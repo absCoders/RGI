@@ -7,10 +7,12 @@ Public Class SOFATTR2
     Dim InquiryOnly As Boolean = False
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
 
-    Dim STYLE_CLASS_CODE As String
+    'Dim STYLE_CLASS_CODE As String
+    Dim SCCs As New List(Of String)
+    Dim SCC_IN As String = ""
     Dim WHSE_CODE As String
     Public STYLE_CODE As String
-    Dim sqlcols As String = "ICTSTYL1.STYLE_CODE,ICTSTYL1.STYLE_STATUS,ICTSTYL1.STYLE_DESC,ICTSTYL1.INNER_PACK_QTY,ICTSTYL1.CARTON_PACK_QTY,ICTSTYL1.STYLE_UOM,ICTSTYL1.STYLE_PRICE,ICTSTYL1.STYLE_CLASS_CODE,ICTSTYL1.SIZE_CODE, ICTSTYL1.VEND_CODE, ICTSTYL1.CASE_CUBE, ICTSTYL1.EXCLUSIVE_STYLE, 999 AS IMPORT_SORT, ICTSTYL1.DUTY_RATE_CODE, ICTSTYL1.STYLE_MATL_DESC"
+    Dim sqlcols As String = "ICTSTYL1.STYLE_CODE,ICTSTYL1.STYLE_STATUS,ICTSTYL1.STYLE_DESC,ICTSTYL1.INNER_PACK_QTY,ICTSTYL1.CARTON_PACK_QTY,ICTSTYL1.STYLE_UOM,ICTSTYL1.STYLE_PRICE,ICTSTYL1.STYLE_CLASS_CODE,ICTSTYL1.SIZE_CODE, ICTSTYL1.VEND_CODE, ICTSTYL1.CASE_CUBE, ICTSTYL1.EXCLUSIVE_STYLE, 999 AS IMPORT_SORT, ICTSTYL1.DUTY_RATE_CODE, ICTSTYL1.STYLE_MATL_DESC, ICTSTYL1.COUNTRY_CODE, ICTSTYL1.PURCH_NOTES"
     Dim ATTR_CODE_1s As String
     Dim SIZE_CODEs As String
     Dim ATTR_CODE_2s As String
@@ -43,6 +45,7 @@ Public Class SOFATTR2
 
             ASCMAIN1.sql = "Select * from ICTCLAS1"
             Create_TDA(.Tables.Add, "ICTCLAS1", "**", 0, False, "", 1)
+            .Tables("ICTCLAS1").Columns.Add("SEL").DefaultValue = 0
 
             ASCMAIN1.sql = "Select * from ICTTHEME"
             Create_TDA(.Tables.Add, "ICTTHEME", "**", 0, False, "", 1)
@@ -187,7 +190,7 @@ Public Class SOFATTR2
         Fill_Records("ICTCLAS1")
         Fill_Records("ICTTHEME")
 
-        AddAllClass()
+        'AddAllClass()
         Sort_grdColumns(grdICTCLAS1, "STYLE_CLASS_CODE")
         Fill_Records("ICTDISC1")
         Fill_Records("ICTCOLR1")
@@ -319,9 +322,12 @@ Public Class SOFATTR2
 
         Select Case eItemKey
             Case "Find"
-                STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
-                Dim rowICTCLAS1 As DataRow = dst.Tables("ICTCLAS1").Rows.Find(STYLE_CLASS_CODE)
-                If rowICTCLAS1 Is Nothing Then
+                'STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
+                'Dim rowICTCLAS1 As DataRow = dst.Tables("ICTCLAS1").Rows.Find(STYLE_CLASS_CODE)
+                'If rowICTCLAS1 Is Nothing Then
+                '    EMsg &= vbCr & "You Must Select (at minimum) a valid Class Code"
+                'End If
+                If SCCs.Count = 0 Then
                     EMsg &= vbCr & "You Must Select (at minimum) a valid Class Code"
                 End If
 
@@ -375,6 +381,41 @@ Public Class SOFATTR2
                         End If
                     End If
                 End If
+            Case "Attribute Excel"
+                Dim SelOnlyWhere As String = "SEL = '1'"
+                Dim SelRows As Int64 = dst.Tables.Item("ICTSTYL1").Select(SelOnlyWhere, "").Count
+                If SelRows = 0 Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "No Rows Selected!"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("You Must Select At Least One")
+                    iMSG.AppendLine("Row From The Grid To Create")
+                    iMSG.AppendLine("An Excel File.")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Would You Like Me To Select")
+                    iMSG.AppendLine("All Of Them And Proceed?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult = MsgBoxResult.Yes Then
+                        For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select()
+                            rowICTSTYL1.Item("SEL") = "1"
+                            SelRows += 1
+                        Next
+                    Else
+                        EMsg = EMsg & vbCrLf & "No Rows Selected."
+                    End If
+                End If
+                If SelRows > 250 Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "Thats A Lot!"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine($"You Have Selected {SelRows} Rows!")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Are You Sure You Want To Procced?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult <> MsgBoxResult.Yes Then
+                        EMsg = EMsg & vbCrLf & "Too Many Rows."
+                    End If
+                End If
             Case "Import"
                 Dim iResult As MsgBoxResult
                 Dim iTitle As String = "Pick Style/Colors from Spreadsheet?"
@@ -411,7 +452,8 @@ Public Class SOFATTR2
             Case "Clear"
                 Call Mode_Settings(False)
                 txtOrder.Text = ""
-                Absx1.txtFor("STYLE_CLASS_CODE").Text = ""
+                'Absx1.txtFor("STYLE_CLASS_CODE").Text = ""
+                SCC_CLEAR(True)
                 Initialize_tabAttributes()
                 chkSTYLE_STATUS_D.Checked = True
                 chkSTYLE_STATUS_A.Checked = True
@@ -486,6 +528,16 @@ Public Class SOFATTR2
                     start_excel.StartInfo.FileName = rbadDir & excelFile & xls_format
                     start_excel.Start()
                 End If
+            Case "Attribute Excel"
+                DisplaySplash("Now Generating Attribute Excel", "", "")
+                Me.Cursor = Cursors.WaitCursor
+                ExcelProcessInit()
+                Dim excelFile As String = Generate_Excel_WPICS()
+
+                Show_Document(excelFile)
+
+                CloseSplash()
+                Me.Cursor = Cursors.Default
             Case "Zip"
                 DisplaySplash("Now Building Zip File", "", "")
                 Generate_Zip_file()
@@ -497,6 +549,133 @@ Public Class SOFATTR2
         End Select
     End Sub
 
+    Private Function Generate_Excel_WPICS() As String
+        Dim RetVal As String = ""
+        Dim success As Boolean = False
+        Dim XLS_NO As Integer = 0
+        Dim xls_name As String = ""
+        Dim xls_file_name As String = ""
+        Dim xls_path As String = ASCMAIN1.Folders("Work")
+        Dim oWB As SpreadsheetGear.IWorkbook
+        Dim oSheet As SpreadsheetGear.IWorksheet = Nothing
+        Dim RowStyleColors As New Dictionary(Of Int64, String())
+        Do Until success
+            Try
+                XLS_NO += 1
+                xls_name = ASCMAIN1.DBS_SESSION_ID
+                xls_name &= "-" & Format(XLS_NO, "000") & ".xlsx"
+                xls_file_name = xls_path & "\" & xls_name & ".XLSx"
+                If Not My.Computer.FileSystem.FileExists(xls_file_name) Then
+                    success = True
+                End If
+            Catch ex As Exception
+                Stop
+            End Try
+        Loop
+
+        oWB = SpreadsheetGear.Factory.GetWorkbook()
+        For i As Integer = oWB.Worksheets.Count To 2 Step -1
+            oWB.Worksheets(i).Delete()
+        Next i
+
+        oSheet = oWB.Worksheets(0)
+        oSheet.Name = "Search By Attribute"
+        ASCMAIN1.Progress("-", oSheet.Name)
+        Dim SORT_ORDER As String = ""
+        For Each SRT_COL As UltraWinGrid.UltraGridColumn In grdICTSTYL1.DisplayLayout.Bands(0).SortedColumns
+            SORT_ORDER = SORT_ORDER & "," & SRT_COL.Key
+        Next
+        If SORT_ORDER.StartsWith(",") Then
+            SORT_ORDER = SORT_ORDER.Substring(1, SORT_ORDER.Length - 1)
+        End If
+
+        Dim SelOnlyWhere As String = "SEL = '1'"
+        Load_DataTable_into_SGXLS(1, 3, dst.Tables.Item("ICTSTYL1"), oSheet, grdICTSTYL1, Nothing, SORT_ORDER, SelOnlyWhere)
+        'Lock and color header row.
+        'Dim dbRows As Int64 = grdICTSTYL1.Rows.Count
+        Dim dbRows As Int64 = dst.Tables.Item("ICTSTYL1").Select(SelOnlyWhere, "").Count
+        Dim dbCols As Int64 = grdICTSTYL1.DisplayLayout.Bands(0).Columns.Count
+        oSheet.Cells(0, 0).Value = "Image"
+        oSheet.Cells(0, 0).EntireColumn.ColumnWidth = 25
+        oSheet.Cells(0, 1).Value = "SKU"
+        oSheet.Cells(0, 1).EntireColumn.ColumnWidth = 25
+        Dim STYLE_COL As Int64 = 0
+        Dim COLOR_COL As Int64 = 0
+        For col As Int64 = 0 To dbCols + 2
+            If oSheet.Cells(0, col).Interior.Color = SpreadsheetGear.Colors.Transparent Then
+                oSheet.Cells(0, col).Interior.Color = SpreadsheetGear.Colors.LightBlue
+            End If
+            If oSheet.Cells(0, col).Text.Trim.ToUpper = "STYLE CODE" Then
+                STYLE_COL = col
+            End If
+            If oSheet.Cells(0, col).Text.Trim.ToUpper = "COLOR" Then
+                COLOR_COL = col
+            End If
+        Next
+        For rw As Int64 = 1 To dbRows
+            oSheet.Cells(rw, 1).RowHeight = 100
+            If STYLE_COL > 0 And COLOR_COL > 0 Then
+                Dim STYLE_CODE As String = oSheet.Cells(rw, STYLE_COL).Text
+                Dim COLOR_CODE As String = oSheet.Cells(rw, COLOR_COL).Text
+                RowStyleColors.Add(rw, {STYLE_CODE, COLOR_CODE})
+                oSheet.Cells(rw, 1).Value = $"{STYLE_CODE}-{COLOR_CODE}"
+            End If
+        Next
+        oSheet.Range(0, 0).Select()
+        oSheet.WindowInfo.FreezePanes = True
+        oSheet.Range("A1:A1").Select()
+
+        oWB.SaveAs(xls_file_name, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+        oWB = Nothing
+        AddImagesToExcel(xls_file_name, RowStyleColors)
+        RetVal = xls_file_name
+        Return RetVal
+    End Function
+
+    Private Sub AddImagesToExcel(ByVal xls_file_name As String, ByVal rowStyleColors As Dictionary(Of Long, String()))
+        Dim excel As Excel.Application = New Microsoft.Office.Interop.Excel.Application
+        Dim XWB As Excel.Workbook = excel.Workbooks.Open(xls_file_name)
+        Dim XWS As Excel.Worksheet = XWB.Sheets(1)
+        Dim rng As Excel.Range
+        For Each rw As KeyValuePair(Of Long, String()) In rowStyleColors
+            rng = XWS.Range($"A{rw.Key + 1}:A{rw.Key + 1}")
+            Dim STYLE_CODE As String = rw.Value(0)
+            Dim COLOR_CODE As String = rw.Value(1)
+            Dim IMAGE_NAME As String = STYLE_CODE & "-" & COLOR_CODE & ".JPG"
+
+            If IMAGE_NAME <> "" Then
+                Dim FILENAME As String = IMAGES_FOLDER & "\" & IMAGE_NAME
+                If chkWebImages.Checked Then
+                    getWebImage(FILENAME, STYLE_CODE, COLOR_CODE)
+                End If
+                'rng = XWS.Range("A" & CStr(r) & ":" & "B" & CStr(r + 4))
+                If My.Computer.FileSystem.FileExists(FILENAME) Then
+                    InsertPictureInRange(FILENAME, rng, XWS, STYLE_CODE, COLOR_CODE)
+                Else
+                    rng.MergeCells = True
+                    rng.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter
+                    rng.VerticalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter
+                    rng.FormulaR1C1 = "No Image Available"
+                    rng.Font.Bold = True
+                End If
+            End If
+        Next
+        XWB.Save()
+        XWB.Close()
+        XWB = Nothing
+        excel = Nothing
+    End Sub
+
+    Private Sub SCC_CLEAR(ByRef clearSelection As Boolean)
+        SCCs.Clear()
+        SCC_IN = ""
+        If clearSelection Then
+            For Each rowICTCLAS1 As DataRow In dst.Tables("ICTCLAS1").Select()
+                rowICTCLAS1.Item("SEL") = "0"
+            Next
+        End If
+    End Sub
+
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
         Call Set_ScreenMode_Base(tf)
         If UltraExplorerBar1.Groups.Count > 0 Then
@@ -506,6 +685,7 @@ Public Class SOFATTR2
                 .Groups("Screen Control").Items("Done").Visible = True
                 .Groups("Screen Control").Items("Email").Visible = ScreenMode
                 .Groups("Screen Control").Items("Excel").Visible = ScreenMode
+                .Groups("Screen Control").Items("Attribute Excel").Visible = ScreenMode
                 .Groups("Screen Control").Items("Import").Visible = True
                 .Groups("Screen Control").Items("Zip").Visible = ScreenMode
                 SetOptionsVisible(ScreenMode)
@@ -580,6 +760,8 @@ Public Class SOFATTR2
         Load_Popup_Menu(grdICTATTR1_1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTATTR1_2, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTSIZE1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
+        Load_Popup_Menu(grdICTCLAS1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
+
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1188,8 +1370,8 @@ Public Class SOFATTR2
             MyBase.txt_ValueChanged(sender, e)
             Select Case Absx1.GetABSColumnName(sender)
                 Case "STYLE_CLASS_CODE"
-                    Dim STYLE_CLASS_CODE As String = Absx1.txtFor("STYLE_CLASS_CODE").Text
-                    Dim rowICTCLAS1 As DataRow = dst.Tables("ICTCLAS1").Rows.Find(STYLE_CLASS_CODE)
+                    'Dim STYLE_CLASS_CODE As String = Absx1.txtFor("STYLE_CLASS_CODE").Text
+                    'Dim rowICTCLAS1 As DataRow = dst.Tables("ICTCLAS1").Rows.Find(STYLE_CLASS_CODE)
                     Initialize_tabAttributes()
             End Select
         End If
@@ -1362,7 +1544,7 @@ Public Class SOFATTR2
                     Optional Color_List As List(Of String) = Nothing)
         Dim QD As String = ""
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
-        STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
+        'STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
 
         Dim SQLAttribute As New StringBuilder With {.Length = 0}
         SQLAttribute.AppendLine("SELECT")
@@ -1514,11 +1696,11 @@ Public Class SOFATTR2
                     & "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
                     & "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
                 Else
-                    If STYLE_CLASS_CODE <> "ALL" Then
-                        ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE = '" & STYLE_CLASS_CODE & "'" & vbCrLf
-                    Else
-                        ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "'" & vbCrLf
-                    End If
+                    'If SCCs(0) = "ALL" Then
+                    '    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE <> 'ALL'" & vbCrLf
+                    'Else
+                    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE IN (" & SCC_IN & ")" & vbCrLf
+                    'End If
 
                     If Not chkSTYLE_STATUS_A.Checked Or Not chkSTYLE_STATUS_N.Checked Or Not chkSTYLE_STATUS_D.Checked Then
                         Dim STATUS_CODEs As String = ""
@@ -1699,10 +1881,12 @@ Public Class SOFATTR2
             If (grdICTSTYL1.Rows.Count > 0) Then
                 .Groups("Screen Control").Items("Email").Settings.Enabled = DefaultableBoolean.True
                 .Groups("Screen Control").Items("Excel").Settings.Enabled = DefaultableBoolean.True
+                .Groups("Screen Control").Items("Attribute Excel").Settings.Enabled = DefaultableBoolean.True
                 .Groups("Screen Control").Items("Zip").Settings.Enabled = DefaultableBoolean.True
             Else
                 .Groups("Screen Control").Items("Email").Settings.Enabled = DefaultableBoolean.False
                 .Groups("Screen Control").Items("Excel").Settings.Enabled = DefaultableBoolean.False
+                .Groups("Screen Control").Items("Attribute Excel").Settings.Enabled = DefaultableBoolean.False
                 .Groups("Screen Control").Items("Zip").Settings.Enabled = DefaultableBoolean.False
             End If
 
@@ -1713,6 +1897,39 @@ Public Class SOFATTR2
             grdICTSTYL1.DisplayLayout.Bands(0).Columns.Item("IMPORT_SORT").Format = "###,###"
         Else
             grdICTSTYL1.DisplayLayout.Bands(0).Columns.Item("IMPORT_SORT").Hidden = True
+        End If
+    End Sub
+
+    Private Sub BUILD_SCC()
+        SCC_CLEAR(False)
+        'Dim rowALL As DataRow = dst.Tables.Item("ICTCLAS1").Select("STYLE_CLASS_CODE = 'ALL'").FirstOrDefault
+        'If rowALL.Item("SEL") = "1" Then
+        '    SCCs.Add("ALL")
+        'Else
+        For Each rowICTCLAS1 As DataRow In dst.Tables("ICTCLAS1").Select()
+            If rowICTCLAS1.Item("SEL") = "1" Then
+                SCCs.Add(rowICTCLAS1.Item("STYLE_CLASS_CODE").ToString & String.Empty)
+            End If
+        Next
+        'End If
+
+        If SCCs.Count = 0 Then
+            SCC_IN = "'NONE'"
+        End If
+        If SCCs.Count = 1 Then
+            'If SCCs(0) = "ALL" Then
+            '    For Each rowICTCLAS1 As DataRow In dst.Tables("ICTCLAS1").Select("STYLE_CLASS_CODE <> 'ALL'")
+            '        SCC_IN = SCC_IN & "','" & rowICTCLAS1.Item("STYLE_CLASS_CODE").ToString & String.Empty
+            '    Next
+            'Else
+            SCC_IN = $"'{SCCs(0)}'"
+            'End If
+        End If
+        If SCCs.Count > 1 Then
+            For Each SCC As String In SCCs
+                SCC_IN = SCC_IN & "','" & SCC & String.Empty
+            Next
+            SCC_IN = SCC_IN.Substring(2, SCC_IN.Length - 2) & "'"
         End If
     End Sub
 
@@ -1857,9 +2074,13 @@ Public Class SOFATTR2
 
     Private Sub showSelectors(ByVal showSel As Boolean)
         splChoices.Panel1Collapsed = Not showSel
-        lblClass.Visible = showSel
-        txtSTYLE_CLASS_CODE.Visible = showSel
+        'lblClass.Visible = showSel
+        'txtSTYLE_CLASS_CODE.Visible = showSel
         btnAllDiscontinued.Visible = showSel
+        btnSelectClass.Visible = showSel
+        If showSel = True Then
+            SCC_CLEAR(False)
+        End If
     End Sub
 
     Private Sub StartSplash()
@@ -1883,15 +2104,21 @@ Public Class SOFATTR2
             If LAST_ATTR = "1" Then
                 ATTR_CODE_1s = Get_CODE_VALUEs(grdICTATTR1_1)
                 SIZE_CODEs = Get_CODE_VALUEs(grdICTSIZE1)
-                If STYLE_CLASS_CODE = "ALL" Then
-                    ASCMAIN1.sql = "Select Distinct SIZE_CODE from ICTSTYL1" _
-                        & " where STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "' and SIZE_CODE is Not Null" _
-                        & IIf(ATTR_CODE_1s = "", "", "   and STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))")
-                Else
-                    ASCMAIN1.sql = "Select Distinct SIZE_CODE from ICTSTYL1" _
-                    & " where STYLE_CLASS_CODE = '" & STYLE_CLASS_CODE & "' and SIZE_CODE is Not Null" _
+                'If SCCs(0) = "ALL" Then
+                '    'ASCMAIN1.sql = "Select Distinct SIZE_CODE from ICTSTYL1" _
+                '    '    & " where STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "' and SIZE_CODE is Not Null" _
+                '    '    & IIf(ATTR_CODE_1s = "", "", "   and STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))")
+                '    ASCMAIN1.sql = "Select Distinct SIZE_CODE from ICTSTYL1" _
+                '        & " where STYLE_CLASS_CODE NOT IN (" & SCC_IN & ") and SIZE_CODE is Not Null" _
+                '        & IIf(ATTR_CODE_1s = "", "", "   and STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))")
+                'Else
+                '    'ASCMAIN1.sql = "Select Distinct SIZE_CODE from ICTSTYL1" _
+                '    '& " where STYLE_CLASS_CODE = '" & STYLE_CLASS_CODE & "' and SIZE_CODE is Not Null" _
+                '    '& IIf(ATTR_CODE_1s = "", "", "   and STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))")
+                ASCMAIN1.sql = "Select Distinct SIZE_CODE from ICTSTYL1" _
+                    & " where STYLE_CLASS_CODE IN (" & SCC_IN & ") and SIZE_CODE is Not Null" _
                     & IIf(ATTR_CODE_1s = "", "", "   and STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))")
-                End If
+                'End If
 
                 Fill_Records("ICTSIZE1", "", True, ASCMAIN1.sql)
                 dst.Tables("ICTSIZE1").Rows.Add(New String() {"", ""})
@@ -1911,20 +2138,30 @@ Public Class SOFATTR2
             If LAST_ATTR = "Size" Or LAST_ATTR = "1" Then
                 SIZE_CODEs = Get_CODE_VALUEs(grdICTSIZE1)
                 ATTR_CODE_2s = Get_CODE_VALUEs(grdICTATTR1_2)
-                If STYLE_CLASS_CODE = "ALL" Then
-                    ASCMAIN1.sql = "Select Distinct ICTSTYL3.ATTR_CODE from ICTSTYL3,ICTSTYL1" _
-                    & " where ICTSTYL3.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
-                    & "   and ICTSTYL1.STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "'" _
-                    & IIf(SIZE_CODEs = "", "", "   and NVL(ICTSTYL1.SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")") _
-                    & IIf(AT1s = "", "", "   and ICTSTYL3.STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(AT1s, 2) & "))")
+                'If SCCs(0) = "ALL" Then
+                '    'ASCMAIN1.sql = "Select Distinct ICTSTYL3.ATTR_CODE from ICTSTYL3,ICTSTYL1" _
+                '    '& " where ICTSTYL3.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
+                '    '& "   and ICTSTYL1.STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "'" _
+                '    '& IIf(SIZE_CODEs = "", "", "   and NVL(ICTSTYL1.SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")") _
+                '    '& IIf(AT1s = "", "", "   and ICTSTYL3.STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(AT1s, 2) & "))")
+                '    ASCMAIN1.sql = "Select Distinct ICTSTYL3.ATTR_CODE from ICTSTYL3,ICTSTYL1" _
+                '    & " where ICTSTYL3.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
+                '    & "   and ICTSTYL1.STYLE_CLASS_CODE IN (" & SCC_IN & ")" _
+                '    & IIf(SIZE_CODEs = "", "", "   and NVL(ICTSTYL1.SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")") _
+                '    & IIf(AT1s = "", "", "   and ICTSTYL3.STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(AT1s, 2) & "))")
 
-                Else
-                    ASCMAIN1.sql = "Select Distinct ICTSTYL3.ATTR_CODE from ICTSTYL3,ICTSTYL1" _
-                    & " where ICTSTYL3.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
-                    & "   and ICTSTYL1.STYLE_CLASS_CODE = '" & STYLE_CLASS_CODE & "'" _
-                    & IIf(SIZE_CODEs = "", "", "   and NVL(ICTSTYL1.SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")") _
-                    & IIf(AT1s = "", "", "   and ICTSTYL3.STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(AT1s, 2) & "))")
-                End If
+                'Else
+                '    'ASCMAIN1.sql = "Select Distinct ICTSTYL3.ATTR_CODE from ICTSTYL3,ICTSTYL1" _
+                '    '& " where ICTSTYL3.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
+                '    '& "   and ICTSTYL1.STYLE_CLASS_CODE = '" & STYLE_CLASS_CODE & "'" _
+                '    '& IIf(SIZE_CODEs = "", "", "   and NVL(ICTSTYL1.SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")") _
+                '    '& IIf(AT1s = "", "", "   and ICTSTYL3.STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(AT1s, 2) & "))")
+                ASCMAIN1.sql = "Select Distinct ICTSTYL3.ATTR_CODE from ICTSTYL3,ICTSTYL1" _
+                & " where ICTSTYL3.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
+                & "   and ICTSTYL1.STYLE_CLASS_CODE IN (" & SCC_IN & ")" _
+                & IIf(SIZE_CODEs = "", "", "   and NVL(ICTSTYL1.SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")") _
+                & IIf(AT1s = "", "", "   and ICTSTYL3.STYLE_CODE in (Select STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(AT1s, 2) & "))")
+                'End If
 
                 ASCMAIN1.sql = "Select ATTR_CODE, ATTR_DESC from ICTATTR1 where ATTR_CODE in (" & ASCMAIN1.sql & ") AND NVL(ATT_RANK,9) <> 1"
                 Fill_Records("ICTATTR1_2", "", True, ASCMAIN1.sql)
@@ -1982,7 +2219,8 @@ Public Class SOFATTR2
         With rowICTATTRQ
             .Item("QUERY_NO") = QUERY_NO
             .Item("QUERY_DESC") = txtQueryDesc.Text
-            .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+            '.Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+            .Item("STYLE_CLASS_CODE") = SCC_IN
             .Item("WHSE_CODE") = WHSE_CODE
             .Item("INCLUDE_STATUS") = IIf(chkSTYLE_STATUS_A.Checked, "A", "") & IIf(chkSTYLE_STATUS_N.Checked, "N", "") & IIf(chkSTYLE_STATUS_D.Checked, "D", "")
             .Item("ATTR_CODE_1S") = Get_CODE_VALUEs(grdICTATTR1_1) ' ATTR_CODE_1s
@@ -2072,14 +2310,15 @@ Public Class SOFATTR2
         tabAttributes.SelectedTab = tabAttributes.Tabs("1")
         txtQueryDesc.Text = rowICTATTRQ.Item("QUERY_DESC") & ""
 
-        STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
+        'STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
+        BUILD_SCC()
         WHSE_CODE = Absx1.txtFor("WHSE_CODE").Text
 
         Find_Styles()
     End Sub
 
     Private Sub grdICTCLAS1_DoubleClickRow(sender As Object, e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdICTCLAS1.DoubleClickRow
-        Absx1.txtFor("STYLE_CLASS_CODE").Text = e.Row.Cells("STYLE_CLASS_CODE").Value
+        'Absx1.txtFor("STYLE_CLASS_CODE").Text = e.Row.Cells("STYLE_CLASS_CODE").Value
     End Sub
 
     Private Sub grdICTATTR1_1_CellChange(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTATTR1_1.CellChange
@@ -2114,21 +2353,22 @@ Public Class SOFATTR2
 #End Region
 
     Sub Initialize_tabAttributes()
-        STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
-        If STYLE_CLASS_CODE = "" Then
+        'STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
+        If SCCs.Count = 0 Then
             tabAttributes.Visible = False
             grdICTCLAS1.Visible = True
             LAST_ATTR = ""
         Else
             tabAttributes.Visible = True
             grdICTCLAS1.Visible = False
-            If STYLE_CLASS_CODE = "ALL" Then
-                ASCMAIN1.sql = "Select Distinct ATTR_CODE from ICTSTYL3 " _
-                    & " where STYLE_CODE in (Select STYLE_CODE from ICTSTYL1 where STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "')"
-            Else
-                ASCMAIN1.sql = "Select Distinct ATTR_CODE from ICTSTYL3 " _
-                    & " where STYLE_CODE in (Select STYLE_CODE from ICTSTYL1 where STYLE_CLASS_CODE = '" & STYLE_CLASS_CODE & "')"
-            End If
+            'If SCCs(0) = "ALL" Then
+            '    'ASCMAIN1.sql = "Select Distinct ATTR_CODE from ICTSTYL3 " _
+            '    '    & " where STYLE_CODE in (Select STYLE_CODE from ICTSTYL1 where STYLE_CLASS_CODE <> '" & STYLE_CLASS_CODE & "')"
+            '    ASCMAIN1.sql = "Select Distinct ATTR_CODE from ICTSTYL3 "
+            'Else
+            ASCMAIN1.sql = "Select Distinct ATTR_CODE from ICTSTYL3 " _
+                & " where STYLE_CODE in (Select STYLE_CODE from ICTSTYL1 where STYLE_CLASS_CODE IN (" & SCC_IN & "))"
+            'End If
 
             ASCMAIN1.sql = "Select ATTR_CODE, ATTR_DESC from ICTATTR1 where ATTR_CODE in (" & ASCMAIN1.sql & ") AND NVL(ATT_RANK,9) = 1"
             Fill_Records("ICTATTR1_1", "", True, ASCMAIN1.sql)
@@ -2164,6 +2404,7 @@ Public Class SOFATTR2
         With UltraExplorerBar1
             .Groups("Screen Control").Items("Email").Settings.Enabled = False
             .Groups("Screen Control").Items("Excel").Settings.Enabled = False
+            .Groups("Screen Control").Items("Attribute Excel").Settings.Enabled = False
             .Groups("Screen Control").Items("Zip").Settings.Enabled = False
         End With
 
@@ -2573,6 +2814,9 @@ Public Class SOFATTR2
 
             If IMAGE_NAME <> "" Then
                 Dim FILENAME As String = IMAGES_FOLDER & "\" & IMAGE_NAME
+                If chkWebImages.Checked Then
+                    getWebImage(FILENAME, STYLE_CODE, COLOR_CODE)
+                End If
                 rng = XWS.Range("A" & CStr(R) & ":" & "B" & CStr(R + 4))
                 If My.Computer.FileSystem.FileExists(FILENAME) Then
                     InsertPictureInRange(FILENAME, rng, XWS, STYLE_CODE, COLOR_CODE)
@@ -2730,6 +2974,32 @@ Public Class SOFATTR2
         excel = Nothing
         Return xlsFileName
     End Function
+
+    Private Sub getWebImage(ByRef FILENAME As String,
+                            ByVal STYLE_CODE As String,
+                            ByVal COLOR_CODE As String)
+        Dim WEBURL As String = "https://www.regency-rib.com/media/product/"
+        Dim FILEURL As String = WEBURL & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+        Dim TMP_FOLDER As String = ASCMAIN1.Folders("Temp")
+        Dim TMP_FILE As String = TMP_FOLDER & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+        If Not TMP_FOLDER.EndsWith("\") Then
+            TMP_FOLDER = TMP_FOLDER & "\"
+        End If
+        If IO.Directory.Exists(TMP_FOLDER) Then
+            Try
+                Dim web_client As New Net.WebClient
+                Dim image_stream As New MemoryStream(web_client.DownloadData(FILEURL))
+                Dim img As Image = Image.FromStream(image_stream)
+                If IO.File.Exists(TMP_FILE) Then
+                    IO.File.Delete(TMP_FILE)
+                End If
+                img.Save(TMP_FILE)
+                FILENAME = TMP_FILE
+            Catch ex As Exception
+
+            End Try
+        End If
+    End Sub
 
     Sub Add_Branch_Info(xlws As Excel.Worksheet, dr As DataRow)
 
@@ -2926,8 +3196,9 @@ Public Class SOFATTR2
            TargetCells.Height)
         'Selection.ShapeRange.Item(1)'
         If STYLE_CODE <> "" Then
-            XWS.Hyperlinks.Add(Anchor:=pp, Address:=
-                "http://api.regency-rib.com:8181/images/product/" & STYLE_CODE & "-" & COLOR_CODE & ".jpg", ScreenTip:="Click to view image on our Web-Site")
+            'XWS.Hyperlinks.Add(Anchor:=pp, Address:=
+            '    "http://api.regency-rib.com:8181/images/product/" & STYLE_CODE & "-" & COLOR_CODE & ".jpg", ScreenTip:="Click to view image on our Web-Site")
+            XWS.Hyperlinks.Add(Anchor:=pp, Address:="https://www.regency-rib.com/media/product/" & STYLE_CODE & "-" & COLOR_CODE & ".jpg", ScreenTip:="Click to view image on our Web-Site")
         End If
         ', TextToDisplay:="text"
 
@@ -3029,7 +3300,7 @@ Optional ByVal absolute As Boolean = False) As String
                 .SEND_METHOD = "E"
                 .SEND_ENTITY_CAPTION = "Style List"
                 .SEND_ENTITY_TABLE = "ICTSTYL1"
-                .SEND_ENTITY_KEY = Absx1.txtFor("STYLE_CLASS_CODE").Text
+                .SEND_ENTITY_KEY = SCCs(0)
                 .SEND_ENTITY_NAME = ""
                 .ShowDialog()
                 '.Send_email()
@@ -3623,10 +3894,17 @@ Optional ByVal absolute As Boolean = False) As String
     End Function
 
     Private Sub AddAllClass()
-        Dim newICTCLAS1 As DataRow = dst.Tables.Item("ICTCLAS1").NewRow
-        newICTCLAS1.Item("STYLE_CLASS_CODE") = "ALL"
-        newICTCLAS1.Item("STYLE_CLASS_DESC") = "All"
-        newICTCLAS1.Item("DISC_CODE") = "NONPVC"
-        dst.Tables.Item("ICTCLAS1").Rows.Add(newICTCLAS1)
+        'Dim newICTCLAS1 As DataRow = dst.Tables.Item("ICTCLAS1").NewRow
+        'newICTCLAS1.Item("STYLE_CLASS_CODE") = "ALL"
+        'newICTCLAS1.Item("STYLE_CLASS_DESC") = "All"
+        'newICTCLAS1.Item("DISC_CODE") = "NONPVC"
+        'dst.Tables.Item("ICTCLAS1").Rows.Add(newICTCLAS1)
+    End Sub
+
+    Private Sub btnSelectClass_Click(sender As Object, e As EventArgs) Handles btnSelectClass.Click
+        BUILD_SCC()
+        Initialize_tabAttributes()
+        btnAllDiscontinued.Visible = False
+        btnSelectClass.Visible = False
     End Sub
 End Class

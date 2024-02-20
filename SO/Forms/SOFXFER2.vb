@@ -40,12 +40,6 @@ Public Class SOFXFER2
 
         setVersionNo()
 
-        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne") Then
-            btnTest.Visible = True
-        Else
-            btnTest.Visible = False
-        End If
-
         With dst
 
             With .Tables.Add("TATCTLN0")
@@ -2134,40 +2128,40 @@ Public Class SOFXFER2
         'VersionInfo.AppendLine("* Changes to Image Mapper For Michale.")
         'VersionInfo.AppendLine("* Changes to Order Entry To Allow FE Disc Ordering With Warning.")
 
-        VersionNo = "22.01.03.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to Add Extended PVC System To Laptops.")
+        'VersionNo = "22.01.03.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to Add Extended PVC System To Laptops.")
 
-        VersionNo = "22.01.21.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to Search By Attribute For Importing Spreadsheets.")
+        'VersionNo = "22.01.21.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to Search By Attribute For Importing Spreadsheets.")
 
-        VersionNo = "22.03.21.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to Search By Attribute For PVC Items.")
+        'VersionNo = "22.03.21.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to Search By Attribute For PVC Items.")
 
-        VersionNo = "22.11.18.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Upgrade to Label Printing.")
+        'VersionNo = "22.11.18.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Upgrade to Label Printing.")
 
-        VersionNo = "22.11.18.02"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Upgrade to Encryption.")
+        'VersionNo = "22.11.18.02"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Upgrade to Encryption.")
 
-        VersionNo = "22.11.18.03"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Remove Software Update Option Unless Mario.")
+        'VersionNo = "22.11.18.03"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Remove Software Update Option Unless Mario.")
 
-        VersionNo = "22.12.23.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Software Updates Are Locked With Passwords.")
+        'VersionNo = "22.12.23.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Software Updates Are Locked With Passwords.")
 
         VersionNo = "23.01.26.01"
         VersionInfo.AppendLine("")
@@ -2200,71 +2194,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change Order Printing To Show Sub-UPCs.")
 
+        VersionNo = "24.02.15.03"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* New Attribute Excel Feature Added to SSBA Screen.")
+
         lblVersionNo.Text = VersionNo
-    End Sub
-
-    Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
-        Dim RetVal As Boolean = True
-        Try
-            Stop
-            AddHandler FtpS.OnSSHServerAuthentication, AddressOf SSHServerAuthentication
-            AddHandler FtpS.OnSSHStatus, AddressOf SSHStatus
-            Dim RemotePath As String = "quotes\"
-            Dim LocalPath As String = "C:\TST\VAN_QUOTE\"
-            Dim RemoteFile As String = "QUOTEEXAMPLE2.pdf"
-            Dim LocalFile As String = "QUOTEEXAMPLE2.pdf"
-
-            If Not RemotePath.EndsWith("\") Then
-                RemotePath = RemotePath & "\"
-            End If
-            If Not LocalPath.EndsWith("\") Then
-                LocalPath = LocalPath & "\"
-            End If
-
-            FileListS.Clear()
-            FtpS.SSHUser = "ftp@tzn.lnr.mybluehost.me"
-            FtpS.SSHPassword = "Van2126838181"
-            FtpS.SSHHost = "ftp.tzn.lnr.mybluehost.me"
-            FtpS.SSHAuthMode = nsoftware.IPWorksSSH.SftpSSHAuthModes.amPassword
-            FtpS.SSHEncryptionAlgorithms = "aes256-ctr"
-            FtpS.LocalFile = String.Format("{0}{1}", LocalPath, LocalFile)
-            FtpS.RemoteFile = RemoteFile
-            FtpS.RemotePath = RemotePath '"/DB"
-            FtpS.Overwrite = True
-            FtpS.Config("PreserveFileTime=True")
-
-            FtpS.SSHLogon("ftp.tzn.lnr.mybluehost.me", "21")
-            FtpS.ListDirectory()
-            If FtpS.DirList.Count > 0 Then
-                For Each FL As nsoftware.IPWorksSSH.DirEntry In FtpS.DirList
-                    If Not FL.IsDir Then
-                        FtpS.LocalFile = String.Format("{0}{1}", LocalPath, FL.FileName)
-                        FtpS.RemoteFile = FL.FileName
-
-                        Dim DFile As Boolean = True
-                        If IO.File.Exists(FtpS.LocalFile) Then
-                            If IO.File.GetCreationTime(FtpS.LocalFile) >= FL.FileTime Then
-                                DFile = False
-                            End If
-                        End If
-                        If FtpS.RemoteFile = "nsoftware.IPWorksSSH.dll" Or FtpS.RemoteFile = "nsoftware.IPWorksSSH.System.dll" Then 'Force Security Update Always.
-                            DFile = True
-                        End If
-                        If DFile Then
-                            ASCMAIN1.Progress("Secure Fetch: " & FL.FileName)
-                            FtpS.Download()
-                        End If
-                    End If
-                Next
-            End If
-            FtpS.SSHLogoff()
-
-            ASCMAIN1.Progress("")
-        Catch ex As Exception
-            FtpS.SSHLogoff()
-            ASCMAIN1.Progress("")
-            MsgBox(ex.Message, MsgBoxStyle.Critical, "Secure FTP Error")
-            RetVal = False
-        End Try
     End Sub
 End Class
