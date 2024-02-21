@@ -43,9 +43,15 @@ Public Class ICFQUOTV
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+
         Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
         'FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
 
+        If Now() >= DateSerial(2024, 3, 1) Then
+            chkNewLinks.Checked = True
+        Else
+            chkNewLinks.Checked = False
+        End If
 
         Get_PARM("ICTPARM1")
         Get_PARM("SOTPARM1")
@@ -799,6 +805,13 @@ Public Class ICFQUOTV
                         newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
                         dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
 
+                        Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+                        Dim ext As String = getFileExt(FileNameLocalFull)
+                        Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+                        Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+                        If eMsg.Length > 0 Then
+                            MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                        End If
                     End If
                 Else
                     Dim iMSGX As New System.Text.StringBuilder With {.Length = 0}
@@ -897,31 +910,49 @@ Public Class ICFQUOTV
                     Me.Cursor = Cursors.Default
                 End If
             Case "FTP"
-                Dim FileName As String = "C:\Users\Wayne\Dropbox\Vandale\Quotes Sheets\vincebras001.pdf"
-                Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileName)
+                Dim FileNameRemote As String = "vincebras003.pdf"
+                Dim FileNameLocalFull As String = "C:\Users\Wayne\Dropbox\Vandale\Quotes Sheets\vincebras003.pdf"
+                Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
         End Select
     End Sub
 
-    Private Function FTP_BLUEHOST(ByRef FileName As String) As StringBuilder
+    Private Function FTP_BLUEHOST(ByRef FileNameLocalFull As String, ByRef FileNameRemote As String) As StringBuilder
         Dim RetVal As New StringBuilder With {.Length = 0}
-        Dim LocalFileOrig As String = ""
-        Dim RemoteFileOrig As String = ""
-        Stop
-        Ftp1.User = "abs@vandalequotes.com"
-        Ftp1.Password = "0ff1c3ABS"
-        Ftp1.RemoteHost = "ftp.tzn.lnr.mybluehost.me"
-        Ftp1.Logon()
-        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-        Ftp1.LocalFile = FileName
-        LocalFileOrig = FileName
-        Ftp1.RemoteFile = FileName
-        RemoteFileOrig = FileName
-        'Ftp1.Timeout = 0 'Don't Timeout
-        Ftp1.Overwrite = True
-        Ftp1.Upload()
+        Dim FTPUser As String = "abs@vandalequotes.com"
+        Dim FTPPassword As String = "0ff1c3ABS#"
+        Dim FTPHost As String = "ftp.tzn.lnr.mybluehost.me"
+        Dim FTPRemoteFull As String = $"/public_html/FTP/{FileNameRemote}"
 
-        Ftp1.Logoff()
-        ASCMAIN1.Progress("")
+        If Not System.IO.File.Exists(FileNameLocalFull) Then
+            RetVal.AppendLine($"FTP File Provided Does Not Exist: {FileNameLocalFull}")
+        End If
+
+        If RetVal.Length = 0 Then
+            Try
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    Stop
+                End If
+
+                Ftp1.User = FTPUser
+                Ftp1.Password = FTPPassword
+                Ftp1.RemoteHost = FTPHost
+
+                Ftp1.Logon()
+
+                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                Ftp1.LocalFile = FileNameLocalFull
+                Ftp1.RemoteFile = FTPRemoteFull
+                'Ftp1.Timeout = 0 'Don't Timeout
+                Ftp1.Overwrite = True
+
+                Ftp1.Upload()
+
+                Ftp1.Logoff()
+            Catch ex As Exception
+                RetVal.AppendLine($"FTP Error: {ex.Message} : {ex.InnerException}")
+                'Just bail out for now.  We eventually need some kind of tracking.
+            End Try
+        End If
         Return RetVal
     End Function
 
@@ -1523,18 +1554,39 @@ Public Class ICFQUOTV
 
                     End If
             Case "Copy Link"
-                Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
-                Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
-                Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
-                My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                If chkNewLinks.Checked Then
+                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Dim ext As String = getFileExt(FILENAME)
+                    Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
+                    Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
+                    Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
+                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                Else
+                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                End If
             Case "Copy All Links"
                 Dim clipbrd As String = ""
-                For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
-                    Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
-                    Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
-                    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
-                    clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
-                Next
+                If chkNewLinks.Checked Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                        Dim ext As String = getFileExt(FILENAME)
+                        Dim SESSION_NO As String = grow.Cells.Item("SESSION_NO").Text
+                        Dim FILE_NO As String = grow.Cells.Item("FILE_NO").Text
+                        Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
+
+                        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                    Next
+                Else
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                        Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
+                        Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                    Next
+                End If
                 My.Computer.Clipboard.SetText(clipbrd)
         End Select
     End Sub
@@ -1642,8 +1694,8 @@ Public Class ICFQUOTV
             End If
             If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
                 'Stop
-                'FOLDER_NAME = "S:\VAN\images\"
-                FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
+                FOLDER_NAME = "S:\VAN\images\"
+                'FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
             End If
 
 
@@ -2079,14 +2131,32 @@ Public Class ICFQUOTV
         Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "V", QUOTE_NO)
         For Each rowASTATTA2 As DataRow In tbl.Rows
             MaxFILE_NO += 1
+            Dim ATTACHMENT_FILENAME As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+            Dim ext As String = getFileExt(ATTACHMENT_FILENAME)
             Dim newICTQUOHF As DataRow = dst.Tables.Item("ICTQUOHF").NewRow
             newICTQUOHF.Item("SESSION_NO") = SESSION_NO
             newICTQUOHF.Item("FILE_NO") = MaxFILE_NO
-            newICTQUOHF.Item("FILENAME") = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+            newICTQUOHF.Item("FILENAME") = ATTACHMENT_FILENAME
             newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
             dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
+
+            Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+            Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+            Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+            If eMsg.Length > 0 Then
+                MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+            End If
         Next
     End Sub
+
+    Private Function getFileExt(ByVal ATTACHMENT_FILENAME As String) As String
+        Dim RetVal As String = ""
+        Dim dotLoc As Int64 = ATTACHMENT_FILENAME.IndexOf(".", ATTACHMENT_FILENAME.Length - 5)
+        If dotLoc > 0 Then
+            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc)
+        End If
+        Return RetVal
+    End Function
 #End Region
     Private Function EXTEND_LINK(ByVal HASHVALUE As String) As Boolean
         Dim RetVal As Boolean = False
@@ -2281,7 +2351,7 @@ Public Class ICFQUOTV
                 Dim COLOR_CODE_S As String = rowICTSTDQ1.Item("COLOR_CODE").ToString & String.Empty
 
                 If ASCMAIN1.Running_in_VS Then
-                    If rowICTSTDQ1.Item("STYLE_CODE").ToString = "VCO51509" Then Stop
+                    'If rowICTSTDQ1.Item("STYLE_CODE").ToString = "VCO51509" Then Stop
                 End If
 
                 Dim QTY_ATS As Int64 = Val(rowICTSTDQ1.Item("QTY_ATS") & "")
@@ -3068,7 +3138,7 @@ Public Class ICFQUOTV
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "whr" Then
             '  Stop
-            IMAGE_FOLDER = "C:\Users\wjz\Desktop\Clients\VAN\images"
+            IMAGE_FOLDER = "S:\VAN\images\"
         End If
 
         Dim CAP_QTY As Int64 = Val(numCapQty.Value & "")
@@ -4103,8 +4173,8 @@ Public Class ICFQUOTV
             'If STYLE_CODE_PLM = "500498AVR" And ASCMAIN1.Running_in_VS Then Stop
             If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
                 'Stop
-                'FOLDER_NAME = "S:\VAN\images\"
-                FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
+                FOLDER_NAME = "S:\VAN\images\"
+                'FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
             End If
 
             If Not My.Computer.FileSystem.FileExists(FOLDER_NAME & row.Item("IMAGE_NAME")) Then
@@ -4219,6 +4289,8 @@ Public Class ICFQUOTV
             Dim DESCHASH As String = ""
 
             Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/"
+            Dim LINEPFX_NEW As String = "http://docs.vandalequotes.com/"
+
             Dim SESSION_NO As String = ASCMAIN1.Next_Control_No("ICTQUOH1.SESSION_NO")
             Dim FILE_NO As Integer = 0
 
@@ -4491,6 +4563,15 @@ Public Class ICFQUOTV
 
                         Dim strToHash As String = ASCMAIN1.Get_Hash(SESSION_NO & FILE_NO & PDF_FN)
 
+                        If chkNewLinks.Checked Then
+                            Dim FileNameLocalFull As String = $"{ASCMAIN1.Folders("Temp")}{tempFileName}.PDF"
+                            Dim FileNameRemote As String = $"{SESSION_NO}-{FILE_NO}.pdf"
+                            Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+                            If eMsg.Length > 0 Then
+                                MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                            End If
+                        End If
+
                         Dim ICTQUOH2 As DataRow = dst.Tables("ICTQUOH2").NewRow
                         ICTQUOH2.Item("SESSION_NO") = SESSION_NO
                         ICTQUOH2.Item("FILE_NO") = FILE_NO
@@ -4572,7 +4653,11 @@ Public Class ICFQUOTV
 
                     For Each rowICTQUOH2 As DataRow In dst.Tables("ICTQUOH2").Select("")
                         sw.WriteLine(rowICTQUOH2.Item("SALES_DIVISION_NAME") & " - " & rowICTQUOH2.Item("SUB_BODY_DESC") & " - " & rowICTQUOH2.Item("FABRIC_DESC"))
-                        sw.WriteLine(LINEPFX & rowICTQUOH2.Item("HASHVALUE"))
+                        If chkNewLinks.Checked Then
+                            sw.WriteLine($"{LINEPFX_NEW}{rowICTQUOH2.Item("SESSION_NO").ToString & String.Empty}-{rowICTQUOH2.Item("FILE_NO").ToString & String.Empty}.pdf")
+                        Else
+                            sw.WriteLine(LINEPFX & rowICTQUOH2.Item("HASHVALUE"))
+                        End If
                         sw.WriteLine()
                     Next
 
@@ -5571,9 +5656,9 @@ Public Class ICFQUOTV
                 End If
                 SQLS.AppendLine(")")
                 If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-                    If STYLE_CODE = "VCO51665" And COLOR_CODE = "260" Then
-                        Stop
-                    End If
+                    'If STYLE_CODE = "VCO51665" And COLOR_CODE = "260" Then
+                    '    Stop
+                    'End If
                 End If
                 ASCMAIN1.sql = SQLS.ToString()
                 Dim PO_QTY_REC_SUM As Int64 = Val(ASCDATA1.GetDataValue)

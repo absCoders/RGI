@@ -113,6 +113,7 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chkWebLinks = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.btnLoadOrders = New System.Windows.Forms.Button()
         Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -127,9 +128,9 @@ Partial Class SORCUSTQ
         Me.grdSOTORDR0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Reservations = New System.Windows.Forms.TabPage()
         Me.grdSOTRSRV1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.chkWebLinks = New ABSCS.ABSCheckBox()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkNewLinks = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -166,6 +167,7 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -182,9 +184,9 @@ Partial Class SORCUSTQ
         CType(Me.grdSOTORDR0, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Reservations.SuspendLayout()
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage1.SuspendLayout()
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -401,6 +403,7 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkNewLinks)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkWebLinks)
         Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox3)
         Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox1)
@@ -412,6 +415,19 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Size = New System.Drawing.Size(773, 358)
         Me.SplitContainer8.SplitterDistance = 105
         Me.SplitContainer8.TabIndex = 265
+        '
+        'chkWebLinks
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkWebLinks, False)
+        Me.chkWebLinks.ABSChecked = "1"
+        Me.chkWebLinks.CausesValidation = False
+        Me.chkWebLinks.Checked = True
+        Me.chkWebLinks.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkWebLinks.Location = New System.Drawing.Point(537, 19)
+        Me.chkWebLinks.Name = "chkWebLinks"
+        Me.chkWebLinks.Size = New System.Drawing.Size(216, 20)
+        Me.chkWebLinks.TabIndex = 268
+        Me.chkWebLinks.Text = "Save Report To Web Links"
         '
         'UltraGroupBox3
         '
@@ -727,19 +743,6 @@ Partial Class SORCUSTQ
         Me.grdSOTRSRV1.Size = New System.Drawing.Size(759, 214)
         Me.grdSOTRSRV1.TabIndex = 14
         '
-        'chkWebLinks
-        '
-        Me.Absx1.SetABSBindToTable(Me.chkWebLinks, False)
-        Me.chkWebLinks.ABSChecked = "1"
-        Me.chkWebLinks.CausesValidation = False
-        Me.chkWebLinks.Checked = True
-        Me.chkWebLinks.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkWebLinks.Location = New System.Drawing.Point(537, 19)
-        Me.chkWebLinks.Name = "chkWebLinks"
-        Me.chkWebLinks.Size = New System.Drawing.Size(216, 20)
-        Me.chkWebLinks.TabIndex = 268
-        Me.chkWebLinks.Text = "Save Report To Web Links"
-        '
         'TabPage1
         '
         Me.TabPage1.Controls.Add(Me.grdWEBLINKS)
@@ -839,6 +842,15 @@ Partial Class SORCUSTQ
         Me.grdWEBLINKS.Size = New System.Drawing.Size(765, 220)
         Me.grdWEBLINKS.TabIndex = 15
         '
+        'chkNewLinks
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
+        Me.chkNewLinks.Location = New System.Drawing.Point(555, 36)
+        Me.chkNewLinks.Name = "chkNewLinks"
+        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
+        Me.chkNewLinks.TabIndex = 269
+        Me.chkNewLinks.Text = "New Links"
+        '
         'SORCUSTQ
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -883,6 +895,7 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.UltraGroupBox3.PerformLayout()
@@ -900,9 +913,9 @@ Partial Class SORCUSTQ
         CType(Me.grdSOTORDR0, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Reservations.ResumeLayout(False)
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage1.ResumeLayout(False)
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -926,4 +939,5 @@ Partial Class SORCUSTQ
     Friend WithEvents chkWebLinks As ABSCS.ABSCheckBox
     Friend WithEvents TabPage1 As TabPage
     Friend WithEvents grdWEBLINKS As UltraWinGrid.UltraGrid
+    Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
 End Class

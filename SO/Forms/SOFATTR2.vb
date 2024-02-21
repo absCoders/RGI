@@ -2121,7 +2121,7 @@ Public Class SOFATTR2
                 'End If
 
                 Fill_Records("ICTSIZE1", "", True, ASCMAIN1.sql)
-                dst.Tables("ICTSIZE1").Rows.Add(New String() {"", ""})
+                'dst.Tables("ICTSIZE1").Rows.Add(New String() {"", ""})
                 Sort_grdColumns(grdICTSIZE1, "SIZE_CODE")
                 If SIZE_CODEs <> "" Then
                     For Each row As DataRow In dst.Tables("ICTSIZE1").Select("SIZE_CODE in (" & Mid(SIZE_CODEs, 2) & ")")
