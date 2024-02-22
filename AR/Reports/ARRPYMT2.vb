@@ -236,7 +236,7 @@ Public Class ARRPYMT2
         Create_TDA(dst.Tables.Add, "ARTPYMTX", "**", 0, False)
         With dst.Tables("ARTPYMTX")
             .PrimaryKey = New DataColumn() _
-                {.Columns("PYMT_BATCH_NO"), .Columns("PYMT_BATCH_LNO"), .Columns("RECORD_TYPE"), .Columns("PYMT_BATCH_ILNO")}
+                { .Columns("PYMT_BATCH_NO"), .Columns("PYMT_BATCH_LNO"), .Columns("RECORD_TYPE"), .Columns("PYMT_BATCH_ILNO")}
         End With
         Fill_Records("ARTPYMTX")
 
