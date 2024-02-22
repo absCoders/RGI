@@ -459,6 +459,7 @@ Partial Class ICFQUOTX
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkNewLinks = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -572,6 +573,7 @@ Partial Class ICFQUOTX
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -1209,7 +1211,7 @@ Partial Class ICFQUOTX
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.Panel1)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(208, 461)
         '
@@ -1399,13 +1401,14 @@ Partial Class ICFQUOTX
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.grpExcelOptions)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(208, 461)
         '
         'grpExcelOptions
         '
         Me.grpExcelOptions.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpExcelOptions.Controls.Add(Me.chkNewLinks)
         Me.grpExcelOptions.Controls.Add(Me.chkShowRetail)
         Me.grpExcelOptions.Controls.Add(Me.chkShowCost)
         Me.grpExcelOptions.Controls.Add(Me.chkOmitPrice)
@@ -3012,6 +3015,15 @@ Partial Class ICFQUOTX
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(892, 517)
         '
+        'chkNewLinks
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
+        Me.chkNewLinks.Location = New System.Drawing.Point(6, 284)
+        Me.chkNewLinks.Name = "chkNewLinks"
+        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
+        Me.chkNewLinks.TabIndex = 227
+        Me.chkNewLinks.Text = "New Links"
+        '
         'ICFQUOTX
         '
         Me.Absx1.SetABSTableName(Me, "ICTQUOT1")
@@ -3140,6 +3152,7 @@ Partial Class ICFQUOTX
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -3259,4 +3272,5 @@ Partial Class ICFQUOTX
     Friend WithEvents numLIMIT_NETPOS_G As UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel7 As Misc.UltraLabel
     Friend WithEvents grpRECDATES As Misc.UltraGroupBox
+    Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
 End Class

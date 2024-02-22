@@ -74,8 +74,12 @@ Public Class GLFACTI1
             End With
 
             ASCMAIN1.sql = "Select GLTDETL1.*, GLTJRNL1.JOURNAL_DESC, GLTJRNL1.JOURNAL_TYPE" _
-                & ", GLTDETL1.SEG2_CODE SEG2_CODE_JOIN, GLTDETL1.SEG3_CODE SEG3_CODE_JOIN, GLTDETL1.SEG4_CODE SEG4_CODE_JOIN" _
-                & " from GLTDETL1,GLTJRNL1 where GLTDETL1.ACCT_CODE = :PARM1 " _
+                & ", GLTDETL1.SEG2_CODE SEG2_CODE_JOIN, GLTDETL1.SEG3_CODE SEG3_CODE_JOIN, GLTDETL1.SEG4_CODE SEG4_CODE_JOIN," _
+                & " DECODE (GLTDETL1.DETL_CVX_TYPE,'C',ARTCUST1.CUST_NAME,'V',APTVEND1.VEND_NAME,'L',STYLE_CLASS_DESC,NULL) DETL_CVX_NAME" _
+                & " from GLTDETL1,GLTJRNL1,ARTCUST1,APTVEND1,ICTCLAS1 where GLTDETL1.ACCT_CODE = :PARM1 " _
+                & " AND ARTCUST1.CUST_CODE (+) = GLTDETL1.DETL_CVX_NO" _
+                & " AND APTVEND1.VEND_CODE (+) = GLTDETL1.DETL_CVX_NO" _
+                & " AND ICTCLAS1.STYLE_CLASS_CODE (+) = GLTDETL1.DETL_CVX_NO" _
                 & " and GLTDETL1.OPS_YYYYPP >= :PARM2 AND GLTDETL1.OPS_YYYYPP <= :PARM3" _
                 & " and GLTJRNL1.JOURNAL_NO (+) = GLTDETL1.JOURNAL_NO"
             Create_TDA(.Tables.Add, "GLTDETL1", "**", 0, False, "VVV", 3)
@@ -1033,18 +1037,18 @@ Public Class GLFACTI1
         End With
     End Sub
 
-    Private Sub grdGLTDETL1_InitializeRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdGLTDETL1.InitializeRow
-        If e.Row.Band.Key = "GLTDETL1" Then
-            If e.Row.Cells("DETL_CVX_NO").Text <> "" Then
-                Select Case e.Row.Cells("DETL_CVX_TYPE").Text
-                    Case "V"
-                        e.Row.Cells("DETL_CVX_NAME").Value = LookUp("APTVEND1", e.Row.Cells("DETL_CVX_NO").Text, True).Item("VEND_NAME")
-                    Case "C"
-                        e.Row.Cells("DETL_CVX_NAME").Value = LookUp("ARTCUST1", e.Row.Cells("DETL_CVX_NO").Text, True).Item("CUST_NAME")
-                End Select
-            End If
-        End If
-    End Sub
+    'Private Sub grdGLTDETL1_InitializeRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdGLTDETL1.InitializeRow
+    '    If e.Row.Band.Key = "GLTDETL1" Then
+    '        If e.Row.Cells("DETL_CVX_NO").Text <> "" Then
+    '            Select Case e.Row.Cells("DETL_CVX_TYPE").Text
+    '                Case "V"
+    '                    e.Row.Cells("DETL_CVX_NAME").Value = LookUp("APTVEND1", e.Row.Cells("DETL_CVX_NO").Text, True).Item("VEND_NAME")
+    '                Case "C"
+    '                    e.Row.Cells("DETL_CVX_NAME").Value = LookUp("ARTCUST1", e.Row.Cells("DETL_CVX_NO").Text, True).Item("CUST_NAME")
+    '            End Select
+    '        End If
+    '    End If
+    'End Sub
 
     Private Sub grdGLTACCT3_InitializeLayout(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeLayoutEventArgs) Handles grdGLTACCT3.InitializeLayout
         With grdGLTACCT3.DisplayLayout.Bands(0)

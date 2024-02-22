@@ -35,9 +35,20 @@ Public Class ICFQUOTQ
     Dim S As New System.Text.StringBuilder With {.Length = 0}
     Dim dayBreaks As Integer = 120
 
+    Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+        'FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
+
+        If Now() >= DateSerial(2024, 3, 1) Then
+            chkNewLinks.Checked = True
+        Else
+            chkNewLinks.Checked = False
+        End If
 
         Get_PARM("ICTPARM1")
         Get_PARM("SOTPARM1")
@@ -372,37 +383,37 @@ Public Class ICFQUOTQ
 
             Create_TDA(.Tables.Add, "ASTATTA2", "*")
 
-            s.Length = 0
-            s.AppendLine("SELECT")
-            s.AppendLine("T2.STYLE_CODE,")
-            s.AppendLine("T2.COLOR_CODE,")
-            s.AppendLine("C1.COLOR_DESC,")
-            s.AppendLine("SUM(CASE")
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("T2.STYLE_CODE,")
+            S.AppendLine("T2.COLOR_CODE,")
+            S.AppendLine("C1.COLOR_DESC,")
+            S.AppendLine("SUM(CASE")
             S.AppendLine("     WHEN ROUND((SYSDATE - T1.TRAN_DATE)) <= :PARM1")
             S.AppendLine("     THEN T2.TRAN_QTY")
-            s.AppendLine("     ELSE 0")
-            s.AppendLine("END) AS RECEIVED_01,")
-            s.AppendLine("SUM(CASE")
+            S.AppendLine("     ELSE 0")
+            S.AppendLine("END) AS RECEIVED_01,")
+            S.AppendLine("SUM(CASE")
             S.AppendLine("     WHEN ROUND((SYSDATE - T1.TRAN_DATE)) > :PARM1 AND ROUND((SYSDATE - T1.TRAN_DATE)) <= (:PARM1 * 2)")
             S.AppendLine("     THEN T2.TRAN_QTY")
-            s.AppendLine("     ELSE 0")
-            s.AppendLine("END) AS RECEIVED_02,")
-            s.AppendLine("SUM(CASE")
+            S.AppendLine("     ELSE 0")
+            S.AppendLine("END) AS RECEIVED_02,")
+            S.AppendLine("SUM(CASE")
             S.AppendLine("     WHEN ROUND((SYSDATE - T1.TRAN_DATE)) > (:PARM1 * 2)")
             S.AppendLine("     THEN T2.TRAN_QTY")
-            s.AppendLine("     ELSE 0")
-            s.AppendLine("END) AS RECEIVED_03")
-            s.AppendLine("FROM ICTTRAN1 T1, ICTTRAN2 T2, ICTCOLR1 C1")
-            s.AppendLine("WHERE T1.OPS_YYYYPP = T2.OPS_YYYYPP")
-            s.AppendLine("AND T1.TRAN_TYPE = T2.TRAN_TYPE")
-            s.AppendLine("AND T1.TRAN_NO = T2.TRAN_NO")
-            s.AppendLine("AND T1.TRAN_TYPE = 'R'")
-            s.AppendLine("AND T2.COLOR_CODE = C1.COLOR_CODE")
-            s.AppendLine("GROUP BY")
-            s.AppendLine("T2.STYLE_CODE,")
-            s.AppendLine("T2.COLOR_CODE,")
-            s.AppendLine("C1.COLOR_DESC")
-            ASCMAIN1.sql = s.ToString()
+            S.AppendLine("     ELSE 0")
+            S.AppendLine("END) AS RECEIVED_03")
+            S.AppendLine("FROM ICTTRAN1 T1, ICTTRAN2 T2, ICTCOLR1 C1")
+            S.AppendLine("WHERE T1.OPS_YYYYPP = T2.OPS_YYYYPP")
+            S.AppendLine("AND T1.TRAN_TYPE = T2.TRAN_TYPE")
+            S.AppendLine("AND T1.TRAN_NO = T2.TRAN_NO")
+            S.AppendLine("AND T1.TRAN_TYPE = 'R'")
+            S.AppendLine("AND T2.COLOR_CODE = C1.COLOR_CODE")
+            S.AppendLine("GROUP BY")
+            S.AppendLine("T2.STYLE_CODE,")
+            S.AppendLine("T2.COLOR_CODE,")
+            S.AppendLine("C1.COLOR_DESC")
+            ASCMAIN1.sql = S.ToString()
             Create_TDA(dst.Tables.Add, "ICTQUOTD", "**", 0, False, "I")
 
             ASCMAIN1.sql = "Select * from ICTCOLR1"
@@ -732,13 +743,24 @@ Public Class ICFQUOTQ
                         Dim MaxFILE_NO As Int64 = Val(dst.Tables("ICTQUOHF").Compute("Max(FILE_NO)", "") & "")
                         Dim SESSION_NO As String = dst.Tables("ICTQUOHF").Compute("Max(SESSION_NO)", "") & ""
                         MaxFILE_NO += 1
+
                         Dim newICTQUOHF As DataRow = dst.Tables.Item("ICTQUOHF").NewRow
                         Dim rowASTATTA2 As DataRow = dst.Tables.Item("ASTATTA2").Select().FirstOrDefault
+                        Dim ATTACHMENT_FILENAME As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+                        Dim ext As String = getFileExt(ATTACHMENT_FILENAME)
+
                         newICTQUOHF.Item("SESSION_NO") = SESSION_NO
                         newICTQUOHF.Item("FILE_NO") = MaxFILE_NO
-                        newICTQUOHF.Item("FILENAME") = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString & String.Empty
+                        newICTQUOHF.Item("FILENAME") = ATTACHMENT_FILENAME
                         newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
                         dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
+
+                        Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+                        Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+                        Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+                        If eMsg.Length > 0 Then
+                            MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                        End If
                     Next
                 End If
             Case "Print", "email"
@@ -1385,19 +1407,54 @@ Public Class ICFQUOTQ
 
                 End If
             Case "Copy Link"
-                Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
-                Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
-                Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
-                My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                If chkNewLinks.Checked Then
+                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Dim ext As String = getFileExt(FILENAME)
+                    Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
+                    Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
+                    Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
+                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                Else
+                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                End If
             Case "Copy All Links"
                 Dim clipbrd As String = ""
-                For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
-                    Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
-                    Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
-                    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
-                    clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
-                Next
+                If chkNewLinks.Checked Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                        Dim ext As String = getFileExt(FILENAME)
+                        Dim SESSION_NO As String = grow.Cells.Item("SESSION_NO").Text
+                        Dim FILE_NO As String = grow.Cells.Item("FILE_NO").Text
+                        Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
+
+                        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                    Next
+                Else
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                        Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
+                        Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                    Next
+                End If
                 My.Computer.Clipboard.SetText(clipbrd)
+                'Case "Copy Link"
+                '    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                '    Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                '    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                '    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                'Case "Copy All Links"
+                '    Dim clipbrd As String = ""
+                '    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                '        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                '        Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
+                '        Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                '        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                '    Next
+                '    My.Computer.Clipboard.SetText(clipbrd)
         End Select
     End Sub
 
@@ -1709,15 +1766,65 @@ Public Class ICFQUOTQ
         sql.AppendLine("AND CODE_VALUE = :PARM")
         Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty, "V", QUOTE_NO)
         For Each rowASTATTA2 As DataRow In tbl.Rows
+            Dim ATTACHMENT_FILENAME As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+            Dim ext As String = getFileExt(ATTACHMENT_FILENAME)
+
             MaxFILE_NO += 1
             Dim newICTQUOHF As DataRow = dst.Tables.Item("ICTQUOHF").NewRow
             newICTQUOHF.Item("SESSION_NO") = SESSION_NO
             newICTQUOHF.Item("FILE_NO") = MaxFILE_NO
-            newICTQUOHF.Item("FILENAME") = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+            newICTQUOHF.Item("FILENAME") = ATTACHMENT_FILENAME
             newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
             dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
+
+            Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+            Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+            Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+            If eMsg.Length > 0 Then
+                MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+            End If
         Next
     End Sub
+
+    Private Function FTP_BLUEHOST(ByRef FileNameLocalFull As String, ByRef FileNameRemote As String) As Text.StringBuilder
+        Dim RetVal As New Text.StringBuilder With {.Length = 0}
+        Dim FTPUser As String = "abs@vandalequotes.com"
+        Dim FTPPassword As String = "0ff1c3ABS#"
+        Dim FTPHost As String = "ftp.tzn.lnr.mybluehost.me"
+        Dim FTPRemoteFull As String = $"/public_html/FTP/{FileNameRemote}"
+
+        If Not System.IO.File.Exists(FileNameLocalFull) Then
+            RetVal.AppendLine($"FTP File Provided Does Not Exist: {FileNameLocalFull}")
+        End If
+
+        If RetVal.Length = 0 Then
+            Try
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    Stop
+                End If
+
+                Ftp1.User = FTPUser
+                Ftp1.Password = FTPPassword
+                Ftp1.RemoteHost = FTPHost
+
+                Ftp1.Logon()
+
+                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                Ftp1.LocalFile = FileNameLocalFull
+                Ftp1.RemoteFile = FTPRemoteFull
+                'Ftp1.Timeout = 0 'Don't Timeout
+                Ftp1.Overwrite = True
+
+                Ftp1.Upload()
+
+                Ftp1.Logoff()
+            Catch ex As Exception
+                RetVal.AppendLine($"FTP Error: {ex.Message} : {ex.InnerException}")
+                'Just bail out for now.  We eventually need some kind of tracking.
+            End Try
+        End If
+        Return RetVal
+    End Function
 
     Private Sub CALC_EXCLUDED_COLORS()
         For Each row As DataRow In dst.Tables("ICTQUOT3").Select("")
@@ -3568,6 +3675,15 @@ Public Class ICFQUOTQ
             End If
         End If
         Return SIZEs_And_QTYs
+    End Function
+
+    Private Function getFileExt(ByVal ATTACHMENT_FILENAME As String) As String
+        Dim RetVal As String = ""
+        Dim dotLoc As Int64 = ATTACHMENT_FILENAME.IndexOf(".", ATTACHMENT_FILENAME.Length - 5)
+        If dotLoc > 0 Then
+            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc)
+        End If
+        Return RetVal
     End Function
 
     'Sub Print_Style_Sheet(eItemKey As String, Optional STYLE_CODE As String = "")

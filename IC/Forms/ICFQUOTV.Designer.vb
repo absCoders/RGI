@@ -541,6 +541,7 @@ Partial Class ICFQUOTV
         Me.UltraLabel20 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtQUOTE_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel9 = New Infragistics.Win.Misc.UltraLabel()
         Me.btnByDate = New Infragistics.Win.Misc.UltraButton()
         Me.btnFixColors = New Infragistics.Win.Misc.UltraButton()
         Me.UltraDateTimeEditor12 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -548,6 +549,7 @@ Partial Class ICFQUOTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkNewLinks = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -702,6 +704,7 @@ Partial Class ICFQUOTV
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -862,7 +865,7 @@ Partial Class ICFQUOTV
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpAvailabilityDates)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 70)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, -41)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 246)
         Me.UltraExplorerBarContainerControl3.TabIndex = 8
@@ -1276,9 +1279,9 @@ Partial Class ICFQUOTV
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.CMDGETDIV)
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.grdSOTSDIVC)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(134, 150)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 10
         Me.UltraExplorerBarContainerControl4.Visible = False
         '
@@ -1360,7 +1363,7 @@ Partial Class ICFQUOTV
         Me.grdSOTSDIVC.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTSDIVC.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTSDIVC.Name = "grdSOTSDIVC"
-        Me.grdSOTSDIVC.Size = New System.Drawing.Size(134, 150)
+        Me.grdSOTSDIVC.Size = New System.Drawing.Size(172, 150)
         Me.grdSOTSDIVC.TabIndex = 167
         '
         'UltraExplorerBarContainerControl5
@@ -1421,7 +1424,7 @@ Partial Class ICFQUOTV
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.SplitContainer2)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 525)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 414)
         Me.UltraExplorerBarContainerControl6.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 212)
@@ -1723,6 +1726,7 @@ Partial Class ICFQUOTV
         'grpICTQUOT1_Options
         '
         Me.grpICTQUOT1_Options.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpICTQUOT1_Options.Controls.Add(Me.chkNewLinks)
         Me.grpICTQUOT1_Options.Controls.Add(Me.chkDivOnly)
         Me.grpICTQUOT1_Options.Controls.Add(Me.chkShowRetailCAD)
         Me.grpICTQUOT1_Options.Controls.Add(Me.trkScaleImage)
@@ -1745,7 +1749,7 @@ Partial Class ICFQUOTV
         'chkDivOnly
         '
         Me.Absx1.SetABSBindToTable(Me.chkDivOnly, False)
-        Me.chkDivOnly.Location = New System.Drawing.Point(10, 186)
+        Me.chkDivOnly.Location = New System.Drawing.Point(10, 188)
         Me.chkDivOnly.Name = "chkDivOnly"
         Me.chkDivOnly.Size = New System.Drawing.Size(167, 20)
         Me.chkDivOnly.TabIndex = 225
@@ -1757,7 +1761,7 @@ Partial Class ICFQUOTV
         Me.chkShowRetailCAD.ABSChecked = "1"
         Me.chkShowRetailCAD.Checked = True
         Me.chkShowRetailCAD.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowRetailCAD.Location = New System.Drawing.Point(9, 147)
+        Me.chkShowRetailCAD.Location = New System.Drawing.Point(9, 149)
         Me.chkShowRetailCAD.Name = "chkShowRetailCAD"
         Me.chkShowRetailCAD.Size = New System.Drawing.Size(113, 20)
         Me.chkShowRetailCAD.TabIndex = 224
@@ -1765,7 +1769,7 @@ Partial Class ICFQUOTV
         '
         'trkScaleImage
         '
-        Me.trkScaleImage.Location = New System.Drawing.Point(26, 235)
+        Me.trkScaleImage.Location = New System.Drawing.Point(26, 237)
         Me.trkScaleImage.MaxValue = 100
         Me.trkScaleImage.Name = "trkScaleImage"
         Me.trkScaleImage.Size = New System.Drawing.Size(150, 29)
@@ -1777,7 +1781,7 @@ Partial Class ICFQUOTV
         'chkScaleImages
         '
         Me.Absx1.SetABSBindToTable(Me.chkScaleImages, False)
-        Me.chkScaleImages.Location = New System.Drawing.Point(10, 214)
+        Me.chkScaleImages.Location = New System.Drawing.Point(10, 216)
         Me.chkScaleImages.Name = "chkScaleImages"
         Me.chkScaleImages.Size = New System.Drawing.Size(181, 20)
         Me.chkScaleImages.TabIndex = 219
@@ -1786,7 +1790,7 @@ Partial Class ICFQUOTV
         'chkLowRes
         '
         Me.Absx1.SetABSBindToTable(Me.chkLowRes, False)
-        Me.chkLowRes.Location = New System.Drawing.Point(9, 165)
+        Me.chkLowRes.Location = New System.Drawing.Point(9, 167)
         Me.chkLowRes.Name = "chkLowRes"
         Me.chkLowRes.Size = New System.Drawing.Size(167, 20)
         Me.chkLowRes.TabIndex = 218
@@ -1795,7 +1799,7 @@ Partial Class ICFQUOTV
         'chkShowBlank
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowBlank, False)
-        Me.chkShowBlank.Location = New System.Drawing.Point(9, 129)
+        Me.chkShowBlank.Location = New System.Drawing.Point(9, 131)
         Me.chkShowBlank.Name = "chkShowBlank"
         Me.chkShowBlank.Size = New System.Drawing.Size(158, 20)
         Me.chkShowBlank.TabIndex = 217
@@ -1804,7 +1808,7 @@ Partial Class ICFQUOTV
         'chkShowZero
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowZero, False)
-        Me.chkShowZero.Location = New System.Drawing.Point(10, 111)
+        Me.chkShowZero.Location = New System.Drawing.Point(10, 113)
         Me.chkShowZero.Name = "chkShowZero"
         Me.chkShowZero.Size = New System.Drawing.Size(158, 20)
         Me.chkShowZero.TabIndex = 216
@@ -2558,14 +2562,14 @@ Partial Class ICFQUOTV
         Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem4, ValueListItem5})
         Me.optASN.Location = New System.Drawing.Point(16, 8)
         Me.optASN.Name = "optASN"
-        Me.optASN.Size = New System.Drawing.Size(137, 55)
+        Me.optASN.Size = New System.Drawing.Size(125, 55)
         Me.optASN.TabIndex = 204
         Me.optASN.Text = "All Styles"
         '
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdICTQUOT2)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(921, 521)
         '
@@ -3106,7 +3110,7 @@ Partial Class ICFQUOTV
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(921, 521)
         '
@@ -3249,7 +3253,7 @@ Partial Class ICFQUOTV
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTQUOTX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(925, 549)
         '
@@ -3368,7 +3372,7 @@ Partial Class ICFQUOTV
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.tabStyles)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(925, 549)
         '
@@ -3708,6 +3712,7 @@ Partial Class ICFQUOTV
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel9)
         Me.UltraGroupBox1.Controls.Add(Me.btnByDate)
         Me.UltraGroupBox1.Controls.Add(Me.btnFixColors)
         Me.UltraGroupBox1.Controls.Add(Me.UltraDateTimeEditor12)
@@ -3728,6 +3733,17 @@ Partial Class ICFQUOTV
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(929, 75)
         Me.UltraGroupBox1.TabIndex = 0
+        '
+        'UltraLabel9
+        '
+        Me.UltraLabel9.AutoSize = True
+        Me.UltraLabel9.Font = New System.Drawing.Font("Verdana", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.UltraLabel9.Location = New System.Drawing.Point(7, 60)
+        Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(4)
+        Me.UltraLabel9.Name = "UltraLabel9"
+        Me.UltraLabel9.Size = New System.Drawing.Size(48, 15)
+        Me.UltraLabel9.TabIndex = 227
+        Me.UltraLabel9.Text = "24.2.15"
         '
         'btnByDate
         '
@@ -3811,6 +3827,15 @@ Partial Class ICFQUOTV
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(925, 549)
+        '
+        'chkNewLinks
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
+        Me.chkNewLinks.Location = New System.Drawing.Point(86, 93)
+        Me.chkNewLinks.Name = "chkNewLinks"
+        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
+        Me.chkNewLinks.TabIndex = 226
+        Me.chkNewLinks.Text = "New Links"
         '
         'ICFQUOTV
         '
@@ -3986,6 +4011,7 @@ Partial Class ICFQUOTV
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -4145,4 +4171,6 @@ Partial Class ICFQUOTV
     Friend WithEvents grdICTWHSE1 As UltraWinGrid.UltraGrid
     Friend WithEvents optWHSE As UltraWinEditors.UltraOptionSet
     Friend WithEvents chkDivOnly As ABSCS.ABSCheckBox
+    Friend WithEvents UltraLabel9 As Misc.UltraLabel
+    Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
 End Class

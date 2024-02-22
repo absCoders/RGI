@@ -34,9 +34,20 @@ Public Class ICFQUOTX
     Dim Form_Loading As Boolean = True
     Dim LOAD_TEMP As String = ""
 
+    Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
+        Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+        'FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
+
+        If Now() >= DateSerial(2024, 3, 1) Then
+            chkNewLinks.Checked = True
+        Else
+            chkNewLinks.Checked = False
+        End If
 
         Get_PARM("ICTPARM1")
         Get_PARM("SOTPARM1")
@@ -720,6 +731,14 @@ Public Class ICFQUOTX
                         newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
                         dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
 
+                        Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+                        Dim ext As String = getFileExt(FileNameLocalFull)
+                        Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+                        Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+                        If eMsg.Length > 0 Then
+                            MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                        End If
+
                     End If
                 End If
             Case "Print", "email"
@@ -1339,20 +1358,54 @@ Public Class ICFQUOTX
                     End If
 
                 End If
+                'Case "Copy Link"
+                '    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                '    Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                '    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                '    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                'Case "Copy All Links"
+                '    Dim clipbrd As String = ""
+                '    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                '        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                '        Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
+                '        Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                '        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                '    Next
+                '    My.Computer.Clipboard.SetText(clipbrd)
             Case "Copy Link"
-                Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
-                Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
-                Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
-                My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                If chkNewLinks.Checked Then
+                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Dim ext As String = getFileExt(FILENAME)
+                    Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
+                    Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
+                    Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
+                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                Else
+                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                End If
             Case "Copy All Links"
                 Dim clipbrd As String = ""
-                For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
-                    Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
-                    Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
-                    Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
-                    clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
-                Next
-                My.Computer.Clipboard.SetText(clipbrd)
+                If chkNewLinks.Checked Then
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                        Dim ext As String = getFileExt(FILENAME)
+                        Dim SESSION_NO As String = grow.Cells.Item("SESSION_NO").Text
+                        Dim FILE_NO As String = grow.Cells.Item("FILE_NO").Text
+                        Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
+
+                        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                    Next
+                Else
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTQUOHF.Rows
+                        Dim FILENAME As String = grow.Cells.Item("FILENAME").Text
+                        Dim HASH As String = grow.Cells.Item("HASHVALUE").Text
+                        Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                        clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
+                    Next
+                End If
         End Select
     End Sub
 
@@ -4734,6 +4787,55 @@ Public Class ICFQUOTX
         Return SIZEs_And_QTYs
     End Function
 
+    Private Function getFileExt(ByVal ATTACHMENT_FILENAME As String) As String
+        Dim RetVal As String = ""
+        Dim dotLoc As Int64 = ATTACHMENT_FILENAME.IndexOf(".", ATTACHMENT_FILENAME.Length - 5)
+        If dotLoc > 0 Then
+            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc)
+        End If
+        Return RetVal
+    End Function
+
+    Private Function FTP_BLUEHOST(ByRef FileNameLocalFull As String, ByRef FileNameRemote As String) As Text.StringBuilder
+        Dim RetVal As New Text.StringBuilder With {.Length = 0}
+        Dim FTPUser As String = "abs@vandalequotes.com"
+        Dim FTPPassword As String = "0ff1c3ABS#"
+        Dim FTPHost As String = "ftp.tzn.lnr.mybluehost.me"
+        Dim FTPRemoteFull As String = $"/public_html/FTP/{FileNameRemote}"
+
+        If Not System.IO.File.Exists(FileNameLocalFull) Then
+            RetVal.AppendLine($"FTP File Provided Does Not Exist: {FileNameLocalFull}")
+        End If
+
+        If RetVal.Length = 0 Then
+            Try
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    Stop
+                End If
+
+                Ftp1.User = FTPUser
+                Ftp1.Password = FTPPassword
+                Ftp1.RemoteHost = FTPHost
+
+                Ftp1.Logon()
+
+                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                Ftp1.LocalFile = FileNameLocalFull
+                Ftp1.RemoteFile = FTPRemoteFull
+                'Ftp1.Timeout = 0 'Don't Timeout
+                Ftp1.Overwrite = True
+
+                Ftp1.Upload()
+
+                Ftp1.Logoff()
+            Catch ex As Exception
+                RetVal.AppendLine($"FTP Error: {ex.Message} : {ex.InnerException}")
+                'Just bail out for now.  We eventually need some kind of tracking.
+            End Try
+        End If
+        Return RetVal
+    End Function
+
 End Class
 
 Public Module ImageUtilsx
@@ -4801,5 +4903,6 @@ Public Module ImageUtilsx
         Return Nothing
 
     End Function
+
 
 End Module

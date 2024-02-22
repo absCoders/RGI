@@ -341,7 +341,7 @@ Public Class SORSLSJ1
                 & ", " & ACCT_CODE_sql & " ACCT_CODE" & vbCrLf _
                 & ", SOTINVHU.SEG2_CODE, SOTINVHU.SEG3_CODE, SOTINVHU.SEG4_CODE" & vbCrLf _
                 & ", SOTINVHU.ORDR_TYPE_CODE DETL_CVX_REF_NO" & vbCrLf _
-                & ", 'C' DETL_CVX_TYPE, SOTINVHU.STYLE_CLASS_CODE DETL_CVX_NO" & vbCrLf _
+                & ", 'L' DETL_CVX_TYPE, SOTINVHU.STYLE_CLASS_CODE DETL_CVX_NO" & vbCrLf _
                 & ", SUM (-1 * SOTINVHU.SLS) DIST_AMT " & vbCrLf _
                 & ", NULL DETL_CTL_DATE, " & sqlGL_BY_INV & " DETL_CTL_NO, NULL DETL_CTL_LNO " & vbCrLf _
                 & " from " & SOTINVHU & " SOTINVHU,ICTCLAS1,SOTSDIV1" & vbCrLf _

@@ -256,6 +256,7 @@ Partial Class ICFQUOTQ
         Me.grdSOTSDIVC = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.chkExtended = New ABSCS.ABSCheckBox()
         Me.btnRefreshStyles = New Infragistics.Win.Misc.UltraButton()
         Me.numCustomBreaks = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.chkCustomBreaks = New ABSCS.ABSCheckBox()
@@ -331,7 +332,7 @@ Partial Class ICFQUOTQ
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkExtended = New ABSCS.ABSCheckBox()
+        Me.chkNewLinks = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -345,6 +346,7 @@ Partial Class ICFQUOTQ
         CType(Me.grdSOTSDIVC, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl12.SuspendLayout()
         Me.Panel1.SuspendLayout()
+        CType(Me.chkExtended, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.numCustomBreaks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkCustomBreaks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -425,7 +427,7 @@ Partial Class ICFQUOTQ
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.chkExtended, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -634,6 +636,7 @@ Partial Class ICFQUOTQ
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.chkNewLinks)
         Me.Panel1.Controls.Add(Me.chkExtended)
         Me.Panel1.Controls.Add(Me.btnRefreshStyles)
         Me.Panel1.Controls.Add(Me.numCustomBreaks)
@@ -654,6 +657,15 @@ Partial Class ICFQUOTQ
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(298, 461)
         Me.Panel1.TabIndex = 174
+        '
+        'chkExtended
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkExtended, False)
+        Me.chkExtended.Location = New System.Drawing.Point(16, 155)
+        Me.chkExtended.Name = "chkExtended"
+        Me.chkExtended.Size = New System.Drawing.Size(251, 20)
+        Me.chkExtended.TabIndex = 289
+        Me.chkExtended.Text = "Show Extended Columns"
         '
         'btnRefreshStyles
         '
@@ -2114,14 +2126,14 @@ Partial Class ICFQUOTQ
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(892, 517)
         '
-        'chkExtended
+        'chkNewLinks
         '
-        Me.Absx1.SetABSBindToTable(Me.chkExtended, False)
-        Me.chkExtended.Location = New System.Drawing.Point(16, 155)
-        Me.chkExtended.Name = "chkExtended"
-        Me.chkExtended.Size = New System.Drawing.Size(251, 20)
-        Me.chkExtended.TabIndex = 289
-        Me.chkExtended.Text = "Show Extended Columns"
+        Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
+        Me.chkNewLinks.Location = New System.Drawing.Point(16, 66)
+        Me.chkNewLinks.Name = "chkNewLinks"
+        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
+        Me.chkNewLinks.TabIndex = 290
+        Me.chkNewLinks.Text = "New Links"
         '
         'ICFQUOTQ
         '
@@ -2146,6 +2158,7 @@ Partial Class ICFQUOTQ
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
+        CType(Me.chkExtended, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.numCustomBreaks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkCustomBreaks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2228,7 +2241,7 @@ Partial Class ICFQUOTQ
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.chkExtended, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2313,4 +2326,5 @@ Partial Class ICFQUOTQ
     Friend WithEvents chkBuyerOutput As ABSCS.ABSCheckBox
     Friend WithEvents btnRefreshStyles As Misc.UltraButton
     Friend WithEvents chkExtended As ABSCS.ABSCheckBox
+    Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
 End Class
