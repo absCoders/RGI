@@ -15,11 +15,7 @@ Public Class SORCUSTQ
         Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
         'FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
 
-        If Now() >= DateSerial(2024, 3, 1) Then
-            chkNewLinks.Checked = True
-        Else
-            chkNewLinks.Checked = False
-        End If
+        chkNewLinks.Checked = True
 
         RWU = "N"
         Get_PARM("ICTPARM1")
@@ -497,7 +493,7 @@ Public Class SORCUSTQ
             Case "Copy Link"
                 If chkNewLinks.Checked Then
                     Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
-                    Dim LINEPFX As String = $"http://docs.vandalequotes.com/{FILENAME}"
+                    Dim LINEPFX As String = $"https://docs.vandalequotes.com/{FILENAME}"
                     My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
                 Else
                     Dim FILE_NAME As String = grd.ActiveRow.Cells.Item("FILE_NAME").Text

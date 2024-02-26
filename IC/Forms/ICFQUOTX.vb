@@ -43,11 +43,7 @@ Public Class ICFQUOTX
         Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
         'FtpS.RuntimeLicense = "31484E46414431535542323032333033313352415331544531414D483134323600000000000000003335384A30543346000059554A4336594E46335047530000"
 
-        If Now() >= DateSerial(2024, 3, 1) Then
-            chkNewLinks.Checked = True
-        Else
-            chkNewLinks.Checked = False
-        End If
+        chkNewLinks.Checked = True
 
         Get_PARM("ICTPARM1")
         Get_PARM("SOTPARM1")
@@ -1378,7 +1374,7 @@ Public Class ICFQUOTX
                     Dim ext As String = getFileExt(FILENAME)
                     Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
                     Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
-                    Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
+                    Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
                     My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
                 Else
                     Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
@@ -1394,7 +1390,7 @@ Public Class ICFQUOTX
                         Dim ext As String = getFileExt(FILENAME)
                         Dim SESSION_NO As String = grow.Cells.Item("SESSION_NO").Text
                         Dim FILE_NO As String = grow.Cells.Item("FILE_NO").Text
-                        Dim LINEPFX As String = $"http://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
+                        Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
 
                         clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
                     Next
