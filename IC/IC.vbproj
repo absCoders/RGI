@@ -89,6 +89,7 @@
     <Reference Include="Infragistics4.Win.UltraWinSchedule.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Infragistics4.Win.UltraWinTabbedMdi.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Infragistics4.Win.UltraWinTree.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />
     <Reference Include="Infragistics4.Win.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Infragistics\2014.2\Windows Forms\CLR4.0\Bin\Infragistics4.Win.v14.2.dll</HintPath>
@@ -193,6 +194,12 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\ICFCACT1.Designer.vb">
+      <DependentUpon>ICFCACT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ICFCACT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ICFATOP1.Designer.vb">
       <DependentUpon>ICFATOP1.vb</DependentUpon>
     </Compile>
@@ -786,6 +793,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\ICFCACT1.resx">
+      <DependentUpon>ICFCACT1.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ICFATOP1.resx">
       <DependentUpon>ICFATOP1.vb</DependentUpon>
     </EmbeddedResource>
