@@ -39,11 +39,47 @@ Public Class ICFCACT1
                 .Columns("SEL").Caption = "Sel"
                 .Columns("SEL").SetOrdinal(0)
             End With
+
+            ASCMAIN1.sql = $"select * from (
+                                select POTORDR1.PO_REFERENCE, 'Received' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                from POTORDR1, ICTIREC1, ICTIREC2
+                                where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                                and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                                and ICTIREC2.STYLE_CODE in('')
+                                group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                                union
+                                Select ' ', 'Shipped',  SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
+                                from SOTINVH1, SOTINVH2, SOTORDR1
+                                where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
+                                and SOTINVH1.INV_NO = SOTINVH2.INV_NO
+                                and SOTORDR1.ORDR_NO (+) = SOTINVH1.ORDR_NO
+                                and SOTINVH2.STYLE_CODE in('')
+                                group by SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE
+                                union
+                                select ' ','Adjusted',to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
+                                from ICTIADJ1, ICTIADJ2
+                                Where ICTIADJ1.ADJ_NO =  ICTIADJ2.ADJ_NO
+                                AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
+                                AND ICTIADJ1.REVERSES_ADJ_NO IS NULL
+                                AND ICTIADJ2.STYLE_CODE in ('')
+                                group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
+                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in(''))"
+            Create_TDA(.Tables.Add, "ICTCACTX", "**", 0, False)
+
+            ASCMAIN1.sql = $"select * from (
+                                select POTORDR1.PO_REFERENCE, 't Balance' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                from POTORDR1, ICTIREC1, ICTIREC2
+                                where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                                and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                                and ICTIREC2.STYLE_CODE in('')
+                                group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in(''))"
+            Create_TDA(.Tables.Add, "ICTCACTB", "**", 0, False)
         End With
 
         grdICFCACT1.DataSource = dst.Tables("ICTCACT1")
         grdICFCACT2.DataSource = dst.Tables("ICTCACT2")
-
+        grdICFCACTX.DataSource = dst.Tables("ICTCACTX")
 
 
         For Each gcol As UltraWinGrid.UltraGridColumn In grdICFCACT2.DisplayLayout.Bands(0).Columns
@@ -117,8 +153,8 @@ Public Class ICFCACT1
             Case "Cancel"
                 Mode_Settings(False)
 
-            'Case "Generate"
-            '    Update_Record()
+            Case "Generate"
+                Generate()
             '    Mode_Settings(False)
 
             Case "Refresh"
@@ -188,6 +224,79 @@ Public Class ICFCACT1
         End Try
     End Sub
 
+    Private Sub Generate()
+
+        ASCMAIN1.sql = $"select * from (
+                                select POTORDR1.PO_REFERENCE, 'Received' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                from POTORDR1, ICTIREC1, ICTIREC2
+                                where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                                and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                                and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
+                                group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                                union
+                                Select ' ', 'Shipped',  SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
+                                from SOTINVH1, SOTINVH2, SOTORDR1
+                                where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
+                                and SOTINVH1.INV_NO = SOTINVH2.INV_NO
+                                and SOTORDR1.ORDR_NO (+) = SOTINVH1.ORDR_NO
+                                and SOTINVH2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
+                                group by SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE
+                                union
+                                select ' ','Adjusted',to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
+                                from ICTIADJ1, ICTIADJ2
+                                Where ICTIADJ1.ADJ_NO =  ICTIADJ2.ADJ_NO
+                                AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
+                                AND ICTIADJ1.REVERSES_ADJ_NO IS NULL
+                                AND ICTIADJ2.STYLE_CODE in ('{String.Join("','", selectedStylesList)}')
+                                group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
+                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in('{String.Join("','", selectedStylesList)}'))"
+
+        Fill_Records("ICTCACTX", "", True, ASCMAIN1.sql)
+
+        ASCMAIN1.sql = $"select * from (
+                                select POTORDR1.PO_REFERENCE, 'T Bal' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                from POTORDR1, ICTIREC1, ICTIREC2
+                                where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                                and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                                and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
+                                group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in('{String.Join("','", selectedStylesList)}'))"
+
+        Fill_Records("ICTCACTB", "", True, ASCMAIN1.sql)
+
+        'add a row after every shipment record
+        Dim SkipCols As String = "PERIOD,ACTIVITY,PO_REFERENCE"
+
+        For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted'", "PERIOD,ACTIVITY,PO_REFERENCE")
+            Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
+            rowdist.ItemArray = row.ItemArray
+            For Each balrow As DataRow In dst.Tables("ICTCACTB").Select("")
+                Dim updaterow As Boolean = False
+                For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
+                    If Not SkipCols.Contains(col.ColumnName) Then
+                        If Val(balrow(col.ColumnName) & "") > 0 And Val(balrow(col.ColumnName) & "") > 0 Then
+                            updaterow = True
+                            balrow("PERIOD") = row("PERIOD")
+                            If Val(balrow(col.ColumnName) & "") > (Val(rowdist(col.ColumnName) & "") * -1) Then
+                                balrow(col.ColumnName) = Val(balrow(col.ColumnName) & "") + Val(rowdist(col.ColumnName) & "")
+                                rowdist(col.ColumnName) = 0
+                            Else
+                                rowdist(col.ColumnName) = Val(rowdist(col.ColumnName) & "") + Val(balrow(col.ColumnName) & "")
+                                balrow(col.ColumnName) = 0
+                            End If
+                        End If
+                    End If
+                Next
+                If updaterow Then
+                    dst.Tables("ICTCACTX").ImportRow(balrow)
+                End If
+            Next
+        Next
+
+
+
+
+    End Sub
     Private Sub Update_Record()
 
         'Try
