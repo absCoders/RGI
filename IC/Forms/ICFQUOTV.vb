@@ -1488,6 +1488,7 @@ Public Class ICFQUOTV
                     openFileDialog1.Filter = "excel files (*.xlsx)|*.xlsx"
                     ext = ".xlsx"
                 End If
+                ext = ext.ToLower()
                 If openFileDialog1.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
                     Dim FN_FROM As String = openFileDialog1.FileName
                     Dim FN_TO As String = grd.ActiveRow.Cells.Item("FILENAME").Text
@@ -2163,7 +2164,7 @@ Public Class ICFQUOTV
         Dim RetVal As String = ""
         Dim dotLoc As Int64 = ATTACHMENT_FILENAME.IndexOf(".", ATTACHMENT_FILENAME.Length - 5)
         If dotLoc > 0 Then
-            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc)
+            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc).ToLower()
         End If
         Return RetVal
     End Function
