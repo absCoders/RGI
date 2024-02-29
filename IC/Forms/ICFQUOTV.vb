@@ -905,9 +905,9 @@ Public Class ICFQUOTV
                     Me.Cursor = Cursors.Default
                 End If
             Case "FTP"
-                Dim FileNameRemote As String = "vincebras003.pdf"
-                Dim FileNameLocalFull As String = "C:\Users\Wayne\Dropbox\Vandale\Quotes Sheets\vincebras003.pdf"
-                Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+                'Dim FileNameRemote As String = "vincebras003.pdf"
+                'Dim FileNameLocalFull As String = "C:\Users\Wayne\Dropbox\Vandale\Quotes Sheets\vincebras003.pdf"
+                'Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
         End Select
     End Sub
 
@@ -1076,7 +1076,7 @@ Public Class ICFQUOTV
         Dim SESSION_NO As String = ASCDATA1.GetDataValue
 
         Fill_Records("ICTQUOHF", SESSION_NO)
-        addExtraICTQUOHF()
+        addExtraICTQUOHF(False)
 
         For Each row As DataRow In dst.Tables("ICTQUOT2").Select("")
             row.Item("STYLE_GROUP_CODE") = row.Item("STYLE_GROUP_CODE_SAVED")
@@ -1480,15 +1480,19 @@ Public Class ICFQUOTV
                 End If
             Case "Replace File"
                 Dim openFileDialog1 As New OpenFileDialog()
+                Dim ext As String = ""
                 If grd.ActiveRow.Cells.Item("FILENAME").Text.EndsWith(".pdf") Then
                     openFileDialog1.Filter = "pdf files (*.pdf)|*.pdf"
+                    ext = ".pdf"
                 Else
                     openFileDialog1.Filter = "excel files (*.xlsx)|*.xlsx"
+                    ext = ".xlsx"
                 End If
                 If openFileDialog1.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
                     Dim FN_FROM As String = openFileDialog1.FileName
                     Dim FN_TO As String = grd.ActiveRow.Cells.Item("FILENAME").Text
                     Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
+                    Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
                     If FN_TO.EndsWith(".pdf") Then
                         Dim PDFD As String = ASCMAIN1.Folders("Archive") & "QuotePDFs\" & SESSION_NO & "\" & FN_TO & ".pdf"
                         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
@@ -1508,6 +1512,11 @@ Public Class ICFQUOTV
                                 IO.File.Delete(PDFD)
                             End If
                             IO.File.Copy(FN_FROM, PDFD)
+                            Dim FileNameRemote As String = $"{SESSION_NO}-{FILE_NO}{ext}"
+                            Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FN_FROM, FileNameRemote)
+                            If eMsg.Length > 0 Then
+                                MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                            End If
                         End If
                     Else
                         'Stop
@@ -1516,38 +1525,42 @@ Public Class ICFQUOTV
                         Dim filter As String = String.Format("ATTACHMENT_FILENAME = '{0}'", FILENAME)
 
                         Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-                            SQLS.AppendLine(String.Format("SELECT ATTACHMENT_NO FROM ASTATTA2 WHERE ATTACHMENT_FILENAME = '{0}'", FILENAME))
-                            ASCMAIN1.sql = SQLS.ToString()
-                            Dim ATTACHMENT_NO As String = ASCDATA1.GetDataValue
+                        SQLS.AppendLine(String.Format("SELECT ATTACHMENT_NO FROM ASTATTA2 WHERE ATTACHMENT_FILENAME = '{0}'", FILENAME))
+                        ASCMAIN1.sql = SQLS.ToString()
+                        Dim ATTACHMENT_NO As String = ASCDATA1.GetDataValue
 
-                            'Dim ATTACHMENT_NO As String = dst.Tables.Item("ASTATTA2").Select(filter).FirstOrDefault.Item("ATTACHMENT_NO").ToString & ""
+                        'Dim ATTACHMENT_NO As String = dst.Tables.Item("ASTATTA2").Select(filter).FirstOrDefault.Item("ATTACHMENT_NO").ToString & ""
 
-                            Dim iResult As MsgBoxResult
-                            Dim iTitle As String = "Replace file"
-                            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                            iMSG.AppendLine("This Action Will Replace The Generated File")
-                            iMSG.AppendLine("With The Following File You Selected:")
-                            iMSG.AppendLine(FN_FROM)
-                            iMSG.AppendLine("")
-                            iMSG.AppendLine("Is That What You Want?")
-                            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                            Dim FN_TO_EXCL As String = ""
-                            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-                                Stop
-                                FN_TO_EXCL = "G:\VDI\Attach\VAN\" & ATTACHMENT_NO
-                            Else
-                                FN_TO_EXCL = ASCMAIN1.Folders("Attach") & ATTACHMENT_NO
-                            End If
-
-                            If iResult = MsgBoxResult.Yes Then
-                                If IO.File.Exists(FN_TO_EXCL) Then
-                                    IO.File.Delete(FN_TO_EXCL)
-                                End If
-                                IO.File.Copy(FN_FROM, FN_TO_EXCL)
-                            End If
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Replace file"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("This Action Will Replace The Generated File")
+                        iMSG.AppendLine("With The Following File You Selected:")
+                        iMSG.AppendLine(FN_FROM)
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Is That What You Want?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        Dim FN_TO_EXCL As String = ""
+                        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+                            Stop
+                            FN_TO_EXCL = "G:\VDI\Attach\VAN\" & ATTACHMENT_NO
+                        Else
+                            FN_TO_EXCL = ASCMAIN1.Folders("Attach") & ATTACHMENT_NO
                         End If
 
+                        If iResult = MsgBoxResult.Yes Then
+                            If IO.File.Exists(FN_TO_EXCL) Then
+                                IO.File.Delete(FN_TO_EXCL)
+                            End If
+                            IO.File.Copy(FN_FROM, FN_TO_EXCL)
+                            Dim FileNameRemote As String = $"{SESSION_NO}-{FILE_NO}{ext}"
+                            Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FN_FROM, FileNameRemote)
+                            If eMsg.Length > 0 Then
+                                MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                            End If
+                        End If
                     End If
+                End If
             Case "Copy Link"
                 If chkNewLinks.Checked Then
                     Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
@@ -2114,7 +2127,7 @@ Public Class ICFQUOTV
 #End Region
 
 #Region "Custom Methods"
-    Private Sub addExtraICTQUOHF()
+    Private Sub addExtraICTQUOHF(ByVal UpdateFTP As Boolean)
         Dim MaxFILE_NO As Int64 = Val(dst.Tables("ICTQUOHF").Compute("Max(FILE_NO)", "") & "")
         Dim SESSION_NO As String = dst.Tables("ICTQUOHF").Compute("Max(SESSION_NO)", "") & ""
         Dim sql As New System.Text.StringBuilder With {.Length = 0}
@@ -2135,11 +2148,13 @@ Public Class ICFQUOTV
             newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
             dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
 
-            Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
-            Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
-            Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
-            If eMsg.Length > 0 Then
-                MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+            If UpdateFTP Then
+                Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
+                Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+                Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+                If eMsg.Length > 0 Then
+                    MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+                End If
             End If
         Next
     End Sub
@@ -4641,7 +4656,7 @@ Public Class ICFQUOTV
                 Update_Record_TDA("ICTQUOH2", sqlDelete)
 
                 Fill_Records("ICTQUOHF", SESSION_NO)
-                addExtraICTQUOHF()
+                addExtraICTQUOHF(True)
 
                 Using sw As New System.IO.StreamWriter(ASCMAIN1.Folders("Temp") & SESSION_NO & ".TXT")
 
