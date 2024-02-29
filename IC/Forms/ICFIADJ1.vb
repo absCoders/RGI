@@ -1300,16 +1300,15 @@ Public Class ICFIADJ1
         '            & " and rec_status =1)" & vbCrLf _
         '            & " group by bar_code" & vbCrLf _
         '            & " having sum(abs(location_qty)) = 0)"
-        'ASCMAIN1.sql = "select whtlocb0.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC 
-        '                from whtlocb0,ICTSTYL1,ICTCOLR1
-        '                where whse_code = 'NJC'
-        '                and ICTCOLR1.COLOR_CODE = WHTLOCB0.COLOR_CODE 
-        '                and ICTSTYL1.STYLE_CODE = WHTLOCB0.STYLE_CODE
-        '                and (location_code, bar_code) in (
-        '                select location_code, bar_code from RR_ADJ
-        '                where to_update  = '0'
-        '                )
-        '                and location_qty > 0"
+        ' *** Below SQL used for Costco Mergers in to single color
+        'ASCMAIN1.sql = "select WHTLOCB1.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC
+        '                    From WHTLOCB1, ICTSTYL1, ICTCOLR1
+        '                    Where WHTLOCB1.WHSE_CODE = 'NJC'
+        '                    And ICTCOLR1.COLOR_CODE = WHTLOCB1.COLOR_CODE
+        '                    And ICTSTYL1.STYLE_CODE = WHTLOCB1.STYLE_CODE
+        '                    And WHTLOCB1.STYLE_CODE = 'CS36930'
+        '                    And WHTLOCB1.COLOR_CODE = '401' 
+        '                    And location_qty <> 0"
 
 
         For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
@@ -1337,7 +1336,28 @@ Public Class ICFIADJ1
                     .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
                     .Item("OPS_YYYYPP") = ASCMAIN1.CYP
                     .Item("LOCATION_CODE") = row("LOCATION_CODE")
-                    '.Item("BAR_CODE") = row("BAR_CODE")
+                    .Item("BAR_CODE") = row("BAR_CODE")
+                    .Item("ADJ_REF") = ""
+                    ' .Item("ADJ_REF") = row("SHEET") ' TEMP
+                End With
+                dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+
+                rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+                With rowICTIADJ2
+                    .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
+                    .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
+                    .Item("STYLE_CODE") = row("STYLE_CODE")
+                    .Item("STYLE_DESC") = row("STYLE_DESC")
+                    .Item("COLOR_CODE") = "040"
+                    .Item("COLOR_DESC") = "SILVER"
+                    .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") '* -1  'WHSE_TRAN_QTY
+                    .Item("STYLE_COST") = STYLE_COST
+                    '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
+                    .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                    .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                    .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                    .Item("LOCATION_CODE") = row("LOCATION_CODE")
+                    .Item("BAR_CODE") = row("BAR_CODE")
                     .Item("ADJ_REF") = ""
                     ' .Item("ADJ_REF") = row("SHEET") ' TEMP
                 End With
