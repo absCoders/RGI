@@ -192,15 +192,18 @@ Public Class ICFCACT1
                                 group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
                                 ) pivot (sum (PO_QTY_REC) for STYLE_CODE in('{String.Join("','", selectedStylesList)}'))"
 
-        'AdjustTableSchema("ICTCACTX", selectedStylesList)
-
         grdICTCACTX.DisplayLayout.NewColumnLoadStyle = NewColumnLoadStyle.Show
         grdICTCACTX.DisplayLayout.NewBandLoadStyle = NewBandLoadStyle.Show
         Fill_Records("ICTCACTX", "", True, ASCMAIN1.sql)
         grdICTCACTX.DataSource = dst.Tables("ICTCACTX")
+        AdjustTableSchema("ICTCACTX", selectedStylesList)
         ASCMAIN1.grdInitializeLayout(grdICTCACTX)
+        For Each col As UltraGridColumn In grdICTCACTX.DisplayLayout.Bands(0).Columns
+            If Not {"PERIOD", "ACTIVITY", "PO_REFERENCE"}.Contains(col.Key) Then
+                col.Header.Caption = col.Key.Trim("'"c)
+            End If
+        Next
         Sort_grdColumns(grdICTCACTX, "PERIOD, ACTIVITY, PO_REFERENCE")
-
 
         ASCMAIN1.sql = $"select * from (
                                 select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
@@ -241,8 +244,6 @@ Public Class ICFCACT1
                 End If
             Next
         Next
-        'grdICTCACTX.DataSource = dst.Tables("ICTCACTX")
-        'grdICTCACTX.Refresh()
     End Sub
     Overrides Sub Prepare_for_View_Lookup_Special(
     ByVal ctl As Control,
@@ -353,7 +354,7 @@ Public Class ICFCACT1
             F.ShowDialog()
             F.Dispose()
             If ASCMAIN1.CodeSelector.Selections <> 0 Then
-                'selectedStylesList.Clear()
+                selectedStylesList.Clear()
                 For Each STYLE_CODE As String In ASCMAIN1.CodeSelector.SelectedCodes
                     selectedStylesList.Add(STYLE_CODE)
                 Next
@@ -363,35 +364,21 @@ Public Class ICFCACT1
     End Sub
     Private Sub AdjustTableSchema(ByRef table As String, selectedStyles As HashSet(Of String))
         Dim baseColumns As New List(Of String) From {"PO_REFERENCE", "ACTIVITY", "PERIOD"} ' Add all your base column names here
-        selectedStyles.Add("PO_REFERENCE")
-        selectedStyles.Add("ACTIVITY")
-        selectedStyles.Add("PERIOD")
+        For Each baseColumn As String In baseColumns
+            selectedStyles.Add(baseColumn)
+        Next
+        Dim adjustedSelectedStyles As New HashSet(Of String)(selectedStyles.Select(Function(s) s.Replace("'", "")))
 
         With grdICTCACTX.DisplayLayout.Bands(0)
-            For Each COLUMN_NAME As String In New String() {"MULTI_PO", "PALLETS", "PALLETS_CTNS", "MULTIPO_TTL"}
-                .Columns(COLUMN_NAME).Hidden = Not ASCMAIN1.CLIENT = "VAN"
-            Next
-            For Each grdcol As UltraGridColumn In .Columns
-
+            For Each grdCol As UltraGridColumn In .Columns
+                Dim cleanKey As String = grdCol.Key.Trim("'")
+                If adjustedSelectedStyles.Contains(cleanKey) OrElse baseColumns.Contains(cleanKey) Then
+                    grdCol.Hidden = False
+                Else
+                    grdCol.Hidden = True
+                End If
             Next
         End With
-        '' Adjust selectedStyles to include quotes
-        'Dim adjustedSelectedStyles As New HashSet(Of String)(selectedStyles.Select(Function(s) s.Replace("'", "")))
-
-        'For Each styleCode As String In adjustedSelectedStyles
-        '    Dim adjustedStyleCode = $"'{styleCode}'"
-        '    If Not dst.Tables(table).Columns.Contains(adjustedStyleCode) Then
-        '        dst.Tables(table).Columns.Add(adjustedStyleCode, GetType(Integer))
-        '    End If
-        'Next
-
-        '' Remove columns that are no longer needed
-        'For i As Integer = dst.Tables(table).Columns.Count - 1 To 0 Step -1
-        '    Dim colNameWithoutQuotes = dst.Tables(table).Columns(i).ColumnName.Replace("'", "")
-        '    If Not baseColumns.Contains(colNameWithoutQuotes) AndAlso Not adjustedSelectedStyles.Contains(colNameWithoutQuotes) Then
-        '        dst.Tables(table).Columns.RemoveAt(i)
-        '    End If
-        'Next
     End Sub
 
 End Class
