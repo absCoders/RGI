@@ -12,14 +12,14 @@ Public Class ICFCACT1
         With dst
 
             ASCMAIN1.sql = $"select * from (
-                                select POTORDR1.PO_REFERENCE, 'Received' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                select ICTIREC1.OPS_YYYYPP PERIOD, 'Received' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
                                 where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                                 and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
                                 and ICTIREC2.STYLE_CODE in('')
                                 group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
                                 union
-                                Select ' ', 'Shipped',  SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
+                                Select SOTINVH2.ORDR_YYYYPP_UPDATED, 'Shipped', ' ', SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
                                 from SOTINVH1, SOTINVH2, SOTORDR1
                                 where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
                                 and SOTINVH1.INV_NO = SOTINVH2.INV_NO
@@ -27,7 +27,7 @@ Public Class ICFCACT1
                                 and SOTINVH2.STYLE_CODE in('')
                                 group by SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE
                                 union
-                                select ' ','Adjusted',to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
+                                select to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), 'Adjusted', ' ', ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
                                 from ICTIADJ1, ICTIADJ2
                                 Where ICTIADJ1.ADJ_NO =  ICTIADJ2.ADJ_NO
                                 AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
@@ -38,7 +38,7 @@ Public Class ICFCACT1
             Create_TDA(.Tables.Add, "ICTCACTX", "**", 0, False)
 
             ASCMAIN1.sql = $"select * from (
-                                select POTORDR1.PO_REFERENCE, 't Balance' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                select ICTIREC1.OPS_YYYYPP, 't_Bal',  POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
                                 where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                                 and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
@@ -47,7 +47,7 @@ Public Class ICFCACT1
                                 ) pivot (sum (PO_QTY_REC) for STYLE_CODE in(''))"
             Create_TDA(.Tables.Add, "ICTCACTB", "**", 0, False)
         End With
-        grdICFCACTX.DataSource = dst.Tables("ICTCACTX")
+        grdICTCACTX.DataSource = dst.Tables("ICTCACTX")
         Absx1.txtFor("CUST_CODE").Value = "WALMART"
 
     End Sub
@@ -123,7 +123,7 @@ Public Class ICFCACT1
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
         cmdMulti.Visible = ScreenMode
-        grdICFCACTX.Visible = ScreenMode
+        grdICTCACTX.Visible = ScreenMode
 
         If ScreenMode Then
         Else
@@ -168,14 +168,14 @@ Public Class ICFCACT1
 
     Private Sub Generate()
         ASCMAIN1.sql = $"select * from (
-                                select POTORDR1.PO_REFERENCE, 'Received' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                select ICTIREC1.OPS_YYYYPP PERIOD, 'Received' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
                                 where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                                 and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
                                 and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
                                 group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
                                 union
-                                Select ' ', 'Shipped',  SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
+                                Select SOTINVH2.ORDR_YYYYPP_UPDATED, 'Shipped', ' ',  SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
                                 from SOTINVH1, SOTINVH2, SOTORDR1
                                 where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
                                 and SOTINVH1.INV_NO = SOTINVH2.INV_NO
@@ -183,7 +183,7 @@ Public Class ICFCACT1
                                 and SOTINVH2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
                                 group by SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE
                                 union
-                                select ' ','Adjusted',to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
+                                select to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), 'Adjusted', ' ', ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
                                 from ICTIADJ1, ICTIADJ2
                                 Where ICTIADJ1.ADJ_NO =  ICTIADJ2.ADJ_NO
                                 AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
@@ -192,15 +192,18 @@ Public Class ICFCACT1
                                 group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
                                 ) pivot (sum (PO_QTY_REC) for STYLE_CODE in('{String.Join("','", selectedStylesList)}'))"
 
+        'AdjustTableSchema("ICTCACTX", selectedStylesList)
 
+        grdICTCACTX.DisplayLayout.NewColumnLoadStyle = NewColumnLoadStyle.Show
+        grdICTCACTX.DisplayLayout.NewBandLoadStyle = NewBandLoadStyle.Show
         Fill_Records("ICTCACTX", "", True, ASCMAIN1.sql)
-        'ICTCACTX
-        Dim dvw As DataView = DirectCast(grdICFCACTX.DataSource, DataTable).DefaultView
-        Dim Row_filter As String = ""
-        dvw.RowFilter = Row_filter
+        grdICTCACTX.DataSource = dst.Tables("ICTCACTX")
+        ASCMAIN1.grdInitializeLayout(grdICTCACTX)
+        Sort_grdColumns(grdICTCACTX, "PERIOD, ACTIVITY, PO_REFERENCE")
+
 
         ASCMAIN1.sql = $"select * from (
-                                select POTORDR1.PO_REFERENCE, 'Balance' ACTIVITY, ICTIREC1.OPS_YYYYPP Period, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
                                 where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                                 and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
@@ -238,8 +241,8 @@ Public Class ICFCACT1
                 End If
             Next
         Next
-        'grdICFCACTX.DataSource = dst.Tables("ICTCACTX")
-        'grdICFCACTX.Refresh()
+        'grdICTCACTX.DataSource = dst.Tables("ICTCACTX")
+        'grdICTCACTX.Refresh()
     End Sub
     Overrides Sub Prepare_for_View_Lookup_Special(
     ByVal ctl As Control,
@@ -358,26 +361,37 @@ Public Class ICFCACT1
             UpdateSelectedStylesTextBox()
         End If
     End Sub
-    'Private Sub AdjustTableSchema(ByRef table As DataTable, selectedStyles As HashSet(Of String))
-    '    Dim baseColumns As New List(Of String) From {"PO_REFERENCE", "ACTIVITY", "PERIOD"} ' Add all your base column names here
+    Private Sub AdjustTableSchema(ByRef table As String, selectedStyles As HashSet(Of String))
+        Dim baseColumns As New List(Of String) From {"PO_REFERENCE", "ACTIVITY", "PERIOD"} ' Add all your base column names here
+        selectedStyles.Add("PO_REFERENCE")
+        selectedStyles.Add("ACTIVITY")
+        selectedStyles.Add("PERIOD")
 
-    '    ' Adjust selectedStyles to include quotes
-    '    Dim adjustedSelectedStyles As New HashSet(Of String)(selectedStyles.Select(Function(s) s.Replace("'", "")))
+        With grdICTCACTX.DisplayLayout.Bands(0)
+            For Each COLUMN_NAME As String In New String() {"MULTI_PO", "PALLETS", "PALLETS_CTNS", "MULTIPO_TTL"}
+                .Columns(COLUMN_NAME).Hidden = Not ASCMAIN1.CLIENT = "VAN"
+            Next
+            For Each grdcol As UltraGridColumn In .Columns
 
-    '    For Each styleCode As String In adjustedSelectedStyles
-    '        Dim adjustedStyleCode = $"'{styleCode}'"
-    '        If Not table.Columns.Contains(adjustedStyleCode) Then
-    '            table.Columns.Add(adjustedStyleCode, GetType(Integer))
-    '        End If
-    '    Next
+            Next
+        End With
+        '' Adjust selectedStyles to include quotes
+        'Dim adjustedSelectedStyles As New HashSet(Of String)(selectedStyles.Select(Function(s) s.Replace("'", "")))
 
-    '    ' Remove columns that are no longer needed
-    '    For i As Integer = table.Columns.Count - 1 To 0 Step -1
-    '        Dim colNameWithoutQuotes = table.Columns(i).ColumnName.Replace("'", "")
-    '        If Not baseColumns.Contains(colNameWithoutQuotes) AndAlso Not adjustedSelectedStyles.Contains(colNameWithoutQuotes) Then
-    '            table.Columns.RemoveAt(i)
-    '        End If
-    '    Next
-    'End Sub
+        'For Each styleCode As String In adjustedSelectedStyles
+        '    Dim adjustedStyleCode = $"'{styleCode}'"
+        '    If Not dst.Tables(table).Columns.Contains(adjustedStyleCode) Then
+        '        dst.Tables(table).Columns.Add(adjustedStyleCode, GetType(Integer))
+        '    End If
+        'Next
+
+        '' Remove columns that are no longer needed
+        'For i As Integer = dst.Tables(table).Columns.Count - 1 To 0 Step -1
+        '    Dim colNameWithoutQuotes = dst.Tables(table).Columns(i).ColumnName.Replace("'", "")
+        '    If Not baseColumns.Contains(colNameWithoutQuotes) AndAlso Not adjustedSelectedStyles.Contains(colNameWithoutQuotes) Then
+        '        dst.Tables(table).Columns.RemoveAt(i)
+        '    End If
+        'Next
+    End Sub
 
 End Class
