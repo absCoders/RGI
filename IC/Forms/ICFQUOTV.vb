@@ -35,6 +35,7 @@ Public Class ICFQUOTV
     Dim PRINTING_SHEETS As Boolean = False
     Dim Form_Loading As Boolean = True
     Dim WHSE_BUILD As String = "'NJC'"
+    Dim exlExt As String = ".xlsx"
 
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
     'Dim WithEvents FtpS As New nsoftware.IPWorksSSH.Sftp
@@ -1486,7 +1487,7 @@ Public Class ICFQUOTV
                     ext = ".pdf"
                 Else
                     openFileDialog1.Filter = "excel files (*.xlsx)|*.xlsx"
-                    ext = ".xlsx"
+                    ext = exlExt
                 End If
                 ext = ext.ToLower()
                 If openFileDialog1.ShowDialog() = System.Windows.Forms.DialogResult.OK Then
@@ -2747,7 +2748,7 @@ Public Class ICFQUOTV
                     If SALES_DIVISION_CODE <> "" Then
                         XLS_FILENAME &= "-" & SALES_DIVISION_CODE
                     End If
-                    XLS_FILENAME &= "-" & Format(XLS_NO, "000") & ".XLSX"
+                    XLS_FILENAME &= "-" & Format(XLS_NO, "000") & exlExt
                     workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
                     'workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
                     RetVal = XLS_FILENAME
@@ -2858,7 +2859,7 @@ Public Class ICFQUOTV
         Next
 
         'Show Workbook
-        Dim XLS_FILENAME As String = Format(XLS_NO, "000") & ".XLSX"
+        Dim XLS_FILENAME As String = Format(XLS_NO, "000") & exlExt
         workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
         Show_Document(ASCMAIN1.Folders("Temp") & XLS_FILENAME)
 
@@ -3119,7 +3120,7 @@ Public Class ICFQUOTV
         Do Until success
             Try
                 XLS_NO += 1
-                XLS_FILENAME = RPT_PREFIX & "_" & Format(XLS_NO, "000") & ".XLSX"
+                XLS_FILENAME = RPT_PREFIX & "_" & Format(XLS_NO, "000") & exlExt
                 workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
                 RetVal = XLS_FILENAME
                 success = True
