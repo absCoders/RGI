@@ -744,15 +744,16 @@ Public Class ICFQUOTQ
                         Dim rowASTATTA2 As DataRow = dst.Tables.Item("ASTATTA2").Select().FirstOrDefault
                         Dim ATTACHMENT_FILENAME As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
                         Dim ext As String = getFileExt(ATTACHMENT_FILENAME)
+                        Dim HASHVALUE As String = rowASTATTA2.Item("HASHVALUE").ToString
 
                         newICTQUOHF.Item("SESSION_NO") = SESSION_NO
                         newICTQUOHF.Item("FILE_NO") = MaxFILE_NO
                         newICTQUOHF.Item("FILENAME") = ATTACHMENT_FILENAME
-                        newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
+                        newICTQUOHF.Item("HASHVALUE") = HASHVALUE
                         dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
 
                         Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
-                        Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+                        Dim FileNameRemote As String = $"{HASHVALUE}{ext}"
                         Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
                         If eMsg.Length > 0 Then
                             MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
@@ -1766,15 +1767,17 @@ Public Class ICFQUOTQ
             Dim ext As String = getFileExt(ATTACHMENT_FILENAME)
 
             MaxFILE_NO += 1
+            Dim HASHVALUE As String = rowASTATTA2.Item("HASHVALUE").ToString
+
             Dim newICTQUOHF As DataRow = dst.Tables.Item("ICTQUOHF").NewRow
             newICTQUOHF.Item("SESSION_NO") = SESSION_NO
             newICTQUOHF.Item("FILE_NO") = MaxFILE_NO
             newICTQUOHF.Item("FILENAME") = ATTACHMENT_FILENAME
-            newICTQUOHF.Item("HASHVALUE") = rowASTATTA2.Item("HASHVALUE").ToString
+            newICTQUOHF.Item("HASHVALUE") = HASHVALUE
             dst.Tables.Item("ICTQUOHF").Rows.Add(newICTQUOHF)
 
             Dim FileNameLocalFull As String = rowASTATTA2.Item("ATTACHMENT_FILENAME").ToString
-            Dim FileNameRemote As String = $"{SESSION_NO}-{MaxFILE_NO}{ext}"
+            Dim FileNameRemote As String = $"{HASHVALUE}{ext}"
             Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
             If eMsg.Length > 0 Then
                 MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
@@ -3674,10 +3677,10 @@ Public Class ICFQUOTQ
     End Function
 
     Private Function getFileExt(ByVal ATTACHMENT_FILENAME As String) As String
-        Dim RetVal As String = ""
-        Dim dotLoc As Int64 = ATTACHMENT_FILENAME.IndexOf(".", ATTACHMENT_FILENAME.Length - 5)
+        Dim RetVal As String = ".pdf"
+        Dim dotLoc As Int64 = ATTACHMENT_FILENAME.LastIndexOf(".", ATTACHMENT_FILENAME.Length - 5)
         If dotLoc > 0 Then
-            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc)
+            RetVal = ATTACHMENT_FILENAME.Substring(dotLoc, ATTACHMENT_FILENAME.Length - dotLoc).ToLower()
         End If
         Return RetVal
     End Function
