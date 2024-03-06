@@ -28,7 +28,12 @@ Public Class EDFASNO1
 
         grdEDTASNO1.DataSource = dst.Tables("EDTASNO1")
         grdEDTASNO2.DataSource = dst.Tables("EDTASNO2")
-
+        With grdEDTASNO2
+            If .DisplayLayout.Bands(0).Columns.Exists("ComplianceStatus") Then
+                .DisplayLayout.Bands(0).Columns("ComplianceStatus").Header.Appearance.ForeColor = Drawing.Color.White
+                .DisplayLayout.Bands(0).Columns("ComplianceStatus").Header.Appearance.BackColor = Drawing.Color.Blue
+            End If
+        End With
 
 
         'dteSearchE.MaxDate = DateAdd(DateInterval.Day, 1, DateTime.Now)
