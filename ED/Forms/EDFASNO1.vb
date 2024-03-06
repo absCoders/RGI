@@ -167,7 +167,7 @@ Public Class EDFASNO1
                "And PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" And PARTNER.""PartnerKEY"" = 'WMartTest'"
 
             Fill_Records("EDTASNO2", "", True, ASCMAIN1.sql)
-            Sort_grdColumns(grdEDTASNO2, "compliancestatus, CREATED")
+            Sort_grdColumns(grdEDTASNO2, "compliancestatus, created") 'time descending
             'Catch ex As Exception
             '    MessageBox.Show($"Error Generating EDI 846 {ex.Message }", "Generate EDI 846", MessageBoxButtons.OK, MessageBoxIcon.Error)
             '    Clear_Record()
