@@ -38,7 +38,7 @@ Public Class ICFCACT1
             Create_TDA(.Tables.Add, "ICTCACTX", "**", 0, False)
 
             ASCMAIN1.sql = $"select * from (
-                                select ICTIREC1.OPS_YYYYPP, 't_Bal',  POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE, sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
                                 where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                                 and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
@@ -205,7 +205,7 @@ Public Class ICFCACT1
         Next
 
         ASCMAIN1.sql = $"select * from (
-                                select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                                select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
                                 where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                                 and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
@@ -218,19 +218,30 @@ Public Class ICFCACT1
         'add a row after every shipment record
         Dim SkipCols As String = "PERIOD,ACTIVITY,PO_REFERENCE"
 
-        For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted'", "PERIOD,ACTIVITY,PO_REFERENCE")
+        For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted' or ACTIVITY = 'Received'", "PERIOD,ACTIVITY,PO_REFERENCE")
             Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
+            Dim forcerow As Boolean = False
+            Dim balrowis0 As Boolean = True
             rowdist.ItemArray = row.ItemArray
+forcerow_here:
+            If rowdist("PERIOD") = "201901" And rowdist("ACTIVITY") = "Received" Then
+                balrowis0 = False
+            End If
             For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'")
                 Dim updaterow As Boolean = False
+                If rowdist("ACTIVITY") = "Received" And rowdist("PO_REFERENCE") <> balrow("PO_REFERENCE") Then
+                    Continue For
+                End If
                 For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
                     If Not SkipCols.Contains(col.ColumnName) Then
-                        If Val(balrow(col.ColumnName) & "") > 0 And Val(balrow(col.ColumnName) & "") > 0 Then
+                        If (Val(balrow(col.ColumnName) & "") > 0 Or Val(rowdist(col.ColumnName) & "") <> 0) Then
+
                             updaterow = True
                             balrow("PERIOD") = row("PERIOD")
-                            If Val(balrow(col.ColumnName) & "") > (Val(rowdist(col.ColumnName) & "") * -1) Then
+                            If Val(balrow(col.ColumnName) & "") > (Val(rowdist(col.ColumnName) & "") * -1) Or forcerow Then
                                 balrow(col.ColumnName) = Val(balrow(col.ColumnName) & "") + Val(rowdist(col.ColumnName) & "")
                                 rowdist(col.ColumnName) = 0
+                                balrowis0 = False
                             Else
                                 rowdist(col.ColumnName) = Val(rowdist(col.ColumnName) & "") + Val(balrow(col.ColumnName) & "")
                                 balrow(col.ColumnName) = 0
@@ -239,7 +250,31 @@ Public Class ICFCACT1
                     End If
                 Next
                 If updaterow Then
-                    dst.Tables("ICTCACTX").ImportRow(balrow)
+                    Dim updated As Boolean = False
+                    For Each balupdate As DataRow In dst.Tables("ICTCACTX").Select($"PO_REFERENCE = '{balrow("PO_REFERENCE")}' and ACTIVITY = '{balrow("ACTIVITY")}' and PERIOD = '{balrow("PERIOD")}'")
+                        updated = True
+                        For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
+                            If Not SkipCols.Contains(col.ColumnName) Then
+                                If balrow(col.ColumnName) & "" = "" Then
+                                    'Stop
+                                Else
+                                    balupdate(col.ColumnName) = Val(balrow(col.ColumnName) & "")
+                                End If
+                            End If
+                        Next
+                    Next
+                    If Not updated Then
+                        dst.Tables("ICTCACTX").ImportRow(balrow)
+                    End If
+                End If
+            Next
+            For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
+                If Not SkipCols.Contains(col.ColumnName) Then
+                    If (Val(rowdist(col.ColumnName) & "") <> 0) Then
+                        forcerow = True
+                        GoTo forcerow_here
+                        Stop
+                    End If
                 End If
             Next
         Next
@@ -365,12 +400,13 @@ Public Class ICFCACT1
             UpdateSelectedStylesTextBox()
         End If
     End Sub
-    Private Sub AdjustTableSchema(ByRef table As String, selectedStyles As HashSet(Of String))
+    Private Sub AdjustTableSchema(ByRef table As String, ByVal selectedStyles As HashSet(Of String))
         Dim baseColumns As New List(Of String) From {"PO_REFERENCE", "ACTIVITY", "PERIOD"} ' Add all your base column names here
-        For Each baseColumn As String In baseColumns
-            selectedStyles.Add(baseColumn)
-        Next
+
         Dim adjustedSelectedStyles As New HashSet(Of String)(selectedStyles.Select(Function(s) s.Replace("'", "")))
+        For Each baseColumn As String In baseColumns
+            adjustedSelectedStyles.Add(baseColumn)
+        Next
 
         With grdICTCACTX.DisplayLayout.Bands(0)
             For Each grdCol As UltraGridColumn In .Columns
