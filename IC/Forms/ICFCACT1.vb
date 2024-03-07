@@ -123,7 +123,7 @@ Public Class ICFCACT1
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
         cmdMulti.Visible = ScreenMode
-        grdICTCACTX.Visible = ScreenMode
+        grdICTCACTX.Visible = False
 
         If ScreenMode Then
         Else
@@ -203,7 +203,6 @@ Public Class ICFCACT1
                 col.Header.Caption = col.Key.Trim("'"c)
             End If
         Next
-        Sort_grdColumns(grdICTCACTX, "PERIOD, ACTIVITY, PO_REFERENCE")
 
         ASCMAIN1.sql = $"select * from (
                                 select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
@@ -222,7 +221,7 @@ Public Class ICFCACT1
         For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted'", "PERIOD,ACTIVITY,PO_REFERENCE")
             Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
             rowdist.ItemArray = row.ItemArray
-            For Each balrow As DataRow In dst.Tables("ICTCACTB").Select("")
+            For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'")
                 Dim updaterow As Boolean = False
                 For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
                     If Not SkipCols.Contains(col.ColumnName) Then
@@ -244,6 +243,10 @@ Public Class ICFCACT1
                 End If
             Next
         Next
+
+        Sort_grdColumns(grdICTCACTX, "PERIOD, ACTIVITY, PO_REFERENCE")
+        grdICTCACTX.Visible = True
+
     End Sub
     Overrides Sub Prepare_for_View_Lookup_Special(
     ByVal ctl As Control,

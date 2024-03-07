@@ -1,5 +1,7 @@
 Public Class EDFASNO1
     Dim CUST_CODE As String
+    Dim fromDte As DateTime
+    Dim toDte As DateTime
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -151,6 +153,10 @@ Public Class EDFASNO1
     Sub Load_Record()
 
         Try
+            fromDte = dteSearchS.DateTime
+            toDte = dteSearchE.DateTime.AddDays(1)
+
+
             update_ack_recs()
 
             For Each TABLE_NAME As String In New String() {"EDTASNO1", "EDTASNO2"}
@@ -162,7 +168,7 @@ Public Class EDFASNO1
             SOTSHIP1, SOTORDR0
             where SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO
             And CUST_CODE = 'WALMART' 
-            And SHIP_DATE_SHIPPED between '{dteSearchS.DateTime.ToString("dd-MMM-yyyy")}' And '{dteSearchE.DateTime.ToString("dd-MMM-yyyy")}'"
+            And SHIP_DATE_SHIPPED between '{fromDte.ToString("dd-MMM-yyyy")}' And '{toDte.ToString("dd-MMM-yyyy")}'"
 
             Fill_Records("EDTASNO1", "", True, ASCMAIN1.sql)
             'Trunc(NEW_TIME((TO_DATE('01/01/1970', 'MM-DD-YYYY') + "TimeCreated" / 86400), 'GMT', 'EST')),
@@ -171,8 +177,8 @@ Public Class EDFASNO1
                 DOC.""TransactionSetID"", DOC.""FunctionalGroupID"", DOC.""ControlNumber"", DOC.""ComplianceStatus"" ComplianceStatus, ""AppField6"" ,  DOC.""DocumentBlobKEY"", DOC.""DocumentKEY"" 
                 FROM ""Document_tb"" DOC, ""Partner_tb"" PARTNER
                 WHERE ""TransactionSetID"" = '856' 
-                AND ""TimeCreated"" BETWEEN  (DATE '{dteSearchS.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
-                        and (DATE '{dteSearchE.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400
+                AND ""TimeCreated"" BETWEEN  (DATE '{fromDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
+                        and (DATE '{toDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400
                 And PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" And PARTNER.""PartnerKEY"" = 'WMartTest'"
 
 
@@ -205,7 +211,7 @@ Public Class EDFASNO1
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdEDTASNO1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Show EDI ASN")
+        Load_Popup_Menu(grdEDTASNO1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Show EDI ASN", "Find EDI Below")
         Load_Popup_Menu(grdEDTASNO2, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Show EDI ASN", "Show 997 Raw")
     End Sub
 
@@ -237,12 +243,13 @@ Public Class EDFASNO1
 
         End Select
 
-        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
-            'e.Cancel = True
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse grd.ActiveRow.IsFilterRow Then
+            e.Cancel = True
         Else
             Select Case e.SourceControl.Name
                 'SHIP_856_BATCH_NO
                 Case "grdEDTASNO1"
+                    tlb_pop.Tools("Find EDI Below").SharedProps.Visible = grd.ActiveRow.Cells("SHIP_856_BATCH_NO").Value & "" <> ""
                     tlb_pop.Tools("Show EDI ASN").SharedProps.Visible = grd.ActiveRow.Cells("SHIP_856_BATCH_NO").Value & "" <> ""
             End Select
 
@@ -317,6 +324,10 @@ Public Class EDFASNO1
                     frm.ShowDialog()
                 End Using
 
+            Case "Find EDI Below"
+                ' use the BOL to enter a filter on the grid below
+                ' do active row event so that when a new row is selected the filter is cleared
+
         End Select
     End Sub
 
@@ -329,8 +340,8 @@ Public Class EDFASNO1
                         and dc.""PartnerKEY"" = 'WMartTest'
                         and dc.""TransactionSetID"" = 997
                         and dc.""AppField6"" is null
-                        AND ""TimeCreated"" BETWEEN  (DATE '{dteSearchS.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
-                        and (DATE '{dteSearchE.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400"
+                        AND ""TimeCreated"" BETWEEN  (DATE '{fromDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
+                        and (DATE '{toDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400"
 
         Fill_Records("EDTACK01",,, ASCMAIN1.sql)
         Dim rowcount As Integer = 0
