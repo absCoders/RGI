@@ -327,7 +327,10 @@ Public Class EDFASNO1
             Case "Find EDI Below"
                 ' use the BOL to enter a filter on the grid below
                 ' do active row event so that when a new row is selected the filter is cleared
-
+                Dim BOL As String = grd.ActiveRow.Cells("BILL_OF_LADING_NO").Value & ""
+                Dim dt As DataTable = CType(grdEDTASNO2.DataSource, DataTable)
+                dt.DefaultView.RowFilter = "DocumentName = '" & BOL & "'"
+                grdEDTASNO2.DataSource = dt
         End Select
     End Sub
 
@@ -401,6 +404,9 @@ Public Class EDFASNO1
         End If
         Return RAW_DATA
     End Function
+    Private Sub grdEDTASNO1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdEDTASNO1.AfterRowActivate
+        DirectCast(grdEDTASNO2.DataSource, DataTable).DefaultView.RowFilter = "" ' Clear the filter
+    End Sub
 
 
 
