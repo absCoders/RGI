@@ -16,20 +16,21 @@ Public Class EDFASNO1
             And SHIP_DATE_SHIPPED between :PARM1 And : PARM2"
             Create_TDA(.Tables.Add, "EDTASNO1", "**", 0, False, "DD")
 
-            ASCMAIN1.sql = "SELECT (NEW_TIME((TO_DATE('01/01/1970', 'MM-DD-YYYY') + ^TimeCreated^ / 86400), 'GMT', 'EST')) Created, DOC.^Direction^ Direction, DOC.^PartnerKEY^, DOC.^DocumentName^,
-                DOC.^TransactionSetID^, DOC.^FunctionalGroupID^, DOC.^ControlNumber^, DOC.^ComplianceStatus^ ComplianceStatus, DOC.^DocumentBlobKEY^, DOC.^DocumentKEY^ FROM ^Document_tb^ DOC, ^Partner_tb^ PARTNER " &
-               "WHERE ^TransactionSetID^ = '856' " &
+            ASCMAIN1.sql = "SELECT (NEW_TIME((TO_DATE('01/01/1970', 'MM-DD-YYYY') + ""TimeCreated"" / 86400), 'GMT', 'EST')) Created, DOC.""Direction"" Direction, DOC.""PartnerKEY"", DOC.""DocumentName"",
+                DOC.""TransactionSetID"", DOC.""FunctionalGroupID"", DOC.""ControlNumber"", DOC.""ComplianceStatus"" ComplianceStatus, ""AppField6"" , DOC.""DocumentBlobKEY"", DOC.""DocumentKEY""
+                FROM ""Document_tb"" DOC, ""Partner_tb"" PARTNER " &
+               "WHERE ""TransactionSetID"" = '856' " &
                "AND TO_CHAR(NEW_TIME(TO_DATE('01/01/1970', 'MM-DD-YYYY') + " &
-               "^TimeCreated^/ 86400, 'GMT', 'EST'), 'yyyymmdd') BETWEEN :PARM1 AND :PARM2 " &
-               "AND PARTNER.^PartnerKEY^ = DOC.^PartnerKEY^ AND PARTNER.^PartnerKEY^ = 'WMartTest'"
+               """TimeCreated""/ 86400, 'GMT', 'EST'), 'yyyymmdd') BETWEEN :PARM1 AND :PARM2 " &
+               "AND PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" AND PARTNER.""PartnerKEY"" = 'WMartTest'"
             Create_TDA(.Tables.Add, "EDTASNO2", "**", 0, False, "DD")
 
-            ASCMAIN1.sql = $"select * from gen.^Track_tb^ Tr, gen.^Document_tb^ Dc
-                        where Tr.^DocumentKEY^ = Dc.^DocumentKEY^
-                        and dc.^PartnerKEY^ = 'WMartTest'
-                        and dc.^TransactionSetID^ = 997
-                        and dc.^AppField6^ is null"
-            Create_TDA(.Tables.Add, "EDTACK01", "**", 0, False)
+            ASCMAIN1.sql = $"select dc.*, tr.""GroupControlNumber"" from gen.""Track_tb"" Tr, gen.""Document_tb"" Dc
+                        where Tr.""DocumentKEY"" = Dc.""DocumentKEY""
+                        and dc.""PartnerKEY"" = 'WMartTest'
+                        and dc.""TransactionSetID"" = 997
+                        and dc.""AppField6"" is null"
+            Create_TDA(.Tables.Add, "EDTACK01", "**", 0, False, , 1)
 
         End With
 
@@ -166,12 +167,14 @@ Public Class EDFASNO1
             Fill_Records("EDTASNO1", "", True, ASCMAIN1.sql)
             'Trunc(NEW_TIME((TO_DATE('01/01/1970', 'MM-DD-YYYY') + "TimeCreated" / 86400), 'GMT', 'EST')),
             Sort_grdColumns(grdEDTASNO1, "ORDR_CUST_PO")
-            ASCMAIN1.sql = $"SELECT (NEW_TIME((TO_DATE('01/01/1970', 'MM-DD-YYYY') + ^TimeCreated^ / 86400), 'GMT', 'EST')) Created, DOC.^Direction^ Direction, DOC.^PartnerKEY^, DOC.^DocumentName^,
-                DOC.^TransactionSetID^, DOC.^FunctionalGroupID^, DOC.^ControlNumber^, DOC.^ComplianceStatus^ ComplianceStatus, DOC.^DocumentBlobKEY^, DOC.^DocumentKEY^ FROM ^Document_tb^ DOC, ^Partner_tb^ PARTNER 
-                WHERE ^TransactionSetID^ = '856' 
-                AND ^TimeCreated^ BETWEEN  (DATE '{dteSearchS.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
+            ASCMAIN1.sql = $"Select (NEW_TIME((TO_DATE('01/01/1970', 'MM-DD-YYYY') + ""TimeCreated"" / 86400), 'GMT', 'EST')) Created, DOC.""Direction"" Direction, DOC.""PartnerKEY"", DOC.""DocumentName"",
+                DOC.""TransactionSetID"", DOC.""FunctionalGroupID"", DOC.""ControlNumber"", DOC.""ComplianceStatus"" ComplianceStatus, ""AppField6"" ,  DOC.""DocumentBlobKEY"", DOC.""DocumentKEY"" 
+                FROM ""Document_tb"" DOC, ""Partner_tb"" PARTNER
+                WHERE ""TransactionSetID"" = '856' 
+                AND ""TimeCreated"" BETWEEN  (DATE '{dteSearchS.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
                         and (DATE '{dteSearchE.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400
-                And PARTNER.^PartnerKEY^ = DOC.^PartnerKEY^ And PARTNER.^PartnerKEY^ = 'WMartTest'"
+                And PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" And PARTNER.""PartnerKEY"" = 'WMartTest'"
+
 
             Fill_Records("EDTASNO2", "", True, ASCMAIN1.sql)
             Sort_grdColumns(grdEDTASNO2, "compliancestatus, created") 'time descending
@@ -203,7 +206,7 @@ Public Class EDFASNO1
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdEDTASNO1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Show EDI ASN")
-        Load_Popup_Menu(grdEDTASNO2, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Show EDI ASN")
+        Load_Popup_Menu(grdEDTASNO2, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Show EDI ASN", "Show 997 Raw")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -302,6 +305,18 @@ Public Class EDFASNO1
 
                 End If
 
+            Case "Show 997 Raw"
+                Dim doc_key As String = grd.ActiveRow.Cells("AppField6").Value & ""
+                Dim EDI_DOCUMENT_NAME As String = grd.ActiveRow.Cells("DocumentName").Value & ""
+                ASCMAIN1.sql = $"select * from gen.""Document_tb"" where ""DocumentKEY"" = '{doc_key}'"
+                Dim row997 As DataRow = ASCDATA1.GetDataRow
+                Dim RAW_EDI As String = get_997_raw(row997)
+                Using frm As New ASFTEXT1
+                    frm.t = RAW_EDI
+                    frm.Text = "Raw EDI for " & CUST_CODE & " BOL No " & EDI_DOCUMENT_NAME
+                    frm.ShowDialog()
+                End Using
+
         End Select
     End Sub
 
@@ -309,24 +324,52 @@ Public Class EDFASNO1
 
     Sub update_ack_recs()
 
-        ASCMAIN1.sql = $"select * from gen.^Track_tb^ Tr, gen.^Document_tb^ Dc
-                        where Tr.^DocumentKEY^ = Dc.^DocumentKEY^
-                        and dc.^PartnerKEY^ = 'WMartTest'
-                        and dc.^TransactionSetID^ = 997
-                        and dc.^AppField6^ is null
-                        AND AND ^TimeCreated^ BETWEEN  (DATE '{dteSearchS.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
+        ASCMAIN1.sql = $"select dc.*, tr.""GroupControlNumber"" from gen.""Track_tb"" Tr, gen.""Document_tb"" Dc
+                        where Tr.""DocumentKEY"" = Dc.""DocumentKEY""
+                        and dc.""PartnerKEY"" = 'WMartTest'
+                        and dc.""TransactionSetID"" = 997
+                        and dc.""AppField6"" is null
+                        AND ""TimeCreated"" BETWEEN  (DATE '{dteSearchS.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
                         and (DATE '{dteSearchE.DateTime.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400"
 
         Fill_Records("EDTACK01",,, ASCMAIN1.sql)
-
+        Dim rowcount As Integer = 0
         For Each ackrow As DataRow In dst.Tables("EDTACK01").Select("")
             'get_997_raw - get group control no
             'get dockey from 997
+            Dim group_control_no As String = ""
+            Dim Doc_Key_997 As String = ackrow.Item("DocumentKEY")
+            Dim raw_data As String = get_997_raw(ackrow)
+            Dim raw_rows() As String = raw_data.Replace(vbCrLf, "").Split("~")
+            For Each rawrow As String In raw_rows
+                If rawrow.StartsWith("AK1*") Then
+                    group_control_no = rawrow.Split("*")(2)
+                End If
+            Next
+            'new sql to update doctable for 856 recs that match group control no and update reffield6 with dockey from 997 "810003583"
 
-            'new sql to update doctable for 856 recs that match group control no and update reffield6 with dockey from 997
+            If group_control_no & "" <> "" Then
+                ASCMAIN1.sql = $"begin
+                            declare cursor c1 is 
+                            select dc.*, tr.""GroupControlNumber"" from gen.""Track_tb"" Tr, gen.""Document_tb"" Dc
+                                                    where Tr.""DocumentKEY"" = Dc.""DocumentKEY""
+                                                    and dc.""PartnerKEY"" = 'WMartTest'
+                                                    and tr.""GroupControlNumber"" = '{group_control_no}';
+                            begin 
+                            for r1 in c1 loop
+                            update gen.""Document_tb""
+                            set ""AppField6"" = {Doc_Key_997}
+                            where ""DocumentKEY"" = r1.""DocumentKEY"";
+                            end loop; end; end;"
 
+                ASCDATA1.ExecuteSQL()
+                ASCMAIN1.sql = $"update gen.""Document_tb""
+                            set ""AppField6"" = '1'
+                            where ""DocumentKEY"" = {Doc_Key_997}"
+                ASCDATA1.ExecuteSQL()
+                rowcount += 1
+            End If
         Next
-
 
     End Sub
 
@@ -334,7 +377,7 @@ Public Class EDFASNO1
     Function get_997_raw(row As DataRow)
 
         Dim ED_PARM_RAW_ARCHIVE As String = ROWs("EDTPARM1").Item("ED_PARM_RAW_ARCHIVE")
-        If ASCMAIN1.Running_in_VS Then ED_PARM_RAW_ARCHIVE = "z:\NL\RAWDATA"
+        If ASCMAIN1.Running_in_VS Then ED_PARM_RAW_ARCHIVE = "z:\NL\Documents"
 
         Dim RAW_DATA As String = ""
         Dim RAW_DATA_FILE As String = row.Item("DocumentBlobKEY") ' ASCDATA1.GetDataValue
@@ -347,5 +390,7 @@ Public Class EDFASNO1
         End If
         Return RAW_DATA
     End Function
+
+
 
 End Class
