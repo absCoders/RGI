@@ -1452,6 +1452,7 @@ Public Class SOFCSTY1
                         SIZE_DESC = Trim(oSheet.Cells(r, 1).Value & "")
                         VENDOR_STOCK_NO = Trim(oSheet.Cells(r, 6).Value & "")
                         CUST_PRICE = Trim(oSheet.Cells(r, 4).Value & "")
+                        CUST_UPC = Trim(oSheet.Cells(r, 0).Value & "")
                         CARTON_ID_EXISTS = False
 
                     ElseIf Absx1.txtFor("CUST_CODE").Text & "" = "MACYS" Or Absx1.txtFor("CUST_CODE").Text & "" = "MACYSCOM" Then

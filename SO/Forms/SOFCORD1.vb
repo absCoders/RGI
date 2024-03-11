@@ -3341,7 +3341,9 @@ Public Class SOFCORD1
                                and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
                                and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
                                and SOTSHIP1.SHIP_BOL_NO_REV is null
-                               and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+                               and SOTSHIP1.ORDR_GROUP_NO = :PARM1
+                            and SOTORDR1.ORDR_cUST_PO IN (SELECT DISTINCT SOTORDR1.ORDR_CUST_PO FROM SOTCARM2,SOTORDR1 WHERE CART_NO = SOTCARM1.CART_NO AND SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO)"
+
 
             Fill_Records("SOTCART1", ORDR_GROUP_NO, True, ASCMAIN1.sql)
 
@@ -3351,16 +3353,21 @@ Public Class SOFCORD1
                               and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
                               and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
                               and SOTSHIP1.SHIP_BOL_NO_REV is null
-                              and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+                              and SOTSHIP1.ORDR_GROUP_NO = :PARM1
+            			      and SOTORDR1.ORDR_cUST_PO IN (SELECT DISTINCT SOTORDR1.ORDR_CUST_PO FROM SOTCARM2,SOTORDR1 WHERE CART_NO = SOTCARM1.CART_NO AND SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO)"
+
             Fill_Records("SOTCARTP", ORDR_GROUP_NO, True, ASCMAIN1.sql)
             Fill_Records("SOTCARTX", New String() {ORDR_GROUP_NO, ORDR_GROUP_NO2})
             ASCMAIN1.sql = "Select SOTCARM2.*, SOTPICK1.ORDR_NO PICK_ORDR_NO
-                            from SOTCARM2,SOTCARM1,SOTPICK1,SOTSHIP1
+                            from SOTCARM2,SOTCARM1,SOTPICK1,SOTSHIP1,sotordr1
                             where SOTCARM1.CART_NO = SOTCARM2.CART_NO
+                              AND SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
                               and SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO
                               and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
                               and SOTSHIP1.SHIP_BOL_NO_REV is null
-                              and SOTSHIP1.ORDR_GROUP_NO = :PARM1"
+                              and SOTSHIP1.ORDR_GROUP_NO = :PARM1
+                             and SOTORDR1.ORDR_cUST_PO IN (SELECT DISTINCT SOTORDR1.ORDR_CUST_PO FROM SOTCARM2,SOTORDR1 WHERE CART_NO = SOTCARM1.CART_NO AND SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO)"
+
             Fill_Records("SOTCART2", ORDR_GROUP_NO, True, ASCMAIN1.sql)
         Else
             UltraExplorerBar1.Groups("Multi PO Pallet").Visible = False
