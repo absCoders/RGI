@@ -5,6 +5,8 @@ Public Class ICFCACT1
     Private wkTable As String = String.Empty
     Private selectedRowCount As Integer = 0
     Private selectedStylesList As New HashSet(Of String)
+    Private SLQColumnsList As String = ""
+    Dim SkipCols As String = "PERIOD,ACTIVITY,PO_REFERENCE"
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -190,7 +192,7 @@ Public Class ICFCACT1
                                 AND ICTIADJ1.REVERSES_ADJ_NO IS NULL
                                 AND ICTIADJ2.STYLE_CODE in ('{String.Join("','", selectedStylesList)}')
                                 group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
-                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in('{String.Join("','", selectedStylesList)}'))"
+                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
 
         grdICTCACTX.DisplayLayout.NewColumnLoadStyle = NewColumnLoadStyle.Show
         grdICTCACTX.DisplayLayout.NewBandLoadStyle = NewBandLoadStyle.Show
@@ -203,48 +205,71 @@ Public Class ICFCACT1
                 col.Header.Caption = col.Key.Trim("'"c)
             End If
         Next
+        'Dim balexpr As String = ""
+        'For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
+        '    If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
+        '        balexpr &= $"+ ISNULL({col.ColumnName},0) "
+        '    End If
+        'Next
+        'If Not dst.Tables("ICTCACTX").Columns.Contains("BALANCE") Then
+        '    dst.Tables("ICTCACTX").Columns.Add("BALANCE", GetType(System.Int64), "1 + 1")
+        'End If
+        'dst.Tables("ICTCACTX").Columns("BALANCE").Expression = balexpr.Substring(2)
 
         ASCMAIN1.sql = $"select * from (
-                                select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0) PO_QTY_REC
-                                from POTORDR1, ICTIREC1, ICTIREC2
-                                where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
-                                and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
-                                and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
-                                group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
-                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in('{String.Join("','", selectedStylesList)}'))"
+                        select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
+                        from POTORDR1, ICTIREC1, ICTIREC2
+                        where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                        and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                        and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
+                        group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                        ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
+
 
         Fill_Records("ICTCACTB", "", True, ASCMAIN1.sql)
 
         'add a row after every shipment record
-        Dim SkipCols As String = "PERIOD,ACTIVITY,PO_REFERENCE"
-
         For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted' or ACTIVITY = 'Received'", "PERIOD,ACTIVITY,PO_REFERENCE")
             Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
             Dim forcerow As Boolean = False
-            Dim balrowis0 As Boolean = True
+            Dim OrderBy As String = ""
             rowdist.ItemArray = row.ItemArray
+
 forcerow_here:
-            If rowdist("PERIOD") = "201901" And rowdist("ACTIVITY") = "Received" Then
-                balrowis0 = False
+            If rowdist("ACTIVITY") = "Adjusted" Then
+                OrderBy = "PERIOD desc"
             End If
-            For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'")
+            For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'", OrderBy)
                 Dim updaterow As Boolean = False
+                Dim bal As Integer = 0
                 If rowdist("ACTIVITY") = "Received" And rowdist("PO_REFERENCE") <> balrow("PO_REFERENCE") Then
                     Continue For
                 End If
+                For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
+                    If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
+                        bal += (Val(rowdist(col.ColumnName) & "") <> 0)
+                    End If
+                Next
+                If bal = 0 Then
+                    Continue For
+                End If
+
                 For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
                     If Not SkipCols.Contains(col.ColumnName) Then
                         If (Val(balrow(col.ColumnName) & "") > 0 Or Val(rowdist(col.ColumnName) & "") <> 0) Then
 
-                            updaterow = True
+
                             balrow("PERIOD") = row("PERIOD")
                             If Val(balrow(col.ColumnName) & "") > (Val(rowdist(col.ColumnName) & "") * -1) Or forcerow Then
                                 balrow(col.ColumnName) = Val(balrow(col.ColumnName) & "") + Val(rowdist(col.ColumnName) & "")
                                 rowdist(col.ColumnName) = 0
-                                balrowis0 = False
-                            Else
+                                updaterow = True
+                            ElseIf Val(balrow(col.ColumnName) & "") <> 0 Then
                                 rowdist(col.ColumnName) = Val(rowdist(col.ColumnName) & "") + Val(balrow(col.ColumnName) & "")
                                 balrow(col.ColumnName) = 0
+                                updaterow = True
+                            Else
+                                'Stop
                             End If
                         End If
                     End If
@@ -395,8 +420,10 @@ forcerow_here:
                 selectedStylesList.Clear()
                 For Each STYLE_CODE As String In ASCMAIN1.CodeSelector.SelectedCodes
                     selectedStylesList.Add(STYLE_CODE)
+                    SLQColumnsList &= ",'" & STYLE_CODE & "' " & STYLE_CODE
                 Next
             End If
+            SLQColumnsList = SLQColumnsList.Substring(1)
             UpdateSelectedStylesTextBox()
         End If
     End Sub
