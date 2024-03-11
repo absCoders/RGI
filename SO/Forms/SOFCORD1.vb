@@ -3225,6 +3225,8 @@ Public Class SOFCORD1
                 .DisplayLayout.Bands(0).Summaries.Clear()
                 If ASCMAIN1.CLIENT = "VAN" Then
                     Create_Summary(grdSOTORDR1, New String() {"ORDR_AMT", "ORDR_QTY"}, , , "#,##0")
+                    Create_Summary(grdSOTORDR1, "ORDR_NO", "Count")
+
                 End If
 
 
