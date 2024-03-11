@@ -1508,7 +1508,7 @@ Public Class WHFLB128
                     & ", SOTSHIP1.SHIP_VIA_CODE" & vbCrLf _
                     & ", SOTSHIP1.SHIP_BOL_NO SHIP_BOL_NO_X" & vbCrLf _
                     & ", ARTCUST1.CUST_NAME, ARTCUST1.CUST_ROUTING_INST" & vbCrLf _
-                    & ", SOTSHIP1.SHIP_PICK_PRINTED, SOTORDR0.ORDR_TYPE_CODE, SOTORDR0.ORDR_SOURCE" & vbCrLf
+                    & ", SOTSHIP1.SHIP_PICK_PRINTED, SOTORDR0.ORDR_TYPE_CODE, SOTORDR0.ORDR_SOURCE, SOTSHIP1.SHIP_BOL_NO_CONS" & vbCrLf
             Else
                 ASCMAIN1.sql = "Select DISTINCT SOTORDR0.ORDR_GROUP_NO, SOTSHIP1.PICK_BATCH_NO" & vbCrLf _
                     & ", SOTSHIP1.SHIP_BOL_NO, SOTSHIP1.SHIP_SPEC_INST" & vbCrLf _
@@ -1518,7 +1518,7 @@ Public Class WHFLB128
                     & ", SOTSHIP1.SHIP_VIA_CODE" & vbCrLf _
                     & ", 'MK' SHIP_BOL_NO_X" & vbCrLf _
                     & ", ARTCUST1.CUST_NAME, ARTCUST1.CUST_ROUTING_INST" & vbCrLf _
-                    & ", SOTSHIP1.SHIP_PICK_PRINTED, SOTORDR0.ORDR_TYPE_CODE, SOTORDR0.ORDR_SOURCE" & vbCrLf
+                    & ", SOTSHIP1.SHIP_PICK_PRINTED, SOTORDR0.ORDR_TYPE_CODE, SOTORDR0.ORDR_SOURCE, SOTSHIP1.SHIP_BOL_NO_CONS" & vbCrLf
             End If
 
             If SOTPICKX <> "" Then
@@ -1596,7 +1596,7 @@ Public Class WHFLB128
         ASCMAIN1.sql = "" _
             & "Begin" & vbCrLf _
             & " Declare Cursor C1 is " & vbCrLf _
-            & " Select SOTPICK1.SHIP_BOL_NO" & vbCrLf _
+            & " Select SOTPICK1.SHIP_BOL_NO, SOTPICKX.SHIP_BOL_NO_CONS" & vbCrLf _
             & ", Sum (SOTPICK2.PICK_QTY) ORDR_QTY_PICK" & vbCrLf _
             & ", Sum (SOTPICK2.PICK_QTY * SOTPICK2.PICK_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
             & ", Max (SOTORDR1.ORDR_HIGH_PRIORITY) ORDR_HIGH_PRIORITY" & vbCrLf _
@@ -1607,7 +1607,7 @@ Public Class WHFLB128
             & "   and SOTPICK1.SHIP_BOL_NO = SOTPICKX.SHIP_BOL_NO" & vbCrLf _
             & "   and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
             & "   and SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
-            & " group by SOTPICK1.SHIP_BOL_NO;" & vbCrLf _
+            & " group by SOTPICK1.SHIP_BOL_NO, SOTPICKX.SHIP_BOL_NO_CONS;" & vbCrLf _
             & " Begin" & vbCrLf _
             & "  For R1 in C1 Loop" & vbCrLf _
             & "   Update " & SOTPICKX & " Set ORDR_QTY_PICK = R1.ORDR_QTY_PICK, ORDR_AMT_PICK = R1.ORDR_AMT_PICK, ORDR_HIGH_PRIORITY = R1.ORDR_HIGH_PRIORITY, ORDR_HIGH_PRIORITY_NOTE = R1.ORDR_HIGH_PRIORITY_NOTE, PICK_RELEASED = R1.PICK_RELEASED" & vbCrLf _
@@ -1615,9 +1615,20 @@ Public Class WHFLB128
             & "   Update " & SOTPICKX & " Set ORDR_CNT_PICK = " & vbCrLf _
             & "    (Select Count (*) from SOTPICK1 where SHIP_BOL_NO = R1.SHIP_BOL_NO and SOTPICK1.PICK_STATUS = 'P')" & vbCrLf _
             & "    where SHIP_BOL_NO = R1.SHIP_BOL_NO;" & vbCrLf _
-            & "   Update " & SOTPICKX & " Set ORDR_CNT_CART = " & vbCrLf _
-            & "    (Select Count (*) from SOTCART1,SOTPICK1 where SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO and SOTPICK1.PICK_STATUS = 'P')" & vbCrLf _
-            & "    where SHIP_BOL_NO = R1.SHIP_BOL_NO;" & vbCrLf _
+            & "      if r1.SHIP_BOL_NO_CONS is null then 
+                Update " & SOTPICKX & " Set ORDR_CNT_CART = 
+                (Select Count (*) from SOTCART1,SOTPICK1 where SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO and SOTPICK1.PICK_STATUS = 'P')
+                where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                else
+                Update " & SOTPICKX & " set ORDR_CNT_CART = 
+                (Select Count (*) from SOTCARM1,SOTPICK1, SOTSHIP1 
+                    where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO 
+                    and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    and SOTSHIP1.SHIP_BOL_NO_REV is null
+                    and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO
+                    and SOTSHIP1.ORDR_GROUP_NO in (select distinct ordr_group_no FROM SOTCARM2,SOTORDR1 WHERE CART_NO = SOTCARM1.CART_NO AND SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO))
+                    where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                end if;" & vbCrLf _
             & "  End Loop;" & vbCrLf _
             & " End;" & vbCrLf _
             & "End;"
