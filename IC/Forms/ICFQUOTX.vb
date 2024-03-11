@@ -1376,7 +1376,9 @@ Public Class ICFQUOTX
                     Dim ext As String = getFileExt(FILENAME)
                     Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
                     Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
-                    Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
+                    Dim HASHVALUE As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                    'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
+                    Dim LINEPFX As String = $"https://vandaledocs.azurewebsites.net/Documents/{HASHVALUE}"
                     My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
                 Else
                     Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
@@ -1392,8 +1394,9 @@ Public Class ICFQUOTX
                         Dim ext As String = getFileExt(FILENAME)
                         Dim SESSION_NO As String = grow.Cells.Item("SESSION_NO").Text
                         Dim FILE_NO As String = grow.Cells.Item("FILE_NO").Text
-                        Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
-
+                        Dim HASHVALUE As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                        'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}.{ext}"
+                        Dim LINEPFX As String = $"https://vandaledocs.azurewebsites.net/Documents/{HASHVALUE}"
                         clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
                     Next
                 Else

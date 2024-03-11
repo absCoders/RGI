@@ -1588,7 +1588,8 @@ Public Class ICFQUOTV
                     Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
                     Dim HASHVALUE As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
                     'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
-                    Dim LINEPFX As String = $"https://docs.vandalequotes.com/{HASHVALUE}{ext}{random}"
+                    'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{HASHVALUE}{ext}{random}"
+                    Dim LINEPFX As String = $"https://vandaledocs.azurewebsites.net/Documents/{HASHVALUE}"
                     My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
                 Else
                     Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
@@ -1607,7 +1608,8 @@ Public Class ICFQUOTV
                         Dim FILE_NO As String = grow.Cells.Item("FILE_NO").Text
                         Dim HASHVALUE As String = grow.Cells.Item("HASHVALUE").Text
                         'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{SESSION_NO}-{FILE_NO}{ext}"
-                        Dim LINEPFX As String = $"https://docs.vandalequotes.com/{HASHVALUE}{ext}{random}"
+                        'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{HASHVALUE}{ext}{random}"
+                        Dim LINEPFX As String = $"https://vandaledocs.azurewebsites.net/Documents/{HASHVALUE}"
 
                         clipbrd = clipbrd & FILENAME & vbCrLf & LINEPFX & vbCrLf & vbCrLf
                     Next
@@ -4326,7 +4328,8 @@ Public Class ICFQUOTV
             Dim DESCHASH As String = ""
 
             Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/"
-            Dim LINEPFX_NEW As String = "https://docs.vandalequotes.com/"
+            'Dim LINEPFX_NEW As String = "https://docs.vandalequotes.com/"
+            Dim LINEPFX_NEW As String = "https://vandaledocs.azurewebsites.net/Documents/"
 
             Dim SESSION_NO As String = ASCMAIN1.Next_Control_No("ICTQUOH1.SESSION_NO")
             Dim FILE_NO As Integer = 0
@@ -4695,7 +4698,8 @@ Public Class ICFQUOTV
                         sw.WriteLine(rowICTQUOH2.Item("SALES_DIVISION_NAME") & " - " & rowICTQUOH2.Item("SUB_BODY_DESC") & " - " & rowICTQUOH2.Item("FABRIC_DESC"))
                         If chkNewLinks.Checked Then
                             'sw.WriteLine($"{LINEPFX_NEW}{rowICTQUOH2.Item("SESSION_NO").ToString & String.Empty}-{rowICTQUOH2.Item("FILE_NO").ToString & String.Empty}.pdf")
-                            sw.WriteLine($"{LINEPFX_NEW}{rowICTQUOH2.Item("HASHVALUE")}.pdf")
+                            'sw.WriteLine($"{LINEPFX_NEW}{rowICTQUOH2.Item("HASHVALUE")}.pdf")
+                            sw.WriteLine($"{LINEPFX_NEW}{rowICTQUOH2.Item("HASHVALUE")}")
                         Else
                             sw.WriteLine(LINEPFX & rowICTQUOH2.Item("HASHVALUE"))
                         End If

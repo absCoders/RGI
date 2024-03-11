@@ -3752,7 +3752,7 @@ Partial Class ICFQUOTV
         Me.UltraLabel9.Name = "UltraLabel9"
         Me.UltraLabel9.Size = New System.Drawing.Size(56, 15)
         Me.UltraLabel9.TabIndex = 227
-        Me.UltraLabel9.Text = "24.03.02"
+        Me.UltraLabel9.Text = "24.03.10"
         '
         'btnByDate
         '
