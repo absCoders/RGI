@@ -6,7 +6,7 @@ Public Class ICFCACT1
     Private selectedRowCount As Integer = 0
     Private selectedStylesList As New HashSet(Of String)
     Private SLQColumnsList As String = ""
-    Dim SkipCols As String = "PERIOD,ACTIVITY,PO_REFERENCE"
+    Private SkipCols As String = "PERIOD,ACTIVITY,PO_REFERENCE,ORIG_PERIOD"
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -71,6 +71,7 @@ Public Class ICFCACT1
             Case "Cancel"
                 selectedStylesList.Clear()
                 SelectedStyles.Text = String.Empty
+                SLQColumnsList = ""
 
             Case "Refresh"
                 If MessageBox.Show($"Do you want to Refresh?") = DialogResult.No Then
@@ -126,6 +127,7 @@ Public Class ICFCACT1
         Set_Read_Only(UltraGroupBox1, ScreenMode)
         cmdMulti.Visible = ScreenMode
         grdICTCACTX.Visible = False
+        UltraLabel2.Visible = ScreenMode
 
         If ScreenMode Then
         Else
@@ -169,6 +171,7 @@ Public Class ICFCACT1
     End Sub
 
     Private Sub Generate()
+        UpdateSelectedStylesFromTextbox()
         ASCMAIN1.sql = $"select * from (
                                 select ICTIREC1.OPS_YYYYPP PERIOD, 'Received' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
                                 from POTORDR1, ICTIREC1, ICTIREC2
@@ -217,32 +220,39 @@ Public Class ICFCACT1
         'dst.Tables("ICTCACTX").Columns("BALANCE").Expression = balexpr.Substring(2)
 
         ASCMAIN1.sql = $"select * from (
-                        select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
+                        select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
                         from POTORDR1, ICTIREC1, ICTIREC2
                         where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                         and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
                         and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
-                        group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                        group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE, ICTIREC1.OPS_YYYYPP
                         ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
 
 
         Fill_Records("ICTCACTB", "", True, ASCMAIN1.sql)
-
+        Dim lastpoRef As String = String.Empty 'use this to add the forcedrow to the last poref
         'add a row after every shipment record
         For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted' or ACTIVITY = 'Received'", "PERIOD,ACTIVITY,PO_REFERENCE")
             Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
             Dim forcerow As Boolean = False
             Dim OrderBy As String = ""
             rowdist.ItemArray = row.ItemArray
-
+            Dim currentPORef As String = If(IsDBNull(row("PO_REFERENCE")), String.Empty, row("PO_REFERENCE").ToString())
+            If Not String.IsNullOrEmpty(currentPORef) And row("ACTIVITY") = "Received" Then
+                lastpoRef = currentPORef
+            End If
 forcerow_here:
             If rowdist("ACTIVITY") = "Adjusted" Then
-                OrderBy = "PERIOD desc"
+                OrderBy = "ORIG_PERIOD desc"
             End If
             For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'", OrderBy)
                 Dim updaterow As Boolean = False
                 Dim bal As Integer = 0
+                Dim poref = balrow("PO_REFERENCE").ToString()
                 If rowdist("ACTIVITY") = "Received" And rowdist("PO_REFERENCE") <> balrow("PO_REFERENCE") Then
+                    Continue For
+                End If
+                If forcerow And lastpoRef <> balrow("PO_REFERENCE") Then
                     Continue For
                 End If
                 For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
@@ -257,8 +267,6 @@ forcerow_here:
                 For Each col As DataColumn In dst.Tables("ICTCACTB").Columns
                     If Not SkipCols.Contains(col.ColumnName) Then
                         If (Val(balrow(col.ColumnName) & "") > 0 Or Val(rowdist(col.ColumnName) & "") <> 0) Then
-
-
                             balrow("PERIOD") = row("PERIOD")
                             If Val(balrow(col.ColumnName) & "") > (Val(rowdist(col.ColumnName) & "") * -1) Or forcerow Then
                                 balrow(col.ColumnName) = Val(balrow(col.ColumnName) & "") + Val(rowdist(col.ColumnName) & "")
@@ -289,7 +297,13 @@ forcerow_here:
                         Next
                     Next
                     If Not updated Then
-                        dst.Tables("ICTCACTX").ImportRow(balrow)
+                        If Not forcerow Then
+                            dst.Tables("ICTCACTX").ImportRow(balrow)
+                            'lastpoRef = balrow("PO_REFERENCE")
+                        Else
+                            balrow("PO_REFERENCE") = lastpoRef 'need to combine with prev balrow
+                            dst.Tables("ICTCACTX").ImportRow(balrow)
+                        End If
                     End If
                 End If
             Next
@@ -405,9 +419,26 @@ forcerow_here:
 #End Region
     Private Sub UpdateSelectedStylesTextBox()
         Dim stylesText As String = String.Join(", ", selectedStylesList)
-        Dim heading As String = "Selected Styles: " & vbCrLf
-        SelectedStyles.Text = heading & stylesText
+        SelectedStyles.Text = stylesText
     End Sub
+    Private Sub UpdateSelectedStylesFromTextbox()
+        Dim stylesText As String = SelectedStyles.Text
+        Dim stylesArray As String() = stylesText.Split(New Char() {","c}, StringSplitOptions.RemoveEmptyEntries)
+
+        selectedStylesList.Clear()
+        SLQColumnsList = ""
+
+        For Each style As String In stylesArray
+            Dim trimmedStyle As String = style.Trim()
+            selectedStylesList.Add(trimmedStyle)
+            If SLQColumnsList.Length > 0 Then
+                SLQColumnsList &= ","
+            End If
+            SLQColumnsList &= "'" & trimmedStyle & "'"
+        Next
+        UpdateSelectedStylesTextBox()
+    End Sub
+
     Private Sub cmdMulti_Click(sender As System.Object, e As System.EventArgs) Handles cmdMulti.Click
         ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL("STYLE_CODE")
         ASCMAIN1.CodeSelector.SQL &= " where CUST_CODE ='" & Absx1.txtFor("CUST_CODE").Text & "'"
@@ -446,5 +477,4 @@ forcerow_here:
             Next
         End With
     End Sub
-
 End Class
