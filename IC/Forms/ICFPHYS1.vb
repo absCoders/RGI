@@ -154,6 +154,13 @@ Public Class ICFPHYS1
                 End If
             Next
 
+            If ASCMAIN1.CLIENT = "RGI" Then
+                ASCMAIN1.sql = "Truncate table ICTPHYC1_RECNT"
+                ASCDATA1.ExecuteSQL()
+            End If
+
+
+
             ASCMAIN1.Progress("-", "Snapshot")
             ASCMAIN1.sql = $"Insert into WHTLOCB0 ({COLS_LOCB1}, BOOK_INVTY_ADJ) 
                 Select {COLS_LOCB1}, 0 BOOK_INVTY_ADJ

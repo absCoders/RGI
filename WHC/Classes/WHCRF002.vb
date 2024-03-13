@@ -129,7 +129,7 @@
                 Case "VERIFY"
                     If SCANTEXT = "Y" Then
                         If tbl.Rows.Count = 0 Then
-                            CreateResponse("", "R", "No Cases")
+                            CreateResponse("SCAN_LPN", "R", "No Cases on last update")
                             Exit Select
                         End If
 
