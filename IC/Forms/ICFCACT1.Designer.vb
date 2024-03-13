@@ -60,6 +60,7 @@ Partial Class ICFCACT1
         Me.SelectedStyles = New System.Windows.Forms.TextBox()
         Me.grdICTCACTX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.cmdMulti = New Infragistics.Win.Misc.UltraButton()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -208,22 +209,22 @@ Partial Class ICFCACT1
         '
         'SplitContainer2.Panel1
         '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.UltraLabel2)
         Me.SplitContainer2.Panel1.Controls.Add(Me.SelectedStyles)
         '
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTCACTX)
         Me.SplitContainer2.Size = New System.Drawing.Size(747, 473)
-        Me.SplitContainer2.SplitterDistance = 82
+        Me.SplitContainer2.SplitterDistance = 118
         Me.SplitContainer2.TabIndex = 15
         '
         'SelectedStyles
         '
-        Me.SelectedStyles.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SelectedStyles.Location = New System.Drawing.Point(0, 0)
+        Me.SelectedStyles.Location = New System.Drawing.Point(0, 21)
         Me.SelectedStyles.Multiline = True
         Me.SelectedStyles.Name = "SelectedStyles"
-        Me.SelectedStyles.Size = New System.Drawing.Size(747, 82)
+        Me.SelectedStyles.Size = New System.Drawing.Size(747, 94)
         Me.SelectedStyles.TabIndex = 0
         '
         'grdICTCACTX
@@ -297,15 +298,25 @@ Partial Class ICFCACT1
         Me.grdICTCACTX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTCACTX.Location = New System.Drawing.Point(0, 0)
         Me.grdICTCACTX.Name = "grdICTCACTX"
-        Me.grdICTCACTX.Size = New System.Drawing.Size(747, 387)
+        Me.grdICTCACTX.Size = New System.Drawing.Size(747, 351)
         Me.grdICTCACTX.TabIndex = 165
-        Me.grdICTCACTX.Text = "Volume control"
+        Me.grdICTCACTX.Text = "Volume Control"
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(747, 473)
+        '
+        'UltraLabel2
+        '
+        Me.UltraLabel2.AutoSize = True
+        Me.UltraLabel2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.UltraLabel2.Location = New System.Drawing.Point(-1, 3)
+        Me.UltraLabel2.Name = "UltraLabel2"
+        Me.UltraLabel2.Size = New System.Drawing.Size(125, 18)
+        Me.UltraLabel2.TabIndex = 1
+        Me.UltraLabel2.Text = "Selected Styles:"
         '
         'UltraGroupBox1
         '
@@ -454,4 +465,5 @@ Partial Class ICFCACT1
     Friend WithEvents UltraTabbedMdiManager1 As UltraWinTabbedMdi.UltraTabbedMdiManager
     Friend WithEvents cmdMulti As Misc.UltraButton
     Friend WithEvents grdICTCACTX As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraLabel2 As Misc.UltraLabel
 End Class
