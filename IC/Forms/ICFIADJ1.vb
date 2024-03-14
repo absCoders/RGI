@@ -1342,26 +1342,26 @@ Public Class ICFIADJ1
                 End With
                 dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
 
-                rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
-                With rowICTIADJ2
-                    .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
-                    .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
-                    .Item("STYLE_CODE") = row("STYLE_CODE")
-                    .Item("STYLE_DESC") = row("STYLE_DESC")
-                    .Item("COLOR_CODE") = "040"
-                    .Item("COLOR_DESC") = "SILVER"
-                    .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") '* -1  'WHSE_TRAN_QTY
-                    .Item("STYLE_COST") = STYLE_COST
-                    '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
-                    .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
-                    .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
-                    .Item("OPS_YYYYPP") = ASCMAIN1.CYP
-                    .Item("LOCATION_CODE") = row("LOCATION_CODE")
-                    .Item("BAR_CODE") = row("BAR_CODE")
-                    .Item("ADJ_REF") = ""
-                    ' .Item("ADJ_REF") = row("SHEET") ' TEMP
-                End With
-                dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
+                'rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
+                'With rowICTIADJ2
+                '    .Item("ADJ_NO") = Absx1.CtlFor("ADJ_NO").Text
+                '    .Item("ADJ_LNO") = Val(dst.Tables("ICTIADJ2").Compute("Max(ADJ_LNO)", "") & "") + 1
+                '    .Item("STYLE_CODE") = row("STYLE_CODE")
+                '    .Item("STYLE_DESC") = row("STYLE_DESC")
+                '    .Item("COLOR_CODE") = "040"
+                '    .Item("COLOR_DESC") = "SILVER"
+                '    .Item("ADJ_QTY") = Val(row("LOCATION_QTY") & "") '* -1  'WHSE_TRAN_QTY
+                '    .Item("STYLE_COST") = STYLE_COST
+                '    '.Item("STYLE_COST") = Val(row("STYLE_COST") & "") ' TEMP
+                '    .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
+                '    .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
+                '    .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                '    .Item("LOCATION_CODE") = row("LOCATION_CODE")
+                '    .Item("BAR_CODE") = row("BAR_CODE")
+                '    .Item("ADJ_REF") = ""
+                '    ' .Item("ADJ_REF") = row("SHEET") ' TEMP
+                'End With
+                'dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
             End If
 
         Next
