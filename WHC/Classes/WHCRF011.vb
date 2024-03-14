@@ -17,6 +17,7 @@
     Dim UNITS_MOVED As Integer
     Dim TICKET_NO1 As String
     Dim BAR_CODE_LOCATION As String
+    Dim HOLD_PROMPT As String
     Dim Mode As String
     Dim colors As String = ""
 
@@ -205,6 +206,12 @@
                         ClearScanner()
                         CreateResponse("SCAN_LOC", "YELLOW", DisplayMsg("Move Cancelled, Scan  location"))
                         Exit Select
+                    ElseIf SCANTEXT = "OK" Then
+                        CreateResponse("VERIFY", "B", DisplayMsg(HOLD_PROMPT))
+                        Exit Select
+                    ElseIf SCANTEXT = "NEW_QTY" Then
+                        CreateResponse("", "G", DisplayMsg("Re-enter Qty for " & UPC_CODE))
+                        Exit Select
                     ElseIf SCANTEXT.Contains("*") Then
                         Dim S() As String
                         S = SCANTEXT.Split("*")
@@ -229,6 +236,18 @@
                     Dim CARTON_PACK_QTY As String = ASCDATA1.GetDataValue
                     UNITS_MOVED = UNITS_MOVED + Val(CARTON_PACK_QTY) * CASES_MOVED
 
+                    ASCMAIN1.sql = "Select LOCATION_QTY from WHTLOCB1 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "' and WHSE_CODE = '" & G.WHSE_CODE & "' and LOCATION_CODE = '" & LOCATION_CODE & "'"
+                    Dim LOC_QTY As String = ASCDATA1.GetDataValue
+                    If UNITS_MOVED > Val(LOC_QTY & "") And Mode = "M2G" Then
+                        'Warning
+                        Dim hold As String = AppStates(AppState)
+                        AppStates(AppState) = "Warning About to create Negative O/H|OK|NEW_QTY|"
+                        CreateResponse("", "RED", DisplayMsg("Trying to move " & UNITS_MOVED & " - ONLY " & LOC_QTY & " O/H"))
+                        AppStates(AppState) = hold
+                        HOLD_PROMPT = "Entered " & SCANTEXT & " Cases, Carton pack: " & CARTON_PACK_QTY & ", Units to move: " & UNITS_MOVED
+                        Exit Select
+                    End If
+
                     CreateResponse("VERIFY", "B", DisplayMsg("Entered " & SCANTEXT & " Cases, Carton pack: " & CARTON_PACK_QTY & ", Units to move: " & UNITS_MOVED))
                     'Exit Select
 
@@ -236,6 +255,12 @@
                     If SCANTEXT = "CANCEL" Then
                         ClearScanner()
                         CreateResponse("SCAN_LOC", "YELLOW", DisplayMsg("Move Cancelled, Scan  location"))
+                        Exit Select
+                    ElseIf SCANTEXT = "OK" Then
+                        CreateResponse("VERIFY", "B", DisplayMsg(HOLD_PROMPT))
+                        Exit Select
+                    ElseIf SCANTEXT = "NEW_QTY" Then
+                        CreateResponse("", "G", DisplayMsg("Re-enter Qty for " & UPC_CODE))
                         Exit Select
                     Else
                         'Can we have more than 99 loose units to count in a location?
@@ -245,8 +270,17 @@
                         End If
                         UNITS_MOVED = Val(SCANTEXT)
 
-                        'ASCMAIN1.sql = "Select CARTON_PACK_QTY from ICTSTYL1 where STYLE_CODE = '" & STYLE_CODE & "'"
-                        'Dim CARTON_PACK_QTY As String = ASCDATA1.GetDataValue
+                        ASCMAIN1.sql = "Select LOCATION_QTY from WHTLOCB1 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "' and WHSE_CODE = '" & G.WHSE_CODE & "' and LOCATION_CODE = '" & LOCATION_CODE & "'"
+                        Dim LOC_QTY As String = ASCDATA1.GetDataValue
+                        If UNITS_MOVED > Val(LOC_QTY & "") And Mode = "M2G" Then
+                            'Warning
+                            Dim hold As String = AppStates(AppState)
+                            AppStates(AppState) = "Warning About to create Negative O/H|OK|NEW_QTY|"
+                            CreateResponse("", "RED", DisplayMsg("Trying to move " & UNITS_MOVED & " - ONLY " & LOC_QTY & " O/H"))
+                            AppStates(AppState) = hold
+                            HOLD_PROMPT = "Entered " & SCANTEXT & "Scanned " & SCANTEXT & " Units to Move"
+                            Exit Select
+                        End If
 
                         CreateResponse("VERIFY", "B", DisplayMsg("Scanned " & SCANTEXT & " Units to Move"))
                     End If

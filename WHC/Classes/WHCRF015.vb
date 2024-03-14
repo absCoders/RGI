@@ -19,6 +19,7 @@
     Dim BAR_CODE_LOCATION As String
     Dim colors As String = ""
     Dim locations As String = ""
+    Dim PAGE_NO As Integer = 0
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -26,7 +27,7 @@
         Me.MENU_ITEM_TYPE = "C"
         Me.MENU_ITEM_OBJECT = "WHCRF015"
 
-        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|EXTRA|") ' BLUE
+        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|NEXT|EXTRA|") ' BLUE
         AppStates.Add("SCAN_COLOR", "Select a Color from List |CANCEL|")
 
         AppState = "SCAN_UPC"
@@ -52,6 +53,11 @@
                 Case "SCAN_UPC"
                     If SCANTEXT = "EXTRA" Then
                         locations = FINDUPC(STYLE_CODE, COLOR_CODE, True)
+                        PAGE_NO = 0
+                        CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
+                        Exit Select
+                    ElseIf SCANTEXT = "NEXT" Then
+                        locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                         CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
                         Exit Select
                     End If
@@ -69,6 +75,7 @@
                         UPC_CODE = CheckResponse("UPC_CODE")
                         STYLE_CODE = CheckResponse("STYLE_CODE")
                         COLOR_CODE = CheckResponse("COLOR_CODE")
+                        PAGE_NO = 0
                         locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                         CreateResponse("", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
                         Exit Select
@@ -98,6 +105,7 @@
                             COLOR_CODE = CheckResponse("COLOR_CODE")
                         End If
                     End If
+                    PAGE_NO = 0
                     locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                     CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
 
@@ -116,21 +124,29 @@
                        & " and WHTLOCB1.WHSE_CODE = '" & G.WHSE_CODE & "'" _
                        & " and WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" _
                        & " and WHTLOCB1.COLOR_CODE = '" & COLOR_CODE & "'" _
-                       & " order by WHTLOCB1.LOCATION_QTY DESC, WHTLOCB1.LAST_DATE DESC"
+                       & " order by abs(sign(WHTLOCB1.LOCATION_QTY)) DESC, WHTLOCB1.LOCATION_QTY DESC, WHTLOCB1.LAST_DATE DESC"
         If EXTRA Then
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E')", "WHTLOCM1.LOCATION_CODE in ('00-RCV','00-RTS','00-SHP','00-DST')")
         End If
-        rows = ASCDATA1.GetDataTable.Select("", "LOCATION_QTY DESC")
+        rows = ASCDATA1.GetDataTable.Select("")
         Dim cnt As Int32 = 0
+        Dim rownum As Int32 = 0
         If rows.Length > 0 Then
             For Each ROW As DataRow In rows
-                cnt += 1
-                If cnt > 5 Then
-                    locations = locations & vbCrLf & "More ..." & vbCrLf
-                    Exit For
+                rownum += 1
+                If PAGE_NO * 5 <= rownum Then
+                    cnt += 1
+                    If cnt > 5 Then
+                        locations = locations & vbCrLf & "More ..." & vbCrLf
+                        PAGE_NO += 1
+                        Exit For
+                    End If
+                    locations = locations & If(cnt = 1, "", vbCrLf & " ") & ROW.Item("WHSE_CODE") & ":" & ROW.Item("LOCATION_CODE") & " #" & ROW.Item("LOCATION_QTY") & " "
                 End If
-                locations = locations & If(cnt = 1, "", vbCrLf & " ") & ROW.Item("WHSE_CODE") & ":" & ROW.Item("LOCATION_CODE") & " #" & ROW.Item("LOCATION_QTY") & " "
             Next
+        End If
+        If cnt < 6 Then
+            PAGE_NO = 0
         End If
 
         Return locations
