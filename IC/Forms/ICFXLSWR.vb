@@ -519,6 +519,7 @@ Public Class ICFXLSWR
             Next
 
             If Not (listPriceMaintenanceMode) Then
+                dst.Tables("ICTXLSW1").Clear() '?
                 For Each row As DataRow In dst.Tables("APTVENDX").Select("SEL='1'", "VEND_CODE")
                     Dim VEND_CODE As String = row.Item("VEND_CODE")
 
@@ -541,6 +542,7 @@ Public Class ICFXLSWR
                             .Item("XLS_STATUS") = IIf(calcCodeMaintenanceMode, "C", "G") ' G = GENERATED, R = REPLIED, D = DELETED
                             .Item("XLS_DESC") = Mid(STYLE_CLASS_CODEs, 2)
                             .Item("REPLY_BY_DATE") = dteREPLY_BY_DATE.Value
+                            .Item("SEASON_CODE") = "2025S"
                             .Item("XLS_TYPE") = "R"
                             .Item("XLS_IMP_NO") = XLS_IMP_NO
                             .Item("XLS_SEQ_NO") = XLS_SEQ_NO

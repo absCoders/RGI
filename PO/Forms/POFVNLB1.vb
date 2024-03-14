@@ -1,7 +1,9 @@
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class POFVNLB1
     Dim POTVNLB1 As String 'TABLE_NAME
     Dim sqlPOTVNLB1 As String
-
+    Dim subUPCSupport As Boolean = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI")
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -28,31 +30,31 @@ Public Class POFVNLB1
 
             POTVNLB1 = ASCMAIN1.Temp_Table(ASCMAIN1.sql)
 
-
             ASCMAIN1.sql = "Select * from " & POTVNLB1
             Create_TDA(.Tables.Add("POTVNLB1"), POTVNLB1, "**", 0, True)
             ' Create_TDA(.Tables.Add, "POTBATC1", "**", 0, True, "V", 1)
 
+            If subUPCSupport Then
+                ASCMAIN1.sql = $"Select ICTXLSPS.* 
+                    from ICTXLSPS, {POTVNLB1} POTVNLB1
+                    where ICTXLSPS.STYLE_CODE = POTVNLB1.STYLE_CODE 
+                    AND ICTXLSPS.COLOR_CODE = POTVNLB1.COLOR_CODE"
+                Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False)
+            End If
+
         End With
-
-
 
         grdPOTVNLB1.DataSource = dst.Tables("POTVNLB1")
 
         ' Create_Summary(grdPOTVNLB1, "STYLE_CODE", "Count")
 
         With grdPOTVNLB1.DisplayLayout.Bands(0)
-            '.Columns("STYLE_CODE").Header.Fixed = True
-            '.Columns("STYLE_DESC").Header.Fixed = True
-            '.Columns("COLOR_CODE").Header.Fixed = True
-            '.Columns("STYLE_STATUS").Header.Fixed = True
-            '.Columns("STYLE_COLOR_STATUS").Header.Fixed = True
-            ' .Columns("COLOR_DESC").Header.Fixed = True
+
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
                 gcol.Header.Appearance.BackColor2 = Drawing.Color.LightPink
- 
+
             Next
         End With
 
@@ -60,7 +62,12 @@ Public Class POFVNLB1
         spl.Panel1Collapsed = True
 
 
- 
+        If subUPCSupport Then
+            grdICTXLSPS.DataSource = dst.Tables("ICTXLSPS")
+            Create_Summary(grdICTXLSPS, "SET_LNO", "Count")
+            Sort_grdColumns(grdICTXLSPS, "SET_LNO", True)
+            splSets.Panel2Collapsed = True
+        End If
 
 
 
@@ -122,6 +129,14 @@ Public Class POFVNLB1
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
+        If subUPCSupport Then
+            With grdICTXLSPS.DisplayLayout.Override
+                .AllowAddNew = UltraWinGrid.AllowAddNew.No
+                .AllowUpdate = DefaultableBoolean.False
+                .AllowDelete = DefaultableBoolean.False
+            End With
+        End If
+
         If ScreenMode Then
         Else
             'Clear_Record()
@@ -135,6 +150,11 @@ Public Class POFVNLB1
         For Each TABLE_NAME As String In New String() {"POFVNLB1"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
+
+        If subUPCSupport Then
+            dst.Tables("ICTXLSPS").Rows.Clear()
+        End If
+
         EnforceConstraints(True)
 
         ' Absx1.txtFor("CUST_CODE").Text = ""
@@ -162,6 +182,7 @@ Public Class POFVNLB1
             ASCDATA1.ExecuteSQL()
 
             Fill_Records("POTVNLB1")
+            Fill_Records("ICTXLSPS")
         End If
 
 
@@ -193,6 +214,9 @@ Public Class POFVNLB1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdPOTVNLB1, "SSBS", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Update Column")
+        If subUPCSupport Then
+            Load_Popup_Menu(grdICTXLSPS, "B", "Style Master File")
+        End If
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -277,7 +301,7 @@ Public Class POFVNLB1
 #End Region
 
     Sub Set_background_colors()
-  
+
 
     End Sub
 
@@ -310,5 +334,52 @@ Public Class POFVNLB1
 
     Private Sub UltraLabel7_Click(sender As System.Object, e As System.EventArgs) Handles UltraLabel7.Click
 
+    End Sub
+
+    Private Sub grdPOTVNLB1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdPOTVNLB1.AfterRowActivate
+        Setup_grdPOTORDR2_ActiveRow()
+    End Sub
+    Sub Setup_grdPOTORDR2_ActiveRow()
+
+        If (grdPOTVNLB1.ActiveRow Is Nothing) Then
+            splSets.Panel2Collapsed = True
+        Else
+            If subUPCSupport Then
+                Setup_Sub_UPC_Grid()
+            End If
+        End If
+
+    End Sub
+
+    Sub Setup_Sub_UPC_Grid()
+
+        Dim STYLE_CODE As String = grdPOTVNLB1.ActiveRow.Cells("STYLE_CODE").Value & ""
+        Dim COLOR_CODE As String = grdPOTVNLB1.ActiveRow.Cells("COLOR_CODE").Value & ""
+
+        Dim dvw As DataView = DirectCast(grdICTXLSPS.DataSource, DataTable).DefaultView
+        dvw.RowFilter = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+
+        splSets.Panel2Collapsed = Not Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE)
+
+        If Not splSets.Panel2Collapsed Then
+            Dim PO_ORDER_NO As Int32 = Val(grdPOTVNLB1.ActiveRow.Cells("PO_ORDER_NO").Value & "")
+            Sort_grdColumns(grdICTXLSPS, "SET_LNO")
+            grdICTXLSPS.Text = $"Sub UPCS for Style/Color {STYLE_CODE}/{COLOR_CODE} on PO {PO_ORDER_NO}"
+        End If
+
+    End Sub
+
+    Function Line_Has_Sub_UPCs(STYLE_CODE As String, COLOR_CODE As String) As Boolean
+        Return dst.Tables("ICTXLSPS").Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'").Count > 0
+    End Function
+
+    Private Sub grdPOTVNLB1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTVNLB1.InitializeRow
+        If subUPCSupport Then
+            Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & ""
+            Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & ""
+            If Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE) Then
+                e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Drawing.Color.Blue
+            End If
+        End If
     End Sub
 End Class
