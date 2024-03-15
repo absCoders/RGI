@@ -247,7 +247,7 @@ forcerow_here:
             End If
             For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'", OrderBy)
                 Dim updaterow As Boolean = False
-                Dim bal As Integer = 0
+                Dim distbal As Integer = 0, balbal As Integer = 0
                 Dim poref = balrow("PO_REFERENCE").ToString()
                 If rowdist("ACTIVITY") = "Received" And rowdist("PO_REFERENCE") <> balrow("PO_REFERENCE") Then
                     Continue For
@@ -257,10 +257,11 @@ forcerow_here:
                 End If
                 For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
                     If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
-                        bal += (Val(rowdist(col.ColumnName) & "") <> 0)
+                        distbal += (Val(rowdist(col.ColumnName) & "") <> 0)
+                        balbal += (Val(balrow(col.ColumnName) & "") <> 0)
                     End If
                 Next
-                If bal = 0 Then
+                If distbal = 0 And balbal = 0 Then
                     Continue For
                 End If
 
@@ -454,9 +455,11 @@ forcerow_here:
                     SLQColumnsList &= ",'" & STYLE_CODE & "' " & STYLE_CODE
                 Next
             End If
-            SLQColumnsList = SLQColumnsList.Substring(1)
+            If SLQColumnsList.Length > 0 Then
+                SLQColumnsList = SLQColumnsList.Substring(1)
+            End If
             UpdateSelectedStylesTextBox()
-        End If
+            End If
     End Sub
     Private Sub AdjustTableSchema(ByRef table As String, ByVal selectedStyles As HashSet(Of String))
         Dim baseColumns As New List(Of String) From {"PO_REFERENCE", "ACTIVITY", "PERIOD"} ' Add all your base column names here
