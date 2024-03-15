@@ -35,7 +35,12 @@ Public Class POFVNLB1
             ' Create_TDA(.Tables.Add, "POTBATC1", "**", 0, True, "V", 1)
 
             If subUPCSupport Then
-                ASCMAIN1.sql = $"Select ICTXLSPS.* 
+                ASCMAIN1.sql = $"Select DISTINCT ICTXLSPS.STYLE_CODE,
+                    ICTXLSPS.COLOR_CODE,
+                    ICTXLSPS.SET_LNO,
+                    ICTXLSPS.SET_PREFIX_DESC,
+                    ICTXLSPS.SET_ITEM_DESC,
+                    ICTXLSPS.SET_ITEM_UPC  
                     from ICTXLSPS, {POTVNLB1} POTVNLB1
                     where ICTXLSPS.STYLE_CODE = POTVNLB1.STYLE_CODE 
                     AND ICTXLSPS.COLOR_CODE = POTVNLB1.COLOR_CODE"
@@ -61,15 +66,12 @@ Public Class POFVNLB1
 
         spl.Panel1Collapsed = True
 
-
         If subUPCSupport Then
             grdICTXLSPS.DataSource = dst.Tables("ICTXLSPS")
             Create_Summary(grdICTXLSPS, "SET_LNO", "Count")
             Sort_grdColumns(grdICTXLSPS, "SET_LNO", True)
             splSets.Panel2Collapsed = True
         End If
-
-
 
     End Sub
 
@@ -99,7 +101,8 @@ Public Class POFVNLB1
                 Load_Record()
                 Mode_Settings(True)
 
-
+            Case "Export w/ Sets"
+                Generate_Custom_Export()
             Case "Done"
                 Mode_Settings(False)
 
@@ -122,6 +125,7 @@ Public Class POFVNLB1
                 With .Groups("Screen Control")
                     .Items("Load").Settings.Enabled = not_iScreenMode
                     .Items("Done").Settings.Enabled = iScreenMode
+                    .Items("Export w/ Sets").Settings.Enabled = iScreenMode
                     .Items("Cancel").Visible = (ScreenMode And EntryMode = "E")
                 End With
             End With
@@ -204,9 +208,6 @@ Public Class POFVNLB1
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
-
-
-
 
 #End Region
 
@@ -295,6 +296,14 @@ Public Class POFVNLB1
                 If rowICTSTYL1 IsNot Nothing Then
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
+            Case "Style Master File"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
+                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                If rowICTSTYL1 IsNot Nothing Then
+                    Dim keys As New Dictionary(Of String, Object)
+                    keys.Add("STYLE_CODE", STYLE_CODE)
+                    Context_Launch("View", keys, e.Tool.Key, "ICTSTYL1")
+                End If
         End Select
     End Sub
 
@@ -339,6 +348,7 @@ Public Class POFVNLB1
     Private Sub grdPOTVNLB1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdPOTVNLB1.AfterRowActivate
         Setup_grdPOTORDR2_ActiveRow()
     End Sub
+
     Sub Setup_grdPOTORDR2_ActiveRow()
 
         If (grdPOTVNLB1.ActiveRow Is Nothing) Then
@@ -353,6 +363,7 @@ Public Class POFVNLB1
 
     Sub Setup_Sub_UPC_Grid()
 
+        Dim PO_ORDER_NO As String = grdPOTVNLB1.ActiveRow.Cells("PO_ORDER_NO").Value & ""
         Dim STYLE_CODE As String = grdPOTVNLB1.ActiveRow.Cells("STYLE_CODE").Value & ""
         Dim COLOR_CODE As String = grdPOTVNLB1.ActiveRow.Cells("COLOR_CODE").Value & ""
 
@@ -362,7 +373,6 @@ Public Class POFVNLB1
         splSets.Panel2Collapsed = Not Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE)
 
         If Not splSets.Panel2Collapsed Then
-            Dim PO_ORDER_NO As Int32 = Val(grdPOTVNLB1.ActiveRow.Cells("PO_ORDER_NO").Value & "")
             Sort_grdColumns(grdICTXLSPS, "SET_LNO")
             grdICTXLSPS.Text = $"Sub UPCS for Style/Color {STYLE_CODE}/{COLOR_CODE} on PO {PO_ORDER_NO}"
         End If
@@ -375,11 +385,121 @@ Public Class POFVNLB1
 
     Private Sub grdPOTVNLB1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTVNLB1.InitializeRow
         If subUPCSupport Then
+            Dim PO_ORDER_NO As String = e.Row.Cells("PO_ORDER_NO").Value & ""
             Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & ""
             Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & ""
             If Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE) Then
                 e.Row.Cells("STYLE_CODE").Appearance.ForeColor = Drawing.Color.Blue
             End If
         End If
+    End Sub
+
+    Sub Generate_Custom_Export()
+        ASCMAIN1.Progress("Now Creating Workbook")
+
+        Dim r As Integer = 0
+        Dim c As Integer = 0
+
+        Dim ssgx As String = ASCMAIN1.Folders("Work") & "Label_Requirements_" & XNO & ".xlsX"
+
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
+        Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+        Dim range As SpreadsheetGear.IRange = Nothing
+        Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing
+        Dim rangePasteTo As SpreadsheetGear.IRange = Nothing
+
+        Dim cdr As Integer = 0
+
+        Dim R0 As Integer = 1 ' 0 based starting row for headings just prior to data
+
+        Dim COLS As Integer = dst.Tables("POTVNLB1").Columns.Count
+        Dim ROWS As Integer = dst.Tables("POTVNLB1").Rows.Count
+
+        Dim cdc As Integer = -1
+
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "PO No"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Whse"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Color Code"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Style Code"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Style Desc"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Country"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "UPC Code"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Customer"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "UOM"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Cust SKU"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Cust SKU1"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Cust Style1"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Cust Color"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Cust ColorXX"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Label"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "RetIL"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "test"
+        cdc += 1 : worksheet.Cells(cdr, cdc).Value = "Vendor"
+
+        cdr += 1
+
+        For Each rowPOTVNLB1 As DataRow In dst.Tables("POTVNLB1").Select("", "PO_ORDER_NO,STYLE_CODE,COLOR_CODE")
+            cdc = -1
+            Dim PO_ORDER_NO As String = rowPOTVNLB1.Item("PO_ORDER_NO") & ""
+            Dim STYLE_CODE As String = rowPOTVNLB1.Item("STYLE_CODE") & ""
+            Dim COLOR_CODE As String = rowPOTVNLB1.Item("COLOR_CODE") & ""
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = PO_ORDER_NO
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("WHSE_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = COLOR_CODE
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = STYLE_CODE
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("STYLE_DESC")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("COUNTRY_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("UPC_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("CUST_NAME")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("STYLE_UOM")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("CUST_SKU")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = "'" & rowPOTVNLB1.Item("CUST_UPC")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("CUST_STYLE_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("CUST_COLOR_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("PO_QTY_OPN")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("LABEL_TYPE_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("CUST_SIZE_CODE")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("STYLE_RETAIL")
+            cdc += 1 : worksheet.Cells(cdr, cdc).Value = rowPOTVNLB1.Item("VEND_CODE")
+
+            If Line_Has_Sub_UPCs(STYLE_CODE, COLOR_CODE) Then
+
+                For Each rowICTXLSPS As DataRow In dst.Tables("ICTXLSPS").Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'", "SET_LNO")
+                    cdr += 1
+                    worksheet.Cells(cdr, 4).Value = rowICTXLSPS.Item("SET_PREFIX_DESC")
+                    worksheet.Cells(cdr, 5).Value = rowICTXLSPS.Item("SET_ITEM_DESC")
+                    worksheet.Cells(cdr, 6).Value = "'" & rowICTXLSPS.Item("SET_ITEM_UPC")
+                Next
+            End If
+            cdr += 1
+        Next
+
+        worksheet.Cells(0, 6).EntireColumn.NumberFormat = "0"
+        worksheet.Cells(0, 6).EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+        worksheet.UsedRange.Columns.AutoFit()
+        worksheet.Range(0, 0, 0, 18 - 1).Interior.Color = SpreadsheetGear.Colors.AliceBlue
+        worksheet.Cells(1, 0, 1 + cdr, 18 - 1).Interior.Color = SpreadsheetGear.Colors.GhostWhite
+
+
+        ' Headings
+        worksheet.Range(0, 0, 0, COLS - 1).AutoFilter()
+        For CX As Integer = 0 To COLS - 1
+            worksheet.Cells(0, CX).EntireColumn.ColumnWidth *= 1.25
+        Next
+
+        worksheet.Cells(1, 0).Activate()
+        worksheet.WindowInfo.FreezePanes = True
+
+        'worksheet.Protect("")
+
+        workbook.SaveAs(ssgx, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+        range = Nothing
+        worksheet = Nothing
+        workbook = Nothing
+
+        Show_Document(ssgx)
+
+        ASCMAIN1.Progress("")
+
     End Sub
 End Class
