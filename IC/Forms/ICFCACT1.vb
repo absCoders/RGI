@@ -454,9 +454,11 @@ forcerow_here:
                     SLQColumnsList &= ",'" & STYLE_CODE & "' " & STYLE_CODE
                 Next
             End If
-            SLQColumnsList = SLQColumnsList.Substring(1)
+            If SLQColumnsList.Length > 0 Then
+                SLQColumnsList = SLQColumnsList.Substring(1)
+            End If
             UpdateSelectedStylesTextBox()
-        End If
+            End If
     End Sub
     Private Sub AdjustTableSchema(ByRef table As String, ByVal selectedStyles As HashSet(Of String))
         Dim baseColumns As New List(Of String) From {"PO_REFERENCE", "ACTIVITY", "PERIOD"} ' Add all your base column names here
