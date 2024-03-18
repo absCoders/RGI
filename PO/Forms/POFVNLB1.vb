@@ -395,22 +395,21 @@ Public Class POFVNLB1
     End Sub
 
     Sub Generate_Custom_Export()
-        ASCMAIN1.Progress("Now Creating Workbook")
 
-        Dim r As Integer = 0
-        Dim c As Integer = 0
+        If grdPOTVNLB1.ActiveRow Is Nothing Or grdPOTVNLB1.ActiveRow.IsFilterRow Then
+            Exit Sub
+        End If
 
-        Dim ssgx As String = ASCMAIN1.Folders("Work") & "Label_Requirements_" & XNO & ".xlsX"
+        Dim PO_ORDER_NO As String = grdPOTVNLB1.ActiveRow.Cells("PO_ORDER_NO").Text
+
+        ASCMAIN1.Progress($"Now Creating Workbook for PO: {PO_ORDER_NO}")
+
+        Dim ssgx As String = ASCMAIN1.Folders("Work") & $"Label_Requirements_{PO_ORDER_NO}_{XNO}.xlsX"
 
         Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
         Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
-        Dim range As SpreadsheetGear.IRange = Nothing
-        Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing
-        Dim rangePasteTo As SpreadsheetGear.IRange = Nothing
 
         Dim cdr As Integer = 0
-
-        Dim R0 As Integer = 1 ' 0 based starting row for headings just prior to data
 
         Dim COLS As Integer = dst.Tables("POTVNLB1").Columns.Count
         Dim ROWS As Integer = dst.Tables("POTVNLB1").Rows.Count
@@ -440,7 +439,6 @@ Public Class POFVNLB1
 
         For Each rowPOTVNLB1 As DataRow In dst.Tables("POTVNLB1").Select("", "PO_ORDER_NO,STYLE_CODE,COLOR_CODE")
             cdc = -1
-            Dim PO_ORDER_NO As String = rowPOTVNLB1.Item("PO_ORDER_NO") & ""
             Dim STYLE_CODE As String = rowPOTVNLB1.Item("STYLE_CODE") & ""
             Dim COLOR_CODE As String = rowPOTVNLB1.Item("COLOR_CODE") & ""
             cdc += 1 : worksheet.Cells(cdr, cdc).Value = PO_ORDER_NO
@@ -493,9 +491,6 @@ Public Class POFVNLB1
         'worksheet.Protect("")
 
         workbook.SaveAs(ssgx, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
-        range = Nothing
-        worksheet = Nothing
-        workbook = Nothing
 
         Show_Document(ssgx)
 
