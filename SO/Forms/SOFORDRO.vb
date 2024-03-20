@@ -41,6 +41,8 @@ Public Class SOFORDRO
 
         SREP_CODE = Remote.SREP_CODE
 
+        setExcelOptions()
+
         Get_PARM("SOTPARM1")
         Dim SQLs As New System.Text.StringBuilder() With {.Length = 0}
 
@@ -221,6 +223,36 @@ Public Class SOFORDRO
             .Tables("SOTORDP2").Columns.Add("UPC_CODE", GetType(System.String))
             .Tables("SOTORDP2").Columns.Add("FACTORY_CODE", GetType(System.String))
 
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT")
+            SQLs.AppendLine("ORDR_NO,")
+            SQLs.AppendLine("ORDR_LNO,")
+            SQLs.AppendLine("STYLE_CODE,")
+            SQLs.AppendLine("STYLE_DESC,")
+            SQLs.AppendLine("COLOR_CODE,")
+            SQLs.AppendLine("ORDR_UNIT_PRICE,")
+            SQLs.AppendLine("STYLE_UOM,")
+            SQLs.AppendLine("ORDR_QTY,")
+            SQLs.AppendLine("ORDR_QTY AS ORDR_QTY_2")
+            SQLs.AppendLine("FROM SOTORDR2")
+            SQLs.AppendLine("where ORDR_NO = :PARM1")
+            ASCMAIN1.sql = SQLs.ToString
+            Create_TDA(.Tables.Add, "SOTORDX9", "**", 0, False, "V", 2)
+            With .Tables("SOTORDX9").Columns
+                .Add("UPC_CODE", GetType(System.String))
+                .Add("BOX_QTY", GetType(System.Int64))
+                .Add("CART_QTY", GetType(System.Int64))
+                .Add("UOM_VALUE", GetType(System.Int64))
+                .Add("CASE_CUBE", GetType(System.String))
+                .Add("STYLE_PRICE", GetType(System.String))
+                .Add("STYLE_RETAIL", GetType(System.String))
+                .Add("CUBE1", GetType(System.String))
+                .Add("CUBE2", GetType(System.String))
+                .Add("PORT_CODE", GetType(System.String))
+                .Add("COUNTRY_CODE", GetType(System.String))
+                .Add("EXT_TOTAL", GetType(System.String))
+                .Add("REMARKS", GetType(System.String))
+            End With
 
             ASCMAIN1.sql = "SELECT * FROM SOTORDR5 where ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = 'ST'"
             Create_TDA(.Tables.Add, "SOTORDX5", "**", 0, False, "V", 2)
@@ -808,6 +840,29 @@ Public Class SOFORDRO
                     start_excel.StartInfo.FileName = EXCELDir & excelFile & ".xls"
                     start_excel.Start()
                 End If
+            'Case "Excel (New)"
+            '    Dim ORDR_NO As String
+            '    If grdSOTORDRX.Selected.Rows.Count = 0 Then
+            '        MsgBox("You Must Select An Order From The Orders List To Print", MsgBoxStyle.OkOnly, "Please Select An Order")
+            '        Exit Sub
+            '    Else
+            '        ORDR_NO = grdSOTORDRX.Selected.Rows(0).Cells.Item("ORDR_NO").Text
+            '    End If
+
+            '    ASCMAIN1.Progress("Now Generating Excel Document")
+            '    Cursor = Cursors.WaitCursor
+
+            '    Dim excelFile As String = Generate_Excel_NEW(ORDR_NO)
+
+            '    Cursor = Cursors.Default
+            '    ASCMAIN1.Progress("")
+            '    If excelFile <> "" Then
+            '        Dim start_excel As New Process
+            '        start_excel.StartInfo.Arguments = """" + excelFile + """ /e"
+            '        start_excel.StartInfo.FileName = EXCELDir & excelFile & ".xls"
+            '        start_excel.Start()
+            '    End If
+
             Case "Customer Masterfile"
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 If CUST_CODE.Length > 0 Then
@@ -990,6 +1045,7 @@ Public Class SOFORDRO
                 .Groups("FEFD").Expanded = False
                 .Groups("Filter").Visible = Not ScreenMode
                 .Groups("Filter").Expanded = Not ScreenMode
+                .Groups("Settings").Visible = Not tf
             End With
         End If
 
@@ -3596,7 +3652,283 @@ Public Class SOFORDRO
 #End Region
 #End Region
 
-#Region "Excel Functionality"
+    '#Region "New Excel Funcionality"
+    '    Function Generate_Excel_New(ByVal ORDR_NO As String) As String
+    '        Dim excelFile As String = ""
+    '        Dim FILE_NAME As String = ""
+    '        'Dim xlPages As New Dictionary(Of Integer, Integer)
+    '        Dim PrntQtyOrdered As Boolean
+    '        Dim SelMin As Boolean = False
+    '        Dim excel As Excel.Application = New Microsoft.Office.Interop.Excel.Application
+    '        Dim XWB As Excel.Workbook = excel.Workbooks.Add
+    '        Dim oSheet As Excel.Worksheet = XWB.Sheets(1)
+    '        Dim Iresponse As MsgBoxResult
+    '        Dim ShowCancelledLines As Boolean = True
+
+    '        Fill_Records("SOTORDX1", ORDR_NO, True)
+    '        Fill_Records("SOTORDX2", ORDR_NO, True)
+    '        Fill_Records("SOTORDX5", ORDR_NO, True)
+    '        Fill_Records("SOTORDX9", ORDR_NO, True)
+
+    '        For Each rowSOTORDX2 As DataRow In dst.Tables("SOTORDX2").Select()
+    '            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", rowSOTORDX2.Item("STYLE_CODE"))
+    '            rowSOTORDX2.Item("FACTORY_CODE") = GetVendorData(rowICTSTYL1.Item("VEND_CODE").ToString, "VEND_SUPPLIER_ID")
+    '        Next
+
+    '        For Each rowSOTORDX9 As DataRow In dst.Tables("SOTORDX9").Select()
+    '            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", rowSOTORDX9.Item("STYLE_CODE"))
+    '            rowSOTORDX9.Item("FACTORY_CODE") = GetVendorData(rowICTSTYL1.Item("VEND_CODE").ToString, "VEND_SUPPLIER_ID")
+    '        Next
+
+    '        If IMAGES_FOLDER.Length = 0 Then
+    '            MsgBox("Location For Images Not Set Up." & vbCrLf & "Please Set It Up In Parameters Before Proceeding", MsgBoxStyle.OkOnly, "Image Location")
+    '            Return ""
+    '            Exit Function
+    '        End If
+
+    '        Dim iResult As MsgBoxResult
+    '        Dim iTitle As String = "Sort Order"
+    '        Dim iMSG As New System.Text.StringBuilder
+    '        iMSG.AppendLine("Do You Want To Sort By Style Code?")
+    '        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+    '        If iResult = MsgBoxResult.Yes Then
+    '            ExcelSort = "STYLE_CODE, COLOR_CODE"
+    '        Else
+    '            ExcelSort = "ORDR_LNO"
+    '        End If
+
+    '        If dst.Tables.Item("SOTORDX2").Select("ORDR_QTY_CANC > 0").Count > 0 Then
+    '            If Not MsgBox("Show Cancelled Lines On Order?", vbYesNo, "Cancelled Lines") = vbYes Then
+    '                ShowCancelledLines = False
+    '            End If
+    '        End If
+
+    '        Dim rowSOTORDX1 As DataRow = dst.Tables("SOTORDX1").Rows(0)
+    '        If rowSOTORDX1.Item("ORDR_STATUS") <> "L" Then
+    '            Iresponse = MsgBox("Do You Want The Entered Order Qty To Appear?", vbYesNo, "Confirm Qty Printing")
+    '            If Iresponse = vbYes Then
+    '                PrntQtyOrdered = True
+    '                SelMin = False
+    '            Else
+    '                PrntQtyOrdered = False
+    '                Iresponse = MsgBox("Do You Want To Use The Order Qty As The Min Order Qty", vbYesNo, "Min Order Qty")
+    '                If Iresponse = vbYes Then
+    '                    SelMin = True
+    '                Else
+    '                    SelMin = False
+    '                End If
+    '            End If
+    '        Else
+    '            PrntQtyOrdered = True
+    '            SelMin = False
+    '        End If
+
+    '        'For i As Integer = 1 To 2
+    '        'oSheet = XWB.Worksheets(1)
+    '        Excel_Format_Heads(oSheet, True, SelMin)
+    '        'Excel_Fill_Sheet_New(oSheet, True, PrntQtyOrdered, SelMin, ShowCancelledLines)
+    '        Excel_Make_Totals(oSheet)
+    '        Excel_Auto_Resize(oSheet)
+    '        'Next
+
+    '        With oSheet.PageSetup
+    '            .FitToPagesWide = 1
+    '            .FitToPagesTall = False
+    '            .CenterHorizontally = True
+    '        End With
+
+    '        oSheet.Application.ActiveWindow.View = Microsoft.Office.Interop.Excel.XlWindowView.xlPageBreakPreview
+
+    '        oSheet.Application.ActiveWindow.View = Microsoft.Office.Interop.Excel.XlWindowView.xlNormalView
+
+    '        Dim xlsFileName_sfx As String = ""
+    '        Dim xlsFileName As String = ""
+    '        Dim xlsControlNo As String = ASCMAIN1.Next_Control_No("QUOTE")
+    '        FILE_NAME = rowSOTORDX1.Item("CUST_NAME").ToString & "-" & rowSOTORDX1.Item("ORDR_CUST_PO").ToString & "-" & Format(rowSOTORDX1.Item("ORDR_DATE"), "yy-MM-dd") & "-" & rowSOTORDX1.Item("ORDR_NO").ToString
+    '        FILE_NAME = FILE_NAME.Replace("'", "")
+    '        FILE_NAME = FILE_NAME.Replace(" ", "")
+    '        FILE_NAME = FILE_NAME.Replace("/", "")
+    '        FILE_NAME = FILE_NAME.Replace(".", "")
+    '        FILE_NAME = FILE_NAME.Replace("&", "")
+    '        FILE_NAME = FILE_NAME.Replace("$", "")
+    '        FILE_NAME = FILE_NAME.Replace("@", "")
+    '        FILE_NAME = FILE_NAME.Replace("!", "")
+    '        FILE_NAME = FILE_NAME.Replace("*", "")
+    '        FILE_NAME = FILE_NAME.Replace("(", "")
+    '        FILE_NAME = FILE_NAME.Replace(")", "")
+    '        FILE_NAME = FILE_NAME.Replace("#", "")
+    '        FILE_NAME = InputBox("File Name:", "Save File As", FILE_NAME)
+    '        Do
+    '            Try
+    '                xlsFileName = FILE_NAME
+    '                If xlsFileName_sfx.Length = 0 Then
+    '                    excelFile = String.Format("{0}{1}.xls", EXCELDir, xlsFileName)
+    '                Else
+    '                    excelFile = String.Format("{0}{1}_{2}.xls", EXCELDir, xlsFileName, xlsFileName_sfx)
+    '                End If
+    '                '----XWB.SaveAs(excelFile)
+    '                xlsFileName_sfx = ""
+    '            Catch ex As Exception
+    '                xlsFileName_sfx = CStr(Val(xlsFileName_sfx) + 1)
+    '            End Try
+    '        Loop While xlsFileName_sfx <> "" And Val(xlsFileName_sfx) < 20
+
+    '        '----XWB.Close()
+    '        '----XWB = Nothing
+    '        '----excel = Nothing
+    '        Return xlsFileName
+    '    End Function
+
+    '    Private Sub Excel_Fill_Sheet_New(ByRef oSheet As Excel.Worksheet,
+    '                                 ByVal PrintRemarks As Boolean,
+    '                                 ByVal PrntQtyOrdered As Boolean,
+    '                                 ByVal SelMin As Boolean,
+    '                                 ByVal ShowCancelledLines As Boolean)
+    '        RowCount = 0
+    '        Dim FCount As Integer
+    '        Dim LastSKU As String = ""
+    '        Dim Sort As String = ""
+    '        Select Case oSheet.Index
+    '            Case 1
+    '                Sort = ExcelSort
+    '            Case 2
+    '                Sort = FactorySort
+    '            Case 3
+    '                Sort = PictureSort
+    '        End Select
+    '        'If oSheet.Index = 2 Then
+    '        '    Sort = ""
+    '        'Else
+    '        '    Sort = ExcelSort
+    '        'End If
+    '        Dim filter As String = ""
+    '        If ShowCancelledLines = False Then
+    '            filter = "ORDR_QTY_OPEN > 0"
+    '        End If
+    '        For Each rowSOTORDX2 As DataRow In dst.Tables("SOTORDX2").Select(filter, Sort)
+    '            Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", rowSOTORDX2.Item("STYLE_CODE"))
+    '            Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", New String() {rowSOTORDX2.Item("STYLE_CODE"), rowSOTORDX2.Item("COLOR_CODE")})
+    '            If Not IsNothing(rowICTSTYL1) Then
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 1), Excel_Cell(SCD + RowCount, 1)).Value = rowSOTORDX2.Item("STYLE_CODE")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Value = rowSOTORDX2.Item("STYLE_DESC")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 3), Excel_Cell(SCD + RowCount, 3)).Value = rowSOTORDX2.Item("COLOR_CODE")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).NumberFormat = "########################"
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Value = rowICTSTYC1.Item("UPC_CODE")
+    '                Dim UOMnum As Integer
+    '                Select Case rowICTSTYL1.Item("STYLE_UOM")
+    '                    Case Is = "DZ"
+    '                        UOMnum = 12
+    '                    Case Is = "GR"
+    '                        UOMnum = 144
+    '                    Case Else
+    '                        UOMnum = 1
+    '                End Select
+    '                'Editing from here
+    '                If Not IsDBNull(rowICTSTYL1.Item("INNER_PACK_QTY")) Then
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 5), Excel_Cell(SCD + RowCount, 5)).Value = Val(rowICTSTYL1.Item("INNER_PACK_QTY")) / Val(UOMnum)
+    '                Else
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 5), Excel_Cell(SCD + RowCount, 5)).Value = 0
+    '                End If
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 6), Excel_Cell(SCD + RowCount, 6)).Value = Val(rowICTSTYL1.Item("CARTON_PACK_QTY")) / Val(UOMnum)
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 7), Excel_Cell(SCD + RowCount, 7)).Value = rowICTSTYL1.Item("STYLE_UOM")
+    '                'Always Print Cube now for every Line Per Rich.
+    '                'If LastSKU <> rowSOTORDX2.Item("STYLE_CODE") Then
+    '                '    oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = rowICTSTYL1.Item("CASE_CUBE")
+    '                'Else
+    '                '    oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = ""
+    '                'End If
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = rowICTSTYL1.Item("CASE_CUBE")
+    '                'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+    '                '    If rowSOTORDX2.Item("STYLE_CODE") = "MTX63427" Then Stop 'Use This to Check Style price
+    '                'End If
+    '                'Changed to use Order List Price per Danny. - W.R. 1/26/23
+    '                'oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
+    '                'oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
+    '                'Changes to by Hybrid per Rich - W.R> 6/7/23.
+    '                Dim useMaster As Boolean = True
+    '                If IsNumeric(rowSOTORDX2.Item("STYLE_PRICE")) Then
+    '                    If Val(rowSOTORDX2.Item("STYLE_PRICE").ToString & String.Empty) > 0 Then
+    '                        useMaster = False
+    '                    End If
+    '                End If
+    '                If useMaster Then
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
+    '                Else
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
+    '                End If
+
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).NumberFormat = "$###,##0.00"
+    '                If Val(rowSOTORDX2.Item("ORDR_QTY")) <> 0 Then
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Value = rowSOTORDX2.Item("ORDR_UNIT_PRICE")
+    '                Else
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Value = 0
+    '                End If
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).NumberFormat = "###,##0.00"
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Font.ColorIndex = 32
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Font.Bold = True
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 11), Excel_Cell(SCD + RowCount, 11)).Value = rowICTSTYL1.Item("STYLE_UOM")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 12), Excel_Cell(SCD + RowCount, 12)).Value = rowSOTORDX2.Item("STYLE_RETAIL")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 12), Excel_Cell(SCD + RowCount, 12)).NumberFormat = "###,##0.00"
+    '                If PrntQtyOrdered Then
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 13), Excel_Cell(SCD + RowCount, 13)).Value = rowSOTORDX2.Item("ORDR_QTY")
+    '                Else
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 13), Excel_Cell(SCD + RowCount, 13)).Value = ""
+    '                End If
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 13), Excel_Cell(SCD + RowCount, 13)).NumberFormat = "###,##0"
+    '                If LastSKU <> rowSOTORDX2.Item("STYLE_CODE") Then
+    '                    FCount = RowCount
+    '                End If
+    '                Dim Formula As String = "=IF(" & Excel_Cell(SCD + RowCount, 13) & "<>" & Chr(34) & Chr(34) & ",(" & Excel_Cell(SCD + RowCount, 13) & "/" & Excel_Cell(SCD + FCount, 6) & ")*" & Excel_Cell(SCD + FCount, 8) & "," & Chr(34) & Chr(34) & ")"
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 14), Excel_Cell(SCD + RowCount, 14)).Formula = Formula
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 14), Excel_Cell(SCD + RowCount, 14)).NumberFormat = "###,##0.00"
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 15), Excel_Cell(SCD + RowCount, 15)).Value = rowSOTORDX2.Item("FACTORY_CODE") & "" 'GetVendorData(rowICTSTYL1.Item("VEND_CODE"), "VEND_SUPPLIER_ID")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 15), Excel_Cell(SCD + RowCount, 15)).Font.Color = System.Drawing.Color.Red
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 15), Excel_Cell(SCD + RowCount, 15)).Font.Bold = vbTrue
+    '                If SelMin Then
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 16), Excel_Cell(SCD + RowCount, 16)).Value = rowSOTORDX2.Item("ORDR_QTY") & ""
+    '                Else
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 16), Excel_Cell(SCD + RowCount, 16)).Value = ""
+    '                End If
+    '                If LastSKU <> rowSOTORDX2.Item("STYLE_CODE") Then
+    '                    FCount = RowCount
+    '                End If
+    '                Formula = "=IF(" & Excel_Cell(SCD + RowCount, 16) & "<>" & Chr(34) & Chr(34) & ",(" & Excel_Cell(SCD + RowCount, 16) & "/" & Excel_Cell(SCD + FCount, 6) & ")*" & Excel_Cell(SCD + FCount, 8) & "," & Chr(34) & Chr(34) & ")"
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 17), Excel_Cell(SCD + RowCount, 17)).Formula = Formula
+    '                Dim Port As String = ""
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 18), Excel_Cell(SCD + RowCount, 18)).Formula = GetVendorData(rowICTSTYL1.Item("VEND_CODE") & "", "PORT_CODE")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 18), Excel_Cell(SCD + RowCount, 18)).NumberFormat = "###,##0.00"
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 19), Excel_Cell(SCD + RowCount, 19)).Value = rowICTSTYL1.Item("COUNTRY_CODE") & ""
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 20), Excel_Cell(SCD + RowCount, 20)).Formula = "=J" & Format(SCD + RowCount, "000") & "* M" & Format(SCD + RowCount, "000")
+    '                oSheet.Range(Excel_Cell(SCD + RowCount, 20), Excel_Cell(SCD + RowCount, 20)).NumberFormat = "$##,###,##0.00"
+    '                If PrintRemarks = True Then
+    '                    oSheet.Range(Excel_Cell(SCD + RowCount, 21), Excel_Cell(SCD + RowCount, 21)).Value = "" 'We still Don't know where this comes from. rsItemMaster.Fields("Remark").Value
+    '                End If
+    '                LastSKU = rowSOTORDX2.Item("STYLE_CODE")
+    '                Dim fltr As String = $"STYLE_CODE = '{rowSOTORDX2.Item("STYLE_CODE").ToString & String.Empty}' AND COLOR_CODE = '{rowSOTORDX2.Item("COLOR_CODE").ToString & String.Empty}'"
+    '                Dim subs As Int64 = dst.Tables.Item("ICTXLSPS").Select(fltr).Count
+    '                If subs > 0 Then
+    '                    For Each rowICTXLSPS As DataRow In dst.Tables("ICTXLSPS").Select(fltr, "SET_LNO")
+    '                        RowCount = RowCount + 1
+    '                        Dim SET_ITEM_DESC As String = rowICTXLSPS.Item("SET_ITEM_DESC").ToString & String.Empty
+    '                        Dim SET_PREFIX_DESC As String = rowICTXLSPS.Item("SET_PREFIX_DESC").ToString & String.Empty
+    '                        Dim SET_ITEM_UPC As String = rowICTXLSPS.Item("SET_ITEM_UPC").ToString & String.Empty
+    '                        Dim szD As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Size
+    '                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Size = szD - 1
+    '                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Italic = True
+    '                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Value = SET_ITEM_DESC & " - " & SET_PREFIX_DESC
+    '                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).NumberFormat = "########################"
+    '                        Dim szU As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Font.Size
+    '                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Font.Size = szU - 1
+    '                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Value = SET_ITEM_UPC
+    '                    Next
+    '                End If
+    '                RowCount = RowCount + 1
+    '            End If
+    '        Next
+    '    End Sub
+    '#End Region
+
+#Region "Old Excel Functionality"
     Private Sub ExcelProcessInit()
         Try
             'Get all currently running process Ids for Excel applications
@@ -3672,6 +4004,7 @@ Public Class SOFORDRO
             ExcelSort = "ORDR_LNO"
         End If
         iMSG.Length = 0
+
         iMSG.AppendLine("Do you want the pictures to be factory sorted?")
         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
         If iResult = MsgBoxResult.Yes Then
@@ -3719,23 +4052,44 @@ Public Class SOFORDRO
         XWB.Worksheets(2).Name = "Factory"
         XWB.Worksheets(3).Name = "Pictures"
 
-        For i As Integer = 1 To 2
+        Dim FirstSheet As Int64 = 1
+        Dim lastSheet As Int64 = 2
+        If chkNewExcel.Checked = True Then
+            If rdoDomestic.Checked Then
+                FirstSheet = 1
+                lastSheet = 1
+            Else
+                FirstSheet = 2
+                lastSheet = 2
+            End If
+        End If
+        For i As Integer = FirstSheet To lastSheet
             oSheet = XWB.Worksheets(i)
             Excel_Format_Heads(oSheet, PrintRemarks, SelMin)
             Excel_Fill_Sheet(oSheet, PrintRemarks, PrntQtyOrdered, SelMin, ShowCancelledLines)
             Excel_Make_Totals(oSheet)
             Excel_Auto_Resize(oSheet)
         Next
-        oSheet = XWB.Worksheets(1)
-        For i As Integer = 18 To 14 Step -1
-            oSheet.Columns(i).Delete()
-        Next i
 
-        'Fill In Pictures Tab
-        oSheet = XWB.Worksheets(3)
+        If chkNewExcel.Checked = True Then
+            If rdoDomestic.Checked Then
+                oSheet = XWB.Worksheets(1)
+                For i As Integer = 19 To 15 Step -1
+                    oSheet.Columns(i).Delete()
+                Next i
+            End If
+        Else
+            oSheet = XWB.Worksheets(1)
+            For i As Integer = 18 To 14 Step -1
+                oSheet.Columns(i).Delete()
+            Next i
+        End If
 
-
-        Excel_Fill_Pictures(oSheet)
+        If chkNewExcel.Checked = False Then
+            'Fill In Pictures Tab
+            oSheet = XWB.Worksheets(3)
+            Excel_Fill_Pictures(oSheet)
+        End If
 
         '---- End of config
         'excel.PrintCommunication = False
@@ -3749,6 +4103,35 @@ Public Class SOFORDRO
         'oSheet.PageSetup.FitToPagesTall = False
         'oSheet.PageSetup.FitToPagesWide = 1
 
+        If chkNewExcel.Checked = True Then
+            Dim WS As Excel.Worksheets = Nothing
+            XWB.Worksheets(1).Name = "Domestic"
+            XWB.Worksheets(2).Name = "FD FE"
+            XWB.Worksheets(3).Delete()
+            If rdoFDFE.Checked Then
+                oSheet = XWB.Worksheets(2)
+                XWB.Worksheets(1).Delete()
+            Else
+                oSheet = XWB.Worksheets(1)
+                XWB.Worksheets(2).Delete()
+            End If
+        End If
+
+        If chkNewExcel.Checked = True Then
+            Dim DCOLS As Int64() = {14, 15, 17, 18, 21}
+            If rdoFDFE.Checked Then
+                If Not IsNothing(DCOLS) Then
+                    For Each COL As Int64 In DCOLS
+                        Dim DefaultWidth As Int64 = 10
+                        Dim rngFDFE As Excel.Range = XWB.Worksheets(1).Range(Excel_Cell(1, COL), Excel_Cell(1, COL))
+                        rngFDFE.EntireColumn.ColumnWidth = DefaultWidth
+                        rngFDFE.ColumnWidth = DefaultWidth
+                    Next
+                End If
+            End If
+            XWB.Worksheets(1).Application.ActiveWindow.SplitRow = 6
+            XWB.Worksheets(1).Application.ActiveWindow.FreezePanes = True
+        End If
 
         oSheet.Application.ActiveWindow.View = Microsoft.Office.Interop.Excel.XlWindowView.xlPageBreakPreview
 
@@ -3879,57 +4262,61 @@ Public Class SOFORDRO
         oSheet.Range(Excel_Cell(4, 8), Excel_Cell(4, 8)).Value = "Whse: " & rowSOTORDX1.Item("WHSE_CODE")
         oSheet.Range(Excel_Cell(5, 8), Excel_Cell(5, 8)).Value = "Order/Quote: " & rowSOTORDX1.Item("ORDR_NO")
         'END - New Extended Header information added 6/27/07
-
-        oSheet.Range(Excel_Cell(SCD - 1, 1), Excel_Cell(SCD - 1, 1)).Value = "Stock#"
-        oSheet.Range(Excel_Cell(SCD - 1, 2), Excel_Cell(SCD - 1, 2)).Value = "Description"
-        oSheet.Range(Excel_Cell(SCD - 1, 3), Excel_Cell(SCD - 1, 3)).Value = "Color"
-        oSheet.Range(Excel_Cell(SCD - 1, 4), Excel_Cell(SCD - 1, 4)).Value = "UPC"
-        oSheet.Range(Excel_Cell(SCD - 1, 5), Excel_Cell(SCD - 1, 5)).Value = "Box"
-        oSheet.Range(Excel_Cell(SCD - 1, 6), Excel_Cell(SCD - 1, 6)).Value = "Cart"
-        oSheet.Range(Excel_Cell(SCD - 1, 7), Excel_Cell(SCD - 1, 7)).Value = "U/M"
-        oSheet.Range(Excel_Cell(SCD - 1, 8), Excel_Cell(SCD - 1, 8)).Value = "CuFt"
-        oSheet.Range(Excel_Cell(SCD - 1, 9), Excel_Cell(SCD - 1, 9)).Value = "List Price"
-        oSheet.Range(Excel_Cell(SCD - 1, 10), Excel_Cell(SCD - 1, 10)).Value = "Net Cost"
-        oSheet.Range(Excel_Cell(SCD - 1, 10), Excel_Cell(SCD - 1, 10)).Interior.ColorIndex = 3
-        oSheet.Range(Excel_Cell(SCD - 1, 11), Excel_Cell(SCD - 1, 11)).Value = "U/M"
-        oSheet.Range(Excel_Cell(SCD - 1, 12), Excel_Cell(SCD - 1, 12)).Value = "Retail"
-        oSheet.Range(Excel_Cell(SCD - 1, 13), Excel_Cell(SCD - 1, 13)).Value = "Qty Ordered"
-        oSheet.Range(Excel_Cell(SCD - 1, 13), Excel_Cell(SCD - 1, 13)).Orientation = 90
-        oSheet.Range(Excel_Cell(1, 13), Excel_Cell(SCD - 1, 13)).Merge()
-        oSheet.Range(Excel_Cell(1, 13), Excel_Cell(1, 13)).Font.Bold = True
-        oSheet.Range(Excel_Cell(SCD - 1, 14), Excel_Cell(SCD - 1, 14)).Value = "Cube"
-        oSheet.Range(Excel_Cell(SCD - 1, 15), Excel_Cell(SCD - 1, 15)).Value = "Factory Code"
-        oSheet.Range(Excel_Cell(SCD - 1, 15), Excel_Cell(SCD - 1, 15)).Orientation = 90
-        oSheet.Range(Excel_Cell(1, 15), Excel_Cell(SCD - 1, 15)).Merge()
-        oSheet.Range(Excel_Cell(1, 15), Excel_Cell(1, 15)).Font.Bold = True
-        oSheet.Range(Excel_Cell(SCD - 2, 16), Excel_Cell(SCD - 2, 18)).Merge()
+        Dim ap As Int64 = 0
+        If chkNewExcel.Checked = True Then
+            ap = 1
+            oSheet.Range(Excel_Cell(SCD - 1, 1), Excel_Cell(SCD - 1, 1)).Value = "Image"
+        End If
+        oSheet.Range(Excel_Cell(SCD - 1, 1 + ap), Excel_Cell(SCD - 1, 1 + ap)).Value = "Stock#"
+        oSheet.Range(Excel_Cell(SCD - 1, 2 + ap), Excel_Cell(SCD - 1, 2 + ap)).Value = "Description"
+        oSheet.Range(Excel_Cell(SCD - 1, 3 + ap), Excel_Cell(SCD - 1, 3 + ap)).Value = "Color"
+        oSheet.Range(Excel_Cell(SCD - 1, 4 + ap), Excel_Cell(SCD - 1, 4 + ap)).Value = "UPC"
+        oSheet.Range(Excel_Cell(SCD - 1, 5 + ap), Excel_Cell(SCD - 1, 5 + ap)).Value = "Box"
+        oSheet.Range(Excel_Cell(SCD - 1, 6 + ap), Excel_Cell(SCD - 1, 6 + ap)).Value = "Cart"
+        oSheet.Range(Excel_Cell(SCD - 1, 7 + ap), Excel_Cell(SCD - 1, 7 + ap)).Value = "U/M"
+        oSheet.Range(Excel_Cell(SCD - 1, 8 + ap), Excel_Cell(SCD - 1, 8 + ap)).Value = "CuFt"
+        oSheet.Range(Excel_Cell(SCD - 1, 9 + ap), Excel_Cell(SCD - 1, 9 + ap)).Value = "List Price"
+        oSheet.Range(Excel_Cell(SCD - 1, 10 + ap), Excel_Cell(SCD - 1, 10 + ap)).Value = "Net Cost"
+        oSheet.Range(Excel_Cell(SCD - 1, 10 + ap), Excel_Cell(SCD - 1, 10 + ap)).Interior.ColorIndex = 3
+        oSheet.Range(Excel_Cell(SCD - 1, 11 + ap), Excel_Cell(SCD - 1, 11 + ap)).Value = "U/M"
+        oSheet.Range(Excel_Cell(SCD - 1, 12 + ap), Excel_Cell(SCD - 1, 12 + ap)).Value = "Retail"
+        oSheet.Range(Excel_Cell(SCD - 1, 13 + ap), Excel_Cell(SCD - 1, 13 + ap)).Value = "Qty Ordered"
+        oSheet.Range(Excel_Cell(SCD - 1, 13 + ap), Excel_Cell(SCD - 1, 13 + ap)).Orientation = 90
+        oSheet.Range(Excel_Cell(1, 13 + ap), Excel_Cell(SCD - 1, 13 + ap)).Merge()
+        oSheet.Range(Excel_Cell(1, 13 + ap), Excel_Cell(1, 13 + ap)).Font.Bold = True
+        oSheet.Range(Excel_Cell(SCD - 1, 14 + ap), Excel_Cell(SCD - 1, 14 + ap)).Value = "Cube"
+        oSheet.Range(Excel_Cell(SCD - 1, 15 + ap), Excel_Cell(SCD - 1, 15 + ap)).Value = "Factory Code"
+        oSheet.Range(Excel_Cell(SCD - 1, 15 + ap), Excel_Cell(SCD - 1, 15 + ap)).Orientation = 90
+        oSheet.Range(Excel_Cell(1, 15 + ap), Excel_Cell(SCD - 1, 15 + ap)).Merge()
+        oSheet.Range(Excel_Cell(1, 15 + ap), Excel_Cell(1, 15 + ap)).Font.Bold = True
+        oSheet.Range(Excel_Cell(SCD - 2, 16 + ap), Excel_Cell(SCD - 2, 18 + ap)).Merge()
         If SelMin Then
             'oSheet.Range(Excel_Cell(SCD - 1, 16), Excel_Cell(SCD - 1, 16)).Value = ""
-            oSheet.Range(Excel_Cell(SCD - 1, 16), Excel_Cell(SCD - 1, 16)).Value = "MOQ"
+            oSheet.Range(Excel_Cell(SCD - 1, 16 + ap), Excel_Cell(SCD - 1, 16 + ap)).Value = "MOQ"
         Else
             'oSheet.Range(Excel_Cell(SCD - 1, 16), Excel_Cell(SCD - 1, 16)).Value = ""
-            oSheet.Range(Excel_Cell(SCD - 1, 16), Excel_Cell(SCD - 1, 16)).Value = "Order Qty"
+            oSheet.Range(Excel_Cell(SCD - 1, 16 + ap), Excel_Cell(SCD - 1, 16 + ap)).Value = "Order Qty"
         End If
-        oSheet.Range(Excel_Cell(SCD - 2, 16), Excel_Cell(SCD - 2, 16)).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter
-        oSheet.Range(Excel_Cell(SCD - 2, 16), Excel_Cell(SCD - 2, 16)).Interior.ColorIndex = 33
+        oSheet.Range(Excel_Cell(SCD - 2, 16 + ap), Excel_Cell(SCD - 2, 16 + ap)).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter
+        oSheet.Range(Excel_Cell(SCD - 2, 16 + ap), Excel_Cell(SCD - 2, 16 + ap)).Interior.ColorIndex = 33
         oSheet.Range(Excel_Cell(SCD - 1, 16), Excel_Cell(SCD - 1, 16)).Interior.ColorIndex = 8
-        oSheet.Range(Excel_Cell(SCD - 1, 17), Excel_Cell(SCD - 1, 17)).Value = "Cube"
-        oSheet.Range(Excel_Cell(SCD - 2, 17), Excel_Cell(SCD - 2, 17)).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter
-        oSheet.Range(Excel_Cell(SCD - 2, 17), Excel_Cell(SCD - 2, 17)).Interior.ColorIndex = 33
-        oSheet.Range(Excel_Cell(SCD - 1, 17), Excel_Cell(SCD - 1, 17)).Interior.ColorIndex = 8
+        oSheet.Range(Excel_Cell(SCD - 1, 17 + ap), Excel_Cell(SCD - 1, 17 + ap)).Value = "Cube"
+        oSheet.Range(Excel_Cell(SCD - 2, 17 + ap), Excel_Cell(SCD - 2, 17 + ap)).HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter
+        oSheet.Range(Excel_Cell(SCD - 2, 17 + ap), Excel_Cell(SCD - 2, 17 + ap)).Interior.ColorIndex = 33
+        oSheet.Range(Excel_Cell(SCD - 1, 17 + ap), Excel_Cell(SCD - 1, 17 + ap)).Interior.ColorIndex = 8
 
-        oSheet.Range(Excel_Cell(SCD - 1, 18), Excel_Cell(SCD - 1, 18)).Value = "Port"
-        oSheet.Range(Excel_Cell(SCD - 1, 18), Excel_Cell(SCD - 1, 18)).Interior.ColorIndex = 8
-        oSheet.Range(Excel_Cell(SCD - 1, 19), Excel_Cell(SCD - 1, 19)).Value = "C.O."
-        oSheet.Range(Excel_Cell(SCD - 1, 20), Excel_Cell(SCD - 1, 20)).Value = "Total"
+        oSheet.Range(Excel_Cell(SCD - 1, 18 + ap), Excel_Cell(SCD - 1, 18 + ap)).Value = "Port"
+        oSheet.Range(Excel_Cell(SCD - 1, 18 + ap), Excel_Cell(SCD - 1, 18 + ap)).Interior.ColorIndex = 8
+        oSheet.Range(Excel_Cell(SCD - 1, 19 + ap), Excel_Cell(SCD - 1, 19 + ap)).Value = "C.O."
+        oSheet.Range(Excel_Cell(SCD - 1, 20 + ap), Excel_Cell(SCD - 1, 20 + ap)).Value = "Total"
         If PrintRemarks Then
-            oSheet.Range(Excel_Cell(SCD - 1, 21), Excel_Cell(SCD - 1, 21)).Value = "Remarks"
+            oSheet.Range(Excel_Cell(SCD - 1, 21 + ap), Excel_Cell(SCD - 1, 21 + ap)).Value = "Remarks"
         End If
         For i As Integer = 1 To EndMark
-            oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i)).Font.Bold = True
-            oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i)).Borders.Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous
-            oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i)).Font.Bold = True
-            oSheet.Cells(i).Columns.AutoFit()
+            oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i + ap)).Font.Bold = True
+            oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i + ap)).Borders.Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous
+            oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i + ap)).Font.Bold = True
+            oSheet.Cells(i + ap).Columns.AutoFit()
         Next i
     End Sub
 
@@ -3959,15 +4346,46 @@ Public Class SOFORDRO
         If ShowCancelledLines = False Then
             filter = "ORDR_QTY_OPEN > 0"
         End If
+        Dim ap As Int64 = 0
+        If chkNewExcel.Checked = True Then
+            ap = 1
+        End If
+
         For Each rowSOTORDX2 As DataRow In dst.Tables("SOTORDX2").Select(filter, Sort)
             Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", rowSOTORDX2.Item("STYLE_CODE"))
             Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", New String() {rowSOTORDX2.Item("STYLE_CODE"), rowSOTORDX2.Item("COLOR_CODE")})
             If Not IsNothing(rowICTSTYL1) Then
-                oSheet.Range(Excel_Cell(SCD + RowCount, 1), Excel_Cell(SCD + RowCount, 1)).Value = rowSOTORDX2.Item("STYLE_CODE")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Value = rowSOTORDX2.Item("STYLE_DESC")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 3), Excel_Cell(SCD + RowCount, 3)).Value = rowSOTORDX2.Item("COLOR_CODE")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).NumberFormat = "########################"
-                oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Value = rowICTSTYC1.Item("UPC_CODE")
+                If chkNewExcel.Checked = True Then
+                    Dim rng As Excel.Range = oSheet.Range(Excel_Cell(SCD + RowCount, 1), Excel_Cell(SCD + RowCount, 1))
+                    rng.EntireColumn.ColumnWidth = 25
+                    rng.ColumnWidth = 25
+                    rng.RowHeight = 100
+                    Dim STYLE_CODE As String = rowSOTORDX2.Item("STYLE_CODE").ToString & String.Empty
+                    Dim COLOR_CODE As String = rowSOTORDX2.Item("COLOR_CODE").ToString & String.Empty
+                    Dim IMAGE_NAME As String = STYLE_CODE & "-" & COLOR_CODE & ".JPG"
+
+
+                    If IMAGE_NAME <> "" Then
+                        Dim FILENAME As String = IMAGES_FOLDER & "\" & IMAGE_NAME
+                        If chkWebImages.Checked Then
+                            getWebImage(FILENAME, STYLE_CODE, COLOR_CODE)
+                        End If
+                        If My.Computer.FileSystem.FileExists(FILENAME) Then
+                            InsertPictureInRangeNew(FILENAME, rng, oSheet, STYLE_CODE, COLOR_CODE)
+                        Else
+                            rng.MergeCells = True
+                            rng.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignCenter
+                            rng.VerticalAlignment = Microsoft.Office.Interop.Excel.XlVAlign.xlVAlignCenter
+                            rng.FormulaR1C1 = "No Image Available"
+                            rng.Font.Bold = True
+                        End If
+                    End If
+                End If
+                oSheet.Range(Excel_Cell(SCD + RowCount, 1 + ap), Excel_Cell(SCD + RowCount, 1 + ap)).Value = rowSOTORDX2.Item("STYLE_CODE")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 2 + ap), Excel_Cell(SCD + RowCount, 2 + ap)).Value = rowSOTORDX2.Item("STYLE_DESC")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 3 + ap), Excel_Cell(SCD + RowCount, 3 + ap)).Value = rowSOTORDX2.Item("COLOR_CODE")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 4 + ap), Excel_Cell(SCD + RowCount, 4 + ap)).NumberFormat = "########################"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 4 + ap), Excel_Cell(SCD + RowCount, 4 + ap)).Value = rowICTSTYC1.Item("UPC_CODE")
                 Dim UOMnum As Integer
                 Select Case rowICTSTYL1.Item("STYLE_UOM")
                     Case Is = "DZ"
@@ -3979,19 +4397,19 @@ Public Class SOFORDRO
                 End Select
                 'Editing from here
                 If Not IsDBNull(rowICTSTYL1.Item("INNER_PACK_QTY")) Then
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 5), Excel_Cell(SCD + RowCount, 5)).Value = Val(rowICTSTYL1.Item("INNER_PACK_QTY")) / Val(UOMnum)
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 5 + ap), Excel_Cell(SCD + RowCount, 5 + ap)).Value = Val(rowICTSTYL1.Item("INNER_PACK_QTY")) / Val(UOMnum)
                 Else
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 5), Excel_Cell(SCD + RowCount, 5)).Value = 0
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 5 + ap), Excel_Cell(SCD + RowCount, 5 + ap)).Value = 0
                 End If
-                oSheet.Range(Excel_Cell(SCD + RowCount, 6), Excel_Cell(SCD + RowCount, 6)).Value = Val(rowICTSTYL1.Item("CARTON_PACK_QTY")) / Val(UOMnum)
-                oSheet.Range(Excel_Cell(SCD + RowCount, 7), Excel_Cell(SCD + RowCount, 7)).Value = rowICTSTYL1.Item("STYLE_UOM")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 6 + ap), Excel_Cell(SCD + RowCount, 6 + ap)).Value = Val(rowICTSTYL1.Item("CARTON_PACK_QTY")) / Val(UOMnum)
+                oSheet.Range(Excel_Cell(SCD + RowCount, 7 + ap), Excel_Cell(SCD + RowCount, 7 + ap)).Value = rowICTSTYL1.Item("STYLE_UOM")
                 'Always Print Cube now for every Line Per Rich.
                 'If LastSKU <> rowSOTORDX2.Item("STYLE_CODE") Then
                 '    oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = rowICTSTYL1.Item("CASE_CUBE")
                 'Else
                 '    oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = ""
                 'End If
-                oSheet.Range(Excel_Cell(SCD + RowCount, 8), Excel_Cell(SCD + RowCount, 8)).Value = rowICTSTYL1.Item("CASE_CUBE")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 8 + ap), Excel_Cell(SCD + RowCount, 8 + ap)).Value = rowICTSTYL1.Item("CASE_CUBE")
                 'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
                 '    If rowSOTORDX2.Item("STYLE_CODE") = "MTX63427" Then Stop 'Use This to Check Style price
                 'End If
@@ -4006,56 +4424,56 @@ Public Class SOFORDRO
                     End If
                 End If
                 If useMaster Then
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowICTSTYL1.Item("STYLE_PRICE")
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 9 + ap), Excel_Cell(SCD + RowCount, 9 + ap)).Value = rowICTSTYL1.Item("STYLE_PRICE")
                 Else
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).Value = rowSOTORDX2.Item("STYLE_PRICE")
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 9 + ap), Excel_Cell(SCD + RowCount, 9 + ap)).Value = rowSOTORDX2.Item("STYLE_PRICE")
                 End If
 
-                oSheet.Range(Excel_Cell(SCD + RowCount, 9), Excel_Cell(SCD + RowCount, 9)).NumberFormat = "$###,##0.00"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 9 + ap), Excel_Cell(SCD + RowCount, 9 + ap)).NumberFormat = "$###,##0.00"
                 If Val(rowSOTORDX2.Item("ORDR_QTY")) <> 0 Then
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Value = rowSOTORDX2.Item("ORDR_UNIT_PRICE")
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 10 + ap), Excel_Cell(SCD + RowCount, 10 + ap)).Value = rowSOTORDX2.Item("ORDR_UNIT_PRICE")
                 Else
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Value = 0
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 10 + ap), Excel_Cell(SCD + RowCount, 10 + ap)).Value = 0
                 End If
-                oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).NumberFormat = "###,##0.00"
-                oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Font.ColorIndex = 32
-                oSheet.Range(Excel_Cell(SCD + RowCount, 10), Excel_Cell(SCD + RowCount, 10)).Font.Bold = True
-                oSheet.Range(Excel_Cell(SCD + RowCount, 11), Excel_Cell(SCD + RowCount, 11)).Value = rowICTSTYL1.Item("STYLE_UOM")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 12), Excel_Cell(SCD + RowCount, 12)).Value = rowSOTORDX2.Item("STYLE_RETAIL")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 12), Excel_Cell(SCD + RowCount, 12)).NumberFormat = "###,##0.00"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 10 + ap), Excel_Cell(SCD + RowCount, 10 + ap)).NumberFormat = "###,##0.00"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 10 + ap), Excel_Cell(SCD + RowCount, 10 + ap)).Font.ColorIndex = 32
+                oSheet.Range(Excel_Cell(SCD + RowCount, 10 + ap), Excel_Cell(SCD + RowCount, 10 + ap)).Font.Bold = True
+                oSheet.Range(Excel_Cell(SCD + RowCount, 11 + ap), Excel_Cell(SCD + RowCount, 11 + ap)).Value = rowICTSTYL1.Item("STYLE_UOM")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 12 + ap), Excel_Cell(SCD + RowCount, 12 + ap)).Value = rowSOTORDX2.Item("STYLE_RETAIL")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 12 + ap), Excel_Cell(SCD + RowCount, 12 + ap)).NumberFormat = "###,##0.00"
                 If PrntQtyOrdered Then
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 13), Excel_Cell(SCD + RowCount, 13)).Value = rowSOTORDX2.Item("ORDR_QTY")
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 13 + ap), Excel_Cell(SCD + RowCount, 13 + ap)).Value = rowSOTORDX2.Item("ORDR_QTY")
                 Else
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 13), Excel_Cell(SCD + RowCount, 13)).Value = ""
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 13 + ap), Excel_Cell(SCD + RowCount, 13 + ap)).Value = ""
                 End If
-                oSheet.Range(Excel_Cell(SCD + RowCount, 13), Excel_Cell(SCD + RowCount, 13)).NumberFormat = "###,##0"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 13 + ap), Excel_Cell(SCD + RowCount, 13 + ap)).NumberFormat = "###,##0"
                 If LastSKU <> rowSOTORDX2.Item("STYLE_CODE") Then
                     FCount = RowCount
                 End If
-                Dim Formula As String = "=IF(" & Excel_Cell(SCD + RowCount, 13) & "<>" & Chr(34) & Chr(34) & ",(" & Excel_Cell(SCD + RowCount, 13) & "/" & Excel_Cell(SCD + FCount, 6) & ")*" & Excel_Cell(SCD + FCount, 8) & "," & Chr(34) & Chr(34) & ")"
-                oSheet.Range(Excel_Cell(SCD + RowCount, 14), Excel_Cell(SCD + RowCount, 14)).Formula = Formula
-                oSheet.Range(Excel_Cell(SCD + RowCount, 14), Excel_Cell(SCD + RowCount, 14)).NumberFormat = "###,##0.00"
-                oSheet.Range(Excel_Cell(SCD + RowCount, 15), Excel_Cell(SCD + RowCount, 15)).Value = rowSOTORDX2.Item("FACTORY_CODE") & "" 'GetVendorData(rowICTSTYL1.Item("VEND_CODE"), "VEND_SUPPLIER_ID")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 15), Excel_Cell(SCD + RowCount, 15)).Font.Color = System.Drawing.Color.Red
-                oSheet.Range(Excel_Cell(SCD + RowCount, 15), Excel_Cell(SCD + RowCount, 15)).Font.Bold = vbTrue
+                Dim Formula As String = "=IF(" & Excel_Cell(SCD + RowCount, 13 + ap) & "<>" & Chr(34) & Chr(34) & ",(" & Excel_Cell(SCD + RowCount, 13 + ap) & "/" & Excel_Cell(SCD + FCount, 6 + ap) & ")*" & Excel_Cell(SCD + FCount, 8 + ap) & "," & Chr(34) & Chr(34) & ")"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 14 + ap), Excel_Cell(SCD + RowCount, 14 + ap)).Formula = Formula
+                oSheet.Range(Excel_Cell(SCD + RowCount, 14 + ap), Excel_Cell(SCD + RowCount, 14 + ap)).NumberFormat = "###,##0.00"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 15 + ap), Excel_Cell(SCD + RowCount, 15 + ap)).Value = rowSOTORDX2.Item("FACTORY_CODE") & "" 'GetVendorData(rowICTSTYL1.Item("VEND_CODE"), "VEND_SUPPLIER_ID")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 15 + ap), Excel_Cell(SCD + RowCount, 15 + ap)).Font.Color = System.Drawing.Color.Red
+                oSheet.Range(Excel_Cell(SCD + RowCount, 15 + ap), Excel_Cell(SCD + RowCount, 15 + ap)).Font.Bold = vbTrue
                 If SelMin Then
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 16), Excel_Cell(SCD + RowCount, 16)).Value = rowSOTORDX2.Item("ORDR_QTY") & ""
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 16 + ap), Excel_Cell(SCD + RowCount, 16 + ap)).Value = rowSOTORDX2.Item("ORDR_QTY") & ""
                 Else
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 16), Excel_Cell(SCD + RowCount, 16)).Value = ""
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 16 + ap), Excel_Cell(SCD + RowCount, 16 + ap)).Value = ""
                 End If
                 If LastSKU <> rowSOTORDX2.Item("STYLE_CODE") Then
                     FCount = RowCount
                 End If
-                Formula = "=IF(" & Excel_Cell(SCD + RowCount, 16) & "<>" & Chr(34) & Chr(34) & ",(" & Excel_Cell(SCD + RowCount, 16) & "/" & Excel_Cell(SCD + FCount, 6) & ")*" & Excel_Cell(SCD + FCount, 8) & "," & Chr(34) & Chr(34) & ")"
-                oSheet.Range(Excel_Cell(SCD + RowCount, 17), Excel_Cell(SCD + RowCount, 17)).Formula = Formula
+                Formula = "=IF(" & Excel_Cell(SCD + RowCount, 16 + ap) & "<>" & Chr(34) & Chr(34) & ",(" & Excel_Cell(SCD + RowCount, 16 + ap) & "/" & Excel_Cell(SCD + FCount, 6 + ap) & ")*" & Excel_Cell(SCD + FCount, 8 + ap) & "," & Chr(34) & Chr(34) & ")"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 17 + ap), Excel_Cell(SCD + RowCount, 17 + ap)).Formula = Formula
                 Dim Port As String = ""
-                oSheet.Range(Excel_Cell(SCD + RowCount, 18), Excel_Cell(SCD + RowCount, 18)).Formula = GetVendorData(rowICTSTYL1.Item("VEND_CODE") & "", "PORT_CODE")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 18), Excel_Cell(SCD + RowCount, 18)).NumberFormat = "###,##0.00"
-                oSheet.Range(Excel_Cell(SCD + RowCount, 19), Excel_Cell(SCD + RowCount, 19)).Value = rowICTSTYL1.Item("COUNTRY_CODE") & ""
-                oSheet.Range(Excel_Cell(SCD + RowCount, 20), Excel_Cell(SCD + RowCount, 20)).Formula = "=J" & Format(SCD + RowCount, "000") & "* M" & Format(SCD + RowCount, "000")
-                oSheet.Range(Excel_Cell(SCD + RowCount, 20), Excel_Cell(SCD + RowCount, 20)).NumberFormat = "$##,###,##0.00"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 18 + ap), Excel_Cell(SCD + RowCount, 18 + ap)).Formula = GetVendorData(rowICTSTYL1.Item("VEND_CODE") & "", "PORT_CODE")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 18 + ap), Excel_Cell(SCD + RowCount, 18 + ap)).NumberFormat = "###,##0.00"
+                oSheet.Range(Excel_Cell(SCD + RowCount, 19 + ap), Excel_Cell(SCD + RowCount, 19 + ap)).Value = rowICTSTYL1.Item("COUNTRY_CODE") & ""
+                oSheet.Range(Excel_Cell(SCD + RowCount, 20 + ap), Excel_Cell(SCD + RowCount, 20 + ap)).Formula = $"={Chr(Asc("J") + ap)}" & Format(SCD + RowCount, "000") & $"* {Chr(Asc("M") + ap)}" & Format(SCD + RowCount, "000")
+                oSheet.Range(Excel_Cell(SCD + RowCount, 20 + ap), Excel_Cell(SCD + RowCount, 20 + ap)).NumberFormat = "$##,###,##0.00"
                 If PrintRemarks = True Then
-                    oSheet.Range(Excel_Cell(SCD + RowCount, 21), Excel_Cell(SCD + RowCount, 21)).Value = "" 'We still Don't know where this comes from. rsItemMaster.Fields("Remark").Value
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 21 + ap), Excel_Cell(SCD + RowCount, 21 + ap)).Value = "" 'We still Don't know where this comes from. rsItemMaster.Fields("Remark").Value
                 End If
                 LastSKU = rowSOTORDX2.Item("STYLE_CODE")
                 Dim fltr As String = $"STYLE_CODE = '{rowSOTORDX2.Item("STYLE_CODE").ToString & String.Empty}' AND COLOR_CODE = '{rowSOTORDX2.Item("COLOR_CODE").ToString & String.Empty}'"
@@ -4067,13 +4485,13 @@ Public Class SOFORDRO
                         Dim SET_PREFIX_DESC As String = rowICTXLSPS.Item("SET_PREFIX_DESC").ToString & String.Empty
                         Dim SET_ITEM_UPC As String = rowICTXLSPS.Item("SET_ITEM_UPC").ToString & String.Empty
                         Dim szD As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Size
-                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Size = szD - 1
-                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Font.Italic = True
-                        oSheet.Range(Excel_Cell(SCD + RowCount, 2), Excel_Cell(SCD + RowCount, 2)).Value = SET_ITEM_DESC & " - " & SET_PREFIX_DESC
-                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).NumberFormat = "########################"
-                        Dim szU As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Font.Size
-                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Font.Size = szU - 1
-                        oSheet.Range(Excel_Cell(SCD + RowCount, 4), Excel_Cell(SCD + RowCount, 4)).Value = SET_ITEM_UPC
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 2 + ap), Excel_Cell(SCD + RowCount, 2 + ap)).Font.Size = szD - 1
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 2 + ap), Excel_Cell(SCD + RowCount, 2 + ap)).Font.Italic = True
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 2 + ap), Excel_Cell(SCD + RowCount, 2 + ap)).Value = SET_ITEM_DESC & " - " & SET_PREFIX_DESC
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 4 + ap), Excel_Cell(SCD + RowCount, 4 + ap)).NumberFormat = "########################"
+                        Dim szU As Int64 = oSheet.Range(Excel_Cell(SCD + RowCount, 4 + ap), Excel_Cell(SCD + RowCount, 4 + ap)).Font.Size
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 4 + ap), Excel_Cell(SCD + RowCount, 4 + ap)).Font.Size = szU - 1
+                        oSheet.Range(Excel_Cell(SCD + RowCount, 4 + ap), Excel_Cell(SCD + RowCount, 4 + ap)).Value = SET_ITEM_UPC
                     Next
                 End If
                 RowCount = RowCount + 1
@@ -4082,23 +4500,27 @@ Public Class SOFORDRO
     End Sub
 
     Private Sub Excel_Make_Totals(ByRef oSheet As Excel.Worksheet)
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 2), Excel_Cell(SCD + RowCount + 1, 2)).Value = "TOTALS"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 13), Excel_Cell(SCD + RowCount + 1, 13)).Formula = "=SUM(M001:M" & Format(SCD + RowCount, "000") & ")"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 13), Excel_Cell(SCD + RowCount + 1, 13)).NumberFormat = "###,##0.00"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 14), Excel_Cell(SCD + RowCount + 1, 14)).Formula = "=SUM(N001:N" & Format(SCD + RowCount, "000") & ")"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 14), Excel_Cell(SCD + RowCount + 1, 14)).NumberFormat = "###,##0.00"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 16), Excel_Cell(SCD + RowCount + 1, 16)).Formula = "=SUM(P001:P" & Format(SCD + RowCount, "000") & ")"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 16), Excel_Cell(SCD + RowCount + 1, 16)).NumberFormat = "###,##0.00"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 17), Excel_Cell(SCD + RowCount + 1, 17)).Formula = "=SUM(Q001:Q" & Format(SCD + RowCount, "000") & ")"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 17), Excel_Cell(SCD + RowCount + 1, 17)).NumberFormat = "###,##0.00"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 20), Excel_Cell(SCD + RowCount + 1, 20)).Formula = "=SUM(T001:T" & Format(SCD + RowCount, "000") & ")"
-        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 20), Excel_Cell(SCD + RowCount + 1, 20)).NumberFormat = "$##,###,##0.00"
+        Dim ap As Int64 = 0
+        If chkNewExcel.Checked = True Then
+            ap = 1
+        End If
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 2 + ap), Excel_Cell(SCD + RowCount + 1, 2 + ap)).Value = "TOTALS"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 13 + ap), Excel_Cell(SCD + RowCount + 1, 13 + ap)).Formula = $"=SUM({Chr(Asc("M") + ap)}001:{Chr(Asc("M") + ap)}" & Format(SCD + RowCount, "000") & ")"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 13 + ap), Excel_Cell(SCD + RowCount + 1, 13 + ap)).NumberFormat = "###,##0.00"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 14 + ap), Excel_Cell(SCD + RowCount + 1, 14 + ap)).Formula = $"=SUM({Chr(Asc("N") + ap)}001:{Chr(Asc("N") + ap)}" & Format(SCD + RowCount, "000") & ")"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 14 + ap), Excel_Cell(SCD + RowCount + 1, 14 + ap)).NumberFormat = "###,##0.00"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 16 + ap), Excel_Cell(SCD + RowCount + 1, 16 + ap)).Formula = $"=SUM({Chr(Asc("P") + ap)}001:{Chr(Asc("P") + ap)}" & Format(SCD + RowCount, "000") & ")"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 16 + ap), Excel_Cell(SCD + RowCount + 1, 16 + ap)).NumberFormat = "###,##0.00"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 17 + ap), Excel_Cell(SCD + RowCount + 1, 17 + ap)).Formula = $"=SUM({Chr(Asc("Q") + ap)}001:{Chr(Asc("Q") + ap)}" & Format(SCD + RowCount, "000") & ")"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 17 + ap), Excel_Cell(SCD + RowCount + 1, 17 + ap)).NumberFormat = "###,##0.00"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 20 + ap), Excel_Cell(SCD + RowCount + 1, 20 + ap)).Formula = $"=SUM({Chr(Asc("T") + ap)}001:{Chr(Asc("T") + ap)}" & Format(SCD + RowCount, "000") & ")"
+        oSheet.Range(Excel_Cell(SCD + RowCount + 1, 20 + ap), Excel_Cell(SCD + RowCount + 1, 20 + ap)).NumberFormat = "$##,###,##0.00"
         For i As Integer = 1 To EndMark
-            oSheet.Range(Excel_Cell(SCD + RowCount + 1, i), Excel_Cell(SCD + RowCount + 1, i)).Font.Bold = True
-            oSheet.Range(Excel_Cell(SCD + RowCount + 1, i), Excel_Cell(SCD + RowCount + 1, i)).Borders.Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlDouble
-            oSheet.Range(Excel_Cell(SCD + RowCount + 1, i), Excel_Cell(SCD + RowCount + 1, i)).Borders.Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous
-            With oSheet.Range(Excel_Cell(SCD, i), Excel_Cell(SCD + RowCount, i))
-                oSheet.Range(Excel_Cell(SCD + RowCount + 1, i), Excel_Cell(SCD + RowCount + 1, i)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
+            oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).Font.Bold = True
+            oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).Borders.Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlDouble
+            oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).Borders.Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous
+            With oSheet.Range(Excel_Cell(SCD, i + ap), Excel_Cell(SCD + RowCount, i + ap))
+                oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
             End With
         Next i
         'Begin - tariff Notification
@@ -4117,8 +4539,13 @@ Public Class SOFORDRO
         'End - tariff Notification
     End Sub
 
-    Private Sub Excel_Auto_Resize(oSheet As Excel.Worksheet)
+    Private Sub Excel_Auto_Resize(oSheet As Excel.Worksheet, Optional DCOLS As Int64() = Nothing)
         oSheet.Cells.Columns.AutoFit()
+        If chkNewExcel.Checked Then
+            Dim rng As Excel.Range = oSheet.Range(Excel_Cell(1, 1), Excel_Cell(1, 1))
+            rng.EntireColumn.ColumnWidth = 25
+            rng.ColumnWidth = 25
+        End If
     End Sub
 
     Private Sub InsertPictureInRange(ByVal PictureFileName As String,
@@ -4134,6 +4561,40 @@ Public Class SOFORDRO
         pp = XWS.Shapes.AddPicture(PictureFileName,
            Microsoft.Office.Core.MsoTriState.msoFalse,
            Microsoft.Office.Core.MsoTriState.msoCTrue, TargetCells.Left, TargetCells.Top, TargetCells.Width, TargetCells.Height)
+
+        'pp = XWS.Shapes.AddPicture(PictureFileName, _
+        '   0, _
+        '   1, TargetCells.Left, TargetCells.Top, TargetCells.Width, TargetCells.Height)
+        pp.Placement = Microsoft.Office.Interop.Excel.XlPlacement.xlMoveAndSize
+        pp.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse
+        pp = Nothing
+    End Sub
+
+    Sub InsertPictureInRangeNew(ByVal PictureFileName As String,
+                    ByVal TargetCells As Microsoft.Office.Interop.Excel.Range,
+                    ByVal XWS As Microsoft.Office.Interop.Excel.Worksheet,
+                    STYLE_CODE As String, COLOR_CODE As String)
+
+        ' inserts a picture and resizes it to fit the TargetCells range
+        Dim pp As Microsoft.Office.Interop.Excel.Shape
+
+        If TypeName(XWS) <> "Worksheet" Then Exit Sub
+        If Dir(PictureFileName) = "" Then Exit Sub
+
+        pp = XWS.Shapes.AddPicture(PictureFileName,
+           Microsoft.Office.Core.MsoTriState.msoFalse,
+           Microsoft.Office.Core.MsoTriState.msoCTrue,
+           TargetCells.Left,
+           TargetCells.Top,
+           TargetCells.Width,
+           TargetCells.Height)
+        'Selection.ShapeRange.Item(1)'
+        If STYLE_CODE <> "" Then
+            'XWS.Hyperlinks.Add(Anchor:=pp, Address:=
+            '    "http://api.regency-rib.com:8181/images/product/" & STYLE_CODE & "-" & COLOR_CODE & ".jpg", ScreenTip:="Click to view image on our Web-Site")
+            XWS.Hyperlinks.Add(Anchor:=pp, Address:="https://www.regency-rib.com/media/product/" & STYLE_CODE & "-" & COLOR_CODE & ".jpg", ScreenTip:="Click to view image on our Web-Site")
+        End If
+        ', TextToDisplay:="text"
 
         'pp = XWS.Shapes.AddPicture(PictureFileName, _
         '   0, _
@@ -4614,5 +5075,43 @@ Public Class SOFORDRO
 
     Private Sub grdSHIP2_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdSHIP2.InitializeLayout
 
+    End Sub
+
+    Private Sub setExcelOptions()
+        If chkNewExcel.Checked = True Then
+            grpNewExcel.Visible = True
+        Else
+            grpNewExcel.Visible = False
+        End If
+    End Sub
+
+    Private Sub chkNewExcel_CheckedChanged(sender As Object, e As EventArgs) Handles chkNewExcel.CheckedChanged
+        setExcelOptions()
+    End Sub
+
+    Private Sub getWebImage(ByRef FILENAME As String,
+                        ByVal STYLE_CODE As String,
+                        ByVal COLOR_CODE As String)
+        Dim WEBURL As String = "https://www.regency-rib.com/media/product/"
+        Dim FILEURL As String = WEBURL & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+        Dim TMP_FOLDER As String = ASCMAIN1.Folders("Temp")
+        Dim TMP_FILE As String = TMP_FOLDER & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+        If Not TMP_FOLDER.EndsWith("\") Then
+            TMP_FOLDER = TMP_FOLDER & "\"
+        End If
+        If IO.Directory.Exists(TMP_FOLDER) Then
+            Try
+                Dim web_client As New Net.WebClient
+                Dim image_stream As New IO.MemoryStream(web_client.DownloadData(FILEURL))
+                Dim img As Image = Image.FromStream(image_stream)
+                If IO.File.Exists(TMP_FILE) Then
+                    IO.File.Delete(TMP_FILE)
+                End If
+                img.Save(TMP_FILE)
+                FILENAME = TMP_FILE
+            Catch ex As Exception
+
+            End Try
+        End If
     End Sub
 End Class

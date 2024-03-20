@@ -102,6 +102,8 @@ Partial Class SORCUSTS
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chkShipDates = New ABSCS.ABSCheckBox()
+        Me.chkAveragePrice = New ABSCS.ABSCheckBox()
         Me.grpShip1 = New System.Windows.Forms.GroupBox()
         Me.optSelectBy = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.dteShip_Beg = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -113,8 +115,7 @@ Partial Class SORCUSTS
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkAveragePrice = New ABSCS.ABSCheckBox()
-        Me.chkShipDates = New ABSCS.ABSCheckBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -157,6 +158,8 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpShip1.SuspendLayout()
         CType(Me.optSelectBy, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteShip_Beg, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -170,8 +173,6 @@ Partial Class SORCUSTS
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl2.SuspendLayout()
-        CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -588,6 +589,7 @@ Partial Class SORCUSTS
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.Label1)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShipDates)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkAveragePrice)
         Me.SplitContainer8.Panel1.Controls.Add(Me.grpShip1)
@@ -601,6 +603,26 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Size = New System.Drawing.Size(773, 358)
         Me.SplitContainer8.SplitterDistance = 105
         Me.SplitContainer8.TabIndex = 265
+        '
+        'chkShipDates
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShipDates, False)
+        Me.chkShipDates.CausesValidation = False
+        Me.chkShipDates.Location = New System.Drawing.Point(610, 51)
+        Me.chkShipDates.Name = "chkShipDates"
+        Me.chkShipDates.Size = New System.Drawing.Size(197, 20)
+        Me.chkShipDates.TabIndex = 272
+        Me.chkShipDates.Text = "Show 1st / Last Shipped."
+        '
+        'chkAveragePrice
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkAveragePrice, False)
+        Me.chkAveragePrice.CausesValidation = False
+        Me.chkAveragePrice.Location = New System.Drawing.Point(610, 33)
+        Me.chkAveragePrice.Name = "chkAveragePrice"
+        Me.chkAveragePrice.Size = New System.Drawing.Size(159, 20)
+        Me.chkAveragePrice.TabIndex = 271
+        Me.chkAveragePrice.Text = "Show Average Price"
         '
         'grpShip1
         '
@@ -729,25 +751,14 @@ Partial Class SORCUSTS
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(769, 221)
         '
-        'chkAveragePrice
+        'Label1
         '
-        Me.Absx1.SetABSBindToTable(Me.chkAveragePrice, False)
-        Me.chkAveragePrice.CausesValidation = False
-        Me.chkAveragePrice.Location = New System.Drawing.Point(610, 33)
-        Me.chkAveragePrice.Name = "chkAveragePrice"
-        Me.chkAveragePrice.Size = New System.Drawing.Size(159, 20)
-        Me.chkAveragePrice.TabIndex = 271
-        Me.chkAveragePrice.Text = "Show Average Price"
-        '
-        'chkShipDates
-        '
-        Me.Absx1.SetABSBindToTable(Me.chkShipDates, False)
-        Me.chkShipDates.CausesValidation = False
-        Me.chkShipDates.Location = New System.Drawing.Point(610, 51)
-        Me.chkShipDates.Name = "chkShipDates"
-        Me.chkShipDates.Size = New System.Drawing.Size(197, 20)
-        Me.chkShipDates.TabIndex = 272
-        Me.chkShipDates.Text = "Show 1st / Last Shipped."
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(610, 84)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(66, 16)
+        Me.Label1.TabIndex = 273
+        Me.Label1.Text = "v24.3.19"
         '
         'SORCUSTS
         '
@@ -796,9 +807,12 @@ Partial Class SORCUSTS
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel3.ResumeLayout(False)
         Me.SplitContainer8.Panel1.ResumeLayout(False)
+        Me.SplitContainer8.Panel1.PerformLayout()
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpShip1.ResumeLayout(False)
         Me.grpShip1.PerformLayout()
         CType(Me.optSelectBy, System.ComponentModel.ISupportInitialize).EndInit()
@@ -814,8 +828,6 @@ Partial Class SORCUSTS
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl2.ResumeLayout(False)
-        CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -840,4 +852,5 @@ Partial Class SORCUSTS
     Friend WithEvents grdSOTINVHX As UltraWinGrid.UltraGrid
     Friend WithEvents chkShipDates As ABSCS.ABSCheckBox
     Friend WithEvents chkAveragePrice As ABSCS.ABSCheckBox
+    Friend WithEvents Label1 As Label
 End Class
