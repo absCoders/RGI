@@ -883,7 +883,10 @@ Public Class ICFPHYC1
         Fill_Records("ICTPHYC2", New String() {WHSE_CODE, TICKET_NO})
         Dim dvwC2 As DataView = DirectCast(grdICTPHYC2.DataSource, DataTable).DefaultView
         dvwC2.RowFilter = "STATUS IS NULL"
-        grdICTPHYC2.Text = "Details for Ticket " & TICKET_NO & ", Location " & rowICTPHYC1.Item("LOCATION_CODE")
+        If TICKET_NO <> "" Then
+            grdICTPHYC2.Text = "Details for Ticket " & TICKET_NO & ", Location " & rowICTPHYC1.Item("LOCATION_CODE")
+        End If
+
         If EntryMode = "E" And (optMode.Value = "U" Or optMode.Value = "V") Then
             Dim dvw As DataView = DirectCast(grdICTPHYCX.DataSource, DataTable).DefaultView
             dvw.RowFilter = "INIT_OPER = '" & SelUser & "' " & IIf(optMode.Value = "U", "and (VERIFIED_OPER IS NULL or LAST_ACTIVITY > LAST_DATE)", "and VERIFIED_OPER IS NOT NULL")
