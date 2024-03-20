@@ -112,6 +112,22 @@ Public Class ICRPHYV1
                         rowICTSTYL1.Item("STYLE_COST") = row.Item("PO_COST")
                     End If
                 Next
+
+                For Each rowICTPHYV1 As DataRow In dst.Tables("ICTPHYV1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "'")
+                    If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
+                        rowICTPHYV1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
+                    Else
+                        rowICTPHYV1.Item("STYLE_COST") = row.Item("PO_COST")
+                    End If
+                Next
+
+                For Each rowWHTPHYV1 As DataRow In dst.Tables("WHTPHYV1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "'")
+                    If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
+                        rowWHTPHYV1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
+                    Else
+                        rowWHTPHYV1.Item("STYLE_COST") = row.Item("PO_COST")
+                    End If
+                Next
             Next
         End If
 
