@@ -7,9 +7,12 @@ Public Class SORCUSTS
     Dim REPORT_NAME As String = "SORCUSTS"
     Dim SQL_REPORT As New StringBuilder With {.Length = 0}
     Dim GRP_IN As String = ""
+    Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
 
 #Region "Report Standards"
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        Ftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+
         RWU = "N"
         Get_PARM("ICTPARM1")
 
@@ -178,6 +181,13 @@ Public Class SORCUSTS
         rowWEBLINKS.Item("FORM_NAME") = REPORT_NAME
         dst.Tables.Item("WEBLINKS").Rows.Add(rowWEBLINKS)
         Update_Record_TDA("WEBLINKS")
+
+        Dim FileNameLocalFull As String = FILENAME_FULL
+        Dim FileNameRemote As String = FILE_NAME
+        Dim eMsg As Text.StringBuilder = FTP_BLUEHOST(FileNameLocalFull, FileNameRemote)
+        If eMsg.Length > 0 Then
+            MsgBox(eMsg.ToString, vbCritical, "Error Sending To Remote Server")
+        End If
     End Sub
 
     Public Overrides Sub Verify_Special(ByVal eItemKey As String)
@@ -343,9 +353,14 @@ Public Class SORCUSTS
                     MsgBox("You File Has Been Replaced", vbInformation, "Done")
                 End If
             Case "Copy Link"
+                'Dim FILE_NAME As String = grd.ActiveRow.Cells.Item("FILE_NAME").Text
+                'Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                'Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                'My.Computer.Clipboard.SetText(FILE_NAME & vbCrLf & LINEPFX)
+                'MsgBox("You Link Has Been Copied To Your Clipboard", vbInformation, "Done")
                 Dim FILE_NAME As String = grd.ActiveRow.Cells.Item("FILE_NAME").Text
-                Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
-                Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/" & HASH
+                Dim HASHVALUE As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                Dim LINEPFX As String = $"https://vandaledocs.azurewebsites.net/Documents/{HASHVALUE}"
                 My.Computer.Clipboard.SetText(FILE_NAME & vbCrLf & LINEPFX)
                 MsgBox("You Link Has Been Copied To Your Clipboard", vbInformation, "Done")
             Case "Extend Expiration"
@@ -1337,4 +1352,44 @@ Public Class SORCUSTS
     End Sub
 
 #End Region
+
+    Private Function FTP_BLUEHOST(ByRef FileNameLocalFull As String, ByRef FileNameRemote As String) As StringBuilder
+        Dim RetVal As New StringBuilder With {.Length = 0}
+        Dim FTPUser As String = "abs@vandalequotes.com"
+        Dim FTPPassword As String = "0ff1c3ABS#"
+        Dim FTPHost As String = "ftp.tzn.lnr.mybluehost.me"
+        Dim FTPRemoteFull As String = $"/public_html/FTP/{FileNameRemote}"
+
+        If Not System.IO.File.Exists(FileNameLocalFull) Then
+            RetVal.AppendLine($"FTP File Provided Does Not Exist: {FileNameLocalFull}")
+        End If
+
+        If RetVal.Length = 0 Then
+            Try
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    Stop
+                End If
+
+                Ftp1.User = FTPUser
+                Ftp1.Password = FTPPassword
+                Ftp1.RemoteHost = FTPHost
+
+                Ftp1.Logon()
+
+                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                Ftp1.LocalFile = FileNameLocalFull
+                Ftp1.RemoteFile = FTPRemoteFull
+                'Ftp1.Timeout = 0 'Don't Timeout
+                Ftp1.Overwrite = True
+
+                Ftp1.Upload()
+
+                Ftp1.Logoff()
+            Catch ex As Exception
+                RetVal.AppendLine($"FTP Error: {ex.Message} : {ex.InnerException}")
+                'Just bail out for now.  We eventually need some kind of tracking.
+            End Try
+        End If
+        Return RetVal
+    End Function
 End Class

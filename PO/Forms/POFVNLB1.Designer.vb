@@ -26,6 +26,7 @@ Partial Class POFVNLB1
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -67,8 +68,6 @@ Partial Class POFVNLB1
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim DateButton1 As Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton = New Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton()
-        Dim DateButton2 As Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton = New Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTXLSPS", -1)
         Dim UltraGridColumn73 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
@@ -88,6 +87,8 @@ Partial Class POFVNLB1
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim DateButton1 As Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton = New Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton()
+        Dim DateButton2 As Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton = New Infragistics.Win.UltraWinSchedule.CalendarCombo.DateButton()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.txtVEND_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
@@ -96,11 +97,11 @@ Partial Class POFVNLB1
         Me.grdPOTVNLB1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.splSets = New System.Windows.Forms.SplitContainer()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.grdICTXLSPS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraCalendarCombo1 = New Infragistics.Win.UltraWinSchedule.UltraCalendarCombo()
         Me.UltraCalendarCombo2 = New Infragistics.Win.UltraWinSchedule.UltraCalendarCombo()
-        Me.splSets = New System.Windows.Forms.SplitContainer()
-        Me.grdICTXLSPS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -118,13 +119,13 @@ Partial Class POFVNLB1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        CType(Me.UltraCalendarCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraCalendarCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splSets, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splSets.Panel1.SuspendLayout()
         Me.splSets.Panel2.SuspendLayout()
         Me.splSets.SuspendLayout()
         CType(Me.grdICTXLSPS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraCalendarCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraCalendarCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -133,7 +134,8 @@ Partial Class POFVNLB1
         UltraExplorerBarItem1.Text = "Load"
         UltraExplorerBarItem2.Text = "Done"
         UltraExplorerBarItem5.Text = "Cancel"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem5})
+        UltraExplorerBarItem3.Text = "Export w/ Sets"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem5, UltraExplorerBarItem3})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -145,7 +147,7 @@ Partial Class POFVNLB1
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.AllowEdit = Infragistics.Win.DefaultableBoolean.[False]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -157,7 +159,7 @@ Partial Class POFVNLB1
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5)
         Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(779, 564)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
@@ -235,7 +237,7 @@ Partial Class POFVNLB1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.txtVEND_CODE)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraLabel7)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 157)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -247,7 +249,7 @@ Partial Class POFVNLB1
         Me.Absx1.SetABSHasButton(Me.txtVEND_CODE, True)
         Me.Absx1.SetABSViewName(Me.txtVEND_CODE, "VEND_CODE")
         Me.txtVEND_CODE.Location = New System.Drawing.Point(-2, 0)
-        Me.txtVEND_CODE.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.txtVEND_CODE.Margin = New System.Windows.Forms.Padding(4)
         Me.txtVEND_CODE.Name = "txtVEND_CODE"
         Me.txtVEND_CODE.Size = New System.Drawing.Size(153, 25)
         Me.txtVEND_CODE.TabIndex = 181
@@ -420,34 +422,6 @@ Partial Class POFVNLB1
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 113
         '
-        'TextBox1
-        '
-        Me.TextBox1.Location = New System.Drawing.Point(11, 2)
-        Me.TextBox1.Margin = New System.Windows.Forms.Padding(2)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(52, 23)
-        Me.TextBox1.TabIndex = 112
-        '
-        'UltraCalendarCombo1
-        '
-        Me.UltraCalendarCombo1.BackColor = System.Drawing.SystemColors.Window
-        Me.UltraCalendarCombo1.DateButtons.Add(DateButton1)
-        Me.UltraCalendarCombo1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraCalendarCombo1.Name = "UltraCalendarCombo1"
-        Me.UltraCalendarCombo1.NonAutoSizeHeight = 22
-        Me.UltraCalendarCombo1.Size = New System.Drawing.Size(121, 38)
-        Me.UltraCalendarCombo1.TabIndex = 1
-        '
-        'UltraCalendarCombo2
-        '
-        Me.UltraCalendarCombo2.BackColor = System.Drawing.SystemColors.Window
-        Me.UltraCalendarCombo2.DateButtons.Add(DateButton2)
-        Me.UltraCalendarCombo2.Location = New System.Drawing.Point(0, 0)
-        Me.UltraCalendarCombo2.Name = "UltraCalendarCombo2"
-        Me.UltraCalendarCombo2.NonAutoSizeHeight = 22
-        Me.UltraCalendarCombo2.Size = New System.Drawing.Size(121, 38)
-        Me.UltraCalendarCombo2.TabIndex = 1
-        '
         'splSets
         '
         Me.splSets.Dock = System.Windows.Forms.DockStyle.Fill
@@ -466,6 +440,14 @@ Partial Class POFVNLB1
         Me.splSets.Size = New System.Drawing.Size(779, 493)
         Me.splSets.SplitterDistance = 329
         Me.splSets.TabIndex = 112
+        '
+        'TextBox1
+        '
+        Me.TextBox1.Location = New System.Drawing.Point(11, 2)
+        Me.TextBox1.Margin = New System.Windows.Forms.Padding(2)
+        Me.TextBox1.Name = "TextBox1"
+        Me.TextBox1.Size = New System.Drawing.Size(52, 23)
+        Me.TextBox1.TabIndex = 112
         '
         'grdICTXLSPS
         '
@@ -557,6 +539,26 @@ Partial Class POFVNLB1
         Me.grdICTXLSPS.TabIndex = 223
         Me.grdICTXLSPS.Text = "Sub UPCs"
         '
+        'UltraCalendarCombo1
+        '
+        Me.UltraCalendarCombo1.BackColor = System.Drawing.SystemColors.Window
+        Me.UltraCalendarCombo1.DateButtons.Add(DateButton1)
+        Me.UltraCalendarCombo1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraCalendarCombo1.Name = "UltraCalendarCombo1"
+        Me.UltraCalendarCombo1.NonAutoSizeHeight = 22
+        Me.UltraCalendarCombo1.Size = New System.Drawing.Size(121, 38)
+        Me.UltraCalendarCombo1.TabIndex = 1
+        '
+        'UltraCalendarCombo2
+        '
+        Me.UltraCalendarCombo2.BackColor = System.Drawing.SystemColors.Window
+        Me.UltraCalendarCombo2.DateButtons.Add(DateButton2)
+        Me.UltraCalendarCombo2.Location = New System.Drawing.Point(0, 0)
+        Me.UltraCalendarCombo2.Name = "UltraCalendarCombo2"
+        Me.UltraCalendarCombo2.NonAutoSizeHeight = 22
+        Me.UltraCalendarCombo2.Size = New System.Drawing.Size(121, 38)
+        Me.UltraCalendarCombo2.TabIndex = 1
+        '
         'POFVNLB1
         '
         Me.Absx1.SetABSBindToTable(Me, False)
@@ -584,14 +586,14 @@ Partial Class POFVNLB1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        CType(Me.UltraCalendarCombo1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraCalendarCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splSets.Panel1.ResumeLayout(False)
         Me.splSets.Panel1.PerformLayout()
         Me.splSets.Panel2.ResumeLayout(False)
         CType(Me.splSets, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splSets.ResumeLayout(False)
         CType(Me.grdICTXLSPS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraCalendarCombo1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraCalendarCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
