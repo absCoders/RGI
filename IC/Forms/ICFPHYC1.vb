@@ -883,7 +883,7 @@ Public Class ICFPHYC1
         Fill_Records("ICTPHYC2", New String() {WHSE_CODE, TICKET_NO})
         Dim dvwC2 As DataView = DirectCast(grdICTPHYC2.DataSource, DataTable).DefaultView
         dvwC2.RowFilter = "STATUS IS NULL"
-        If TICKET_NO <> "" Then
+        If TICKET_NO <> "" And Not IsNothing(rowICTPHYC1) Then
             grdICTPHYC2.Text = "Details for Ticket " & TICKET_NO & ", Location " & rowICTPHYC1.Item("LOCATION_CODE")
         End If
 
