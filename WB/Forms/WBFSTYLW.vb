@@ -845,7 +845,7 @@ Public Class WBFSTYLW
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE").ToString & String.Empty
             If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-                If STYLE_CODE = "MTX53294" And COLOR_CODE = "APGR" Then Stop
+                'If STYLE_CODE = "MTX53294" And COLOR_CODE = "APGR" Then Stop
             End If
             Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
             Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
@@ -3319,18 +3319,110 @@ Public Class WBFSTYLW
         For i As Int64 = 10 To 50 Step 10
             INT.Add(i)
         Next
+
+        If ASCMAIN1.Running_in_VS Then Stop
         If INT.Contains(MN) And MN <> LASTMIN Then
-            'If ASCMAIN1.Running_in_VS Then Stop
+            If ASCMAIN1.Running_in_VS Then Stop
             LASTMIN = MN
             txtInventoryLast.Text = String.Format("Last: {0}", Now().ToShortTimeString)
             uploadShopsiteInventory()
             uploadShipTos()
             sendCustomerPricing()
+            sendImagesEmail()
         Else
             If txtInventoryLast.Text = "" Then
                 txtInventoryLast.Text = "Waiting...."
             End If
         End If
+    End Sub
+
+    Private Sub sendImagesEmail()
+        Dim ZIP_FOLDER As String = "\\192.168.110.233\c$\ShopsiteService\Data\OrderImageZips\"
+        Dim TXT_FOLDER As String = "\\192.168.110.233\c$\ShopsiteService\Data\Files\"
+        Dim BASE_URL As String = "https://www.regency-rib.com/images/"
+        'Dim ORDR_NO As String = "0000771989"
+        'Dim GIVENNAME As String = "Mario (Big Pappa)"
+        Dim ATTACHMENTs As New Dictionary(Of String, String)
+        'ATTACHMENTs.Add($"{ORDR_NO}.zip", $"\\192.168.110.233\c$\ShopsiteService\Data\OrderImageZips\{ORDR_NO}.zip")
+
+        Dim SQLW As New StringBuilder
+        SQLW.Length = 0
+        SQLW.AppendLine("SELECT *")
+        SQLW.AppendLine("FROM WBTIMGR1")
+        Fill_Records("WBTIMGR1", , , SQLW.ToString)
+
+        'Dim di As DirectoryInfo = System.IO.DirectoryInfo(ZIP_FOLDER)
+        Dim files As String() = Directory.GetFiles(ZIP_FOLDER)
+        For Each file As String In files
+            If file.ToUpper.EndsWith(".ZIP") Then
+                Dim ORDR_NO As String = file.Replace(".ZIP", "").Replace(".zip", "").Replace(ZIP_FOLDER, "")
+                Dim FLTR As String = $"ORDR_NO = '{ORDR_NO}'"
+                If dst.Tables.Item("WBTIMGR1").Select(FLTR).Count = 0 Then
+                    Dim TXT_FILE As String = $"{TXT_FOLDER}{ORDR_NO}.txt"
+                    If System.IO.File.Exists(TXT_FILE) Then
+                        Dim fileContent As String = System.IO.File.ReadAllText(TXT_FILE)
+                        Dim fileData As String() = fileContent.Split("|")
+                        If fileData.Length >= 1 Then
+                            Dim EMAIL As String = fileData(0).ToUpper
+                            SQLW.Length = 0
+                            SQLW.AppendLine("SELECT GIVENNAME")
+                            SQLW.AppendLine("FROM WBTCUST1")
+                            SQLW.AppendLine($"WHERE UPPER(EMAIL) = UPPER('{EMAIL}')")
+                            ASCMAIN1.sql = SQLW.ToString()
+                            Dim GIVENNAME As String = ASCDATA1.GetDataValue
+
+                            SQLW.Length = 0
+                            SQLW.AppendLine("SELECT FAMILYNAME")
+                            SQLW.AppendLine("FROM WBTCUST1")
+                            SQLW.AppendLine($"WHERE UPPER(EMAIL) = UPPER('{EMAIL}')")
+                            ASCMAIN1.sql = SQLW.ToString()
+                            Dim FAMILYNAME As String = ASCDATA1.GetDataValue
+
+                            If GIVENNAME.Length > 0 Then
+                                Dim SUBJECT As String = $"Requested Images For Order {ORDR_NO}"
+                                Dim BDY As New StringBuilder With {.Length = 0}
+                                If GIVENNAME.Length > 0 Then
+                                    BDY.AppendLine($"Hi {GIVENNAME};")
+                                Else
+                                    BDY.AppendLine("Hi;")
+                                End If
+                                BDY.AppendLine("")
+                                BDY.AppendLine($"Please follow the link below to view to download images for order #{ORDR_NO}:")
+                                BDY.AppendLine($"<a href={BASE_URL}{ORDR_NO}.zip >Click Here To Download Your File</a>")
+                                BDY.AppendLine("")
+                                BDY.AppendLine("Thank You,")
+                                BDY.AppendLine("")
+                                BDY.AppendLine("Regency International")
+                                BDY.AppendLine("800.782.7810")
+                                BDY.AppendLine("")
+                                BDY.AppendLine("For questions, please contact <a href='mailto:hq@regency-rib.com'>Customer Service</a> or your <a href='https://www.regency-rib.com/locate-sales-representative.html/'>Sales Representative</a> directly.")
+
+                                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                                EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                                EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
+                                'EMAIL_ADDRESSs.Add(EMAIL, $"{GIVENNAME} {FAMILYNAME}")
+
+
+                                Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                                        SUBJECT, "SHOPSI", True, False, ORDR_NO, "Order Images", "Order Images", BDY.ToString)
+                                If SEND_NO.Length > 0 Then
+                                    Dim newWBTIMGR1 As DataRow = dst.Tables("WBTIMGR1").NewRow
+                                    newWBTIMGR1.Item("ORDR_NO") = ORDR_NO
+                                    newWBTIMGR1.Item("REQ_DATE") = Now()
+                                    newWBTIMGR1.Item("REQ_EMAIL") = EMAIL.ToUpper
+                                    newWBTIMGR1.Item("REQ_STATUS") = "X"
+                                    dst.Tables("WBTIMGR1").Rows.Add(newWBTIMGR1)
+                                    Update_Record_TDA("WBTIMGR1")
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+        Next
+
+
     End Sub
 
     Private Sub uploadShipTos()

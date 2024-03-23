@@ -483,10 +483,11 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel2
         '
@@ -557,7 +558,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 405)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, -147)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -613,7 +614,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 599)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 47)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
@@ -714,11 +715,10 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 241)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'grpUploads
         '
@@ -833,11 +833,10 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 510)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel1
         '
@@ -959,7 +958,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.pnlWHTSTYLH)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1004, 398)
         '
@@ -1538,7 +1537,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdWBTPAGEX)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(1004, 398)
         '
@@ -1626,7 +1625,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdWBTSTYLD)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1008, 599)
         '
@@ -1882,7 +1881,7 @@ Partial Class WBFSTYLW
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splWHTSTYLH)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1008, 599)
         '
