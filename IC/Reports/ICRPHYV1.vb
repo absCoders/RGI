@@ -106,26 +106,32 @@ Public Class ICRPHYV1
             ASCMAIN1.sql = "SELECT * FROM ICTSTYV1 where STYLE_CODE < 'a'"
             For Each row As DataRow In ASCDATA1.GetDataTable().Select("PO_COST > 0")
                 For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "' and VEND_CODE = '" & row.Item("VEND_CODE") & "'")
-                    If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
-                        rowICTSTYL1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
-                    Else
-                        rowICTSTYL1.Item("STYLE_COST") = row.Item("PO_COST")
+                    If Val(rowICTSTYL1.Item("STYLE_COST") & "") = 0 Then
+                        If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
+                            rowICTSTYL1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
+                        Else
+                            rowICTSTYL1.Item("STYLE_COST") = row.Item("PO_COST")
+                        End If
                     End If
                 Next
 
                 For Each rowICTPHYV1 As DataRow In dst.Tables("ICTPHYV1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "'")
-                    If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
-                        rowICTPHYV1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
-                    Else
-                        rowICTPHYV1.Item("STYLE_COST") = row.Item("PO_COST")
+                    If Val(rowICTPHYV1.Item("STYLE_COST") & "") = 0 Then
+                        If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
+                            rowICTPHYV1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
+                        Else
+                            rowICTPHYV1.Item("STYLE_COST") = row.Item("PO_COST")
+                        End If
                     End If
                 Next
 
                 For Each rowWHTPHYV1 As DataRow In dst.Tables("WHTPHYV1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE") & "'")
-                    If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
-                        rowWHTPHYV1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
-                    Else
-                        rowWHTPHYV1.Item("STYLE_COST") = row.Item("PO_COST")
+                    If Val(rowWHTPHYV1.Item("STYLE_COST") & "") = 0 Then
+                        If Not IsDBNull(row.Item("NEW_PO_COST_DATE")) AndAlso row.Item("NEW_PO_COST_DATE") < DATETIME_STAMP Then
+                            rowWHTPHYV1.Item("STYLE_COST") = row.Item("NEW_PO_COST")
+                        Else
+                            rowWHTPHYV1.Item("STYLE_COST") = row.Item("PO_COST")
+                        End If
                     End If
                 Next
             Next
@@ -242,33 +248,33 @@ Public Class ICRPHYV1
 
             If chkIncludeCycleCountAdjustments.Checked Then
                 Dim cycle_counts As String = "SELECT Y.*, WHTCYCL2.BAR_CODE, WHTCYCL2.CYCLE_SCAN, WHTCYCL2.CYCLE_NEW, WHTLOCB2.WHSE_TRAN_QTY, WHTLOCB2.STYLE_CODE, WHTLOCB2.COLOR_CODE
- FROM WHTCYCL2, WHTLOCB2, (
-SELECT X.*, WHTCYCL1.WHSE_CODE, WHTCYCL1.LOCATION_CODE, WHTCYCL1.CYCLE_STATUS, WHTCYCL1.CYCLE_RESOLUTION, WHTCYCL1.CYCLE_TYPE,'M' WHSE_TRAN_TYPE, WHTCYCL1.WHSE_TRAN_NO,
- WHTCYCL1.CASES_BOOK, WHTCYCL1.CASES_PHYS FROM WHTCYCL1,(
-SELECT CYCLE_NO
-, SUM (CASE WHEN CYCLE_SCAN IS NULL THEN 1 ELSE 0 END) NOSCANS
-, SUM (CASE WHEN CYCLE_SCAN = '1' THEN 1 ELSE 0 END) SCANS
-, SUM (CASE WHEN CYCLE_NEW = '1' THEN 1 ELSE 0 END) NEW
- FROM WHTCYCL2
-GROUP BY CYCLE_NO
-) X WHERE WHTCYCL1.CYCLE_NO = X.CYCLE_NO
-AND WHTCYCL1.CYCLE_STATUS = 'D' AND WHTCYCL1.CYCLE_RESOLUTION = 'U' AND WHTCYCL1.CYCLE_TYPE = 'V'
-AND WHTCYCL1.INIT_DATE > '06-FEB-2023'
-) Y  WHERE Y.CYCLE_NO = WHTCYCL2.CYCLE_NO
-AND (WHTCYCL2.CYCLE_SCAN IS NULL OR WHTCYCL2.CYCLE_NEW = '1')
-AND WHTLOCB2.WHSE_CODE = Y.WHSE_CODE AND WHTLOCB2.WHSE_TRAN_TYPE = Y.WHSE_TRAN_TYPE AND WHTLOCB2.WHSE_TRAN_NO = Y.WHSE_TRAN_NO
-AND WHTLOCB2.LOCATION_CODE= '00-LNF-A' AND (WHTLOCB2.BAR_CODE = WHTCYCL2.BAR_CODE OR WHTLOCB2.BAR_CODE_OTHER = WHTCYCL2.BAR_CODE)
-ORDER BY Y.CYCLE_NO"
+                 FROM WHTCYCL2, WHTLOCB2, (
+                SELECT X.*, WHTCYCL1.WHSE_CODE, WHTCYCL1.LOCATION_CODE, WHTCYCL1.CYCLE_STATUS, WHTCYCL1.CYCLE_RESOLUTION, WHTCYCL1.CYCLE_TYPE,'M' WHSE_TRAN_TYPE, WHTCYCL1.WHSE_TRAN_NO,
+                 WHTCYCL1.CASES_BOOK, WHTCYCL1.CASES_PHYS FROM WHTCYCL1,(
+                SELECT CYCLE_NO
+                , SUM (CASE WHEN CYCLE_SCAN IS NULL THEN 1 ELSE 0 END) NOSCANS
+                , SUM (CASE WHEN CYCLE_SCAN = '1' THEN 1 ELSE 0 END) SCANS
+                , SUM (CASE WHEN CYCLE_NEW = '1' THEN 1 ELSE 0 END) NEW
+                 FROM WHTCYCL2
+                GROUP BY CYCLE_NO
+                ) X WHERE WHTCYCL1.CYCLE_NO = X.CYCLE_NO
+                AND WHTCYCL1.CYCLE_STATUS = 'D' AND WHTCYCL1.CYCLE_RESOLUTION = 'U' AND WHTCYCL1.CYCLE_TYPE = 'V'
+                AND WHTCYCL1.INIT_DATE > '06-FEB-2023'
+                ) Y  WHERE Y.CYCLE_NO = WHTCYCL2.CYCLE_NO
+                AND (WHTCYCL2.CYCLE_SCAN IS NULL OR WHTCYCL2.CYCLE_NEW = '1')
+                AND WHTLOCB2.WHSE_CODE = Y.WHSE_CODE AND WHTLOCB2.WHSE_TRAN_TYPE = Y.WHSE_TRAN_TYPE AND WHTLOCB2.WHSE_TRAN_NO = Y.WHSE_TRAN_NO
+                AND WHTLOCB2.LOCATION_CODE= '00-LNF-A' AND (WHTLOCB2.BAR_CODE = WHTCYCL2.BAR_CODE OR WHTLOCB2.BAR_CODE_OTHER = WHTCYCL2.BAR_CODE)
+                ORDER BY Y.CYCLE_NO"
 
                 ASCMAIN1.sql = $"INSERT INTO ICTPHYC1 
-SELECT 'NJC' WHSE_CODE, 'C' || SUBSTR(CYCLE_NO,6,5), 'cycle', LOCATION_CODE, INIT_OPER, LAST_OPER, INIT_DATE, LAST_DATE, 'A', NULL, NULL
-FROM WHTCYCL1 WHERE CYCLE_NO IN (SELECT DISTINCT CYCLE_NO FROM ({cycle_counts}))"
+                SELECT 'NJC' WHSE_CODE, 'C' || SUBSTR(CYCLE_NO,6,5), 'cycle', LOCATION_CODE, INIT_OPER, LAST_OPER, INIT_DATE, LAST_DATE, 'A', NULL, NULL
+                FROM WHTCYCL1 WHERE CYCLE_NO IN (SELECT DISTINCT CYCLE_NO FROM ({cycle_counts}))"
                 ASCDATA1.ExecuteSQL()
 
                 Dim sqlCYCLE_ADJ As String = $"SELECT Z.WHSE_CODE, 'C' || SUBSTR(Z.CYCLE_NO,6,5), ROWNUM TICKET_LNO
-, Z.STYLE_CODE, Z.COLOR_CODE, 0 COUNT_CTNS, 0 CARTON_PACK_QTY, -1 * Z.WHSE_TRAN_QTY COUNT_LOOSE
-, Z.BAR_CODE, 'A' STATUS, NULL NEW_TICKET
-FROM ({cycle_counts}) Z"
+                , Z.STYLE_CODE, Z.COLOR_CODE, 0 COUNT_CTNS, 0 CARTON_PACK_QTY, -1 * Z.WHSE_TRAN_QTY COUNT_LOOSE
+                , Z.BAR_CODE, 'A' STATUS, NULL NEW_TICKET
+                FROM ({cycle_counts}) Z"
 
                 ASCMAIN1.sql = $"INSERT INTO ICTPHYC2 {sqlCYCLE_ADJ}"
                 ASCDATA1.ExecuteSQL()
