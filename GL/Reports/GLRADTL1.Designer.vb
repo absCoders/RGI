@@ -82,6 +82,7 @@ Partial Class GLRADTL1
         Me.UltraCheckEditor6 = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraCheckEditor5 = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraCheckEditor2 = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.UltraCheckEditor7 = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -125,25 +126,40 @@ Partial Class GLRADTL1
         CType(Me.UltraCheckEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCheckEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCheckEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraCheckEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
+        '
+        'UltraTabPageControl2
+        '
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
         'UltraTabControl1
         '
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
+        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
         '
         'SplitContainer5
         '
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.UltraCheckEditor7)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox1)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraCheckEditor4)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraCheckEditor3)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraCheckEditor1)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox2)
+        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
+        '
+        'txtDescription
+        '
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         'grdASTRECAP
         '
@@ -236,15 +252,23 @@ Partial Class GLRADTL1
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
+        '
+        'tabDataExports
+        '
+        Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
+        Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'grdASFBASEX
         '
@@ -291,17 +315,24 @@ Partial Class GLRADTL1
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        '_ASFBASE1_Toolbars_Dock_Area_Left
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
         '
         'tlb
         '
@@ -312,9 +343,10 @@ Partial Class GLRADTL1
         '
         Me.UltraGroupBox2.Controls.Add(Me.UltraCombo2)
         Me.UltraGroupBox2.Controls.Add(Me.UltraCombo1)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(10, 3)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(12, 3)
+        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(162, 91)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(202, 102)
         Me.UltraGroupBox2.TabIndex = 9
         Me.UltraGroupBox2.Text = "Period Range"
         '
@@ -378,9 +410,10 @@ Partial Class GLRADTL1
         Me.UltraCombo2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo2.DisplayMember = "LEGEND"
         Me.UltraCombo2.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo2.Location = New System.Drawing.Point(6, 55)
+        Me.UltraCombo2.Location = New System.Drawing.Point(8, 62)
+        Me.UltraCombo2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo2.Name = "UltraCombo2"
-        Me.UltraCombo2.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo2.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo2.TabIndex = 1
         '
         'UltraCombo1
@@ -443,17 +476,19 @@ Partial Class GLRADTL1
         Me.UltraCombo1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo1.DisplayMember = "LEGEND"
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo1.Location = New System.Drawing.Point(6, 23)
+        Me.UltraCombo1.Location = New System.Drawing.Point(8, 26)
+        Me.UltraCombo1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo1.TabIndex = 0
         '
         'UltraCheckEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraCheckEditor1, "CHKDTL")
-        Me.UltraCheckEditor1.Location = New System.Drawing.Point(10, 100)
+        Me.UltraCheckEditor1.Location = New System.Drawing.Point(12, 112)
+        Me.UltraCheckEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCheckEditor1.Name = "UltraCheckEditor1"
-        Me.UltraCheckEditor1.Size = New System.Drawing.Size(276, 52)
+        Me.UltraCheckEditor1.Size = New System.Drawing.Size(345, 58)
         Me.UltraCheckEditor1.TabIndex = 11
         Me.UltraCheckEditor1.Text = "Show Only those Accounts with Activity in the Period Range Selected"
         '
@@ -462,9 +497,10 @@ Partial Class GLRADTL1
         Me.Absx1.SetABSColumnName(Me.UltraCheckEditor4, "SHOW_CVX_NAME")
         Me.UltraCheckEditor4.Checked = True
         Me.UltraCheckEditor4.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.UltraCheckEditor4.Location = New System.Drawing.Point(10, 184)
+        Me.UltraCheckEditor4.Location = New System.Drawing.Point(12, 207)
+        Me.UltraCheckEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCheckEditor4.Name = "UltraCheckEditor4"
-        Me.UltraCheckEditor4.Size = New System.Drawing.Size(241, 20)
+        Me.UltraCheckEditor4.Size = New System.Drawing.Size(301, 22)
         Me.UltraCheckEditor4.TabIndex = 16
         Me.UltraCheckEditor4.Text = "Print Vendor/Customer Names"
         '
@@ -473,9 +509,10 @@ Partial Class GLRADTL1
         Me.Absx1.SetABSColumnName(Me.UltraCheckEditor3, "SHOW_DETL_DESC")
         Me.UltraCheckEditor3.Checked = True
         Me.UltraCheckEditor3.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.UltraCheckEditor3.Location = New System.Drawing.Point(10, 158)
+        Me.UltraCheckEditor3.Location = New System.Drawing.Point(12, 178)
+        Me.UltraCheckEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCheckEditor3.Name = "UltraCheckEditor3"
-        Me.UltraCheckEditor3.Size = New System.Drawing.Size(209, 20)
+        Me.UltraCheckEditor3.Size = New System.Drawing.Size(261, 22)
         Me.UltraCheckEditor3.TabIndex = 15
         Me.UltraCheckEditor3.Text = "Print Detail Description"
         '
@@ -484,44 +521,59 @@ Partial Class GLRADTL1
         Me.UltraGroupBox1.Controls.Add(Me.UltraCheckEditor6)
         Me.UltraGroupBox1.Controls.Add(Me.UltraCheckEditor5)
         Me.UltraGroupBox1.Controls.Add(Me.UltraCheckEditor2)
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(178, 3)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(222, 3)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(162, 91)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(202, 102)
         Me.UltraGroupBox1.TabIndex = 17
         Me.UltraGroupBox1.Text = "Consolidate"
         '
         'UltraCheckEditor6
         '
         Me.Absx1.SetABSColumnName(Me.UltraCheckEditor6, "CHKSEG4")
-        Me.UltraCheckEditor6.Location = New System.Drawing.Point(6, 65)
+        Me.UltraCheckEditor6.Location = New System.Drawing.Point(8, 73)
+        Me.UltraCheckEditor6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCheckEditor6.Name = "UltraCheckEditor6"
-        Me.UltraCheckEditor6.Size = New System.Drawing.Size(106, 20)
+        Me.UltraCheckEditor6.Size = New System.Drawing.Size(132, 22)
         Me.UltraCheckEditor6.TabIndex = 20
         Me.UltraCheckEditor6.Text = "SEG4_CODE"
         '
         'UltraCheckEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraCheckEditor5, "CHKSEG3")
-        Me.UltraCheckEditor5.Location = New System.Drawing.Point(6, 43)
+        Me.UltraCheckEditor5.Location = New System.Drawing.Point(8, 48)
+        Me.UltraCheckEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCheckEditor5.Name = "UltraCheckEditor5"
-        Me.UltraCheckEditor5.Size = New System.Drawing.Size(106, 20)
+        Me.UltraCheckEditor5.Size = New System.Drawing.Size(132, 22)
         Me.UltraCheckEditor5.TabIndex = 19
         Me.UltraCheckEditor5.Text = "SEG3_CODE"
         '
         'UltraCheckEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraCheckEditor2, "CHKSEG2")
-        Me.UltraCheckEditor2.Location = New System.Drawing.Point(6, 22)
+        Me.UltraCheckEditor2.Location = New System.Drawing.Point(8, 25)
+        Me.UltraCheckEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCheckEditor2.Name = "UltraCheckEditor2"
-        Me.UltraCheckEditor2.Size = New System.Drawing.Size(106, 20)
+        Me.UltraCheckEditor2.Size = New System.Drawing.Size(132, 22)
         Me.UltraCheckEditor2.TabIndex = 18
         Me.UltraCheckEditor2.Text = "SEG2_CODE"
         '
+        'UltraCheckEditor7
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraCheckEditor7, "SHOW_OPSJ")
+        Me.UltraCheckEditor7.Location = New System.Drawing.Point(13, 235)
+        Me.UltraCheckEditor7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraCheckEditor7.Name = "UltraCheckEditor7"
+        Me.UltraCheckEditor7.Size = New System.Drawing.Size(261, 22)
+        Me.UltraCheckEditor7.TabIndex = 18
+        Me.UltraCheckEditor7.Text = "Generate OPSJ Details"
+        '
         'GLRADTL1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.ClientSize = New System.Drawing.Size(1238, 646)
+        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.Name = "GLRADTL1"
         Me.Text = "GLRADTL1"
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -568,6 +620,7 @@ Partial Class GLRADTL1
         CType(Me.UltraCheckEditor6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCheckEditor5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCheckEditor2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraCheckEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -581,4 +634,5 @@ Partial Class GLRADTL1
     Friend WithEvents UltraGroupBox1 As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraCheckEditor6 As Infragistics.Win.UltraWinEditors.UltraCheckEditor
     Friend WithEvents UltraCheckEditor5 As Infragistics.Win.UltraWinEditors.UltraCheckEditor
+    Friend WithEvents UltraCheckEditor7 As UltraWinEditors.UltraCheckEditor
 End Class
