@@ -149,7 +149,7 @@ Public Class SOFDISCI
         AttachmentFolder = ASCMAIN1.Folders("Attach")
 
         If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "edz" Then
-            AttachmentFolder = "R:\RGI\Attach\RGI"
+            AttachmentFolder = "\\192.168.110.221\Shared\RGI\Attach\RGI"
         End If
 
         If AttachmentFolder.Length > 0 Then
@@ -171,7 +171,23 @@ Public Class SOFDISCI
         Select Case eItemKey
 
             Case "Generate Letters"
+                If MessageBox.Show("Do you want to Generate Letters?", "Generate Letters", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    Exit Sub
+                End If
+
                 processingInventoryShortages = False
+                chkForceEmail.Checked = False
+                chkForceEmail.Visible = False
+
+
+            Case "Re-Generate Letters"
+                If MessageBox.Show("Do you want to Re-Generate Letters?", "Re-Generate Letters", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    Exit Sub
+                End If
+
+                processingInventoryShortages = False
+                chkForceEmail.Checked = True
+                chkForceEmail.Visible = True
 
             Case "Cancel"
                 If MessageBox.Show("Do you want to Cancel any changes?",
@@ -189,11 +205,20 @@ Public Class SOFDISCI
                         Exit Select
                     End If
 
-                    If MessageBox.Show("Do you want to Print the Letters for the selected Sales orders?",
-                                       "Print Letters", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                                       MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
-                        Exit Sub
+                    If chkForceEmail.Checked Then
+                        If MessageBox.Show("Do you want to Re-Email letters emailed to the Customers and Sales Reps?",
+                                           "Print Letters", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                           MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
+                            Exit Sub
 
+                        End If
+                    Else
+                        If MessageBox.Show("Do you want to Print the Letters for the selected Sales orders?",
+                                           "Print Letters", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                                           MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
+                            Exit Sub
+
+                        End If
                     End If
 
                 Else
@@ -229,7 +254,7 @@ Public Class SOFDISCI
 
         Select Case eItemKey
 
-            Case "Generate Letters", "View Shortages"
+            Case "Generate Letters", "Re-Generate Letters", "View Shortages"
                 EntryMode = "E"
                 Load_Record()
                 Mode_Settings(True)
@@ -259,6 +284,9 @@ Public Class SOFDISCI
                 .Groups("Screen Control").Items("Generate Letters").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Cancel").Settings.Enabled = iScreenMode
 
+                .Groups("Screen Control").Items("Re-Generate Letters").Settings.Enabled = not_iScreenMode
+                .Groups("Screen Control").Items("Re-Generate Letters").Visible = False
+
                 If processingInventoryShortages OrElse not_iScreenMode = 1 Then
                     .Groups("Screen Control").Items("Save Changes").Text = "Save Changes"
                     .Groups("Screen Control").Items("Update Sales Orders").Settings.Enabled = iScreenMode
@@ -270,6 +298,7 @@ Public Class SOFDISCI
                 If Not tf Then
                     If Val(ASCDATA1.GetDataValue("select count(*) from sotordrc where EMAILED_TO_CUST = '1' OR PRINTED = '1'") & String.Empty) > 0 Then
                         .Groups("Screen Control").Items("View Shortages").Settings.Enabled = DefaultableBoolean.False
+                        .Groups("Screen Control").Items("Re-Generate Letters").Visible = True
                     End If
                 End If
 
@@ -298,6 +327,10 @@ Public Class SOFDISCI
         dst.Tables("ASTATTA2").Rows.Clear()
         dst.Tables("SOTORDRC").Rows.Clear()
 
+        chkForceEmail.Checked = False
+        chkForceEmail.Visible = False
+        chkForceEmail.Enabled = False
+
         cancelItems = False
         EnforceConstraints(True)
 
@@ -319,7 +352,12 @@ Public Class SOFDISCI
         sql &= " Where SOTORDR2.ORDR_NO = SOTORDRC.ORDR_NO  AND SOTORDR2.ORDR_LNO = SOTORDRC.ORDR_LNO"
         sql &= " and SOTORDR2.STYLE_CODE = SOTORDRC.STYLE_CODE AND SOTORDR2.COLOR_CODE = SOTORDRC.COLOR_CODE"
 
-        If Not processingInventoryShortages Then
+        If chkForceEmail.Checked Then
+            ' Re-emailing the letters to the customer
+            sql &= " AND NVL(SOTORDRC.SELECTED, '0') = '1' 
+                     AND NVL(SOTORDRC.SELECTED_DTL, '0') = '1' 
+                     AND (NVL(SOTORDRC.EMAILED_TO_CUST, '0') = '1' or NVL(SOTORDRC.EMAILED_TO_SREP, '0') = '1')"
+        ElseIf Not processingInventoryShortages Then
             sql &= " AND NVL(SOTORDR2.ORDR_LINE_CANC, '0') = '1'"
         End If
 
@@ -407,8 +445,10 @@ Public Class SOFDISCI
             Fill_Stats()
 
             If Not ProcessCustomerEmails() Then Exit Sub
+            Fill_Stats()
 
             If Not ProcessPrintedletters() Then Exit Sub
+            Fill_Stats()
 
             If Not ProcessSalesRepEmails() Then Exit Sub
             Fill_Stats()
@@ -807,6 +847,11 @@ Public Class SOFDISCI
 
     Private Function ClearNoDetailSalesOrders() As Boolean
 
+        ' This is a reprint; therefore, get out
+        If chkForceEmail.Checked Then
+            Return True
+        End If
+
         Try
             ' Get all letters with no details out of the way.
             ASCMAIN1.Progress("Updating User Canceled 'Item Cancellation Letter'", "")
@@ -933,12 +978,21 @@ Public Class SOFDISCI
                 End If
 
                 ' Only email any that were not previously emailed.
-                For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("SREP_CODE = '" & SREP_CODE & "'")
-                    Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
-                    If dst.Tables("SOTORDRC").Select($"ORDR_NO = '{rowSOTORDR1.Item("ORDR_NO")}' AND EMAILED_TO_SREP <> '1'").Length > 0 Then
-                        rowSOTORDR1.Item("SELECTED") = LetterEmailedOrPrinted
-                    End If
-                Next
+                If chkForceEmail.Checked Then
+                    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("SREP_CODE = '" & SREP_CODE & "'")
+                        Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
+                        If dst.Tables("SOTORDRC").Select($"ORDR_NO = '{rowSOTORDR1.Item("ORDR_NO")}' AND EMAILED_TO_SREP = '1'").Length > 0 Then
+                            rowSOTORDR1.Item("SELECTED") = LetterEmailedOrPrinted
+                        End If
+                    Next
+                Else
+                    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("SREP_CODE = '" & SREP_CODE & "'")
+                        Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO") & String.Empty
+                        If dst.Tables("SOTORDRC").Select($"ORDR_NO = '{rowSOTORDR1.Item("ORDR_NO")}' AND EMAILED_TO_SREP <> '1'").Length > 0 Then
+                            rowSOTORDR1.Item("SELECTED") = LetterEmailedOrPrinted
+                        End If
+                    Next
+                End If
 
                 If dst.Tables("SOTORDR1").Select("SELECTED = '2' AND SREP_CODE = '" & SREP_CODE & "'").Length = 0 Then
                     Continue For
@@ -988,8 +1042,13 @@ Public Class SOFDISCI
 
     End Function
 
-    Private Function ProcessPrintedletters()
+    Private Function ProcessPrintedletters() As Boolean
         ' Process printed letters
+
+        If chkForceEmail.Checked Then
+            Return True
+        End If
+
         Try
             ' Start with a fresh copy of the data
             Fill_Records("SOTORDRC", String.Empty, True, "SELECT * FROM SOTORDRC")
@@ -1049,6 +1108,7 @@ Public Class SOFDISCI
 
             ' If we have an attachment record for this sales order then get out.
             Dim rowASTATTA2 As DataRow = Nothing
+            Dim ATTACHMENT_FILENAME As String = String.Empty
 
             If Not emailToSalesRep Then
 
@@ -1062,13 +1122,12 @@ Public Class SOFDISCI
                 If rowASTATTA2 IsNot Nothing Then
                     Dim ATTACHMENT_NO As String = rowASTATTA2.Item("ATTACHMENT_NO") & String.Empty
                     If ATTACHMENT_NO.Length > 0 Then
-                        Dim ATTACHMENT_FILENAME As String = AttachmentFolder & ATTACHMENT_NO
-                        If ASCMAIN1.Running_in_VS Then
-                            ATTACHMENT_FILENAME = ATTACHMENT_FILENAME.Replace("S:\", "R:\")
-                        End If
+                        ATTACHMENT_FILENAME = AttachmentFolder & ATTACHMENT_NO
                         If My.Computer.FileSystem.FileExists(ATTACHMENT_FILENAME) Then
-                            fileAttachment = String.Empty
-                            Return True
+                            If Not chkForceEmail.Checked Then
+                                fileAttachment = String.Empty
+                                Return True
+                            End If
                         End If
                     End If
                 End If
@@ -1157,6 +1216,12 @@ Public Class SOFDISCI
 
             emailedTo = emailToList
 
+            If ATTACHMENT_FILENAME.Length > 0 Then
+                If My.Computer.FileSystem.FileExists(ATTACHMENT_FILENAME) Then
+                    My.Computer.FileSystem.CopyFile(ATTACHMENT_FILENAME, ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf", True)
+                End If
+            End If
+
             ' Concatentate and process all email addresses
             Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
             For Each emailAddress As String In (emailToList).ToString.Split(";")
@@ -1172,17 +1237,19 @@ Public Class SOFDISCI
 
             ASCMAIN1.Progress("Sending Sales Rep / Customer a copy of the Modified Sales Order", "")
 
-            Print_Report_Begin()
+            If Not My.Computer.FileSystem.FileExists(ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf") Then
+                Print_Report_Begin()
 
-            Dim REPORT_NO As String = Generate_Report("SORDISC1", "Modified Sales Order", "", filter, "PDF", fileAttachment, False)
-            Print_Report_End(False, True)
+                Dim REPORT_NO As String = Generate_Report("SORDISC1", "Modified Sales Order", "", filter, "PDF", fileAttachment, False)
+                Print_Report_End(False, True)
 
-            ' If the file was not there then put it there and get out
-            If rowASTATTA2 IsNot Nothing Then
-                Dim ATTACHMENT_NO As String = rowASTATTA2.Item("ATTACHMENT_NO") & String.Empty
-                My.Computer.FileSystem.CopyFile(ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf", AttachmentFolder & ATTACHMENT_NO)
-                fileAttachment = String.Empty
-                Return True
+                ' If the file was not there then put it there and get out
+                If rowASTATTA2 IsNot Nothing Then
+                    Dim ATTACHMENT_NO As String = rowASTATTA2.Item("ATTACHMENT_NO") & String.Empty
+                    My.Computer.FileSystem.CopyFile(ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf", AttachmentFolder & ATTACHMENT_NO)
+                    fileAttachment = String.Empty
+                    Return True
+                End If
             End If
 
             Dim ATTACHMENTs As New Dictionary(Of String, String)
@@ -1190,8 +1257,10 @@ Public Class SOFDISCI
             fileAttachment = ASCMAIN1.Folders("Temp") & fileAttachment & ".pdf"
 
             ' This is done incase there is a crash.
-            If dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "' AND (EMAILED_TO_CUST = '1' OR PRINTED = '1')").Length > 0 Then
-                Return False
+            If Not chkForceEmail.Checked Then
+                If dst.Tables("SOTORDRC").Select("ORDR_NO = '" & ORDR_NO & "' AND (EMAILED_TO_CUST = '1' OR PRINTED = '1')").Length > 0 Then
+                    Return False
+                End If
             End If
 
             Dim SUBJECT As String = String.Empty
@@ -1214,6 +1283,10 @@ Public Class SOFDISCI
                 clsASCNOTE1.ReplaceEmailSubject = "Modified Sales Orders for your customers"
             Else
                 clsASCNOTE1.ReplaceEmailSubject = "Modified Sales Order (" & ORDR_NO & ") for customer " & rowARTCUST1.Item("CUST_NAME")
+            End If
+
+            If chkForceEmail.Checked Then
+                clsASCNOTE1.ReplaceEmailSubject &= " - THIS MAY BE A DUPLICATE EMAIL"
             End If
 
             clsASCNOTE1.Note = "See Attached"
