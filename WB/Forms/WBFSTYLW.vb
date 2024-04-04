@@ -1535,12 +1535,26 @@ Public Class WBFSTYLW
         S.AppendLine("CL.COLOR_CODE,")
         S.AppendLine("SL.STYLE_DESC,")
         S.AppendLine("CL.STYLE_COLOR_STATUS,")
+        S.AppendLine("DECODE(NVL(SL.CUST_CODE,'X'),'X','Stock','Non-Stock') AS TYPE,")
         S.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
         S.AppendLine("FROM ICTSTYL1 SL, ICTSTYC1 CL, ICTSTAT2 ST")
         S.AppendLine("WHERE SL.STYLE_CODE = CL.STYLE_CODE")
         S.AppendLine("AND CL.STYLE_CODE = ST.STYLE_CODE (+)")
         S.AppendLine("AND CL.COLOR_CODE = ST.COLOR_CODE(+)")
         S.AppendLine("AND ST.WHSE_CODE (+) = 'MS'")
+        If chkSTOCKONLY.Checked = True Then
+            S.AppendLine("AND NVL(SL.CUST_CODE,'X') = 'X'")
+        End If
+        If chkNoDNR.Checked = True Then
+            S.AppendLine("AND NOT ")
+            S.AppendLine(" (")
+            S.AppendLine("  SL.STYLE_STATUS = 'D'")
+            S.AppendLine("  AND")
+            S.AppendLine("  (")
+            S.AppendLine("  ((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) = 0")
+            S.AppendLine("  )")
+            S.AppendLine(" )")
+        End If
         'Put these back if you want to go back to limiting Active with future. 
         'S.AppendLine("AND SL.STYLE_STATUS = 'A'")
         'S.AppendLine("AND CL.STYLE_COLOR_STATUS = 'A'")
@@ -3398,10 +3412,9 @@ Public Class WBFSTYLW
                                 BDY.AppendLine("For questions, please contact <a href='mailto:hq@regency-rib.com'>Customer Service</a> or your <a href='https://www.regency-rib.com/locate-sales-representative.html/'>Sales Representative</a> directly.")
 
                                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
-                                EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                                'EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
                                 EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
-                                'EMAIL_ADDRESSs.Add(EMAIL, $"{GIVENNAME} {FAMILYNAME}")
-
+                                EMAIL_ADDRESSs.Add(EMAIL, $"{GIVENNAME} {FAMILYNAME}")
 
                                 Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                                        (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,

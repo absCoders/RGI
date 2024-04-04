@@ -552,10 +552,14 @@ Public Class WBFCUST1
                 End If
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Send Credit E-Mail"), UltraWinToolbars.ButtonTool)
-                If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
-                    tlb_btn.SharedProps.Visible = (rdoShowNew.Checked) And MY_CLAIM
+                If ASCMAIN1.Running_in_VS Then
+                    tlb_btn.SharedProps.Visible = True
                 Else
-                    tlb_btn.SharedProps.Visible = False
+                    If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
+                        tlb_btn.SharedProps.Visible = (rdoShowNew.Checked) And MY_CLAIM
+                    Else
+                        tlb_btn.SharedProps.Visible = False
+                    End If
                 End If
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Accept Customer"), UltraWinToolbars.ButtonTool)
@@ -1963,7 +1967,7 @@ Public Class WBFCUST1
         Next
     End Sub
 
-    Private Function SendEMail(ByRef rowWBTCUST1 As DataRow, ByVal TEMPLATE_NAME As String) As String
+    Private Function SendEMail_orig(ByRef rowWBTCUST1 As DataRow, ByVal TEMPLATE_NAME As String) As String
         'These all need to be parameterized before Wayne Retires.
         Const FROM_ADDRESS As String = "New.accounts@regency-rib.com"
         Const FROM_NAME As String = "New Accounts At Regency-rib.com"
@@ -2052,6 +2056,156 @@ Public Class WBFCUST1
             MsgBox("Error Trying to Generate Document" & vbCrLf & ex.Message)
         End Try
         Return ""
+    End Function
+
+    Private Function SendEMail(ByRef rowWBTCUST1 As DataRow, ByVal TEMPLATE_NAME As String) As String
+        Dim TO_SUBJECT As String = ""
+        Select Case TEMPLATE_NAME
+            Case Is = "ACCEPT"
+                TO_SUBJECT = "Welcome To Regency"
+            Case Is = "CREDIT"
+                TO_SUBJECT = "Welcome To Regency"
+            Case Else
+                TO_SUBJECT = "Welcome To Regency"
+        End Select
+
+        Try
+            If TEMPLATE_NAME.Length = 0 Then
+                MsgBox("Could Not Determine Correct Report To Print", MsgBoxStyle.Critical, "Problem Printing Report")
+                Return ""
+                Exit Function
+            End If
+
+            Dim AddSalesRep As Boolean = False
+            Dim ccSPREPName As String = ""
+            Dim ccSREPEmail As String = ""
+            Dim SREP_CODE As String = rowWBTCUST1.Item("SREP_CODE").ToString
+            If SREP_CODE.Length > 0 Then
+                Dim SQLC As StringBuilder = New StringBuilder() With {.Length = 0}
+                SQLC.AppendLine("Select ")
+                SQLC.AppendLine("NVL(SOTSREP1.SREP_NAME,'') SREP_NAME,")
+                SQLC.AppendLine("NVL(SOTSREP1.SREP_EMAIL,'') SREP_EMAIL,")
+                SQLC.AppendLine("NVL(SOTSREP1.SREP_CODE,'') SREP_CODE")
+                SQLC.AppendLine("FROM SOTSREP1")
+                SQLC.AppendLine(String.Format("WHERE SOTSREP1.SREP_CODE =  '{0}'", rowWBTCUST1.Item("SREP_CODE")))
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(SQLC.ToString())
+                If tbl.Rows.Count > 0 Then
+                    If tbl.Rows(0).Item("SREP_CODE").ToString.Length > 0 And tbl.Rows(0).Item("SREP_CODE").ToString <> "HO" Then
+                        ccSPREPName = tbl.Rows(0).Item("SREP_NAME").ToString
+                        ccSREPEmail = tbl.Rows(0).Item("SREP_EMAIL").ToString
+                        AddSalesRep = True
+                    End If
+                End If
+            End If
+
+            EMAIL_ADDRESS = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
+            EMAIL_NAME = $"{rowWBTCUST1.Item("GIVENNAME").ToString & String.Empty} {rowWBTCUST1.Item("FAMILYNAME").ToString & String.Empty}"
+            'Dim HTMLBody As String = ProcessWordToHTML(rowWBTCUST1, TEMPLATE_NAME)
+
+            If EMAIL_ADDRESS.Length = 0 Or EMAIL_NAME.Length = 0 Then
+                MsgBox("Either The Email Address Or The Name Could Not Be Found", MsgBoxStyle.Critical, "E-Mail Not Sent")
+            Else
+                Dim HTMLBody As String = MakeHTMLBody(rowWBTCUST1)
+                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                Dim ATTACHMENTs As New Dictionary(Of String, String)
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                    EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                Else
+                    EMAIL_ADDRESSs.Add(EMAIL_ADDRESS, EMAIL_NAME)
+                    If AddSalesRep Then
+                        EMAIL_ADDRESSs.Add(ccSREPEmail, ccSPREPName)
+                    End If
+                    EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
+                End If
+                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                        TO_SUBJECT, TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Shopsite Credit", HTMLBody)
+
+                'Dim mail As New MailMessage()
+                'mail.From = New MailAddress(FROM_ADDRESS, FROM_NAME)
+                'mail.To.Add(New MailAddress(EMAIL_ADDRESS, EMAIL_NAME))
+                'mail.Subject = TO_SUBJECT
+                'mail.IsBodyHtml = True
+                'mail.Body = HTMLBody
+                'mail.Bcc.Add(New MailAddress(BCC_ADDRESS, BCC_NAME))
+                'If AddSalesRep Then
+                '    mail.CC.Add(New MailAddress(ccSREPEmail, ccSPREPName))
+                'End If
+                ''mail.Attachments.Add(New Attachment(ss.Trim))
+
+                'Dim smtp As New SmtpClient(SERVER_IP, SERVER_PORT)
+                'If smtp IsNot Nothing Then
+                '    smtp.Credentials = New System.Net.NetworkCredential(SERVER_ACCOUNT, SERVER_PASSWORD)
+                'Else
+                '    Dim eMsg As String = "SMTP Client could not be created."
+                '    MsgBox(eMsg, MsgBoxStyle.OkOnly, "Error")
+                '    Return False
+                'End If
+
+                'If ASCMAIN1.Running_in_VS Then
+                '    Stop
+                'Else
+                '    smtp.Send(mail)
+                'End If
+            End If
+
+        Catch ex As Exception
+            MsgBox("Error Trying to Generate Document" & vbCrLf & ex.Message)
+        End Try
+        Return ""
+    End Function
+
+    Private Function MakeHTMLBody(ByRef rowWBTCUST1 As DataRow) As String
+        Dim HStr As New StringBuilder With {.Length = 0}
+        Dim WEB_EMAIL As String = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
+        Dim WEB_GIVENNAME As String = rowWBTCUST1.Item("GIVENNAME").ToString & String.Empty
+        Dim WEB_FAMILYNAME As String = rowWBTCUST1.Item("FAMILYNAME").ToString & String.Empty
+        Dim WEB_COMPANY As String = rowWBTCUST1.Item("COMPANY").ToString & String.Empty
+        Dim WEB_STREET As String = rowWBTCUST1.Item("STREET").ToString & String.Empty
+        Dim WEB_CITY As String = rowWBTCUST1.Item("CITY").ToString & String.Empty
+        Dim WEB_STATE As String = rowWBTCUST1.Item("STATE").ToString & String.Empty
+        Dim WEB_ZIP_CODE As String = rowWBTCUST1.Item("ZIP_CODE").ToString & String.Empty
+        Dim WEB_TELEPHONE As String = rowWBTCUST1.Item("TELEPHONE").ToString & String.Empty
+
+        HStr.Append("<html>")
+        HStr.Append("<head>")
+        HStr.Append("</head>")
+        HStr.Append("<body>")
+        HStr.Append($"Hello {WEB_GIVENNAME} {WEB_FAMILYNAME},<br>")
+        HStr.Append("<br>")
+        HStr.Append($"We see that you are with {WEB_COMPANY}, located at: {WEB_STREET}, {WEB_CITY}, {WEB_STATE}, {WEB_ZIP_CODE} <br>")
+        HStr.Append($"Phone: {WEB_TELEPHONE}<br>")
+        HStr.Append($"Email: {WEB_EMAIL}<br>")
+        HStr.Append("<br>")
+        HStr.Append("You are receiving this email in response to your request for an online account for one of the following possible reasons:")
+        HStr.Append("<ul>")
+        HStr.Append("    <li>The Tax Document you uploaded was corrupted and must be resent, see below.</li>")
+        HStr.Append("    <li>The Tax Document you uploaded was not what we require, see below. (i.e. IRS Document, Articles of Organization, Walmart Receipt, etc.)</li>")
+        HStr.Append("    <li>Your Company name and/or address do not match the Tax Document you uploaded. (Please email or call to correct)</li>")
+        HStr.Append("    <li>The registration form was incorrectly filled out. (Please email or call to correct)</li>")
+        HStr.Append("</ul>")
+        HStr.Append("If your business operates in the USA we will need a copy of your <b>STATE Sales &amp; Use Tax Certificate</b>")
+        HStr.Append("(Resale Certificate). You may email this to <a href='mailto: HQ@regency - rib.com'>HQ@regency-rib.com</a>")
+        HStr.Append("or send via fax to (212) 685-2062 (Please write <b >New Web Customer</b> on fax). This is required of all new customers.")
+        HStr.Append("Once we review the required information, you will receive an email informing")
+        HStr.Append("you of your status.<br>")
+        HStr.Append("<br>")
+        HStr.Append("If you have any questions or concerns please contact your local <a href='https: //www.regency-rib.com/locate-sales-representative.html'>Sales Representative</a>.")
+        HStr.Append("You may also contact Customer Service at (800) 782-7810, or email us at <a href='mailto: HQ@regency-rib.com'>HQ@regency-rib.com</a> for any product or order related questions.<br>")
+        HStr.Append("<br>")
+        HStr.Append("Thank You,<br>")
+        HStr.Append("<br>")
+        HStr.Append("New Accounts Administrator<br>")
+        HStr.Append("Regency International<br>")
+        HStr.Append("<a href='http://www.regency-rib.com'>www.regency-rib.com</a><br>")
+        HStr.Append($"<img src='https://www.regency-rib.com/media/logo.png' width='157' height='116' >")
+        'HStr.Append("<!-- <![if !vml]><img border=0 width=157 height=116")
+        'HStr.Append("src='CREDIT_files/image002.jpg' >")
+        'HStr.Append("<![endif]>-->")
+        HStr.Append("</body>")
+        HStr.Append("</html>")
+        Return HStr.ToString
     End Function
 
 #End Region

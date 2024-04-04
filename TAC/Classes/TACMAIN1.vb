@@ -870,6 +870,10 @@ Public Class TACMAIN1
         & IIf(USER_FAX <> "", "Fax: " & ASCMAIN1.FormatTel(USER_FAX) & vbCrLf, "") _
         & rowASTUSER1_EMAIL_FROM.Item("USER_EMAIL") & vbCrLf
 
+        If ASCMAIN1.CLIENT = "RGI" And EMAIL_KEY = "CREDIT" Then
+            USER_SIGNATURE = ""
+        End If
+
         Dim frmTAFSEND1 As New TAFSEND1(frmASFBASE0)
         frmTAFSEND1.EMAIL_KEY = EMAIL_KEY
         frmTAFSEND1.SEND_FROM = rowASTUSER1_EMAIL_FROM.Item("USER_EMAIL") & ""
@@ -902,12 +906,13 @@ Public Class TACMAIN1
         frmTAFSEND1.SEND_ATTACHMENTs = ATTACHMENTs
         frmTAFSEND1.SEND_ATTACHMENT = ""
 
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
         If auto_send Then
             frmTAFSEND1.Send_email_automatically()
         Else
             frmTAFSEND1.ShowDialog()
         End If
-
+        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
         Dim SEND_STATUS As String = frmTAFSEND1.SEND_STATUS
         Dim SEND_NO As String = frmTAFSEND1.SEND_NO
 
