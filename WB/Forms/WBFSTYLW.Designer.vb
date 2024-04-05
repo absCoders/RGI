@@ -158,6 +158,8 @@ Partial Class WBFSTYLW
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.chkNoDNR = New System.Windows.Forms.CheckBox()
+        Me.chkSTOCKONLY = New System.Windows.Forms.CheckBox()
         Me.chkExportTesting = New System.Windows.Forms.CheckBox()
         Me.btnRunAllGroups = New System.Windows.Forms.Button()
         Me.btnAddStyles = New System.Windows.Forms.Button()
@@ -483,14 +485,15 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
-        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.chkNoDNR)
+        Me.Panel2.Controls.Add(Me.chkSTOCKONLY)
         Me.Panel2.Controls.Add(Me.chkExportTesting)
         Me.Panel2.Controls.Add(Me.btnRunAllGroups)
         Me.Panel2.Controls.Add(Me.btnAddStyles)
@@ -502,10 +505,34 @@ Partial Class WBFSTYLW
         Me.Panel2.Size = New System.Drawing.Size(172, 150)
         Me.Panel2.TabIndex = 0
         '
+        'chkNoDNR
+        '
+        Me.chkNoDNR.AutoSize = True
+        Me.chkNoDNR.Checked = True
+        Me.chkNoDNR.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkNoDNR.Location = New System.Drawing.Point(13, 64)
+        Me.chkNoDNR.Name = "chkNoDNR"
+        Me.chkNoDNR.Size = New System.Drawing.Size(105, 20)
+        Me.chkNoDNR.TabIndex = 21
+        Me.chkNoDNR.Text = "No DNR w/0"
+        Me.chkNoDNR.UseVisualStyleBackColor = True
+        '
+        'chkSTOCKONLY
+        '
+        Me.chkSTOCKONLY.AutoSize = True
+        Me.chkSTOCKONLY.Checked = True
+        Me.chkSTOCKONLY.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkSTOCKONLY.Location = New System.Drawing.Point(13, 45)
+        Me.chkSTOCKONLY.Name = "chkSTOCKONLY"
+        Me.chkSTOCKONLY.Size = New System.Drawing.Size(99, 20)
+        Me.chkSTOCKONLY.TabIndex = 20
+        Me.chkSTOCKONLY.Text = "Stock Only"
+        Me.chkSTOCKONLY.UseVisualStyleBackColor = True
+        '
         'chkExportTesting
         '
         Me.chkExportTesting.AutoSize = True
-        Me.chkExportTesting.Location = New System.Drawing.Point(13, 103)
+        Me.chkExportTesting.Location = New System.Drawing.Point(13, 111)
         Me.chkExportTesting.Name = "chkExportTesting"
         Me.chkExportTesting.Size = New System.Drawing.Size(109, 20)
         Me.chkExportTesting.TabIndex = 19
@@ -517,7 +544,7 @@ Partial Class WBFSTYLW
         '
         'btnRunAllGroups
         '
-        Me.btnRunAllGroups.Location = New System.Drawing.Point(9, 78)
+        Me.btnRunAllGroups.Location = New System.Drawing.Point(9, 86)
         Me.btnRunAllGroups.Name = "btnRunAllGroups"
         Me.btnRunAllGroups.Size = New System.Drawing.Size(150, 23)
         Me.btnRunAllGroups.TabIndex = 9
@@ -558,7 +585,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, -147)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 405)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -614,7 +641,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 47)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 599)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
@@ -715,10 +742,11 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 241)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'grpUploads
         '
@@ -833,10 +861,11 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 510)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel1
         '
@@ -2340,4 +2369,6 @@ Partial Class WBFSTYLW
     Friend WithEvents numQTY As MaskedTextBox
     Friend WithEvents lblQTY As Label
     Friend WithEvents Label7 As Label
+    Friend WithEvents chkSTOCKONLY As CheckBox
+    Friend WithEvents chkNoDNR As CheckBox
 End Class
