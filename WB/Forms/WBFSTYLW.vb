@@ -104,7 +104,15 @@ Public Class WBFSTYLW
             sqls.AppendLine("ICTSTYL1.STYLE_CLASS_CODE,")
             sqls.AppendLine("ICTSTYL1.VEND_CODE,")
             sqls.AppendLine("NVL(PGC.PAGE_CNT,0) PAGE_CNT,")
-            sqls.AppendLine("ATR.ATTR_DESC")
+            sqls.AppendLine("ATR.ATTR_DESC,")
+            sqls.AppendLine("STA.WHSE_QTY_ON_ORDER,")
+            sqls.AppendLine("STA.WHSE_QTY_TRAN,")
+            sqls.AppendLine("STA.WHSE_TOTAL_FUT,")
+            sqls.AppendLine("STA.WHSE_QTY_ON_HAND,")
+            sqls.AppendLine("STA.WHSE_QTY_PICK,")
+            sqls.AppendLine("STA.OPEN_TO_SELL,")
+            sqls.AppendLine("STA.WHSE_QTY_OPEN,")
+            sqls.AppendLine("STA.FUT_AVAIL")
             sqls.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC,")
             sqls.AppendLine("(")
             sqls.AppendLine("   SELECT")
@@ -114,11 +122,28 @@ Public Class WBFSTYLW
             sqls.AppendLine("   WHERE A1.ATTR_CODE = A3.ATTR_CODE")
             sqls.AppendLine("   AND NVL(A1.ATT_RANK,'0') = '1'")
             sqls.AppendLine("   GROUP BY A3.STYLE_CODE")
-            sqls.AppendLine(") ATR")
+            sqls.AppendLine(") ATR,")
+            sqls.AppendLine("(")
+            sqls.AppendLine("    SELECT")
+            sqls.AppendLine("    STYLE_CODE,")
+            sqls.AppendLine("    COLOR_CODE,")
+            sqls.AppendLine("    NVL(WHSE_QTY_ON_ORDER,0) WHSE_QTY_ON_ORDER,")
+            sqls.AppendLine("    NVL(WHSE_QTY_TRAN,0) WHSE_QTY_TRAN,")
+            sqls.AppendLine("    (NVL(WHSE_QTY_ON_ORDER,0) + NVL(WHSE_QTY_TRAN,0)) WHSE_TOTAL_FUT,")
+            sqls.AppendLine("    NVL(WHSE_QTY_ON_HAND,0) WHSE_QTY_ON_HAND,")
+            sqls.AppendLine("    NVL(WHSE_QTY_PICK,0) WHSE_QTY_PICK,")
+            sqls.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)) OPEN_TO_SELL,")
+            sqls.AppendLine("    NVL(WHSE_QTY_OPEN,0) WHSE_QTY_OPEN,")
+            sqls.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) FUT_AVAIL")
+            sqls.AppendLine("    FROM ICTSTAT2")
+            sqls.AppendLine("    WHERE WHSE_CODE = 'MS'")
+            sqls.AppendLine(") STA")
             sqls.AppendLine("WHERE WBTSTYLD.STYLE_CODE = WBTSTYLH.STYLE_CODE (+)")
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = ICTSTYL1.STYLE_CODE")
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = PGC.STYLE_CODE (+)")
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = ATR.STYLE_CODE (+)")
+            sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = STA.STYLE_CODE (+)")
+            sqls.AppendLine("AND WBTSTYLD.COLOR_CODE = STA.COLOR_CODE (+)")
             ASCMAIN1.sql = sqls.ToString
             Create_TDA(dst.Tables.Add, "WBTSTYLD", "**", 0, True)
             .Tables("WBTSTYLD").Columns.Add("FILTER_SEL", GetType(System.String))
@@ -464,9 +489,42 @@ Public Class WBFSTYLW
         Get_PARM("WBTPARM1")
 
         'WBCMAIN1.DisplayHeaderCheckBox(grdWBTSTYLD, New String() {"WEB_IND"})
-        grdWBTSTYLD.DisplayLayout.Bands(0).Columns("PAGE_CNT").Format = "###,##0"
-        grdWBTSTYLD.DisplayLayout.Bands(0).Columns("ALT_FUT_QTY").Format = "###,##0"
-        grdICTSTYLX.DisplayLayout.Bands(0).Columns("QTY_AVL").Format = "###,##0"
+        With grdWBTSTYLD.DisplayLayout.Bands(0)
+            .Columns("PAGE_CNT").Format = "###,##0"
+            .Columns("ALT_FUT_QTY").Format = "###,##0"
+            '.Columns("QTY_AVL").Format = "###,##0"
+            .Columns("WHSE_QTY_ON_ORDER").Format = "###,##0"
+            .Columns("WHSE_QTY_ON_ORDER").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_ON_ORDER").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+
+            .Columns("WHSE_QTY_TRAN").Format = "###,##0"
+            .Columns("WHSE_QTY_TRAN").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_TRAN").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+
+            .Columns("WHSE_TOTAL_FUT").Format = "###,##0"
+            .Columns("WHSE_TOTAL_FUT").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_TOTAL_FUT").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+
+            .Columns("WHSE_QTY_ON_HAND").Format = "###,##0"
+            .Columns("WHSE_QTY_ON_HAND").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_ON_HAND").Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+
+            .Columns("WHSE_QTY_PICK").Format = "###,##0"
+            .Columns("WHSE_QTY_PICK").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_PICK").Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+
+            .Columns("OPEN_TO_SELL").Format = "###,##0"
+            .Columns("OPEN_TO_SELL").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("OPEN_TO_SELL").Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+
+            .Columns("WHSE_QTY_OPEN").Format = "###,##0"
+            .Columns("WHSE_QTY_OPEN").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_OPEN").Header.Appearance.BackColor2 = Drawing.Color.Lime
+
+            .Columns("FUT_AVAIL").Format = "###,##0"
+            .Columns("FUT_AVAIL").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("FUT_AVAIL").Header.Appearance.BackColor2 = Drawing.Color.Green
+        End With
 
         Create_Summary(grdWBTSTYLD, "STYLE_CODE", "Count")
         Create_Summary(grdWBTPAGEX, "PAGE_CODE", "Count")
@@ -785,7 +843,15 @@ Public Class WBFSTYLW
         SQLW.AppendLine("ICTSTYL1.STYLE_CLASS_CODE,")
         SQLW.AppendLine("ICTSTYL1.VEND_CODE,")
         SQLW.AppendLine("NVL(PGC.PAGE_CNT,0) PAGE_CNT,")
-        SQLW.AppendLine("ATR.ATTR_DESC")
+        SQLW.AppendLine("ATR.ATTR_DESC,")
+        SQLW.AppendLine("STA.WHSE_QTY_ON_ORDER,")
+        SQLW.AppendLine("STA.WHSE_QTY_TRAN,")
+        SQLW.AppendLine("STA.WHSE_TOTAL_FUT,")
+        SQLW.AppendLine("STA.WHSE_QTY_ON_HAND,")
+        SQLW.AppendLine("STA.WHSE_QTY_PICK,")
+        SQLW.AppendLine("STA.OPEN_TO_SELL,")
+        SQLW.AppendLine("STA.WHSE_QTY_OPEN,")
+        SQLW.AppendLine("STA.FUT_AVAIL")
         SQLW.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC,")
         SQLW.AppendLine("(")
         SQLW.AppendLine("   SELECT")
@@ -795,11 +861,28 @@ Public Class WBFSTYLW
         SQLW.AppendLine("   WHERE A1.ATTR_CODE = A3.ATTR_CODE")
         SQLW.AppendLine("   AND NVL(A1.ATT_RANK,'0') = '1'")
         SQLW.AppendLine("   GROUP BY A3.STYLE_CODE")
-        SQLW.AppendLine(") ATR")
+        SQLW.AppendLine(") ATR,")
+        SQLW.AppendLine("(")
+        SQLW.AppendLine("    SELECT")
+        SQLW.AppendLine("    STYLE_CODE,")
+        SQLW.AppendLine("    COLOR_CODE,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_ON_ORDER,0) WHSE_QTY_ON_ORDER,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_TRAN,0) WHSE_QTY_TRAN,")
+        SQLW.AppendLine("    (NVL(WHSE_QTY_ON_ORDER,0) + NVL(WHSE_QTY_TRAN,0)) WHSE_TOTAL_FUT,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_ON_HAND,0) WHSE_QTY_ON_HAND,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_PICK,0) WHSE_QTY_PICK,")
+        SQLW.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)) OPEN_TO_SELL,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_OPEN,0) WHSE_QTY_OPEN,")
+        SQLW.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) FUT_AVAIL")
+        SQLW.AppendLine("    FROM ICTSTAT2")
+        SQLW.AppendLine("    WHERE WHSE_CODE = 'MS'")
+        SQLW.AppendLine(") STA")
         SQLW.AppendLine("WHERE WBTSTYLD.STYLE_CODE = WBTSTYLH.STYLE_CODE (+)")
         SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = ICTSTYL1.STYLE_CODE")
         SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = PGC.STYLE_CODE (+)")
         SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = ATR.STYLE_CODE (+)")
+        SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = STA.STYLE_CODE (+)")
+        SQLW.AppendLine("AND WBTSTYLD.COLOR_CODE = STA.COLOR_CODE (+)")
         Fill_Records("WBTSTYLD", , , SQLW.ToString)
 
         UpdateInventory()
