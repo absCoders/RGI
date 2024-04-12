@@ -483,6 +483,9 @@ Public Class WHFLB128
                                  "OPT_MANIFEST"}.Contains(GCOL.Key) Then
                     GCOL.Hidden = True
                 End If
+                If New String() {"ORDR_CNT_CART", "ORDR_CNT_MTPO"}.Contains(GCOL.Key) Then
+                    GCOL.CellAppearance.BackColor = Color.LightBlue
+                End If
                 'End If
             Next
         End With
@@ -1522,7 +1525,7 @@ Public Class WHFLB128
             End If
 
             If SOTPICKX <> "" Then
-                ASCMAIN1.sql &= ", 0 ORDR_QTY_PICK, 0 ORDR_AMT_PICK, 0 ORDR_CNT_PICK, 0 ORDR_CNT_CART, NULL ORDR_HIGH_PRIORITY, NULL ORDR_HIGH_PRIORITY_NOTE, '0' CCPA_NO_STATUS, '' PICK_NO_CONS, '' PICK_RELEASED"
+                ASCMAIN1.sql &= ", 0 ORDR_QTY_PICK, 0 ORDR_AMT_PICK, 0 ORDR_CNT_PICK, 0 ORDR_CNT_CART, 0 ORDR_CNT_MTPO, NULL ORDR_HIGH_PRIORITY, NULL ORDR_HIGH_PRIORITY_NOTE, '0' CCPA_NO_STATUS, '' PICK_NO_CONS, '' PICK_RELEASED"
             End If
 
             ASCMAIN1.sql &= " from SOTSHIP1,SOTORDR0,ARTCUST1" & vbCrLf _
@@ -1563,6 +1566,7 @@ Public Class WHFLB128
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add ORDR_AMT_PICK NUMBER (13,2)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add ORDR_CNT_PICK NUMBER (8,0)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add ORDR_CNT_CART NUMBER (8,0)")
+                ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add ORDR_CNT_MTPO NUMBER (8,0)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add ORDR_HIGH_PRIORITY VARCHAR2(1)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add ORDR_HIGH_PRIORITY_NOTE VARCHAR2(30)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add CCPA_NO_STATUS VARCHAR2(1)")
@@ -1616,7 +1620,7 @@ Public Class WHFLB128
             & "    (Select Count (*) from SOTPICK1 where SHIP_BOL_NO = R1.SHIP_BOL_NO and SOTPICK1.PICK_STATUS = 'P')" & vbCrLf _
             & "    where SHIP_BOL_NO = R1.SHIP_BOL_NO;" & vbCrLf _
             & "      if r1.SHIP_BOL_NO_CONS is null then 
-                Update " & SOTPICKX & " Set ORDR_CNT_CART = 
+                Update " & SOTPICKX & " Set ORDR_CNT_MTPO = '', ORDR_CNT_CART = 
                 (Select Count (*) from SOTCART1,SOTPICK1 where SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO and SOTPICK1.PICK_STATUS = 'P')
                 where SHIP_BOL_NO = R1.SHIP_BOL_NO;
                 else
@@ -1627,6 +1631,14 @@ Public Class WHFLB128
                     and SOTSHIP1.SHIP_BOL_NO_REV is null
                     and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO
                     and SOTSHIP1.ORDR_GROUP_NO in (select distinct ordr_group_no FROM SOTCARM2,SOTORDR1 WHERE CART_NO = SOTCARM1.CART_NO AND SOTORDR1.ORDR_NO = SOTCARM2.ORDR_NO))
+                    where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                Update " & SOTPICKX & " set ORDR_CNT_MTPO = 
+                (Select Count (distinct SOTCARM1.CART_NO) from SOTCARM1,SOTPICK1, SOTSHIP1 
+                    where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO 
+                    and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    and SOTSHIP1.SHIP_BOL_NO_REV is null
+                    and SOTSHIP1.SHIP_BOL_NO_CONS = R1.SHIP_BOL_NO_CONS
+                    )
                     where SHIP_BOL_NO = R1.SHIP_BOL_NO;
                 end if;" & vbCrLf _
             & "  End Loop;" & vbCrLf _
