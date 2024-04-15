@@ -119,6 +119,11 @@ Public Class EDFASNO1
             Case "Cancel"
                 Mode_Settings(False)
 
+            Case "Refresh"
+                EntryMode = "E"
+                Load_Record()
+                Mode_Settings(True)
+
         End Select
 
     End Sub
@@ -131,6 +136,8 @@ Public Class EDFASNO1
             With UltraExplorerBar1
                 .Groups("Screen Control").Items("Load").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Cancel").Settings.Enabled = iScreenMode
+                .Groups("Screen Control").Items("Refresh").Settings.Enabled = iScreenMode
+
             End With
         End If
 
