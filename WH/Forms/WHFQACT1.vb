@@ -780,8 +780,8 @@ Public Class WHFQACT1
     End Sub
     Private Sub load_WHTQACT()
 
-        dst.Tables("WHTQACT1").Rows.Clear()
         dst.Tables("WHTQACT2").Rows.Clear()
+        dst.Tables("WHTQACT1").Rows.Clear()
         Dim isMeijer As Boolean = False
 
         If grdSOTPICK1.ActiveRow Is Nothing OrElse Not grdSOTPICK1.ActiveRow.IsDataRow Then
@@ -805,7 +805,7 @@ Public Class WHFQACT1
 
         If isMeijer Then
             For Each row As DataRow In dst.Tables("WHTQACT2").Select()
-                row("QTY_PICK_CONF") = row("QTY_VERIFIED")
+                row("QTY_VERIFIED") = row("QTY_PICK_CONF")
             Next
         End If
 
