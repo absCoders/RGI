@@ -2705,10 +2705,10 @@
         If manual_release Then
             ' DO NOT TOUCH ICTSTDQX IF DOING A MANUAL RELEASE
         Else
-
-            ASCMAIN1.sql = "Update SOTPARM1 Set SO_PARM_LAST_ALLO_DATE = SYSDATE where SO_PARM_KEY = 'Z'"
-            ASCDATA1.ExecuteSQL()
-
+            If STYLE_CODE_to_Allocate = "" Then
+                ASCMAIN1.sql = "Update SOTPARM1 Set SO_PARM_LAST_ALLO_DATE = SYSDATE where SO_PARM_KEY = 'Z'"
+                ASCDATA1.ExecuteSQL()
+            End If
             If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" _
             Or ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
 
