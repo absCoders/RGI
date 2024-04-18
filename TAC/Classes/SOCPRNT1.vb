@@ -476,10 +476,40 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns.Add("PARTIAL_CASE", GetType(System.String))
         rowSOTCART1.Table.Columns("EDI_PO_TYPE").MaxLength = 50
         rowSOTCART1.Table.Columns.Add("CUST_ADDR_NAME", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("GTIN_CODE", GetType(System.String))
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
         Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
+        Dim GTIN_CODE As String = ""
+
+        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" Then
+            Select Case Val(rowSOTCART1("CART_TOTAL_UNITS") + 0)
+                Case 2
+                    GTIN_CODE = "10"
+                Case 4
+                    GTIN_CODE = "20"
+                Case 6
+                    GTIN_CODE = "30"
+                Case 8
+                    GTIN_CODE = "40"
+                Case 12
+                    GTIN_CODE = "50"
+                Case 24
+                    GTIN_CODE = "60"
+                Case 36
+                    GTIN_CODE = "70"
+                Case 48
+                    GTIN_CODE = "80"
+                Case Else
+                    GTIN_CODE = "90"
+            End Select
+            GTIN_CODE &= rowSOTCART1("UPC_CODE_ONLY") & ""
+            If GTIN_CODE.Length = 14 Then
+                GTIN_CODE = GTIN_CODE.Substring(0, 13)
+            End If
+        End If
+        rowSOTCART1("GTIN_CODE") = GTIN_CODE
 
         ASCMAIN1.sql = "select CUST_ADDR_NAME from ARTCUST2 where CUST_CODE = :PARM1 and CUST_ADDR_CODE = :PARM2"
         rowSOTCART1.Item("CUST_ADDR_NAME") = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {CUST_CODE, rowSOTCART1.Item("CUST_ADDR_CODE") & String.Empty}) & String.Empty

@@ -32,6 +32,7 @@ Public Class WHFLB128
     Dim ORDR_NO_MT As String
     Private sqlDerelease As String = String.Empty
     Dim WalmartCA = "WALCOSTAR,WALELSAV,WALGUAT,WALHOND,WALNICAR"
+    Dim PrintQty As Integer = 1
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -1984,21 +1985,24 @@ Public Class WHFLB128
                     SQLS.AppendLine(String.Format("AND CART_NO = '{0}'", CART_NO))
                     ASCMAIN1.sql = SQLS.ToString()
                     Dim CUST_CODE As String = ASCDATA1.GetDataValue
+                    PrintQty = 1
                     Select Case CUST_CODE
-                        'Case Is = "BURLING"
-                        '    Dim iResult As MsgBoxResult
-                        '    Dim iTitle As String = "Burlington"
-                        '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                        '    iMSG.AppendLine("Do You Want To Print Buk Labels")
-                        '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                        '    If iResult = MsgBoxResult.Yes Then
-                        '        LabelTemplateOverride = "BURLING2"
-                        '    End If
+                        Case = "WALMARTCOM"
+                            PrintQty = 2
+                            'Case Is = "BURLING"
+                            '    Dim iResult As MsgBoxResult
+                            '    Dim iTitle As String = "Burlington"
+                            '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                            '    iMSG.AppendLine("Do You Want To Print Buk Labels")
+                            '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                            '    If iResult = MsgBoxResult.Yes Then
+                            '        LabelTemplateOverride = "BURLING2"
+                            '    End If
                     End Select
                     If LabelTemplateOverride.Length > 0 Then
-                        cartonLabel.PrintLabel(, PrinterName, LabelTemplateOverride)
+                        cartonLabel.PrintLabel(PrintQty, PrinterName, LabelTemplateOverride)
                     Else
-                        cartonLabel.PrintLabel(, PrinterName)
+                        cartonLabel.PrintLabel(PrintQty, PrinterName)
                     End If
                 Else
                     cartonLabel.PrintLabel()
@@ -2083,6 +2087,7 @@ Public Class WHFLB128
                     If CUST_CODE <> CUST_CODE_LAST Then
                         CUST_CODE_LAST = CUST_CODE
                         LabelTemplateOverride = ""
+                        PrintQty = 1
                         Select Case CUST_CODE
                             'Case Is = "BURLING"
                             '    Dim iResult As MsgBoxResult
@@ -2098,6 +2103,8 @@ Public Class WHFLB128
                                 If row1.Item("CUST_DC_NO") & "" = "" Then
                                     LabelTemplateOverride = "WAL_NODC"
                                 End If
+                            Case = "WALMARTCOM"
+                                PrintQty = 2
                         End Select
                     End If
                     ASCMAIN1.Progress("Printing Labels for " & CUST_CODE)
@@ -2197,9 +2204,9 @@ Public Class WHFLB128
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
                             Dim cartonLabel As New TAC.CartonLabel(CART_NO)
                             If LabelTemplateOverride.Length > 0 Then
-                                cartonLabel.PrintLabel(, PrinterName, LabelTemplateOverride)
+                                cartonLabel.PrintLabel(PrintQty, PrinterName, LabelTemplateOverride)
                             Else
-                                cartonLabel.PrintLabel(, PrinterName)
+                                cartonLabel.PrintLabel(PrintQty, PrinterName)
                             End If
                         Next
                     End If
