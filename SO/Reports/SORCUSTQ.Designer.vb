@@ -113,6 +113,7 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chkNewLinks = New ABSCS.ABSCheckBox()
         Me.chkWebLinks = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.btnLoadOrders = New System.Windows.Forms.Button()
@@ -130,7 +131,7 @@ Partial Class SORCUSTQ
         Me.grdSOTRSRV1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.chkNewLinks = New ABSCS.ABSCheckBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -167,6 +168,7 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
@@ -186,7 +188,6 @@ Partial Class SORCUSTQ
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage1.SuspendLayout()
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -403,6 +404,7 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.Label1)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkNewLinks)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkWebLinks)
         Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox3)
@@ -415,6 +417,15 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Size = New System.Drawing.Size(773, 358)
         Me.SplitContainer8.SplitterDistance = 105
         Me.SplitContainer8.TabIndex = 265
+        '
+        'chkNewLinks
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
+        Me.chkNewLinks.Location = New System.Drawing.Point(555, 36)
+        Me.chkNewLinks.Name = "chkNewLinks"
+        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
+        Me.chkNewLinks.TabIndex = 269
+        Me.chkNewLinks.Text = "New Links"
         '
         'chkWebLinks
         '
@@ -842,14 +853,14 @@ Partial Class SORCUSTQ
         Me.grdWEBLINKS.Size = New System.Drawing.Size(765, 220)
         Me.grdWEBLINKS.TabIndex = 15
         '
-        'chkNewLinks
+        'Label1
         '
-        Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
-        Me.chkNewLinks.Location = New System.Drawing.Point(555, 36)
-        Me.chkNewLinks.Name = "chkNewLinks"
-        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
-        Me.chkNewLinks.TabIndex = 269
-        Me.chkNewLinks.Text = "New Links"
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(534, 84)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(66, 16)
+        Me.Label1.TabIndex = 270
+        Me.Label1.Text = "v24.3.19"
         '
         'SORCUSTQ
         '
@@ -892,9 +903,11 @@ Partial Class SORCUSTQ
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel3.ResumeLayout(False)
         Me.SplitContainer8.Panel1.ResumeLayout(False)
+        Me.SplitContainer8.Panel1.PerformLayout()
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
@@ -915,7 +928,6 @@ Partial Class SORCUSTQ
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage1.ResumeLayout(False)
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -940,4 +952,5 @@ Partial Class SORCUSTQ
     Friend WithEvents TabPage1 As TabPage
     Friend WithEvents grdWEBLINKS As UltraWinGrid.UltraGrid
     Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
+    Friend WithEvents Label1 As Label
 End Class

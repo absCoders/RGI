@@ -492,9 +492,12 @@ Public Class SORCUSTQ
                 End If
             Case "Copy Link"
                 If chkNewLinks.Checked Then
-                    Dim FILENAME As String = grd.ActiveRow.Cells.Item("FILENAME").Text
-                    Dim LINEPFX As String = $"https://docs.vandalequotes.com/{FILENAME}"
-                    My.Computer.Clipboard.SetText(FILENAME & vbCrLf & LINEPFX)
+                    Dim FILE_NAME As String = grd.ActiveRow.Cells.Item("FILE_NAME").Text
+                    Dim HASHVALUE As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text
+                    'Dim LINEPFX As String = $"https://docs.vandalequotes.com/{FILENAME}"
+                    Dim LINEPFX As String = $"https://vandaledocs.azurewebsites.net/Documents/{HASHVALUE}"
+                    My.Computer.Clipboard.SetText(FILE_NAME & vbCrLf & LINEPFX)
+                    MsgBox("You Link Has Been Copied To Your Clipboard", vbInformation, "Done")
                 Else
                     Dim FILE_NAME As String = grd.ActiveRow.Cells.Item("FILE_NAME").Text
                     Dim HASH As String = grd.ActiveRow.Cells.Item("HASHVALUE").Text

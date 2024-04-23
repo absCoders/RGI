@@ -2199,6 +2199,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* New Attribute Excel Feature Added to SSBA Screen.")
 
+        VersionNo = "24.03.06.02"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* New Order Entry Excel Features.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

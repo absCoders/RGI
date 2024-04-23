@@ -43,9 +43,9 @@ Public Class ARCRGIDD
             eMsg = "Invalid Period Provided"
             'MsgBox(eMsg, vbCritical, "Bad Bad")
         Else
-            YYYYBP = YYYY & "01"
+            YYYYBP = YYYY & "09"
             'YYYYEP = YYYY & "12"
-            YYYYEP = YYYY & "08"
+            YYYYEP = YYYY & "11"
         End If
         If eMsg.Length = 0 Then
             ASCMAIN1.Progress("Now Loading Excel Data", "")

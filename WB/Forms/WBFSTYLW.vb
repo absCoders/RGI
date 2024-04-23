@@ -104,7 +104,15 @@ Public Class WBFSTYLW
             sqls.AppendLine("ICTSTYL1.STYLE_CLASS_CODE,")
             sqls.AppendLine("ICTSTYL1.VEND_CODE,")
             sqls.AppendLine("NVL(PGC.PAGE_CNT,0) PAGE_CNT,")
-            sqls.AppendLine("ATR.ATTR_DESC")
+            sqls.AppendLine("ATR.ATTR_DESC,")
+            sqls.AppendLine("STA.WHSE_QTY_ON_ORDER,")
+            sqls.AppendLine("STA.WHSE_QTY_TRAN,")
+            sqls.AppendLine("STA.WHSE_TOTAL_FUT,")
+            sqls.AppendLine("STA.WHSE_QTY_ON_HAND,")
+            sqls.AppendLine("STA.WHSE_QTY_PICK,")
+            sqls.AppendLine("STA.OPEN_TO_SELL,")
+            sqls.AppendLine("STA.WHSE_QTY_OPEN,")
+            sqls.AppendLine("STA.FUT_AVAIL")
             sqls.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC,")
             sqls.AppendLine("(")
             sqls.AppendLine("   SELECT")
@@ -114,11 +122,28 @@ Public Class WBFSTYLW
             sqls.AppendLine("   WHERE A1.ATTR_CODE = A3.ATTR_CODE")
             sqls.AppendLine("   AND NVL(A1.ATT_RANK,'0') = '1'")
             sqls.AppendLine("   GROUP BY A3.STYLE_CODE")
-            sqls.AppendLine(") ATR")
+            sqls.AppendLine(") ATR,")
+            sqls.AppendLine("(")
+            sqls.AppendLine("    SELECT")
+            sqls.AppendLine("    STYLE_CODE,")
+            sqls.AppendLine("    COLOR_CODE,")
+            sqls.AppendLine("    NVL(WHSE_QTY_ON_ORDER,0) WHSE_QTY_ON_ORDER,")
+            sqls.AppendLine("    NVL(WHSE_QTY_TRAN,0) WHSE_QTY_TRAN,")
+            sqls.AppendLine("    (NVL(WHSE_QTY_ON_ORDER,0) + NVL(WHSE_QTY_TRAN,0)) WHSE_TOTAL_FUT,")
+            sqls.AppendLine("    NVL(WHSE_QTY_ON_HAND,0) WHSE_QTY_ON_HAND,")
+            sqls.AppendLine("    NVL(WHSE_QTY_PICK,0) WHSE_QTY_PICK,")
+            sqls.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)) OPEN_TO_SELL,")
+            sqls.AppendLine("    NVL(WHSE_QTY_OPEN,0) WHSE_QTY_OPEN,")
+            sqls.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) FUT_AVAIL")
+            sqls.AppendLine("    FROM ICTSTAT2")
+            sqls.AppendLine("    WHERE WHSE_CODE = 'MS'")
+            sqls.AppendLine(") STA")
             sqls.AppendLine("WHERE WBTSTYLD.STYLE_CODE = WBTSTYLH.STYLE_CODE (+)")
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = ICTSTYL1.STYLE_CODE")
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = PGC.STYLE_CODE (+)")
             sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = ATR.STYLE_CODE (+)")
+            sqls.AppendLine("AND WBTSTYLD.STYLE_CODE = STA.STYLE_CODE (+)")
+            sqls.AppendLine("AND WBTSTYLD.COLOR_CODE = STA.COLOR_CODE (+)")
             ASCMAIN1.sql = sqls.ToString
             Create_TDA(dst.Tables.Add, "WBTSTYLD", "**", 0, True)
             .Tables("WBTSTYLD").Columns.Add("FILTER_SEL", GetType(System.String))
@@ -464,9 +489,42 @@ Public Class WBFSTYLW
         Get_PARM("WBTPARM1")
 
         'WBCMAIN1.DisplayHeaderCheckBox(grdWBTSTYLD, New String() {"WEB_IND"})
-        grdWBTSTYLD.DisplayLayout.Bands(0).Columns("PAGE_CNT").Format = "###,##0"
-        grdWBTSTYLD.DisplayLayout.Bands(0).Columns("ALT_FUT_QTY").Format = "###,##0"
-        grdICTSTYLX.DisplayLayout.Bands(0).Columns("QTY_AVL").Format = "###,##0"
+        With grdWBTSTYLD.DisplayLayout.Bands(0)
+            .Columns("PAGE_CNT").Format = "###,##0"
+            .Columns("ALT_FUT_QTY").Format = "###,##0"
+            '.Columns("QTY_AVL").Format = "###,##0"
+            .Columns("WHSE_QTY_ON_ORDER").Format = "###,##0"
+            .Columns("WHSE_QTY_ON_ORDER").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_ON_ORDER").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+
+            .Columns("WHSE_QTY_TRAN").Format = "###,##0"
+            .Columns("WHSE_QTY_TRAN").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_TRAN").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+
+            .Columns("WHSE_TOTAL_FUT").Format = "###,##0"
+            .Columns("WHSE_TOTAL_FUT").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_TOTAL_FUT").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+
+            .Columns("WHSE_QTY_ON_HAND").Format = "###,##0"
+            .Columns("WHSE_QTY_ON_HAND").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_ON_HAND").Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+
+            .Columns("WHSE_QTY_PICK").Format = "###,##0"
+            .Columns("WHSE_QTY_PICK").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_PICK").Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+
+            .Columns("OPEN_TO_SELL").Format = "###,##0"
+            .Columns("OPEN_TO_SELL").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("OPEN_TO_SELL").Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+
+            .Columns("WHSE_QTY_OPEN").Format = "###,##0"
+            .Columns("WHSE_QTY_OPEN").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("WHSE_QTY_OPEN").Header.Appearance.BackColor2 = Drawing.Color.Lime
+
+            .Columns("FUT_AVAIL").Format = "###,##0"
+            .Columns("FUT_AVAIL").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            .Columns("FUT_AVAIL").Header.Appearance.BackColor2 = Drawing.Color.Green
+        End With
 
         Create_Summary(grdWBTSTYLD, "STYLE_CODE", "Count")
         Create_Summary(grdWBTPAGEX, "PAGE_CODE", "Count")
@@ -785,7 +843,15 @@ Public Class WBFSTYLW
         SQLW.AppendLine("ICTSTYL1.STYLE_CLASS_CODE,")
         SQLW.AppendLine("ICTSTYL1.VEND_CODE,")
         SQLW.AppendLine("NVL(PGC.PAGE_CNT,0) PAGE_CNT,")
-        SQLW.AppendLine("ATR.ATTR_DESC")
+        SQLW.AppendLine("ATR.ATTR_DESC,")
+        SQLW.AppendLine("STA.WHSE_QTY_ON_ORDER,")
+        SQLW.AppendLine("STA.WHSE_QTY_TRAN,")
+        SQLW.AppendLine("STA.WHSE_TOTAL_FUT,")
+        SQLW.AppendLine("STA.WHSE_QTY_ON_HAND,")
+        SQLW.AppendLine("STA.WHSE_QTY_PICK,")
+        SQLW.AppendLine("STA.OPEN_TO_SELL,")
+        SQLW.AppendLine("STA.WHSE_QTY_OPEN,")
+        SQLW.AppendLine("STA.FUT_AVAIL")
         SQLW.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC,")
         SQLW.AppendLine("(")
         SQLW.AppendLine("   SELECT")
@@ -795,11 +861,28 @@ Public Class WBFSTYLW
         SQLW.AppendLine("   WHERE A1.ATTR_CODE = A3.ATTR_CODE")
         SQLW.AppendLine("   AND NVL(A1.ATT_RANK,'0') = '1'")
         SQLW.AppendLine("   GROUP BY A3.STYLE_CODE")
-        SQLW.AppendLine(") ATR")
+        SQLW.AppendLine(") ATR,")
+        SQLW.AppendLine("(")
+        SQLW.AppendLine("    SELECT")
+        SQLW.AppendLine("    STYLE_CODE,")
+        SQLW.AppendLine("    COLOR_CODE,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_ON_ORDER,0) WHSE_QTY_ON_ORDER,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_TRAN,0) WHSE_QTY_TRAN,")
+        SQLW.AppendLine("    (NVL(WHSE_QTY_ON_ORDER,0) + NVL(WHSE_QTY_TRAN,0)) WHSE_TOTAL_FUT,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_ON_HAND,0) WHSE_QTY_ON_HAND,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_PICK,0) WHSE_QTY_PICK,")
+        SQLW.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)) OPEN_TO_SELL,")
+        SQLW.AppendLine("    NVL(WHSE_QTY_OPEN,0) WHSE_QTY_OPEN,")
+        SQLW.AppendLine("    (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) FUT_AVAIL")
+        SQLW.AppendLine("    FROM ICTSTAT2")
+        SQLW.AppendLine("    WHERE WHSE_CODE = 'MS'")
+        SQLW.AppendLine(") STA")
         SQLW.AppendLine("WHERE WBTSTYLD.STYLE_CODE = WBTSTYLH.STYLE_CODE (+)")
         SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = ICTSTYL1.STYLE_CODE")
         SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = PGC.STYLE_CODE (+)")
         SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = ATR.STYLE_CODE (+)")
+        SQLW.AppendLine("AND WBTSTYLD.STYLE_CODE = STA.STYLE_CODE (+)")
+        SQLW.AppendLine("AND WBTSTYLD.COLOR_CODE = STA.COLOR_CODE (+)")
         Fill_Records("WBTSTYLD", , , SQLW.ToString)
 
         UpdateInventory()
@@ -845,7 +928,7 @@ Public Class WBFSTYLW
             Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowWBTSTYLD.Item("COLOR_CODE").ToString & String.Empty
             If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-                If STYLE_CODE = "MTX53294" And COLOR_CODE = "APGR" Then Stop
+                'If STYLE_CODE = "MTX53294" And COLOR_CODE = "APGR" Then Stop
             End If
             Dim filter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
             Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
@@ -1535,12 +1618,26 @@ Public Class WBFSTYLW
         S.AppendLine("CL.COLOR_CODE,")
         S.AppendLine("SL.STYLE_DESC,")
         S.AppendLine("CL.STYLE_COLOR_STATUS,")
+        S.AppendLine("DECODE(NVL(SL.CUST_CODE,'X'),'X','Stock','Non-Stock') AS TYPE,")
         S.AppendLine("((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) AS FTR_AVAIL")
         S.AppendLine("FROM ICTSTYL1 SL, ICTSTYC1 CL, ICTSTAT2 ST")
         S.AppendLine("WHERE SL.STYLE_CODE = CL.STYLE_CODE")
         S.AppendLine("AND CL.STYLE_CODE = ST.STYLE_CODE (+)")
         S.AppendLine("AND CL.COLOR_CODE = ST.COLOR_CODE(+)")
         S.AppendLine("AND ST.WHSE_CODE (+) = 'MS'")
+        If chkSTOCKONLY.Checked = True Then
+            S.AppendLine("AND NVL(SL.CUST_CODE,'X') = 'X'")
+        End If
+        If chkNoDNR.Checked = True Then
+            S.AppendLine("AND NOT ")
+            S.AppendLine(" (")
+            S.AppendLine("  SL.STYLE_STATUS = 'D'")
+            S.AppendLine("  AND")
+            S.AppendLine("  (")
+            S.AppendLine("  ((NVL(ST.WHSE_QTY_ON_HAND,0) - NVL(ST.WHSE_QTY_PICK,0)) + NVL(ST.WHSE_QTY_TRAN,0) + NVL(ST.WHSE_QTY_ON_ORDER,0) - NVL(ST.WHSE_QTY_OPEN,0)) = 0")
+            S.AppendLine("  )")
+            S.AppendLine(" )")
+        End If
         'Put these back if you want to go back to limiting Active with future. 
         'S.AppendLine("AND SL.STYLE_STATUS = 'A'")
         'S.AppendLine("AND CL.STYLE_COLOR_STATUS = 'A'")
@@ -3319,18 +3416,109 @@ Public Class WBFSTYLW
         For i As Int64 = 10 To 50 Step 10
             INT.Add(i)
         Next
+
+        If ASCMAIN1.Running_in_VS Then Stop
         If INT.Contains(MN) And MN <> LASTMIN Then
-            'If ASCMAIN1.Running_in_VS Then Stop
+            If ASCMAIN1.Running_in_VS Then Stop
             LASTMIN = MN
             txtInventoryLast.Text = String.Format("Last: {0}", Now().ToShortTimeString)
             uploadShopsiteInventory()
             uploadShipTos()
             sendCustomerPricing()
+            sendImagesEmail()
         Else
             If txtInventoryLast.Text = "" Then
                 txtInventoryLast.Text = "Waiting...."
             End If
         End If
+    End Sub
+
+    Private Sub sendImagesEmail()
+        Dim ZIP_FOLDER As String = "\\192.168.110.233\c$\ShopsiteService\Data\OrderImageZips\"
+        Dim TXT_FOLDER As String = "\\192.168.110.233\c$\ShopsiteService\Data\Files\"
+        Dim BASE_URL As String = "https://www.regency-rib.com/images/"
+        'Dim ORDR_NO As String = "0000771989"
+        'Dim GIVENNAME As String = "Mario (Big Pappa)"
+        Dim ATTACHMENTs As New Dictionary(Of String, String)
+        'ATTACHMENTs.Add($"{ORDR_NO}.zip", $"\\192.168.110.233\c$\ShopsiteService\Data\OrderImageZips\{ORDR_NO}.zip")
+
+        Dim SQLW As New StringBuilder
+        SQLW.Length = 0
+        SQLW.AppendLine("SELECT *")
+        SQLW.AppendLine("FROM WBTIMGR1")
+        Fill_Records("WBTIMGR1", , , SQLW.ToString)
+
+        'Dim di As DirectoryInfo = System.IO.DirectoryInfo(ZIP_FOLDER)
+        Dim files As String() = Directory.GetFiles(ZIP_FOLDER)
+        For Each file As String In files
+            If file.ToUpper.EndsWith(".ZIP") Then
+                Dim ORDR_NO As String = file.Replace(".ZIP", "").Replace(".zip", "").Replace(ZIP_FOLDER, "")
+                Dim FLTR As String = $"ORDR_NO = '{ORDR_NO}'"
+                If dst.Tables.Item("WBTIMGR1").Select(FLTR).Count = 0 Then
+                    Dim TXT_FILE As String = $"{TXT_FOLDER}{ORDR_NO}.txt"
+                    If System.IO.File.Exists(TXT_FILE) Then
+                        Dim fileContent As String = System.IO.File.ReadAllText(TXT_FILE)
+                        Dim fileData As String() = fileContent.Split("|")
+                        If fileData.Length >= 1 Then
+                            Dim EMAIL As String = fileData(0).ToUpper
+                            SQLW.Length = 0
+                            SQLW.AppendLine("SELECT GIVENNAME")
+                            SQLW.AppendLine("FROM WBTCUST1")
+                            SQLW.AppendLine($"WHERE UPPER(EMAIL) = UPPER('{EMAIL}')")
+                            ASCMAIN1.sql = SQLW.ToString()
+                            Dim GIVENNAME As String = ASCDATA1.GetDataValue
+
+                            SQLW.Length = 0
+                            SQLW.AppendLine("SELECT FAMILYNAME")
+                            SQLW.AppendLine("FROM WBTCUST1")
+                            SQLW.AppendLine($"WHERE UPPER(EMAIL) = UPPER('{EMAIL}')")
+                            ASCMAIN1.sql = SQLW.ToString()
+                            Dim FAMILYNAME As String = ASCDATA1.GetDataValue
+
+                            If GIVENNAME.Length > 0 Then
+                                Dim SUBJECT As String = $"Requested Images For Order {ORDR_NO}"
+                                Dim BDY As New StringBuilder With {.Length = 0}
+                                If GIVENNAME.Length > 0 Then
+                                    BDY.AppendLine($"Hi {GIVENNAME};")
+                                Else
+                                    BDY.AppendLine("Hi;")
+                                End If
+                                BDY.AppendLine("")
+                                BDY.AppendLine($"Please follow the link below to view to download images for order #{ORDR_NO}:")
+                                BDY.AppendLine($"<a href={BASE_URL}{ORDR_NO}.zip >Click Here To Download Your File</a>")
+                                BDY.AppendLine("")
+                                BDY.AppendLine("Thank You,")
+                                BDY.AppendLine("")
+                                BDY.AppendLine("Regency International")
+                                BDY.AppendLine("800.782.7810")
+                                BDY.AppendLine("")
+                                BDY.AppendLine("For questions, please contact <a href='mailto:hq@regency-rib.com'>Customer Service</a> or your <a href='https://www.regency-rib.com/locate-sales-representative.html/'>Sales Representative</a> directly.")
+
+                                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                                'EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                                EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
+                                EMAIL_ADDRESSs.Add(EMAIL, $"{GIVENNAME} {FAMILYNAME}")
+
+                                Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                                        SUBJECT, "SHOPSI", True, False, ORDR_NO, "Order Images", "Order Images", BDY.ToString)
+                                If SEND_NO.Length > 0 Then
+                                    Dim newWBTIMGR1 As DataRow = dst.Tables("WBTIMGR1").NewRow
+                                    newWBTIMGR1.Item("ORDR_NO") = ORDR_NO
+                                    newWBTIMGR1.Item("REQ_DATE") = Now()
+                                    newWBTIMGR1.Item("REQ_EMAIL") = EMAIL.ToUpper
+                                    newWBTIMGR1.Item("REQ_STATUS") = "X"
+                                    dst.Tables("WBTIMGR1").Rows.Add(newWBTIMGR1)
+                                    Update_Record_TDA("WBTIMGR1")
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+        Next
+
+
     End Sub
 
     Private Sub uploadShipTos()

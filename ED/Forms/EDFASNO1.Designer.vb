@@ -25,6 +25,7 @@ Partial Class EDFASNO1
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -84,9 +85,12 @@ Partial Class EDFASNO1
         Me.grdEDTASNO1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdEDTASNO2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.spl = New System.Windows.Forms.SplitContainer()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
@@ -108,6 +112,8 @@ Partial Class EDFASNO1
         CType(Me.grdEDTASNO2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.spl, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -121,7 +127,8 @@ Partial Class EDFASNO1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem1.Text = "Load"
         UltraExplorerBarItem2.Text = "Cancel"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2})
+        UltraExplorerBarItem3.Text = "Refresh"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -136,13 +143,13 @@ Partial Class EDFASNO1
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 912)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(751, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1238, 932)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -193,21 +200,21 @@ Partial Class EDFASNO1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 932)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(964, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1451, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 932)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(964, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1451, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(964, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 932)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1451, 0)
         '
         'tlb
         '
@@ -220,7 +227,7 @@ Partial Class EDFASNO1
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraLabel2)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.dteSearchE)
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.dteSearchS)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 130)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 157)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 110)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -280,7 +287,7 @@ Partial Class EDFASNO1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdEDTASNO2)
-        Me.SplitContainer2.Size = New System.Drawing.Size(751, 501)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1238, 765)
         Me.SplitContainer2.SplitterDistance = 241
         Me.SplitContainer2.TabIndex = 15
         '
@@ -372,7 +379,7 @@ Partial Class EDFASNO1
         Me.grdEDTASNO1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdEDTASNO1.Location = New System.Drawing.Point(0, 0)
         Me.grdEDTASNO1.Name = "grdEDTASNO1"
-        Me.grdEDTASNO1.Size = New System.Drawing.Size(751, 241)
+        Me.grdEDTASNO1.Size = New System.Drawing.Size(1238, 241)
         Me.grdEDTASNO1.TabIndex = 16
         Me.grdEDTASNO1.Text = "ABS Shipment Records"
         '
@@ -451,27 +458,53 @@ Partial Class EDFASNO1
         Me.grdEDTASNO2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdEDTASNO2.Location = New System.Drawing.Point(0, 0)
         Me.grdEDTASNO2.Name = "grdEDTASNO2"
-        Me.grdEDTASNO2.Size = New System.Drawing.Size(751, 256)
+        Me.grdEDTASNO2.Size = New System.Drawing.Size(1238, 520)
         Me.grdEDTASNO2.TabIndex = 15
         Me.grdEDTASNO2.Text = "EDI ASN Records"
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor1)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor3)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor5)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor2)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel4)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(751, 69)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1238, 163)
         Me.UltraGroupBox1.TabIndex = 0
+        '
+        'UltraTextEditor1
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor1, False)
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "PARTNERKEY")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor1, "EDVTPM01")
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(13, 76)
+        Me.UltraTextEditor1.Name = "UltraTextEditor1"
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(142, 25)
+        Me.UltraTextEditor1.TabIndex = 2
+        '
+        'UltraTextEditor3
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "PARTNERNAME")
+        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor3, "EDVTPM01")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "PARTNERKEY")
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(154, 76)
+        Me.UltraTextEditor3.Name = "UltraTextEditor3"
+        Me.UltraTextEditor3.ReadOnly = True
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(535, 25)
+        Me.UltraTextEditor3.TabIndex = 3
+        Me.UltraTextEditor3.TabStop = False
         '
         'UltraTextEditor5
         '
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor5, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "CUST_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor5, True)
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(13, 36)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(13, 28)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.Size = New System.Drawing.Size(142, 25)
         Me.UltraTextEditor5.TabIndex = 0
@@ -480,7 +513,7 @@ Partial Class EDFASNO1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "CUST_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor2, "CUST_CODE")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(154, 36)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(154, 28)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.ReadOnly = True
         Me.UltraTextEditor2.Size = New System.Drawing.Size(535, 25)
@@ -490,11 +523,20 @@ Partial Class EDFASNO1
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(13, 12)
+        Me.UltraLabel1.Location = New System.Drawing.Point(13, 10)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(110, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel1.TabIndex = 1
-        Me.UltraLabel1.Text = "Trading Partner"
+        Me.UltraLabel1.Text = "Customer"
+        '
+        'UltraLabel4
+        '
+        Me.UltraLabel4.AutoSize = True
+        Me.UltraLabel4.Location = New System.Drawing.Point(13, 60)
+        Me.UltraLabel4.Name = "UltraLabel4"
+        Me.UltraLabel4.Size = New System.Drawing.Size(110, 18)
+        Me.UltraLabel4.TabIndex = 4
+        Me.UltraLabel4.Text = "Trading Partner"
         '
         'spl
         '
@@ -510,15 +552,15 @@ Partial Class EDFASNO1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.spl.Size = New System.Drawing.Size(751, 574)
-        Me.spl.SplitterDistance = 69
+        Me.spl.Size = New System.Drawing.Size(1238, 932)
+        Me.spl.SplitterDistance = 163
         Me.spl.TabIndex = 15
         '
         'EDFASNO1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(964, 574)
+        Me.ClientSize = New System.Drawing.Size(1451, 932)
         Me.Name = "EDFASNO1"
         Me.Text = "EDF846O1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -543,6 +585,8 @@ Partial Class EDFASNO1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.Panel1.ResumeLayout(False)
@@ -566,4 +610,7 @@ Partial Class EDFASNO1
     Friend WithEvents UltraLabel2 As Misc.UltraLabel
     Friend WithEvents dteSearchE As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents dteSearchS As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraTextEditor1 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel4 As Misc.UltraLabel
 End Class

@@ -1,4 +1,5 @@
 ﻿Imports System.Net.Mail
+Imports Microsoft.Exchange.WebServices.Data
 
 Public Class ASCNOTE1
 
@@ -426,6 +427,11 @@ Public Class ASCNOTE1
             Exit Sub
         End If
 
+        If rowASTPARM1.Item("AS_PARM_EMAIL_TYPE") & String.Empty = "EWS" Then
+            EmailDocument_EWS(displayErrorMessage, ErrorMessage)
+            Exit Sub
+        End If
+
         Dim SEND_FROM_SIGNATURE As String = String.Empty
         Dim EMAIL_LOGO As String = String.Empty
 
@@ -519,6 +525,75 @@ Public Class ASCNOTE1
         Next
 
     End Sub
+
+    Private Sub EmailDocument_EWS(ByVal displayErrorMessage As Boolean, ByRef ErrorMessage As String)
+
+        If emailTo.Length = 0 OrElse emailFrom.Length = 0 OrElse documentText.Length = 0 Then
+            ErrorMessage = "Missing data: emailTo or emailFrom or documentText"
+            Exit Sub
+        End If
+
+        Dim SEND_FROM_SIGNATURE As String = String.Empty
+        Dim EMAIL_LOGO As String = String.Empty
+
+        Try
+
+            Dim Message As EmailMessage = Nothing
+
+            Dim AS_PARM_EMAIL_USER_ID As String = rowASTPARM1.Item("AS_PARM_EMAIL_USER_ID") & ""
+            Dim AS_PARM_EMAIL_PASSWORD As String = ASCMAIN1.DecryptAES(rowASTPARM1.Item("AS_PARM_EMAIL_PASSWORD") & "")
+
+            Dim service As ExchangeService = TACMAIN1.Get_EWS_Service(AS_PARM_EMAIL_USER_ID)
+            Message = New EmailMessage(service)
+
+            Message.From = New EmailAddress(emailFrom, emailFrom)
+
+            For Each sendTo As String In emailTo.Split(";")
+                If sendTo.Length > 0 Then
+                    Message.ToRecipients.Add(sendTo, sendTo)
+                End If
+            Next
+
+            For Each cc As String In emailCC.Split(";")
+                If cc.Length > 0 Then
+                    Message.CcRecipients.Add(cc, cc)
+                End If
+            Next
+
+            For Each bcc As String In emailBCC.Split(";")
+                If bcc.Length > 0 Then
+                    Message.BccRecipients.Add(bcc, bcc)
+                End If
+            Next
+
+            Message.Subject = emailSubjectText
+            If rowTATMAIL1 IsNot Nothing Then
+                EMAIL_LOGO = (rowTATMAIL1.Item("EMAIL_LOGO") & String.Empty).ToString.Trim
+            End If
+
+            For Each attach As String In Attachments
+                Message.Attachments.AddFileAttachment(attach)
+            Next
+
+            If EMAIL_LOGO <> "" AndAlso ASCMAIN1.Folders.ContainsKey("Images") Then
+                Dim logo As FileAttachment = Message.Attachments.AddFileAttachment(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
+                logo.ContentId = "logo"
+                Message.Body = "<img src=cid:logo>" & "<p>" & Replace(documentText & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br/>") & "</p>"
+            Else
+                Message.Body = "<p>" & Replace(documentText & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br/>") & "</p>"
+            End If
+
+            Message.SendAndSaveCopy()
+
+        Catch ex As Exception
+            ErrorMessage = "Send Email Error: " & ex.Message
+            If displayErrorMessage Then
+                MessageBox.Show(ex.Message, "Send Email", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+        End Try
+
+    End Sub
+
 #End Region
 
 End Class

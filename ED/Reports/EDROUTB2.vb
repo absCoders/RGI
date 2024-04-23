@@ -392,13 +392,14 @@ Public Class EDROUTB2
 
         ASCMAIN1.sql = "Select SOTSHIP1.BILL_OF_LADING_NO" & vbCrLf _
             & ", Sum(SOTPICK1.PICK_TOTAL_WGT) TOT_WGT, Sum(SOTPICK1.PICK_CNT_CARTONS) TOT_CTNS " & vbCrLf _
-            & ", Sum(CASE WHEN SOTPICK1.PICK_NO = SOTPICK1.PICK_NO_CONS THEN SOTPICK1.PICK_CNT_CARTONS ELSE 0 END) TOT_CTNS_CONS" & vbCrLf _
-            & " from SOTSHIP1, SOTORDR0, SOTPICK1, " & SOTSHIPX & " SOTSHIPX" & vbCrLf _
+            & ", sum( TOT_CTNS_CONS) TOT_CTNS_CONS" & vbCrLf _
+            & " from SOTSHIP1, SOTORDR0, SOTPICK1, " & SOTSHIPX & " SOTSHIPX, (select PICK_NO, count(CART_NO) TOT_CTNS_CONS from SOTCARM1 group by PICK_NO) SOTCARM1" & vbCrLf _
             & " where SOTSHIP1.BILL_OF_LADING_NO = :PARM1" & vbCrLf _
             & "   and SOTORDR0.CUST_CODE = :PARM2" & vbCrLf _
             & "   and SOTSHIP1.SHIP_BOL_NO = SOTSHIPX.SHIP_BOL_NO " & vbCrLf _
             & "   and SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
             & "   and SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" & vbCrLf _
+            & "   and SOTCARM1.PICK_NO(+) = SOTPICK1.PICK_NO" & vbCrLf _
             & " group by SOTSHIP1.BILL_OF_LADING_NO"
         Create_TDA(dst.Tables.Add, "SOTSHIPT", "**", 0, False, "VV", 1)
 
