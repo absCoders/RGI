@@ -325,6 +325,12 @@
     <Compile Include="Reports\PORITPD1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Reports\PORPREC1.Designer.vb">
+      <DependentUpon>PORPREC1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\PORPREC1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Reports\POROPEN6.Designer.vb">
       <DependentUpon>POROPEN6.vb</DependentUpon>
     </Compile>
@@ -539,6 +545,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\PORITPD1.resx">
       <DependentUpon>PORITPD1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\PORPREC1.resx">
+      <DependentUpon>PORPREC1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\POROPEN6.resx">
       <DependentUpon>POROPEN6.vb</DependentUpon>
