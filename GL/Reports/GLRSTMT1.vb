@@ -57,7 +57,7 @@ Public Class GLRSTMT1
         Get_PARM("GLTPARM1")
         Breakout_By()
         Breakout_By_Class()
-        Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 12, 0)
+        Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
 
     End Sub
 
