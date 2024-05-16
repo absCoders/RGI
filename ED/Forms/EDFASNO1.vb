@@ -1,5 +1,6 @@
 Public Class EDFASNO1
     Dim CUST_CODE As String
+    Dim PartnerKEY As String
     Dim fromDte As DateTime
     Dim toDte As DateTime
 
@@ -7,14 +8,16 @@ Public Class EDFASNO1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         CUST_CODE = "WALMART"
+        PartnerKEY = "WMartTest"
         Absx1.txtFor("CUST_CODE").Value = CUST_CODE
+        Absx1.txtFor("PARTNERKEY").Value = PartnerKEY
         Get_PARM("EDTPARM1")
         With dst
-            ASCMAIN1.sql = "Select SHIP_BOL_NO, MASTER_BILL_OF_LADING_NO, SOTSHIP1.BILL_OF_LADING_NO, EDI_LOAD_ID,
+            ASCMAIN1.sql = $"Select SHIP_BOL_NO, MASTER_BILL_OF_LADING_NO, SOTSHIP1.BILL_OF_LADING_NO, EDI_LOAD_ID,
             SHIP_REF, SHIP_856_BATCH_NO, SHIP_DATE_SHIPPED, SHIP_STATUS, ORDR_CUST_PO from 
             SOTSHIP1, SOTORDR0
             where SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO
-            And CUST_CODE = 'WALMART' 
+            And CUST_CODE = '{CUST_CODE}' 
             And SHIP_DATE_SHIPPED between :PARM1 And : PARM2"
             Create_TDA(.Tables.Add, "EDTASNO1", "**", 0, False, "DD")
 
@@ -24,12 +27,12 @@ Public Class EDFASNO1
                "WHERE ""TransactionSetID"" = '856' " &
                "AND TO_CHAR(NEW_TIME(TO_DATE('01/01/1970', 'MM-DD-YYYY') + " &
                """TimeCreated""/ 86400, 'GMT', 'EST'), 'yyyymmdd') BETWEEN :PARM1 AND :PARM2 " &
-               "AND PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" AND PARTNER.""PartnerKEY"" = 'WMartTest'"
+               $"AND PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" AND PARTNER.""PartnerKEY"" = '{PartnerKEY}'"
             Create_TDA(.Tables.Add, "EDTASNO2", "**", 0, False, "DD")
 
             ASCMAIN1.sql = $"select dc.*, tr.""GroupControlNumber"" from gen.""Track_tb"" Tr, gen.""Document_tb"" Dc
                         where Tr.""DocumentKEY"" = Dc.""DocumentKEY""
-                        and dc.""PartnerKEY"" = 'WMartTest'
+                        and dc.""PartnerKEY"" = '{PartnerKEY}'
                         and dc.""TransactionSetID"" = 997
                         and dc.""AppField6"" is null"
             Create_TDA(.Tables.Add, "EDTACK01", "**", 0, False, , 1)
@@ -116,6 +119,11 @@ Public Class EDFASNO1
             Case "Cancel"
                 Mode_Settings(False)
 
+            Case "Refresh"
+                EntryMode = "E"
+                Load_Record()
+                Mode_Settings(True)
+
         End Select
 
     End Sub
@@ -128,6 +136,8 @@ Public Class EDFASNO1
             With UltraExplorerBar1
                 .Groups("Screen Control").Items("Load").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Cancel").Settings.Enabled = iScreenMode
+                .Groups("Screen Control").Items("Refresh").Settings.Enabled = iScreenMode
+
             End With
         End If
 
@@ -155,7 +165,8 @@ Public Class EDFASNO1
         Try
             fromDte = dteSearchS.DateTime
             toDte = dteSearchE.DateTime.AddDays(1)
-
+            CUST_CODE = Absx1.txtFor("CUST_CODE").Value
+            PartnerKEY = Absx1.txtFor("PARTNERKEY").Value
 
             update_ack_recs()
 
@@ -167,7 +178,7 @@ Public Class EDFASNO1
             SHIP_REF, SHIP_856_BATCH_NO, SHIP_DATE_SHIPPED, SHIP_STATUS, ORDR_CUST_PO from 
             SOTSHIP1, SOTORDR0
             where SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO
-            And CUST_CODE = 'WALMART' 
+            And CUST_CODE = '{CUST_CODE}' 
             And SHIP_DATE_SHIPPED between '{fromDte.ToString("dd-MMM-yyyy")}' And '{toDte.ToString("dd-MMM-yyyy")}'"
 
             Fill_Records("EDTASNO1", "", True, ASCMAIN1.sql)
@@ -179,7 +190,7 @@ Public Class EDFASNO1
                 WHERE ""TransactionSetID"" = '856' 
                 AND ""TimeCreated"" BETWEEN  (DATE '{fromDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
                         and (DATE '{toDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400
-                And PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" And PARTNER.""PartnerKEY"" = 'WMartTest'"
+                And PARTNER.""PartnerKEY"" = DOC.""PartnerKEY"" And PARTNER.""PartnerKEY"" = '{PartnerKEY}'"
 
 
             Fill_Records("EDTASNO2", "", True, ASCMAIN1.sql)
@@ -340,7 +351,7 @@ Public Class EDFASNO1
 
         ASCMAIN1.sql = $"select dc.*, tr.""GroupControlNumber"" from gen.""Track_tb"" Tr, gen.""Document_tb"" Dc
                         where Tr.""DocumentKEY"" = Dc.""DocumentKEY""
-                        and dc.""PartnerKEY"" = 'WMartTest'
+                        and dc.""PartnerKEY"" = '{PartnerKEY}'
                         and dc.""TransactionSetID"" = 997
                         and dc.""AppField6"" is null
                         AND ""TimeCreated"" BETWEEN  (DATE '{fromDte.ToString("yyyy-MM-dd")}' - DATE '1970-01-01') * 86400 
@@ -367,7 +378,7 @@ Public Class EDFASNO1
                             declare cursor c1 is 
                             select dc.*, tr.""GroupControlNumber"" from gen.""Track_tb"" Tr, gen.""Document_tb"" Dc
                                                     where Tr.""DocumentKEY"" = Dc.""DocumentKEY""
-                                                    and dc.""PartnerKEY"" = 'WMartTest'
+                                                    and dc.""PartnerKEY"" = '{PartnerKEY}'
                                                     and tr.""GroupControlNumber"" = '{group_control_no}';
                             begin 
                             for r1 in c1 loop
@@ -407,7 +418,4 @@ Public Class EDFASNO1
     Private Sub grdEDTASNO1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdEDTASNO1.AfterRowActivate
         DirectCast(grdEDTASNO2.DataSource, DataTable).DefaultView.RowFilter = "" ' Clear the filter
     End Sub
-
-
-
 End Class

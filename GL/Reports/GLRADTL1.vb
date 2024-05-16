@@ -139,11 +139,18 @@ Public Class GLRADTL1
                 ORDR_QTY_SHIP, SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_PRICE INV_EXT, SOTINVH1.CUST_CODE, SOTINVH1.CUST_STORE_NO,
                 SOTINVH1.ORDR_CUST_PO, SOTINVH1.WHSE_CODE, SOTINVH1.REASON_CODE, SOTINVH1.INV_DATE, SOTINVH1.POST_CODE, SOTINVH1.TERM_CODE,
                 SOTINVH1.SREP_CODE, INV_COMMENT, SOTINVH1.ORDR_TYPE_CODE, SOTINVH1.CUST_BILL_TO_CUST, SOTINVH1.REGISTER_XNO,
-                SOTINVH1.REGISTER_DATE  From SOTINVH2, SOTINVH1, (SELECT DISTINCT DETL_EXE_NO, JOURNAL_NO FROM {TT_GLTDETL1} WHERE JOURNAL_TYPE =  'OPSJ') AA
+                SOTINVH1.REGISTER_DATE, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_MISC_CHG,''  MISC_FRT From SOTINVH2, SOTINVH1, (SELECT DISTINCT DETL_EXE_NO, JOURNAL_NO FROM {TT_GLTDETL1} WHERE JOURNAL_TYPE =  'OPSJ') AA
                             WHERE SOTINVH1.INV_NO = SOTINVH2.INV_NO
-                And SOTINVH1.register_xno = AA.DETL_EXE_NO"
-
-
+                And SOTINVH1.register_xno = AA.DETL_EXE_NO 
+                UNION
+                SELECT aa.JOURNAL_NO,SOTINVH1.INV_TYPE,SOTINVH1.INV_NO,0 INV_LNO,'' STYLE_CODE,'' COLOR_CODE, 0 ORDR_UNIT_PRICE,0 ORDR_QTY_SHIP,
+                0 INV_EXT, SOTINVH1.CUST_CODE, SOTINVH1.CUST_STORE_NO, SOTINVH1.ORDR_CUST_PO, SOTINVH1.WHSE_CODE, SOTINVH1.REASON_CODE,
+                SOTINVH1.INV_DATE, SOTINVH1.POST_CODE, SOTINVH1.TERM_CODE, SOTINVH1.SREP_CODE, INV_COMMENT, SOTINVH1.ORDR_TYPE_CODE, SOTINVH1.CUST_BILL_TO_CUST,
+                SOTINVH1.REGISTER_XNO,SOTINVH1.REGISTER_DATE, SOTINVH1.INV_FREIGHT,SOTINVH1.INV_MISC_CHG,'Header'  MISC_FRT
+                FROM SOTINVH1 ,(SELECT DISTINCT DETL_EXE_NO, JOURNAL_NO FROM  {TT_GLTDETL1}  WHERE JOURNAL_TYPE =  'OPSJ') AA
+                 WHERE SOTINVH1.register_xno = AA.DETL_EXE_NO
+                AND (SOTINVH1.INV_FREIGHT <> 0 OR SOTINVH1.INV_MISC_CHG <> 0) AND
+                 (SOTINVH1.REASON_CODE IS NULL OR SOTINVH1.REASON_CODE <> 'SHP')"
             dst.Tables.Add(ASCDATA1.GetDataTable(sql, "GLTOPSJ1", 0))
         End If
 
@@ -287,7 +294,7 @@ Public Class GLRADTL1
         Next
 
 
-        Set_DX_Column(grdASTEXPT2, "JOURNAL_NO", "Journal No", 50,,, System.Drawing.Color.Gold)
+        Set_DX_Column(grdASTEXPT2, "JOURNAL_NO", "Journal No", 90,,, System.Drawing.Color.Gold)
         Set_DX_Column(grdASTEXPT2, "INV_TYPE", "Inv Type", 50,,, System.Drawing.Color.Pink)
         Set_DX_Column(grdASTEXPT2, "INV_NO", "Inv No", 90,,, System.Drawing.Color.Pink)
         Set_DX_Column(grdASTEXPT2, "INV_LNO", "Inv LNo", 90,,, System.Drawing.Color.Pink)
@@ -296,7 +303,7 @@ Public Class GLRADTL1
         Set_DX_Column(grdASTEXPT2, "ORDR_UNIT_PRICE", "Price", 90, "###,##0.00", , Color.Pink)
         Set_DX_Column(grdASTEXPT2, "ORDR_QTY_SHIP", "Qty Shipped", 90, "#,###,##0", , Color.Pink)
         Set_DX_Column(grdASTEXPT2, "INV_EXT", "Inv Ext", 120, "##,###,##0.00", , Color.Pink)
-        Set_DX_Column(grdASTEXPT2, "REGISTER_XNO", "Register", 90,,, System.Drawing.Color.Pink)
+        Set_DX_Column(grdASTEXPT2, "REGISTER_XNO", "Register", 120,,, System.Drawing.Color.Pink)
         Set_DX_Column(grdASTEXPT2, "REGISTER_DATE", "Register", 90, "MM/dd/yy",, System.Drawing.Color.Pink)
 
 
@@ -314,12 +321,18 @@ Public Class GLRADTL1
         Set_DX_Column(grdASTEXPT2, "INV_COMMENT", "Inv Comment", 120,,, System.Drawing.Color.Orange)
         Set_DX_Column(grdASTEXPT2, "ORDR_TYPE_CODE", "Order Type", 90,,, System.Drawing.Color.Orange)
         Set_DX_Column(grdASTEXPT2, "CUST_BILL_TO_CUST", "Bill to Cust", 90,,, System.Drawing.Color.Orange)
+        Set_DX_Column(grdASTEXPT2, "INV_FREIGHT", "Freight", 120, "##,###,##0.00", , Color.Orange)
+        Set_DX_Column(grdASTEXPT2, "INV_MISC_CHG", "Misc Charge", 120, "##,###,##0.00", , Color.Orange)
+        Set_DX_Column(grdASTEXPT2, "MISC_FRT", "Header Charge", 50,,, System.Drawing.Color.Orange)
+
+
+
 
 
         Create_Summary(grdASTEXPT2, "REGISTER_XNO", "Count")
         Create_Summary(grdASTEXPT2, New String() {"ORDR_QTY_SHIP", "INV_EXT"})
 
-        Sort_grdColumns(grdASTEXPT2, "REGISTER_XNO,INV_NO,INV_date")
+        Sort_grdColumns(grdASTEXPT2, "JOURNAL_NO,REGISTER_XNO,MISC_FRT,INV_TYPE,INV_NO,INV_date")
 
 
 
