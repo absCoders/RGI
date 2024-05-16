@@ -119,16 +119,16 @@ Public Class ICFPHYP1
             Create_TDA(.Tables.Add, "ICTPHYJS", "**", 0, False, "")
 
 
-            '''.Relations.Add("ICTPHYJS",
-            '''.Tables("ICTPHYJMS").Columns("LOCATION_CODE"),
-            '''.Tables("ICTPHYJS").Columns("LOCATION_CODE"))
+            ''.Relations.Add("ICTPHYJS",
+            ''.Tables("ICTPHYJMS").Columns("LOCATION_CODE"),
+            ''.Tables("ICTPHYJS").Columns("LOCATION_CODE"))
 
-            '''.Tables("ICTPHYJMS").Columns("STYLE_COUNT)").Expression = "COUNT(CHILD(ICTPHYJS).STYLE_CODE)"
-            ''''   .Tables("ICTPHYJS").Columns("OPS_YYYYPP").Expression = "PARENT(APTINVR2).OPS_YYYYPP"
+            ''.Tables("ICTPHYJMS").Columns("STYLE_COUNT)").Expression = "COUNT(CHILD(ICTPHYJS).STYLE_CODE)"
+            ''   .Tables("ICTPHYJS").Columns("OPS_YYYYPP").Expression = "PARENT(APTINVR2).OPS_YYYYPP"
 
 
 
-            '''   Dim STYLES_COUNT As Decimal = Val(dst.Tables("ICTPHYJM").Compute("COUNT(STYLE_CODE)", "YELLOW = '1'") & "")
+            ''   Dim STYLES_COUNT As Decimal = Val(dst.Tables("ICTPHYJM").Compute("COUNT(STYLE_CODE)", "YELLOW = '1'") & "")
 
 
 

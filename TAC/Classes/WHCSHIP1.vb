@@ -4,14 +4,6 @@ Imports System.Text
 Imports System.IO
 Imports Newtonsoft.Json
 
-' Needed for USPS Pitney Bowes
-'alter table SOTCARR1 add USPS_PARTNER VARCHAR2(1);
-'alter table SOTCARR3 modify ACCESSLICENSENUMBER VARCHAR2(100);
-'alter table SOTCARR3 modify ADDR_VALID_LICENSE VARCHAR2(100);
-'alter table SOTCARR3 modify METER_NUMBER VARCHAR2(500);
-'alter table SOTCARR3 modify SHIPPER_ID VARCHAR2(100);
-'alter table SOTCARR3 add TOKEN_EXPIRES DATE;
-
 Public Class WHCSHIP1
 
 #Region "Variables"
@@ -56,7 +48,6 @@ Public Class WHCSHIP1
 
     Public USPSPostageProvider As USPSPostageProviders = USPSPostageProviders.None
 
-    Public DropOffType As FedexshipintlDropoffTypes = FedexshipintlDropoffTypes.dtRegularPickup
     Public EzshipLabelImage As EzshipLabelImageTypes = EzshipLabelImageTypes.itZebra
     Public UPSPickupType As UpsratesPickupTypes = UpsratesPickupTypes.ptDailyPickup
     Private cCustomerType As UpsratesCustomerTypes = UpsratesCustomerTypes.ccDaily
@@ -70,8 +61,6 @@ Public Class WHCSHIP1
     Public CommodityDetailList As New List(Of CommodityDetail)
     Public RequestedServicesRates As New List(Of ServiceDetail)
     Public HandlingUnit As String = String.Empty
-
-    Public USPSTestMode As Boolean = True
 
     Private cServiceProvider As ServiceProviders = ServiceProviders.Unknown
     Private cServer As String = String.Empty
@@ -135,6 +124,7 @@ Public Class WHCSHIP1
     Private cShipmentDescription As String = String.Empty
 
     Private clsInternationalFormsFile As String = String.Empty
+    Private inTestMode As Boolean = False
 
     Public Structure CommercialInvoice
         Dim Purpose As CommercialInvoicePurposes
@@ -321,8 +311,6 @@ Public Class WHCSHIP1
 
         FedexClose = New CloseDetail
 
-        DropOffType = FedexshipintlDropoffTypes.dtRegularPickup
-        'PackageDetail = New PackageDetail
         EzshipLabelImage = EzshipLabelImageTypes.itZebra
         ShippingLabelDirectory = String.Empty
         ShippingLabelPrefix = String.Empty
@@ -1058,32 +1046,17 @@ Public Class WHCSHIP1
                 Return False
             End If
 
-            Dim useSoap As Boolean = cServer.ToUpper.Contains("WEBSERVICES")
-            If useSoap Then
-                objUpsShipIntl.Config("UseSOAP=true")
-                If Not cServer.EndsWith("/") Then
-                    objUpsShipIntl.UPSAccount.Server = cServer & "/Ship"
-                Else
-                    objUpsShipIntl.UPSAccount.Server = cServer & "Ship"
-                End If
-            Else
-                objUpsShipIntl.Config("UseSOAP=false")
-                If Not cServer.EndsWith("/") Then
-                    objUpsShipIntl.UPSAccount.Server = cServer & "/ShipConfirm"
-                Else
-                    objUpsShipIntl.UPSAccount.Server = cServer & "ShipConfirm"
-                End If
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsShipIntl.Config("TESTMODE=true")
             End If
+            objUpsShipIntl.UPSAccount.AccountNumber = cAccountNumber
+            objUpsShipIntl.UPSAccount.AuthorizationToken = bearerToken
+            objUpsShipIntl.ServiceType = cRequestedServiceType
+            objUpsShipIntl.ShipmentDescription = ShipmentDescription
 
             objUpsShipIntl.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            objUpsShipIntl.UPSAccount.AccessKey = UPSAccessKey
-            objUpsShipIntl.UPSAccount.Password = cPassword
-            objUpsShipIntl.UPSAccount.AccountNumber = cAccountNumber
-            objUpsShipIntl.UPSAccount.UserId = cUserId
-            objUpsShipIntl.ServiceType = cRequestedServiceType
-            objUpsShipIntl.ShipmentDescription = ShipmentDescription
 
             ' Get Sender Information
             With cSenderContact
@@ -1158,7 +1131,7 @@ Public Class WHCSHIP1
                     objUpsShipIntl.LabelImageType = UpsshipLabelImageTypes.uitGIF
                 Case EzshipLabelImageTypes.itSPL
                     objUpsShipIntl.LabelImageType = UpsshipLabelImageTypes.uitSPL
-                Case EzshipLabelImageTypes.itZPL
+                Case EzshipLabelImageTypes.itZPL, EzshipLabelImageTypes.itZebra
                     objUpsShipIntl.LabelImageType = UpsshipLabelImageTypes.uitZPL
                 Case Else
                     objUpsShipIntl.LabelImageType = UpsshipLabelImageTypes.uitEPL
@@ -1569,7 +1542,6 @@ Public Class WHCSHIP1
                     .Password = cPassword
                     .Server = cServer
                     .UserId = cUserId
-                    .AccessKey = cUPSAccessKey
                 End With
 
                 .Account = EzAccount
@@ -3292,18 +3264,19 @@ Public Class WHCSHIP1
             End If
 
             ' Set credentials
-            objFedexShipIntl.FedExAccount.Server = cServer
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+            If inTestMode Then
+                objFedexShipIntl.Config("TESTMODE=true")
+                cAccountNumber = "740561073"
+            End If
+
+            objFedexShip.FedExAccount.AccountNumber = cAccountNumber
+            objFedexShip.FedExAccount.AuthorizationToken = bearertoken
             objFedexShipIntl.FedExAccount.DeveloperKey = cFedexDeveloperKey
             objFedexShipIntl.FedExAccount.Password = cPassword
             objFedexShipIntl.FedExAccount.AccountNumber = cAccountNumber
             objFedexShipIntl.FedExAccount.MeterNumber = cFedexMeterNumber
             objFedexShipIntl.ServiceType = cRequestedServiceType
-
-            If cServer.ToUpper.Contains("WEB-SERVICES") Then
-                objFedexShipIntl.Config("UseSOAP=true")
-            Else
-                objFedexShipIntl.Config("UseSOAP=false")
-            End If
 
             objFedexShipIntl.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
@@ -3444,7 +3417,6 @@ Public Class WHCSHIP1
 
             ' Service Type
             objFedexShipIntl.ServiceType = cRequestedServiceType
-            objFedexShipIntl.DropoffType = DropOffType
             objFedexShipIntl.Payor.PayorType = Payor
 
             objFedexShipIntl.Payor.AccountNumber = cSenderContact.AccountNumber
@@ -3572,17 +3544,63 @@ Public Class WHCSHIP1
                 Return False
             End If
 
-            objFedexShip.FedExAccount.Server = cServer
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+
+            If inTestMode Then
+                ' FedEx does not have a full test environment
+                ' Need tyo hard code Label information.
+                cAccountNumber = "740561073"
+                objFedexShip.Config("TESTMODE=true") ' no need To Set the server
+
+                With cSenderContact
+                    .Company = ""
+                    .eMail = ""
+                    .FirstName = "Test"
+                    .LastName = "Test"
+                    .MiddleInitial = ""
+                    .Phone = "8889997777"
+                    .Address1 = "5007 Southpark Drive"
+                    .Address2 = "Suite 240"
+                    .City = "Durham"
+                    .CountryCode = "US"
+                    .State = "NC"
+                    .ZipCode = "27713"
+                End With
+
+                With cRecipientContact
+                    .Company = ""
+                    .eMail = ""
+                    .FirstName = "Test & Such"
+                    .LastName = ""
+                    .MiddleInitial = ""
+                    .Phone = "0000000000"
+                    .Address1 = "8355 Rockville Rd"
+                    .Address2 = "Suite B"
+                    .City = "Indianapolis"
+                    .CountryCode = "US"
+                    .State = "IN"
+                    .ZipCode = "46234"
+                End With
+
+                For Each shippingPackageDetail In PackageDetailList
+                    With shippingPackageDetail
+                        .Height = 5
+                        .Length = 5
+                        .Width = 5
+                        .Weight = "16" ' 16 OPUNCES
+                        .PackagingType = TPackagingTypes.ptYourPackaging
+                    End With
+                Next
+
+            End If
+
             objFedexShip.FedExAccount.AccountNumber = cAccountNumber
+            objFedexShip.FedExAccount.AuthorizationToken = bearertoken
+            objFedexShip.PickupType = FedexratesPickupTypes.fptUseScheduledPickup
+
             objFedexShip.FedExAccount.Password = cPassword
             objFedexShip.FedExAccount.MeterNumber = cFedexMeterNumber
             objFedexShip.FedExAccount.DeveloperKey = cFedexDeveloperKey
-
-            If cServer.ToUpper.Contains("WEB-SERVICES") Then
-                objFedexShip.Config("UseSOAP=true")
-            Else
-                objFedexShip.Config("UseSOAP=false")
-            End If
 
             objFedexShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
@@ -3843,7 +3861,7 @@ Public Class WHCSHIP1
 
             ' NS-HF048860852E
             If cFedexCustomContent.Length > 0 Then
-                objFedexShip.Config("CustomContent=" & cFedexCustomContent)
+                objFedexShip.Config("DocTabContent=" & cFedexCustomContent)
 
                 ' Need to check the labal type
                 ' 4 = 4x8, 5=4x9 - has pull tab
@@ -3941,7 +3959,6 @@ Public Class WHCSHIP1
             objFedexShip.Dispose()
             objFedexShip = Nothing
         End Try
-
     End Function
 
     ''' <summary>
@@ -3958,18 +3975,16 @@ Public Class WHCSHIP1
             objFedexShip.Reset()
             objFedexShip.RuntimeLicense = s4DPaymentsShippingSDK
 
-            objFedexShip.FedExAccount.Server = cServer
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+            If inTestMode Then
+                objFedexShip.Config("TESTMODE=true")
+                cAccountNumber = "740561073"
+            End If
             objFedexShip.FedExAccount.AccountNumber = cAccountNumber
+            objFedexShip.FedExAccount.AuthorizationToken = bearertoken
             objFedexShip.FedExAccount.Password = cPassword
             objFedexShip.FedExAccount.MeterNumber = cFedexMeterNumber
             objFedexShip.FedExAccount.DeveloperKey = cFedexDeveloperKey
-
-            If cServer.ToUpper.Contains("WEB-SERVICES") Then
-                objFedexShip.Config("UseSOAP=true")
-            Else
-                objFedexShip.Config("UseSOAP=false")
-            End If
-
             objFedexShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
@@ -4018,25 +4033,26 @@ Public Class WHCSHIP1
                 Return False
             End If
 
-            objFedexShip.FedExAccount.Server = cServer
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+            If inTestMode Then
+                objFedexShip.Config("TESTMODE=true")
+                cAccountNumber = "740561073"
+            End If
+
             objFedexShip.FedExAccount.AccountNumber = cAccountNumber
+            objFedexShip.FedExAccount.AuthorizationToken = bearertoken
+
             objFedexShip.FedExAccount.Password = cPassword
             objFedexShip.FedExAccount.MeterNumber = cFedexMeterNumber
             objFedexShip.FedExAccount.DeveloperKey = cFedexDeveloperKey
-
-            If cServer.ToUpper.Contains("WEB-SERVICES") Then
-                objFedexShip.Config("UseSOAP=true")
-            Else
-                objFedexShip.Config("UseSOAP=false")
-            End If
 
             objFedexShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             If isMultiPackage Then
-                objFedexShip.CancelShipment(TrackingNumber, FedexTrackingIDType)
+                objFedexShip.CancelShipment(TrackingNumber)
             Else
-                objFedexShip.CancelPackage(TrackingNumber, FedexTrackingIDType)
+                objFedexShip.CancelPackage(TrackingNumber)
             End If
 
             Return True
@@ -4062,85 +4078,108 @@ Public Class WHCSHIP1
             objFedexRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Set credentials
-            objFedexRates.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+
+            objFedexRates.FedExAccount.AccountNumber = cAccountNumber
+            objFedexRates.FedExAccount.AuthorizationToken = bearertoken
+
             objFedexRates.FedExAccount.DeveloperKey = cFedexDeveloperKey
             objFedexRates.FedExAccount.Password = cPassword
-            objFedexRates.FedExAccount.AccountNumber = cAccountNumber
             objFedexRates.FedExAccount.MeterNumber = cFedexMeterNumber
             objFedexRates.RequestedService = cRequestedServiceType
-
-            If cServer.ToUpper.Contains("WEB-SERVICES") Then
-                objFedexRates.Config("UseSOAP=true")
-            Else
-                objFedexRates.Config("UseSOAP=false")
-            End If
 
             objFedexRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
-            ' Get Sender Information
-            With cSenderContact
-                objFedexRates.SenderAddress.State = .State
-                objFedexRates.SenderAddress.ZipCode = .ZipCode
-                objFedexRates.SenderAddress.CountryCode = .CountryCode
-                If objFedexRates.SenderAddress.CountryCode.Length = 0 Then
-                    objFedexRates.SenderAddress.CountryCode = "US"
-                End If
+            If inTestMode Then
+                With objFedexRates
+                    .Config("TESTMODE=true")
 
-                If .IsResidental Then
-                    objFedexRates.SenderAddress.AddressFlags = &H2 'Residential
-                End If
-            End With
+                    .FedExAccount.AccountNumber = "740561073"
+                    .FedExAccount.AuthorizationToken = bearertoken
 
-            With cRecipientContact
-                objFedexRates.RecipientAddress.State = .State
-                objFedexRates.RecipientAddress.ZipCode = .ZipCode
-                objFedexRates.RecipientAddress.CountryCode = .CountryCode
-                If objFedexRates.RecipientAddress.CountryCode.Length = 0 Then
-                    objFedexRates.RecipientAddress.CountryCode = "US"
-                End If
+                    .SenderAddress.ZipCode = "90660" ' "07092"
+                    .SenderAddress.CountryCode = "US"
 
-                If .IsResidental Then
-                    objFedexRates.RecipientAddress.AddressFlags = &H2 'Residential
-                ElseIf .IsPOBox Then
-                    objFedexRates.RecipientAddress.AddressFlags = &H1 'PO Box
-                End If
+                    .RecipientAddress.ZipCode = "10007" ' "07081"
+                    .RecipientAddress.CountryCode = "US"
 
-            End With
+                    .RecipientAddress.AddressFlags = 2
+                    .RequestedService = ServiceTypes.stUnspecified
+                    .PickupType = FedexratesPickupTypes.fptDropoffAtFedexLocation
 
-            Dim totalWeight As Double = 0
-            Dim totalInsured As Decimal = 0
-            ' Add packages
-            For Each shippingPackageDetail In PackageDetailList
-                ' Add packages (package weight is in Ounces - Convert to Pounds)
-                shippingPackageDetail.Weight = Format(Val(shippingPackageDetail.Weight) / 16, "###0.0")
-                totalWeight += Val(shippingPackageDetail.Weight)
+                    Dim PackageDetail As New PackageDetail
+                    With PackageDetail
+                        .Weight = "1.5"
+                    End With
+                    .Packages.Add(PackageDetail)
 
-                shippingPackageDetail.InsuredValue = Math.Abs(Val(shippingPackageDetail.InsuredValue & String.Empty))
-                totalInsured += shippingPackageDetail.InsuredValue
-
-                If cSignatureRequired Then
-                    shippingPackageDetail.SignatureType = TSignatureTypes.stDirect
-                End If
-
-                objFedexRates.Packages.Add(shippingPackageDetail)
-            Next
-
-            objFedexRates.TotalWeight = Format(Val(totalWeight), "###0.0")
-            objFedexRates.InsuredValue = Format(Val(totalInsured), "###0.00")
-
-            objFedexRates.ShipmentSpecialServices = 0
-            objFedexRates.DropoffType = FedexratesDropoffTypes.dtRegularPickup
-            objFedexRates.Config("WeightUnit=LB")
-
-            If IsDate(Me.ShipDate) Then
-                objFedexRates.ShipDate = CDate(Me.ShipDate).ToString("yyyy-MM-dd")
+                End With
             Else
-                objFedexRates.ShipDate = DateTime.Now.ToString("yyyy-MM-dd")
+                ' Get Sender Information
+                With cSenderContact
+                    objFedexRates.SenderAddress.State = .State
+                    objFedexRates.SenderAddress.ZipCode = .ZipCode
+                    objFedexRates.SenderAddress.CountryCode = .CountryCode
+                    If objFedexRates.SenderAddress.CountryCode.Length = 0 Then
+                        objFedexRates.SenderAddress.CountryCode = "US"
+                    End If
+
+                    If .IsResidental Then
+                        objFedexRates.SenderAddress.AddressFlags = &H2 'Residential
+                    End If
+                End With
+
+                With cRecipientContact
+                    objFedexRates.RecipientAddress.State = .State
+                    objFedexRates.RecipientAddress.ZipCode = .ZipCode
+                    objFedexRates.RecipientAddress.CountryCode = .CountryCode
+                    If objFedexRates.RecipientAddress.CountryCode.Length = 0 Then
+                        objFedexRates.RecipientAddress.CountryCode = "US"
+                    End If
+
+                    If .IsResidental Then
+                        objFedexRates.RecipientAddress.AddressFlags = &H2 'Residential
+                    ElseIf .IsPOBox Then
+                        objFedexRates.RecipientAddress.AddressFlags = &H1 'PO Box
+                    End If
+
+                End With
+
+                Dim totalWeight As Double = 0
+                Dim totalInsured As Decimal = 0
+                ' Add packages
+                For Each shippingPackageDetail In PackageDetailList
+                    ' Add packages (package weight is in Ounces - Convert to Pounds)
+                    shippingPackageDetail.Weight = Format(Val(shippingPackageDetail.Weight) / 16, "###0.0")
+                    totalWeight += Val(shippingPackageDetail.Weight)
+
+                    shippingPackageDetail.InsuredValue = Math.Abs(Val(shippingPackageDetail.InsuredValue & String.Empty))
+                    totalInsured += shippingPackageDetail.InsuredValue
+
+                    If cSignatureRequired Then
+                        shippingPackageDetail.SignatureType = TSignatureTypes.stDirect
+                    End If
+
+                    objFedexRates.Packages.Add(shippingPackageDetail)
+                Next
+
+                objFedexRates.TotalWeight = Format(Val(totalWeight), "###0.0")
+                objFedexRates.InsuredValue = Format(Val(totalInsured), "###0.00")
+
+                objFedexRates.ShipmentSpecialServices = 0
+                objFedexRates.Config("WeightUnit=LB")
+
+                If IsDate(Me.ShipDate) Then
+                    objFedexRates.ShipDate = CDate(Me.ShipDate).ToString("yyyy-MM-dd")
+                Else
+                    objFedexRates.ShipDate = DateTime.Now.ToString("yyyy-MM-dd")
+                End If
+
+                objFedexRates.ShipmentSpecialServices = ShipmentSpecialServices
             End If
 
-            objFedexRates.ShipmentSpecialServices = ShipmentSpecialServices
-
+            objFedexRates.RateType = &H2 Or &H1 ' FedexratesRateTypes.rtList
             objFedexRates.GetRates()
 
             ShipmentBaseCharge.Clear()
@@ -4187,96 +4226,127 @@ Public Class WHCSHIP1
             objFedexRates.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Set credentials
-            objFedexRates.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
-            objFedexRates.FedExAccount.DeveloperKey = cFedexDeveloperKey
-            objFedexRates.FedExAccount.Password = cPassword
-            objFedexRates.FedExAccount.AccountNumber = cAccountNumber
-            objFedexRates.FedExAccount.MeterNumber = cFedexMeterNumber
-            objFedexRates.RequestedService = cRequestedServiceType
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
 
-            If cServer.ToUpper.Contains("WEB-SERVICES") Then
-                objFedexRates.Config("UseSOAP=true")
+            If inTestMode Then
+                With objFedexRates
+                    .Config("TESTMODE=true")
+
+                    .FedExAccount.AccountNumber = "740561073"
+                    .FedExAccount.AuthorizationToken = bearertoken
+
+                    .SenderAddress.ZipCode = "90660" ' "07092"
+                    .SenderAddress.CountryCode = "US"
+
+                    .RecipientAddress.ZipCode = "10007" ' "07081"
+                    .RecipientAddress.CountryCode = "US"
+
+                    '.RecipientAddress.AddressFlags = 2
+                    .RequestedService = ServiceTypes.stUnspecified
+                    '.PickupType = FedexratesPickupTypes.fptUseScheduledPickup
+
+                    Dim PackageDetail As New PackageDetail
+                    With PackageDetail
+                        .Weight = "1.5"
+                    End With
+                    .Packages.Add(PackageDetail)
+
+                End With
             Else
-                objFedexRates.Config("UseSOAP=false")
+                objFedexRates.FedExAccount.AccountNumber = cAccountNumber
+                objFedexRates.FedExAccount.AuthorizationToken = bearertoken
+
+                objFedexRates.FedExAccount.DeveloperKey = cFedexDeveloperKey
+                objFedexRates.FedExAccount.Password = cPassword
+                objFedexRates.FedExAccount.MeterNumber = cFedexMeterNumber
+                objFedexRates.RequestedService = cRequestedServiceType
+
+                objFedexRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
+
+                ' Get Sender Information
+                With cSenderContact
+                    objFedexRates.SenderAddress.State = .State
+                    objFedexRates.SenderAddress.ZipCode = .ZipCode
+                    objFedexRates.SenderAddress.CountryCode = .CountryCode
+                    If objFedexRates.SenderAddress.CountryCode.Length = 0 Then
+                        objFedexRates.SenderAddress.CountryCode = "US"
+                    End If
+
+                    If .IsResidental Then
+                        objFedexRates.SenderAddress.AddressFlags = &H2 'Residential
+                    End If
+                End With
+
+                With cRecipientContact
+                    objFedexRates.RecipientAddress.State = .State
+                    objFedexRates.RecipientAddress.ZipCode = .ZipCode
+                    objFedexRates.RecipientAddress.CountryCode = .CountryCode
+                    If objFedexRates.RecipientAddress.CountryCode.Length = 0 Then
+                        objFedexRates.RecipientAddress.CountryCode = "US"
+                    End If
+
+                    If .IsResidental Then
+                        objFedexRates.RecipientAddress.AddressFlags = &H2 'Residential
+                    ElseIf .IsPOBox Then
+                        objFedexRates.RecipientAddress.AddressFlags = &H1 'PO Box
+                    End If
+
+                End With
+
+                Dim totalWeight As Double = 0
+                Dim totalInsured As Decimal = 0
+                ' Add packages
+                For Each shippingPackageDetail In PackageDetailList
+                    ' Add packages (package weight is in Ounces - Convert to Pounds)
+                    shippingPackageDetail.Weight = Format(Val(shippingPackageDetail.Weight) / 16, "###0.0")
+                    totalWeight += Val(shippingPackageDetail.Weight)
+
+                    If Val(shippingPackageDetail.InsuredValue & String.Empty) < 0 Then
+                        shippingPackageDetail.InsuredValue = 0
+                    End If
+
+                    shippingPackageDetail.InsuredValue = Math.Abs(Val(shippingPackageDetail.InsuredValue & String.Empty))
+                    totalInsured += shippingPackageDetail.InsuredValue
+
+                    If cSignatureRequired Then
+                        shippingPackageDetail.SignatureType = TSignatureTypes.stDirect
+                    End If
+
+                    objFedexRates.Packages.Add(shippingPackageDetail)
+                Next
+
+                objFedexRates.InsuredValue = Format(Val(totalInsured), "###0.00")
+                objFedexRates.ShipmentSpecialServices = 0
+
+                If IsDate(Me.ShipDate) Then
+                    objFedexRates.ShipDate = CDate(Me.ShipDate).ToString("yyyy-MM-dd")
+                Else
+                    objFedexRates.ShipDate = DateTime.Now.ToString("yyyy-MM-dd")
+                End If
+
+                ShipmentBaseCharge.Clear()
+                ShipmentDiscountCharge.Clear()
+                ShipmentListCharge.Clear()
+                ShipmentNetCharge.Clear()
+                ShipmentSurCharge.Clear()
+
+                objFedexRates.ShipmentSpecialServices = ShipmentSpecialServices
             End If
 
-            objFedexRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
+            objFedexRates.RateType = &H2 Or &H1 ' FedexratesRateTypes.rtList
 
-            ' Get Sender Information
-            With cSenderContact
-                objFedexRates.SenderAddress.State = .State
-                objFedexRates.SenderAddress.ZipCode = .ZipCode
-                objFedexRates.SenderAddress.CountryCode = .CountryCode
-                If objFedexRates.SenderAddress.CountryCode.Length = 0 Then
-                    objFedexRates.SenderAddress.CountryCode = "US"
-                End If
+            ' Geting a resouce error, try it twice. May be the test environment
+            Dim success As Boolean = True
+            Try
+                objFedexRates.GetRates()
+            Catch ex As Exception
+                success = False
+            End Try
 
-                If .IsResidental Then
-                    objFedexRates.SenderAddress.AddressFlags = &H2 'Residential
-                End If
-            End With
-
-            With cRecipientContact
-                objFedexRates.RecipientAddress.State = .State
-                objFedexRates.RecipientAddress.ZipCode = .ZipCode
-                objFedexRates.RecipientAddress.CountryCode = .CountryCode
-                If objFedexRates.RecipientAddress.CountryCode.Length = 0 Then
-                    objFedexRates.RecipientAddress.CountryCode = "US"
-                End If
-
-                If .IsResidental Then
-                    objFedexRates.RecipientAddress.AddressFlags = &H2 'Residential
-                ElseIf .IsPOBox Then
-                    objFedexRates.RecipientAddress.AddressFlags = &H1 'PO Box
-                End If
-
-            End With
-
-            Dim totalWeight As Double = 0
-            Dim totalInsured As Decimal = 0
-            ' Add packages
-            For Each shippingPackageDetail In PackageDetailList
-                ' Add packages (package weight is in Ounces - Convert to Pounds)
-                shippingPackageDetail.Weight = Format(Val(shippingPackageDetail.Weight) / 16, "###0.0")
-                totalWeight += Val(shippingPackageDetail.Weight)
-
-                If Val(shippingPackageDetail.InsuredValue & String.Empty) < 0 Then
-                    shippingPackageDetail.InsuredValue = 0
-                End If
-
-                shippingPackageDetail.InsuredValue = Math.Abs(Val(shippingPackageDetail.InsuredValue & String.Empty))
-                totalInsured += shippingPackageDetail.InsuredValue
-
-                If cSignatureRequired Then
-                    shippingPackageDetail.SignatureType = TSignatureTypes.stDirect
-                End If
-
-                objFedexRates.Packages.Add(shippingPackageDetail)
-            Next
-
-            objFedexRates.TotalWeight = Format(Val(totalWeight), "###0.0")
-            objFedexRates.InsuredValue = Format(Val(totalInsured), "###0.00")
-
-            objFedexRates.ShipmentSpecialServices = 0
-            objFedexRates.DropoffType = FedexratesDropoffTypes.dtRegularPickup
-            objFedexRates.Config("WeightUnit=LB")
-
-            If IsDate(Me.ShipDate) Then
-                objFedexRates.ShipDate = CDate(Me.ShipDate).ToString("yyyy-MM-dd")
-            Else
-                objFedexRates.ShipDate = DateTime.Now.ToString("yyyy-MM-dd")
+            If Not success Then
+                objFedexRates.GetRates()
             End If
-
-            ShipmentBaseCharge.Clear()
-            ShipmentDiscountCharge.Clear()
-            ShipmentListCharge.Clear()
-            ShipmentNetCharge.Clear()
-            ShipmentSurCharge.Clear()
-
-            objFedexRates.ShipmentSpecialServices = ShipmentSpecialServices
-
-            objFedexRates.GetRates()
 
             ReDim requestedRateList(objFedexRates.Services.Count)
             If objFedexRates.Config("Warning") = String.Empty OrElse objFedexRates.Services.Count > 0 Then
@@ -4289,6 +4359,12 @@ Public Class WHCSHIP1
                         .DeliveryTime = objFedexRates.Services(iLoop).DeliveryTime
                         .ListNetCharge = Val(objFedexRates.Services(iLoop).ListNetCharge & String.Empty)
                         .TransitTime = objFedexRates.Services(iLoop).TransitTime & String.Empty
+
+                        If inTestMode Then
+                            If .AccountNetCharge = 0 Then
+                                .AccountNetCharge = .ListNetCharge
+                            End If
+                        End If
 
                         If Val(.TransitTime) <= 0 Then
                             Select Case objFedexRates.Services(iLoop).TransitTime
@@ -4346,10 +4422,17 @@ Public Class WHCSHIP1
             objFedexTrack.RuntimeLicense = s4DPaymentsShippingSDK
 
             ' Set credentials
-            objFedexTrack.FedExAccount.Server = cServer ' "https://gatewaybeta.fedex.com:443/xml"
-            objFedexTrack.FedExAccount.DeveloperKey = cFedexDeveloperKey
-            objFedexTrack.FedExAccount.Password = cPassword
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+            If inTestMode Then
+                objFedexTrack.Config("TESTMODE=true")
+                cAccountNumber = "740561073"
+            End If
+
             objFedexTrack.FedExAccount.AccountNumber = cAccountNumber
+            objFedexTrack.FedExAccount.AuthorizationToken = bearertoken
+
+            objFedexTrack.FedExAccount.Password = cPassword
+            objFedexTrack.FedExAccount.DeveloperKey = cFedexDeveloperKey
             objFedexTrack.FedExAccount.MeterNumber = cFedexMeterNumber
 
             objFedexTrack.TrackShipment(TrackingNumber)
@@ -4415,30 +4498,12 @@ Public Class WHCSHIP1
             objUpsTrack.Reset()
             objUpsTrack.RuntimeLicense = s4DPaymentsShippingSDK
 
-            Dim useSoap As Boolean = cServer.ToUpper.Contains("WEBSERVICES")
-            If useSoap Then
-                objUpsTrack.Config("UseSOAP=true")
-                If Not cServer.EndsWith("/") Then
-                    objUpsTrack.UPSAccount.Server = cServer & "/Track"
-                Else
-                    objUpsTrack.UPSAccount.Server = cServer & "Track"
-                End If
-            Else
-                objUpsTrack.Config("UseSOAP=false")
-                If Not cServer.EndsWith("/") Then
-                    objUpsTrack.UPSAccount.Server = cServer & "/Track"
-                Else
-                    objUpsTrack.UPSAccount.Server = cServer & "Track"
-                End If
-            End If
-
             objUpsTrack.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
-            objUpsTrack.UPSAccount.AccessKey = cUPSAccessKey
             objUpsTrack.UPSAccount.AccountNumber = cAccountNumber
-            objUpsTrack.UPSAccount.Password = cPassword
-            objUpsTrack.UPSAccount.UserId = cUserId
+            Dim bearertoken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            objUpsTrack.UPSAccount.AuthorizationToken = bearertoken
 
             objUpsTrack.TrackShipment(TrackingNumber)
 
@@ -4502,12 +4567,6 @@ Public Class WHCSHIP1
             ShipmentNetCharge.Clear()
             ShipmentSurCharge.Clear()
 
-            If cServer.ToUpper.Contains("WEBSERVICES") Then
-                objUpsRates.Config("UseSOAP=true")
-            Else
-                objUpsRates.Config("UseSOAP=false")
-            End If
-
             If cServiceProvider = ServiceProviders.Unknown Then
                 LastError = "Unknown Service Type"
                 Return False
@@ -4516,17 +4575,13 @@ Public Class WHCSHIP1
             objUpsRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
-
-            If Not cServer.EndsWith("/") Then
-                objUpsRates.UPSAccount.Server = cServer & "/Rate"
-            Else
-                objUpsRates.UPSAccount.Server = cServer & "Rate"
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsRates.Config("TESTMODE=true")
             End If
 
-            objUpsRates.UPSAccount.AccessKey = cUPSAccessKey
             objUpsRates.UPSAccount.AccountNumber = cAccountNumber
-            objUpsRates.UPSAccount.Password = cPassword
-            objUpsRates.UPSAccount.UserId = cUserId
+            objUpsRates.UPSAccount.AuthorizationToken = bearerToken
             objUpsRates.RequestedService = cRequestedServiceType
 
             objUpsRates.PickupType = UpsratesPickupTypes.ptDailyPickup
@@ -4641,30 +4696,16 @@ Public Class WHCSHIP1
                 Return False
             End If
 
-            Dim useSoap As Boolean = cServer.ToUpper.Contains("WEBSERVICES")
-            If useSoap Then
-                objUpsShip.Config("UseSOAP=true")
-                If Not cServer.EndsWith("/") Then
-                    objUpsShip.UPSAccount.Server = cServer & "/Ship"
-                Else
-                    objUpsShip.UPSAccount.Server = cServer & "Ship"
-                End If
-            Else
-                objUpsShip.Config("UseSOAP=false")
-                If Not cServer.EndsWith("/") Then
-                    objUpsShip.UPSAccount.Server = cServer & "/ShipConfirm"
-                Else
-                    objUpsShip.UPSAccount.Server = cServer & "ShipConfirm"
-                End If
-            End If
-
             objUpsShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
-            objUpsShip.UPSAccount.AccessKey = cUPSAccessKey
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsShip.Config("TESTMODE=true")
+            End If
+
             objUpsShip.UPSAccount.AccountNumber = cAccountNumber
-            objUpsShip.UPSAccount.Password = cPassword
-            objUpsShip.UPSAccount.UserId = cUserId
+            objUpsShip.UPSAccount.AuthorizationToken = bearerToken
             objUpsShip.ServiceType = cRequestedServiceType
 
             objUpsShip.ShipDate = ShipDate.ToString("yyyyMMdd")
@@ -4791,7 +4832,7 @@ Public Class WHCSHIP1
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitGIF
                 Case EzshipLabelImageTypes.itSPL
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitSPL
-                Case EzshipLabelImageTypes.itZPL
+                Case EzshipLabelImageTypes.itZPL, EzshipLabelImageTypes.itZebra
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitZPL
                 Case Else
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitEPL
@@ -4904,10 +4945,6 @@ Public Class WHCSHIP1
                     objUpsShip.Config("FRSCommodityFreightNMFC[" & iloop & "]=" & commodityDetail.FreightNMFC)
                 Next
                 objUpsShip.ServiceType = ServiceTypes.stUPSGround
-
-                objUpsShip.UPSAccount.Server = objUpsShip.UPSAccount.Server.Replace("ups.app/xml", "webservices")
-                objUpsShip.UPSAccount.Server = objUpsShip.UPSAccount.Server.Replace("/ShipConfirm", "/Ship")
-                objUpsShip.Config("UseSOAP=true")
             End If
 
 
@@ -4996,30 +5033,16 @@ Public Class WHCSHIP1
                 Return False
             End If
 
-            'wwwcie is the test environment
-            If cServer.Contains("wwwcie.ups.com") Then
-                objUpsShip.UPSAccount.Server = "https://wwwcie.ups.com/ups.app/xml/Void"
-            Else
-                If Not cServer.EndsWith("/") Then
-                    objUpsShip.UPSAccount.Server = cServer & "/Void"
-                Else
-                    objUpsShip.UPSAccount.Server = cServer & "Void"
-                End If
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsShip.Config("TESTMODE=true")
             End If
 
-            If cServer.ToUpper.Contains("WEBSERVICES") Then
-                objUpsShip.Config("UseSOAP=true")
-            Else
-                objUpsShip.Config("UseSOAP=false")
-            End If
+            objUpsShip.UPSAccount.AccountNumber = cAccountNumber
+            objUpsShip.UPSAccount.AuthorizationToken = bearerToken
 
             objUpsShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            objUpsShip.UPSAccount.AccessKey = cUPSAccessKey
-            objUpsShip.UPSAccount.AccountNumber = cAccountNumber
-            objUpsShip.UPSAccount.Password = cPassword
-            objUpsShip.UPSAccount.UserId = cUserId
 
             If isMultiPackage Then
                 objUpsShip.CancelShipment(TrackingNumber)
@@ -5049,25 +5072,16 @@ Public Class WHCSHIP1
             objUpsRates.Reset()
             objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
 
-            If cServer.ToUpper.Contains("WEBSERVICES") Then
-                objUpsRates.Config("UseSOAP=true")
-            Else
-                objUpsRates.Config("UseSOAP=false")
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsRates.Config("TESTMODE=true")
             End If
+
+            objUpsRates.UPSAccount.AccountNumber = cAccountNumber
+            objUpsRates.UPSAccount.AuthorizationToken = bearerToken
 
             objUpsRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            If Not cServer.EndsWith("/") Then
-                objUpsRates.UPSAccount.Server = cServer & "/Rate"
-            Else
-                objUpsRates.UPSAccount.Server = cServer & "Rate"
-            End If
-
-            objUpsRates.UPSAccount.AccessKey = cUPSAccessKey
-            objUpsRates.UPSAccount.UserId = cUserId
-            objUpsRates.UPSAccount.AccountNumber = cAccountNumber
-            objUpsRates.UPSAccount.Password = cPassword
 
             objUpsRates.RequestedService = cRequestedServiceType
             objUpsRates.PickupType = UPSPickupType
@@ -5165,8 +5179,6 @@ Public Class WHCSHIP1
                 objUpsRates.RequestedService = ServiceTypes.stUPSGround
 
                 isGroundFreight = True
-                objUpsRates.UPSAccount.Server = objUpsRates.UPSAccount.Server.Replace("ups.app/xml", "webservices")
-                objUpsRates.Config("UseSOAP=true")
             End If
 
             objUpsRates.GetRates()
@@ -5219,7 +5231,6 @@ Public Class WHCSHIP1
             Next
 
             Try
-                objUpsRates.UPSAccount.Server = objUpsRates.UPSAccount.Server.Replace("/Rate", "/TimeInTransit")
                 objUpsRates.TotalValue = RatesTotalValue
                 objUpsRates.GetShippingTime()
 
@@ -5274,25 +5285,16 @@ Public Class WHCSHIP1
             objUpsRates.Reset()
             objUpsRates.RuntimeLicense = s4DPaymentsShippingSDK
 
-            If cServer.ToUpper.Contains("WEBSERVICES") Then
-                objUpsRates.Config("UseSOAP=true")
-            Else
-                objUpsRates.Config("UseSOAP=false")
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsRates.Config("TESTMODE=true")
             End If
+
+            objUpsRates.UPSAccount.AccountNumber = cAccountNumber
+            objUpsRates.UPSAccount.AuthorizationToken = bearerToken
 
             objUpsRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            If Not cServer.EndsWith("/") Then
-                objUpsRates.UPSAccount.Server = cServer & "/Rate"
-            Else
-                objUpsRates.UPSAccount.Server = cServer & "Rate"
-            End If
-
-            objUpsRates.UPSAccount.AccessKey = cUPSAccessKey
-            objUpsRates.UPSAccount.UserId = cUserId
-            objUpsRates.UPSAccount.AccountNumber = cAccountNumber
-            objUpsRates.UPSAccount.Password = cPassword
 
             objUpsRates.RequestedService = cRequestedServiceType
             objUpsRates.PickupType = UPSPickupType
@@ -5362,7 +5364,6 @@ Public Class WHCSHIP1
             End If
 
             objUpsRates.ShipmentSpecialServices = ShipmentSpecialServices
-            objUpsRates.UPSAccount.Server = objUpsRates.UPSAccount.Server.Replace("/Rate", "/TimeInTransit")
             objUpsRates.GetShippingTime()
 
             ReDim requestedRateList(objUpsRates.Services.Count)
@@ -5411,28 +5412,17 @@ Public Class WHCSHIP1
                 Return False
             End If
 
-            cServer = "https://wwwcie.ups.com/webservices"
-
-            If Not cServer.EndsWith("/") Then
-                objUpsFreight.UPSAccount.Server = cServer & "/FreightShip"
-            Else
-                objUpsFreight.UPSAccount.Server = cServer & "FreightShip"
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsRates.Config("TESTMODE=true")
             End If
 
-            If cServer.ToUpper.Contains("WEBSERVICES") Then
-                objUpsFreight.Config("UseSOAP=true")
-            Else
-                objUpsFreight.Config("UseSOAP=false")
-            End If
+            objUpsFreight.UPSAccount.AccountNumber = cAccountNumber
+            objUpsFreight.UPSAccount.AuthorizationToken = bearerToken
+            objUpsFreight.ServiceType = UpsfreightshipServiceTypes.stUPSFreight
 
             objUpsFreight.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            objUpsFreight.UPSAccount.AccessKey = cUPSAccessKey
-            objUpsFreight.UPSAccount.AccountNumber = cAccountNumber
-            objUpsFreight.UPSAccount.Password = cPassword
-            objUpsFreight.UPSAccount.UserId = cUserId
-            objUpsFreight.ServiceType = UpsfreightshipServiceTypes.stUPSFreight
 
             With cSenderContact
                 objUpsFreight.SenderContact.Company = .Company
@@ -5580,32 +5570,16 @@ Public Class WHCSHIP1
             'https://onlinetools.ups.com/webservices/FreightShip
             'https://onlinetools.ups.com/webservices/FreightRate
 
-            If cServer.ToUpper.Contains("wwwcie.ups.com".ToUpper) Then
-                cServer = "https://wwwcie.ups.com/webservices"
-            Else
-                cServer = "https://onlinetools.ups.com/webservices"
+            Dim bearerToken As String = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            If inTestMode Then
+                objUpsRates.Config("TESTMODE=true")
             End If
 
-            If cServer.ToUpper.Contains("WEBSERVICES") Then
-                objUpsFreightRates.Config("UseSOAP=true")
-            Else
-                objUpsFreightRates.Config("UseSOAP=false")
-            End If
+            objUpsFreightRates.UPSAccount.AccountNumber = cAccountNumber
+            objUpsFreightRates.UPSAccount.AuthorizationToken = bearerToken
 
             objUpsFreightRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            If Not cServer.EndsWith("/") Then
-                objUpsFreightRates.UPSAccount.Server = cServer & "/FreightRate"
-            Else
-                objUpsFreightRates.UPSAccount.Server = cServer & "FreightRate"
-            End If
-
-            objUpsFreightRates.UPSAccount.AccessKey = cUPSAccessKey
-            objUpsFreightRates.UPSAccount.UserId = cUserId
-            objUpsFreightRates.UPSAccount.AccountNumber = cAccountNumber
-            objUpsFreightRates.UPSAccount.Password = cPassword
-
 
             objUpsFreightRates.SenderName = cSenderContact.Company
             objUpsFreightRates.SenderAddress.Address1 = cSenderContact.Address1
@@ -5665,106 +5639,6 @@ Public Class WHCSHIP1
 #End Region
 
 #Region "USPS"
-
-    Public Function USPSAddressValidation() As List(Of Contact)
-
-
-        Dim addressVer As New Uspsaddress
-
-        Try
-            addressVer.RuntimeLicense = s4DPaymentsShippingSDK
-
-            Select Case USPSPostageProvider
-                Case USPSPostageProviders.Endicia
-                    addressVer.Config("PostageProvider=1")
-
-                    If USPSTestMode Then
-                        addressVer.Config("EndiciaTestMode=1") 'Test request to Sandbox Server
-                    Else
-                        'addressVer.Config("EndiciaTestMode=2") 'Test request to Production Server
-                    End If
-                Case USPSPostageProviders.StampsCom
-                    addressVer.Config("PostageProvider=2")
-
-                Case USPSPostageProviders.PitneyBowes
-                    Return Nothing
-
-                Case Else
-                    Return Nothing
-            End Select
-
-            addressVer.USPSAccount.Server = cServer
-            addressVer.USPSAccount.UserId = cUserId
-            addressVer.USPSAccount.Password = cPassword
-            addressVer.USPSAccount.AccountNumber = cIntegrationID
-
-            With cRecipientContact
-                addressVer.Config("FullName=" & (.FirstName & " " & .LastName).ToString.Trim)
-
-                addressVer.Address.Address1 = .Address1
-                addressVer.Address.Address2 = .Address2
-                addressVer.Address.City = .City
-                addressVer.Address.State = .State
-                addressVer.Address.ZipCode = .ZipCode
-                addressVer.Company = .Company
-            End With
-
-            addressVer.ValidateAddress()
-
-            Dim returnAddress As New Contact
-            Dim returnAddressList As New List(Of Contact)
-
-            If USPSPostageProvider = USPSPostageProviders.StampsCom Then
-                If (addressVer.Config("AddressMatch") & String.Empty).Trim.ToUpper = "TRUE" Then
-                    With returnAddress
-                        .Address1 = cRecipientContact.Address1
-                        .Address2 = cRecipientContact.Address2
-                        .Address3 = cRecipientContact.Address3
-                        .City = cRecipientContact.City
-                        .State = cRecipientContact.State
-                        .ZipCode = cRecipientContact.ZipCode
-                    End With
-
-                    returnAddressList.Add(returnAddress)
-                    Return returnAddressList
-                End If
-
-                If (addressVer.Config("CityStateZipOK") & String.Empty).Trim.ToUpper = "TRUE" Then
-                    'Return ""
-                End If
-            End If
-
-            If addressVer.Matches.Count = 0 Then
-                Return Nothing
-            End If
-
-            For iLoop As Integer = 0 To addressVer.Matches.Count - 1
-                returnAddress = New Contact
-                With returnAddress
-                    .Address1 = addressVer.Matches(iLoop).Address1
-                    .Address2 = addressVer.Matches(iLoop).Address2
-                    .City = addressVer.Matches(iLoop).City
-                    .State = addressVer.Matches(iLoop).State
-                    .ZipCode = addressVer.Matches(iLoop).ZipCode
-                End With
-                returnAddressList.Add(returnAddress)
-            Next
-
-            Return returnAddressList
-
-        Catch ex As DShippingSDKUspsshipException
-            LastError = ex.Message
-            Return Nothing
-
-        Catch exc As Exception
-            LastError = exc.Message
-            Return Nothing
-
-        Finally
-            cRawRequest = addressVer.Config("RawRequest")
-            cRawResponse = addressVer.Config("RawResponse")
-        End Try
-    End Function
 
     Public Function GetUSPSRatesList() As RateList()
 
@@ -5937,10 +5811,6 @@ Public Class WHCSHIP1
                 Case Else
                     objUspsShip.PostageProvider = UspsratesPostageProviders.ppStamps
             End Select
-
-            'If USPSTestMode Then
-            '    objUspsShip.Config("Certify=True")
-            'End If
 
             With cSenderContact
                 objUspsShip.SenderContact.FirstName = .FirstName
@@ -6374,17 +6244,6 @@ Public Class WHCSHIP1
                 objEzShip.Account.DeveloperKey = String.Empty
             End If
 
-            If cServiceProvider = ServiceProviders.UPS Then
-                objEzShip.Account.AccessKey = cUPSAccessKey
-
-                If Not objEzShip.Account.Server.EndsWith("/") Then
-                    objEzShip.Account.Server &= "/"
-                End If
-                objEzShip.Account.Server &= "ShipConfirm"
-            Else
-                objEzShip.Account.AccessKey = String.Empty
-            End If
-
             If cServiceProvider = ServiceProviders.USPS Then
                 objEzShip.Config("PostageProvider=1") 'Use Endicia instead of USPS directly.
                 objEzShip.Config("CustomerId=" & cUSPSEndiciaCustomerId) 'Mandatory for Endicia
@@ -6560,6 +6419,143 @@ Public Class WHCSHIP1
         Public PhysicalPackaging As String = "4"
         Public TrackingNumbers As List(Of String) = New List(Of String)
     End Class
+
+#End Region
+
+#Region "Oauth"
+
+    Private Enum Carriers
+        FedEx
+        UPS
+    End Enum
+
+    Private Function GetAuthorizationToken(ByVal Carrier As Carriers,
+                                           ByVal AccountNo As String) As String
+
+        Static numLoops As Int16 = 0
+        Const MT_LEVEL As String = "888"
+
+        If numLoops > 5 Then
+            numLoops = 0
+            Return String.Empty
+        End If
+
+        Dim CARRIER_CODE As String = String.Empty
+        Select Case Carrier
+            Case Carriers.FedEx
+                CARRIER_CODE = "FEDEX"
+
+            Case Carriers.UPS
+                CARRIER_CODE = "UPS"
+
+            Case Else
+                numLoops = 0
+                Return String.Empty
+        End Select
+
+        Dim sql As String = "Select * from SOTCARR3 where CARRIER_CODE = :PARM1 AND CARRIER_ACCOUNT_NO = :PARM2"
+        Dim rowSOTCARR3 As DataRow = ASCDATA1.GetDataRow(sql, "VV", {CARRIER_CODE, AccountNo})
+
+        If rowSOTCARR3 Is Nothing Then
+            numLoops = 0
+            Return String.Empty
+        End If
+
+        Dim ServerTokenURL As String = rowSOTCARR3.Item("SERVER_TOKEN_URL") & String.Empty
+        Dim ClientId As String = rowSOTCARR3.Item("CLIENT_ID") & String.Empty
+        Dim ClientSecret As String = rowSOTCARR3.Item("CLIENT_SECRET") & String.Empty
+        Dim AUTH_CODE As String = rowSOTCARR3.Item("AUTH_CODE") & String.Empty
+
+        ' Test Server Token Urls.
+        'https://wwwcie.ups.com/security/v1/oauth/token
+        'https://apis-sandbox.fedex.com/oauth/token
+
+        ' Production Server Token URLs.
+        'https://onlinetools.ups.com/security/v1/oauth/token
+        'https://apis.fedex.com/oauth/token
+
+
+        ' Going to use the Server Token URL to determine if we are in test mode.
+        Select Case Carrier
+            Case Carriers.FedEx
+                inTestMode = ServerTokenURL.ToUpper.Contains("apis-sandbox".ToUpper)
+
+            Case Carriers.UPS
+                inTestMode = ServerTokenURL.ToUpper.Contains("wwwcie.ups".ToUpper)
+
+            Case Else
+                numLoops = 0
+                Return String.Empty
+        End Select
+
+        ' See if we need to get a new token; otherwise, return the current Authorization Code
+        If rowSOTCARR3.Item("TOKEN_EXPIRES") & String.Empty <> String.Empty Then
+            If IsDate(rowSOTCARR3.Item("TOKEN_EXPIRES") & String.Empty) Then
+                If DateDiff(DateInterval.Minute, CDate(rowSOTCARR3.Item("TOKEN_EXPIRES") & String.Empty), DateTime.Now) < 0 Then
+                    If AUTH_CODE.Length > 0 Then
+                        numLoops = 0
+                        Return AUTH_CODE
+                    End If
+                End If
+            End If
+        End If
+
+        ' If we hit this then there is no token or the token has expired.
+        ' Only one user can refresh the token
+        If Not ASCMAIN1.Logical_Lock("SOTCARR3", CARRIER_CODE,, False, False, MT_LEVEL) Then
+            System.Threading.Thread.Sleep(2000)
+            numLoops += 1
+            Return GetAuthorizationToken(Carrier, AccountNo)
+        End If
+
+        Dim bearerToken As String = String.Empty
+        Dim tokenExp As DateTime
+        Dim oauth As New Oauth
+
+        oauth.RuntimeLicense = s4DPaymentsShippingSDK
+
+        Select Case Carrier
+            Case Carriers.UPS
+                With oauth
+                    .GrantType = OauthGrantTypes.ogtClientCredentials
+                    .ServerTokenURL = ServerTokenURL
+                    .ClientId = ClientId
+                    .ClientSecret = ClientSecret
+                    .ClientProfile = OauthClientProfiles.ocpApplication
+                End With
+
+                bearerToken = oauth.GetAuthorization
+                tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(oauth.AccessTokenExp))
+
+
+            Case Carriers.FedEx
+                With oauth
+                    .GrantType = OauthGrantTypes.ogtClientCredentials
+                    .ServerTokenURL = ServerTokenURL
+                    .ClientId = ClientId
+                    .ClientSecret = ClientSecret
+                    .Config("IncludeClientCredsInBody=true")
+                End With
+
+                bearerToken = oauth.GetAuthorization
+                tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(oauth.AccessTokenExp))
+
+        End Select
+
+        sql = "UPDATE SOTCARR3 SET AUTH_CODE = :PARM1, TOKEN_EXPIRES = :PARM2 WHERE CARRIER_CODE = :PARM3 AND CARRIER_ACCOUNT_NO = :PARM4"
+        ASCDATA1.ExecuteSQL(sql, "VDVV", {bearerToken, tokenExp, CARRIER_CODE, AccountNo})
+
+        Try
+            ASCMAIN1.MultiTask_Release(,, MT_LEVEL)
+        Catch ex As Exception
+        Finally
+            numLoops = 0
+        End Try
+
+        Return bearerToken
+
+    End Function
+
 
 #End Region
 

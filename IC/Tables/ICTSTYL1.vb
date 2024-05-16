@@ -3145,7 +3145,7 @@ Public Class ICTSTYL1
     End Function
     Sub CREATE_STYLE_UPLOAD_TEMPLATE()
         Dim workbook As SpreadsheetGear.IWorkbook
-        Dim worksheet As SpreadsheetGear.IWorksheet
+        'Dim worksheet As SpreadsheetGear.IWorksheet
         Dim worksheetBase As SpreadsheetGear.IWorksheet
         Dim worksheetCodes As SpreadsheetGear.IWorksheet
 

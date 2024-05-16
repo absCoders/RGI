@@ -460,7 +460,7 @@ Public Class SOFSHIPB
             Create_TDA(.Tables.Add, "SOTSHIP0", "**", 0, False, "", 1)
 
             Create_TDA(.Tables.Add, "SOTINVH1", "*")
-            Create_TDA(.Tables.Add, "SOTINVH2", "*")
+            Create_TDA(.Tables.Add, "SOTINVH2", "*", 2)
             Create_TDA(.Tables.Add, "SOTINVH9", "*")
             Create_TDA(.Tables.Add, "SOTINVHM", "*")
 
@@ -7940,6 +7940,7 @@ Public Class SOFSHIPB
                     End If
                 Next
 
+                Display_Totals()
                 MessageBox.Show("Copy Complete", "Copy", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
             Case "Cancel Carton Contents"
@@ -7993,6 +7994,7 @@ Public Class SOFSHIPB
                     Next
 
                     SetupgrdSOTCART1_SHIP()
+                    Display_Totals()
                     MessageBox.Show("The carton has been deleted and the contents marked as cancelled.", "Cancel Carton Contents", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                 Catch ex As Exception
@@ -8055,7 +8057,7 @@ Public Class SOFSHIPB
                         dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")(0).Item("PICK_TOTAL_WGT") = totalCartWeight
                     End If
                 Next
-
+                Display_Totals()
                 MessageBox.Show("Copy Complete", "Copy", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         End Select
@@ -10352,7 +10354,13 @@ Public Class SOFSHIPB
                     dsco_ship_method = dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMMNT_2 = 'dsco_ship_method'")(0).Item("EDI_CMT_REF") & String.Empty
                 End If
 
+                Dim RECEIPT_ID As String = String.Empty
+                If dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMT_CODE = 'BAF'").Length > 0 Then
+                    RECEIPT_ID = dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMT_CODE = 'BAF'")(0).Item("EDI_CMT_REF") & String.Empty
+                End If
+
                 rowEDT850T1.Item("SHIP_METHOD") = (dsco_ship_carrier & " " & dsco_ship_method).ToString.Trim
+                rowEDT850T1.Item("RECEIPT_ID") = RECEIPT_ID
 
                 rowEDT850T1.Item("TAX_TYPE_CODE_1") = String.Empty
                 rowEDT850T1.Item("TAX_TYPE_CODE_2") = String.Empty
@@ -10367,6 +10375,10 @@ Public Class SOFSHIPB
 
                 ' IS_GIFT
                 rowEDT850T1.Item("IS_GIFT") = "0"
+
+                If dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMT_CODE = 'EAJ'").Length > 0 Then
+                    isGiftMessage = True
+                End If
 
                 If isGiftMessage Then
                     rowEDT850T1.Item("IS_GIFT") = "1"
@@ -16501,11 +16513,15 @@ Public Class SOFSHIPB
                                 .LastName = String.Empty
                                 .MiddleInitial = String.Empty
                                 .Phone = rowARTCUSTS.Item("FDX_RTN_SHIP_PHONE") & String.Empty
+                                ' This is required
+                                If .Phone.Length = 0 Then
+                                    .Phone = clsShip.Sender.Phone
+                                End If
                                 .State = rowARTCUSTS.Item("FDX_RTN_SHIP_STATE") & String.Empty
                                 .ZipCode = rowARTCUSTS.Item("FDX_RTN_SHIP_ZIP_CODE") & String.Empty
-                            End If
+                                End If
 
-                        Case "U" ' UPS
+                                Case "U" ' UPS
                             If rowARTCUSTS.Item("UPS_RTN_SHIP_COMPANY") & String.Empty <> String.Empty Then
                                 .Address1 = rowARTCUSTS.Item("UPS_RTN_SHIP_ADDR1") & String.Empty
                                 .Address2 = rowARTCUSTS.Item("UPS_RTN_SHIP_ADDR2") & String.Empty
@@ -16521,6 +16537,10 @@ Public Class SOFSHIPB
                                 .LastName = String.Empty
                                 .MiddleInitial = String.Empty
                                 .Phone = rowARTCUSTS.Item("UPS_RTN_SHIP_PHONE") & String.Empty
+                                ' This is required
+                                If .Phone.Length = 0 Then
+                                    .Phone = clsShip.Sender.Phone
+                                End If
                                 .State = rowARTCUSTS.Item("UPS_RTN_SHIP_STATE") & String.Empty
                                 .ZipCode = rowARTCUSTS.Item("UPS_RTN_SHIP_ZIP_CODE") & String.Empty
                             End If
@@ -17017,8 +17037,6 @@ Public Class SOFSHIPB
             If clsShip.RequestedServiceType = fedexSmartPost Then
                 clsShip.FedexSmartPost.HubId = rowSOTCARR3.Item("FEDEX_HUB_ID") & String.Empty
             End If
-
-            clsShip.DropOffType = FedexshipintlDropoffTypes.dtRegularPickup
 
             ' The COLLECT payment type is only supported in FedEx Ground services. The CONSIGNEE type is only supported in UPS service.
 

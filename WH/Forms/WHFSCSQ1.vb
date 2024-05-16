@@ -639,7 +639,7 @@ Public Class WHFSCSQ1
                     Dim STYLE_CODE As String = ws.Cells(r, ColStyle).Text
                     Dim COLOR_CODE As String = ws.Cells(r, ColColor).Text
                     Dim STYLE_SEQ As Integer = Val(ws.Cells(r, ColSeq).Text)
-                    Dim LOCATION_CODE As String
+                    Dim LOCATION_CODE As String = ""
                     Dim ERROR_MSG As String = ""
                     If ColLoc <> -1 Then
                         LOCATION_CODE = ws.Cells(r, ColLoc).Text

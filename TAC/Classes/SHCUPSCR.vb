@@ -13,8 +13,7 @@ Public Class SHCUPSCR
     Private cRawResponse As String = String.Empty
 
     Private Const SSLEnabledProtocols As Int32 = 4032
-    Private inShipLicense As String = ASCMAIN1.nSoftwareKeys("nSoftwareInship")
-
+    Private s4DPaymentsShippingSDK As String = ASCMAIN1.nSoftwareKeys("4DPaymentsShippingSDK")
 
 #Region "Class Enums"
     Public Enum LabelDeliveryMethods
@@ -119,42 +118,21 @@ Public Class SHCUPSCR
 #Region "Instantiation"
 
     Public Sub New(ByVal UPSCredentials As Credentials)
-        objUpsship.RuntimeLicense = inShipLicense
-        objUpsship.Reset()
-        objUpsship.RuntimeLicense = inShipLicense
 
-        objUpsrates.RuntimeLicense = inShipLicense
+        objUpsship.RuntimeLicense = s4DPaymentsShippingSDK
+        objUpsship.Reset()
+        objUpsship.RuntimeLicense = s4DPaymentsShippingSDK
+
+        objUpsrates.RuntimeLicense = s4DPaymentsShippingSDK
         objUpsrates.Reset()
-        objUpsrates.RuntimeLicense = inShipLicense
+        objUpsrates.RuntimeLicense = s4DPaymentsShippingSDK
 
         clsCredentials = UPSCredentials
 
         With clsCredentials
-            If Not .Server.EndsWith("/") Then
-                .Server &= "/"
-            End If
-            If .Server.ToUpper.Contains("WEBSERVICES") Then
-                objUpsship.Config("UseSOAP=true")
-                objUpsship.UPSAccount.Server = .Server & "Ship"
-            Else
-                objUpsship.Config("UseSOAP=false")
-                objUpsship.UPSAccount.Server = .Server & "ShipConfirm"
-            End If
             objUpsship.LabelImageType = .LabelImageType
-            objUpsship.UPSAccount.AccessKey = .AccessKey
             objUpsship.UPSAccount.AccountNumber = .AccountNumber
-            objUpsship.UPSAccount.UserId = .UserId
-            objUpsship.UPSAccount.Password = .Password
-            If .Server.ToUpper.Contains("WEBSERVICES") Then
-                objUpsrates.Config("UseSOAP=true")
-            Else
-                objUpsrates.Config("UseSOAP=false")
-            End If
-            objUpsrates.UPSAccount.Server = .Server & "Rate"
-            objUpsrates.UPSAccount.AccessKey = .AccessKey
             objUpsrates.UPSAccount.AccountNumber = .AccountNumber
-            objUpsrates.UPSAccount.UserId = .UserId
-            objUpsrates.UPSAccount.Password = .Password
         End With
 
         With tblRates
@@ -170,6 +148,141 @@ Public Class SHCUPSCR
 
 #Region "Procedures"
 
+    Private inTestMode As Boolean = False
+
+    Private Enum Carriers
+        FedEx
+        UPS
+    End Enum
+
+    Private Function GetAuthorizationToken(ByVal Carrier As Carriers,
+                                           ByVal AccountNo As String) As String
+
+        Static numLoops As Int16 = 0
+        Const MT_LEVEL As String = "888"
+
+        If numLoops > 5 Then
+            numLoops = 0
+            Return String.Empty
+        End If
+
+        Dim CARRIER_CODE As String = String.Empty
+        Select Case Carrier
+            Case Carriers.FedEx
+                CARRIER_CODE = "FEDEX"
+
+            Case Carriers.UPS
+                CARRIER_CODE = "UPS"
+
+            Case Else
+                numLoops = 0
+                Return String.Empty
+        End Select
+
+        Dim sql As String = "Select * from SOTCARR3 where CARRIER_CODE = :PARM1 AND CARRIER_ACCOUNT_NO = :PARM2"
+        Dim rowSOTCARR3 As DataRow = ASCDATA1.GetDataRow(sql, "VV", {CARRIER_CODE, AccountNo})
+
+        If rowSOTCARR3 Is Nothing Then
+            numLoops = 0
+            Return String.Empty
+        End If
+
+        Dim ServerTokenURL As String = rowSOTCARR3.Item("SERVER_TOKEN_URL") & String.Empty
+        Dim ClientId As String = rowSOTCARR3.Item("CLIENT_ID") & String.Empty
+        Dim ClientSecret As String = rowSOTCARR3.Item("CLIENT_SECRET") & String.Empty
+        Dim AUTH_CODE As String = rowSOTCARR3.Item("AUTH_CODE") & String.Empty
+
+        ' Test Server Token Urls.
+        'https://wwwcie.ups.com/security/v1/oauth/token
+        'https://apis-sandbox.fedex.com/oauth/token
+
+        ' Production Server Token URLs.
+        'https://onlinetools.ups.com/security/v1/oauth/token
+        'https://apis.fedex.com/oauth/token
+
+
+        ' Going to use the Server Token URL to determine if we are in test mode.
+        Select Case Carrier
+            Case Carriers.FedEx
+                inTestMode = ServerTokenURL.ToUpper.Contains("apis-sandbox".ToUpper)
+
+            Case Carriers.UPS
+                inTestMode = ServerTokenURL.ToUpper.Contains("wwwcie.ups".ToUpper)
+
+            Case Else
+                numLoops = 0
+                Return String.Empty
+        End Select
+
+        ' See if we need to get a new token; otherwise, return the current Authorization Code
+        If rowSOTCARR3.Item("TOKEN_EXPIRES") & String.Empty <> String.Empty Then
+            If IsDate(rowSOTCARR3.Item("TOKEN_EXPIRES") & String.Empty) Then
+                If DateDiff(DateInterval.Minute, CDate(rowSOTCARR3.Item("TOKEN_EXPIRES") & String.Empty), DateTime.Now) < 0 Then
+                    If AUTH_CODE.Length > 0 Then
+                        numLoops = 0
+                        Return AUTH_CODE
+                    End If
+                End If
+            End If
+        End If
+
+        ' If we hit this then there is no token or the token has expired.
+        ' Only one user can refresh the token
+        If Not ASCMAIN1.Logical_Lock("SOTCARR3", CARRIER_CODE,, False, False, MT_LEVEL) Then
+            System.Threading.Thread.Sleep(2000)
+            numLoops += 1
+            Return GetAuthorizationToken(Carrier, AccountNo)
+        End If
+
+        Dim bearerToken As String = String.Empty
+        Dim tokenExp As DateTime
+        Dim oauth As New Oauth
+
+        oauth.RuntimeLicense = s4DPaymentsShippingSDK
+
+        Select Case Carrier
+            Case Carriers.UPS
+                With oauth
+                    .GrantType = OauthGrantTypes.ogtClientCredentials
+                    .ServerTokenURL = ServerTokenURL
+                    .ClientId = ClientId
+                    .ClientSecret = ClientSecret
+                    .ClientProfile = OauthClientProfiles.ocpApplication
+                End With
+
+                bearerToken = oauth.GetAuthorization
+                tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(oauth.AccessTokenExp))
+
+
+            Case Carriers.FedEx
+                With oauth
+                    .GrantType = OauthGrantTypes.ogtClientCredentials
+                    .ServerTokenURL = ServerTokenURL
+                    .ClientId = ClientId
+                    .ClientSecret = ClientSecret
+                    .Config("IncludeClientCredsInBody=true")
+                End With
+
+                bearerToken = oauth.GetAuthorization
+                tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(oauth.AccessTokenExp))
+
+        End Select
+
+        sql = "UPDATE SOTCARR3 SET AUTH_CODE = :PARM1, TOKEN_EXPIRES = :PARM2 WHERE CARRIER_CODE = :PARM3 AND CARRIER_ACCOUNT_NO = :PARM4"
+        ASCDATA1.ExecuteSQL(sql, "VDVV", {bearerToken, tokenExp, CARRIER_CODE, AccountNo})
+
+        Try
+            ASCMAIN1.MultiTask_Release(,, MT_LEVEL)
+        Catch ex As Exception
+        Finally
+            numLoops = 0
+        End Try
+
+        Return bearerToken
+
+    End Function
+
+
     Public Function RequestReturnLabel(ByVal ShipDetails As ReturnLabelRequestDetail) As Response
         clsLastError = String.Empty
         RequestReturnLabel = New Response
@@ -180,22 +293,22 @@ Public Class SHCUPSCR
                 End If
             Next
 
-            ValidateInputFieldLengths(ShipDetails.Recipient.Address1, _
-            ShipDetails.Recipient.Address2, _
-            ShipDetails.Recipient.Address3, _
-            ShipDetails.Recipient.Name, _
-            ShipDetails.Recipient.City, _
-            ShipDetails.Recipient.State, _
-            ShipDetails.Recipient.ZipCode, _
+            ValidateInputFieldLengths(ShipDetails.Recipient.Address1,
+            ShipDetails.Recipient.Address2,
+            ShipDetails.Recipient.Address3,
+            ShipDetails.Recipient.Name,
+            ShipDetails.Recipient.City,
+            ShipDetails.Recipient.State,
+            ShipDetails.Recipient.ZipCode,
             ShipDetails.Recipient.Company)
 
-            ValidateInputFieldLengths(ShipDetails.Shipper.Address1, _
-            ShipDetails.Shipper.Address2, _
-            ShipDetails.Shipper.Address3, _
-            ShipDetails.Shipper.Name, _
-            ShipDetails.Shipper.City, _
-            ShipDetails.Shipper.State, _
-            ShipDetails.Shipper.ZipCode, _
+            ValidateInputFieldLengths(ShipDetails.Shipper.Address1,
+            ShipDetails.Shipper.Address2,
+            ShipDetails.Shipper.Address3,
+            ShipDetails.Shipper.Name,
+            ShipDetails.Shipper.City,
+            ShipDetails.Shipper.State,
+            ShipDetails.Shipper.ZipCode,
             ShipDetails.Shipper.Company)
 
             If Not GetShipper(ShipDetails.Shipper) Then
@@ -242,6 +355,7 @@ Public Class SHCUPSCR
             End Select
 
             objUpsship.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            objUpsship.UPSAccount.AuthorizationToken = GetAuthorizationToken(Carriers.UPS, objUpsship.UPSAccount.AccountNumber)
             objUpsship.GetShipmentLabels()
 
             Dim Resp As New Response
@@ -503,6 +617,8 @@ Public Class SHCUPSCR
             objUpsrates.RecipientAddress.State = ShipDetails.Shipper.State
             objUpsrates.RecipientAddress.ZipCode = ShipDetails.Shipper.ZipCode
             objUpsrates.RecipientAddress.CountryCode = ShipDetails.Shipper.Country
+
+            objUpsrates.UPSAccount.AuthorizationToken = GetAuthorizationToken(Carriers.UPS, objUpsrates.UPSAccount.AccountNumber)
             objUpsrates.GetRates()
 
             For i As Integer = 0 To objUpsrates.Services.Count - 1
@@ -526,13 +642,13 @@ Public Class SHCUPSCR
         End Try
     End Function
 
-    Private Sub ValidateInputFieldLengths(ByRef AddressLine1 As String, _
-    ByRef AddressLine2 As String, _
-    ByRef AddressLine3 As String, _
-    ByRef AttentionName As String, _
-    ByRef City As String, _
-    ByRef StateProvinceCode As String, _
-    ByRef PostalCode As String, _
+    Private Sub ValidateInputFieldLengths(ByRef AddressLine1 As String,
+    ByRef AddressLine2 As String,
+    ByRef AddressLine3 As String,
+    ByRef AttentionName As String,
+    ByRef City As String,
+    ByRef StateProvinceCode As String,
+    ByRef PostalCode As String,
     ByRef CompanyName As String)
         ' MT 7103 - validate fiels lengths
         AddressLine1 = AddressLine1 & String.Empty

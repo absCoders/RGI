@@ -76,7 +76,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DPayments.DShippingSDK">
+    <Reference Include="DPayments.DShippingSDK, Version=22.3.8873.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLs\DPayments.DShippingSDK.dll</HintPath>
     </Reference>
     <Reference Include="Infragistics4.Win.UltraWinDataSource.v14.2, Version=14.2.20142.2010, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL" />

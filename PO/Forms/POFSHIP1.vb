@@ -13902,7 +13902,7 @@ Public Class POFSHIP1
                     Dim rowPOTORDR2 As DataRow = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                     If IsNothing(rowPOTORDR2) Then
                         MsgBox("Purchase Order Not Matching", vbOKOnly, "Cannot Continue")
-                        Exit Function
+                        Return ""
                     End If
 
 
@@ -14104,14 +14104,14 @@ Public Class POFSHIP1
                             rowPOTORDR2.Item("PO_QTY_OPN") = 0
 
                             ' NEED TO FIX 11/11/2022
-                            '''If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
-                            '''    rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                            '''    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
-                            '''Else
-                            '''    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                            '''    rowPOTORDR2.Item("PO_QTY_OPN") = 0
-                            '''End If
-                            ''''DGJ
+                            ''If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
+                            ''    rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                            ''    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+                            ''Else
+                            ''    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                            ''    rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            ''End If
+                            ''DGJ
                         End If
 
 
