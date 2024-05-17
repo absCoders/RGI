@@ -6502,7 +6502,7 @@ Public Class WHCSHIP1
 
         ' If we hit this then there is no token or the token has expired.
         ' Only one user can refresh the token
-        If Not ASCMAIN1.Logical_Lock("SOTCARR3", CARRIER_CODE,, False, False, MT_LEVEL) Then
+        If Not ASCMAIN1.Logical_Lock("SOTCARR3", AccountNo,, False, False, MT_LEVEL) Then
             System.Threading.Thread.Sleep(2000)
             numLoops += 1
             Return GetAuthorizationToken(Carrier, AccountNo)
