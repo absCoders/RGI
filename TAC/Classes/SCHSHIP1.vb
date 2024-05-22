@@ -303,12 +303,6 @@ Public Class SCHSHIP1
                 objEzShip.Account.DeveloperKey = String.Empty
             End If
 
-            If cService = Services.UPS Then
-                objEzShip.Account.AccessKey = cUPSAccessKey
-            Else
-                objEzShip.Account.AccessKey = String.Empty
-            End If
-
             If cService = Services.USPS Then
                 objEzShip.Config("PostageProvider=1") 'Use Endicia instead of USPS directly.
                 objEzShip.Config("CustomerId=" & cUSPSEndiciaCustomerId) 'Mandatory for Endicia

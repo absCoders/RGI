@@ -53,6 +53,9 @@ Partial Class SOTCARR1
         Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEG2_CODE")
         Dim UltraGridColumn42 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEG3_CODE")
         Dim UltraGridColumn43 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEG4_CODE")
+        Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SERVER_TOKEN_URL")
+        Dim UltraGridColumn50 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIENT_ID")
+        Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLIENT_SECRET")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SOTCARR3_SOTCARR5")
         Dim UltraGridBand5 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTCARR3_SOTCARR5", 0)
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
@@ -82,9 +85,9 @@ Partial Class SOTCARR1
         Dim Appearance58 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance59 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueList2 As Infragistics.Win.ValueList = New Infragistics.Win.ValueList(118864891)
-        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem28 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem29 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem30 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem31 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem32 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance60 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand6 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
@@ -324,6 +327,7 @@ Partial Class SOTCARR1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -474,8 +478,14 @@ Partial Class SOTCARR1
         UltraGridColumn43.Header.VisiblePosition = 17
         UltraGridColumn43.Hidden = True
         UltraGridColumn43.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
-        UltraGridColumn6.Header.VisiblePosition = 18
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn5, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn12, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn6})
+        UltraGridColumn49.Header.Caption = "Oauth Server URL"
+        UltraGridColumn49.Header.VisiblePosition = 18
+        UltraGridColumn50.Header.Caption = "Oauth Client ID"
+        UltraGridColumn50.Header.VisiblePosition = 19
+        UltraGridColumn51.Header.Caption = "Oauth Client Secret"
+        UltraGridColumn51.Header.VisiblePosition = 20
+        UltraGridColumn6.Header.VisiblePosition = 21
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn5, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn12, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn6})
         UltraGridBand4.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         UltraGridColumn7.Header.VisiblePosition = 0
         UltraGridColumn7.Hidden = True
@@ -566,13 +576,13 @@ Partial Class SOTCARR1
         Me.grdSOTCARR3.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdSOTCARR3.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         ValueList2.Key = "CUST_COMMENT_KEY"
-        ValueListItem1.DataValue = "DEL"
-        ValueListItem1.DisplayText = "Digital Eye Lab"
-        ValueListItem28.DataValue = "BILLING"
-        ValueListItem28.DisplayText = "Billing"
-        ValueListItem29.DataValue = "SOE"
-        ValueListItem29.DisplayText = "Sales Order Entry"
-        ValueList2.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem28, ValueListItem29})
+        ValueListItem30.DataValue = "DEL"
+        ValueListItem30.DisplayText = "Digital Eye Lab"
+        ValueListItem31.DataValue = "BILLING"
+        ValueListItem31.DisplayText = "Billing"
+        ValueListItem32.DataValue = "SOE"
+        ValueListItem32.DisplayText = "Sales Order Entry"
+        ValueList2.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem30, ValueListItem31, ValueListItem32})
         Me.grdSOTCARR3.DisplayLayout.ValueLists.AddRange(New Infragistics.Win.ValueList() {ValueList2})
         Me.grdSOTCARR3.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCARR3.Dock = System.Windows.Forms.DockStyle.Fill

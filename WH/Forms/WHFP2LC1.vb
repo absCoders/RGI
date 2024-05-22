@@ -2159,7 +2159,7 @@ Public Class WHFP2LC1
 
         Dim LEVEL As String = ""
         Dim ZoneSelected As String = grdWHTWAVE3.ActiveCell.Column.Key
-        Dim rowWHTLOCM1 As DataRow
+        Dim rowWHTLOCM1 As DataRow = Nothing
         dst.Tables("WHTLOCM1").Clear()
 
         ASCMAIN1.sql = "Select * from WHTLOCM1 WHERE WHSE_CODE = :PARM1 and LOCATION_CODE LIKE :PARM2 and LOCATION_ZONE = :PARM3"

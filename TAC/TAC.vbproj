@@ -66,7 +66,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DPayments.DShippingSDK">
+    <Reference Include="DPayments.DShippingSDK, Version=22.3.8873.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLs\DPayments.DShippingSDK.dll</HintPath>
     </Reference>
     <Reference Include="DPayments.InPay">

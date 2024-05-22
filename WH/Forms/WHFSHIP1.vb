@@ -196,10 +196,10 @@ Public Class WHFSHIP1
 
         LoadSmartPostDropDowns()
 
-        ASCMAIN1.Add_Value_List(grdWHTSHPC2, "SIGNATURE_TYPE", Nothing, New String() {":", "0:Default for requested service", "1:Adult", _
+        ASCMAIN1.Add_Value_List(grdWHTSHPC2, "SIGNATURE_TYPE", Nothing, New String() {":", "0:Default for requested service", "1:Adult",
                             "2:Direct", "3:Indirect", "4:Not Required"}, 0)
 
-        ASCMAIN1.Add_Value_List(grdWHTSHPC2, "COD_TYPE", Nothing, New String() {":", "0:Any Check", _
+        ASCMAIN1.Add_Value_List(grdWHTSHPC2, "COD_TYPE", Nothing, New String() {":", "0:Any Check",
                              "1:Cashier's check or money order", "2:None"}, 0)
 
         With ultraComboPackage.DisplayLayout.Bands(0)
@@ -253,7 +253,7 @@ Public Class WHFSHIP1
 
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-            Dim defaultprinter = ""
+            Dim defaultprinter As String = ""
             For Each printerName As String In Drawing.Printing.PrinterSettings.InstalledPrinters
                 If printerName.ToUpper.StartsWith("ZDESIGNER") Or printerName.ToUpper.StartsWith("MONARCH") Or printerName.ToUpper.StartsWith("AVERY") Or printerName.ToUpper.StartsWith("ZEBRA") Then
                     ZebraPrinters.Add(printerName)
@@ -267,8 +267,6 @@ Public Class WHFSHIP1
                 cboZebraPrinter.SelectedItem = defaultprinter
             End If
         End If
-
-
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -391,17 +389,19 @@ Public Class WHFSHIP1
                     End If
                 End If
 
-                ' Fedex Smart Post Specific
-                If cmbProvider.SelectedRow.Cells("PROVIDER_TYPE").Value = WHCSHIP1.ProviderTypeFedex _
-                    AndAlso cmbShipMethod.SelectedRow.Cells("CARRIER_PROD_CODE").Value = 26 Then
-                    If cmbSmartPost.SelectedRow Is Nothing Then
-                        EMsg &= vbCrLf & "Smart Post shipping methods require a Smart Post Type."
-                    End If
-                    If cmbSmartPostPackage.SelectedRow Is Nothing Then
-                        EMsg &= vbCrLf & "Smart Post shipping methods require a package Type."
-                    End If
-                    If cmbProvider.SelectedRow.Cells("FEDEX_HUB_ID").Value & String.Empty = String.Empty Then
-                        EMsg &= vbCrLf & "Smart Post shipping methods require a Hub Id."
+                If eItemKey <> "Get Rates" Then
+                    ' Fedex Smart Post Specific
+                    If cmbProvider.SelectedRow.Cells("PROVIDER_TYPE").Value = WHCSHIP1.ProviderTypeFedex _
+                        AndAlso cmbShipMethod.SelectedRow.Cells("CARRIER_PROD_CODE").Value = 26 Then
+                        If cmbSmartPost.SelectedRow Is Nothing Then
+                            EMsg &= vbCrLf & "Smart Post shipping methods require a Smart Post Type."
+                        End If
+                        If cmbSmartPostPackage.SelectedRow Is Nothing Then
+                            EMsg &= vbCrLf & "Smart Post shipping methods require a package Type."
+                        End If
+                        If cmbProvider.SelectedRow.Cells("FEDEX_HUB_ID").Value & String.Empty = String.Empty Then
+                            EMsg &= vbCrLf & "Smart Post shipping methods require a Hub Id."
+                        End If
                     End If
                 End If
 
@@ -462,7 +462,7 @@ Public Class WHFSHIP1
                 End If
 
             Case "Clear"
-                If MessageBox.Show("Do you want to clear the contents of the screen?", "Clear", _
+                If MessageBox.Show("Do you want to clear the contents of the screen?", "Clear",
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -473,7 +473,7 @@ Public Class WHFSHIP1
                     Exit Select
                 End If
 
-                If MessageBox.Show("Do you want to cancel the selected packages?", "Cancel Shipment", _
+                If MessageBox.Show("Do you want to cancel the selected packages?", "Cancel Shipment",
                                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -502,7 +502,7 @@ Public Class WHFSHIP1
                     Exit Select
                 End If
 
-                If MessageBox.Show("Do you want to Reprint labels for the shipment displayed on the screen?", "Reprint Label", _
+                If MessageBox.Show("Do you want to Reprint labels for the shipment displayed on the screen?", "Reprint Label",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -525,7 +525,9 @@ Public Class WHFSHIP1
             Case "Request Label"
                 EntryMode = "S"
                 If RequestShippingLabel() Then
-                    Me.Mode_Settings(False)
+                    If Not ASCMAIN1.Running_in_VS Then
+                        Me.Mode_Settings(False)
+                    End If
                 End If
 
             Case "Get Rates"
@@ -642,7 +644,9 @@ Public Class WHFSHIP1
 
                 End Select
 
-                Mode_Settings(False)
+                If Not ASCMAIN1.Running_in_VS Then
+                    Mode_Settings(False)
+                End If
 
                 ASCMAIN1.Progress("", "")
         End Select
@@ -679,9 +683,9 @@ Public Class WHFSHIP1
     Private Sub Clear_Record()
         MyBase.EnforceConstraints(False)
 
-        For Each tableName As String In New String() {"WHTSHPC1", "WHTSHPC2", "WHTSHPC5_SF", _
-                                                      "WHTSHPC5_ST", "WHTSHPC5_HL", "WHTSHPCC", _
-                                                      "WHTSHPCP_S", "WHTSHPCP_D", "WHTSHPCS", "WHTSHPC4", _
+        For Each tableName As String In New String() {"WHTSHPC1", "WHTSHPC2", "WHTSHPC5_SF",
+                                                      "WHTSHPC5_ST", "WHTSHPC5_HL", "WHTSHPCC",
+                                                      "WHTSHPCP_S", "WHTSHPCP_D", "WHTSHPCS", "WHTSHPC4",
                                                       "SOTRMAFL", "ASTATTA2"}
             dst.Tables(tableName).Rows.Clear()
         Next
@@ -1498,7 +1502,6 @@ Public Class WHFSHIP1
             BuildPackages()
             GetCredentials()
             GetServiceType()
-            GetDropoffType()
             GetShipPayor()
             GetDutiesPayor()
             GetSpecialServices()
@@ -1508,14 +1511,24 @@ Public Class WHFSHIP1
 
 
             If optPrint_Type.Value <> rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty Then
-                Dim labelFormatDesc As String = "Unknown"
+                Dim usualFormatDesc As String = "Unknown"
                 For Each vlItem As ValueListItem In optPrint_Type.Items
                     If vlItem.DataValue = rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty Then
-                        labelFormatDesc = vlItem.DisplayText
+                        usualFormatDesc = vlItem.DisplayText
+                        Exit For
                     End If
                 Next
+
+                Dim selectedFormatDesc As String = optPrint_Type.Value
+                For Each vlItem As ValueListItem In optPrint_Type.Items
+                    If vlItem.DataValue = selectedFormatDesc Then
+                        selectedFormatDesc = vlItem.DisplayText
+                        Exit For
+                    End If
+                Next
+
                 If ASCMAIN1.CLIENT <> "VAN" Then
-                    If MessageBox.Show("Typically you use " & labelFormatDesc & " to print " & rowSOTCARR1.Item("CARRIER_DESC") & " Labels. Do you want to change to " & labelFormatDesc & " labels?", "Labels", MessageBoxButtons.YesNo) = Windows.Forms.DialogResult.Yes Then
+                    If MessageBox.Show("Typically you use " & usualFormatDesc & " to print " & rowSOTCARR1.Item("CARRIER_DESC") & " Labels. Do you want to change to " & selectedFormatDesc & " labels?", "Labels", MessageBoxButtons.YesNo) = Windows.Forms.DialogResult.No Then
                         optPrint_Type.Value = rowSOTCARR1.Item("LABEL_FORMAT") & String.Empty
                     End If
                 End If
@@ -1592,10 +1605,17 @@ Public Class WHFSHIP1
                             RequestShippingLabel = True
                             Update_Record()
 
-                            If shipPackageDetail.ShippingLabel.Length > 0 Then PrintShipingLabel(shipPackageDetail.ShippingLabel)
-                            If shipPackageDetail.CODLabel.Length > 0 Then PrintShipingLabel(shipPackageDetail.CODLabel)
-                            If shipPackageDetail.ReturnReceipt.Length > 0 Then PrintShipingLabel(shipPackageDetail.ReturnReceipt)
+                            If shipPackageDetail.ShippingLabel.Length > 0 Then
+                                PrintShipingLabel(shipPackageDetail.ShippingLabel)
+                            End If
 
+                            If shipPackageDetail.CODLabel.Length > 0 Then
+                                PrintShipingLabel(shipPackageDetail.CODLabel)
+                            End If
+
+                            If shipPackageDetail.ReturnReceipt.Length > 0 Then
+                                PrintShipingLabel(shipPackageDetail.ReturnReceipt)
+                            End If
                         Next
                     Else
                         MessageBox.Show("Shipping Label(s) could not be captured. " & clsShip.LastError)
@@ -1877,10 +1897,6 @@ Public Class WHFSHIP1
         End If
     End Sub
 
-    Private Sub GetDropoffType()
-        clsShip.DropOffType = FedexshipintlDropoffTypes.dtRegularPickup
-    End Sub
-
     Private Sub GetShipPayor()
         Select Case cmbShipPayor.Value
             Case "S" : clsShip.Payor = TPayorTypes.ptSender
@@ -2049,7 +2065,7 @@ Public Class WHFSHIP1
     End Sub
 
     Private Function GetCommodityUnits() As String()
-        Return New String() {":", _
+        Return New String() {":",
               "AR:Carat" _
              , "CG:Centigram" _
              , "CM:Centimeters" _
@@ -2096,7 +2112,7 @@ Public Class WHFSHIP1
             Dim rowWHTSHPC1 As DataRow = dst.Tables("WHTSHPC1").Rows(0)
             'Dim multiShipment As Boolean = dst.Tables("WHTSHPC2").Select("ISNULL(TRACKING_NO, '') <> ''").Length > 1
             Dim rowSOTCARR2 As DataRow = ASCDATA1.GetDataRow("select * from sotcarr2 where CARRIER_CODE = :PARM1" _
-                                                             & " and CARRIER_PROD_CODE = :PARM2", "VV", _
+                                                             & " and CARRIER_PROD_CODE = :PARM2", "VV",
                                                              New Object() {rowWHTSHPC1.Item("CARRIER_CODE"), rowWHTSHPC1.Item("CARRIER_PROD_CODE")})
 
             ' cancel one package at a time
@@ -2278,7 +2294,10 @@ Public Class WHFSHIP1
 
             txtlabelPrinter.BackColor = Drawing.Color.Yellow
             If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
-                ASCMAIN1.LabelPrinterSerialPort.Open()
+                Try
+                    ASCMAIN1.LabelPrinterSerialPort.Open()
+                Catch ex As Exception
+                End Try
             End If
 
             If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
@@ -3193,7 +3212,7 @@ Public Class WHFSHIP1
             End If
 
             SEND_NO = ASCMAIN1.TACMAIN1.Send_email _
-                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
+                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                     SUBJECT, "RTNLBL", True, False, "", txtToCompany.Text, "Return Label")
 
 

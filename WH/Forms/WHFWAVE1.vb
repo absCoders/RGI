@@ -1968,7 +1968,8 @@ Public Class WHFWAVE1
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Updating ...")
 
-        Dim WHSE_TRAN_NO As String
+        Dim WHSE_TRAN_NO As String = ""
+
         If chkFinalize.Checked Then
             If WAVE_TYPE = "W" Or WAVE_TYPE = "L" Then
                 ' deposits stay in stage

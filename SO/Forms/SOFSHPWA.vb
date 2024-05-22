@@ -2423,7 +2423,7 @@ Public Class SOFSHPWA
                 ' Generate Excel from table CARTEXCEL
                 Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
                 Dim worksheet As SpreadsheetGear.IWorksheet
-                Dim worksheetBase As SpreadsheetGear.IWorksheet
+                'Dim worksheetBase As SpreadsheetGear.IWorksheet
 
                 Dim range As SpreadsheetGear.IRange = Nothing
                 Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing
@@ -2473,7 +2473,7 @@ Public Class SOFSHPWA
         ' Generate Excel from table CARTEXCELEXC
         Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
         Dim worksheet As SpreadsheetGear.IWorksheet
-        Dim worksheetBase As SpreadsheetGear.IWorksheet
+        'Dim worksheetBase As SpreadsheetGear.IWorksheet
 
         Dim range As SpreadsheetGear.IRange = Nothing
         Dim rangeCopyFrom As SpreadsheetGear.IRange = Nothing

@@ -1,5 +1,7 @@
 Imports Infragistics.Win.UltraWinGrid
 Imports DPayments.DShippingSDK
+Imports System.Xml
+Imports Newtonsoft.Json
 
 Public Class SOFSHIPL
     ' proceed prereq - after maintenance, or confirmation,need to verify that auth amt on credit check and credit card has not been violated
@@ -1651,11 +1653,13 @@ Public Class SOFSHIPL
         Group_No_Selected = String.Empty
 
         ASCMAIN1.CodeSelector.SQL = ASCMAIN1.CodeSelector.Get_SQL("ORDR_GROUP_NO")
-        ASCMAIN1.CodeSelector.SQL = "Select ORDR_GROUP_NO,CUST_CODE,ORDR_DATE,ORDR_SHIP_DATE,ORDR_CANCEL_DATE," _
-        & " ORDR_CUST_PO,ORDR_AMT,ORDR_QTY,ORDR_CNT,ORDR_CNT_OPEN," _
-        & " ORDR_CNT_PICK, ORDR_CGS_SHIP, ORDR_AMT_DISC, " _
-        & " SALES_DIVISION_CODE, CUST_DC_NO, ORDR_DEPT From SOTORDR0" _
-        & " Where CUST_CODE = '" & Absx1.txtFor("CUST_CODE").Text & "'"
+        ASCMAIN1.CodeSelector.SQL = $"SELECT ORDR_GROUP_NO,CUST_CODE,ORDR_DATE,ORDR_SHIP_DATE,ORDR_CANCEL_DATE,
+                                        ORDR_CUST_PO,ORDR_AMT,ORDR_QTY,ORDR_CNT,ORDR_CNT_OPEN,
+                                        ORDR_CNT_PICK, ORDR_CGS_SHIP, ORDR_AMT_DISC,
+                                        SALES_DIVISION_CODE, CUST_DC_NO, ORDR_DEPT 
+                                        FROM SOTORDR0
+                                        WHERE CUST_CODE = '{Absx1.txtFor("CUST_CODE").Text}'
+                                        AND (ORDR_QTY_OPEN > 0 OR ORDR_QTY_PICK > 0 OR ORDR_SHIP_DATE >= SYSDATE - 90)"
 
         ASCMAIN1.CodeSelector.MultipleSelections = True
         Using F As New ASFCODE1
@@ -2455,9 +2459,6 @@ Public Class SOFSHIPL
                 clsShip.FedexSmartPost.HubId = rowSOTCARR3.Item("FEDEX_HUB_ID") & String.Empty
             End If
 
-            clsShip.DropOffType = FedexshipintlDropoffTypes.dtRegularPickup
-
-
             ' The COLLECT payment type is only supported in FedEx Ground services. The CONSIGNEE type is only supported in UPS service.
 
             ' For FedEx, when this field is set to a value other than 0 (ptSender), the AccountNumber and 
@@ -2609,7 +2610,7 @@ Public Class SOFSHIPL
                 .ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyy-MM-dd")
 
                 If optLabel_Type.Value = "4" Then
-                    Dim Custom_Content As String = "<CustomContent>" _
+                    Dim Custom_Content As String = "<docTabContent>" _
                            & "<TextEntries>" _
                            & "<Position><X>20</X><Y>20</Y></Position>" _
                            & "<Format>PO#:</Format>" _
@@ -2652,8 +2653,19 @@ Public Class SOFSHIPL
                            & "<ThinBarWidth>4</ThinBarWidth>" _
                            & "<BarcodeSymbology>CODE128B</BarcodeSymbology> " _
                            & "</BarcodeEntries>" _
-                           & "</CustomContent>"
-                    .FedexCustomContent = Custom_Content
+                           & "</docTabContent>"
+
+                    Dim json As String = String.Empty
+
+                    Try
+                        Dim doc As XmlDocument = New XmlDocument
+                        doc.LoadXml(Custom_Content)
+                        json = JsonConvert.SerializeXmlNode(doc)
+                    Catch ex As Exception
+
+                    End Try
+
+                    .FedexCustomContent = json
                 End If
 
                 'If chkSaturday.Checked Then

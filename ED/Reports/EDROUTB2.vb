@@ -1556,7 +1556,7 @@ get_next:
                         End If
                     End If
 
-                    Dim rowEDT850T2 As DataRow
+                    Dim rowEDT850T2 As DataRow = Nothing
 
                     Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New Object() {ORDR_NO, ORDR_LNO})
                     If rowSOTORDR2 IsNot Nothing Then
@@ -1575,7 +1575,7 @@ get_next:
                         rowICTSTYL1 = Fill_Record("ICTSTYL1", STYLE_CODE, False, False)
                     End If
 
-                    Dim rowSOTINVH9 As DataRow
+                    Dim rowSOTINVH9 As DataRow = Nothing
                     Dim RANGE_STYLE_CODE As String = ""
                     Dim PICK_QTY_CONF As Int64 = 0
                     If rowSOTORDR2 IsNot Nothing Then
