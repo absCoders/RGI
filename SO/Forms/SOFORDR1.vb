@@ -12743,7 +12743,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
 
                 For i As Integer = 4 To xws.UsedRange.Rows.Count Step +1
-                    If Val(xws.Cells(i, 3).value) <> 0 Then
+                    If xws.Cells(i, 3).value & "" <> "" Then
 
                         Dim SKU As String = xws.Cells(i, 3).value.ToString
                         Dim STYLECOLOR As String() = Split(SKU, "-")
