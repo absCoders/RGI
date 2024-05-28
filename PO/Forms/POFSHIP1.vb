@@ -3697,6 +3697,9 @@ Public Class POFSHIP1
             Set_Read_Only_for_ctl(txtPO_NOTES, False)
         End If
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            If tf = False Then
+                eMsg_Booking = ""
+            End If
         Else
             Set_Read_Only_for_ctl(Absx1.optFor("FREIGHT_ENTERED_BY"), True)
         End If
