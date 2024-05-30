@@ -145,9 +145,9 @@ Partial Class SOFXFER2
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.grdTATCTLN0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTORDR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkNoDiscInvPics = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -182,8 +182,6 @@ Partial Class SOFXFER2
         Me.SplitContainer3.Panel2.SuspendLayout()
         Me.SplitContainer3.SuspendLayout()
         CType(Me.grdTATCTLN0, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer2.SuspendLayout()
         CType(Me.grdARTCUST1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdSOTORDR1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -217,7 +215,7 @@ Partial Class SOFXFER2
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Import Quotes"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup3.Expanded = False
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 180
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Images"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -232,13 +230,13 @@ Partial Class SOFXFER2
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 731)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1008, 751)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -289,21 +287,21 @@ Partial Class SOFXFER2
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 751)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1221, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 751)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1221, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 751)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1221, 0)
         '
         'tlb
         '
@@ -358,14 +356,14 @@ Partial Class SOFXFER2
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 397)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 180)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel2
         '
+        Me.Panel2.Controls.Add(Me.chkNoDiscInvPics)
         Me.Panel2.Controls.Add(Me.txtDeleteImages)
         Me.Panel2.Controls.Add(Me.Label5)
         Me.Panel2.Controls.Add(Me.btnGetImages)
@@ -377,7 +375,7 @@ Partial Class SOFXFER2
         Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel2.Location = New System.Drawing.Point(0, 0)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(172, 150)
+        Me.Panel2.Size = New System.Drawing.Size(172, 180)
         Me.Panel2.TabIndex = 0
         '
         'txtDeleteImages
@@ -403,7 +401,7 @@ Partial Class SOFXFER2
         '
         'btnGetImages
         '
-        Me.btnGetImages.Location = New System.Drawing.Point(6, 120)
+        Me.btnGetImages.Location = New System.Drawing.Point(6, 112)
         Me.btnGetImages.Name = "btnGetImages"
         Me.btnGetImages.Size = New System.Drawing.Size(176, 23)
         Me.btnGetImages.TabIndex = 90
@@ -413,7 +411,7 @@ Partial Class SOFXFER2
         '
         'btnUpdateImages
         '
-        Me.btnUpdateImages.Location = New System.Drawing.Point(6, 94)
+        Me.btnUpdateImages.Location = New System.Drawing.Point(6, 86)
         Me.btnUpdateImages.Name = "btnUpdateImages"
         Me.btnUpdateImages.Size = New System.Drawing.Size(176, 23)
         Me.btnUpdateImages.TabIndex = 89
@@ -465,7 +463,7 @@ Partial Class SOFXFER2
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 444)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 621)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 100)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -546,7 +544,7 @@ Partial Class SOFXFER2
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.UltraGroupBox2)
-        Me.spl.Size = New System.Drawing.Size(777, 574)
+        Me.spl.Size = New System.Drawing.Size(1008, 751)
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 12
         '
@@ -557,7 +555,7 @@ Partial Class SOFXFER2
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(777, 574)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(1008, 751)
         Me.UltraGroupBox2.TabIndex = 0
         '
         'SplitContainer1
@@ -574,8 +572,8 @@ Partial Class SOFXFER2
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.grdSOTORDR1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(771, 568)
-        Me.SplitContainer1.SplitterDistance = 185
+        Me.SplitContainer1.Size = New System.Drawing.Size(1002, 745)
+        Me.SplitContainer1.SplitterDistance = 242
         Me.SplitContainer1.TabIndex = 3
         '
         'SplitContainer3
@@ -590,10 +588,9 @@ Partial Class SOFXFER2
         '
         'SplitContainer3.Panel2
         '
-        Me.SplitContainer3.Panel2.Controls.Add(Me.SplitContainer2)
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdARTCUST1)
-        Me.SplitContainer3.Size = New System.Drawing.Size(771, 185)
-        Me.SplitContainer3.SplitterDistance = 385
+        Me.SplitContainer3.Size = New System.Drawing.Size(1002, 242)
+        Me.SplitContainer3.SplitterDistance = 499
         Me.SplitContainer3.TabIndex = 3
         '
         'grdTATCTLN0
@@ -689,18 +686,9 @@ Partial Class SOFXFER2
         Me.grdTATCTLN0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdTATCTLN0.Location = New System.Drawing.Point(0, 0)
         Me.grdTATCTLN0.Name = "grdTATCTLN0"
-        Me.grdTATCTLN0.Size = New System.Drawing.Size(385, 185)
+        Me.grdTATCTLN0.Size = New System.Drawing.Size(499, 242)
         Me.grdTATCTLN0.TabIndex = 2
         Me.grdTATCTLN0.Text = "Control Numbers Available"
-        '
-        'SplitContainer2
-        '
-        Me.SplitContainer2.Location = New System.Drawing.Point(540, 88)
-        Me.SplitContainer2.Name = "SplitContainer2"
-        Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
-        Me.SplitContainer2.Size = New System.Drawing.Size(392, 571)
-        Me.SplitContainer2.SplitterDistance = 356
-        Me.SplitContainer2.TabIndex = 0
         '
         'grdARTCUST1
         '
@@ -776,7 +764,7 @@ Partial Class SOFXFER2
         Me.grdARTCUST1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST1.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST1.Name = "grdARTCUST1"
-        Me.grdARTCUST1.Size = New System.Drawing.Size(382, 185)
+        Me.grdARTCUST1.Size = New System.Drawing.Size(499, 242)
         Me.grdARTCUST1.TabIndex = 4
         Me.grdARTCUST1.Text = "Customers Pending Transmission"
         '
@@ -896,15 +884,27 @@ Partial Class SOFXFER2
         Me.grdSOTORDR1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDR1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR1.Name = "grdSOTORDR1"
-        Me.grdSOTORDR1.Size = New System.Drawing.Size(771, 379)
+        Me.grdSOTORDR1.Size = New System.Drawing.Size(1002, 499)
         Me.grdSOTORDR1.TabIndex = 3
         Me.grdSOTORDR1.Text = "Sales Orders Pending Transmission"
+        '
+        'chkNoDiscInvPics
+        '
+        Me.chkNoDiscInvPics.AutoSize = True
+        Me.chkNoDiscInvPics.Checked = True
+        Me.chkNoDiscInvPics.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkNoDiscInvPics.Location = New System.Drawing.Point(6, 141)
+        Me.chkNoDiscInvPics.Name = "chkNoDiscInvPics"
+        Me.chkNoDiscInvPics.Size = New System.Drawing.Size(136, 20)
+        Me.chkNoDiscInvPics.TabIndex = 93
+        Me.chkNoDiscInvPics.Text = "No Disc w/o Inv."
+        Me.chkNoDiscInvPics.UseVisualStyleBackColor = True
         '
         'SOFXFER2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.ClientSize = New System.Drawing.Size(1221, 751)
         Me.Name = "SOFXFER2"
         Me.Text = "SOFXFER2"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -944,8 +944,6 @@ Partial Class SOFXFER2
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer3.ResumeLayout(False)
         CType(Me.grdTATCTLN0, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer2.ResumeLayout(False)
         CType(Me.grdARTCUST1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSOTORDR1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
@@ -957,15 +955,12 @@ Partial Class SOFXFER2
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdTATCTLN0 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents SplitContainer3 As System.Windows.Forms.SplitContainer
-    Friend WithEvents SplitContainer2 As System.Windows.Forms.SplitContainer
     Friend WithEvents grdARTCUST1 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents grdSOTORDR1 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents UltraExplorerBarContainerControl1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl
-    Friend WithEvents Panel1 As System.Windows.Forms.Panel
     Friend WithEvents lblVersionNo As System.Windows.Forms.Label
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents UltraExplorerBarContainerControl2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl
-    Friend WithEvents Panel2 As System.Windows.Forms.Panel
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents Label3 As System.Windows.Forms.Label
     Friend WithEvents btnUpdateImages As System.Windows.Forms.Button
@@ -981,4 +976,7 @@ Partial Class SOFXFER2
     Friend WithEvents lblQuoteNumber As Label
     Friend WithEvents chkSECUREFTP As CheckBox
     Friend WithEvents btnPWD As Button
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents Panel2 As Panel
+    Friend WithEvents chkNoDiscInvPics As CheckBox
 End Class
