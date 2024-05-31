@@ -4259,6 +4259,10 @@ Public Class SOFSHIPB
                 ASCMAIN1.Progress("Now Loading Data", "WHTSHPC1")
                 Fill_Records("WHTSHPC1", String.Empty, False, "SELECT * FROM WHTSHPC1 WHERE SHIP_BOL_NO = '" & rowSOTSHIP1.Item("SHIP_BOL_NO") & "' AND SHIP_CNTL_NO = (SELECT MAX(SHIP_CNTL_NO) FROM WHTSHPC1 WHERE SHIP_BOL_NO = '" & rowSOTSHIP1.Item("SHIP_BOL_NO") & "')")
             Next
+            If ASCMAIN1.CLIENT = "VAN" And dst.Tables("SOTSHIP2").Rows.Count = 0 Then
+                'for when Master ship bol no is replaced by new ship bol
+                Fill_Records("SOTSHIP2", String.Empty, False, "SELECT * FROM SOTSHIP2 WHERE SHIP_BOL_NO = '" & MASTER_SHIP_BOL_NO & "'")
+            End If
 
             Try
                 For Each rowWHTSHPC1 As DataRow In dst.Tables("WHTSHPC1").Select("")

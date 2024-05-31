@@ -436,7 +436,7 @@ Public Class CartonLabel
                     & " CASE WHEN COUNT(DISTINCT O2.CUST_SKU) > 1 THEN 'Mixed' ELSE MAX(O2.CUST_SKU) END CUST_SKU_MIX, " & vbCrLf _
                     & " CASE WHEN COUNT(DISTINCT IS1.STYLE_CODE || IC1.COLOR_CODE) > 1 THEN 'Mixed' ELSE TO_CHAR(C1.CART_TOTAL_UNITS) END CART_TOTAL_UNITS_MIX, " & vbCrLf _
                     & " MAX(O2.CUST_STYLE_CODE) CUST_STYLE_CODE, " & vbCrLf _
-                    & " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, " & vbCrLf _
+                    & " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, MAX(C1.CART_TOTAL_WGT_CALC) CART_TOTAL_WGT_CALC, " & vbCrLf _
                     & " MAX(O1.ORDR_CUST_PO) ORDR_CUST_PO, " & vbCrLf _
                     & " MAX(O1.ORDR_NO) ORDR_NO, " & vbCrLf _
                     & " MAX(O1.CUST_CODE) CUST_CODE, " & vbCrLf _
@@ -466,6 +466,7 @@ Public Class CartonLabel
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "ET1.EDI_PO_RELEASE_NO", " NULL EDI_PO_RELEASE_NO")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "AC2.CUST_ADDR_GROUP", " NULL CUST_ADDR_GROUP")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE,", " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, MAX(O2.CUST_SIZE_CODE) CUST_SIZE_CODE,")
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE", "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE, MAX(NVL(IS1.CASE_CUBE,0)) CASE_CUBE")
         End If
 
         Dim rowSOTCART1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {CartonNo})
@@ -477,6 +478,9 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns("EDI_PO_TYPE").MaxLength = 50
         rowSOTCART1.Table.Columns.Add("CUST_ADDR_NAME", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("GTIN_CODE", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("SHIP_VIA_DESC", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("BILL_OF_LADING_NO", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("SHIP_REF", GetType(System.String))
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
@@ -1019,10 +1023,22 @@ Public Class CartonLabel
                     Row.Item("CUST_ZIP_CODE") = Row.Item("CUST_ZIP_CODE").ToString.Substring(0, 5)
                 End If
             Case Is = "MARSHAL", Is = "COSTCOUS"
+                Dim CART_NO As String = Row.Item("CART_NO").ToString
+                Dim SQLS As String
+                SQLS = $"Select SOTSHIP1.BILL_OF_LADING_NO, SOTSHIP1.SHIP_REF, SOTSVIA1.SHIP_VIA_DESC 
+                         from SOTSHIP1, SOTPICK1, SOTCART1, SOTSVIA1
+                         where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                         and SOTPICK1.PICK_NO = SOTCART1.PICK_NO
+                         and SOTSHIP1.SHIP_VIA_CODE=SOTSVIA1.SHIP_VIA_CODE
+                         and SOTCART1.CART_NO = '{CART_NO}'"
+                Dim TmpRow As DataRow = ASCDATA1.GetDataRow(SQLS)
+                Row("BILL_OF_LADING_NO") = TmpRow("BILL_OF_LADING_NO")
+                Row("SHIP_REF") = TmpRow("SHIP_REF")
+                Row("SHIP_VIA_DESC") = TmpRow("SHIP_VIA_DESC")
+
                 If Row.Item("CUST_STORE_NO").ToString.Length > 4 Then
                     Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(Row.Item("CUST_STORE_NO").ToString.Length - 4, 4)
                 End If
-                Dim CART_NO As String = Row.Item("CART_NO").ToString
                 Dim Msg As String = FillSOTCART2(CART_NO, 3, labelData, , 25)
                 If Msg.Length > 0 Then
                     CartonError = Msg
