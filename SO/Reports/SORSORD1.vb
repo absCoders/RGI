@@ -343,8 +343,10 @@ Public Class SORSORD1
 
         Dim SOTSORD1 As String = ASCMAIN1.Temp_Table
 
-        sql = "Delete From " & SOTSORD1 & " WHERE CUST_CODE IN ('BEALLS','ROSS') AND ORDR_QTY_X = ORDR_QTY_CANC_X"
-        ASCDATA1.ExecuteSQL(sql)
+        If ASCMAIN1.CLIENT = "VAN" Then
+            sql = "Delete From " & SOTSORD1 & " WHERE CUST_CODE IN ('BEALLS','ROSS') AND ORDR_QTY_X = ORDR_QTY_CANC_X"
+            ASCDATA1.ExecuteSQL(sql)
+        End If
 
 
         dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & SOTSORD1, "SOTSORD1", 0))
