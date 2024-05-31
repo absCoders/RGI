@@ -466,7 +466,7 @@ Public Class CartonLabel
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "ET1.EDI_PO_RELEASE_NO", " NULL EDI_PO_RELEASE_NO")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "AC2.CUST_ADDR_GROUP", " NULL CUST_ADDR_GROUP")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE,", " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, MAX(O2.CUST_SIZE_CODE) CUST_SIZE_CODE,")
-            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE", "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE, MAX(NVL(IS1.CASE_CUBE,0)) CASE_CUBE")
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE", "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE, MAX(NVL(IS1.CASE_CUBE,0)) CASE_CUBE, MAX (NVL(C1.CART_TOTAL_WGT_CALC, 0)) CART_TOTAL_WGT_CALC")
         End If
 
         Dim rowSOTCART1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {CartonNo})
@@ -541,7 +541,6 @@ Public Class CartonLabel
                 End If
             End If
         End If
-
         ' NEEDTO GET RID OF THIS TOO
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...
             For Each dc In rowSOTCART1.Table.Columns
@@ -575,6 +574,19 @@ Public Class CartonLabel
         If ASCMAIN1.CLIENT = "VAN" Then
             ASCMAIN1.sql = "Select nvl(PICK_NO_CONS,PICK_NO) PICK_NO from SOTPICK1 where PICK_NO = :PARM1"
             PICK_NO = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {PICK_NO}) & ""
+
+            If CUST_CODE = "COSTCOUS" Then
+                ASCMAIN1.sql = $"select SHIP_REF, BILL_OF_LADING_NO, SHIP_VIA_DESC from SOTCART1, SOTPICK1, SOTSHIP1, SOTSVIA1
+                                where SOTSVIA1.SHIP_VIA_CODE = SOTSHIP1.SHIP_VIA_CODE 
+                                AND SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                                AND SOTPICK1.PICK_NO = SOTCART1.PICK_NO
+                                AND SOTCART1.CART_NO = '{CART_NO}'"
+                Dim rowCarrier As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+                rowSOTCART1("SHIP_REF") = rowCarrier.Item("SHIP_REF") & String.Empty
+                rowSOTCART1("BILL_OF_LADING_NO") = rowCarrier.Item("BILL_OF_LADING_NO") & String.Empty
+                rowSOTCART1("SHIP_VIA_DESC") = rowCarrier.Item("SHIP_VIA_DESC") & String.Empty
+            End If
+
         End If
 
         Dim sqlMultiPO As String = " (SELECT PICK_NO_CONS" & vbCrLf _
