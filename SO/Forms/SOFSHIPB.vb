@@ -7309,9 +7309,15 @@ Public Class SOFSHIPB
                     Else
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy to Pick Ticket Cartons"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = (grd.ActiveCell.Column.Key = "PKG_CODE" OrElse grd.ActiveCell.Column.Key = "CART_TOTAL_WGT_ACTUAL") AndAlso Not InquiryMode
+                        If ASCMAIN1.CLIENT = "VAN" Then
+                            tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        End If
 
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy to Shipment Cartons"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = (grd.ActiveCell.Column.Key = "PKG_CODE" OrElse grd.ActiveCell.Column.Key = "CART_TOTAL_WGT_ACTUAL") AndAlso Not InquiryMode
+                        If ASCMAIN1.CLIENT = "VAN" Then
+                            tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        End If
                     End If
 
                     If grd.Selected.Rows.Count <= 1 Then
@@ -8019,16 +8025,26 @@ Public Class SOFSHIPB
                 Dim PKG_L As Decimal = 0
                 Dim PKG_W As Decimal = 0
                 Dim PKG_H As Decimal = 0
+                Dim PKG_Wght As Decimal = 0
 
                 Dim zMsg As String = String.Empty
-                If columnToCopy = "PKG_CODE" Then
-                    zMsg = "Do you want to use the value of this Package (" & valueToCopy & ") to " & e.Tool.Key & "? Note: box dimensions will be copied as well."
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    zMsg = "Do you want use this Carton (" & grd.ActiveRow.Cells("CART_NO").Value & ") to " & e.Tool.Key & "? Note: box dimensions and weight will be copied."
+                    PKG_Wght = grd.ActiveRow.Cells("CART_TOTAL_WGT_ACTUAL").Value
                     PKG_L = Val(grd.ActiveCell.Row.Cells("PKG_L").Value & String.Empty)
                     PKG_W = Val(grd.ActiveCell.Row.Cells("PKG_W").Value & String.Empty)
                     PKG_H = Val(grd.ActiveCell.Row.Cells("PKG_H").Value & String.Empty)
                 Else
-                    zMsg = "Do you want to use the value of this Weight (" & valueToCopy & ") to " & e.Tool.Key & "?"
-                    valueToCopy = Val(valueToCopy)
+                    If columnToCopy = "PKG_CODE" Then
+                        zMsg = "Do you want to use the value of this Package (" & valueToCopy & ") to " & e.Tool.Key & "? Note: box dimensions will be copied as well."
+                        PKG_L = Val(grd.ActiveCell.Row.Cells("PKG_L").Value & String.Empty)
+                        PKG_W = Val(grd.ActiveCell.Row.Cells("PKG_W").Value & String.Empty)
+                        PKG_H = Val(grd.ActiveCell.Row.Cells("PKG_H").Value & String.Empty)
+                    Else
+                        zMsg = "Do you want to use the value of this Weight (" & valueToCopy & ") to " & e.Tool.Key & "?"
+                        valueToCopy = Val(valueToCopy)
+                    End If
+
                 End If
 
                 If MessageBox.Show(zMsg, "Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
@@ -8042,14 +8058,20 @@ Public Class SOFSHIPB
                         Continue For
                     End If
 
-                    rowSOTCART1.Item(columnToCopy) = valueToCopy
-
-                    If columnToCopy = "PKG_CODE" Then
+                    If ASCMAIN1.CLIENT = "VAN" Then
                         rowSOTCART1.Item("PKG_L") = PKG_L
                         rowSOTCART1.Item("PKG_W") = PKG_W
                         rowSOTCART1.Item("PKG_H") = PKG_H
-                    End If
+                        rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = PKG_Wght
+                    Else
+                        rowSOTCART1.Item(columnToCopy) = valueToCopy
 
+                        If columnToCopy = "PKG_CODE" Then
+                            rowSOTCART1.Item("PKG_L") = PKG_L
+                            rowSOTCART1.Item("PKG_W") = PKG_W
+                            rowSOTCART1.Item("PKG_H") = PKG_H
+                        End If
+                    End If
                     Dim pickWeight As Decimal = Val(dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")(0).Item("PICK_TOTAL_WGT") & String.Empty)
                     Dim totalCartWeight As Decimal = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", "PICK_NO = '" & PICK_NO & "'") & String.Empty)
 
@@ -8743,7 +8765,7 @@ Public Class SOFSHIPB
             End If
         Next
 
-        If displayBoxAttributes OrElse ASCMAIN1.CLIENT = "RGI" Then
+        If displayBoxAttributes OrElse ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" Then
             grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = False
             grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = False
             grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = False
