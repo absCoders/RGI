@@ -64,6 +64,7 @@ Public Class WHFLB128
                 .Add("OPT_PULL_STYLE", GetType(System.String))
                 .Add("OPT_MANIFEST", GetType(System.String))
                 .Add("CUST_856", GetType(System.String))
+                .Add("PALLET_COUNT", GetType(System.Int32))  ' New column added here
             End With
             .Tables("SOTPICKX").Columns("SELECTED").DefaultValue = "0"
 
@@ -472,7 +473,7 @@ Public Class WHFLB128
                 '    End If
                 'Else
                 If New String() {"SELECTED", "OPT_PICK_TICKET", "OPT_UCC128", "OPT_PULL_STORE", "OPT_PULL_STYLE",
-                                  "OPT_MANIFEST", "ORDR_HIGH_PRIORITY"}.Contains(GCOL.Key) Then
+                                  "OPT_MANIFEST", "ORDR_HIGH_PRIORITY", "PALLET_COUNT"}.Contains(GCOL.Key) Then
                     GCOL.CellActivation = UltraWinGrid.Activation.AllowEdit
 
                 Else
@@ -635,8 +636,15 @@ Public Class WHFLB128
 
                 If ASCMAIN1.CLIENT = "VAN" Then
                     Dim PICK_NO_CONSs As New List(Of String)
+                    Dim SHIP_BOL_NOs As New List(Of String)
                     For Each ROW As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1'")
                         Dim SHIP_BOL_NO As String = ROW.Item("SHIP_BOL_NO")
+                        If ROW.Item("CUST_CODE").ToString = "COSTCOUS" Then
+                            SHIP_BOL_NOs.Add(SHIP_BOL_NO)
+                        End If
+                        If ROW.Item("CUST_CODE").ToString = "SAMSCLUB" And Val(ROW.Item("PALLET_COUNT").ToString & "") = 0 Then
+                            EMsg &= "Pallet Quantity required for Customer " & ROW.Item("CUST_CODE").ToString
+                        End If
                         For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
                             Dim PICK_NO_CONS As String = rowSOTPICK1.Item("PICK_NO_CONS") & ""
                             Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
@@ -664,6 +672,9 @@ Public Class WHFLB128
                         Next
                         If EMsg <> "" Then Exit For
                     Next
+                    If SHIP_BOL_NOs.Count > 0 And EMsg & "" = "" Then
+                        Missing_COSTCO(SHIP_BOL_NOs, EMsg)
+                    End If
                 End If
 
             Case "Update"
@@ -1304,7 +1315,26 @@ Public Class WHFLB128
                     If grdSOTCART1.ActiveRow IsNot Nothing Then grdSOTCART1.ActiveRow.Selected = True
                 End If
                 If grdSOTCART1.Selected.Rows.Count <> 0 Then
-                    Print_UCC128_Labels()
+                    Dim SHIP_BOL_NOs As New List(Of String)
+                    For Each rowSOTCART1 As UltraWinGrid.UltraGridRow In grdSOTCART1.Selected.Rows
+                        Dim SHIP_BOL_NO As String = rowSOTCART1.Cells("SHIP_BOL_NO").Value.ToString
+                        Dim CUST_CODE As String = rowSOTCART1.Cells("CUST_CODE").Value.ToString
+                        'If CUST_CODE = "COSTCOUS" Then
+                        SHIP_BOL_NOs.Add(SHIP_BOL_NO)
+                        'End If
+                    Next
+                    If SHIP_BOL_NOs.Count > 0 Then
+                        Dim EMsg As String = String.Empty
+                        Missing_COSTCO(SHIP_BOL_NOs, EMsg)
+                        If EMsg <> "" Then
+                            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
+                        Else
+                            Print_UCC128_Labels()
+                        End If
+                    Else
+                        ' If no COSTCOUS customers, proceed to print
+                        Print_UCC128_Labels()
+                    End If
                 End If
 
             Case "Carton Summary"
@@ -1788,6 +1818,16 @@ Public Class WHFLB128
                 e.Row.Appearance.ForeColor = Drawing.Color.Empty
             End If
         End If
+
+        If e.Row.Cells("CUST_CODE").Value = "SAMSCLUB" Then
+            ' Allow editing for PALLET_COUNT
+            e.Row.Cells("PALLET_COUNT").Activation = Infragistics.Win.UltraWinGrid.Activation.AllowEdit
+            e.Row.Cells("PALLET_COUNT").Appearance.BackColor = Color.White  ' Optional: Change background color to indicate editability
+        Else
+            ' Disable editing for PALLET_COUNT
+            e.Row.Cells("PALLET_COUNT").Activation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
+            e.Row.Cells("PALLET_COUNT").Appearance.BackColor = Color.LightGray  ' Optional: Change background color to indicate non-editable
+        End If
     End Sub
 
     Sub Refresh_ICTWHSEX()
@@ -2084,6 +2124,10 @@ Public Class WHFLB128
                     SQLS.AppendLine(")")
                     ASCMAIN1.sql = SQLS.ToString()
                     Dim CUST_CODE As String = ASCDATA1.GetDataValue
+                    'HERE
+                    If CUST_CODE = "SAMSCLUB" Then
+                        Continue For
+                    End If
                     If CUST_CODE <> CUST_CODE_LAST Then
                         CUST_CODE_LAST = CUST_CODE
                         LabelTemplateOverride = ""
@@ -2107,6 +2151,7 @@ Public Class WHFLB128
                                 PrintQty = 2
                         End Select
                     End If
+
                     ASCMAIN1.Progress("Printing Labels for " & CUST_CODE)
                     If WalmartCA.Contains(CUST_CODE) Then
                         Dim rrow As DataRow
@@ -2196,8 +2241,6 @@ Public Class WHFLB128
                                 Exit For
                             Next
                         Next
-
-
                     Else
                         ASCMAIN1.sql = "Select CART_NO from SOTCART1 where PICK_NO = '" & PICK_NO & "'"
                         For Each rowCART_NO As DataRow In ASCDATA1.GetDataTable.Select("", "CART_NO")
@@ -2214,7 +2257,14 @@ Public Class WHFLB128
                 If dst.Tables("SOTCART4").Select("").Count > 0 Then
                     'Print_Report("SORCART4", "Walmart Export Carton Labels")
                 End If
-
+                'our code to print for samsclub
+                For Each row As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1' AND CUST_CODE = 'SAMSCLUB'")
+                    Dim QTY As Integer = Val(row.Item("PALLET_COUNT"))
+                    ASCMAIN1.sql = "Select MIN(CART_NO) from SOTCART1, SOTPICK1 where SHIP_BOL_NO = '" & row.Item("SHIP_BOL_NO") & "'"
+                    Dim CART_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql)
+                    Dim cartonLabel As New TAC.CartonLabel(CART_NO)
+                    cartonLabel.PrintLabel(QTY, PrinterName)
+                Next
             Else
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("", "SHIP_BOL_NO,PICK_NO")
                     Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
@@ -2871,6 +2921,56 @@ Public Class WHFLB128
             dst.Tables("SOTNLAB2").Rows.Add(rowSOTNLAB2)
         Next
 
+    End Sub
+    Public Sub Missing_COSTCO(shipBolNos As List(Of String), ByRef EMsg As String)
+        ' Check if EDI_LOAD_ID and SHIP_REF_NO are not null
+        For Each SHIP_BOL_NO As String In shipBolNos
+            ASCMAIN1.sql = $"SELECT * FROM SOTSHIP1, SOTORDR0 WHERE SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO AND SOTSHIP1.SHIP_BOL_NO = '{SHIP_BOL_NO}'"
+            Dim rowSOTSHIP1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+
+            If rowSOTSHIP1 Is Nothing Then
+                EMsg &= $"No matching records found in SOTSHIP1 for Shipment No: {SHIP_BOL_NO}." & vbCrLf
+                Continue For
+            End If
+
+            Dim ediLoadId As Object = rowSOTSHIP1("EDI_LOAD_ID")
+            Dim shipRefNo As Object = rowSOTSHIP1("SHIP_REF")
+            Dim PO As String = rowSOTSHIP1("ORDR_CUST_PO").ToString
+
+            If Not IsDBNull(ediLoadId) AndAlso Not IsDBNull(shipRefNo) Then
+                ' Pass check, no need to add a message for success in EMsg
+            Else
+                EMsg &= $"Check 1 failed for Purchase Order {PO} in Shipment No {SHIP_BOL_NO}: EDI_LOAD_ID or SHIP_REF is null." & vbCrLf
+                ' Do not exit the loop, just continue to the next SHIP_BOL_NO
+            End If
+        Next
+
+        For Each SHIP_BOL_NO As String In shipBolNos
+            ASCMAIN1.sql = $"SELECT COUNT(*) COUNT, MIN(SOTORDR1.ORDR_CUST_PO) ORDR_CUST_PO from SOTPICK1, SOTCART1, SOTORDR1 WHERE SOTPICK1.SHIP_BOL_NO = '0000862979' 
+                            AND SOTCART1.PICK_NO = SOTPICK1.PICK_NO and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO AND (NVL(PKG_L,0) * NVL(PKG_W,0) <> 1920 
+                            OR NVL(PKG_L,0) * NVL(PKG_W,0) * NVL(PKG_H,0) / 1728 < 15)"
+            Dim ROW As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+
+            Dim COUNT As Integer = Val(ROW.Item("COUNT"))
+            Dim PO As String = ROW.Item("ORDR_CUST_PO").ToString
+
+            If count > 0 Then
+                EMsg &= $"Check 2 failed for Purchase Order {PO} in Shipment No {SHIP_BOL_NO}: Incorrect or missing dimensions." & vbCrLf
+            End If
+        Next
+    End Sub
+    Private Sub grdSOTPICKX_BeforeCellUpdate(sender As Object, e As BeforeCellUpdateEventArgs) Handles grdSOTPICKX.BeforeCellUpdate
+        If grdSOTPICKX.ActiveRow.IsFilterRow Or grdSOTPICKX.ActiveRow IsNot Nothing Then
+            Exit Sub
+        End If
+    End Sub
+    Private Sub grdSOTPICKX_BeforeCellActivate(sender As Object, e As CancelableCellEventArgs) Handles grdSOTPICKX.BeforeCellActivate
+        If e.Cell.Column.Key <> "PALLET_COUNT" Or grdSOTPICKX.ActiveRow.IsFilterRow Or grdSOTPICKX.ActiveRow IsNot Nothing Then
+            Exit Sub
+        End If
+        If grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value <> "SAMSCLUB" Then
+            e.Cancel = True
+        End If
     End Sub
 End Class
 
