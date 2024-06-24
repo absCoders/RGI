@@ -12759,7 +12759,8 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
                         Dim rowSOTCSTY1 As DataRow
 
-                        If CUST_CODE = "AMAZFBA03" Then
+                        If CUST_CODE = "AMAZFBA03x" Then
+                            ' CHANGED TO USE SOTCSTY1 instead of ICVLUPC1 for AMAZFBA03 Wendy 06/20/24
 
                             Dim Sql As String = "Select * from ICVLUPC1 where UPC_CODE = '" & SKU & "'"
                             Dim rows() As DataRow = ASCDATA1.GetDataTable(Sql).Select("")
