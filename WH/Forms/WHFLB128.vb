@@ -1073,7 +1073,7 @@ Public Class WHFLB128
         End If
 
         Fill_Records("SOTPICK2", "", False)
-        If ASCMAIN1.CLIENT = "VAN" Then SetStylePackDefaults
+        If ASCMAIN1.CLIENT = "VAN" Then SetStylePackDefaults()
         Fill_Records("SOTCART1", "", False)
         Carton_Serialization()
         Fill_Records("SOTCART2", "", False)
@@ -1128,7 +1128,7 @@ Public Class WHFLB128
                 (dst.Tables("SOTCART1"), New String() {"PICK_NO"}).Rows
             Dim PICK_NO As String = row.Item("PICK_NO")
             Dim sqlw As String = "PICK_NO = '{0}'"
-                sqlw = String.Format(sqlw, PICK_NO)
+            sqlw = String.Format(sqlw, PICK_NO)
             Dim CART_SEQ_MAX As Int32 = Val(dst.Tables("SOTCART1").Select(sqlw).Length)
             Dim CART_SERIAL_NO As Integer = 0
             For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select(sqlw, "CART_NO")
@@ -1213,7 +1213,7 @@ Public Class WHFLB128
                         tlb_btn.Tag = ""
                     Else
                         tlb_btn.Tag = grdSOTPICKX.ActiveCell.Column.Key & " = '" & grdSOTPICKX.ActiveCell.Value & "'"
-        tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Column.Header.Caption & " = " & grdSOTPICKX.ActiveCell.Value
+                        tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Column.Header.Caption & " = " & grdSOTPICKX.ActiveCell.Value
                         ' tlb_btn.SharedProps.Caption = "Select All " & grdSOTPICKX.ActiveCell.Value
                         tlb_btn.SharedProps.Visible = True
                     End If
@@ -1390,7 +1390,7 @@ Public Class WHFLB128
                 If grd.Name = "grdSOTNLAB2" Then
                     For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
                         Print_Manual_Labels("CART_NO = '" & grow.Cells("CART_NO").Value & "'")
-                     Next
+                    Next
                 End If
 
 
@@ -2264,7 +2264,7 @@ Public Class WHFLB128
                 'our code to print for samsclub
                 For Each row As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1' AND CUST_CODE IN ('SAMSCLUB', 'SAMSCLUBCOM')")
                     Dim QTY As Integer = Val(row.Item("PALLET_COUNT"))
-                    ASCMAIN1.sql = "Select MIN(CART_NO) from SOTCART1, SOTPICK1 where SHIP_BOL_NO = '" & row.Item("SHIP_BOL_NO") & "'"
+                    ASCMAIN1.sql = "Select MIN(CART_NO) from SOTCART1, SOTPICK1 where SHIP_BOL_NO = '" & row.Item("SHIP_BOL_NO") & "' and  SOTPICK1.PICK_NO = SOTCART1.PICK_NO"
                     Dim CART_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql)
                     Dim cartonLabel As New TAC.CartonLabel(CART_NO)
                     cartonLabel.PrintLabel(QTY, PrinterName)
@@ -2958,7 +2958,7 @@ Public Class WHFLB128
             Dim COUNT As Integer = Val(ROW.Item("COUNT"))
             Dim PO As String = ROW.Item("ORDR_CUST_PO").ToString
 
-            If count > 0 Then
+            If COUNT > 0 Then
                 EMsg &= $"Check 2 failed for Purchase Order {PO} in Shipment No {SHIP_BOL_NO}: Incorrect or missing dimensions." & vbCrLf
             End If
         Next
