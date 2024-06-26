@@ -2009,7 +2009,7 @@ Public Class ARFPYMT2
 
                 If ASCMAIN1.CLIENT = "VAN" Then
                     tlb_btn = DirectCast(tlb_pop.Tools("Import From Amazon"), UltraWinToolbars.ButtonTool)
-                    If txtARTCUST1.Text = "AMAZONFBA" Then
+                    If txtARTCUST1.Text = "AMAZONFBA" Or txtARTCUST1.Text = "AMAZONFBA03" Then
                         tlb_btn.SharedProps.Visible = True
                     Else
                         tlb_btn.SharedProps.Visible = False
