@@ -46,7 +46,8 @@ Public Class WBTPAGEH
         SB.AppendLine("WBTPAGED.STYLE_CODE,")
         SB.AppendLine("ICTSTYL1.STYLE_DESC,")
         SB.AppendLine("MIN(WBTSTYLD.STYLE_STATUS) AS STYLE_STATUS,")
-        SB.AppendLine("0 AS CURR_ON_HAND")
+        SB.AppendLine("0 AS CURR_ON_HAND,")
+        SB.AppendLine("NULL AS THEME_DESC")
         SB.AppendLine("FROM WBTPAGED, WBTSTYLD, ICTSTYL1")
         SB.AppendLine("WHERE WBTPAGED.STYLE_CODE = WBTSTYLD.STYLE_CODE")
         SB.AppendLine("AND WBTSTYLD.STYLE_CODE = ICTSTYL1.STYLE_CODE")
@@ -71,6 +72,7 @@ Public Class WBTPAGEH
         Call Fill_Records("WBTPAGU2", String.Empty, True, SB.ToString)
 
         UpdateInventory()
+        UpdateTheme()
 
         grdWBTPAGED.DisplayLayout.Bands(0).SortedColumns.Clear()
         grdWBTPAGED.DisplayLayout.Bands(0).SortedColumns.Add("STYLE_CODE", False)
@@ -90,6 +92,32 @@ Public Class WBTPAGEH
             If Not IsNothing(rowICTSTYC1) Then
                 rowWBTPAGED.Item("CURR_ON_HAND") = Val(rowICTSTYC1.Item("MSOH").ToString & String.Empty) + Val(rowICTSTYC1.Item("MSFT").ToString & String.Empty)
             End If
+        Next
+        grdWBTPAGED.UpdateData()
+        grdWBTPAGED.Refresh()
+    End Sub
+
+    Private Sub UpdateTheme()
+        For Each rowWBTPAGED As DataRow In dst.Tables("WBTPAGED").Select()
+            Dim STYLE_CODE As String = rowWBTPAGED.Item("STYLE_CODE").ToString & String.Empty
+            Dim THEME_DESC As String = ""
+
+            Dim sql As New Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT DISTINCT TH1.THEME_DESC")
+            sql.AppendLine("FROM ICTSTYL1 ST1, ICTSTYC1 CL1, ICTTHEME TH1")
+            sql.AppendLine("WHERE ST1.STYLE_CODE = CL1.STYLE_CODE")
+            sql.AppendLine("AND CL1.THEME_CODE = TH1.THEME_CODE")
+            sql.AppendLine($"AND ST1.STYLE_CODE = '{STYLE_CODE}'")
+            sql.AppendLine("GROUP BY TH1.THEME_DESC")
+            sql.AppendLine("ORDER BY TH1.THEME_DESC DESC")
+            Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+            For Each rowICTTHEME As DataRow In tbl.Select("", "theme_desc")
+                THEME_DESC = $"{THEME_DESC} | {rowICTTHEME.Item("THEME_DESC").ToString & String.Empty}"
+            Next
+            If THEME_DESC.Length > 3 Then
+                THEME_DESC = THEME_DESC.Substring(3, THEME_DESC.Length - 3)
+            End If
+            rowWBTPAGED.Item("THEME_DESC") = THEME_DESC
         Next
         grdWBTPAGED.UpdateData()
         grdWBTPAGED.Refresh()
@@ -571,6 +599,7 @@ Public Class WBTPAGEH
                 .Columns.Add("STYLE_DESC", GetType(System.String))
                 .Columns.Add("STYLE_STATUS", GetType(System.String))
                 .Columns.Add("CURR_ON_HAND", GetType(System.Int64))
+                .Columns.Add("THEME_DESC", GetType(System.String))
             End With
 
             'Create_TDA(.Tables.Add, "WBTSTYLD", "*", 2, True, String.Empty, 2)
@@ -765,6 +794,7 @@ Public Class WBTPAGEH
                     End If
                 End If
                 UpdateInventory()
+                UpdateTheme()
                 Me.Cursor = Cursors.Default
                 ASCMAIN1.Progress("")
                 MsgBox("Import Complete", vbOKOnly, "Done")
