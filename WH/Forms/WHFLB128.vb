@@ -1323,9 +1323,9 @@ Public Class WHFLB128
                     For Each rowSOTCART1 As UltraWinGrid.UltraGridRow In grdSOTCART1.Selected.Rows
                         Dim SHIP_BOL_NO As String = rowSOTCART1.Cells("SHIP_BOL_NO").Value.ToString
                         Dim CUST_CODE As String = rowSOTCART1.Cells("CUST_CODE").Value.ToString
-                        'If CUST_CODE = "COSTCOUS" Then
-                        SHIP_BOL_NOs.Add(SHIP_BOL_NO)
-                        'End If
+                        If CUST_CODE = "COSTCOUS" Then
+                            SHIP_BOL_NOs.Add(SHIP_BOL_NO)
+                        End If
                     Next
                     If SHIP_BOL_NOs.Count > 0 Then
                         Dim EMsg As String = String.Empty
@@ -2937,6 +2937,8 @@ Public Class WHFLB128
                 Continue For
             End If
 
+
+
             Dim ediLoadId As Object = rowSOTSHIP1("EDI_LOAD_ID")
             Dim shipRefNo As Object = rowSOTSHIP1("SHIP_REF")
             Dim PO As String = rowSOTSHIP1("ORDR_CUST_PO").ToString
@@ -2950,7 +2952,7 @@ Public Class WHFLB128
         Next
 
         For Each SHIP_BOL_NO As String In shipBolNos
-            ASCMAIN1.sql = $"SELECT COUNT(*) COUNT, MIN(SOTORDR1.ORDR_CUST_PO) ORDR_CUST_PO from SOTPICK1, SOTCART1, SOTORDR1 WHERE SOTPICK1.SHIP_BOL_NO = '0000862979' 
+            ASCMAIN1.sql = $"SELECT COUNT(*) COUNT, MIN(SOTORDR1.ORDR_CUST_PO) ORDR_CUST_PO, min(CUST_CODE) CUST_CODE from SOTPICK1, SOTCART1, SOTORDR1 WHERE SOTPICK1.SHIP_BOL_NO = '0000862979' 
                             AND SOTCART1.PICK_NO = SOTPICK1.PICK_NO and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO AND (NVL(PKG_L,0) * NVL(PKG_W,0) <> 1920 
                             OR NVL(PKG_L,0) * NVL(PKG_W,0) * NVL(PKG_H,0) / 1728 < 15)"
             Dim ROW As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
