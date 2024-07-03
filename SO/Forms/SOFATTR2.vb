@@ -584,6 +584,9 @@ Public Class SOFATTR2
         Dim SORT_ORDER As String = ""
         For Each SRT_COL As UltraWinGrid.UltraGridColumn In grdICTSTYL1.DisplayLayout.Bands(0).SortedColumns
             SORT_ORDER = SORT_ORDER & "," & SRT_COL.Key
+            If SRT_COL.SortIndicator = UltraWinGrid.SortIndicator.Descending Then
+                SORT_ORDER = SORT_ORDER & " DESC"
+            End If
         Next
         If SORT_ORDER.StartsWith(",") Then
             SORT_ORDER = SORT_ORDER.Substring(1, SORT_ORDER.Length - 1)
@@ -601,6 +604,8 @@ Public Class SOFATTR2
         oSheet.Cells(0, 1).EntireColumn.ColumnWidth = 25
         Dim STYLE_COL As Int64 = 0
         Dim COLOR_COL As Int64 = 0
+        Dim DISC_COL As Int64 = 0
+        Dim LIST_COL As Int64 = 0
         For col As Int64 = 0 To dbCols + 2
             If oSheet.Cells(0, col).Interior.Color = SpreadsheetGear.Colors.Transparent Then
                 oSheet.Cells(0, col).Interior.Color = SpreadsheetGear.Colors.LightBlue
@@ -611,6 +616,15 @@ Public Class SOFATTR2
             If oSheet.Cells(0, col).Text.Trim.ToUpper = "COLOR" Then
                 COLOR_COL = col
             End If
+            If oSheet.Cells(0, col).Text.Trim.ToUpper = "PURCH NOTES" Then
+                DISC_COL = col + 1
+                oSheet.Cells(0, DISC_COL).Value = "Price"
+            End If
+            If oSheet.Cells(0, col).Text.Trim.ToUpper = "LIST PRICE" Then
+                If chkDiscSheets.Checked And numDiscSheets.Value > 0 Then
+                    LIST_COL = col
+                End If
+            End If
         Next
         For rw As Int64 = 1 To dbRows
             oSheet.Cells(rw, 1).RowHeight = 100
@@ -619,6 +633,11 @@ Public Class SOFATTR2
                 Dim COLOR_CODE As String = oSheet.Cells(rw, COLOR_COL).Text
                 RowStyleColors.Add(rw, {STYLE_CODE, COLOR_CODE})
                 oSheet.Cells(rw, 1).Value = $"{STYLE_CODE}-{COLOR_CODE}"
+                If DISC_COL > 0 And LIST_COL > 0 Then
+                    Dim LIST_PRICE As Decimal = Val(oSheet.Cells(rw, LIST_COL).Value)
+                    oSheet.Cells(rw, DISC_COL).Value = LIST_PRICE * (1 - (numDiscSheets.Value / 100))
+                    oSheet.Cells(rw, DISC_COL).NumberFormat = "###,###,###.00"
+                End If
             End If
         Next
         oSheet.Range(0, 0).Select()

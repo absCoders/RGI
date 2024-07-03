@@ -589,7 +589,7 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpInclude)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 82)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 50)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 375)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -896,7 +896,7 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 501)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 469)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 75)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
