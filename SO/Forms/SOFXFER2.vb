@@ -2295,6 +2295,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Web Images to Optionaly Use Only Active/Disc > 0.")
 
+        VersionNo = "24.06.27.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change To Search By Attribute For Sorting And Discount Pricing When Printing.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class
