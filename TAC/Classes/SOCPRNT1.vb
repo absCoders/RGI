@@ -1047,6 +1047,12 @@ Public Class CartonLabel
                 Row("BILL_OF_LADING_NO") = TmpRow("BILL_OF_LADING_NO")
                 Row("SHIP_REF") = TmpRow("SHIP_REF")
                 Row("SHIP_VIA_DESC") = TmpRow("SHIP_VIA_DESC")
+                If CUST_CODE = "COSTCOUS" Then
+                    Dim CASE_CUBE As Integer = 0
+                    'get cubic inches transform to cubic feet / 1728
+                    CASE_CUBE = Val(Row.Item("PKG_W") + 0) * Val(Row.Item("PKG_L") + 0) * Val(Row.Item("PKG_H") + 0) / 1728
+                    Row.Item("CASE_CUBE") = CASE_CUBE
+                End If
 
                 If Row.Item("CUST_STORE_NO").ToString.Length > 4 Then
                     Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(Row.Item("CUST_STORE_NO").ToString.Length - 4, 4)
@@ -1335,6 +1341,11 @@ Public Class TestLabel
         Dim labelTemplate = GetLabelTemplate()
         Dim labeltoPrint As String = FillLabelTemplateWithData(labelTemplate, labelData)
         ShippingLabel.SendToLabelPrinter(labeltoPrint, PrinterNAme)
+
+    End Sub
+    Public Sub PrintRawZPL(PrinterNAme As String, labelRawData As String)
+
+        ShippingLabel.SendToLabelPrinter(labelRawData, PrinterNAme)
 
     End Sub
     Protected Overrides Function GetLabelData() As Dictionary(Of String, DataRow)
