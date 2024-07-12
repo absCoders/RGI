@@ -1422,6 +1422,9 @@ Public Class SOFCSTY1
             If Absx1.txtFor("CUST_CODE").Text & "" = "MACYS" Or Absx1.txtFor("CUST_CODE").Text & "" = "MACYSCOM" Then
                 r = 7
             End If
+            If Absx1.txtFor("CUST_CODE").Text & "" = "MEIJER" Then
+                r = 0
+            End If
 
             Do While oSheet.Cells(r, 0).Value & "" <> "END"
                 Try
@@ -1447,20 +1450,24 @@ Public Class SOFCSTY1
                         CUST_CODE = Absx1.txtFor("CUST_CODE").Text & ""
                         CUST_STYLE_CODE = Trim(oSheet.Cells(r, 0).Value & "")
                         STYLE_CODE = Trim(oSheet.Cells(r, 2).Value & "")
-                        COLOR_CODE = Trim(oSheet.Cells(r, 3).Value & "")
+                        COLOR_CODE = Trim(oSheet.Cells(r, 3).Text & "")
                         COLOR_DESC = Trim(oSheet.Cells(r, 5).Value & "")
                         SIZE_DESC = Trim(oSheet.Cells(r, 1).Value & "")
                         VENDOR_STOCK_NO = Trim(oSheet.Cells(r, 6).Value & "")
                         CUST_PRICE = Trim(oSheet.Cells(r, 4).Value & "")
                         CUST_UPC = Trim(oSheet.Cells(r, 0).Value & "")
                         CARTON_ID_EXISTS = False
+                        'If Len(COLOR_CODE) < 3 And COLOR_CODE <> "" And Val(COLOR_CODE) <> 0 Then
+                        '    COLOR_CODE = Format(Val(COLOR_CODE), "000")
+                        'End If
+
 
                     ElseIf Absx1.txtFor("CUST_CODE").Text & "" = "MACYS" Or Absx1.txtFor("CUST_CODE").Text & "" = "MACYSCOM" Then
                         INV_NUM = ""
                         CUST_CODE = Absx1.txtFor("CUST_CODE").Text & ""
                         CUST_STYLE_CODE = Trim(oSheet.Cells(r, 2).Value & "")
                         STYLE_CODE = Trim(oSheet.Cells(r, 0).Value & "")
-                        COLOR_CODE = Trim(oSheet.Cells(r, 1).Value & "")
+                        COLOR_CODE = Trim(oSheet.Cells(r, 1).Text & "")
                         COLOR_DESC = ""
                         SIZE_DESC = ""
                         VENDOR_STOCK_NO = ""
