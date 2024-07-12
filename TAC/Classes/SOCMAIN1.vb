@@ -1179,6 +1179,7 @@
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSUPP1 & " Modify WHSE_CODE NOT NULL")
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSUPP1 & " Modify STYLE_CODE NOT NULL")
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSUPP1 & " Modify COLOR_CODE NOT NULL")
+            ASCDATA1.ExecuteSQL("Alter Table " & SOTSUPP1 & " Modify PO_SHIP_VESSEL VARCHAR2(30)")
 
             ASCMAIN1.sql = "Select * from " & SOTSUPP1
             frmASFBASE0.Create_TDA(frmASFBASE0.dst.Tables.Add, "SOTSUPP1", "**", , False, , 4)
