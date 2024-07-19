@@ -172,7 +172,7 @@ Public Class WHFAREC1
                     gcol.CellActivation = Activation.AllowEdit
                 Else
                     gcol.CellActivation = Activation.NoEdit
-                    gcol.CellAppearance.BackColor = Drawing.Color.WhiteSmoke
+                    'gcol.CellAppearance.BackColor = Drawing.Color.WhiteSmoke
                 End If
                 If New String() {"WHSE_QTY_ON_HAND", "WHSE_QTY_OPEN", "WHSE_QTY_PICK"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
@@ -359,7 +359,7 @@ Public Class WHFAREC1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
-        Load_Popup_Menu(grdPOTSHIP2, "SB", "Show Filter", "PO Shipment Inquiry")
+        Load_Popup_Menu(grdPOTSHIP2, "SBB", "Show Filter", "PO Shipment Inquiry", "Whse Carrier")
         Load_Popup_Menu(grdPOTSHIP3, "SBB", "Show Filter", "Style Status Inquiry", "PO Inquiry")
     End Sub
 
@@ -442,12 +442,38 @@ Public Class WHFAREC1
             Case "Sales Order Inquiry"
                 Dim ORDR_NO As String = ""
                 Dim ORDR_GROUP_NO As String = ""
- 
-                    ORDR_GROUP_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value & ""
-                    ASCMAIN1.sql = "Select Min (ORDR_NO) from SOTORDR1 where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'"
-                    ORDR_NO = ASCDATA1.GetDataValue
+
+                ORDR_GROUP_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value & ""
+                ASCMAIN1.sql = "Select Min (ORDR_NO) from SOTORDR1 where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'"
+                ORDR_NO = ASCDATA1.GetDataValue
 
                 Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
+
+            Case "Whse Carrier"
+                Dim PO_SHIPMENT_NO As String = grd.ActiveRow.Cells("PO_SHIPMENT_NO").Text
+                Dim PO_SHIPMENT_LNO As String = grd.ActiveRow.Cells("PO_SHIPMENT_LNO").Text
+                Dim WH_CARRIER As String = ""
+
+                For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and PO_SHIPMENT_LNO = '" & PO_SHIPMENT_LNO & "'", "")
+                    WH_CARRIER = rowPOTSHIP2.Item("WH_CARRIER") & ""
+                Next
+
+                Dim frmASFMSGBF As New ASFMSGBF
+                Dim label As New System.Text.StringBuilder With {.Length = 0}
+                label.AppendLine("Enter Carrier Id (10 chars max) ")
+                Dim Caption As String = "Warehouse Carrier Id"
+                WH_CARRIER = frmASFMSGBF.Get_txtblock_from_User(label.ToString, Caption, WH_CARRIER, False, 10)
+
+                ASCMAIN1.sql = $"Update POTSHIP2 set WH_CARRIER = '{WH_CARRIER}'
+                                    Where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'
+                                    and   PO_SHIPMENT_LNO = '{PO_SHIPMENT_LNO}'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+                For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and PO_SHIPMENT_LNO = '" & PO_SHIPMENT_LNO & "'", "")
+                    rowPOTSHIP2.Item("WH_CARRIER") = WH_CARRIER
+                Next
+                grdPOTSHIP2.ActiveRow.Refresh(UltraWinGrid.RefreshRow.FireInitializeRow)
+
 
         End Select
     End Sub
@@ -596,5 +622,17 @@ Public Class WHFAREC1
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
+    End Sub
+
+    Private Sub grdPOTSHIP2_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdPOTSHIP2.InitializeRow
+        If e.Row.Cells("WH_CARRIER").Value & "" <> "" Then
+            e.Row.Appearance.BackColor = Drawing.Color.LightBlue
+            'e.Row.Cells("ORDR_GROUP_NO").ToolTipText = "Some or All Orders are In Pick"
+            e.Row.ToolTipText = "Carrier: " & e.Row.Cells("WH_CARRIER").Value
+        Else
+            e.Row.Appearance.BackColor = Nothing
+            e.Row.ResetToolTipText()
+        End If
+
     End Sub
 End Class

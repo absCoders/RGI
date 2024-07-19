@@ -93,6 +93,7 @@ Partial Class WHFAREC1
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_QTY_OPEN")
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_QTY_PICK")
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_QTY_ON_HAND")
+        Dim UltraGridColumn46 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WH_CARRIER")
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -271,6 +272,7 @@ Partial Class WHFAREC1
         Me.grdSOTORDRX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.cmdPrint = New Infragistics.Win.Misc.UltraButton()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
@@ -279,7 +281,6 @@ Partial Class WHFAREC1
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.cmdPrint = New Infragistics.Win.Misc.UltraButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -556,7 +557,7 @@ Partial Class WHFAREC1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(775, 509)
         '
@@ -584,7 +585,7 @@ Partial Class WHFAREC1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.splShipments)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(775, 509)
         '
@@ -608,6 +609,7 @@ Partial Class WHFAREC1
         '
         'grdPOTSHIP2
         '
+        Me.grdPOTSHIP2.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdPOTSHIP2.DisplayLayout.Appearance = Appearance13
@@ -729,7 +731,9 @@ Partial Class WHFAREC1
         UltraGridColumn12.Header.Caption = "On Hand"
         UltraGridColumn12.Header.VisiblePosition = 24
         UltraGridColumn12.Width = 82
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn124, UltraGridColumn125, UltraGridColumn126, UltraGridColumn127, UltraGridColumn128, UltraGridColumn129, UltraGridColumn130, UltraGridColumn131, UltraGridColumn132, UltraGridColumn133, UltraGridColumn134, UltraGridColumn135, UltraGridColumn136, UltraGridColumn137, UltraGridColumn138, UltraGridColumn139, UltraGridColumn140, UltraGridColumn141, UltraGridColumn142, UltraGridColumn386, UltraGridColumn76, UltraGridColumn241, UltraGridColumn413, UltraGridColumn414, UltraGridColumn415, UltraGridColumn2, UltraGridColumn3, UltraGridColumn5, UltraGridColumn8, UltraGridColumn9, UltraGridColumn54, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12})
+        UltraGridColumn46.Header.VisiblePosition = 34
+        UltraGridColumn46.Hidden = True
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn124, UltraGridColumn125, UltraGridColumn126, UltraGridColumn127, UltraGridColumn128, UltraGridColumn129, UltraGridColumn130, UltraGridColumn131, UltraGridColumn132, UltraGridColumn133, UltraGridColumn134, UltraGridColumn135, UltraGridColumn136, UltraGridColumn137, UltraGridColumn138, UltraGridColumn139, UltraGridColumn140, UltraGridColumn141, UltraGridColumn142, UltraGridColumn386, UltraGridColumn76, UltraGridColumn241, UltraGridColumn413, UltraGridColumn414, UltraGridColumn415, UltraGridColumn2, UltraGridColumn3, UltraGridColumn5, UltraGridColumn8, UltraGridColumn9, UltraGridColumn54, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn46})
         Me.grdPOTSHIP2.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdPOTSHIP2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance16.TextHAlignAsString = "Left"
@@ -1352,6 +1356,14 @@ Partial Class WHFAREC1
         Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 75)
         Me.UltraGroupBox1.TabIndex = 2
         '
+        'cmdPrint
+        '
+        Me.cmdPrint.Location = New System.Drawing.Point(403, 36)
+        Me.cmdPrint.Name = "cmdPrint"
+        Me.cmdPrint.Size = New System.Drawing.Size(127, 28)
+        Me.cmdPrint.TabIndex = 12
+        Me.cmdPrint.Text = "Print"
+        '
         'UltraTextEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "WHSE_DESC")
@@ -1489,14 +1501,6 @@ Partial Class WHFAREC1
         'Timer1
         '
         Me.Timer1.Interval = 5000
-        '
-        'cmdPrint
-        '
-        Me.cmdPrint.Location = New System.Drawing.Point(403, 36)
-        Me.cmdPrint.Name = "cmdPrint"
-        Me.cmdPrint.Size = New System.Drawing.Size(127, 28)
-        Me.cmdPrint.TabIndex = 12
-        Me.cmdPrint.Text = "Print"
         '
         'WHFAREC1
         '
