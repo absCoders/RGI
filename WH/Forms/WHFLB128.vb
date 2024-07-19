@@ -721,6 +721,8 @@ Public Class WHFLB128
             Case "LPN Print"
                 Print_LPN_Labels()
 
+            Case "ABS Test Label"
+                Print_Test_Labels()
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -2810,6 +2812,28 @@ Public Class WHFLB128
             ASCMAIN1.Progress("-", i & " of " & LblQty)
             cartonLabel.PrintTestLabel(PrinterName, labelData)
         Next
+
+    End Sub
+    Sub Print_Test_Labels()
+        ASCMAIN1.Progress("Print Test Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+        'PrinterName = "Zebra-Capture"
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Paste Text From ABS to Print Label")
+        Dim Caption As String = "ABS Test Label Print"
+        Dim labelData As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "", False, 0)
+
+        Dim cartonLabel As New TestLabel("TEST", "")
+        cartonLabel.PrintRawZPL(PrinterName, labelData)
 
     End Sub
     Sub Print_Manual_Labels(CART_NO As String)
