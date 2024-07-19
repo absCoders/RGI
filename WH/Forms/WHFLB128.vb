@@ -2052,6 +2052,9 @@ Public Class WHFLB128
                     cartonLabel.PrintLabel()
                 End If
             Next
+        Catch ex As NotImplementedException
+            'send email
+            GtinErrorEmail()
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
@@ -2280,6 +2283,9 @@ Public Class WHFLB128
                     Next
                 Next
             End If
+        Catch ex As NotImplementedException
+            'send email
+            GtinErrorEmail()
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
@@ -2977,6 +2983,18 @@ Public Class WHFLB128
         If grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value <> "SAMSCLUB" Or grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value <> "SAMSCLUBCOM" Then
             e.Cancel = True
         End If
+    End Sub
+    Private Sub GtinErrorEmail()
+        Try
+            Dim PO_NUMBER As String = grdSOTPICKX.ActiveRow.Cells("ORDR_CUST_PO").Value & ""
+            Dim clsASCNOTE1 As New TAC.ASCNOTE1("GTINERROR", dst)
+            clsASCNOTE1.Note = "WALMART.COM GTIN Error was found in shipment labels for PO " & PO_NUMBER  ' see what is available to identify PO
+            clsASCNOTE1.CreateComponents()
+            clsASCNOTE1.EmailDocument()
+
+        Catch ex As Exception
+            MessageBox.Show("Error sending Call Tag email: " & ex.Message, "Call Tag Email", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 End Class
 

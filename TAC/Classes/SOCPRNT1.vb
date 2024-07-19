@@ -8,6 +8,9 @@ Public MustInherit Class ShippingLabel
     Public Sub PrintLabel(Optional ByVal printQty As Integer = 1, Optional ByVal PrinterName As String = "", Optional ByVal labelTemplateOverride As String = "")
         Dim labelData As Dictionary(Of String, DataRow) = GetLabelData()
         Dim labelTemplate As String = ""
+        If IsNothing(labelData) Then
+            Exit Sub
+        End If
         If labelTemplateOverride <> "" Then
             labelTemplate = labelTemplateOverride
             If ASCMAIN1.CLIENT = "VAN" Then
@@ -487,7 +490,7 @@ Public Class CartonLabel
         Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
         Dim GTIN_CODE As String = ""
 
-        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" Then
+        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" And CUST_CODE = "WALMARTCOM" Then
             Select Case Val(rowSOTCART1("CART_TOTAL_UNITS") + 0)
                 Case 2
                     GTIN_CODE = "10"
@@ -497,7 +500,7 @@ Public Class CartonLabel
                     GTIN_CODE = "30"
                 Case 8
                     GTIN_CODE = "40"
-                Case 12
+                Case 12, 18
                     GTIN_CODE = "50"
                 Case 24
                     GTIN_CODE = "60"
@@ -506,7 +509,8 @@ Public Class CartonLabel
                 Case 48
                     GTIN_CODE = "80"
                 Case Else
-                    GTIN_CODE = "90"
+                    MsgBox("Walmartcom GTIN Error in label, label not printed!", MsgBoxStyle.Critical, "Label Error")
+                    Throw New NotImplementedException("GTIN Error")
             End Select
             GTIN_CODE &= rowSOTCART1("UPC_CODE_ONLY") & ""
             If GTIN_CODE.Length = 14 Then
