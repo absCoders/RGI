@@ -26,10 +26,13 @@ Partial Class ECFPRC01
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -88,6 +91,7 @@ Partial Class ECFPRC01
         Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STANDARD_PARTNER_PRICE")
         Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FINAL_PARTNER_PRICE")
         Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MANUAL_PARTNER_PRICE")
+        Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FINAL_PARTNER_SET_PRICE")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -110,6 +114,10 @@ Partial Class ECFPRC01
         Me.txtECOM_PRICE_MARKUP_NON_PVC = New System.Windows.Forms.MaskedTextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtECOM_PRICE_MARKUP_PVC = New System.Windows.Forms.MaskedTextBox()
+        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.chkActiveOnly = New System.Windows.Forms.CheckBox()
+        Me.chkShowCalcs = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
@@ -141,6 +149,8 @@ Partial Class ECFPRC01
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel4.SuspendLayout()
+        Me.UltraExplorerBarContainerControl1.SuspendLayout()
+        Me.Panel5.SuspendLayout()
         Me.UltraTabPageControl12.SuspendLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer2.Panel1.SuspendLayout()
@@ -173,27 +183,33 @@ Partial Class ECFPRC01
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem1.Key = "New"
         UltraExplorerBarItem1.Text = "New"
         UltraExplorerBarItem2.Key = "Load"
         UltraExplorerBarItem2.Text = "Load"
         UltraExplorerBarItem3.Key = "Save"
         UltraExplorerBarItem3.Text = "Save"
+        UltraExplorerBarItem7.Text = "Add Partner"
         UltraExplorerBarItem5.Key = "Refresh"
         UltraExplorerBarItem5.Text = "Refresh"
         UltraExplorerBarItem6.Key = "Limit Excel"
         UltraExplorerBarItem6.Text = "Limit Excel"
+        UltraExplorerBarItem8.Text = "Cancel"
         UltraExplorerBarItem4.Key = "Exit"
         UltraExplorerBarItem4.Text = "Exit"
         UltraExplorerBarItem4.Visible = False
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem4})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem7, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem8, UltraExplorerBarItem4})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Key = "Parameters"
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Parameters"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3})
+        UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
+        UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup2.Text = "Options"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -202,6 +218,7 @@ Partial Class ECFPRC01
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
         Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 700)
+        Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
@@ -281,7 +298,7 @@ Partial Class ECFPRC01
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 238)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 292)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -366,6 +383,46 @@ Partial Class ECFPRC01
         Me.txtECOM_PRICE_MARKUP_PVC.TabIndex = 2
         Me.txtECOM_PRICE_MARKUP_PVC.Text = "0"
         Me.txtECOM_PRICE_MARKUP_PVC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        '
+        'UltraExplorerBarContainerControl1
+        '
+        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel5)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 486)
+        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl1.TabIndex = 2
+        '
+        'Panel5
+        '
+        Me.Panel5.Controls.Add(Me.chkActiveOnly)
+        Me.Panel5.Controls.Add(Me.chkShowCalcs)
+        Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel5.Location = New System.Drawing.Point(0, 0)
+        Me.Panel5.Name = "Panel5"
+        Me.Panel5.Size = New System.Drawing.Size(189, 150)
+        Me.Panel5.TabIndex = 0
+        '
+        'chkActiveOnly
+        '
+        Me.chkActiveOnly.AutoSize = True
+        Me.chkActiveOnly.Checked = True
+        Me.chkActiveOnly.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkActiveOnly.Location = New System.Drawing.Point(14, 33)
+        Me.chkActiveOnly.Name = "chkActiveOnly"
+        Me.chkActiveOnly.Size = New System.Drawing.Size(139, 20)
+        Me.chkActiveOnly.TabIndex = 1
+        Me.chkActiveOnly.Text = "Load Active Only"
+        Me.chkActiveOnly.UseVisualStyleBackColor = True
+        '
+        'chkShowCalcs
+        '
+        Me.chkShowCalcs.AutoSize = True
+        Me.chkShowCalcs.Location = New System.Drawing.Point(14, 14)
+        Me.chkShowCalcs.Name = "chkShowCalcs"
+        Me.chkShowCalcs.Size = New System.Drawing.Size(147, 20)
+        Me.chkShowCalcs.TabIndex = 0
+        Me.chkShowCalcs.Text = "Show Calculations"
+        Me.chkShowCalcs.UseVisualStyleBackColor = True
         '
         'UltraTabPageControl12
         '
@@ -609,7 +666,10 @@ Partial Class ECFPRC01
         UltraGridColumn26.Header.Caption = "Manual Adj"
         UltraGridColumn26.Header.VisiblePosition = 23
         UltraGridColumn26.Width = 113
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn27, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn26})
+        UltraGridColumn28.Header.Caption = "Final Cost / Set"
+        UltraGridColumn28.Header.VisiblePosition = 25
+        UltraGridColumn28.Width = 124
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn27, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn26, UltraGridColumn28})
         Me.grdECTPRCG3.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdECTPRCG3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
@@ -822,6 +882,9 @@ Partial Class ECFPRC01
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
+        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
+        Me.Panel5.ResumeLayout(False)
+        Me.Panel5.PerformLayout()
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
@@ -883,4 +946,8 @@ Partial Class ECFPRC01
     Friend WithEvents Label2 As Label
     Friend WithEvents txtPRCG_DESC As TextBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents UltraExplorerBarContainerControl1 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents Panel5 As Panel
+    Friend WithEvents chkShowCalcs As CheckBox
+    Friend WithEvents chkActiveOnly As CheckBox
 End Class
