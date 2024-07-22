@@ -721,6 +721,8 @@ Public Class WHFLB128
             Case "LPN Print"
                 Print_LPN_Labels()
 
+            Case "ABS Test Label"
+                Print_Test_Labels()
 
             Case "Cancel", "Done"
                 Mode_Settings(False)
@@ -2052,6 +2054,9 @@ Public Class WHFLB128
                     cartonLabel.PrintLabel()
                 End If
             Next
+        Catch ex As NotImplementedException
+            'send email
+            GtinErrorEmail()
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
@@ -2280,6 +2285,9 @@ Public Class WHFLB128
                     Next
                 Next
             End If
+        Catch ex As NotImplementedException
+            'send email
+            GtinErrorEmail()
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
@@ -2806,6 +2814,28 @@ Public Class WHFLB128
         Next
 
     End Sub
+    Sub Print_Test_Labels()
+        ASCMAIN1.Progress("Print Test Labels", "Carton Serialization")
+        Dim PrinterName As String
+        If ASCMAIN1.CLIENT = "VAN" And ASCMAIN1.Running_in_VS Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = PRINTER_PORT
+        Else
+            PrinterName = cboZebraPrinter.Text
+        End If
+        'PrinterName = "Zebra-Capture"
+
+        Dim frmASFMSGBF As New ASFMSGBF
+        Dim Label As New System.Text.StringBuilder With {.Length = 0}
+        Label.AppendLine("Paste Text From ABS to Print Label")
+        Dim Caption As String = "ABS Test Label Print"
+        Dim labelData As String = frmASFMSGBF.Get_txtblock_from_User(Label.ToString, Caption, "", False, 0)
+
+        Dim cartonLabel As New TestLabel("TEST", "")
+        cartonLabel.PrintRawZPL(PrinterName, labelData)
+
+    End Sub
     Sub Print_Manual_Labels(CART_NO As String)
 
         ASCMAIN1.Progress("Print Manual Labels", "Carton Serialization")
@@ -2977,6 +3007,18 @@ Public Class WHFLB128
         If grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value <> "SAMSCLUB" Or grdSOTPICKX.ActiveRow.Cells("CUST_CODE").Value <> "SAMSCLUBCOM" Then
             e.Cancel = True
         End If
+    End Sub
+    Private Sub GtinErrorEmail()
+        Try
+            Dim PO_NUMBER As String = grdSOTPICKX.ActiveRow.Cells("ORDR_CUST_PO").Value & ""
+            Dim clsASCNOTE1 As New TAC.ASCNOTE1("GTINERROR", dst)
+            clsASCNOTE1.Note = "WALMART.COM GTIN Error was found in shipment labels for PO " & PO_NUMBER  ' see what is available to identify PO
+            clsASCNOTE1.CreateComponents()
+            clsASCNOTE1.EmailDocument()
+
+        Catch ex As Exception
+            MessageBox.Show("Error sending Call Tag email: " & ex.Message, "Call Tag Email", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 End Class
 
