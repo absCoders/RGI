@@ -995,6 +995,7 @@ Public Class ECFSTYL1
                 .Add("WHSE_QTY_OPEN", GetType(System.Int64))
                 .Add("FUT_AVAIL", GetType(System.Int64))
                 .Add("ECOM_SKU", GetType(System.String), "STYLE_CODE + '-' + COLOR_CODE")
+                .Add("ECOM_SET_PRICE", GetType(System.Double), "ISNULL(ECOM_UNIT_PRICE,0) * ISNULL(SET_QTY,0)")
             End With
 
             SQL.Length = 0
@@ -2090,6 +2091,8 @@ Public Class ECFSTYL1
             .Columns("SET_QTY").Format = "###,##0"
             .Columns("EDI_REPORT_DATE").Format = "MM/dd/yy hh:mm"
             .Columns("EDI_AVAIL_QTY").Format = "###,##0"
+            .Columns("ECOM_SET_PRICE").Format = "###,##0.00"
+            .Columns("ECOM_SET_PRICE").CellActivation = UltraWinGrid.Activation.NoEdit
             For Each COLUMN_NAME As String In New String() {"WHSE_QTY_ON_HAND", "WHSE_QTY_PICK", "OPEN_TO_SELL", "WHSE_QTY_TRAN", "WHSE_QTY_ON_ORDER", "WHSE_QTY_OPEN", "FUT_AVAIL"}
                 .Columns(COLUMN_NAME).Format = "###,##0"
                 .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
@@ -2205,6 +2208,7 @@ Public Class ECFSTYL1
         Create_Summary(grdECTSALS1, "SHIP_TOTAL")
         Create_Summary(grdECTSALSX, "ORDR_QTY_SHIP")
         Create_Summary(grdECTSALSX, "SHIP_TOTAL")
+        Create_Summary(grdECUPSERT, "STYLE_CODE", "Count")
     End Sub
 
     Private Sub setGridValueLists()
@@ -2230,7 +2234,7 @@ Public Class ECFSTYL1
     End Sub
 
     Private Sub showPartnerCols(ByVal showCols As Boolean)
-        Dim partnerCols As String() = {"SET_QTY", "ECOM_CODE", "ECOM_STYLE_STATUS", "ECOM_UNIT_PRICE", "SHIP_ECOM", "SHIP_DROP", "SHORT_DESC",
+        Dim partnerCols As String() = {"SET_QTY", "ECOM_CODE", "ECOM_STYLE_STATUS", "ECOM_SET_PRICE", "ECOM_UNIT_PRICE", "SHIP_ECOM", "SHIP_DROP", "SHORT_DESC",
             "LONG_DESC", "EDI_REPORT_DATE", "EDI_AVAIL_QTY", "EDI_STATUS", "ECOM_PARTNER_SKU"}
         For Each grdCol As UltraGridColumn In grdECTSTYLX.DisplayLayout.Bands(0).Columns
             If partnerCols.Contains(grdCol.Key) Then

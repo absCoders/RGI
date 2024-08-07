@@ -35,6 +35,7 @@ Partial Class ECTECOM1
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ECTECOMC", -1)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ECOM_CODE")
@@ -73,7 +74,6 @@ Partial Class ECTECOM1
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.Label6 = New System.Windows.Forms.Label()
@@ -106,6 +106,12 @@ Partial Class ECTECOM1
         Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.UltraLabel16 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraNumericEditor7 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel15 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor6 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel14 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraNumericEditor4 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -128,12 +134,6 @@ Partial Class ECTECOM1
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.UltraNumericEditor6 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel14 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor7 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel15 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel16 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -162,6 +162,9 @@ Partial Class ECTECOM1
         CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
         Me.Panel4.SuspendLayout()
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl4.SuspendLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -179,9 +182,6 @@ Partial Class ECTECOM1
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
-        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -617,6 +617,74 @@ Partial Class ECTECOM1
         Me.Panel4.Size = New System.Drawing.Size(768, 422)
         Me.Panel4.TabIndex = 0
         '
+        'UltraLabel16
+        '
+        Appearance7.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel16.Appearance = Appearance7
+        Me.UltraLabel16.AutoSize = True
+        Me.UltraLabel16.Location = New System.Drawing.Point(13, 113)
+        Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel16.Name = "UltraLabel16"
+        Me.UltraLabel16.Size = New System.Drawing.Size(166, 18)
+        Me.UltraLabel16.TabIndex = 340
+        Me.UltraLabel16.Text = "Contract / Pricing Notes"
+        '
+        'UltraTextEditor7
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "ECOM_PRICE_NOTES")
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(13, 130)
+        Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor7.Multiline = True
+        Me.UltraTextEditor7.Name = "UltraTextEditor7"
+        Me.UltraTextEditor7.Size = New System.Drawing.Size(553, 169)
+        Me.UltraTextEditor7.TabIndex = 339
+        '
+        'UltraNumericEditor7
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor7, "ECOM_PRICE_MARKUP_PCT")
+        Me.UltraNumericEditor7.FormatString = "#,##0.00000"
+        Me.UltraNumericEditor7.Location = New System.Drawing.Point(205, 72)
+        Me.UltraNumericEditor7.MaxValue = 9999
+        Me.UltraNumericEditor7.MinValue = 0
+        Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
+        Me.UltraNumericEditor7.NullText = "0"
+        Me.UltraNumericEditor7.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Decimal]
+        Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor7.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor7.TabIndex = 328
+        '
+        'UltraLabel15
+        '
+        Me.UltraLabel15.AutoSize = True
+        Me.UltraLabel15.Location = New System.Drawing.Point(13, 77)
+        Me.UltraLabel15.Name = "UltraLabel15"
+        Me.UltraLabel15.Size = New System.Drawing.Size(123, 18)
+        Me.UltraLabel15.TabIndex = 327
+        Me.UltraLabel15.Text = "Price Mark Up Pct"
+        '
+        'UltraNumericEditor6
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor6, "ECOM_PRICE_ADD")
+        Me.UltraNumericEditor6.FormatString = "#,##0.00"
+        Me.UltraNumericEditor6.Location = New System.Drawing.Point(205, 50)
+        Me.UltraNumericEditor6.MaxValue = 9999
+        Me.UltraNumericEditor6.MinValue = 0
+        Me.UltraNumericEditor6.Name = "UltraNumericEditor6"
+        Me.UltraNumericEditor6.NullText = "0"
+        Me.UltraNumericEditor6.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.UltraNumericEditor6.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor6.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor6.TabIndex = 326
+        '
+        'UltraLabel14
+        '
+        Me.UltraLabel14.AutoSize = True
+        Me.UltraLabel14.Location = New System.Drawing.Point(13, 55)
+        Me.UltraLabel14.Name = "UltraLabel14"
+        Me.UltraLabel14.Size = New System.Drawing.Size(110, 18)
+        Me.UltraLabel14.TabIndex = 325
+        Me.UltraLabel14.Text = "Price $ Addition"
+        '
         'UltraNumericEditor4
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor4, "ECOM_PRICE_TOLERANCE_PCT")
@@ -999,74 +1067,6 @@ Partial Class ECTECOM1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(768, 422)
         '
-        'UltraNumericEditor6
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor6, "ECOM_PRICE_ADD")
-        Me.UltraNumericEditor6.FormatString = "#,##0.00"
-        Me.UltraNumericEditor6.Location = New System.Drawing.Point(205, 50)
-        Me.UltraNumericEditor6.MaxValue = 9999
-        Me.UltraNumericEditor6.MinValue = 0
-        Me.UltraNumericEditor6.Name = "UltraNumericEditor6"
-        Me.UltraNumericEditor6.NullText = "0"
-        Me.UltraNumericEditor6.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor6.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor6.Size = New System.Drawing.Size(85, 25)
-        Me.UltraNumericEditor6.TabIndex = 326
-        '
-        'UltraLabel14
-        '
-        Me.UltraLabel14.AutoSize = True
-        Me.UltraLabel14.Location = New System.Drawing.Point(13, 55)
-        Me.UltraLabel14.Name = "UltraLabel14"
-        Me.UltraLabel14.Size = New System.Drawing.Size(110, 18)
-        Me.UltraLabel14.TabIndex = 325
-        Me.UltraLabel14.Text = "Price $ Addition"
-        '
-        'UltraNumericEditor7
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor7, "ECOM_PRICE_MARKUP_PCT")
-        Me.UltraNumericEditor7.FormatString = "#,##0.00"
-        Me.UltraNumericEditor7.Location = New System.Drawing.Point(205, 72)
-        Me.UltraNumericEditor7.MaxValue = 9999
-        Me.UltraNumericEditor7.MinValue = 0
-        Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
-        Me.UltraNumericEditor7.NullText = "0"
-        Me.UltraNumericEditor7.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
-        Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor7.Size = New System.Drawing.Size(85, 25)
-        Me.UltraNumericEditor7.TabIndex = 328
-        '
-        'UltraLabel15
-        '
-        Me.UltraLabel15.AutoSize = True
-        Me.UltraLabel15.Location = New System.Drawing.Point(13, 77)
-        Me.UltraLabel15.Name = "UltraLabel15"
-        Me.UltraLabel15.Size = New System.Drawing.Size(123, 18)
-        Me.UltraLabel15.TabIndex = 327
-        Me.UltraLabel15.Text = "Price Mark Up Pct"
-        '
-        'UltraLabel16
-        '
-        Appearance7.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel16.Appearance = Appearance7
-        Me.UltraLabel16.AutoSize = True
-        Me.UltraLabel16.Location = New System.Drawing.Point(13, 113)
-        Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel16.Name = "UltraLabel16"
-        Me.UltraLabel16.Size = New System.Drawing.Size(166, 18)
-        Me.UltraLabel16.TabIndex = 340
-        Me.UltraLabel16.Text = "Contract / Pricing Notes"
-        '
-        'UltraTextEditor7
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "ECOM_PRICE_NOTES")
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(13, 130)
-        Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraTextEditor7.Multiline = True
-        Me.UltraTextEditor7.Name = "UltraTextEditor7"
-        Me.UltraTextEditor7.Size = New System.Drawing.Size(553, 169)
-        Me.UltraTextEditor7.TabIndex = 339
-        '
         'ECTECOM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1105,6 +1105,9 @@ Partial Class ECTECOM1
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
+        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl4.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
@@ -1124,9 +1127,6 @@ Partial Class ECTECOM1
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
-        CType(Me.UltraNumericEditor6, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor7, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

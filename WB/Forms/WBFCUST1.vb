@@ -374,6 +374,19 @@ Public Class WBFCUST1
                 .Columns(COL_NAME).Header.Fixed = True
             Next
         End With
+        With grdWBTCUST1.DisplayLayout.Bands(0)
+            For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
+                'GCOL.Header.Appearance.BackColor = Drawing.Color.White
+                'GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+                'GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                If New String() {"SHP_ADDR_1", "SHP_ADDR_2", "SHP_ADDR_3", "SHP_CITY", "SHP_STATE", "SHP_ZIP_CODE", "SHP_CNTRY"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+                End If
+                If New String() {"COMMENTS"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                End If
+            Next
+        End With
     End Sub
 
     Sub Clear_Record()

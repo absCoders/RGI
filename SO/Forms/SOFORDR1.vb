@@ -2852,10 +2852,13 @@ Public Class SOFORDR1
                 Mode_Settings(False)
 
             Case "Import XFR File"
-                If Absx1.txtFor("CUST_STORE_NO").Text = "COMCAM" Then
-                    Import_XFR_File_COMCAM()
-                Else
+                If Absx1.txtFor("CUST_STORE_NO").Text = "COMCAN" Then
+                    Import_XFR_File_COMCAN()
+                ElseIf Absx1.txtFor("CUST_STORE_NO").Text = "" Then
                     Import_XFR_File()
+                ElseIf Absx1.txtFor("CUST_STORE_NO").Text & "" <> "" Then
+                    MsgBox("No Auto Transfer Setup for Store " & Absx1.txtFor("CUST_STORE_NO").Text, MsgBoxStyle.OkOnly, "Invalid Store")
+
                 End If
 
 
@@ -12622,7 +12625,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
         End If
 
     End Sub
-    Sub Import_XFR_File_COMCAM()
+    Sub Import_XFR_File_COMCAN()
         Dim FILENAME As String = ""
         Using openFileDialog1 As New OpenFileDialog
             openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
@@ -14614,6 +14617,10 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
         Return RetVal
     End Function
+
+    Private Sub UltraGroupBox1_Click(sender As Object, e As EventArgs) Handles UltraGroupBox1.Click
+
+    End Sub
 
 #End Region
 End Class
