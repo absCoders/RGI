@@ -910,7 +910,7 @@ Public Class WHFPACK1
                 End If
 
                 ASCMAIN1.MultiTask_Release()
-                Setup_SOTPACKX()
+                'Setup_SOTPACKX()
 
             Case "Delete Line"
                 Dim CART_NO As String = grd.ActiveRow.Cells("CART_NO").Value
@@ -925,7 +925,7 @@ Public Class WHFPACK1
                 End If
 
                 ASCMAIN1.MultiTask_Release()
-                Setup_SOTPACKX()
+                'Setup_SOTPACKX()
 
             Case "Pick"
                 Start_App(grdSOTPICK1.ActiveRow.Cells("PICK_NO").Value)
@@ -1067,7 +1067,7 @@ Public Class WHFPACK1
             For Each row As DataRow In dst.Tables("SOTPICKX").Select("")
                 row.Item("PICKED_QTY") = dst.Tables("SOTPICK5").Compute("SUM(PICK_QTY)", "UPC_CODE = '" & row.Item("UPC_CODE") & "'")
                 row.Item("PACKED_QTY") = dst.Tables("WHTCART2").Compute("SUM(QTY_PACKED)", "STYLE_CODE = '" & row.Item("STYLE_CODE") & "' and COLOR_CODE = '" & row.Item("COLOR_CODE") & "'")
-                row.Item("LOCATION_CODE") = GetLocation(row.Item("STYLE_CODE"), row.Item("COLOR_CODE"), row.Item("PICK_QTY"))
+                row.Item("LOCATION_CODE") = dst.Tables("SOTPICK5").Compute("MAX(LOCATION_CODE)", "UPC_CODE = '" & row.Item("UPC_CODE") & "'") 'GetLocation(row.Item("STYLE_CODE"), row.Item("COLOR_CODE"), row.Item("PICK_QTY"))
             Next
 
             tabShipment.Tabs("Pick Tickets").Visible = Not (optPickFilter.Value = "P" Or optPickFilter.Value = "F")
@@ -1514,7 +1514,7 @@ Public Class WHFPACK1
         'ASCDATA1.ExecuteSQL("Update WHTCART1 Set CART_SEQ = " & grdWHTCART1.ActiveRow.Cells("CART_SEQ").Value & " where CART_NO = '" & CART_NO & "'")
         Update_Record_TDA("WHTCART1")
         'PrintCartonLabel(CART_NO)
-        Setup_SOTPACKX()
+        'Setup_SOTPACKX()
 
     End Sub
     Private Sub grdWHTCART1_AfterCellUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdWHTCART1.AfterCellUpdate
