@@ -422,7 +422,7 @@ Public Class CartonLabel
                     & " AC2.CUST_CITY CUST_STORE_CITY, AC2.CUST_STATE CUST_STORE_STATE, AC2.CUST_ZIP_CODE CUST_STORE_ZIP_CODE,AC2.CUST_ADDR_GROUP," & vbCrLf _
                     & " X.CART_SERIAL_NO || ' of ' || X.CART_SEQ_MAX CART_1_OF_9,ET1.EDI_PO_RELEASE_NO FROM" & vbCrLf _
                     & " (SELECT ROW_NUMBER() OVER (ORDER BY C1.CART_NO) CART_SERIAL_NO,C1.CART_NO,C1.PICK_NO,O1.EDI_DOC_SEQ_NO,C1.CART_TOTAL_UNITS, " & vbCrLf _
-                    & " COUNT(*) OVER () CART_SEQ_MAX,SUM(C2.QTY_PACKED) CART_QTY_PACKED, RPAD(MAX(C1.PKG_CODE),20,' ') PKG_CODE, " & vbCrLf _
+                    & " COUNT(*) OVER () CART_SEQ_MAX,SUM(C2.QTY_PACKED) CART_QTY_PACKED, RPAD(MAX(C1.PKG_CODE),35,' ') PKG_CODE, " & vbCrLf _
                     & " MAX(IS1.STYLE_CODE) STYLE_CODE," & vbCrLf _
                     & " NVL(MAX(O2.STYLE_CODE_SUB),MAX(IS1.STYLE_CODE)) STYLE_CODE_SUB," & vbCrLf _
                     & " MAX(IS1.STYLE_CODE || IC1.COLOR_CODE) STYLE_COLOR_CODE, " & vbCrLf _
@@ -1127,6 +1127,13 @@ Public Class CartonLabel
                     Dim RANGE_STYLE_CODE As String = ASCDATA1.GetDataValue & ""
                     Row.Item("STYLE_CODE") = RANGE_STYLE_CODE
                 End If
+            'Case Is = "SAMSCLUB"
+            '    Dim CART_NO As String = Row.Item("CART_NO").ToString
+            '    Dim Msg As String = FillSOTCART2(CART_NO, 8, labelData, , 25)
+            '    If Msg.Length > 0 Then
+            '        CartonError = Msg
+            '    End If
+
             Case Is = "SEARS"
                 Dim SQLS As New Text.StringBuilder With {.Length = 0}
                 SQLS.Length = 0
