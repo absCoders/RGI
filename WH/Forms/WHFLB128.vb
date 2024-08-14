@@ -646,9 +646,9 @@ Public Class WHFLB128
                         If ROW.Item("CUST_CODE").ToString = "COSTCOUS" Then
                             SHIP_BOL_NOs.Add(SHIP_BOL_NO)
                         End If
-                        If (ROW.Item("CUST_CODE").ToString = "SAMSCLUB" Or ROW.Item("CUST_CODE").ToString = "SAMSCLUBCOM") And Val(ROW.Item("PALLET_COUNT").ToString & "") = 0 Then
-                            EMsg &= "Pallet Quantity required for Customer " & ROW.Item("CUST_CODE").ToString
-                        End If
+                        'If (ROW.Item("CUST_CODE").ToString = "SAMSCLUB" Or ROW.Item("CUST_CODE").ToString = "SAMSCLUBCOM") And Val(ROW.Item("PALLET_COUNT").ToString & "") = 0 Then
+                        '    EMsg &= "Pallet Quantity required for Customer " & ROW.Item("CUST_CODE").ToString
+                        'End If
                         For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
                             Dim PICK_NO_CONS As String = rowSOTPICK1.Item("PICK_NO_CONS") & ""
                             Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
@@ -1825,7 +1825,7 @@ Public Class WHFLB128
             End If
         End If
 
-        If e.Row.Cells("CUST_CODE").Value = "SAMSCLUB" Or e.Row.Cells("CUST_CODE").Value = "SAMSCLUBCOM" Then
+        If 1 = 2 And e.Row.Cells("CUST_CODE").Value = "SAMSCLUB" Or e.Row.Cells("CUST_CODE").Value = "SAMSCLUBCOM" Then
             ' Allow editing for PALLET_COUNT
             e.Row.Cells("PALLET_COUNT").Activation = Infragistics.Win.UltraWinGrid.Activation.AllowEdit
             e.Row.Cells("PALLET_COUNT").Appearance.BackColor = Color.White  ' Optional: Change background color to indicate editability
@@ -2134,9 +2134,9 @@ Public Class WHFLB128
                     ASCMAIN1.sql = SQLS.ToString()
                     Dim CUST_CODE As String = ASCDATA1.GetDataValue
                     'HERE
-                    If CUST_CODE = "SAMSCLUB" Or CUST_CODE = "SAMSCLUBCOM" Then
-                        Continue For
-                    End If
+                    'If CUST_CODE = "SAMSCLUB" Or CUST_CODE = "SAMSCLUBCOM" Then
+                    '    Continue For
+                    'End If
                     If CUST_CODE <> CUST_CODE_LAST Then
                         CUST_CODE_LAST = CUST_CODE
                         LabelTemplateOverride = ""
@@ -2267,13 +2267,13 @@ Public Class WHFLB128
                     'Print_Report("SORCART4", "Walmart Export Carton Labels")
                 End If
                 'our code to print for samsclub
-                For Each row As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1' AND CUST_CODE IN ('SAMSCLUB', 'SAMSCLUBCOM')")
-                    Dim QTY As Integer = Val(row.Item("PALLET_COUNT"))
-                    ASCMAIN1.sql = "Select MIN(CART_NO) from SOTCART1, SOTPICK1 where SHIP_BOL_NO = '" & row.Item("SHIP_BOL_NO") & "' and  SOTPICK1.PICK_NO = SOTCART1.PICK_NO"
-                    Dim CART_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql)
-                    Dim cartonLabel As New TAC.CartonLabel(CART_NO)
-                    cartonLabel.PrintLabel(QTY, PrinterName)
-                Next
+                'For Each row As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1' AND CUST_CODE IN ('SAMSCLUB', 'SAMSCLUBCOM')")
+                '    Dim QTY As Integer = Val(row.Item("PALLET_COUNT"))
+                '    ASCMAIN1.sql = "Select MIN(CART_NO) from SOTCART1, SOTPICK1 where SHIP_BOL_NO = '" & row.Item("SHIP_BOL_NO") & "' and  SOTPICK1.PICK_NO = SOTCART1.PICK_NO"
+                '    Dim CART_NO As String = ASCDATA1.GetDataValue(ASCMAIN1.sql)
+                '    Dim cartonLabel As New TAC.CartonLabel(CART_NO)
+                '    cartonLabel.PrintLabel(QTY, PrinterName)
+                'Next
             Else
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("", "SHIP_BOL_NO,PICK_NO")
                     Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
