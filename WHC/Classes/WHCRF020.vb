@@ -512,7 +512,7 @@
             & " and COLOR_CODE = i.COLOR_CODE; " & vbCrLf _
             & " IF (SQL%ROWCOUNT = 0) THEN  " & vbCrLf _
             & "   INSERT INTO WHTLOCB0 (WHSE_CODE ,LOCATION_CODE ,BAR_CODE ,STYLE_CODE ,COLOR_CODE ,LOCATION_QTY ,INIT_DATE ,INIT_OPER ,LAST_DATE ,LAST_OPER ,LOCATION_QTY_WAVE, BOOK_INVTY_ADJ)  " & vbCrLf _
-            & "   VALUES (i.WHSE_CODE ,i.LOCATION_CODE ,i.BAR_CODE ,i.STYLE_CODE ,i.COLOR_CODE ,0 ,i.INIT_DATE ,i.INIT_OPER ,i.LAST_DATE ,i.LAST_OPER ,i.LOCATION_QTY_WAVE, i.LOCATION_QTY ); " & vbCrLf _
+            & "   VALUES (i.WHSE_CODE ,i.LOCATION_CODE ,i.BAR_CODE ,i.STYLE_CODE ,i.COLOR_CODE ,0 ,i.INIT_DATE ,i.INIT_OPER ,i.LAST_DATE ,i.LAST_OPER ,i.LOCATION_QTY_WAVE, - i.LOCATION_QTY ); " & vbCrLf _
             & " END IF; " & vbCrLf _
             & " END LOOP;" & vbCrLf _
             & "END;"

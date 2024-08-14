@@ -1127,12 +1127,29 @@ Public Class CartonLabel
                     Dim RANGE_STYLE_CODE As String = ASCDATA1.GetDataValue & ""
                     Row.Item("STYLE_CODE") = RANGE_STYLE_CODE
                 End If
-            'Case Is = "SAMSCLUB"
-            '    Dim CART_NO As String = Row.Item("CART_NO").ToString
-            '    Dim Msg As String = FillSOTCART2(CART_NO, 8, labelData, , 25)
-            '    If Msg.Length > 0 Then
-            '        CartonError = Msg
-            '    End If
+            Case Is = "SAMSCLUB"
+                Dim MaxRows = 8
+                Dim z = 0
+                Dim CART_NO As String = Row.Item("CART_NO").ToString
+                ASCMAIN1.sql = $"SELECT * FROM SOTCART1
+                                WHERE CART_NO = '{CART_NO}'"
+                Dim rowSOTCART2 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+                For i As Integer = 1 To MaxRows
+                    rowSOTCART2.Table.Columns.Add("EDI_SKU_" & Format(i, "0#"))
+                Next
+                ASCMAIN1.sql = $"SELECT SOTORDR2.* FROM SOTCART2, SOTORDR2
+                                WHERE CART_NO = '{CART_NO}'
+                                AND SOTCART2.ORDR_NO = SOTORDR2.ORDR_NO
+                                AND SOTCART2.ORDR_LNO = SOTORDR2.ORDR_LNO"
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                For Each rowSOTCARTX As DataRow In tbl.Rows
+                    z += 1
+                    If z > MaxRows Then
+                        Exit For
+                    End If
+                    rowSOTCART2.Item("EDI_SKU_" & Format(z, "0#")) = rowSOTCARTX.Item("CUST_SKU").ToString & ""
+                Next
+                labelData.Add("SOTCART2", rowSOTCART2)
 
             Case Is = "SEARS"
                 Dim SQLS As New Text.StringBuilder With {.Length = 0}
