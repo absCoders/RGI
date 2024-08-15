@@ -155,6 +155,7 @@ Public Class WHFSCSQ1
                 .Add("OLD_COLOR_CODE", GetType(System.String))
                 .Add("ERROR_MSG", GetType(System.String))
                 .Add("WHSE_CODE", GetType(System.String))
+                .Add("OLD_LOCATION_CODE", GetType(System.String))
             End With
 
 
@@ -463,6 +464,7 @@ Public Class WHFSCSQ1
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdWHTSCSEQ, "SS", "Show Filter", "Show GroupBox")
         Call Load_Popup_Menu(grdWHTSCLAB, "SBBB", "Show Filter", "De-Select All", "De-Select Empty", "Select Selected", "Select All")
+        Call Load_Popup_Menu(grdWHTSCTMP, "B", "Allow Move")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -480,7 +482,7 @@ Public Class WHFSCSQ1
 
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool
-        'Dim tlb_btn As UltraWinToolbars.ButtonTool
+        Dim tlb_btn As UltraWinToolbars.ButtonTool
 
         If tlb_pop.Tools.Exists("Show Filter") Then
             tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
@@ -497,6 +499,9 @@ Public Class WHFSCSQ1
             'If grd.Selected.Rows.Count = 0 Then
             '    e.Cancel = True
             'End If
+
+            tlb_btn = DirectCast(tlb_pop.Tools("Allow Move"), UltraWinToolbars.ButtonTool)
+            tlb_btn.SharedProps.Visible = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value.ToString & "" <> ""
 
             Select Case e.SourceControl.Name
 
@@ -551,6 +556,15 @@ Public Class WHFSCSQ1
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             Exit Sub
         End If
+
+        Select Case e.Tool.Key
+            Case "Allow Move"
+                Dim WHSE_CODE As String = grd.ActiveRow.Cells("WHSE_CODE").Value & ""
+                Dim LocP2L As String = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value & ""
+                ASCMAIN1.sql = $"update WHTLOCM1 set LOCATION_ROUTE_SEQ = '' where WHSE_CODE ='{WHSE_CODE}' and location_code = '{LocP2L}'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        End Select
+
     End Sub
 
 #End Region
@@ -694,6 +708,7 @@ Public Class WHFSCSQ1
                             ERROR_MSG = "Match# Not found in P2L Location"
                         ElseIf LocP2L <> LOCATION_CODE And LocP2L <> "" Then
                             ERROR_MSG = $"Match# found in {LocP2L} P2L Location"
+                            row.Item("OLD_LOCATION_CODE") = LocP2L
                             If ASCMAIN1.Running_in_VS Then
                                 Stop
                                 ASCMAIN1.sql = $"update WHTLOCM1 set LOCATION_ROUTE_SEQ = '' where WHSE_CODE ='{WHSE_CODE}' and location_code = '{LocP2L}'"
