@@ -127,6 +127,7 @@ Public Class SOFRTRN1
             .Tables("SOTRTRN2").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE_CURR,0)")
             .Tables("SOTRTRN2").Columns.Add("LINE_COSTS", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(STYLE_COST,0)")
             .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0)")
+            .Tables("SOTRTRN2").Columns.Add("IMPORTED", GetType(System.String))
 
             Create_TDA(.Tables.Add("SOTRTRN2P"), "SOTRTRN2", "**", 1)
             .Tables("SOTRTRN2P").Columns.Add("RECORD_INDEX", GetType(System.Int32))
@@ -266,6 +267,7 @@ Public Class SOFRTRN1
                 & " from SOTRMAF2, ICTSTYL1" _
                 & " where ICTSTYL1.STYLE_CODE (+) = SOTRMAF2.STYLE_CODE"
             Create_TDA(.Tables.Add, "SOTRMAF2", "**", 1)
+            .Tables("SOTRMAF2").Columns.Add("IMPORTED", GetType(System.String))
 
         End With
 
@@ -424,6 +426,7 @@ Public Class SOFRTRN1
                 .Columns(COLUMN_NAME).Header.Fixed = True
             Next
         End With
+        ASCMAIN1.Add_Value_List(grdSOTRMAFX, "RA_RTN_STATUS", , New String() {":", "1:Stock", "3:Damage"}, 2)
 
         Dim rowGLTPARM2 As DataRow = LookUp("GLTPARM2", ASCMAIN1.CYP)
         PRD_END_DATE = rowGLTPARM2.Item("PRD_END_DATE")
@@ -989,6 +992,7 @@ Public Class SOFRTRN1
             tabDetails.Tabs("Sales History").Visible = (EntryMode = "N")
             tabDetails.SelectedTab = tabDetails.Tabs("Sales History")
             tabDetails.Tabs("GL Distribution").Visible = (EntryMode = "V") And ASCMAIN1.USER_SECURITY_CODEs.Contains("X5")
+            tabDetails.Tabs("Scanned Returns").Visible = (EntryMode = "N") And ASCMAIN1.CLIENT = "RGI"
 
             Set_Read_Only(grpHeader, (EntryMode = "V"))
             'Set_Read_Only(splGL, (EntryMode = "V"))
@@ -1184,6 +1188,8 @@ Public Class SOFRTRN1
                 End If
 
                 Fill_Records("SOTRMAFR", RA_NO)
+                Dim dvw As DataView = dst.Tables("SOTRMAFR").DefaultView
+                dvw.RowFilter = "GUN_STATUS <> 'V'"
             End If
 
             rowSOTRTRN1 = dst.Tables("SOTRTRN1").NewRow
@@ -1353,6 +1359,7 @@ Public Class SOFRTRN1
                             rowSOTRMAF2.Item("RA_QTY_OPEN") = RA_QTY
                             rowSOTRMAF2.Item("RA_QTY_USED") = 0
                             rowSOTRMAF2.Item("RA_QTY_CANC") = 0
+                            rowSOTRMAF2.Item("IMPORTED") = "1"
                             dst.Tables("SOTRMAF2").Rows.Add(rowSOTRMAF2)
                         End If
 
@@ -1366,6 +1373,7 @@ Public Class SOFRTRN1
                         .Cells("STYLE_CODE").Value = rowSOTRMAF2.Item("STYLE_CODE") & String.Empty
                         .Cells("COLOR_CODE").Value = rowSOTRMAF2.Item("COLOR_CODE") & String.Empty
                         .Cells("RTRN_QTY").Value = rowSOTRMAF2.Item("RA_QTY_OPEN") & String.Empty
+                        .Cells("IMPORTED").Value = IIf(rowSOTRMAF2.Item("IMPORTED") & String.Empty = "", "0", "1")
 
                         ASCMAIN1.sql = "STYLE_CODE = '" & rowSOTRMAF2.Item("STYLE_CODE") & "' AND COLOR_CODE = '" & rowSOTRMAF2.Item("COLOR_CODE") & "' AND ISNULL(RA_QTY_USED, 0) < RA_RTN_QTY AND GUN_STATUS = 'F'"
                         If dst.Tables("SOTRMAFR").Select(ASCMAIN1.sql).Length > 0 Then
@@ -2096,6 +2104,7 @@ Public Class SOFRTRN1
         End If
 
         Load_Popup_Menu(grdSOTRMAFX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Cancel RMA Balance")
+        Load_Popup_Menu(grdSOTRMAFR, "SS", "Show Filter", "Show Voids")
 
     End Sub
 
@@ -2272,6 +2281,15 @@ Public Class SOFRTRN1
 
                 Me.Cursor = Cursors.Default
                 ASCMAIN1.Progress("")
+
+            Case "Show Voids"
+                Dim dvw As DataView = dst.Tables("SOTRMAFR").DefaultView
+                Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
+                If tlb_sbt.Checked Then
+                    dvw.RowFilter = ""
+                Else
+                    dvw.RowFilter = "GUN_STATUS <> 'V'"
+                End If
 
         End Select
     End Sub
@@ -2930,6 +2948,11 @@ Public Class SOFRTRN1
                 .ToolTipText = ""
             End If
         End With
+        If e.Row.Cells("IMPORTED").Value.ToString = "1" Then
+
+            e.Row.Appearance.ForeColor = Color.DarkOrange
+            e.Row.ToolTipText = "This line was added by a Gun scan"
+        End If
     End Sub
 
     Private Sub grdSOTINVHH_DoubleClickRow(sender As Object, e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdSOTINVHH.DoubleClickRow
@@ -3073,6 +3096,13 @@ Public Class SOFRTRN1
         Else
             e.Row.Cells("RTRN_NO").Appearance.ForeColor = Color.Empty
             e.Row.Cells("RTRN_NO").ToolTipText = ""
+        End If
+    End Sub
+
+    Private Sub grdSOTRMAFR_InitializeRow(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdSOTRMAFR.InitializeRow
+        If e.Row.Cells("GUN_STATUS").Value & "" = "V" Then
+            e.Row.Appearance.ForeColor = Color.Red
+            e.Row.ToolTipText = "This line was Voided, Do not include"
         End If
     End Sub
 
@@ -3332,7 +3362,7 @@ Public Class SOFRTRN1
         ASCMAIN1.sql = "SELECT * FROM SOTRMAF2 WHERE RA_NO IN (Select RA_NO FROM " & wktable & ")"
         Fill_Records("SOTRMAFX2", "", , ASCMAIN1.sql)
 
-        ASCMAIN1.sql = "SELECT * FROM SOTRMAFR WHERE RA_NO IN (Select RA_NO FROM " & wktable & ")"
+        ASCMAIN1.sql = "SELECT * FROM SOTRMAFR WHERE RA_NO IN (Select RA_NO FROM " & wktable & ") and GUN_STATUS <> 'V'"
         Fill_Records("SOTRMAFXR", "", , ASCMAIN1.sql)
 
     End Sub

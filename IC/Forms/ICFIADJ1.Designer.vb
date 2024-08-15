@@ -318,6 +318,7 @@ Partial Class ICFIADJ1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
+        Me.btnFoundOH = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -411,28 +412,27 @@ Partial Class ICFIADJ1
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
         UltraExplorerBarGroup2.Expanded = False
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 91
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 81
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "GL Distribution"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Expanded = False
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 53
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 47
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Show if Entered in"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
         UltraExplorerBarGroup4.Expanded = False
-        UltraExplorerBarGroup4.Settings.ContainerHeight = 90
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 80
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Totals"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl5
-        UltraExplorerBarGroup6.Expanded = False
         UltraExplorerBarGroup6.ItemSettings.Height = 80
-        UltraExplorerBarGroup6.Settings.ContainerHeight = 72
+        UltraExplorerBarGroup6.Settings.ContainerHeight = 106
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Damages"
         UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl4
         UltraExplorerBarGroup5.Expanded = False
-        UltraExplorerBarGroup5.Settings.ContainerHeight = 169
+        UltraExplorerBarGroup5.Settings.ContainerHeight = 150
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Events"
         UltraExplorerBarGroup7.Container = Me.UltraExplorerBarContainerControl6
@@ -440,32 +440,32 @@ Partial Class ICFIADJ1
         UltraExplorerBarItem7.Text = "Import Amazon Adj"
         UltraExplorerBarItem8.Text = "New Item"
         UltraExplorerBarGroup7.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem8})
+        UltraExplorerBarGroup7.Settings.ContainerHeight = 167
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Special Functions"
         UltraExplorerBarGroup8.Container = Me.UltraExplorerBarContainerControl7
         UltraExplorerBarGroup8.Key = "Cycle Count Adjustment"
-        UltraExplorerBarGroup8.Settings.ContainerHeight = 288
+        UltraExplorerBarGroup8.Settings.ContainerHeight = 256
         UltraExplorerBarGroup8.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup8.Text = "Cycle Count Adjustment"
         UltraExplorerBarGroup8.Visible = False
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup6, UltraExplorerBarGroup5, UltraExplorerBarGroup7, UltraExplorerBarGroup8})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 614)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 547)
         Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
         Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(2)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1063, 638)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(808, 567)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -516,25 +516,25 @@ Partial Class ICFIADJ1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 638)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 567)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1276, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 638)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1021, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 567)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1276, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1021, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 638)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1276, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 567)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1021, 0)
         '
         'tlb
         '
@@ -544,10 +544,9 @@ Partial Class ICFIADJ1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.optGL)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(168, 91)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(134, 81)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         Me.UltraExplorerBarContainerControl1.Visible = False
         '
@@ -564,9 +563,8 @@ Partial Class ICFIADJ1
         ValueListItem9.DisplayText = "Summary"
         Me.optGL.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem4, ValueListItem9})
         Me.optGL.Location = New System.Drawing.Point(0, 0)
-        Me.optGL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optGL.Name = "optGL"
-        Me.optGL.Size = New System.Drawing.Size(168, 91)
+        Me.optGL.Size = New System.Drawing.Size(134, 81)
         Me.optGL.TabIndex = 164
         Me.optGL.Text = "All Lines"
         '
@@ -574,10 +572,9 @@ Partial Class ICFIADJ1
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.chkGL)
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.cbeYP)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(168, 53)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(134, 47)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         Me.UltraExplorerBarContainerControl2.Visible = False
         '
@@ -585,10 +582,9 @@ Partial Class ICFIADJ1
         '
         Me.chkGL.BackColor = System.Drawing.Color.Transparent
         Me.chkGL.BackColorInternal = System.Drawing.Color.Transparent
-        Me.chkGL.Location = New System.Drawing.Point(5, 27)
-        Me.chkGL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkGL.Location = New System.Drawing.Point(4, 24)
         Me.chkGL.Name = "chkGL"
-        Me.chkGL.Size = New System.Drawing.Size(212, 22)
+        Me.chkGL.Size = New System.Drawing.Size(170, 20)
         Me.chkGL.TabIndex = 137
         Me.chkGL.Text = "Show GL History"
         '
@@ -596,20 +592,18 @@ Partial Class ICFIADJ1
         '
         Me.cbeYP.DisplayMember = "LEGEND"
         Me.cbeYP.DropDownStyle = Infragistics.Win.DropDownStyle.DropDownList
-        Me.cbeYP.Location = New System.Drawing.Point(4, 0)
-        Me.cbeYP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cbeYP.Location = New System.Drawing.Point(3, 0)
         Me.cbeYP.Name = "cbeYP"
-        Me.cbeYP.Size = New System.Drawing.Size(214, 29)
+        Me.cbeYP.Size = New System.Drawing.Size(171, 25)
         Me.cbeYP.TabIndex = 136
         Me.cbeYP.ValueMember = "OPS_YYYYPP"
         '
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpTotals)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(168, 90)
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(134, 80)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
         Me.UltraExplorerBarContainerControl3.Visible = False
         '
@@ -620,63 +614,57 @@ Partial Class ICFIADJ1
         Me.grpTotals.Controls.Add(Me.UltraLabel34)
         Me.grpTotals.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpTotals.Location = New System.Drawing.Point(0, 0)
-        Me.grpTotals.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpTotals.Name = "grpTotals"
-        Me.grpTotals.Size = New System.Drawing.Size(168, 90)
+        Me.grpTotals.Size = New System.Drawing.Size(134, 80)
         Me.grpTotals.TabIndex = 164
         '
         'UltraNumericEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "TOTAL_COSTS")
         Me.UltraNumericEditor1.FormatString = "#0.00"
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(70, 18)
-        Me.UltraNumericEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(56, 16)
         Me.UltraNumericEditor1.MaxValue = CType(9999999999, Long)
         Me.UltraNumericEditor1.MinValue = CType(-9999999999, Long)
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor1.ReadOnly = True
-        Me.UltraNumericEditor1.Size = New System.Drawing.Size(148, 29)
+        Me.UltraNumericEditor1.Size = New System.Drawing.Size(118, 25)
         Me.UltraNumericEditor1.TabIndex = 77
         '
         'UltraLabel34
         '
         Me.UltraLabel34.AutoSize = True
-        Me.UltraLabel34.Location = New System.Drawing.Point(10, 18)
-        Me.UltraLabel34.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel34.Location = New System.Drawing.Point(8, 16)
         Me.UltraLabel34.Name = "UltraLabel34"
-        Me.UltraLabel34.Size = New System.Drawing.Size(52, 22)
+        Me.UltraLabel34.Size = New System.Drawing.Size(42, 18)
         Me.UltraLabel34.TabIndex = 78
         Me.UltraLabel34.Text = "Costs"
         '
         'UltraExplorerBarContainerControl5
         '
+        Me.UltraExplorerBarContainerControl5.Controls.Add(Me.btnFoundOH)
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.btnShortage)
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.btnDamages)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 206)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
-        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(168, 72)
+        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 106)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
-        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'btnShortage
         '
-        Me.btnShortage.Location = New System.Drawing.Point(26, -1)
-        Me.btnShortage.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnShortage.Location = New System.Drawing.Point(21, -1)
         Me.btnShortage.Name = "btnShortage"
-        Me.btnShortage.Size = New System.Drawing.Size(162, 35)
+        Me.btnShortage.Size = New System.Drawing.Size(130, 31)
         Me.btnShortage.TabIndex = 1
         Me.btnShortage.Text = "Load Shortages"
         Me.btnShortage.UseVisualStyleBackColor = True
         '
         'btnDamages
         '
-        Me.btnDamages.Location = New System.Drawing.Point(26, 40)
-        Me.btnDamages.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnDamages.Location = New System.Drawing.Point(21, 36)
         Me.btnDamages.Name = "btnDamages"
-        Me.btnDamages.Size = New System.Drawing.Size(162, 35)
+        Me.btnDamages.Size = New System.Drawing.Size(130, 31)
         Me.btnDamages.TabIndex = 0
         Me.btnDamages.Text = "Load Damages"
         Me.btnDamages.UseVisualStyleBackColor = True
@@ -684,10 +672,9 @@ Partial Class ICFIADJ1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.grdICTIADJ0)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraExplorerBarContainerControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(168, 169)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(134, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
         Me.UltraExplorerBarContainerControl4.Visible = False
         '
@@ -758,27 +745,26 @@ Partial Class ICFIADJ1
         Me.grdICTIADJ0.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTIADJ0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIADJ0.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTIADJ0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTIADJ0.Name = "grdICTIADJ0"
-        Me.grdICTIADJ0.Size = New System.Drawing.Size(168, 169)
+        Me.grdICTIADJ0.Size = New System.Drawing.Size(134, 150)
         Me.grdICTIADJ0.TabIndex = 163
         '
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.Button1)
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.optAuto)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraExplorerBarContainerControl6.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
-        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(168, 188)
+        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(134, 167)
         Me.UltraExplorerBarContainerControl6.TabIndex = 5
         Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(2, 129)
-        Me.Button1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Button1.Location = New System.Drawing.Point(2, 115)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(162, 35)
+        Me.Button1.Size = New System.Drawing.Size(130, 31)
         Me.Button1.TabIndex = 168
         Me.Button1.Text = "Import Adjust"
         Me.Button1.UseVisualStyleBackColor = True
@@ -801,9 +787,8 @@ Partial Class ICFIADJ1
         ValueListItem11.DisplayText = "Disposed"
         Me.optAuto.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem6, ValueListItem7, ValueListItem10, ValueListItem1, ValueListItem11})
         Me.optAuto.Location = New System.Drawing.Point(0, 0)
-        Me.optAuto.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optAuto.Name = "optAuto"
-        Me.optAuto.Size = New System.Drawing.Size(168, 188)
+        Me.optAuto.Size = New System.Drawing.Size(134, 167)
         Me.optAuto.TabIndex = 167
         Me.optAuto.Text = "Returned"
         '
@@ -816,9 +801,10 @@ Partial Class ICFIADJ1
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.cmdUpdateCycles)
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraLabel3)
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.dteDATE_CUTOFF)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 436)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 406)
+        Me.UltraExplorerBarContainerControl7.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
-        Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(168, 288)
+        Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 256)
         Me.UltraExplorerBarContainerControl7.TabIndex = 6
         '
         'UltraLabel7
@@ -827,10 +813,9 @@ Partial Class ICFIADJ1
         Appearance12.BackColor2 = System.Drawing.Color.Transparent
         Me.UltraLabel7.Appearance = Appearance12
         Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(0, 62)
-        Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel7.Location = New System.Drawing.Point(0, 55)
         Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(94, 22)
+        Me.UltraLabel7.Size = New System.Drawing.Size(75, 18)
         Me.UltraLabel7.TabIndex = 276
         Me.UltraLabel7.Text = "Resolution"
         '
@@ -848,28 +833,25 @@ Partial Class ICFIADJ1
         ValueListItem14.DataValue = "A"
         ValueListItem14.DisplayText = "All"
         Me.OptResolution.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem5, ValueListItem13, ValueListItem14})
-        Me.OptResolution.Location = New System.Drawing.Point(0, 90)
-        Me.OptResolution.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.OptResolution.Location = New System.Drawing.Point(0, 80)
         Me.OptResolution.Name = "OptResolution"
-        Me.OptResolution.Size = New System.Drawing.Size(182, 52)
+        Me.OptResolution.Size = New System.Drawing.Size(146, 46)
         Me.OptResolution.TabIndex = 273
         Me.OptResolution.Text = "Resolved"
         '
         'chkUpdated
         '
-        Me.chkUpdated.Location = New System.Drawing.Point(4, 231)
-        Me.chkUpdated.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkUpdated.Location = New System.Drawing.Point(3, 205)
         Me.chkUpdated.Name = "chkUpdated"
-        Me.chkUpdated.Size = New System.Drawing.Size(232, 21)
+        Me.chkUpdated.Size = New System.Drawing.Size(186, 19)
         Me.chkUpdated.TabIndex = 271
         Me.chkUpdated.Text = "Updated Cycle Counts"
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(155, 24)
-        Me.Button2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Button2.Location = New System.Drawing.Point(124, 21)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(81, 29)
+        Me.Button2.Size = New System.Drawing.Size(65, 26)
         Me.Button2.TabIndex = 269
         Me.Button2.Text = "Refresh"
         Me.Button2.UseVisualStyleBackColor = True
@@ -877,10 +859,9 @@ Partial Class ICFIADJ1
         'cmdUpdateCycles
         '
         Me.cmdUpdateCycles.Enabled = False
-        Me.cmdUpdateCycles.Location = New System.Drawing.Point(0, 161)
-        Me.cmdUpdateCycles.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdUpdateCycles.Location = New System.Drawing.Point(0, 143)
         Me.cmdUpdateCycles.Name = "cmdUpdateCycles"
-        Me.cmdUpdateCycles.Size = New System.Drawing.Size(195, 39)
+        Me.cmdUpdateCycles.Size = New System.Drawing.Size(156, 35)
         Me.cmdUpdateCycles.TabIndex = 268
         Me.cmdUpdateCycles.Text = "Update Selected"
         Me.cmdUpdateCycles.UseVisualStyleBackColor = True
@@ -892,19 +873,18 @@ Partial Class ICFIADJ1
         Me.UltraLabel3.Appearance = Appearance13
         Me.UltraLabel3.AutoSize = True
         Me.UltraLabel3.Location = New System.Drawing.Point(0, 0)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(142, 22)
+        Me.UltraLabel3.Size = New System.Drawing.Size(114, 18)
         Me.UltraLabel3.TabIndex = 267
         Me.UltraLabel3.Text = "Cycle Cut Off Dt"
         '
         'dteDATE_CUTOFF
         '
         Me.dteDATE_CUTOFF.DateTime = New Date(2015, 8, 13, 0, 0, 0, 0)
-        Me.dteDATE_CUTOFF.Location = New System.Drawing.Point(0, 24)
-        Me.dteDATE_CUTOFF.Margin = New System.Windows.Forms.Padding(6)
+        Me.dteDATE_CUTOFF.Location = New System.Drawing.Point(0, 21)
+        Me.dteDATE_CUTOFF.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.dteDATE_CUTOFF.Name = "dteDATE_CUTOFF"
-        Me.dteDATE_CUTOFF.Size = New System.Drawing.Size(139, 29)
+        Me.dteDATE_CUTOFF.Size = New System.Drawing.Size(111, 25)
         Me.dteDATE_CUTOFF.TabIndex = 266
         Me.dteDATE_CUTOFF.Value = New Date(2015, 8, 13, 0, 0, 0, 0)
         '
@@ -912,9 +892,8 @@ Partial Class ICFIADJ1
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdICTIADJX)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1055, 503)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(800, 440)
         '
         'grdICTIADJX
         '
@@ -1026,19 +1005,17 @@ Partial Class ICFIADJ1
         Me.grdICTIADJX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTIADJX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIADJX.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTIADJX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTIADJX.Name = "grdICTIADJX"
-        Me.grdICTIADJX.Size = New System.Drawing.Size(1055, 503)
+        Me.grdICTIADJX.Size = New System.Drawing.Size(800, 440)
         Me.grdICTIADJX.TabIndex = 164
         Me.grdICTIADJX.Text = "Inventory Adjustments"
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdICTIADJG)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1055, 503)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(800, 440)
         '
         'grdICTIADJG
         '
@@ -1152,23 +1129,24 @@ Partial Class ICFIADJ1
         Me.grdICTIADJG.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTIADJG.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIADJG.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTIADJG.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTIADJG.Name = "grdICTIADJG"
-        Me.grdICTIADJG.Size = New System.Drawing.Size(1055, 503)
+        Me.grdICTIADJG.Size = New System.Drawing.Size(800, 440)
         Me.grdICTIADJG.TabIndex = 165
         Me.grdICTIADJG.Text = "GL Distributions"
         '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1055, 503)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(800, 440)
         '
         'SplitContainer3
         '
         Me.SplitContainer3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer3.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer3.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.SplitContainer3.Name = "SplitContainer3"
         Me.SplitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1180,16 +1158,15 @@ Partial Class ICFIADJ1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdWHTLOCB2)
-        Me.SplitContainer3.Size = New System.Drawing.Size(1055, 503)
-        Me.SplitContainer3.SplitterDistance = 218
+        Me.SplitContainer3.Size = New System.Drawing.Size(800, 440)
+        Me.SplitContainer3.SplitterDistance = 190
         Me.SplitContainer3.TabIndex = 0
         '
         'chkSel
         '
-        Me.chkSel.Location = New System.Drawing.Point(1060, 3)
-        Me.chkSel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkSel.Location = New System.Drawing.Point(848, 3)
         Me.chkSel.Name = "chkSel"
-        Me.chkSel.Size = New System.Drawing.Size(163, 21)
+        Me.chkSel.Size = New System.Drawing.Size(130, 19)
         Me.chkSel.TabIndex = 273
         Me.chkSel.Text = "Sel Only"
         '
@@ -1311,9 +1288,8 @@ Partial Class ICFIADJ1
         Me.grdWHTCYCL1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTCYCL1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTCYCL1.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTCYCL1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTCYCL1.Name = "grdWHTCYCL1"
-        Me.grdWHTCYCL1.Size = New System.Drawing.Size(1055, 218)
+        Me.grdWHTCYCL1.Size = New System.Drawing.Size(800, 190)
         Me.grdWHTCYCL1.TabIndex = 164
         Me.grdWHTCYCL1.Text = "Cycles"
         '
@@ -1439,19 +1415,17 @@ Partial Class ICFIADJ1
         Me.grdWHTLOCB2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdWHTLOCB2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTLOCB2.Location = New System.Drawing.Point(0, 0)
-        Me.grdWHTLOCB2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWHTLOCB2.Name = "grdWHTLOCB2"
-        Me.grdWHTLOCB2.Size = New System.Drawing.Size(1055, 281)
+        Me.grdWHTLOCB2.Size = New System.Drawing.Size(800, 246)
         Me.grdWHTLOCB2.TabIndex = 165
         Me.grdWHTLOCB2.Text = "Locations"
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
-        Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1059, 535)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(804, 468)
         '
         'tab0
         '
@@ -1461,10 +1435,9 @@ Partial Class ICFIADJ1
         Me.tab0.Controls.Add(Me.UltraTabPageControl5)
         Me.tab0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tab0.Location = New System.Drawing.Point(0, 0)
-        Me.tab0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab0.Name = "tab0"
         Me.tab0.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tab0.Size = New System.Drawing.Size(1059, 535)
+        Me.tab0.Size = New System.Drawing.Size(804, 468)
         Me.tab0.TabIndex = 165
         Me.tab0.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab3.TabPage = Me.UltraTabPageControl3
@@ -1479,24 +1452,21 @@ Partial Class ICFIADJ1
         'UltraTabSharedControlsPage2
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1055, 503)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(800, 440)
         '
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-8000, -8889)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1059, 535)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(804, 468)
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1507,7 +1477,7 @@ Partial Class ICFIADJ1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1059, 535)
+        Me.SplitContainer1.Size = New System.Drawing.Size(804, 468)
         Me.SplitContainer1.SplitterDistance = 43
         Me.SplitContainer1.TabIndex = 67
         '
@@ -1520,20 +1490,18 @@ Partial Class ICFIADJ1
         Me.grpHeader.Controls.Add(Me.UltraLabel4)
         Me.grpHeader.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpHeader.Location = New System.Drawing.Point(0, 0)
-        Me.grpHeader.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpHeader.Name = "grpHeader"
-        Me.grpHeader.Size = New System.Drawing.Size(1059, 43)
+        Me.grpHeader.Size = New System.Drawing.Size(804, 43)
         Me.grpHeader.TabIndex = 66
         '
         'UltraTextEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "REASON_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor1, "REASON_CODE")
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(221, 9)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(177, 8)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
         Me.UltraTextEditor1.ReadOnly = True
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(348, 29)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(278, 25)
         Me.UltraTextEditor1.TabIndex = 163
         Me.UltraTextEditor1.TabStop = False
         '
@@ -1543,38 +1511,34 @@ Partial Class ICFIADJ1
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor2, True)
         Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor2, "ICTREAS1")
         Me.Absx1.SetABSViewName(Me.UltraTextEditor2, "REASON_CODE")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(89, 9)
-        Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(71, 8)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor2.TabIndex = 162
         '
         'UltraTextEditor9
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor9, "ADJ_NOTE")
-        Me.UltraTextEditor9.Location = New System.Drawing.Point(679, 9)
-        Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor9.Location = New System.Drawing.Point(543, 8)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
-        Me.UltraTextEditor9.Size = New System.Drawing.Size(282, 29)
+        Me.UltraTextEditor9.Size = New System.Drawing.Size(226, 25)
         Me.UltraTextEditor9.TabIndex = 2
         '
         'UltraLabel9
         '
         Me.UltraLabel9.AutoSize = True
-        Me.UltraLabel9.Location = New System.Drawing.Point(618, 14)
-        Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel9.Location = New System.Drawing.Point(494, 12)
         Me.UltraLabel9.Name = "UltraLabel9"
-        Me.UltraLabel9.Size = New System.Drawing.Size(54, 22)
+        Me.UltraLabel9.Size = New System.Drawing.Size(43, 18)
         Me.UltraLabel9.TabIndex = 161
         Me.UltraLabel9.Text = "Notes"
         '
         'UltraLabel4
         '
         Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(14, 14)
-        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel4.Location = New System.Drawing.Point(11, 12)
         Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(67, 22)
+        Me.UltraLabel4.Size = New System.Drawing.Size(54, 18)
         Me.UltraLabel4.TabIndex = 155
         Me.UltraLabel4.Text = "Reason"
         '
@@ -1582,7 +1546,6 @@ Partial Class ICFIADJ1
         '
         Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer2.Name = "SplitContainer2"
         Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1593,8 +1556,8 @@ Partial Class ICFIADJ1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTIADJ3)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1059, 488)
-        Me.SplitContainer2.SplitterDistance = 289
+        Me.SplitContainer2.Size = New System.Drawing.Size(804, 421)
+        Me.SplitContainer2.SplitterDistance = 249
         Me.SplitContainer2.TabIndex = 164
         '
         'grdICTIADJ2
@@ -1723,9 +1686,8 @@ Partial Class ICFIADJ1
         Me.grdICTIADJ2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTIADJ2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIADJ2.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTIADJ2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTIADJ2.Name = "grdICTIADJ2"
-        Me.grdICTIADJ2.Size = New System.Drawing.Size(1059, 289)
+        Me.grdICTIADJ2.Size = New System.Drawing.Size(804, 249)
         Me.grdICTIADJ2.TabIndex = 163
         Me.grdICTIADJ2.Text = "Details"
         '
@@ -1825,9 +1787,8 @@ Partial Class ICFIADJ1
         Me.grdICTIADJ3.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTIADJ3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTIADJ3.Location = New System.Drawing.Point(0, 0)
-        Me.grdICTIADJ3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTIADJ3.Name = "grdICTIADJ3"
-        Me.grdICTIADJ3.Size = New System.Drawing.Size(1059, 195)
+        Me.grdICTIADJ3.Size = New System.Drawing.Size(804, 168)
         Me.grdICTIADJ3.TabIndex = 13
         Me.grdICTIADJ3.Text = "GL Distribution"
         '
@@ -1843,18 +1804,16 @@ Partial Class ICFIADJ1
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel2)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(1063, 67)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(808, 67)
         Me.UltraGroupBox1.TabIndex = 2
         '
         'UltraLabel10
         '
         Me.UltraLabel10.AutoSize = True
-        Me.UltraLabel10.Location = New System.Drawing.Point(810, 14)
-        Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel10.Location = New System.Drawing.Point(648, 12)
         Me.UltraLabel10.Name = "UltraLabel10"
-        Me.UltraLabel10.Size = New System.Drawing.Size(131, 22)
+        Me.UltraLabel10.Size = New System.Drawing.Size(105, 18)
         Me.UltraLabel10.TabIndex = 113
         Me.UltraLabel10.Text = "Adjustment No"
         '
@@ -1862,19 +1821,17 @@ Partial Class ICFIADJ1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "ADJ_NO")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor5, True)
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(810, 42)
-        Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(648, 37)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
-        Me.UltraTextEditor5.Size = New System.Drawing.Size(156, 29)
+        Me.UltraTextEditor5.Size = New System.Drawing.Size(125, 25)
         Me.UltraTextEditor5.TabIndex = 4
         '
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(148, 14)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel1.Location = New System.Drawing.Point(118, 12)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(100, 22)
+        Me.UltraLabel1.Size = New System.Drawing.Size(80, 18)
         Me.UltraLabel1.TabIndex = 3
         Me.UltraLabel1.Text = "Description"
         '
@@ -1882,11 +1839,10 @@ Partial Class ICFIADJ1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "WHSE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "WHSE_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(148, 42)
-        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(118, 37)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.ReadOnly = True
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(348, 29)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(278, 25)
         Me.UltraTextEditor3.TabIndex = 1
         Me.UltraTextEditor3.TabStop = False
         '
@@ -1894,20 +1850,18 @@ Partial Class ICFIADJ1
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor12, "ADJ_DATE")
         Me.UltraDateTimeEditor12.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
-        Me.UltraDateTimeEditor12.Location = New System.Drawing.Point(514, 42)
-        Me.UltraDateTimeEditor12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraDateTimeEditor12.Location = New System.Drawing.Point(411, 37)
         Me.UltraDateTimeEditor12.Name = "UltraDateTimeEditor12"
-        Me.UltraDateTimeEditor12.Size = New System.Drawing.Size(135, 29)
+        Me.UltraDateTimeEditor12.Size = New System.Drawing.Size(108, 25)
         Me.UltraDateTimeEditor12.TabIndex = 2
         Me.UltraDateTimeEditor12.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
         '
         'UltraLabel41
         '
         Me.UltraLabel41.AutoSize = True
-        Me.UltraLabel41.Location = New System.Drawing.Point(514, 14)
-        Me.UltraLabel41.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel41.Location = New System.Drawing.Point(411, 12)
         Me.UltraLabel41.Name = "UltraLabel41"
-        Me.UltraLabel41.Size = New System.Drawing.Size(45, 22)
+        Me.UltraLabel41.Size = New System.Drawing.Size(36, 18)
         Me.UltraLabel41.TabIndex = 66
         Me.UltraLabel41.Text = "Date"
         '
@@ -1915,19 +1869,17 @@ Partial Class ICFIADJ1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "WHSE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor4, True)
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(15, 42)
-        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(12, 37)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
-        Me.UltraTextEditor4.Size = New System.Drawing.Size(125, 29)
+        Me.UltraTextEditor4.Size = New System.Drawing.Size(100, 25)
         Me.UltraTextEditor4.TabIndex = 0
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(15, 14)
-        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel2.Location = New System.Drawing.Point(12, 12)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(52, 22)
+        Me.UltraLabel2.Size = New System.Drawing.Size(42, 18)
         Me.UltraLabel2.TabIndex = 2
         Me.UltraLabel2.Text = "Whse"
         '
@@ -1938,10 +1890,9 @@ Partial Class ICFIADJ1
         Me.tab.Controls.Add(Me.UltraTabPageControl2)
         Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tab.Location = New System.Drawing.Point(0, 0)
-        Me.tab.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tab.Size = New System.Drawing.Size(1063, 567)
+        Me.tab.Size = New System.Drawing.Size(808, 496)
         Me.tab.TabIndex = 165
         UltraTab1.TabPage = Me.UltraTabPageControl1
         UltraTab1.Text = "0"
@@ -1952,16 +1903,14 @@ Partial Class ICFIADJ1
         'UltraTabSharedControlsPage1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1059, 535)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(804, 468)
         '
         'spl
         '
         Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
         Me.spl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.spl.Location = New System.Drawing.Point(0, 0)
-        Me.spl.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.spl.Name = "spl"
         Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1972,16 +1921,25 @@ Partial Class ICFIADJ1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(1063, 638)
+        Me.spl.Size = New System.Drawing.Size(808, 567)
         Me.spl.SplitterDistance = 67
         Me.spl.TabIndex = 166
         '
+        'btnFoundOH
+        '
+        Me.btnFoundOH.Location = New System.Drawing.Point(21, 73)
+        Me.btnFoundOH.Name = "btnFoundOH"
+        Me.btnFoundOH.Size = New System.Drawing.Size(130, 31)
+        Me.btnFoundOH.TabIndex = 2
+        Me.btnFoundOH.Text = "Load Found OH"
+        Me.btnFoundOH.UseVisualStyleBackColor = True
+        '
         'ICFIADJ1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1276, 638)
-        Me.Margin = New System.Windows.Forms.Padding(6)
+        Me.ClientSize = New System.Drawing.Size(1021, 567)
+        Me.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
         Me.Name = "ICFIADJ1"
         Me.Text = "ICFIADJ1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2122,4 +2080,5 @@ Partial Class ICFIADJ1
     Friend WithEvents chkUpdated As ABSCS.ABSCheckBox
     Friend WithEvents UltraLabel7 As Misc.UltraLabel
     Friend WithEvents chkSel As ABSCS.ABSCheckBox
+    Friend WithEvents btnFoundOH As Button
 End Class

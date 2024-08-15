@@ -526,7 +526,7 @@
         Dim lines As String = ""
         Dim pageLno As Integer = 0
 
-        Dim rows() As DataRow = tbl.Select("GUN_STATUS = 'P'", "RA_RTN_LNO")
+        Dim rows() As DataRow = tbl.Select("GUN_STATUS = 'P'", "RA_RTN_LNO DESC")
         If PAGE * 5 > rows.Length Or PAGE < 0 Then PAGE = 0
 
         If rows.Length > 0 Then
