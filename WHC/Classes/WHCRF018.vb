@@ -32,6 +32,7 @@
     Dim INNER_PACK_QTY As Integer
     Dim CARTON_PACK_QTY As Integer
     Dim CARTONS_PER_UNIT As Integer
+    Dim RA_RTN_QTY As Integer
     Dim holdScan As String
     Dim _sql As String
     Dim rowSOTRMAFR As DataRow
@@ -46,7 +47,7 @@
         Me.MENU_ITEM_OBJECT = "WHCRF018"
 
         AppStates.Add("SCAN_RMA", "Scan RMA Num|EXIT|") 'Green - find RMA get invoice no from (SOTRMAF1)
-        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style|DONE|") 'Blue
+        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style|DONE|VIEW|") 'Blue
         AppStates.Add("SCAN_COLOR", "Enter Color code|CANCEL|")
         AppStates.Add("RTS_ITEM", "Return Item to Stock|Y|N|") ' Return to stock is not broken Y=1,N=3
         AppStates.Add("NOT_FOUND", "Warning Item not in RMA Accept?|Y|N|") ' check SOTRMAF2
@@ -57,7 +58,7 @@
         AppStates.Add("VERIFY", "Update|Y|N|CLEAR|EXIT|")
         AppStates.Add("LEAVE", "Units in Gun, Gun must be Empty for Pick|EXIT|")
         AppStates.Add("CLOSE_RMA", "Close RMA|Y|N|")
-        AppStates.Add("SCAN_VOID", "Void Line or 'ALL'|BACK|NXT PAGE|NEW PICK|EXIT|")
+        AppStates.Add("SCAN_VOID", "Void Line or 'ALL'|BACK|NXT PAGE|EXIT|")
 
         'Get application state ready
         AppState = "SCAN_RMA"
@@ -159,6 +160,10 @@
                 Case "SCAN_UPC"
                     If SCANTEXT = "DONE" Then
                         CreateResponse("CLOSE_RMA", "G", "Update RA Ticket for Processing")
+                        Exit Select
+                    ElseIf SCANTEXT = "VIEW" Then
+                        ' View Scanned
+                        showreturned("")
                         Exit Select
                     Else
                         Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
@@ -334,6 +339,48 @@
                     CreateResponse("VERIFY", "B", RAMessage())
                     AppStates("VERIFY") = hold
 
+                Case "SCAN_VOID"
+                    If SCANTEXT = "BACK" Then
+                        '
+                        InitItem()
+                        CreateResponse("SCAN_UPC", "BLUE", RAMessage())
+                        Exit Select
+                    ElseIf SCANTEXT = "NXT PAGE" Then
+                        showreturned("", PageNo)
+                        'CreateResponse("SCAN_PTCKT", "GREEN", PickMessage())
+                        Exit Select
+                    ElseIf SCANTEXT = "YES" Then
+                        voidLine(holdScan)
+                        holdScan = ""
+                        showreturned("")
+                        Exit Select
+                    ElseIf SCANTEXT = "NO" Then
+                        showreturned("")
+                        holdScan = ""
+                        Exit Select
+                    Else
+                        'handle voids
+                        If holdScan = "" Then
+                            If SCANTEXT.ToUpper = "ALL" Then
+                                holdScan = SCANTEXT.ToUpper
+                                showreturned(holdScan)
+                                Exit Select
+                            End If
+                            If Val(SCANTEXT) > (VoidList.Length - 1) Or Val(SCANTEXT) < 1 Then
+                                'error
+                            Else
+                                holdScan = SCANTEXT
+                                showreturned(SCANTEXT, PageNo - 1)
+                                Exit Select
+                            End If
+                        Else
+                            showreturned(holdScan, PageNo - 1)
+                            Exit Select
+                        End If
+                    End If
+                    showreturned("")
+
+
                 Case "VERIFY"
                     If SCANTEXT.ToUpper = "Y" Then
                         ' Y is for normal Verify
@@ -405,6 +452,7 @@
     Function RMA_ITEM() As Boolean
         Dim Count As Integer
         Count = dst.Tables("SOTRMAF2").Compute("Count(STYLE_CODE)", String.Format("STYLE_CODE = '{0}' and COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE))
+        RA_RTN_QTY = dst.Tables("SOTRMAF2").Compute("Sum(RA_QTY)", String.Format("STYLE_CODE = '{0}' and COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE))
         If Count = 0 Then
             Return False
         End If
@@ -416,7 +464,7 @@
         Dim RA_MESSAGE As String = "RA " & RA_NO
 
         Dim RtnQty As String = ""
-        Dim RA_RTN_QTY = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
+        Dim RA_PUTAWAY_QTY_OPEN = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
 
 
         If STYLE_CODE <> "" Then
@@ -444,9 +492,9 @@
             'Show location and 
         End If
 
-        If Val(RA_RTN_QTY & "") <> 0 Then
+        If Val(RA_PUTAWAY_QTY_OPEN & "") <> 0 Then
             RA_MESSAGE = RA_MESSAGE _
-           & " " & RA_RTN_QTY & " Units "
+           & " " & RA_PUTAWAY_QTY_OPEN & " Units "
         End If
 
         If RA_RTN_STATUS = "3" Then
@@ -477,21 +525,19 @@
         Dim lno As Integer = 0
         Dim lines As String = ""
         Dim pageLno As Integer = 0
-        'ASCMAIN1.sql = "Select UPC_CODE, PICK_LNO, WHSE_TRAN_NO, PICK_CASES, PICK_UNITS, INIT_DATE from SOTPICK5 " & vbCrLf _
-        '                & " where SOTPICK5.PICK_NO = '" & PICK_NO & "' and PICK_STATUS = 'P'"
-        Dim rows() As DataRow = dst.Tables("SOTPICK5").Select("PICK_STATUS = 'P'", "INIT_DATE DESC")
+
+        Dim rows() As DataRow = tbl.Select("GUN_STATUS = 'P'", "RA_RTN_LNO DESC")
         If PAGE * 5 > rows.Length Or PAGE < 0 Then PAGE = 0
 
         If rows.Length > 0 Then
             For Each ROW As DataRow In rows
                 If pageLno / 5 >= PAGE Then
                     lno += 1
-                    Dim prows() As DataRow = tbl.Select("UPC_CODE = '" & ROW.Item("UPC_CODE") & "'")
                     If showline = "" Or showline = "ALL" Or Val(showline) = lno Then
-                        msg = msg & vbCrLf & "L" & lno & " " & ROW.Item("LOCATION_CODE") & " " & prows(0).Item("STYLE_CODE") & " " & prows(0).Item("COLOR_CODE") & " " _
-                            & ROW.Item("PICK_CASES") & "c " & ROW.Item("PICK_UNITS") & "u"
+                        msg = msg & vbCrLf & "L" & lno & " " & ROW.Item("STYLE_CODE") & " " & ROW.Item("COLOR_CODE") & " " _
+                           & ROW.Item("RA_PUTAWAY_QTY_OPEN") & "u " & IIf(ROW.Item("RA_RTN_STATUS") = "1", "", "D")
                     End If
-                    lines &= "|" & ROW.Item("PICK_LNO") & ":" & ROW.Item("UPC_CODE")
+                    lines &= "|" & ROW.Item("RA_RTN_LNO") & ":" & ROW.Item("RA_UPC_CODE")
                     If lno = 5 Then Exit For
                 End If
                 pageLno += 1
@@ -509,7 +555,7 @@
             msg &= vbCrLf & "No Lines to Void" & vbCrLf & "Back to continue"
             VoidList = {}
             Dim hold As String = AppStates("SCAN_VOID")
-            AppStates("SCAN_VOID") = "No Picks, CLICK BELOW|BACK|NEW PICK|EXIT|"
+            AppStates("SCAN_VOID") = "No Returns, CLICK BELOW|BACK|NEW RA|EXIT|"
             CreateResponse("SCAN_VOID", "R", msg)
             AppStates("SCAN_VOID") = hold
         End If
@@ -523,36 +569,35 @@
     Sub voidLine(ByRef SCANTEXT As String)
         Dim rows() As DataRow
         Dim ss As String
-        Dim PICK_LNO As String
+        Dim RA_RTN_LNO As String
         Dim UPC_CODE As String
         If SCANTEXT = "ALL" Then
-            ss = "PICK_STATUS = 'P'"
+            ss = "GUN_STATUS = 'P'"
         Else
             Dim hold = VoidList(Val(SCANTEXT))
             Dim void = hold.split(":")
-            PICK_LNO = void(0)
+            RA_RTN_LNO = void(0)
             UPC_CODE = void(1)
-            ss = "PICK_STATUS = 'P' and PICK_LNO = '" & void(0) & "' and UPC_CODE = '" & void(1) & "'"
+            ss = "RA_RTN_LNO = '" & void(0) & "' and RA_UPC_CODE = '" & void(1) & "'"
         End If
-        rows = dst.Tables("SOTPICK5").Select(ss)
+        rows = tbl.Select(ss)
         If rows.Length = 0 Then
             'error
         Else
-            For Each rowSOTPICK5 As DataRow In rows
+            For Each rowSOTRMAFR As DataRow In rows
                 'Figure out multipicks for SOTPICK5
-                Dim row As DataRow = tbl.Select("UPC_CODE = '" & rowSOTPICK5.Item("UPC_CODE") & "'").First    '.Tables("SOTPICK5").Select("PICK_STATUS = 'P' AND PICK_LNO = '" & voidLine(0) & "' and UPC_CODE = '" & Void(1) & "'").FirstOrDefault
-                rowSOTPICK5.Item("PICK_STATUS") = "V"
-
-                CASES_MOVED = (rowSOTPICK5.Item("PICK_CASES") * -1)
-                UNITS_MOVED = (rowSOTPICK5.Item("PICK_UNITS") * -1)
-                LOCATION_CODE = rowSOTPICK5.Item("LOCATION_CODE")
+                Dim row As DataRow = tbl.Select("RA_UPC_CODE = '" & rowSOTRMAFR.Item("RA_UPC_CODE") & "'").First    '.Tables("SOTPICK5").Select("PICK_STATUS = 'P' AND PICK_LNO = '" & voidLine(0) & "' and UPC_CODE = '" & Void(1) & "'").FirstOrDefault
+                rowSOTRMAFR.Item("GUN_STATUS") = "V"
 
                 'OpenPicks = OpenPicks + 1
                 'rowWHTSCANS = row
                 'loadLine()
-                Update_Record()
+                'Update_Record()
             Next
         End If
+        BeginTrans()
+        Update_Record_TDA("SOTRMAFR")
+        CommitTrans()
 
     End Sub
 
@@ -574,7 +619,7 @@
 
     Sub Update_Record()
 
-        Dim RA_RTN_QTY = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
+        Dim RA_PUTAWAY_QTY_OPEN = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
 
         RA_RTN_LNO = RA_RTN_LNO + 1
 
@@ -587,7 +632,7 @@
             .Item("RA_RTN_QTY") = RA_RTN_QTY
             .Item("RA_UPC_CODE") = UPC_CODE
             .Item("RA_QTY_USED") = 0
-            .Item("RA_PUTAWAY_QTY_OPEN") = RA_RTN_QTY
+            .Item("RA_PUTAWAY_QTY_OPEN") = RA_PUTAWAY_QTY_OPEN
             .Item("STYLE_CODE") = STYLE_CODE
             .Item("COLOR_CODE") = COLOR_CODE
             .Item("RA_RTN_STATUS") = RA_RTN_STATUS
@@ -599,7 +644,8 @@
 
         Update_Record_TDA("SOTRMAFR")
 
-        If RA_RTN_STATUS = "1" And WHSE_LOC_RTN <> LOCATION_CODE Then
+        'lets not accidentally do a move - lets discuss and make sure we want to do this.
+        If RA_RTN_STATUS = "1" And WHSE_LOC_RTN <> LOCATION_CODE And 1 = 2 Then
             Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
             Dim WHSE_TRAN_LNO_ctr As Integer = 1
 

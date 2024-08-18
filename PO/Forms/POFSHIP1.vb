@@ -9511,6 +9511,7 @@ Public Class POFSHIP1
                                         rowSOTORDP2.Item("ORDR_QTY_SHIP") = 0
                                         dst.Tables("SOTORDP2").Rows.Add(rowSOTORDP2)
                                     End If
+                                    'this quantity is for initial setting, see below using PO_QTY_REC for reversal of X back to O
                                     rowSOTORDP2.Item("ORDR_QTY_SHIP") += Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
                                 Next
                             End If
@@ -9551,6 +9552,12 @@ Public Class POFSHIP1
                             ' Status was Received, clicked Reverse Receipt, Status will now show Reverse Now, button will now show Cancel Reverse
                             Dim ORDR_NO As String = e.Cell.Row.Cells("ORDR_NO").Value & ""
                             ' We bill the customer on BTB orders if receiving into a warehouse whose type is P
+                            If ASCMAIN1.CLIENT = "RGI" Then
+                                If MsgBox("Reversing This Line will generate a negative invoice!" + vbCrLf & "Continue?", MsgBoxStyle.YesNo + MsgBoxStyle.Critical, "Generate Negative Invoice?") = MsgBoxResult.No Then
+                                    Exit Select
+                                End If
+                            End If
+
                             If ORDR_NO <> "" And (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
 
                                 If dst.Tables("SOTORDP1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
@@ -9584,11 +9591,10 @@ Public Class POFSHIP1
                                         dst.Tables("SOTORDP2").Rows.Add(rowSOTORDP2)
                                     End If
 
-                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") -= Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") -= Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
 
                                 Next
                             End If
-
                             'If e.Cell.Row.Cells("ORDR_NO").Value & "" <> "" And WHSE_TYPE = "P" Then
                             'MsgBox("You May NOT De-Receive a BTB Shipment which has been Invoiced", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
                             'Else
@@ -9609,7 +9615,7 @@ Public Class POFSHIP1
                                                                                 rowPOTSHIP3.Item("PO_ORDER_LNO")})
                                     Dim ORDR_LNO As Integer = Val(rowPOTORDR2.Item("ORDR_LNO") & "")
                                     Dim rowSOTORDP2 As DataRow = dst.Tables("SOTORDP2").Rows.Find(New Object() {ORDR_NO, ORDR_NO, ORDR_LNO})
-                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") += Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") += Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
                                     If Val(rowSOTORDP2.Item("ORDR_QTY_SHIP") & "") = 0 Then
                                         rowSOTORDP2.Delete()
                                     End If

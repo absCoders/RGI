@@ -7,12 +7,14 @@
     Dim PICK_LNO As String
     Dim STYLE_CODE As String
     Dim COLOR_CODE As String
+    Dim STYLE_DESC As String
+    Dim COLOR_DESC As String
     Dim UPC_CODE As String
     Dim LOCATION_CODE As String
     Dim COLOR_CODEs As New List(Of String)
     Dim Cases_count As Integer
     Dim TICKET_NO As String
-    Dim CASES_BOOK As Integer
+    Dim CARTON_PACK_QTY As Integer
     Dim CASES_MOVED As Integer
     Dim UNITS_MOVED As Integer
     Dim TICKET_NO1 As String
@@ -27,11 +29,24 @@
         Me.MENU_ITEM_TYPE = "C"
         Me.MENU_ITEM_OBJECT = "WHCRF015"
 
-        AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|NEXT|EXTRA|") ' BLUE
+        If "rick,victor,".Contains(g.USER_ID & ",") Then
+            AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|NEXT|EXTRA|+OH|") ' BLUE
+        Else
+            AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|NEXT|EXTRA|") ' BLUE
+        End If
         AppStates.Add("SCAN_COLOR", "Select a Color from List |CANCEL|")
+        AppStates.Add("SCAN_LOCATION", "Scan Location found |CANCEL|") ' Yellow
+        AppStates.Add("SCAN_CASES", "How many cases found, (0 for units)|CANCEL|")
+        AppStates.Add("SCAN_UNITS", "Enter units found |CANCEL|") 'G
+        AppStates.Add("VERIFY", "Update|Y|N|EXIT|")
 
         AppState = "SCAN_UPC"
         LAST_CLR = "BLUE"
+
+        With dst
+            Create_TDA(.Tables.Add, "WHTPICKS", "*")
+        End With
+        tbl = dst.Tables("WHTPICKS")
 
     End Sub
 
@@ -60,6 +75,9 @@
                         locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                         CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
                         Exit Select
+                    ElseIf SCANTEXT = "+OH" Then
+                        CreateResponse("SCAN_LOCATION", "YELLOW", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, "Positive Adjustment"))
+                        Exit Select
                     End If
 
                     If SCANTEXT.Length = 14 Then
@@ -75,6 +93,8 @@
                         UPC_CODE = CheckResponse("UPC_CODE")
                         STYLE_CODE = CheckResponse("STYLE_CODE")
                         COLOR_CODE = CheckResponse("COLOR_CODE")
+                        STYLE_DESC = CheckResponse("STYLE_DESC")
+                        COLOR_DESC = CheckResponse("COLOR_DESC")
                         PAGE_NO = 0
                         locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                         CreateResponse("", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
@@ -103,12 +123,105 @@
                             End If
                             UPC_CODE = CheckResponse("UPC_CODE")
                             COLOR_CODE = CheckResponse("COLOR_CODE")
+                            STYLE_DESC = CheckResponse("STYLE_DESC")
+                            COLOR_DESC = CheckResponse("COLOR_DESC")
                         End If
                     End If
                     PAGE_NO = 0
                     locations = FINDUPC(STYLE_CODE, COLOR_CODE, False)
                     CreateResponse("SCAN_UPC", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, locations))
 
+                Case "SCAN_LOCATION"
+                    If SCANTEXT = "CANCEL" Then
+                        CreateResponse("SCAN_UPC", "BLUE", "Cancelled")
+                        Exit Select
+                    Else
+                        Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckLocation(Me, SCANTEXT, False)
+                        If CheckResponse.ContainsKey("Error") Then
+                            CreateResponse("", "R", CheckResponse("Error"))
+                            Exit Select
+                        End If
+                        BAR_CODE_LOCATION = CheckResponse("LOCATION_CODE")
+                    End If
+                    CreateResponse("SCAN_CASES", "BLUE", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                    dst.Tables("WHTPICKS").Rows.Clear()
+
+                Case "SCAN_CASES"
+                    '  Asking for Cases although Message may not display number of cases requested
+                    If SCANTEXT = "CANCEL" Then
+                        CreateResponse("SCAN_UPC", "BLUE", "Cancelled")
+                        Exit Select
+                    Else
+                        Dim hold As String
+                        If Val(SCANTEXT) > 999 Or Val(SCANTEXT) < 0 Then
+                            'Error
+                            hold = AppStates(AppState)
+                            AppStates(AppState) = "Invalid Number, Enter Cases Found|OK|"
+                            CreateResponse("", "R", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                            AppStates(AppState) = hold
+                            Exit Select
+                        End If
+                        If SCANTEXT.Contains("*") Then
+                            Dim S() As String
+                            S = SCANTEXT.Split("*")
+                            CASES_MOVED = Val(S(0))
+                            UNITS_MOVED = Val(S(1))
+                        Else
+                            CASES_MOVED = Val(SCANTEXT)
+                            UNITS_MOVED = 0
+                        End If
+
+                        If CASES_MOVED + UNITS_MOVED = 0 Then
+                            CreateResponse("SCAN_UNITS", "G", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                            Exit Select
+                        End If
+                        ASCMAIN1.sql = "select CARTON_PACK_QTY from ICTSTYL1 Where STYLE_CODE = '" & STYLE_CODE & "'"
+                        CARTON_PACK_QTY = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql) & "")
+                        hold = AppStates("VERIFY")
+                        AppStates("VERIFY") = "Update " & SCANTEXT & " Cases|Y|N|CLEAR|EXIT|"
+                        CreateResponse("VERIFY", "B", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                        AppStates("VERIFY") = hold
+                    End If
+
+                Case "SCAN_UNITS"
+                    If SCANTEXT = "CANCEL" Then
+                        CreateResponse("SCAN_UPC", "BLUE", "Cancelled")
+                        Exit Select
+                    Else
+                        Dim hold As String
+                        'Can we have more than 999 loose units to Move in a Pick?
+                        If Val(SCANTEXT) > 999 Or Val(SCANTEXT) < 0 Then
+                            'Error
+                            hold = AppStates(AppState)
+                            AppStates(AppState) = "Invalid Count " & SCANTEXT & ", Verify Units Count|OK|"
+                            CreateResponse("", "R", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                            AppStates(AppState) = hold
+                            Exit Select
+                        End If
+                        UNITS_MOVED = Val(SCANTEXT)
+                        hold = AppStates("VERIFY")
+                        AppStates("VERIFY") = "Update " & SCANTEXT & " Units|Y|N|CLEAR|EXIT|"
+                        CreateResponse("VERIFY", "B", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                        AppStates("VERIFY") = hold
+                    End If
+
+                Case "VERIFY"
+                    If SCANTEXT.ToUpper = "Y" Then
+                        ' Y is for normal Verify
+                        Update_Record()
+                        CreateResponse("SCAN_UPC", "BLUE", "Updated")
+                    ElseIf SCANTEXT.ToUpper = "N" Or SCANTEXT = "NO" Then
+                        ' N is for normal Verify
+                        ' NO is for Clear Verify
+                        CreateResponse("SCAN_UPC", "BLUE", "Cancelled")
+                    Else
+                        'Error
+                        Dim hold As String = AppStates(AppState)
+                        AppStates(AppState) = "Invalid Response|OK|"
+                        CreateResponse("", "R", String.Format("{0} {1} {2} {3} {4}", UPC_CODE, STYLE_CODE, COLOR_CODE, vbCrLf, LOCATION_CODE))
+                        AppStates(AppState) = hold
+
+                    End If
             End Select
         End If
     End Sub
@@ -152,5 +265,34 @@
         Return locations
 
     End Function
+    Sub Update_Record()
+        Dim HoldLoc As String = ""
+        Dim QtyFound = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
+
+        BeginTrans()
+
+        Dim rowWHTPICKS As DataRow = dst.Tables("WHTPICKS").NewRow
+        With rowWHTPICKS
+            .Item("PICK_NO") = "+OH"
+            .Item("STYLE_CODE") = STYLE_CODE
+            .Item("COLOR_CODE") = COLOR_CODE
+            .Item("STYLE_DESC") = STYLE_DESC
+            .Item("COLOR_DESC") = COLOR_DESC
+            .Item("LOCATION_CODE") = BAR_CODE_LOCATION
+            .Item("SHORTAGE") = QtyFound
+            .Item("STATUS") = "A"
+            .Item("INIT_OPER") = G.USER_ID
+            .Item("INIT_DATE") = DATETIME_STAMP
+        End With
+        dst.Tables("WHTPICKS").Rows.Add(rowWHTPICKS)
+
+        Update_Record_TDA("WHTPICKS")
+
+        CommitTrans()
+
+        CASES_MOVED = 0
+        UNITS_MOVED = 0
+
+    End Sub
 
 End Class

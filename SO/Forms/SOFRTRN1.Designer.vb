@@ -2184,8 +2184,9 @@ Partial Class SOFRTRN1
         UltraGridColumn292.Header.Caption = "Color"
         UltraGridColumn292.Header.VisiblePosition = 4
         UltraGridColumn292.Width = 114
+        UltraGridColumn293.Header.Caption = "Type"
         UltraGridColumn293.Header.VisiblePosition = 7
-        UltraGridColumn293.Hidden = True
+        UltraGridColumn293.Width = 94
         UltraGridColumn294.Header.VisiblePosition = 8
         UltraGridColumn294.Hidden = True
         UltraGridColumn295.Header.VisiblePosition = 9
@@ -2727,34 +2728,35 @@ Partial Class SOFRTRN1
         Me.grdSOTRMAFR.DisplayLayout.AutoFitStyle = Infragistics.Win.UltraWinGrid.AutoFitStyle.ResizeAllColumns
         UltraGridColumn218.Header.Caption = "RA No"
         UltraGridColumn218.Header.VisiblePosition = 0
+        UltraGridColumn218.Hidden = True
         UltraGridColumn218.Width = 91
-        UltraGridColumn219.Header.Caption = "Scan Lno"
+        UltraGridColumn219.Header.Caption = "Scan"
         UltraGridColumn219.Header.VisiblePosition = 1
-        UltraGridColumn219.Width = 93
+        UltraGridColumn219.Width = 57
         UltraGridColumn220.Header.Caption = "Scan Qty"
-        UltraGridColumn220.Header.VisiblePosition = 2
-        UltraGridColumn220.Width = 93
+        UltraGridColumn220.Header.VisiblePosition = 5
+        UltraGridColumn220.Width = 94
         UltraGridColumn221.Header.Caption = "UPC Code"
-        UltraGridColumn221.Header.VisiblePosition = 3
-        UltraGridColumn221.Width = 93
+        UltraGridColumn221.Header.VisiblePosition = 4
+        UltraGridColumn221.Width = 143
         UltraGridColumn222.Header.Caption = "Qty Used"
-        UltraGridColumn222.Header.VisiblePosition = 4
-        UltraGridColumn222.Width = 93
+        UltraGridColumn222.Header.VisiblePosition = 6
+        UltraGridColumn222.Width = 87
         UltraGridColumn223.Header.Caption = "Style"
-        UltraGridColumn223.Header.VisiblePosition = 5
-        UltraGridColumn223.Width = 93
+        UltraGridColumn223.Header.VisiblePosition = 2
+        UltraGridColumn223.Width = 137
         UltraGridColumn224.Header.Caption = "Color"
-        UltraGridColumn224.Header.VisiblePosition = 6
-        UltraGridColumn224.Width = 93
+        UltraGridColumn224.Header.VisiblePosition = 3
+        UltraGridColumn224.Width = 60
         UltraGridColumn225.Header.Caption = "Status"
         UltraGridColumn225.Header.VisiblePosition = 7
-        UltraGridColumn225.Width = 93
+        UltraGridColumn225.Width = 141
         UltraGridColumn226.Header.Caption = "Scanned On"
         UltraGridColumn226.Header.VisiblePosition = 8
-        UltraGridColumn226.Width = 93
+        UltraGridColumn226.Width = 110
         UltraGridColumn227.Header.Caption = "Scanned By"
         UltraGridColumn227.Header.VisiblePosition = 9
-        UltraGridColumn227.Width = 93
+        UltraGridColumn227.Width = 99
         UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn221, UltraGridColumn222, UltraGridColumn223, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn227})
         Me.grdSOTRMAFR.DisplayLayout.BandsSerializer.Add(UltraGridBand15)
         Me.grdSOTRMAFR.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -2821,7 +2823,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(953, 501)
         '
@@ -2867,7 +2869,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(953, 501)
         '
@@ -2925,7 +2927,7 @@ Partial Class SOFRTRN1
         Me.UltraNumericEditor5.FormatString = "#,##0.00000"
         Me.UltraNumericEditor5.Location = New System.Drawing.Point(454, 80)
         Me.UltraNumericEditor5.MaxValue = 99999.0R
-        Me.UltraNumericEditor5.MinValue = 0.0R
+        Me.UltraNumericEditor5.MinValue = 0R
         Me.UltraNumericEditor5.Name = "UltraNumericEditor5"
         Me.UltraNumericEditor5.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor5.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
