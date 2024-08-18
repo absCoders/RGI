@@ -1536,8 +1536,10 @@ Public Class GLRSTMT1
 
         With worksheet.Cells(4, Col0_STMT_LINE_DESC)
             .AddComment(Join(Page0.ToArray, vbCrLf))
-            .Font.Color = SpreadsheetGear.Colors.Red
-            .Value = description
+            ' .Font.Color = SpreadsheetGear.Colors.Red
+            '.Value = description
+            .Value = "'" & Format(Now, "MM/dd/yy HH:mm") & "   " & ASCMAIN1.USER_ID
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
         End With
 
         With worksheet.Cells(1, Col0_STMT_LINE_DESC, 3, Col0_STMT_LINE_DESC + 1 + 4)
@@ -1618,6 +1620,7 @@ Public Class GLRSTMT1
             Dim rowGLTFINRX As DataRow = dst.Tables("GLTFINRX").Rows.Find(New Object() {STMT_CODE, REPORT_NO, STMT_LINE_NO, STMT_LINE_NO2})
             Dim SUPPRESS_PRINT As String = rowGLTFINRX.Item("SUPPRESS_PRINT") & ""
             Dim STMT_LINE_DC As String = rowGLTFINR2.Item("STMT_LINE_DC") & ""
+            Dim STMT_LINE_DESC_YELLOW As String = rowGLTFINR2.Item("STMT_LINE_DESC") & ""
 
             If STMT_LINE_TYPE = "H" Then
                 worksheet.Cells(Rx, Col0 + (1 - 1) * 2, Rx, Col0 + (MAX_COLUMNS - 1) * 2).Clear()
@@ -1645,6 +1648,19 @@ Public Class GLRSTMT1
                     worksheet.Cells(Rx, Col0_STMT_LINE_DESC).EntireRow.Hidden = True
                 End If
 
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    If (STMT_LINE_DESC_YELLOW = "Warehouse Expenses" Or STMT_LINE_DESC_YELLOW = "Sales and Design Expenses" Or STMT_LINE_DESC_YELLOW = "General/Admin Expenses" Or STMT_LINE_DESC_YELLOW = "Other Income & Expense" Or STMT_LINE_DESC_YELLOW = "Sales and Design Expenses") And STMT_LINE_TYPE = "D" And STMT_LINE_NO2 = "0" Then
+                        With worksheet.Cells(Rx, Col0_STMT_LINE_DESC, Rx, Col0_STMT_LINE_DESC + 4 + 3 + MAX_COLUMNS * 2)
+                            .Interior.Color = SpreadsheetGear.Colors.LightGoldenrodYellow
+                            '.Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continuous
+                            '.Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continuous
+                            '.Borders(SpreadsheetGear.BordersIndex.EdgeLeft).LineStyle = SpreadsheetGear.LineStyle.Continuous
+                            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continuous
+                        End With
+
+                    End If
+
+                End If
                 If STMT_LINE_TYPE = "S" Then
 
                     Dim F As String = ""
