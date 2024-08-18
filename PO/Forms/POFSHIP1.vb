@@ -15007,9 +15007,9 @@ Public Class POFSHIP1
             NEW_PO_COST = Val(FIRST_COST) + (FIRST_COST * PO_COST_COMM / 100)
         Else
             NEW_PO_COST = FIRST_COST
-            If PO_COST <> NEW_PO_COST Then
-                Stop
-            End If
+            'If PO_COST <> NEW_PO_COST Then
+            '    Stop
+            'End If
         End If
         ROW.Item("PO_COST") = NEW_PO_COST
     End Sub
