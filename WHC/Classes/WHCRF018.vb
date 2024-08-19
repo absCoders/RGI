@@ -366,6 +366,11 @@
                                 showreturned(holdScan)
                                 Exit Select
                             End If
+                            If SCANTEXT <> "" AndAlso Left(SCANTEXT, 1) = "*" Then
+                                holdScan = SCANTEXT
+                                showreturned(SCANTEXT, PageNo - 1)
+                                Exit Select
+                            End If
                             If Val(SCANTEXT) > (VoidList.Length - 1) Or Val(SCANTEXT) < 1 Then
                                 'error
                             Else
@@ -525,8 +530,15 @@
         Dim lno As Integer = 0
         Dim lines As String = ""
         Dim pageLno As Integer = 0
+        Dim sqlWhere As String = ""
 
-        Dim rows() As DataRow = tbl.Select("GUN_STATUS = 'P'", "RA_RTN_LNO DESC")
+        If Left(showline, 1) = "*" Then
+            sqlWhere = "RA_RTN_LNO = " & Mid(showline, 2)
+            PAGE = 0
+        Else
+            sqlWhere = "GUN_STATUS = 'P'"
+        End If
+        Dim rows() As DataRow = tbl.Select(sqlWhere, "RA_RTN_LNO DESC")
         If PAGE * 5 > rows.Length Or PAGE < 0 Then PAGE = 0
 
         If rows.Length > 0 Then
@@ -535,6 +547,10 @@
                     lno += 1
                     If showline = "" Or showline = "ALL" Or Val(showline) = lno Then
                         msg = msg & vbCrLf & "L" & lno & " " & ROW.Item("STYLE_CODE") & " " & ROW.Item("COLOR_CODE") & " " _
+                           & ROW.Item("RA_PUTAWAY_QTY_OPEN") & "u " & IIf(ROW.Item("RA_RTN_STATUS") = "1", "", "D")
+                    End If
+                    If Left(showline, 1) = "*" Then
+                        msg = msg & vbCrLf & "L" & ROW.Item("RA_RTN_LNO") & " " & ROW.Item("STYLE_CODE") & " " & ROW.Item("COLOR_CODE") & " " _
                            & ROW.Item("RA_PUTAWAY_QTY_OPEN") & "u " & IIf(ROW.Item("RA_RTN_STATUS") = "1", "", "D")
                     End If
                     lines &= "|" & ROW.Item("RA_RTN_LNO") & ":" & ROW.Item("RA_UPC_CODE")
@@ -574,6 +590,9 @@
         If SCANTEXT = "ALL" Then
             ss = "GUN_STATUS = 'P'"
         Else
+            If Left(SCANTEXT, 1) = "*" Then
+                SCANTEXT = "1"
+            End If
             Dim hold = VoidList(Val(SCANTEXT))
             Dim void = hold.split(":")
             RA_RTN_LNO = void(0)
