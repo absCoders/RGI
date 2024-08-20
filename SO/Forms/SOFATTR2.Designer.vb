@@ -31,8 +31,10 @@ Partial Class SOFATTR2
         Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem9 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance93 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance94 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance95 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -205,6 +207,7 @@ Partial Class SOFATTR2
         Dim UltraGridColumn81 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IMPORT_SORT")
         Dim UltraGridColumn82 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE5")
         Dim UltraGridColumn83 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE6")
+        Dim UltraGridColumn108 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE_ALL")
         Dim UltraGridColumn73 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LIGHT_TYPE")
         Dim UltraGridColumn74 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LIGHT_COLOR")
         Dim UltraGridColumn96 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DUTY_RATE_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
@@ -295,6 +298,13 @@ Partial Class SOFATTR2
         Me.Panel6 = New System.Windows.Forms.Panel()
         Me.cmdOrder = New Infragistics.Win.Misc.UltraButton()
         Me.txtOrder = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel7 = New System.Windows.Forms.Panel()
+        Me.btnECOMPRICING = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.cboECOMPRICING = New System.Windows.Forms.ComboBox()
+        Me.txtPRCG_DESC = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.txtATTR_CODE_1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grdICTATTR1_1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -397,6 +407,8 @@ Partial Class SOFATTR2
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel6.SuspendLayout()
         CType(Me.txtOrder, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl3.SuspendLayout()
+        Me.Panel7.SuspendLayout()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.txtATTR_CODE_1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdICTATTR1_1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -480,6 +492,7 @@ Partial Class SOFATTR2
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
         UltraExplorerBarItem1.Text = "Find"
         UltraExplorerBarItem5.Text = "Clear"
         UltraExplorerBarItem6.Key = "Done"
@@ -489,7 +502,8 @@ Partial Class SOFATTR2
         UltraExplorerBarItem8.Text = "Attribute Excel"
         UltraExplorerBarItem4.Text = "Zip"
         UltraExplorerBarItem7.Text = "Import"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem7})
+        UltraExplorerBarItem9.Text = "Ecom Pricing"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem8, UltraExplorerBarItem4, UltraExplorerBarItem7, UltraExplorerBarItem9})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -500,7 +514,10 @@ Partial Class SOFATTR2
         UltraExplorerBarGroup3.Settings.ContainerHeight = 75
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Add Order Styles"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3})
+        UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
+        UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup4.Text = "Ecom Pricing"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3, UltraExplorerBarGroup4})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -589,7 +606,7 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpInclude)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 50)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 319)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 375)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -896,10 +913,11 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 469)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 75)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel6
         '
@@ -927,6 +945,70 @@ Partial Class SOFATTR2
         Me.txtOrder.Name = "txtOrder"
         Me.txtOrder.Size = New System.Drawing.Size(155, 25)
         Me.txtOrder.TabIndex = 195
+        '
+        'UltraExplorerBarContainerControl3
+        '
+        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel7)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
+        '
+        'Panel7
+        '
+        Me.Panel7.Controls.Add(Me.btnECOMPRICING)
+        Me.Panel7.Controls.Add(Me.Label1)
+        Me.Panel7.Controls.Add(Me.cboECOMPRICING)
+        Me.Panel7.Controls.Add(Me.txtPRCG_DESC)
+        Me.Panel7.Controls.Add(Me.Label3)
+        Me.Panel7.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel7.Location = New System.Drawing.Point(0, 0)
+        Me.Panel7.Name = "Panel7"
+        Me.Panel7.Size = New System.Drawing.Size(172, 150)
+        Me.Panel7.TabIndex = 0
+        '
+        'btnECOMPRICING
+        '
+        Me.btnECOMPRICING.Location = New System.Drawing.Point(10, 113)
+        Me.btnECOMPRICING.Name = "btnECOMPRICING"
+        Me.btnECOMPRICING.Size = New System.Drawing.Size(150, 30)
+        Me.btnECOMPRICING.TabIndex = 8
+        Me.btnECOMPRICING.Text = "Create Pricing"
+        Me.btnECOMPRICING.UseVisualStyleBackColor = True
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(7, 6)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(56, 16)
+        Me.Label1.TabIndex = 7
+        Me.Label1.Text = "Partner"
+        '
+        'cboECOMPRICING
+        '
+        Me.cboECOMPRICING.FormattingEnabled = True
+        Me.cboECOMPRICING.Location = New System.Drawing.Point(6, 25)
+        Me.cboECOMPRICING.Name = "cboECOMPRICING"
+        Me.cboECOMPRICING.Size = New System.Drawing.Size(155, 24)
+        Me.cboECOMPRICING.TabIndex = 6
+        '
+        'txtPRCG_DESC
+        '
+        Me.txtPRCG_DESC.Location = New System.Drawing.Point(6, 76)
+        Me.txtPRCG_DESC.Name = "txtPRCG_DESC"
+        Me.txtPRCG_DESC.Size = New System.Drawing.Size(155, 23)
+        Me.txtPRCG_DESC.TabIndex = 5
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(3, 56)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(81, 16)
+        Me.Label3.TabIndex = 4
+        Me.Label3.Text = "Description"
         '
         'UltraTabPageControl2
         '
@@ -1222,7 +1304,7 @@ Partial Class SOFATTR2
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdICTATTRQ)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(756, 430)
         '
@@ -1331,7 +1413,7 @@ Partial Class SOFATTR2
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(756, 430)
         '
@@ -1476,26 +1558,26 @@ Partial Class SOFATTR2
         UltraGridColumn57.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn57.Width = 40
         UltraGridColumn12.Header.Caption = "PB1"
-        UltraGridColumn12.Header.VisiblePosition = 34
+        UltraGridColumn12.Header.VisiblePosition = 35
         UltraGridColumn13.Header.Caption = "PB1 Val"
-        UltraGridColumn13.Header.VisiblePosition = 35
+        UltraGridColumn13.Header.VisiblePosition = 36
         UltraGridColumn14.Header.Caption = "PB2"
-        UltraGridColumn14.Header.VisiblePosition = 36
+        UltraGridColumn14.Header.VisiblePosition = 37
         UltraGridColumn15.Header.Caption = "PB2 Val"
-        UltraGridColumn15.Header.VisiblePosition = 37
+        UltraGridColumn15.Header.VisiblePosition = 38
         UltraGridColumn16.Header.Caption = "PB3"
-        UltraGridColumn16.Header.VisiblePosition = 38
+        UltraGridColumn16.Header.VisiblePosition = 39
         UltraGridColumn17.Header.Caption = "PB3 Val"
-        UltraGridColumn17.Header.VisiblePosition = 39
+        UltraGridColumn17.Header.VisiblePosition = 40
         UltraGridColumn18.Header.Caption = "PB4"
-        UltraGridColumn18.Header.VisiblePosition = 40
+        UltraGridColumn18.Header.VisiblePosition = 41
         UltraGridColumn19.Header.Caption = "PB4 Val"
-        UltraGridColumn19.Header.VisiblePosition = 41
+        UltraGridColumn19.Header.VisiblePosition = 42
         UltraGridColumn20.Header.Caption = "Local Image"
-        UltraGridColumn20.Header.VisiblePosition = 46
+        UltraGridColumn20.Header.VisiblePosition = 47
         UltraGridColumn23.Header.Caption = "Color Long"
-        UltraGridColumn23.Header.VisiblePosition = 48
-        UltraGridColumn21.Header.VisiblePosition = 51
+        UltraGridColumn23.Header.VisiblePosition = 49
+        UltraGridColumn21.Header.VisiblePosition = 52
         UltraGridColumn21.Hidden = True
         UltraGridColumn22.Header.Caption = "Factory"
         UltraGridColumn22.Header.VisiblePosition = 29
@@ -1506,85 +1588,85 @@ Partial Class SOFATTR2
         UltraGridColumn24.Hidden = True
         UltraGridColumn24.Width = 65
         UltraGridColumn25.Header.Caption = "FE Price"
-        UltraGridColumn25.Header.VisiblePosition = 42
+        UltraGridColumn25.Header.VisiblePosition = 43
         UltraGridColumn25.Width = 81
         UltraGridColumn26.Header.Caption = "Color Grp"
         UltraGridColumn26.Header.VisiblePosition = 5
         UltraGridColumn26.Width = 89
         UltraGridColumn27.Header.Caption = "Cube"
-        UltraGridColumn27.Header.VisiblePosition = 52
+        UltraGridColumn27.Header.VisiblePosition = 53
         UltraGridColumn27.Width = 61
         UltraGridColumn28.Header.Caption = "FD Price"
-        UltraGridColumn28.Header.VisiblePosition = 43
+        UltraGridColumn28.Header.VisiblePosition = 44
         UltraGridColumn28.Width = 90
         UltraGridColumn29.Header.Caption = "FE Mixed"
-        UltraGridColumn29.Header.VisiblePosition = 44
+        UltraGridColumn29.Header.VisiblePosition = 45
         UltraGridColumn29.Width = 98
         UltraGridColumn31.Header.Caption = "FD Mixed"
-        UltraGridColumn31.Header.VisiblePosition = 45
+        UltraGridColumn31.Header.VisiblePosition = 46
         UltraGridColumn31.Width = 97
-        UltraGridColumn58.Header.VisiblePosition = 53
+        UltraGridColumn58.Header.VisiblePosition = 54
         UltraGridColumn58.Hidden = True
         UltraGridColumn58.Width = 80
         UltraGridColumn76.Header.Caption = "Season"
-        UltraGridColumn76.Header.VisiblePosition = 49
+        UltraGridColumn76.Header.VisiblePosition = 50
         UltraGridColumn76.Width = 84
         UltraGridColumn75.Header.Caption = "Theme"
-        UltraGridColumn75.Header.VisiblePosition = 50
+        UltraGridColumn75.Header.VisiblePosition = 51
         UltraGridColumn75.Width = 163
         UltraGridColumn71.Header.Caption = "Disc Date"
-        UltraGridColumn71.Header.VisiblePosition = 54
+        UltraGridColumn71.Header.VisiblePosition = 55
         UltraGridColumn71.Hidden = True
         UltraGridColumn84.Header.Caption = "Lenght - ITM"
-        UltraGridColumn84.Header.VisiblePosition = 57
+        UltraGridColumn84.Header.VisiblePosition = 58
         UltraGridColumn84.Hidden = True
         UltraGridColumn84.Width = 87
         UltraGridColumn85.Header.Caption = "Width - ITM"
-        UltraGridColumn85.Header.VisiblePosition = 58
+        UltraGridColumn85.Header.VisiblePosition = 59
         UltraGridColumn85.Hidden = True
         UltraGridColumn85.Width = 84
         UltraGridColumn86.Header.Caption = "Height - ITM"
-        UltraGridColumn86.Header.VisiblePosition = 59
+        UltraGridColumn86.Header.VisiblePosition = 60
         UltraGridColumn86.Hidden = True
         UltraGridColumn86.Width = 88
         UltraGridColumn87.Header.Caption = "Weight - ITM"
-        UltraGridColumn87.Header.VisiblePosition = 60
+        UltraGridColumn87.Header.VisiblePosition = 61
         UltraGridColumn87.Hidden = True
         UltraGridColumn87.Width = 89
         UltraGridColumn88.Header.Caption = "Length - CTN"
-        UltraGridColumn88.Header.VisiblePosition = 61
+        UltraGridColumn88.Header.VisiblePosition = 62
         UltraGridColumn88.Hidden = True
         UltraGridColumn88.Width = 107
         UltraGridColumn89.Header.Caption = "Width - CTN"
-        UltraGridColumn89.Header.VisiblePosition = 63
+        UltraGridColumn89.Header.VisiblePosition = 64
         UltraGridColumn89.Hidden = True
         UltraGridColumn89.Width = 97
         UltraGridColumn90.Header.Caption = "Height - CTN"
-        UltraGridColumn90.Header.VisiblePosition = 62
+        UltraGridColumn90.Header.VisiblePosition = 63
         UltraGridColumn90.Hidden = True
         UltraGridColumn90.Width = 98
         UltraGridColumn91.Header.Caption = "Weight - CTN"
-        UltraGridColumn91.Header.VisiblePosition = 64
+        UltraGridColumn91.Header.VisiblePosition = 65
         UltraGridColumn91.Hidden = True
         UltraGridColumn91.Width = 105
         UltraGridColumn92.Header.Caption = "Length - INR"
-        UltraGridColumn92.Header.VisiblePosition = 65
+        UltraGridColumn92.Header.VisiblePosition = 66
         UltraGridColumn92.Hidden = True
         UltraGridColumn92.Width = 99
         UltraGridColumn93.Header.Caption = "Width - INR"
-        UltraGridColumn93.Header.VisiblePosition = 66
+        UltraGridColumn93.Header.VisiblePosition = 67
         UltraGridColumn93.Hidden = True
         UltraGridColumn93.Width = 94
         UltraGridColumn94.Header.Caption = "Height - INR"
-        UltraGridColumn94.Header.VisiblePosition = 67
+        UltraGridColumn94.Header.VisiblePosition = 68
         UltraGridColumn94.Hidden = True
         UltraGridColumn94.Width = 97
         UltraGridColumn95.Header.Caption = "Weight - INR"
-        UltraGridColumn95.Header.VisiblePosition = 69
+        UltraGridColumn95.Header.VisiblePosition = 70
         UltraGridColumn95.Hidden = True
         UltraGridColumn95.Width = 101
         UltraGridColumn77.Header.Caption = "Exclusive"
-        UltraGridColumn77.Header.VisiblePosition = 55
+        UltraGridColumn77.Header.VisiblePosition = 56
         UltraGridColumn77.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn77.Width = 74
         UltraGridColumn78.Header.Caption = "Attr2"
@@ -1600,61 +1682,65 @@ Partial Class SOFATTR2
         UltraGridColumn80.Hidden = True
         UltraGridColumn80.Width = 70
         UltraGridColumn81.Header.Caption = "Import Sort"
-        UltraGridColumn81.Header.VisiblePosition = 56
+        UltraGridColumn81.Header.VisiblePosition = 57
         UltraGridColumn81.Width = 92
         UltraGridColumn82.Header.Caption = "Attr5"
-        UltraGridColumn82.Header.VisiblePosition = 68
+        UltraGridColumn82.Header.VisiblePosition = 69
         UltraGridColumn82.Hidden = True
         UltraGridColumn83.Header.Caption = "Attr6"
-        UltraGridColumn83.Header.VisiblePosition = 70
+        UltraGridColumn83.Header.VisiblePosition = 71
         UltraGridColumn83.Hidden = True
+        UltraGridColumn108.Header.Caption = "All 2nd Attr"
+        UltraGridColumn108.Header.VisiblePosition = 34
+        UltraGridColumn108.Hidden = True
+        UltraGridColumn108.Width = 239
         UltraGridColumn73.Header.Caption = "Light Type"
-        UltraGridColumn73.Header.VisiblePosition = 71
+        UltraGridColumn73.Header.VisiblePosition = 72
         UltraGridColumn73.Width = 96
         UltraGridColumn74.Header.Caption = "Light Color"
-        UltraGridColumn74.Header.VisiblePosition = 72
+        UltraGridColumn74.Header.VisiblePosition = 73
         UltraGridColumn74.Width = 94
         UltraGridColumn96.Header.Caption = "Duty Code"
-        UltraGridColumn96.Header.VisiblePosition = 73
+        UltraGridColumn96.Header.VisiblePosition = 74
         UltraGridColumn96.Width = 111
         UltraGridColumn97.Header.Caption = "Materials"
-        UltraGridColumn97.Header.VisiblePosition = 81
+        UltraGridColumn97.Header.VisiblePosition = 82
         UltraGridColumn97.Width = 262
         UltraGridColumn98.Header.Caption = "Duty Rate"
-        UltraGridColumn98.Header.VisiblePosition = 80
+        UltraGridColumn98.Header.VisiblePosition = 81
         UltraGridColumn98.Width = 80
         UltraGridColumn99.Header.Caption = "PVC Height"
-        UltraGridColumn99.Header.VisiblePosition = 75
+        UltraGridColumn99.Header.VisiblePosition = 76
         UltraGridColumn99.Hidden = True
         UltraGridColumn99.Width = 90
         UltraGridColumn100.Header.Caption = "PVC Diameter"
-        UltraGridColumn100.Header.VisiblePosition = 76
+        UltraGridColumn100.Header.VisiblePosition = 77
         UltraGridColumn100.Hidden = True
         UltraGridColumn100.Width = 105
         UltraGridColumn101.Header.Caption = "PVC Colors"
-        UltraGridColumn101.Header.VisiblePosition = 74
+        UltraGridColumn101.Header.VisiblePosition = 75
         UltraGridColumn101.Hidden = True
         UltraGridColumn102.Header.Caption = "PVC Light Type"
-        UltraGridColumn102.Header.VisiblePosition = 77
+        UltraGridColumn102.Header.VisiblePosition = 78
         UltraGridColumn102.Hidden = True
         UltraGridColumn102.Width = 116
         UltraGridColumn103.Header.Caption = "PVC Tip Cnt"
-        UltraGridColumn103.Header.VisiblePosition = 78
+        UltraGridColumn103.Header.VisiblePosition = 79
         UltraGridColumn103.Hidden = True
         UltraGridColumn103.Width = 94
         UltraGridColumn104.Header.Caption = "PVC Light Cnt"
-        UltraGridColumn104.Header.VisiblePosition = 79
+        UltraGridColumn104.Header.VisiblePosition = 80
         UltraGridColumn104.Hidden = True
         UltraGridColumn104.Width = 106
         UltraGridColumn105.Header.Caption = "Country"
-        UltraGridColumn105.Header.VisiblePosition = 82
+        UltraGridColumn105.Header.VisiblePosition = 83
         UltraGridColumn105.Width = 84
         UltraGridColumn107.Header.Caption = "Purch Notes"
-        UltraGridColumn107.Header.VisiblePosition = 83
+        UltraGridColumn107.Header.VisiblePosition = 84
         UltraGridColumn107.Width = 192
         UltraGridColumn72.Header.Caption = "Image API"
-        UltraGridColumn72.Header.VisiblePosition = 47
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn11, UltraGridColumn10, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn31, UltraGridColumn58, UltraGridColumn76, UltraGridColumn75, UltraGridColumn71, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn73, UltraGridColumn74, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn107, UltraGridColumn72})
+        UltraGridColumn72.Header.VisiblePosition = 48
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn11, UltraGridColumn10, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn31, UltraGridColumn58, UltraGridColumn76, UltraGridColumn75, UltraGridColumn71, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn108, UltraGridColumn73, UltraGridColumn74, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn107, UltraGridColumn72})
         Me.grdICTSTYL1.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdICTSTYL1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance62.TextHAlignAsString = "Left"
@@ -2459,6 +2545,9 @@ Partial Class SOFATTR2
         Me.Panel6.ResumeLayout(False)
         Me.Panel6.PerformLayout()
         CType(Me.txtOrder, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
+        Me.Panel7.ResumeLayout(False)
+        Me.Panel7.PerformLayout()
         Me.UltraTabPageControl2.ResumeLayout(False)
         Me.UltraTabPageControl2.PerformLayout()
         CType(Me.txtATTR_CODE_1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2643,4 +2732,11 @@ Partial Class SOFATTR2
     Friend WithEvents optSN As UltraWinEditors.UltraOptionSet
     Friend WithEvents btnSelectClass As Button
     Friend WithEvents chkWebImages As ABSCS.ABSCheckBox
+    Friend WithEvents UltraExplorerBarContainerControl3 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents Panel7 As Panel
+    Friend WithEvents btnECOMPRICING As Button
+    Friend WithEvents Label1 As Label
+    Friend WithEvents cboECOMPRICING As ComboBox
+    Friend WithEvents txtPRCG_DESC As TextBox
+    Friend WithEvents Label3 As Label
 End Class

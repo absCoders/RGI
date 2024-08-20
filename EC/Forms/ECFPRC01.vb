@@ -41,6 +41,15 @@ Public Class ECFPRC01
             Create_TDA(.Tables.Add, "ECTPRCG3", "**", 3, True, "V", 3)
             Dim Calc_Exp As String = "FINAL_PARTNER_PRICE / IIF(ISNULL(SET_QTY,1)=0,1,ISNULL(SET_QTY,1))"
             .Tables("ECTPRCG3").Columns.Add("FINAL_PARTNER_SET_PRICE", GetType(System.Double), Calc_Exp)
+            .Tables("ECTPRCG3").Columns.Add("IS_ECOM")
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTESTY1")
+            'S.AppendLine("WHERE NVL(SHIP_DROP,'0') = '1'")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add("ECTESTYS"), "ECTESTY1", "**", 0, False)
+            Fill_Records("ECTESTYS")
 
             'S.Length = 0
             'S.AppendLine("SELECT *")
@@ -496,12 +505,36 @@ Public Class ECFPRC01
             dst.AcceptChanges()
         End If
 
+        calcISECOM()
+
         EnforceConstraints(False)
 
         EnforceConstraints(True)
 
         ASCMAIN1.Progress("", "")
         Me.Cursor = Cursors.Default
+    End Sub
+
+    Private Sub calcISECOM()
+        For Each rowECTPRCG3 As DataRow In dst.Tables("ECTPRCG3").Select()
+            Dim STYLE_CODE As String = rowECTPRCG3.Item("STYLE_CODE").ToString & String.Empty
+            Dim ECOM_CODE As String = rowECTPRCG3.Item("ECOM_CODE").ToString & String.Empty
+            Dim fltr As String = $"STYLE_CODE = '{STYLE_CODE}' AND ECOM_CODE = '{ECOM_CODE}'"
+            Dim rowECTESTYS As DataRow = dst.Tables("ECTESTYS").Select(fltr).FirstOrDefault
+            If IsNothing(rowECTESTYS) Then
+                rowECTPRCG3.Item("SET_QTY") = "1"
+                rowECTPRCG3.Item("ECOM_UNIT_PRICE") = rowECTPRCG3.Item("STANDARD_PRICE").ToString & String.Empty
+                rowECTPRCG3.Item("SET_PRICE") = rowECTPRCG3.Item("STANDARD_PRICE").ToString & String.Empty
+                rowECTPRCG3.Item("IS_ECOM") = "0"
+            Else
+                rowECTPRCG3.Item("SET_QTY") = rowECTESTYS.Item("SET_QTY").ToString & String.Empty
+                If Not IsNothing(rowECTESTYS.Item("ECOM_UNIT_PRICE")) Then
+                    rowECTPRCG3.Item("ECOM_UNIT_PRICE") = Val(rowECTESTYS.Item("ECOM_UNIT_PRICE").ToString & String.Empty)
+                End If
+                'rowECTPRCG3.Item("SET_PRICE") = Val(rowECTESTYS.Item("SET_PRICE").ToString & String.Empty)
+                rowECTPRCG3.Item("IS_ECOM") = "1"
+            End If
+        Next
     End Sub
 
     Private Sub AddPartner()
@@ -603,6 +636,13 @@ Public Class ECFPRC01
             rowECTPRCG3.Item("CARTON_SET_PRICE") = CARTON_SET_PRICE
             rowECTPRCG3.Item("STANDARD_PARTNER_PRICE") = STANDARD_PARTNER_PRICE
             rowECTPRCG3.Item("FINAL_PARTNER_PRICE") = FINAL_PARTNER_PRICE
+
+            If Val(rowECTPRCG3.Item("ECOM_UNIT_PRICE").ToString & String.Empty) = 999.99 Then
+                rowECTPRCG3.Item("ECOM_UNIT_PRICE") = STANDARD_PRICE
+            End If
+            If Val(rowECTPRCG3.Item("SET_PRICE").ToString & String.Empty) = 999.99 Then
+                rowECTPRCG3.Item("SET_PRICE") = STANDARD_PRICE
+            End If
 
             rowECTPRCG3.Item("MANUAL_PARTNER_PRICE") = 0
             'Dim COLS As String() = {"STANDARD_PRICE", "STANDARD_SET_PRICE", "CARTON_SET_PRICE", "STANDARD_PARTNER_PRICE", "FINAL_PARTNER_PRICE"}

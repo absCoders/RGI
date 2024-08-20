@@ -2300,6 +2300,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Change To Search By Attribute For Sorting And Discount Pricing When Printing.")
 
+        VersionNo = "24.07.25.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change To Customer Matrix to show all orders for SR.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

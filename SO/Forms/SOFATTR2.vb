@@ -144,6 +144,7 @@ Public Class SOFATTR2
                 For i As Integer = 2 To 6
                     .Columns.Add(String.Format("ATTR_CODE{0}", i), GetType(System.String))
                 Next
+                .Columns.Add("ATTR_CODE_ALL", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "SELECT * FROM ICTSTYL1 where STYLE_CODE = :PARM1"
@@ -167,6 +168,28 @@ Public Class SOFATTR2
 
             ASCMAIN1.sql = "SELECT * FROM ICTSTYL3 where STYLE_CODE = :PARM1"
             Create_TDA(.Tables.Add, "ICTSTYL3", "**", 0, False, "V", 0)
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTPRCG1")
+            S.AppendLine("WHERE PRCG_NO = :PARM1")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTPRCG1", "**", 0, True, "V", 1)
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTPRCG2")
+            S.AppendLine("WHERE PRCG_NO = :PARM1")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTPRCG2", "**", 2, True, "V", 2)
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ECTPRCG3")
+            S.AppendLine("WHERE PRCG_NO = :PARM1")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "ECTPRCG3", "**", 3, True, "V", 3)
+
         End With
 
         grdICTATTRQ.DataSource = dst.Tables("ICTATTRQ")
@@ -311,6 +334,17 @@ Public Class SOFATTR2
             IMAGES_FOLDER = "C:\"
             rbadDir = "C:\"
         End If
+
+        Dim ECOM_LIST As New List(Of String)
+        ECOM_LIST.Add("")
+        Dim sql As New StringBuilder With {.Length = 0}
+        sql.AppendLine("SELECT ECOM_CODE FROM ECTECOM1 ORDER BY ECOM_CODE")
+        Dim tblE As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+        For Each rowE As DataRow In tblE.Rows
+            ECOM_LIST.Add(rowE.Item("ECOM_CODE").ToString & String.Empty)
+        Next
+        cboECOMPRICING.DataSource = ECOM_LIST
+        cboECOMPRICING.SelectedIndex = 0
 
         tab.Visible = False
 
@@ -707,6 +741,7 @@ Public Class SOFATTR2
                 .Groups("Screen Control").Items("Attribute Excel").Visible = ScreenMode
                 .Groups("Screen Control").Items("Import").Visible = True
                 .Groups("Screen Control").Items("Zip").Visible = ScreenMode
+                .Groups("Ecom Pricing").Visible = tf
                 SetOptionsVisible(ScreenMode)
             End With
         End If
@@ -957,31 +992,43 @@ Public Class SOFATTR2
                 If tlb_sbt.Checked Then
                     Dim LastStyle As String = ""
                     Me.Cursor = Cursors.WaitCursor
+                    Dim ATTR_CODE_ALL As String = ""
                     For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("", "STYLE_CODE, COLOR_CODE")
                         'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
                         '    If rowICTSTYL1.Item("STYLE_CODE").ToString = "MTX55902" Then Stop
                         'End If
+
                         If LastStyle <> rowICTSTYL1.Item("STYLE_CODE").ToString Then
                             LastStyle = rowICTSTYL1.Item("STYLE_CODE").ToString
+                            ATTR_CODE_ALL = ""
                             Fill_Records("ICTSTYL3", LastStyle)
                         End If
+
                         Dim nextI As Integer = 1
                         For Each rowICTSTYL3 As DataRow In dst.Tables("ICTSTYL3").Select()
-                            If nextI > 4 Then Exit For
                             If rowICTSTYL1.Item("ATTR_CODE") <> rowICTSTYL3.Item("ATTR_CODE") Then
-                                nextI += 1
-                                rowICTSTYL1.Item(String.Format("ATTR_CODE{0}", nextI)) = rowICTSTYL3.Item("ATTR_CODE")
+                                ATTR_CODE_ALL = ATTR_CODE_ALL + rowICTSTYL3.Item("ATTR_CODE") + " - "
+                                If nextI <= 4 Then
+                                    nextI += 1
+                                    rowICTSTYL1.Item(String.Format("ATTR_CODE{0}", nextI)) = rowICTSTYL3.Item("ATTR_CODE")
+                                End If
                             End If
                         Next
+                        If ATTR_CODE_ALL.Length >= 3 Then
+                            ATTR_CODE_ALL = ATTR_CODE_ALL.Substring(0, ATTR_CODE_ALL.Length - 3)
+                        End If
+                        rowICTSTYL1.Item("ATTR_CODE_ALL") = ATTR_CODE_ALL
                     Next
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE2").Hidden = False
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE3").Hidden = False
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE4").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE_ALL").Hidden = False
                     grdICTSTYL1.UpdateData()
                 Else
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE2").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE3").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE4").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE_ALL").Hidden = True
                 End If
                 Me.Cursor = Cursors.Default
             Case "Show Disc Date"
@@ -1104,20 +1151,28 @@ Public Class SOFATTR2
                     Me.Cursor = Cursors.WaitCursor
                     Dim SET_MAX As Int64 = 0
                     Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-
+                    Dim ATTR_CODE_ALL As String = ""
                     For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("", "STYLE_CODE, COLOR_CODE")
                         If LastStyle <> rowICTSTYL1.Item("STYLE_CODE").ToString Then
                             LastStyle = rowICTSTYL1.Item("STYLE_CODE").ToString
+                            ATTR_CODE_ALL = ""
                             Fill_Records("ICTSTYL3", LastStyle)
                         End If
                         Dim nextI As Integer = 1
+
                         For Each rowICTSTYL3 As DataRow In dst.Tables("ICTSTYL3").Select()
-                            If nextI > 4 Then Exit For
                             If rowICTSTYL1.Item("ATTR_CODE") <> rowICTSTYL3.Item("ATTR_CODE") Then
-                                nextI += 1
-                                rowICTSTYL1.Item(String.Format("ATTR_CODE{0}", nextI)) = rowICTSTYL3.Item("ATTR_CODE")
+                                ATTR_CODE_ALL = ATTR_CODE_ALL + rowICTSTYL3.Item("ATTR_CODE") + " - "
+                                If nextI <= 4 Then
+                                    nextI += 1
+                                    rowICTSTYL1.Item(String.Format("ATTR_CODE{0}", nextI)) = rowICTSTYL3.Item("ATTR_CODE")
+                                End If
                             End If
                         Next
+                        If ATTR_CODE_ALL.Length >= 3 Then
+                            ATTR_CODE_ALL = ATTR_CODE_ALL.Substring(0, ATTR_CODE_ALL.Length - 3)
+                        End If
+                        rowICTSTYL1.Item("ATTR_CODE_ALL") = ATTR_CODE_ALL
                         SQLS.Length = 0
                         SQLS.AppendLine("SELECT COUNT(*)")
                         SQLS.AppendLine("FROM ICTSTYST")
@@ -1131,6 +1186,7 @@ Public Class SOFATTR2
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE2").Hidden = False
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE3").Hidden = False
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE4").Hidden = False
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE_ALL").Hidden = False
 
                     For i As Int64 = 1 To SET_MAX
                         Dim SETS As New List(Of String)
@@ -1179,6 +1235,7 @@ Public Class SOFATTR2
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE2").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE3").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE4").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("ATTR_CODE_ALL").Hidden = True
                     For Each grdCol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
                         If grdCol.Key.ToString.StartsWith("SET_") Then
                             grdCol.Hidden = True
@@ -3925,5 +3982,170 @@ Optional ByVal absolute As Boolean = False) As String
         Initialize_tabAttributes()
         btnAllDiscontinued.Visible = False
         btnSelectClass.Visible = False
+    End Sub
+
+    Private Sub btnECOMPRICING_Click(sender As Object, e As EventArgs) Handles btnECOMPRICING.Click
+        Dim eMsg As New StringBuilder With {.Length = 0}
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Create ECom Pricing?"
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+
+        If cboECOMPRICING.Text.Length = 0 Then
+            eMsg.AppendLine("ECommerce Partner Not Selected.")
+        End If
+
+        If txtPRCG_DESC.Text.Length = 0 Then
+            eMsg.AppendLine("Pricing Description Not Selected.")
+        End If
+
+        Dim SelOnlyWhere As String = "SEL = '1'"
+        Dim SelRows As Int64 = dst.Tables.Item("ICTSTYL1").Select(SelOnlyWhere, "").Count
+        If SelRows = 0 Then
+            eMsg.AppendLine("You Must Select As Least Style.")
+        End If
+
+        If eMsg.Length = 0 Then
+            iTitle = "Create ECom Pricing?"
+            iMSG.Length = 0
+            iMSG.AppendLine("This Will Create A New ECommerce")
+            iMSG.AppendLine("Pricing Group For All Of The Selected")
+            iMSG.AppendLine("Styles.")
+            iMSG.AppendLine("")
+            iMSG.AppendLine("Ready?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult = MsgBoxResult.Yes Then
+                createEcomPricing()
+            End If
+        Else
+            iTitle = "Please Fix And Try Again."
+            iMSG.Length = 0
+            iMSG.AppendLine("This Will Create A New ECommerce")
+            iMSG.AppendLine("Pricing Group For All Of The Selected")
+            iMSG.AppendLine("Styles.")
+            iMSG.AppendLine("")
+            iMSG.AppendLine("Ready?")
+            iResult = MsgBox(eMsg.ToString, MsgBoxStyle.Critical, iTitle)
+        End If
+    End Sub
+
+    Private Sub createEcomPricing()
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            'Stop
+            dst.Tables("ECTPRCG1").Clear()
+
+            Dim PRCG_NO As String = ASCMAIN1.Next_Control_No("ECTPRCG1.PRCG_NO")
+            Dim ECOM_CODE As String = cboECOMPRICING.Text
+
+            Dim newECTPRCG1 As DataRow = dst.Tables.Item("ECTPRCG1").NewRow
+            newECTPRCG1.Item("PRCG_NO") = PRCG_NO
+            newECTPRCG1.Item("PRCG_DESC") = txtPRCG_DESC.Text
+            newECTPRCG1.Item("PRCG_STATUS") = "W"
+            newECTPRCG1.Item("PRICE_UPDATE") = Null
+            newECTPRCG1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+            newECTPRCG1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            newECTPRCG1.Item("INIT_DATE") = DATETIME_STAMP
+            newECTPRCG1.Item("LAST_DATE") = DATETIME_STAMP
+            dst.Tables.Item("ECTPRCG1").Rows.Add(newECTPRCG1)
+
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine($"'{PRCG_NO}' AS PRCG_NO,")
+            S.AppendLine("ECOM_CODE,")
+            S.AppendLine("ECOM_NAME,")
+            S.AppendLine("ECOM_PRICE_NOTES,")
+            S.AppendLine("ECOM_PRICE_LAST,")
+            S.AppendLine("ECOM_PRICE_ADD,")
+            S.AppendLine("ECOM_PRICE_MARKUP_PCT")
+            S.AppendLine("FROM ECTECOM1")
+            S.AppendLine($"WHERE ECOM_CODE = '{ECOM_CODE}'")
+            Fill_Records("ECTPRCG2",, True, S.ToString)
+            For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'")
+                Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
+                For Each COL As String In COLS
+                    If IsDBNull(rowECTPRCG2.Item(COL)) Then
+                        rowECTPRCG2.Item(COL) = 0
+                    End If
+                Next
+            Next
+
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine($"'{PRCG_NO}' AS PRCG_NO,")
+            S.AppendLine("I1.STYLE_CODE || '-' || C1.COLOR_CODE AS SKU,")
+            S.AppendLine($"'{ECOM_CODE}' AS ECOM_CODE,")
+            S.AppendLine("I1.STYLE_CODE,")
+            S.AppendLine("C1.COLOR_CODE,")
+            S.AppendLine("I1.STYLE_STATUS,")
+            S.AppendLine("I1.STYLE_DESC,")
+            S.AppendLine("NVL(I1.SIZE_CODE,'') AS SIZE_CODE,")
+            S.AppendLine("S3.ATTR_DESC,")
+            S.AppendLine("I1.CARTON_PACK_QTY AS CASE_QTY,")
+            S.AppendLine("I1.STYLE_UOM AS UOM,")
+            S.AppendLine("I1.STYLE_CLASS_CODE,")
+            S.AppendLine("0 AS SHIP_DROP,")
+            S.AppendLine("S2.WHSE_QTY_ON_HAND,")
+            S.AppendLine("S2.NET_POS,")
+            S.AppendLine("S2.IN_TRANS,")
+            S.AppendLine("S2.FUTURE,")
+            S.AppendLine("I1.STYLE_PRICE,")
+            S.AppendLine("999 AS SET_QTY,")
+            S.AppendLine("999.99 AS ECOM_UNIT_PRICE,")
+            S.AppendLine("999.99 AS SET_PRICE,")
+            S.AppendLine("999.99 AS STANDARD_PRICE,")
+            S.AppendLine("999.99 AS STANDARD_SET_PRICE,")
+            S.AppendLine("999.99 AS CARTON_SET_PRICE,")
+            S.AppendLine("999.99 AS STANDARD_PARTNER_PRICE,")
+            S.AppendLine("999.99 AS MANUAL_PARTNER_PRICE,")
+            S.AppendLine("999.99 AS FINAL_PARTNER_PRICE")
+            S.AppendLine("FROM ICTSTYL1 I1, ICTSTYC1 C1,")
+            S.AppendLine("(")
+            S.AppendLine("    SELECT")
+            S.AppendLine("    S2.STYLE_CODE,")
+            S.AppendLine("    S2.COLOR_CODE,")
+            S.AppendLine("    SUM(NVL(S2.WHSE_QTY_ON_HAND,0)) AS WHSE_QTY_ON_HAND,")
+            S.AppendLine("    SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0))) AS NET_POS,")
+            S.AppendLine("    SUM(NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0)) AS IN_TRANS,")
+            S.AppendLine("    SUM(NVL(S2.WHSE_QTY_ON_HAND,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0)) AS FUTURE")
+            S.AppendLine("    FROM ICTSTAT2 S2")
+            S.AppendLine("    WHERE S2.WHSE_CODE = 'MS'")
+            S.AppendLine("    GROUP BY")
+            S.AppendLine("    S2.STYLE_CODE,")
+            S.AppendLine("    S2.COLOR_CODE,")
+            S.AppendLine("    S2.WHSE_CODE")
+            S.AppendLine(") S2,")
+            S.AppendLine("(")
+            S.AppendLine("    SELECT")
+            S.AppendLine("    S3.STYLE_CODE,")
+            S.AppendLine("    MAX(A1.ATTR_DESC) AS ATTR_DESC")
+            S.AppendLine("    FROM ICTSTYL3 S3, ICTATTR1 A1")
+            S.AppendLine("    WHERE S3.ATTR_CODE = A1.ATTR_CODE")
+            S.AppendLine("    AND NVL(A1.ATT_RANK,'0') = '1'")
+            S.AppendLine("    GROUP BY S3.STYLE_CODE")
+            S.AppendLine(") S3")
+            S.AppendLine("WHERE I1.STYLE_CODE = C1.STYLE_CODE")
+            S.AppendLine("AND I1.STYLE_CODE = S2.STYLE_CODE")
+            S.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE")
+            S.AppendLine("AND I1.STYLE_CODE = S3.STYLE_CODE")
+            Dim SelOnlyWhere As String = "SEL = '1'"
+            dst.Tables("ECTPRCG3").Clear()
+            For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select(SelOnlyWhere)
+                Dim SQLECTPRCG3 As String = S.ToString
+                Dim STYLE_CODE As String = rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty
+                Dim COLOR_CODE As String = rowICTSTYL1.Item("COLOR_CODE").ToString & String.Empty
+                SQLECTPRCG3 = SQLECTPRCG3 & $" AND I1.STYLE_CODE = '{STYLE_CODE}' AND C1.COLOR_CODE = '{COLOR_CODE}'"
+                Fill_Records("ECTPRCG3",, False, SQLECTPRCG3.ToString)
+            Next
+            Call BeginTrans()
+            Dim SQLD As String = $" PRCG_NO = '{PRCG_NO}'"
+            Update_Record_TDA("ECTPRCG1", SQLD)
+            Update_Record_TDA("ECTPRCG2", SQLD)
+            Update_Record_TDA("ECTPRCG3", SQLD)
+            Call CommitTrans("")
+            MsgBox($"Your New Pricing Group {PRCG_NO} Has Been Created.", vbOKOnly, "ECom Pricing!")
+
+        Else
+            MsgBox("Still Working On This Feature!", vbOKOnly, "ECom Pricing!")
+        End If
+        'Stop
     End Sub
 End Class

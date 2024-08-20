@@ -4271,7 +4271,8 @@ Public Class POFORDR1
                         'Changed from 2.5 to 2.0 Per Anna 7/7/19 - WR.
                         'Changed from 2.0 to 2.5 Per Anna 7/17/19 - WR.
                         'Changed from 2.5 to 2.0 Per Anna 1/26/21 - WR.
-                        e.Cell.Row.Cells("PO_COST_COMM").Value = 2.0
+                        'Changed from 2.0 to 0.0 Per Anna 8/16/24 - WR.
+                        e.Cell.Row.Cells("PO_COST_COMM").Value = 0.0
                         e.Cell.Row.Cells("PO_COST_BUFFER").Value = 1
                     Else
                         ' NOTE THAT VAN KEEPS 0 COMM IN PARM FILE SO THAT COMM IS 0 FOR ALL BUT AT
@@ -6183,7 +6184,8 @@ Public Class POFORDR1
             'Changed from 2.5 to 2.0 Per Anna 7/7/19 - WR.
             'Changed from 2.0 to 2.5 Per Anna 7/17/19 - WR.
             'Changed from 2.5 to 2.0 Per Anna 1/26/21 - WR.
-            rowPOTORDR2.Item("PO_COST_COMM") = 2.0
+            'Changed from 2.0 to 0.0 Per Anna 8/16/24 - WR.
+            rowPOTORDR2.Item("PO_COST_COMM") = 0.0
         Else
             rowPOTORDR2.Item("PO_COST_BUFFER") = 2
             rowPOTORDR2.Item("PO_COST_COMM") = 0
@@ -8738,7 +8740,8 @@ Public Class POFORDR1
                             'Changed from 2.5 to 2.0 Per Anna 7/7/19 - WR.
                             'Changed from 2.0 to 2.5 Per Anna 7/17/19 - WR.
                             'Changed from 2.5 to 2.0 Per Anna 1/26/21 - WR.
-                            .Cells("PO_COST_COMM").Value = 2.0
+                            'Changed from 2.0 to 0.0 Per Anna 8/16/24 - WR.
+                            .Cells("PO_COST_COMM").Value = 0.0
                             .Cells("PO_COST_BUFFER").Value = 1
                         Else
                             .Cells("PO_COST_COMM").Value = Val(ROWs("POTPARM1").Item("PO_PARM_DEF_COMM") & "")

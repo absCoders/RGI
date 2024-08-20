@@ -1236,7 +1236,8 @@ Public Class POFORDRA
                 'Changed from 2.5 to 2.0 per Anna on 7/7/19 - WR.
                 'Changed from 2.0 to 2.5 per Anna on 7/17/19 - WR.
                 'PO_COST_COMM_PCT = 2.5 ' PARM FILE IS 0 FOR COMM FOR ALL VENDORS, BUT HARD CODED FOR AT
-                PO_COST_COMM_PCT = 2.0 ' WJZ 10/5/21 - to keep consistent with POFORDR1 for AT
+                'Changed from 2.0 to 0.0 Per Anna 8/16/24 - WR.
+                PO_COST_COMM_PCT = 0.0 ' WJZ 10/5/21 - to keep consistent with POFORDR1 for AT
 
                 Dim PO_COST_COMM_PCT_ADD As Decimal = Val(ROWs("POTPARM1").Item("PO_PARM_DEF_BUFFER") & "")
                 PO_COST_COMM_PCT_ADD = 1 ' 1 HARD CODED FOR AT
