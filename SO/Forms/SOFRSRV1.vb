@@ -11,6 +11,8 @@ Public Class SOFRSRV1
     Dim SREP2_CODE As String        ' Orders Sales Rep2 Code
 
     Dim rowSOTRSRV1 As DataRow
+    Dim rowSOTRSRV2 As DataRow
+    Dim REV_NO As Int32
     Dim rowARTCUST1 As DataRow      ' ARTCUST1 for the Sold-To
     Dim rowICTSTYL1 As DataRow
     Dim RSRV_LNOs As New List(Of Int64) ' list of RSRV_LNOs that are deleted
@@ -29,6 +31,16 @@ Public Class SOFRSRV1
             Create_TDA(.Tables.Add, "SOTRSRVX", "**", 0, False, "V", 1)
 
             Create_TDA(.Tables.Add, "SOTRSRV1", "*", 1)
+
+
+            ASCMAIN1.sql = "Select * from TATEVNT1 where TABLE_NAME = 'SOTRSRV1' and TABLE_KEY = :PARM1"
+            Create_TDA(.Tables.Add, "TATEVNT1", "**", 0, True, "V")
+            .Tables("TATEVNT1").Columns.Add("ATTACHMENT_EXT")
+
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                ASCMAIN1.sql = "Select * from SOTRSRXR where RSRV_NO = :PARM1"
+                Create_TDA(.Tables.Add, "SOTRSRXR", "**", 0, True, "V")
+            End If
 
             ASCMAIN1.sql = "Select SOTRSRV2.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC" _
             & " from SOTRSRV2,ICTSTYL1,ICTCOLR1" _
@@ -80,6 +92,10 @@ Public Class SOFRSRV1
         grdSOTRSRV2.DataSource = dst.Tables("SOTRSRV2")
         grdSOTRSRVT.DataSource = dst.Tables("SOTRSRVT")
         grdICTSTAT2.DataSource = dst.Tables("ICTSTAT2")
+        grdTATEVNT1.DataSource = dst.Tables("TATEVNT1")
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            grdSOTRSRXR.DataSource = dst.Tables("SOTRSRXR")
+        End If
 
         grdSOTRSRVX.DisplayLayout.UseFixedHeaders = True
         With grdSOTRSRVX.DisplayLayout.Bands(0)
@@ -140,6 +156,13 @@ Public Class SOFRSRV1
 
         'SplitContainer1.Panel2Collapsed = True
         tabInfo.Tabs("Usage").Visible = False
+
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            tabInfo.Tabs("Audit Trail").Visible = True
+        Else
+            tabInfo.Tabs("Audit Trail").Visible = False
+        End If
+
 
         ASCMAIN1.Add_Value_List(grdSOTRSRV2, "RSRV_PRIORITY")
 
@@ -460,11 +483,16 @@ Public Class SOFRSRV1
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTRSRV1", "SOTRSRV2", "SOTWORK1", "SOTWORK2"}
+            {"SOTRSRV1", "SOTRSRV2", "SOTWORK1", "SOTWORK2", "TATEVNT1"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
         Load_SOTRSRVX()
+
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            dst.Tables("SOTRSRXR").Rows.Clear()
+        End If
+
     End Sub
 
     Sub Load_Record()
@@ -513,6 +541,15 @@ Public Class SOFRSRV1
         Fill_Records("SOTRSRV2", RSRV_NO)
         Sort_grdColumns(grdSOTRSRV2, "RSRV_LNO")
 
+
+        Fill_Records("TATEVNT1", RSRV_NO)
+        Sort_grdColumns(grdTATEVNT1, "INIT_DATE".ToLower)
+
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            Fill_Records("SOTRSRXR", RSRV_NO)
+            Sort_grdColumns(grdSOTRSRXR, "INIT_DATE".ToLower)
+        End If
+
         If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
             Dim M As String = "###,##0.00"
             For Each row As DataRow In dst.Tables("SOTRSRV2").Select("")
@@ -532,6 +569,8 @@ Public Class SOFRSRV1
 
         If EntryMode = "N" Then
             lblStatus.Text = "New Order"
+            Record_Event("INIT", "RSRV Entry Started")
+
         Else
             Select Case rowSOTRSRV1.Item("RSRV_STATUS")
                 Case "O"
@@ -575,8 +614,18 @@ Public Class SOFRSRV1
             Set_Read_Only(splHeader, True)
         End If
 
+        If (EntryMode = "E") Then
+            Record_Event("LAST", "RSRV Edit Started")
+        End If
+
+
         Display_Totals()
         EnforceConstraints(True)
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            ASCMAIN1.sql = "Select Max (REV_NO) from SOTRSRXR where RSRV_NO = '" & RSRV_NO & "'"
+            REV_NO = Val(ASCDATA1.GetDataValue & "")
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
@@ -608,6 +657,7 @@ Public Class SOFRSRV1
 
         BeginTrans()
 
+        If EntryMode = "E" And (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") Then Check_Changed_Fields()
         If EntryMode <> "N" Then Delete_Records()
 
         If EntryMode = "N" Then
@@ -620,6 +670,11 @@ Public Class SOFRSRV1
         Update_Record_TDA("SOTRSRV1", sqldelete)
         Update_Record_TDA("SOTRSRV2", sqldelete)
         Dependent_Updates(1, RSRV_NO)
+
+        Record_Event("UPDT", "RSRV Updated", True)
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            Update_Record_TDA("SOTRSRXR")
+        End If
 
         Update_Record_TDA("SOTWORK1")
         Update_Record_TDA("SOTWORK2")
@@ -981,6 +1036,8 @@ Public Class SOFRSRV1
         Dim EMsg As String = ""
 
         BeginTrans()
+        Record_Event("RSRV-DEL", "RSRV Deleted", True)
+
 
         If EntryMode = "E" Then
             Delete_Order_1(RSRV_NO)
@@ -1423,8 +1480,151 @@ Public Class SOFRSRV1
             End If
         End If
     End Sub
+    Sub Record_Event(EVENT_TYPE As String, EVENT_DESC As String,
+                     Optional update_database As Boolean = False,
+                     Optional EVENT_KEY As String = "")
 
+        Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+        rowTATEVNT1.Item("TABLE_NAME") = "SOTRSRV1"
+        rowTATEVNT1.Item("TABLE_KEY") = RSRV_NO
+        rowTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+        rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        rowTATEVNT1.Item("EVENT_TYPE") = EVENT_TYPE
+        rowTATEVNT1.Item("EVENT_DESC") = EVENT_DESC
+        rowTATEVNT1.Item("EVENT_KEY") = EVENT_KEY
+        dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+        If update_database Then Update_Record_TDA("TATEVNT1")
+
+    End Sub
     Private Sub grdSOTRSRV2_BeforeRowActivate(sender As Object, e As UltraWinGrid.RowEventArgs) Handles grdSOTRSRV2.BeforeRowActivate
 
     End Sub
+    Function Check_Changed_Fields(Optional clear_before_filling As Boolean = True) As Boolean
+
+        REV_NO += 1
+
+        Dim LAST_DATE As Date = DATETIME_STAMP
+        If EntryMode = "N" Then Stop
+        Dim REV_LNO As Integer = 0
+
+
+        Check_Changed_Fields = False
+
+        If clear_before_filling Then
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                dst.Tables("SOTRSRXR").Rows.Clear()
+            End If
+        End If
+
+            ASCMAIN1.Progress("Logging Header Changes")
+
+        For i As Integer = 0 To rowSOTRSRV1.Table.Columns.Count - 1
+            Dim COLUMN_NAME As String = dst.Tables("SOTRSRV1").Columns(i).ColumnName
+
+            If rowSOTRSRV1.Item(COLUMN_NAME) & "" _
+            <> rowSOTRSRV1.Item(COLUMN_NAME, DataRowVersion.Original) & "" Then
+                Check_Changed_Fields = True
+                ASCMAIN1.Progress("-", COLUMN_NAME)
+                Dim rowSOTRSRXR As DataRow = dst.Tables("SOTRSRXR").NewRow
+                With rowSOTRSRXR
+                    .Item("REV_NO") = REV_NO
+                    REV_LNO += 1
+                    .Item("REV_LNO") = REV_LNO
+                    .Item("RSRV_NO") = RSRV_NO
+                    .Item("RSRV_LNO") = 0
+                    .Item("INIT_DATE") = LAST_DATE
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("COLUMN_NAME") = COLUMN_NAME
+                    .Item("OLD_VALUE") = rowSOTRSRV1.Item(COLUMN_NAME, DataRowVersion.Original)
+                    .Item("NEW_VALUE") = rowSOTRSRV1.Item(COLUMN_NAME)
+                    .Item("EMODE") = EntryMode
+                End With
+                dst.Tables("SOTRSRXR").Rows.Add(rowSOTRSRXR)
+                Check_Changed_Fields = True
+            End If
+        Next i
+
+        ASCMAIN1.Progress("Logging Detail Changes")
+
+        ASCMAIN1.sql = "Select * from SOTRSRV2 where RSRV_NO = '" & RSRV_NO & "'"
+        Dim dt As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+
+        For Each rowSOTRSRV2_orig As DataRow In dt.Rows
+            Dim RSRV_LNO As Int64 = rowSOTRSRV2_orig.Item("RSRV_LNO")
+            Dim rowSOTRSRV2 As DataRow = dst.Tables("SOTRSRV2").Rows.Find(New Object() {RSRV_NO, RSRV_LNO})
+            If rowSOTRSRV2 Is Nothing Then ' Line was Deleted
+                For i As Integer = 0 To dt.Columns.Count - 1
+                    Dim COLUMN_NAME As String = rowSOTRSRV2_orig.Table.Columns(i).ColumnName
+                    Dim rowSOTRSRXR As DataRow = dst.Tables("SOTRSRXR").NewRow
+                    With rowSOTRSRXR
+                        .Item("REV_NO") = REV_NO
+                        REV_LNO += 1
+                        .Item("REV_LNO") = REV_LNO
+                        .Item("RSRV_NO") = RSRV_NO
+                        .Item("RSRV_LNO") = RSRV_LNO
+                        .Item("INIT_DATE") = LAST_DATE
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                        .Item("COLUMN_NAME") = COLUMN_NAME
+                        .Item("OLD_VALUE") = rowSOTRSRV2_orig.Item(COLUMN_NAME)
+                        '.Item("NEW_VALUE") = ""
+                        .Item("EMODE") = EntryMode
+                    End With
+                    dst.Tables("SOTRSRXR").Rows.Add(rowSOTRSRXR)
+                Next
+
+                Check_Changed_Fields = True
+            Else
+                For i As Integer = 0 To dt.Columns.Count - 1
+                    Dim COLUMN_NAME As String = rowSOTRSRV2_orig.Table.Columns(i).ColumnName
+                    If rowSOTRSRV2.Item(COLUMN_NAME) & "" <> rowSOTRSRV2_orig.Item(COLUMN_NAME) & "" Then
+                        ' Value in Column was Changed
+                        Dim rowSOTRSRXR As DataRow = dst.Tables("SOTRSRXR").NewRow
+                        With rowSOTRSRXR
+                            .Item("REV_NO") = REV_NO
+                            REV_LNO += 1
+                            .Item("REV_LNO") = REV_LNO
+                            .Item("RSRV_NO") = RSRV_NO
+                            .Item("RSRV_LNO") = RSRV_LNO
+                            .Item("INIT_DATE") = LAST_DATE
+                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            .Item("COLUMN_NAME") = COLUMN_NAME
+                            .Item("OLD_VALUE") = rowSOTRSRV2_orig.Item(COLUMN_NAME)
+                            .Item("NEW_VALUE") = rowSOTRSRV2.Item(COLUMN_NAME)
+                            .Item("EMODE") = EntryMode
+                        End With
+                        dst.Tables("SOTRSRXR").Rows.Add(rowSOTRSRXR)
+                        Check_Changed_Fields = True
+                    End If
+                Next
+            End If
+        Next
+
+        For Each rowSOTRSRV2 As DataRow In dst.Tables("SOTRSRV2").Select("", "", DataViewRowState.Added)
+            Dim RSRV_LNO = rowSOTRSRV2.Item("RSRV_LNO")
+            ' For i As Integer = 0 To dt.Columns.Count - 1
+            Dim COLUMN_NAME As String = "" ' dt.Columns(i).ColumnName
+            Dim rowSOTRSRXR As DataRow = dst.Tables("SOTRSRXR").NewRow
+            With rowSOTRSRXR
+                .Item("REV_NO") = REV_NO
+                REV_LNO += 1
+                .Item("REV_LNO") = REV_LNO
+                .Item("RSRV_NO") = RSRV_NO
+                .Item("RSRV_LNO") = RSRV_LNO
+                .Item("INIT_DATE") = LAST_DATE
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("COLUMN_NAME") = COLUMN_NAME
+                '.Item("OLD_VALUE") = ""
+                .Item("NEW_VALUE") = "RSRV Line Added" ' rowSOTRSRV2.Item(COLUMN_NAME)
+                .Item("EMODE") = EntryMode
+            End With
+            dst.Tables("SOTRSRXR").Rows.Add(rowSOTRSRXR)
+            Check_Changed_Fields = True
+            'Next
+        Next
+
+        ASCMAIN1.Progress("")
+        Return Check_Changed_Fields
+    End Function
+
+
 End Class

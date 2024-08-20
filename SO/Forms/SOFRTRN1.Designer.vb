@@ -469,6 +469,7 @@ Partial Class SOFRTRN1
         Dim UltraGridColumn220 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RA_RTN_QTY")
         Dim UltraGridColumn221 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RA_UPC_CODE")
         Dim UltraGridColumn222 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RA_QTY_USED")
+        Dim UltraGridColumn134 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RA_PUTAWAY_QTY_OPEN")
         Dim UltraGridColumn223 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn224 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn225 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RA_RTN_STATUS")
@@ -2276,7 +2277,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdSOTINVHX)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(949, 134)
         '
@@ -2716,7 +2717,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.grdSOTRMAFR)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(949, 134)
         '
@@ -2732,32 +2733,36 @@ Partial Class SOFRTRN1
         UltraGridColumn218.Width = 91
         UltraGridColumn219.Header.Caption = "Scan"
         UltraGridColumn219.Header.VisiblePosition = 1
-        UltraGridColumn219.Width = 57
-        UltraGridColumn220.Header.Caption = "Scan Qty"
+        UltraGridColumn219.Width = 47
+        UltraGridColumn220.Header.Caption = "RA Qty"
         UltraGridColumn220.Header.VisiblePosition = 5
-        UltraGridColumn220.Width = 94
+        UltraGridColumn220.Width = 85
         UltraGridColumn221.Header.Caption = "UPC Code"
         UltraGridColumn221.Header.VisiblePosition = 4
-        UltraGridColumn221.Width = 143
+        UltraGridColumn221.Width = 126
         UltraGridColumn222.Header.Caption = "Qty Used"
-        UltraGridColumn222.Header.VisiblePosition = 6
-        UltraGridColumn222.Width = 87
+        UltraGridColumn222.Header.VisiblePosition = 7
+        UltraGridColumn222.Width = 78
+        UltraGridColumn134.Header.Caption = "Scan Qty"
+        UltraGridColumn134.Header.VisiblePosition = 6
+        UltraGridColumn134.Width = 82
         UltraGridColumn223.Header.Caption = "Style"
         UltraGridColumn223.Header.VisiblePosition = 2
-        UltraGridColumn223.Width = 137
+        UltraGridColumn223.Width = 129
         UltraGridColumn224.Header.Caption = "Color"
         UltraGridColumn224.Header.VisiblePosition = 3
         UltraGridColumn224.Width = 60
         UltraGridColumn225.Header.Caption = "Status"
-        UltraGridColumn225.Header.VisiblePosition = 7
-        UltraGridColumn225.Width = 141
+        UltraGridColumn225.Header.VisiblePosition = 8
+        UltraGridColumn225.Width = 120
+        UltraGridColumn226.Format = "dd/MM/yy HH:mm:ss"
         UltraGridColumn226.Header.Caption = "Scanned On"
-        UltraGridColumn226.Header.VisiblePosition = 8
-        UltraGridColumn226.Width = 110
+        UltraGridColumn226.Header.VisiblePosition = 9
+        UltraGridColumn226.Width = 112
         UltraGridColumn227.Header.Caption = "Scanned By"
-        UltraGridColumn227.Header.VisiblePosition = 9
-        UltraGridColumn227.Width = 99
-        UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn221, UltraGridColumn222, UltraGridColumn223, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn227})
+        UltraGridColumn227.Header.VisiblePosition = 10
+        UltraGridColumn227.Width = 89
+        UltraGridBand15.Columns.AddRange(New Object() {UltraGridColumn218, UltraGridColumn219, UltraGridColumn220, UltraGridColumn221, UltraGridColumn222, UltraGridColumn134, UltraGridColumn223, UltraGridColumn224, UltraGridColumn225, UltraGridColumn226, UltraGridColumn227})
         Me.grdSOTRMAFR.DisplayLayout.BandsSerializer.Add(UltraGridBand15)
         Me.grdSOTRMAFR.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance155.TextHAlignAsString = "Left"
