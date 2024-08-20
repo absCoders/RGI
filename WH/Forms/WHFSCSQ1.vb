@@ -484,14 +484,21 @@ Public Class WHFSCSQ1
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool
         Dim tlb_btn As UltraWinToolbars.ButtonTool
 
-        If tlb_pop.Tools.Exists("Show Filter") Then
-            tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
-            tlb_sbt.Checked = (grd.DisplayLayout.Override.AllowRowFiltering = DefaultableBoolean.True)
-        End If
-        If tlb_pop.Tools.Exists("Show GroupBox") Then
-            tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
-            tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
-        End If
+        Select Case grd.Name
+            Case "grdWHTSCTMP"
+                tlb_btn = DirectCast(tlb_pop.Tools("Allow Move"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value.ToString & "" <> ""
+
+            Case "grdWHTSCSEQ", "grdWHTSCLAB"
+                If tlb_pop.Tools.Exists("Show Filter") Then
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
+                    tlb_sbt.Checked = (grd.DisplayLayout.Override.AllowRowFiltering = DefaultableBoolean.True)
+                End If
+                If tlb_pop.Tools.Exists("Show GroupBox") Then
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
+                    tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
+                End If
+        End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             e.Cancel = True
@@ -500,8 +507,6 @@ Public Class WHFSCSQ1
             '    e.Cancel = True
             'End If
 
-            tlb_btn = DirectCast(tlb_pop.Tools("Allow Move"), UltraWinToolbars.ButtonTool)
-            tlb_btn.SharedProps.Visible = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value.ToString & "" <> ""
 
             Select Case e.SourceControl.Name
 
