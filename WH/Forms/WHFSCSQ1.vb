@@ -568,6 +568,7 @@ Public Class WHFSCSQ1
                 Dim LocP2L As String = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value & ""
                 ASCMAIN1.sql = $"update WHTLOCM1 set LOCATION_ROUTE_SEQ = '' where WHSE_CODE ='{WHSE_CODE}' and location_code = '{LocP2L}'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                grd.ActiveRow.Cells("ERROR_MSG").Value = ""
         End Select
 
     End Sub
@@ -733,7 +734,7 @@ Public Class WHFSCSQ1
                             Dim rowOLD As DataRow = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
                             If rowOLD IsNot Nothing Then
                                 If STYLE_CODE = rowOLD.Item("STYLE_CODE") And COLOR_CODE = rowOLD.Item("COLOR_CODE") Then
-                                    ERROR_MSG = "Style Color Same as current"
+                                    'ERROR_MSG = "Style Color Same as current"
                                 ElseIf dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").Length > 0 Then
                                     ERROR_MSG = "Customer Style Color Exists as different Match#"
                                 Else

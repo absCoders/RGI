@@ -775,10 +775,14 @@ Public Class CartonLabel
                 '        labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
                 '    End If
                 'End If
-                S.Length = 0
-                S.AppendLine("select count(1) from SOTCART2")
-                S.AppendLine(String.Format("   where CART_NO = :PARM1", ORDR_NO))
-                ASCMAIN1.sql = S.ToString()
+                ' 8/20/2024 - count Range Styles not styles in range
+                'S.Length = 0
+                'S.AppendLine("select count(1) from SOTCART2")
+                'S.AppendLine(String.Format("   where CART_NO = :PARM1", ORDR_NO))
+                ASCMAIN1.sql = "select count(distinct RANGE_STYLE_CODE) from SOTCART2, SOTORDR2
+                                where SOTCART2.CART_NO = :PARM1
+                                and SOTORDR2.ORDR_NO = SOTCART2.ORDR_NO
+                                and SOTORDR2.ORDR_LNO = SOTCART2.ORDR_LNO"
                 Dim UPC_CNT As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo}) & "")
                 If UPC_CNT = 1 Then
                     LABEL_TEMPLATE_CODE = "MEIJERR"
@@ -1077,55 +1081,18 @@ Public Class CartonLabel
                 Dim SQLS As New Text.StringBuilder With {.Length = 0}
                 If RNG_CNT > 0 Then
                     Dim CART_NO As String = Row.Item("CART_NO").ToString
-                    For Each COL_NAME As String In New String() {"GTIN_UPC_CODE", "GTIN_CODE", "GTIN_DESC"}
-                        SQLS.Length = 0
-                        SQLS.AppendLine(String.Format("SELECT {0} AS RETVAL", COL_NAME))
-                        SQLS.AppendLine("FROM ICTGTINT")
-                        SQLS.AppendLine("WHERE GTIN_UPC_CODE IN")
-                        SQLS.AppendLine("  (")
-                        SQLS.AppendLine("    SELECT UPC_CODE")
-                        SQLS.AppendLine("    FROM ICVLUPC1")
-                        SQLS.AppendLine("    WHERE STYLE_CODE IN")
-                        SQLS.AppendLine("    (")
-                        SQLS.AppendLine("      SELECT RANGE_STYLE_CODE")
-                        SQLS.AppendLine("      FROM SOTORDR2")
-                        SQLS.AppendLine("      WHERE (ORDR_NO, ORDR_LNO) IN")
-                        SQLS.AppendLine("      (")
-                        SQLS.AppendLine("        SELECT MIN(ORDR_NO), MIN(ORDR_LNO)")
-                        SQLS.AppendLine("        FROM SOTCART2")
-                        SQLS.AppendLine(String.Format("        WHERE CART_NO = '{0}'", CART_NO))
-                        SQLS.AppendLine("      )")
-                        SQLS.AppendLine("    )")
-                        SQLS.AppendLine("  )")
-                        ASCMAIN1.sql = SQLS.ToString()
-                        Dim RETVAL As String = ASCDATA1.GetDataValue & ""
-                        If RETVAL.Length = 0 Then
-                            CartonError = String.Format("Carton {0} Has A Range With No GTIN Information!", CART_NO)
-                        Else
-                            Select Case COL_NAME
-                                Case Is = "GTIN_UPC_CODE"
-                                    Row.Item("UPC_CODE") = RETVAL
-                                Case Is = "GTIN_CODE"
-                                    Row.Item("UPC_CODE_ONLY") = RETVAL
-                                Case Is = "GTIN_DESC"
-                                    Row.Item("STYLE_DESC") = RETVAL
-                                Case Else
-                                    Stop 'Check the beginning of this For Each for your problem.
-                            End Select
-                        End If
-                    Next
-                    SQLS.Length = 0
-                    SQLS.AppendLine("SELECT RANGE_STYLE_CODE")
-                    SQLS.AppendLine("FROM SOTORDR2")
-                    SQLS.AppendLine("WHERE (ORDR_NO, ORDR_LNO) IN")
-                    SQLS.AppendLine("(")
-                    SQLS.AppendLine("  SELECT MIN(ORDR_NO), MIN(ORDR_LNO)")
-                    SQLS.AppendLine("  FROM SOTCART2")
-                    SQLS.AppendLine(String.Format("  WHERE CART_NO = '{0}'", CART_NO))
-                    SQLS.AppendLine(")")
-                    ASCMAIN1.sql = SQLS.ToString()
-                    Dim RANGE_STYLE_CODE As String = ASCDATA1.GetDataValue & ""
-                    Row.Item("STYLE_CODE") = RANGE_STYLE_CODE
+
+                    ASCMAIN1.sql = $"select ICTRSTY1.RANGE_STYLE_CODE, ICTRSTY1.RANGE_UPC_CODE from SOTORDR2, ICTRSTY1
+                                    where  ICTRSTY1.CUST_CODE = 'MEIJER'
+                                    and ICTRSTY1.RANGE_STYLE_CODE = SOTORDR2.RANGE_STYLE_CODE
+                                    and (ORDR_NO, ORDR_LNO) in (SELECT MIN(ORDR_NO), MIN(ORDR_LNO)
+                                    from SOTCART2
+                                    where CART_NO = '{CART_NO}')"
+
+                    Dim rowRANGE As DataRow = ASCDATA1.GetDataRow
+                    Row.Item("STYLE_CODE") = rowRANGE("RANGE_STYLE_CODE") & ""
+                    Row.Item("UPC_CODE") = rowRANGE("RANGE_UPC_CODE") & ""
+                    Row.Item("UPC_CODE_ONLY") = rowRANGE("RANGE_UPC_CODE") & ""
                 End If
             Case Is = "SAMSCLUB"
                 Dim MaxRows = 8
