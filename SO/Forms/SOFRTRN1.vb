@@ -12,6 +12,7 @@ Public Class SOFRTRN1
     Private INV_NO_RETURNED As String
     Private KEY_3PL_RECORD As String
     Private PRD_END_DATE As Date
+    Private REFRESH_FLAG As Boolean = False
 
     Private rowARTCUST1 As DataRow
     Private rowSOTINVH1_Ret As DataRow
@@ -896,6 +897,14 @@ Public Class SOFRTRN1
                 Load_Record()
                 Mode_Settings(True)
 
+            Case "Refresh"
+                REFRESH_FLAG = True
+                Clear_Record()
+                EntryMode = "N"
+                Load_Record()
+                Mode_Settings(True)
+                REFRESH_FLAG = False
+
             Case "Update"
                 Update_Record()
 
@@ -944,6 +953,7 @@ Public Class SOFRTRN1
                     '    .Items("Update").Settings.Enabled = iScreenMode
                     '    .Items("Cancel").Settings.Enabled = iScreenMode
                     'End If
+                    .Items("Refresh").Settings.Enabled = iScreenMode And ASCMAIN1.CLIENT = "RGI" And InquiryMode
                     .Items("Update").Settings.Enabled = iScreenMode
                     .Items("Cancel").Settings.Enabled = iScreenMode
 
@@ -969,6 +979,7 @@ Public Class SOFRTRN1
                     .Items("Price Change").Visible = False
                     .Items("Done").Visible = (EntryMode = "V" And ScreenMode) Or InquiryMode
                     .Items("Print").Visible = (EntryMode = "V" And ScreenMode) Or InquiryMode
+                    .Items("Refresh").Visible = iScreenMode And ASCMAIN1.CLIENT = "RGI" And InquiryMode
                     .Items("Update").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
                     .Items("Cancel").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
                 End With
@@ -1002,7 +1013,7 @@ Public Class SOFRTRN1
             End If
 
             tabDetails.Tabs("Sales History").Visible = (EntryMode = "N")
-            tabDetails.SelectedTab = tabDetails.Tabs("Sales History")
+            If Not REFRESH_FLAG Then tabDetails.SelectedTab = tabDetails.Tabs("Sales History")
             tabDetails.Tabs("GL Distribution").Visible = (EntryMode = "V") And ASCMAIN1.USER_SECURITY_CODEs.Contains("X5")
             tabDetails.Tabs("Scanned Returns").Visible = (EntryMode = "N") And ASCMAIN1.CLIENT = "RGI"
 
@@ -1118,6 +1129,8 @@ Public Class SOFRTRN1
 
         EnforceConstraints(True)
 
+        If REFRESH_FLAG Then Exit Sub
+
         If chkGL.Checked Then
             chkGL.Checked = False
         Else
@@ -1177,8 +1190,10 @@ Public Class SOFRTRN1
     Sub Load_Record()
 
         ASCMAIN1.Progress("Now Loading Data ...")
-
-        Save_Header_Fields(UltraGroupBox1)
+        If REFRESH_FLAG Then
+        Else
+            Save_Header_Fields(UltraGroupBox1)
+        End If
 
         ' Preserve the selected tab
         tab0SelectedTab = tab0.SelectedTab.Key
@@ -1211,7 +1226,11 @@ Public Class SOFRTRN1
             If ASCMAIN1.CLIENT = "VAN" Then
                 rowSOTRTRN1.Item("RTRN_NO") = ASCMAIN1.Next_Control_No("TRAN_NO_C")
             Else
-                rowSOTRTRN1.Item("RTRN_NO") = ASCMAIN1.Next_Control_No("SOTRTRN1.RTRN_NO")
+                If InquiryMode Then
+                    rowSOTRTRN1.Item("RTRN_NO") = "0000000000"
+                Else
+                    rowSOTRTRN1.Item("RTRN_NO") = ASCMAIN1.Next_Control_No("SOTRTRN1.RTRN_NO")
+                End If
             End If
 
             rowSOTRTRN1.Item("CURR_CODE") = rowARTCUST1.Item("CURR_CODE") & String.Empty

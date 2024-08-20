@@ -26,6 +26,7 @@ Partial Class SOFRTRN1
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem10 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -786,6 +787,7 @@ Partial Class SOFRTRN1
         UltraExplorerBarItem8.Key = "Price Change"
         UltraExplorerBarItem8.Text = "Price Change"
         UltraExplorerBarItem2.Text = "View"
+        UltraExplorerBarItem10.Text = "Refresh"
         UltraExplorerBarItem3.Key = "Update"
         UltraExplorerBarItem3.Text = "Update (F8)"
         UltraExplorerBarItem4.Text = "Reverse"
@@ -793,7 +795,7 @@ Partial Class SOFRTRN1
         UltraExplorerBarItem7.Text = "Print"
         UltraExplorerBarItem9.Text = "Back to Stock Report"
         UltraExplorerBarItem6.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem8, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem7, UltraExplorerBarItem9, UltraExplorerBarItem6})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem8, UltraExplorerBarItem2, UltraExplorerBarItem10, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem7, UltraExplorerBarItem9, UltraExplorerBarItem6})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -824,6 +826,7 @@ Partial Class SOFRTRN1
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
+        Me.UltraExplorerBar1.Tag = "CLICK"
         '
         'ASFBASE1_Fill_Panel
         '
@@ -897,7 +900,7 @@ Partial Class SOFRTRN1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.optGL)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 319)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 346)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 63)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -955,7 +958,7 @@ Partial Class SOFRTRN1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpTotals)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 451)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 478)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 230)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -2303,7 +2306,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdSOTINVHX)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(949, 134)
         '
@@ -2743,7 +2746,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.splSCANS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(949, 134)
         '
@@ -2962,7 +2965,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(953, 501)
         '
@@ -3008,7 +3011,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(953, 501)
         '

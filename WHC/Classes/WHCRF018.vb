@@ -456,11 +456,14 @@
 
     Function RMA_ITEM() As Boolean
         Dim Count As Integer
+        RA_RTN_QTY = 0
         Count = dst.Tables("SOTRMAF2").Compute("Count(STYLE_CODE)", String.Format("STYLE_CODE = '{0}' and COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE))
-        RA_RTN_QTY = dst.Tables("SOTRMAF2").Compute("Sum(RA_QTY)", String.Format("STYLE_CODE = '{0}' and COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE))
+
         If Count = 0 Then
             Return False
         End If
+        RA_RTN_QTY = dst.Tables("SOTRMAF2").Compute("Sum(RA_QTY)", String.Format("STYLE_CODE = '{0}' and COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE))
+
         Return True
     End Function
 
@@ -641,6 +644,9 @@
         Dim RA_PUTAWAY_QTY_OPEN = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
 
         RA_RTN_LNO = RA_RTN_LNO + 1
+        If RA_RTN_QTY = 0 Then
+            RA_RTN_QTY = RA_PUTAWAY_QTY_OPEN
+        End If
 
         BeginTrans()
 
