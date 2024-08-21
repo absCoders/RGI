@@ -4029,123 +4029,116 @@ Optional ByVal absolute As Boolean = False) As String
     End Sub
 
     Private Sub createEcomPricing()
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            'Stop
-            dst.Tables("ECTPRCG1").Clear()
+        dst.Tables("ECTPRCG1").Clear()
 
-            Dim PRCG_NO As String = ASCMAIN1.Next_Control_No("ECTPRCG1.PRCG_NO")
-            Dim ECOM_CODE As String = cboECOMPRICING.Text
+        Dim PRCG_NO As String = ASCMAIN1.Next_Control_No("ECTPRCG1.PRCG_NO")
+        Dim ECOM_CODE As String = cboECOMPRICING.Text
 
-            Dim newECTPRCG1 As DataRow = dst.Tables.Item("ECTPRCG1").NewRow
-            newECTPRCG1.Item("PRCG_NO") = PRCG_NO
-            newECTPRCG1.Item("PRCG_DESC") = txtPRCG_DESC.Text
-            newECTPRCG1.Item("PRCG_STATUS") = "W"
-            newECTPRCG1.Item("PRICE_UPDATE") = Null
-            newECTPRCG1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-            newECTPRCG1.Item("LAST_OPER") = ASCMAIN1.USER_ID
-            newECTPRCG1.Item("INIT_DATE") = DATETIME_STAMP
-            newECTPRCG1.Item("LAST_DATE") = DATETIME_STAMP
-            dst.Tables.Item("ECTPRCG1").Rows.Add(newECTPRCG1)
+        Dim newECTPRCG1 As DataRow = dst.Tables.Item("ECTPRCG1").NewRow
+        newECTPRCG1.Item("PRCG_NO") = PRCG_NO
+        newECTPRCG1.Item("PRCG_DESC") = txtPRCG_DESC.Text
+        newECTPRCG1.Item("PRCG_STATUS") = "W"
+        newECTPRCG1.Item("PRICE_UPDATE") = Null
+        newECTPRCG1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        newECTPRCG1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        newECTPRCG1.Item("INIT_DATE") = DATETIME_STAMP
+        newECTPRCG1.Item("LAST_DATE") = DATETIME_STAMP
+        dst.Tables.Item("ECTPRCG1").Rows.Add(newECTPRCG1)
 
-            S.Length = 0
-            S.AppendLine("SELECT")
-            S.AppendLine($"'{PRCG_NO}' AS PRCG_NO,")
-            S.AppendLine("ECOM_CODE,")
-            S.AppendLine("ECOM_NAME,")
-            S.AppendLine("ECOM_PRICE_NOTES,")
-            S.AppendLine("ECOM_PRICE_LAST,")
-            S.AppendLine("ECOM_PRICE_ADD,")
-            S.AppendLine("ECOM_PRICE_MARKUP_PCT")
-            S.AppendLine("FROM ECTECOM1")
-            S.AppendLine($"WHERE ECOM_CODE = '{ECOM_CODE}'")
-            Fill_Records("ECTPRCG2",, True, S.ToString)
-            For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'")
-                Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
-                For Each COL As String In COLS
-                    If IsDBNull(rowECTPRCG2.Item(COL)) Then
-                        rowECTPRCG2.Item(COL) = 0
-                    End If
-                Next
+        S.Length = 0
+        S.AppendLine("SELECT")
+        S.AppendLine($"'{PRCG_NO}' AS PRCG_NO,")
+        S.AppendLine("ECOM_CODE,")
+        S.AppendLine("ECOM_NAME,")
+        S.AppendLine("ECOM_PRICE_NOTES,")
+        S.AppendLine("ECOM_PRICE_LAST,")
+        S.AppendLine("ECOM_PRICE_ADD,")
+        S.AppendLine("ECOM_PRICE_MARKUP_PCT")
+        S.AppendLine("FROM ECTECOM1")
+        S.AppendLine($"WHERE ECOM_CODE = '{ECOM_CODE}'")
+        Fill_Records("ECTPRCG2",, True, S.ToString)
+        For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'")
+            Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
+            For Each COL As String In COLS
+                If IsDBNull(rowECTPRCG2.Item(COL)) Then
+                    rowECTPRCG2.Item(COL) = 0
+                End If
             Next
+        Next
 
-            S.Length = 0
-            S.AppendLine("SELECT")
-            S.AppendLine($"'{PRCG_NO}' AS PRCG_NO,")
-            S.AppendLine("I1.STYLE_CODE || '-' || C1.COLOR_CODE AS SKU,")
-            S.AppendLine($"'{ECOM_CODE}' AS ECOM_CODE,")
-            S.AppendLine("I1.STYLE_CODE,")
-            S.AppendLine("C1.COLOR_CODE,")
-            S.AppendLine("I1.STYLE_STATUS,")
-            S.AppendLine("I1.STYLE_DESC,")
-            S.AppendLine("NVL(I1.SIZE_CODE,'') AS SIZE_CODE,")
-            S.AppendLine("S3.ATTR_DESC,")
-            S.AppendLine("I1.CARTON_PACK_QTY AS CASE_QTY,")
-            S.AppendLine("I1.STYLE_UOM AS UOM,")
-            S.AppendLine("I1.STYLE_CLASS_CODE,")
-            S.AppendLine("0 AS SHIP_DROP,")
-            S.AppendLine("S2.WHSE_QTY_ON_HAND,")
-            S.AppendLine("S2.NET_POS,")
-            S.AppendLine("S2.IN_TRANS,")
-            S.AppendLine("S2.FUTURE,")
-            S.AppendLine("I1.STYLE_PRICE,")
-            S.AppendLine("999 AS SET_QTY,")
-            S.AppendLine("999.99 AS ECOM_UNIT_PRICE,")
-            S.AppendLine("999.99 AS SET_PRICE,")
-            S.AppendLine("999.99 AS STANDARD_PRICE,")
-            S.AppendLine("999.99 AS STANDARD_SET_PRICE,")
-            S.AppendLine("999.99 AS CARTON_SET_PRICE,")
-            S.AppendLine("999.99 AS STANDARD_PARTNER_PRICE,")
-            S.AppendLine("999.99 AS MANUAL_PARTNER_PRICE,")
-            S.AppendLine("999.99 AS FINAL_PARTNER_PRICE")
-            S.AppendLine("FROM ICTSTYL1 I1, ICTSTYC1 C1,")
-            S.AppendLine("(")
-            S.AppendLine("    SELECT")
-            S.AppendLine("    S2.STYLE_CODE,")
-            S.AppendLine("    S2.COLOR_CODE,")
-            S.AppendLine("    SUM(NVL(S2.WHSE_QTY_ON_HAND,0)) AS WHSE_QTY_ON_HAND,")
-            S.AppendLine("    SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0))) AS NET_POS,")
-            S.AppendLine("    SUM(NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0)) AS IN_TRANS,")
-            S.AppendLine("    SUM(NVL(S2.WHSE_QTY_ON_HAND,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0)) AS FUTURE")
-            S.AppendLine("    FROM ICTSTAT2 S2")
-            S.AppendLine("    WHERE S2.WHSE_CODE = 'MS'")
-            S.AppendLine("    GROUP BY")
-            S.AppendLine("    S2.STYLE_CODE,")
-            S.AppendLine("    S2.COLOR_CODE,")
-            S.AppendLine("    S2.WHSE_CODE")
-            S.AppendLine(") S2,")
-            S.AppendLine("(")
-            S.AppendLine("    SELECT")
-            S.AppendLine("    S3.STYLE_CODE,")
-            S.AppendLine("    MAX(A1.ATTR_DESC) AS ATTR_DESC")
-            S.AppendLine("    FROM ICTSTYL3 S3, ICTATTR1 A1")
-            S.AppendLine("    WHERE S3.ATTR_CODE = A1.ATTR_CODE")
-            S.AppendLine("    AND NVL(A1.ATT_RANK,'0') = '1'")
-            S.AppendLine("    GROUP BY S3.STYLE_CODE")
-            S.AppendLine(") S3")
-            S.AppendLine("WHERE I1.STYLE_CODE = C1.STYLE_CODE")
-            S.AppendLine("AND I1.STYLE_CODE = S2.STYLE_CODE")
-            S.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE")
-            S.AppendLine("AND I1.STYLE_CODE = S3.STYLE_CODE")
-            Dim SelOnlyWhere As String = "SEL = '1'"
-            dst.Tables("ECTPRCG3").Clear()
-            For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select(SelOnlyWhere)
-                Dim SQLECTPRCG3 As String = S.ToString
-                Dim STYLE_CODE As String = rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty
-                Dim COLOR_CODE As String = rowICTSTYL1.Item("COLOR_CODE").ToString & String.Empty
-                SQLECTPRCG3 = SQLECTPRCG3 & $" AND I1.STYLE_CODE = '{STYLE_CODE}' AND C1.COLOR_CODE = '{COLOR_CODE}'"
-                Fill_Records("ECTPRCG3",, False, SQLECTPRCG3.ToString)
-            Next
-            Call BeginTrans()
-            Dim SQLD As String = $" PRCG_NO = '{PRCG_NO}'"
-            Update_Record_TDA("ECTPRCG1", SQLD)
-            Update_Record_TDA("ECTPRCG2", SQLD)
-            Update_Record_TDA("ECTPRCG3", SQLD)
-            Call CommitTrans("")
-            MsgBox($"Your New Pricing Group {PRCG_NO} Has Been Created.", vbOKOnly, "ECom Pricing!")
-
-        Else
-            MsgBox("Still Working On This Feature!", vbOKOnly, "ECom Pricing!")
-        End If
-        'Stop
+        S.Length = 0
+        S.AppendLine("SELECT")
+        S.AppendLine($"'{PRCG_NO}' AS PRCG_NO,")
+        S.AppendLine("I1.STYLE_CODE || '-' || C1.COLOR_CODE AS SKU,")
+        S.AppendLine($"'{ECOM_CODE}' AS ECOM_CODE,")
+        S.AppendLine("I1.STYLE_CODE,")
+        S.AppendLine("C1.COLOR_CODE,")
+        S.AppendLine("I1.STYLE_STATUS,")
+        S.AppendLine("I1.STYLE_DESC,")
+        S.AppendLine("NVL(I1.SIZE_CODE,'') AS SIZE_CODE,")
+        S.AppendLine("S3.ATTR_DESC,")
+        S.AppendLine("I1.CARTON_PACK_QTY AS CASE_QTY,")
+        S.AppendLine("I1.STYLE_UOM AS UOM,")
+        S.AppendLine("I1.STYLE_CLASS_CODE,")
+        S.AppendLine("0 AS SHIP_DROP,")
+        S.AppendLine("S2.WHSE_QTY_ON_HAND,")
+        S.AppendLine("S2.NET_POS,")
+        S.AppendLine("S2.IN_TRANS,")
+        S.AppendLine("S2.FUTURE,")
+        S.AppendLine("I1.STYLE_PRICE,")
+        S.AppendLine("999 AS SET_QTY,")
+        S.AppendLine("999.99 AS ECOM_UNIT_PRICE,")
+        S.AppendLine("999.99 AS SET_PRICE,")
+        S.AppendLine("999.99 AS STANDARD_PRICE,")
+        S.AppendLine("999.99 AS STANDARD_SET_PRICE,")
+        S.AppendLine("999.99 AS CARTON_SET_PRICE,")
+        S.AppendLine("999.99 AS STANDARD_PARTNER_PRICE,")
+        S.AppendLine("999.99 AS MANUAL_PARTNER_PRICE,")
+        S.AppendLine("999.99 AS FINAL_PARTNER_PRICE")
+        S.AppendLine("FROM ICTSTYL1 I1, ICTSTYC1 C1,")
+        S.AppendLine("(")
+        S.AppendLine("    SELECT")
+        S.AppendLine("    S2.STYLE_CODE,")
+        S.AppendLine("    S2.COLOR_CODE,")
+        S.AppendLine("    SUM(NVL(S2.WHSE_QTY_ON_HAND,0)) AS WHSE_QTY_ON_HAND,")
+        S.AppendLine("    SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) - NVL(S2.WHSE_QTY_OPEN,0))) AS NET_POS,")
+        S.AppendLine("    SUM(NVL(S2.WHSE_QTY_TRAN,0) + NVL(S2.WHSE_QTY_ON_ORDER,0)) AS IN_TRANS,")
+        S.AppendLine("    SUM(NVL(S2.WHSE_QTY_ON_HAND,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0)) AS FUTURE")
+        S.AppendLine("    FROM ICTSTAT2 S2")
+        S.AppendLine("    WHERE S2.WHSE_CODE = 'MS'")
+        S.AppendLine("    GROUP BY")
+        S.AppendLine("    S2.STYLE_CODE,")
+        S.AppendLine("    S2.COLOR_CODE,")
+        S.AppendLine("    S2.WHSE_CODE")
+        S.AppendLine(") S2,")
+        S.AppendLine("(")
+        S.AppendLine("    SELECT")
+        S.AppendLine("    S3.STYLE_CODE,")
+        S.AppendLine("    MAX(A1.ATTR_DESC) AS ATTR_DESC")
+        S.AppendLine("    FROM ICTSTYL3 S3, ICTATTR1 A1")
+        S.AppendLine("    WHERE S3.ATTR_CODE = A1.ATTR_CODE")
+        S.AppendLine("    AND NVL(A1.ATT_RANK,'0') = '1'")
+        S.AppendLine("    GROUP BY S3.STYLE_CODE")
+        S.AppendLine(") S3")
+        S.AppendLine("WHERE I1.STYLE_CODE = C1.STYLE_CODE")
+        S.AppendLine("AND I1.STYLE_CODE = S2.STYLE_CODE")
+        S.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE")
+        S.AppendLine("AND I1.STYLE_CODE = S3.STYLE_CODE")
+        Dim SelOnlyWhere As String = "SEL = '1'"
+        dst.Tables("ECTPRCG3").Clear()
+        For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select(SelOnlyWhere)
+            Dim SQLECTPRCG3 As String = S.ToString
+            Dim STYLE_CODE As String = rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowICTSTYL1.Item("COLOR_CODE").ToString & String.Empty
+            SQLECTPRCG3 = SQLECTPRCG3 & $" AND I1.STYLE_CODE = '{STYLE_CODE}' AND C1.COLOR_CODE = '{COLOR_CODE}'"
+            Fill_Records("ECTPRCG3",, False, SQLECTPRCG3.ToString)
+        Next
+        Call BeginTrans()
+        Dim SQLD As String = $" PRCG_NO = '{PRCG_NO}'"
+        Update_Record_TDA("ECTPRCG1", SQLD)
+        Update_Record_TDA("ECTPRCG2", SQLD)
+        Update_Record_TDA("ECTPRCG3", SQLD)
+        Call CommitTrans("")
+        MsgBox($"Your New Pricing Group {PRCG_NO} Has Been Created.", vbOKOnly, "ECom Pricing!")
     End Sub
 End Class
