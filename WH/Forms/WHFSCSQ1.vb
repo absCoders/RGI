@@ -484,14 +484,21 @@ Public Class WHFSCSQ1
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool
         Dim tlb_btn As UltraWinToolbars.ButtonTool
 
-        If tlb_pop.Tools.Exists("Show Filter") Then
-            tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
-            tlb_sbt.Checked = (grd.DisplayLayout.Override.AllowRowFiltering = DefaultableBoolean.True)
-        End If
-        If tlb_pop.Tools.Exists("Show GroupBox") Then
-            tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
-            tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
-        End If
+        Select Case grd.Name
+            Case "grdWHTSCTMP"
+                tlb_btn = DirectCast(tlb_pop.Tools("Allow Move"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value.ToString & "" <> ""
+
+            Case "grdWHTSCSEQ", "grdWHTSCLAB"
+                If tlb_pop.Tools.Exists("Show Filter") Then
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
+                    tlb_sbt.Checked = (grd.DisplayLayout.Override.AllowRowFiltering = DefaultableBoolean.True)
+                End If
+                If tlb_pop.Tools.Exists("Show GroupBox") Then
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
+                    tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
+                End If
+        End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             e.Cancel = True
@@ -500,8 +507,6 @@ Public Class WHFSCSQ1
             '    e.Cancel = True
             'End If
 
-            tlb_btn = DirectCast(tlb_pop.Tools("Allow Move"), UltraWinToolbars.ButtonTool)
-            tlb_btn.SharedProps.Visible = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value.ToString & "" <> ""
 
             Select Case e.SourceControl.Name
 
@@ -563,6 +568,7 @@ Public Class WHFSCSQ1
                 Dim LocP2L As String = grd.ActiveRow.Cells("OLD_LOCATION_CODE").Value & ""
                 ASCMAIN1.sql = $"update WHTLOCM1 set LOCATION_ROUTE_SEQ = '' where WHSE_CODE ='{WHSE_CODE}' and location_code = '{LocP2L}'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                grd.ActiveRow.Cells("ERROR_MSG").Value = ""
         End Select
 
     End Sub
@@ -728,7 +734,7 @@ Public Class WHFSCSQ1
                             Dim rowOLD As DataRow = dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_SEQ = '{STYLE_SEQ}'").FirstOrDefault
                             If rowOLD IsNot Nothing Then
                                 If STYLE_CODE = rowOLD.Item("STYLE_CODE") And COLOR_CODE = rowOLD.Item("COLOR_CODE") Then
-                                    ERROR_MSG = "Style Color Same as current"
+                                    'ERROR_MSG = "Style Color Same as current"
                                 ElseIf dst.Tables("WHTSCSEQ").Select($"CUST_CODE = '{CUST_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'").Length > 0 Then
                                     ERROR_MSG = "Customer Style Color Exists as different Match#"
                                 Else

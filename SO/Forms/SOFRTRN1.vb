@@ -12,6 +12,7 @@ Public Class SOFRTRN1
     Private INV_NO_RETURNED As String
     Private KEY_3PL_RECORD As String
     Private PRD_END_DATE As Date
+    Private REFRESH_FLAG As Boolean = False
 
     Private rowARTCUST1 As DataRow
     Private rowSOTINVH1_Ret As DataRow
@@ -185,6 +186,17 @@ Public Class SOFRTRN1
 
             Create_TDA(.Tables.Add, "SOTRMAFR", "*", 1)
 
+            ASCMAIN1.sql = "select RA_UPC_CODE ,STYLE_CODE ,COLOR_CODE ,
+                            max(RA_RTN_QTY) RA_RTN_QTY ,
+                            sum(RA_PUTAWAY_QTY_OPEN) RA_PUTAWAY_QTY_OPEN,
+                            sum(RA_QTY_USED) RA_QTY_USED
+                            from SOTRMAFR
+                            where ra_no = :PARM1
+                            and gun_status <> 'V'
+                            group by RA_UPC_CODE ,STYLE_CODE ,COLOR_CODE 
+                            order by Style_code"
+            Create_TDA(.Tables.Add, "SOTRMAFRS", "**", 0, False, "V", 3)
+
             ASCMAIN1.sql = "Select SOTINVH1.INV_TYPE, SOTINVH1.INV_NO" & vbCrLf _
                 & ", SOTINVH1.CUST_CODE, SOTINVH1.CUST_STORE_NO, SOTINVH1.ORDR_CUST_PO" & vbCrLf _
                 & ", SOTINVH1.ORDR_NO, SOTINVH1.WHSE_CODE" & vbCrLf _
@@ -289,6 +301,7 @@ Public Class SOFRTRN1
         grdSOTRTRNG.DataSource = dst.Tables("SOTRTRNG")
         grdSOTRTRN1P.DataSource = dst.Tables("SOTRTRN1P")
         grdSOTRMAFR.DataSource = dst.Tables("SOTRMAFR")
+        grdSOTRMAFRS.DataSource = dst.Tables("SOTRMAFRS")
 
         grdSOTINVHH.DataSource = dst.Tables("SOTINVHH")
         grdSOTINVHX.DataSource = dst.Tables("SOTINVHX")
@@ -884,6 +897,14 @@ Public Class SOFRTRN1
                 Load_Record()
                 Mode_Settings(True)
 
+            Case "Refresh"
+                REFRESH_FLAG = True
+                Clear_Record()
+                EntryMode = "N"
+                Load_Record()
+                Mode_Settings(True)
+                REFRESH_FLAG = False
+
             Case "Update"
                 Update_Record()
 
@@ -932,6 +953,7 @@ Public Class SOFRTRN1
                     '    .Items("Update").Settings.Enabled = iScreenMode
                     '    .Items("Cancel").Settings.Enabled = iScreenMode
                     'End If
+                    .Items("Refresh").Settings.Enabled = iScreenMode And ASCMAIN1.CLIENT = "RGI" And InquiryMode
                     .Items("Update").Settings.Enabled = iScreenMode
                     .Items("Cancel").Settings.Enabled = iScreenMode
 
@@ -957,6 +979,7 @@ Public Class SOFRTRN1
                     .Items("Price Change").Visible = False
                     .Items("Done").Visible = (EntryMode = "V" And ScreenMode) Or InquiryMode
                     .Items("Print").Visible = (EntryMode = "V" And ScreenMode) Or InquiryMode
+                    .Items("Refresh").Visible = iScreenMode And ASCMAIN1.CLIENT = "RGI" And InquiryMode
                     .Items("Update").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
                     .Items("Cancel").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
                 End With
@@ -990,7 +1013,7 @@ Public Class SOFRTRN1
             End If
 
             tabDetails.Tabs("Sales History").Visible = (EntryMode = "N")
-            tabDetails.SelectedTab = tabDetails.Tabs("Sales History")
+            If Not REFRESH_FLAG Then tabDetails.SelectedTab = tabDetails.Tabs("Sales History")
             tabDetails.Tabs("GL Distribution").Visible = (EntryMode = "V") And ASCMAIN1.USER_SECURITY_CODEs.Contains("X5")
             tabDetails.Tabs("Scanned Returns").Visible = (EntryMode = "N") And ASCMAIN1.CLIENT = "RGI"
 
@@ -1106,6 +1129,8 @@ Public Class SOFRTRN1
 
         EnforceConstraints(True)
 
+        If REFRESH_FLAG Then Exit Sub
+
         If chkGL.Checked Then
             chkGL.Checked = False
         Else
@@ -1165,8 +1190,10 @@ Public Class SOFRTRN1
     Sub Load_Record()
 
         ASCMAIN1.Progress("Now Loading Data ...")
-
-        Save_Header_Fields(UltraGroupBox1)
+        If REFRESH_FLAG Then
+        Else
+            Save_Header_Fields(UltraGroupBox1)
+        End If
 
         ' Preserve the selected tab
         tab0SelectedTab = tab0.SelectedTab.Key
@@ -1190,13 +1217,20 @@ Public Class SOFRTRN1
                 Fill_Records("SOTRMAFR", RA_NO)
                 Dim dvw As DataView = dst.Tables("SOTRMAFR").DefaultView
                 dvw.RowFilter = "GUN_STATUS <> 'V'"
+
+                Fill_Records("SOTRMAFRS", RA_NO)
+                splSCANS.Panel2Collapsed = True
             End If
 
             rowSOTRTRN1 = dst.Tables("SOTRTRN1").NewRow
             If ASCMAIN1.CLIENT = "VAN" Then
                 rowSOTRTRN1.Item("RTRN_NO") = ASCMAIN1.Next_Control_No("TRAN_NO_C")
             Else
-                rowSOTRTRN1.Item("RTRN_NO") = ASCMAIN1.Next_Control_No("SOTRTRN1.RTRN_NO")
+                If InquiryMode Then
+                    rowSOTRTRN1.Item("RTRN_NO") = "0000000000"
+                Else
+                    rowSOTRTRN1.Item("RTRN_NO") = ASCMAIN1.Next_Control_No("SOTRTRN1.RTRN_NO")
+                End If
             End If
 
             rowSOTRTRN1.Item("CURR_CODE") = rowARTCUST1.Item("CURR_CODE") & String.Empty
@@ -2104,7 +2138,8 @@ Public Class SOFRTRN1
         End If
 
         Load_Popup_Menu(grdSOTRMAFX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Cancel RMA Balance")
-        Load_Popup_Menu(grdSOTRMAFR, "SS", "Show Filter", "Show Voids")
+        Load_Popup_Menu(grdSOTRMAFR, "SSB", "Show Filter", "Show Voids", "Show Summary")
+        Load_Popup_Menu(grdSOTRMAFRS, "SB", "Show Filter", "Show Details")
 
     End Sub
 
@@ -2186,7 +2221,7 @@ Public Class SOFRTRN1
             Case "Copy All Lines to Negate Inventory Impact"
 
                 If ASCMAIN1.CLIENT = "RGI" Then
-                    MessageBox.Show("This function is disabled. Place the quantity destroyed in the 'Destroy' column. Placing a negative numbers in the 'Stock' or 'Destroy' column messes up the inventory.", _
+                    MessageBox.Show("This function is disabled. Place the quantity destroyed in the 'Destroy' column. Placing a negative numbers in the 'Stock' or 'Destroy' column messes up the inventory.",
                                     "Copy Lines", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Exit Sub
                 Else
@@ -2209,6 +2244,14 @@ Public Class SOFRTRN1
 
                     DisplayTotals()
                 End If
+            Case "Show Summary", "Show Details"
+                If e.Tool.Key = "Show Summary" Then
+                    splSCANS.Panel1Collapsed = True
+                Else
+                    splSCANS.Panel2Collapsed = True
+                End If
+
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
