@@ -779,10 +779,15 @@ Public Class CartonLabel
                 'S.Length = 0
                 'S.AppendLine("select count(1) from SOTCART2")
                 'S.AppendLine(String.Format("   where CART_NO = :PARM1", ORDR_NO))
-                ASCMAIN1.sql = "select count(distinct RANGE_STYLE_CODE) from SOTCART2, SOTORDR2
+                If RNG_CNT > 0 Then
+                    ASCMAIN1.sql = "select count(distinct RANGE_STYLE_CODE) from SOTCART2, SOTORDR2
                                 where SOTCART2.CART_NO = :PARM1
                                 and SOTORDR2.ORDR_NO = SOTCART2.ORDR_NO
                                 and SOTORDR2.ORDR_LNO = SOTCART2.ORDR_LNO"
+                Else
+                    ASCMAIN1.sql = "select count(1) from SOTCART2
+                                where SOTCART2.CART_NO = :PARM1"
+                End If
                 Dim UPC_CNT As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo}) & "")
                 If UPC_CNT = 1 Then
                     LABEL_TEMPLATE_CODE = "MEIJERR"
@@ -1078,7 +1083,6 @@ Public Class CartonLabel
                 End If
                 Row.Item("CUST_STORE_NO") = CUST_STORE_NO
 
-                Dim SQLS As New Text.StringBuilder With {.Length = 0}
                 If RNG_CNT > 0 Then
                     Dim CART_NO As String = Row.Item("CART_NO").ToString
 
