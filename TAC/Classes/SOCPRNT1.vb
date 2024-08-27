@@ -1062,8 +1062,9 @@ Public Class CartonLabel
                 Row("SHIP_VIA_DESC") = TmpRow("SHIP_VIA_DESC")
                 If CUST_CODE = "COSTCOUS" Then
                     Dim CASE_CUBE As Integer = 0
+                    SQLS = $"SELECT trunc(NVL(PKG_L,0) * NVL(PKG_W,0) * NVL(PKG_H,0) / 1728) CUBE FROM SOTCART1 WHERE SOTCART1.CART_NO = '{CART_NO}'"
                     'get cubic inches transform to cubic feet / 1728
-                    CASE_CUBE = Val(Row.Item("PKG_W") + 0) * Val(Row.Item("PKG_L") + 0) * Val(Row.Item("PKG_H") + 0) / 1728
+                    CASE_CUBE = ASCDATA1.GetDataValue(SQLS)
                     Row.Item("CASE_CUBE") = CASE_CUBE
                 End If
 
