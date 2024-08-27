@@ -1066,6 +1066,7 @@ Public Class CartonLabel
                     'get cubic inches transform to cubic feet / 1728
                     CASE_CUBE = ASCDATA1.GetDataValue(SQLS)
                     Row.Item("CASE_CUBE") = CASE_CUBE
+                    Row.Item("cart_total_wgt_calc") = ASCDATA1.GetDataValue($"SELECT CART_TOTAL_WGT_ACTUAL FROM SOTCART1 WHERE SOTCART1.CART_NO = '{CART_NO}'")
                 End If
 
                 If Row.Item("CUST_STORE_NO").ToString.Length > 4 Then
