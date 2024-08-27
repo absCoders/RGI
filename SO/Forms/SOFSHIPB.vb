@@ -8713,8 +8713,9 @@ Public Class SOFSHIPB
             Exit Sub
         End If
 
-        If ASCMAIN1.CLIENT = "NYA" Then
+        If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Then
             Exit Sub
+            'do not add logic below unless that logic is related to sorting the dimensions
         End If
 
         ' Sort the values by length, width, height
