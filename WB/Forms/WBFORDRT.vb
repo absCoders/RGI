@@ -275,7 +275,11 @@ Public Class WBFORDRT
             StyleNo += 1
             Dim STYLE_CODE = rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty
             ASCMAIN1.Progress("Style: " & STYLE_CODE, "Record: " & StyleNo)
-            'If STYLE_CODE = "MTX65981" Then Stop
+
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                If STYLE_CODE = "MTX71769" Then Stop
+            End If
+
             For PriceLevel As Int64 = 0 To 5
                 Select Case PriceLevel
                     Case 0

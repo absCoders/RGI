@@ -1234,6 +1234,7 @@ Public Class POFVBKG1
 
 
         'Return workbook
+        Return Nothing
 
     End Function
 

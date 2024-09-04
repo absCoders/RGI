@@ -2852,11 +2852,20 @@ Public Class SOFORDR1
                 Mode_Settings(False)
 
             Case "Import XFR File"
-                Import_XFR_File()
+                If Absx1.txtFor("CUST_STORE_NO").Text = "COMCAN" Then
+                    Import_XFR_File_COMCAN()
+                ElseIf Absx1.txtFor("CUST_STORE_NO").Text = "" Then
+                    Import_XFR_File()
+                ElseIf Absx1.txtFor("CUST_STORE_NO").Text & "" <> "" Then
+                    MsgBox("No Auto Transfer Setup for Store " & Absx1.txtFor("CUST_STORE_NO").Text, MsgBoxStyle.OkOnly, "Invalid Store")
+
+                End If
+
+
             Case "Import Amazon File"
                 If Absx1.txtFor("CUST_CODE").Text = "AMAZONCOM" Then
                     Import_AmazonCom_File()
-                Else
+                ElseIf Absx1.txtFor("CUST_CODE").Text = "AMAZONFBA" Or Absx1.txtFor("CUST_CODE").Text = "AMAZFBA03" Then
                     Import_Amazon_File()
                 End If
             Case "Import Sample File"
@@ -12616,6 +12625,421 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
         End If
 
     End Sub
+    Sub Import_XFR_File_COMCAN()
+        Dim FILENAME As String = ""
+        Using openFileDialog1 As New OpenFileDialog
+            openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+            'Dim filter As String = "xlsb files (*.xlsb)|*.xlsx|All files (*.*)|*.*"
+            Dim filter As String = "All files (*.*)|*.*"
+            openFileDialog1.Filter = filter
+            openFileDialog1.RestoreDirectory = True
+            If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                FILENAME = openFileDialog1.FileName
+            End If
+        End Using
+
+        If FILENAME <> "" Then
+            Try
+                ASCMAIN1.Progress("Now Building Order From Excel", "")
+                Me.Cursor = Cursors.WaitCursor
+
+                DATETIME_STAMP = Now + ASCMAIN1.NowTSD
+                Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
+                Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Open(FILENAME)
+                Dim xws As Microsoft.Office.Interop.Excel.Worksheet = Nothing
+                xws = XWB.Worksheets(1)
+                Dim ERROR_CODEs As List(Of String) = New List(Of String)
+                Dim ORDR_LNO As Integer = 1
+                Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("ORDR_NO")
+                Dim CUST_CODE As String = "TRANSFERS"
+                Dim CUST_STORE_NO As String = "COMCAN"
+                Dim CUST_STORE_NAME As String = "Commerce Canal"
+                Dim STYLE_COLORs As New Dictionary(Of String, Decimal)
+                Dim STYLE_COLOR As String = ""
+                Dim ORDR_CUST_PO As String = ""
+                Dim ORDR_SHIP_DATE As Date = Nothing
+                Dim ORDR_CANCEL_DATE As Date = Nothing
+                Dim PRE_PACK_OVERRIDE As String = ""
+
+                Me.Cursor = Cursors.WaitCursor
+
+                rowARTCUST1 = LookUp("ARTCUST1", CUST_CODE)
+
+                Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", CUST_STORE_NO})
+                If rowARTCUST2 IsNot Nothing Then
+                    CUST_STORE_NAME = rowARTCUST2.Item("CUST_NAME") & ""
+                End If
+
+                If rowARTCUST1 IsNot Nothing Then
+                    CUST_CODE = CUST_CODE
+
+                    CUST_BILL_TO_CUST = rowARTCUST1.Item("CUST_BILL_TO_CUST") & ""
+                    If CUST_BILL_TO_CUST = "" Then
+                        CUST_BILL_TO_CUST = CUST_CODE
+                    End If
+
+                    Dim rowARTCUST1_BT As DataRow = LookUp("ARTCUST1", CUST_BILL_TO_CUST)
+                    If rowARTCUST1_BT Is Nothing Then
+                        EMsg &= vbCr & "Unable to determine Bill-To Customer"
+                    Else
+                        If rowARTCUST1_BT.Item("POST_CODE") & "" = "" Then
+                            ' EMsg &= vbCr & "No value specified for the Post Code for Bill-To Customer " & CUST_BILL_TO_CUST
+                        Else
+                            If LookUp("ARTPOST1", rowARTCUST1_BT.Item("POST_CODE")) Is Nothing Then
+                                '   EMsg &= vbCr & "Invalide AR Post Code specified for Bill-To Customer " & CUST_BILL_TO_CUST
+                            End If
+                        End If
+                    End If
+
+                End If
+
+                'For ii As Integer = 2 To 3
+                'If xws.Cells(ii, 1).value = "START" Then
+                'ElseIf xws.Cells(ii, 1).value = "CANCEL" Then
+
+                'End If
+
+                ORDR_SHIP_DATE = xws.Cells(3, 2).value.ToString
+                ORDR_CANCEL_DATE = xws.Cells(4, 2).value.ToString
+                ORDR_CUST_PO = xws.Cells(2, 2).value.ToString
+
+
+
+                '  Next ii
+
+
+                For i As Integer = 7 To xws.UsedRange.Rows.Count Step +1
+                    If xws.Cells(i, 1).value <> "" Then
+                        Dim SKU As String = ""
+                        If xws.Cells(i, 1).value = "" Then
+                            SKU = ""
+                        Else
+                            SKU = xws.Cells(i, 1).value.ToString
+                        End If
+
+                        Dim STYLECOLOR As String() = Split(SKU, "-")
+                        Dim STYLE_CODE As String = ""
+                        Dim STYLE_DESC As String = ""
+                        Dim COLOR_CODE As String = ""
+                        Dim ORDR_SELLER_FEE As Double = 0
+                        Dim ORDR_FULLFILL_FEE As Double = 0
+                        Dim ORDR_RETAIL_PRICE As Double = 0
+                        Dim ORDR_UNIT_PRICE As Double = 0
+                        Dim ORDR_QTY_OPEN As Int32 = 0
+                        Dim UPC As String = ""
+                        If xws.Cells(i, 5).value = "" Then
+                            ' UPC = ""
+                        Else
+                            UPC = xws.Cells(i, 5).value.ToString
+
+                        End If
+
+                        Dim UPC1 As String() = Split(UPC, ":")
+
+                        Dim UPCSEARCH As String = ""
+                        If UPC1.Count = 2 Then
+                            UPCSEARCH = UPC1(1)
+                        End If
+                        '     UPC = UPC(1)
+
+
+                        ''If i = 2 Then
+                        ''    ORDR_SHIP_DATE = xws.Cells(i, 2).value.ToString
+                        ''    ORDR_CANCEL_DATE = xws.Cells(i, 3).value.ToString
+                        ''    ORDR_CUST_PO = xws.Cells(i, 1).value.ToString
+                        ''End If
+
+
+
+                        Dim rowSOTCSTY1 As DataRow = LookUp("SOTCSTY1", New String() {"AMAZFBA03", UPCSEARCH})
+                        If rowSOTCSTY1 Is Nothing Then
+
+
+                            ERROR_CODEs.Add("UPC is missing from Style Cross Reference File " & UPCSEARCH & " for SKU " & SKU & " On Line No " & i)
+
+                            Dim rowERROR_TBL As DataRow = Nothing
+                            rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                            With rowERROR_TBL
+                                .Item("ERROR_CODE") = UPC & " for " & SKU
+                                .Item("ERROR_DETAIL") = "Ln# " & i
+                            End With
+                            dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+
+                            STYLE_CODE = ""
+                            COLOR_CODE = ""
+                        Else
+                            STYLE_CODE = rowSOTCSTY1.Item("STYLE_CODE")
+                            COLOR_CODE = rowSOTCSTY1.Item("COLOR_CODE")
+                        End If
+
+
+                        If STYLE_CODE <> "" And Val(xws.Cells(i, 6).value) <> 0 Then
+                            Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
+                            If rowICTSTYL1 Is Nothing Then
+                                ERROR_CODEs.Add("Invalid Style Code " & STYLE_CODE & " for " & SKU & " On Line No " & i)
+                                STYLE_CODE = ""
+                            Else
+                                STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC")
+                                ORDR_QTY_OPEN = xws.Cells(i, 6).value
+                                PRE_PACK_OVERRIDE = xws.Cells(i, 6).value
+
+                                ORDR_RETAIL_PRICE = 0
+                                ORDR_SELLER_FEE = 0
+                                ORDR_FULLFILL_FEE = 0
+                                ORDR_SELLER_FEE = Math.Abs(ORDR_SELLER_FEE)
+                                ORDR_FULLFILL_FEE = Math.Abs(ORDR_FULLFILL_FEE)
+                                ORDR_UNIT_PRICE = 0
+                                ' ORDR_UNIT_PRICE = ORDR_RETAIL_PRICE - ((ORDR_SELLER_FEE + ORDR_FULLFILL_FEE) / ORDR_QTY_OPEN)
+                            End If
+                        End If
+
+
+                        'add SOTORDR2
+                        If STYLE_CODE <> "" Then
+                            ''Dim rowICTSTYLS As DataRow = LookUp("ICTSTYLS", STYLE_CODE)
+                            ''Dim DIVISOR As Integer = 0
+                            ''If rowICTSTYLS IsNot Nothing And rowICTSTYLS.Item("STYLE_SIZE") & "" = "" Then
+                            ''    For II As Integer = 1 To 12
+                            ''        DIVISOR = DIVISOR + Val(rowICTSTYLS.Item("QTY_" & Format(II, "00")) & "")
+                            ''    Next
+                            ''End If
+                            ''If DIVISOR <> 0 Then
+                            ''    ORDR_QTY_OPEN = ORDR_QTY_OPEN / DIVISOR
+                            ''Else
+                            ''    Stop
+                            ''End If
+
+                            Dim ORDR_LNO_NEW As String = ORDR_LNO
+                            STYLE_COLOR = STYLE_CODE & COLOR_CODE
+                            If Not STYLE_COLORs.ContainsKey(STYLE_COLOR) Then
+                                STYLE_COLORs.Add(STYLE_COLOR, ORDR_LNO)
+                            Else
+                                ORDR_LNO_NEW = STYLE_COLORs(STYLE_COLOR)
+                            End If
+
+                            Dim rowSOTORDR2 As DataRow = dst.Tables("SOTORDR2").Rows.Find(New String() {ORDR_NO, ORDR_LNO_NEW})
+                            If rowSOTORDR2 IsNot Nothing Then
+                                rowSOTORDR2.Item("ORDR_QTY") = rowSOTORDR2.Item("ORDR_QTY") + ORDR_QTY_OPEN
+                                rowSOTORDR2.Item("ORDR_QTY_OPEN") = rowSOTORDR2.Item("ORDR_QTY_OPEN") + ORDR_QTY_OPEN
+                                rowSOTORDR2.Item("ORDR_QTY_ORIG") = rowSOTORDR2.Item("ORDR_QTY_ORIG") + ORDR_QTY_OPEN
+                            Else
+                                rowSOTORDR2 = dst.Tables("SOTORDR2").NewRow
+                                With rowSOTORDR2
+                                    .Item("ORDR_NO") = ORDR_NO
+                                    .Item("ORDR_LNO") = ORDR_LNO
+                                    .Item("STYLE_CODE") = STYLE_CODE
+                                    .Item("COLOR_CODE") = COLOR_CODE
+
+                                    .Item("STYLE_DESC") = STYLE_DESC
+                                    .Item("ORDR_UNIT_PRICE") = ORDR_UNIT_PRICE
+                                    .Item("ORDR_UNIT_PRICE_CURR") = ORDR_UNIT_PRICE
+                                    .Item("ORDR_QTY") = ORDR_QTY_OPEN
+                                    .Item("ORDR_QTY_OPEN") = ORDR_QTY_OPEN
+                                    .Item("ORDR_QTY_ORIG") = ORDR_QTY_OPEN
+                                    .Item("ORDR_QTY_ALLO") = 0
+                                    .Item("INNER_PACK_QTY") = 0
+                                    .Item("ORDR_EXTD_COST") = 0
+                                    .Item("STYLE_UOM") = "EA"
+                                    .Item("ORDR_QTY_PICK") = 0
+                                    .Item("ORDR_QTY_SHIP") = 0
+                                    .Item("ORDR_QTY_CANC") = 0
+                                    .Item("ORDR_STATUS") = "O"
+                                    .Item("ORDR_QTY_PRE_ALLO") = 0
+                                    .Item("QTY_PER_PP") = 0
+                                    .Item("CARTON_PACK_QTY") = 0
+                                    .Item("STYLE_PRICE") = 0
+                                    .Item("ORDR_UNIT_PRICE_CALC") = 0
+                                    .Item("ORDR_UNIT_PRICE_MANUAL") = ""
+                                    .Item("STYLE_RETAIL") = 0
+                                    .Item("PO_COST") = 0
+                                    .Item("COMM_RATE") = 0
+                                    .Item("ORDR_RETAIL_PRICE") = ORDR_UNIT_PRICE
+                                    .Item("ORDR_SELLER_FEE") = ORDR_SELLER_FEE
+                                    .Item("ORDR_FULLFILL_FEE") = ORDR_FULLFILL_FEE
+
+                                End With
+                                dst.Tables("SOTORDR2").Rows.Add(rowSOTORDR2)
+                                ORDR_LNO = ORDR_LNO + 1
+                            End If
+                        End If
+                    End If
+                Next
+
+                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Rows
+                    Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE") & ""
+                    Dim rowICTSTYLS As DataRow = LookUp("ICTSTYLS", STYLE_CODE)
+                    Dim DIVISOR As Integer = 0
+                    If rowICTSTYLS IsNot Nothing Then 'And rowICTSTYLS.Item("STYLE_SIZE") & "" = "" Then
+                        Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
+                        If rowICTSTYL1 IsNot Nothing And rowICTSTYL1.Item("SIZE_CODE") & "" = "" Then
+                            For II As Integer = 1 To 12
+                                DIVISOR = DIVISOR + Val(rowICTSTYLS.Item("QTY_" & Format(II, "00")) & "")
+                            Next
+                        End If
+                    End If
+                    If DIVISOR <> 0 Then
+                        Dim ORDR_QTY_OPEN As Int64 = Val(rowSOTORDR2.Item("ORDR_QTY") & "")
+                        WRITE_SOTORDR3(ORDR_NO, rowSOTORDR2.Item("ORDR_LNO"), STYLE_CODE, ORDR_QTY_OPEN, DIVISOR)
+                        'If PRE_PACK_OVERRIDE = "" Then
+
+                        'Else
+                        '    ' WRITE 1 RECORD OUT TO SOTORDR3 
+                        '    Dim rowSOTORDR3 As DataRow = dst.Tables("SOTORDR3").NewRow
+                        '    With rowSOTORDR3
+                        '        .Item("ORDR_NO") = ORDR_NO
+                        '        .Item("ORDR_LNO") = rowSOTORDR2.Item("ORDR_LNO") & ""
+                        '        .Item("ORDR_SUB_LNO") = 1
+                        '        .Item("CUST_STYLE_CODE") = STYLE_CODE
+                        '        .Item("CUST_COLOR_CODE") = PRE_PACK_OVERRIDE
+                        '        .Item("ORDR_QTY") = ORDR_QTY_OPEN
+                        '    End With
+                        '    dst.Tables("SOTORDR3").Rows.Add(rowSOTORDR3)
+                        'End If
+
+                        ''  ORDR_QTY_OPEN = ORDR_QTY_OPEN / DIVISOR
+                        rowSOTORDR2.Item("ORDR_QTY") = ORDR_QTY_OPEN
+                        rowSOTORDR2.Item("ORDR_QTY_OPEN") = ORDR_QTY_OPEN
+                        rowSOTORDR2.Item("ORDR_QTY_ORIG") = ORDR_QTY_OPEN
+                    End If
+
+                Next
+
+
+                Dim CUST_ADDR_TYPE As String = ""
+                Dim CUST_ADDR_CODE As String = ""
+
+
+                For RR As Integer = 1 To 2
+                    If RR = 1 Then
+                        CUST_ADDR_TYPE = "BT"
+                        CUST_ADDR_CODE = "000000"
+                    ElseIf RR = 2 Then
+                        CUST_ADDR_TYPE = "ST"
+                        CUST_ADDR_CODE = "COMCAN"
+                    End If
+                    ADD_SOTORDR5(ORDR_NO, CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE)
+                Next
+
+                Dim ORDR_GROUP_NO As String = ORDR_NO
+
+                Dim rowSOTORDR1 As DataRow = Nothing
+                rowSOTORDR1 = dst.Tables("SOTORDR1").NewRow
+                With rowSOTORDR1
+                    .Item("ORDR_NO") = ORDR_NO
+                    .Item("ORDR_DATE") = DATETIME_STAMP.Date
+                    .Item("CUST_CODE") = rowARTCUST1.Item("CUST_CODE")
+                    .Item("CUST_NAME") = rowARTCUST1.Item("CUST_CODE")
+                    .Item("CUST_STORE_NO") = CUST_STORE_NO
+                    .Item("CUST_STORE_NAME") = CUST_STORE_NAME
+                    .Item("ORDR_FOB") = "Monroe Township NJ"
+                    .Item("ORDR_CUST_PO") = ORDR_CUST_PO
+                    .Item("ORDR_SHIP_DATE") = ORDR_SHIP_DATE
+                    .Item("ORDR_CANCEL_DATE") = ORDR_CANCEL_DATE
+                    .Item("POST_CODE") = "TRADE"
+                    .Item("TERM_CODE") = "49"
+                    .Item("SREP_CODE") = "036"
+                    .Item("SREP2_CODE") = "045"
+                    .Item("WHSE_CODE") = "NJC"
+                    .Item("WHSE_CODE_TO") = "AMAZ03"
+                    .Item("SALES_DIVISION_CODE") = "15"
+                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                    .Item("INIT_DATE") = DATETIME_STAMP
+                    .Item("LAST_DATE") = DATETIME_STAMP
+                    .Item("ORDR_DATE_RECD") = DATETIME_STAMP.Date
+                    .Item("ORDR_SOURCE") = "A"
+                    .Item("FRT_TERMS") = "COL"
+                    .Item("ORDR_ADDR_TYPE_ST") = "MK"
+                    .Item("ORDR_DATE_BOOKED") = DATETIME_STAMP.Date
+                    .Item("ORDR_YYYYPP_BOOKED") = ASCMAIN1.CYP
+                    .Item("ORDR_STATUS") = "O"
+                    .Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
+                    .Item("ORDR_HOLD") = "0"
+                    .Item("CUST_BILL_TO_CUST") = rowARTCUST1.Item("CUST_CODE")
+                    .Item("CUST_FACTOR_IND") = "0"
+                    .Item("CURR_CODE") = "USD"
+                    .Item("CURR_EXCH_RATE") = 1
+                    .Item("ORDR_ORIG_SHIP_DATE") = ORDR_SHIP_DATE
+                    .Item("ORDR_ORIG_CANCEL_DATE") = ORDR_CANCEL_DATE
+                    .Item("ORDR_TYPE_CODE") = "XFR"
+                    ' B2C inStead of REG
+
+                End With
+                dst.Tables("SOTORDR1").Rows.Add(rowSOTORDR1)
+
+                Dim ORDR_AMT As Decimal = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "") & "")
+                Dim ORDR_QTY_ORIG As Decimal = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_QTY)", "") & "")
+
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("", "")
+
+
+
+
+
+                If ERROR_CODEs.Count <> 0 Then
+                    'Using fr As New ASFMSGBF
+                    '    fr.Show_grd(ERROR_TBL, Me, "The following Import Errors have been identified")
+                    'End Using
+
+                    dst.Tables("ERROR_TBL").Columns(0).ColumnName = "SKUs"
+
+                    If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                        Using F As New ASFMSGBF
+                            F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Import Errors have been identified", "DGJ")
+                        End Using
+                    End If
+
+
+                    '             MsgBox("These are the following Errors in the SpreadSheet: " & Join(ERROR_CODEs.ToArray, vbCrLf), MsgBoxStyle.OkOnly, "Cannot Update Spreadsheet")
+                    dst.Tables("SOTORDR1").Rows.Clear()
+                    dst.Tables("SOTORDR3").Rows.Clear()
+                    dst.Tables("SOTORDR2").Rows.Clear()
+                    dst.Tables("SOTORDR5").Rows.Clear()
+                    dst.Tables("SOTORDR0").Rows.Clear()
+                    dst.Tables("ERROR_TBL").Rows.Clear()
+                    dst.Tables("ERROR_TBL").Columns(0).ColumnName = "ERROR_CODE"
+                Else
+                    ORDR_GROUP_NO = ASCMAIN1.Next_Control_No("ORDR_GROUP_NO")
+
+                    For Each row As DataRow In dst.Tables("SOTORDR1").Select("")
+                        row.Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
+                    Next
+                    For Each row As DataRow In dst.Tables("SOTORDR0").Select("")
+                        row.Item("ORDR_GROUP_NO") = ORDR_GROUP_NO
+                        row.Item("ORDR_NO_MIN") = ORDR_NO
+                        row.Item("ORDR_NO_MAX") = ORDR_NO
+                    Next
+
+                    BeginTrans()
+                    Update_Record_TDA("SOTORDR1")
+                    Update_Record_TDA("SOTORDR2")
+                    Update_Record_TDA("SOTORDR3")
+                    Update_Record_TDA("SOTORDR5")
+                    Update_Record_TDA("SOTORDR0")
+
+                    Dependent_Updates(1, ORDR_NO)
+
+                    ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
+
+                    CommitTrans()
+                    MsgBox("This Excel File has been successfully Updated to the Sales Order",
+                            MsgBoxStyle.OkOnly, "Verification")
+
+                    dst.Tables("SOTORDR1").Rows.Clear()
+                    dst.Tables("SOTORDR3").Rows.Clear()
+                    dst.Tables("SOTORDR2").Rows.Clear()
+                    dst.Tables("SOTORDR5").Rows.Clear()
+                    dst.Tables("SOTORDR0").Rows.Clear()
+                    dst.Tables("ERROR_TBL").Rows.Clear()
+                    dst.Tables("ERROR_TBL").Columns(0).ColumnName = "ERROR_CODE"
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error: " & ex.Message, "XFR Import, Excel Format Issues", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End If
+
+    End Sub
 
     Sub Import_Amazon_File()
         Dim FILENAME As String = ""
@@ -12638,9 +13062,30 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                 Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
                 Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Open(FILENAME)
                 Dim xws As Microsoft.Office.Interop.Excel.Worksheet = Nothing
-                Dim CUST_CODE As String = "AMAZONFBA"
-                Dim CUST_STORE_NO As String = "AMAFBA"
-                Dim CUST_STORE_NAME As String = "AMAZON.COM SERVICES, INC"
+                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+                Dim CUST_STORE_NO As String = Absx1.txtFor("CUST_STORE_NO").Text
+                Dim CUST_STORE_NAME As String = Absx1.txtFor("CUST_NAME").Text
+                Dim WHSE_CODE As String = "AMAZ02"
+                Dim SLS_CODE As String = "045"
+                Dim CUST_ADDR_CODE_CUST = "AMAFBA"
+
+
+
+                If CUST_CODE = "AMAZFBA03" Then
+                    ''                 CUST_CODE = "AMAZONFBA"
+                    'CUST_STORE_NO = "AMAFBA"
+                    CUST_STORE_NAME = "AMAZON.COM SERVICES, INC"
+                    WHSE_CODE = "AMAZ03"
+                    SLS_CODE = "046"
+                    CUST_ADDR_CODE_CUST = "AMAFBA"
+                ElseIf Absx1.txtFor("CUST_CODE").Text = "AMAZONFBA" Then
+                    CUST_STORE_NAME = "AMAZON.COM SERVICES, INC"
+                    ' DEFAULT 
+                End If
+
+                ''Dim CUST_CODE As String = "AMAZONFBA"
+                ''Dim CUST_STORE_NO As String = "AMAFBA"
+                ''Dim CUST_STORE_NAME As String = "AMAZON.COM SERVICES, INC"
 
                 If Absx1.txtFor("CUST_CODE").Text = "AMAZONCOM" Then
                     xws = XWB.Worksheets("Edit Line Items")
@@ -12722,101 +13167,137 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
 
                 For i As Integer = 4 To xws.UsedRange.Rows.Count Step +1
-                    Dim SKU As String = xws.Cells(i, 3).value.ToString
-                    Dim STYLECOLOR As String() = Split(SKU, "-")
-                    Dim STYLE_CODE As String = ""
-                    Dim STYLE_DESC As String = ""
-                    Dim COLOR_CODE As String = ""
-                    Dim ORDR_SELLER_FEE As Double = 0
-                    Dim ORDR_FULLFILL_FEE As Double = 0
-                    Dim ORDR_RETAIL_PRICE As Double = 0
-                    Dim ORDR_UNIT_PRICE As Double = 0
-                    Dim ORDR_QTY_OPEN As Int32 = 0
+                    If xws.Cells(i, 3).value & "" <> "" Then
 
-                    Dim rowSOTCSTY1 As DataRow = LookUp("SOTCSTY1", New String() {CUST_CODE, SKU})
-                    If rowSOTCSTY1 Is Nothing Then
-                        If Val(xws.Cells(i, 4).value.ToString) <> 0 Then
-                            ERROR_CODEs.Add("SKU is missing from Style Cross Reference File " & SKU & " On Line No " & i)
+                        Dim SKU As String = xws.Cells(i, 3).value.ToString
+                        Dim STYLECOLOR As String() = Split(SKU, "-")
+                        Dim STYLE_CODE As String = ""
+                        Dim STYLE_DESC As String = ""
+                        Dim COLOR_CODE As String = ""
+                        Dim ORDR_SELLER_FEE As Double = 0
+                        Dim ORDR_FULLFILL_FEE As Double = 0
+                        Dim ORDR_RETAIL_PRICE As Double = 0
+                        Dim ORDR_UNIT_PRICE As Double = 0
+                        Dim ORDR_QTY_OPEN As Int32 = 0
+                        Dim ORDR_REVENUE_AMT As Double = 0
 
-                            Dim rowERROR_TBL As DataRow = Nothing
-                            rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
-                            With rowERROR_TBL
-                                .Item("ERROR_CODE") = SKU
-                                .Item("ERROR_DETAIL") = "Ln# " & i
-                            End With
-                            dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
-                        End If
+                        Dim rowSOTCSTY1 As DataRow
 
-                        STYLE_CODE = ""
-                        COLOR_CODE = ""
-                        ORDR_QTY_OPEN = 0
-                    Else
-                        STYLE_CODE = rowSOTCSTY1.Item("STYLE_CODE")
-                        COLOR_CODE = rowSOTCSTY1.Item("COLOR_CODE")
-                        ORDR_QTY_OPEN = Val(xws.Cells(i, 4).value.ToString)
-                    End If
+                        If CUST_CODE = "AMAZFBA03x" Then
+                            ' CHANGED TO USE SOTCSTY1 instead of ICVLUPC1 for AMAZFBA03 Wendy 06/20/24
+
+                            Dim Sql As String = "Select * from ICVLUPC1 where UPC_CODE = '" & SKU & "'"
+                            Dim rows() As DataRow = ASCDATA1.GetDataTable(Sql).Select("")
+                            If rows.Length = 1 Then
+                                STYLE_CODE = rows(0).Item("STYLE_CODE") & ""
+                                COLOR_CODE = rows(0).Item("COLOR_CODE") & ""
+                                ORDR_QTY_OPEN = Val(xws.Cells(i, 4).value.ToString)
+                            Else
+                                ERROR_CODEs.Add("Invalid UPC from UPC Cross Reference File " & SKU & " On Line No " & i)
+                                STYLE_CODE = ""
+                                COLOR_CODE = ""
+                                ORDR_QTY_OPEN = 0
+                                Dim rowERROR_TBL As DataRow = Nothing
+                                rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                                With rowERROR_TBL
+                                    .Item("ERROR_CODE") = SKU
+                                    .Item("ERROR_DETAIL") = "Ln# " & i
+                                End With
+                                dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
 
 
-                    If STYLE_CODE <> "" And ORDR_QTY_OPEN <> 0 Then
-                        Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
-                        If rowICTSTYL1 Is Nothing Then
-                            ERROR_CODEs.Add("Invalid Style Code " & STYLE_CODE & " for " & SKU & " On Line No " & i)
-                            STYLE_CODE = ""
+                            End If
+                            '    rowSOTCSTY1 = LookUp("SOTCSTY1", New String() {"MACYS", SKU})
                         Else
-                            STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC")
+                            rowSOTCSTY1 = LookUp("SOTCSTY1", New String() {CUST_CODE, SKU})
+                            If rowSOTCSTY1 Is Nothing Then
+                                If Val(xws.Cells(i, 4).value.ToString) <> 0 Then
+                                    ERROR_CODEs.Add("SKU is missing from Style Cross Reference File " & SKU & " On Line No " & i)
 
-                            ORDR_RETAIL_PRICE = Val(xws.Cells(i, 6).value.ToString)
-                            ORDR_SELLER_FEE = xws.Cells(i, 7).value.ToString
-                            ORDR_FULLFILL_FEE = xws.Cells(i, 8).value.ToString
+                                    Dim rowERROR_TBL As DataRow = Nothing
+                                    rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                                    With rowERROR_TBL
+                                        .Item("ERROR_CODE") = SKU
+                                        .Item("ERROR_DETAIL") = "Ln# " & i
+                                    End With
+                                    dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                                End If
 
-                            ORDR_SELLER_FEE = Math.Abs(ORDR_SELLER_FEE)
-                            ORDR_FULLFILL_FEE = Math.Abs(ORDR_FULLFILL_FEE)
-                            ORDR_UNIT_PRICE = ORDR_RETAIL_PRICE - ((ORDR_SELLER_FEE + ORDR_FULLFILL_FEE) / ORDR_QTY_OPEN)
+                                STYLE_CODE = ""
+                                COLOR_CODE = ""
+                                ORDR_QTY_OPEN = 0
+                            Else
+                                STYLE_CODE = rowSOTCSTY1.Item("STYLE_CODE")
+                                COLOR_CODE = rowSOTCSTY1.Item("COLOR_CODE")
+                                ORDR_QTY_OPEN = Val(xws.Cells(i, 4).value.ToString)
+                            End If
                         End If
-                    End If
 
+                        If STYLE_CODE <> "" And ORDR_QTY_OPEN <> 0 Then
+                            Dim rowICTSTYL1 As DataRow = clsASCBASE1.LookUp("ICTSTYL1", STYLE_CODE)
+                            If rowICTSTYL1 Is Nothing Then
+                                ERROR_CODEs.Add("Invalid Style Code " & STYLE_CODE & " for " & SKU & " On Line No " & i)
+                                STYLE_CODE = ""
+                            Else
+                                STYLE_DESC = rowICTSTYL1.Item("STYLE_DESC")
 
-                    'add SOTORDR2
-                    If STYLE_CODE <> "" And ORDR_QTY_OPEN <> 0 Then
-                        Dim rowSOTORDR2 As DataRow = Nothing
-                        rowSOTORDR2 = dst.Tables("SOTORDR2").NewRow
-                        With rowSOTORDR2
-                            .Item("ORDR_NO") = ORDR_NO
-                            .Item("ORDR_LNO") = ORDR_LNO
-                            .Item("STYLE_CODE") = STYLE_CODE
-                            .Item("COLOR_CODE") = COLOR_CODE
+                                ORDR_REVENUE_AMT = Val(xws.Cells(i, 12).value.ToString)
+                                ORDR_RETAIL_PRICE = Val(xws.Cells(i, 6).value.ToString)
+                                ORDR_SELLER_FEE = xws.Cells(i, 7).value.ToString
+                                ORDR_FULLFILL_FEE = xws.Cells(i, 8).value.ToString
 
-                            .Item("STYLE_DESC") = STYLE_DESC
-                            .Item("ORDR_UNIT_PRICE") = ORDR_UNIT_PRICE
-                            .Item("ORDR_UNIT_PRICE_CURR") = ORDR_UNIT_PRICE
-                            .Item("ORDR_QTY") = ORDR_QTY_OPEN
-                            .Item("ORDR_QTY_OPEN") = ORDR_QTY_OPEN
-                            .Item("ORDR_QTY_ORIG") = ORDR_QTY_OPEN
-                            .Item("ORDR_QTY_ALLO") = 0
-                            .Item("INNER_PACK_QTY") = 0
-                            .Item("ORDR_EXTD_COST") = 0
-                            .Item("STYLE_UOM") = "EA"
-                            .Item("ORDR_QTY_PICK") = 0
-                            .Item("ORDR_QTY_SHIP") = 0
-                            .Item("ORDR_QTY_CANC") = 0
-                            .Item("ORDR_STATUS") = "O"
-                            .Item("ORDR_QTY_PRE_ALLO") = 0
-                            .Item("QTY_PER_PP") = 0
-                            .Item("CARTON_PACK_QTY") = 0
-                            .Item("STYLE_PRICE") = 0
-                            .Item("ORDR_UNIT_PRICE_CALC") = 0
-                            .Item("ORDR_UNIT_PRICE_MANUAL") = ""
-                            .Item("STYLE_RETAIL") = 0
-                            .Item("PO_COST") = 0
-                            .Item("COMM_RATE") = 0
-                            .Item("ORDR_RETAIL_PRICE") = ORDR_UNIT_PRICE
-                            .Item("ORDR_SELLER_FEE") = ORDR_SELLER_FEE
-                            .Item("ORDR_FULLFILL_FEE") = ORDR_FULLFILL_FEE
+                                ORDR_SELLER_FEE = Math.Abs(ORDR_SELLER_FEE)
+                                ORDR_FULLFILL_FEE = Math.Abs(ORDR_FULLFILL_FEE)
+                                If CUST_CODE = "AMAZFBA03" Then
+                                    ORDR_UNIT_PRICE = ORDR_REVENUE_AMT / ORDR_QTY_OPEN
+                                Else
+                                    ORDR_UNIT_PRICE = ORDR_RETAIL_PRICE - ((ORDR_SELLER_FEE + ORDR_FULLFILL_FEE) / ORDR_QTY_OPEN)
+                                End If
 
-                        End With
-                        dst.Tables("SOTORDR2").Rows.Add(rowSOTORDR2)
-                        ORDR_LNO = ORDR_LNO + 1
+                            End If
+                        End If
 
+                        'add SOTORDR2
+                        If STYLE_CODE <> "" And ORDR_QTY_OPEN <> 0 Then
+                            Dim rowSOTORDR2 As DataRow = Nothing
+                            rowSOTORDR2 = dst.Tables("SOTORDR2").NewRow
+                            With rowSOTORDR2
+                                .Item("ORDR_NO") = ORDR_NO
+                                .Item("ORDR_LNO") = ORDR_LNO
+                                .Item("STYLE_CODE") = STYLE_CODE
+                                .Item("COLOR_CODE") = COLOR_CODE
+
+                                .Item("STYLE_DESC") = STYLE_DESC
+                                .Item("ORDR_UNIT_PRICE") = ORDR_UNIT_PRICE
+                                .Item("ORDR_UNIT_PRICE_CURR") = ORDR_UNIT_PRICE
+                                .Item("ORDR_QTY") = ORDR_QTY_OPEN
+                                .Item("ORDR_QTY_OPEN") = ORDR_QTY_OPEN
+                                .Item("ORDR_QTY_ORIG") = ORDR_QTY_OPEN
+                                .Item("ORDR_QTY_ALLO") = 0
+                                .Item("INNER_PACK_QTY") = 0
+                                .Item("ORDR_EXTD_COST") = 0
+                                .Item("STYLE_UOM") = "EA"
+                                .Item("ORDR_QTY_PICK") = 0
+                                .Item("ORDR_QTY_SHIP") = 0
+                                .Item("ORDR_QTY_CANC") = 0
+                                .Item("ORDR_STATUS") = "O"
+                                .Item("ORDR_QTY_PRE_ALLO") = 0
+                                .Item("QTY_PER_PP") = 0
+                                .Item("CARTON_PACK_QTY") = 0
+                                .Item("STYLE_PRICE") = 0
+                                .Item("ORDR_UNIT_PRICE_CALC") = 0
+                                .Item("ORDR_UNIT_PRICE_MANUAL") = ""
+                                .Item("STYLE_RETAIL") = 0
+                                .Item("PO_COST") = 0
+                                .Item("COMM_RATE") = 0
+                                .Item("ORDR_RETAIL_PRICE") = ORDR_UNIT_PRICE
+                                .Item("ORDR_SELLER_FEE") = ORDR_SELLER_FEE
+                                .Item("ORDR_FULLFILL_FEE") = ORDR_FULLFILL_FEE
+
+                            End With
+                            dst.Tables("SOTORDR2").Rows.Add(rowSOTORDR2)
+                            ORDR_LNO = ORDR_LNO + 1
+                        End If
                     End If
                 Next
 
@@ -12827,9 +13308,11 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     If RR = 1 Then
                         CUST_ADDR_TYPE = "BT"
                         CUST_ADDR_CODE = "000000"
+                        '      CUST_ADDR_CODE = CUST_STORE_NO
                     ElseIf RR = 2 Then
                         CUST_ADDR_TYPE = "ST"
-                        CUST_ADDR_CODE = "AMAFBA"
+                        '   CUST_ADDR_CODE = CUST_ADDR_CODE_CUST
+                        CUST_ADDR_CODE = CUST_STORE_NO
                         '  ElseIf RR = 3 Then
                         '    CUST_ADDR_TYPE = "BY"
                         '    CUST_ADDR_CODE = "AMAZONFBA"
@@ -12862,8 +13345,8 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     .Item("ORDR_CANCEL_DATE") = ORDR_CANCEL_DATE
                     .Item("POST_CODE") = "TRADE"
                     .Item("TERM_CODE") = "01"
-                    .Item("SREP_CODE") = "045"
-                    .Item("WHSE_CODE") = "AMAZ02"
+                    .Item("SREP_CODE") = SLS_CODE
+                    .Item("WHSE_CODE") = WHSE_CODE
                     .Item("SALES_DIVISION_CODE") = "15"
                     .Item("INIT_OPER") = ASCMAIN1.USER_ID
                     .Item("LAST_OPER") = ASCMAIN1.USER_ID
@@ -12964,14 +13447,27 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
         Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", CUST_ADDR_CODE})
         Dim CUST_NAME As String = "AMAZON.COM SERVICES, INC"
         Dim CUST_ADDR1 As String = "401 INDEPENDENCE ROAD"
+        Dim CUST_ADDR2 As String = ""
         Dim CUST_CITY As String = "FLORENCE"
         Dim CUST_STATE As String = "NJ"
         Dim CUST_ZIP_CODE As String = "08518-220"
         Dim CUST_COUNTRY As String = "USA"
 
+
+        If CUST_CODE = "AMAZFBA03" Then
+            CUST_NAME = "AMAZON.COM SERVICES, INC"
+            CUST_ADDR1 = "Commerce Canal"
+            CUST_ADDR2 = "401 INDEPENDENCE ROAD"
+            CUST_CITY = "FLORENCE"
+            CUST_STATE = "NJ"
+            CUST_ZIP_CODE = "08518-220"
+            CUST_COUNTRY = "USA"
+        End If
+
         If rowARTCUST2 IsNot Nothing Then
             CUST_NAME = rowARTCUST2.Item("CUST_NAME") & ""
             CUST_ADDR1 = rowARTCUST2.Item("CUST_ADDR1") & ""
+            CUST_ADDR2 = rowARTCUST2.Item("CUST_ADDR2") & ""
             CUST_CITY = rowARTCUST2.Item("CUST_CITY") & ""
             CUST_STATE = rowARTCUST2.Item("CUST_STATE") & ""
             CUST_ZIP_CODE = rowARTCUST2.Item("CUST_ZIP_CODE") & ""
@@ -12986,6 +13482,7 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
             .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
             .Item("CUST_NAME") = CUST_NAME
             .Item("CUST_ADDR1") = CUST_ADDR1
+            .Item("CUST_ADDR2") = CUST_ADDR2
             .Item("CUST_CITY") = CUST_CITY
 
             .Item("CUST_STATE") = CUST_STATE
@@ -14120,6 +14617,10 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
         Return RetVal
     End Function
+
+    Private Sub UltraGroupBox1_Click(sender As Object, e As EventArgs) Handles UltraGroupBox1.Click
+
+    End Sub
 
 #End Region
 End Class

@@ -167,14 +167,25 @@ Public Class SORSORD1
         ElseIf Absx1.optFor("OPTCONS_GROUPS").Value = "N" Then
             ASCDATA1.ExecuteSQL("Update " & SOTORDR0 & " Set GROUP_SEQ = ROWNUM")
         End If
-
-        ASCMAIN1.sql = "Select SOTORDR1.ORDR_GROUP_NO" _
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = "Select SOTORDR1.ORDR_GROUP_NO" _
             & ", NVL(SOTORDR1.CUST_DC_NO,'XXXXXX') CUST_DC_NO" _
             & ", SUM (ORDR_QTY) ORDR_QTY, SUM (ORDR_QTY * ORDR_UNIT_PRICE) ORDR_AMT" _
             & " from SOTORDR1,SOTORDR2" _
             & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" _
-            & "   and SOTORDR1.ORDR_GROUP_NO in (Select Distinct ORDR_GROUP_NO from " & SOTORDR0 & " where ORDR_GROUP_TYPE = 'O')" _
+            & " and (CUST_CODE NOT IN ('BEALLS','ROSS') OR SOTORDR2.ORDR_QTY <> SOTORDR2.ORDR_QTY_CANC)" _
+            & " and SOTORDR1.ORDR_GROUP_NO in (Select Distinct ORDR_GROUP_NO from " & SOTORDR0 & " where ORDR_GROUP_TYPE = 'O')" _
             & " GROUP BY SOTORDR1.ORDR_GROUP_NO, NVL(SOTORDR1.CUST_DC_NO,'XXXXXX');"
+        Else
+            ASCMAIN1.sql = "Select SOTORDR1.ORDR_GROUP_NO" _
+            & ", NVL(SOTORDR1.CUST_DC_NO,'XXXXXX') CUST_DC_NO" _
+            & ", SUM (ORDR_QTY) ORDR_QTY, SUM (ORDR_QTY * ORDR_UNIT_PRICE) ORDR_AMT" _
+            & " from SOTORDR1,SOTORDR2" _
+            & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" _
+            & " and SOTORDR1.ORDR_GROUP_NO in (Select Distinct ORDR_GROUP_NO from " & SOTORDR0 & " where ORDR_GROUP_TYPE = 'O')" _
+            & " GROUP BY SOTORDR1.ORDR_GROUP_NO, NVL(SOTORDR1.CUST_DC_NO,'XXXXXX');"
+
+        End If
 
         ASCMAIN1.sql = "" _
             & "Begin" _
@@ -342,6 +353,12 @@ Public Class SORSORD1
         ASCMAIN1.sql &= ") group by CUST_CODE, GROUP_SEQ, STYLE_CODE, COLOR_CODE, RANGE_STYLE_CODE"
 
         Dim SOTSORD1 As String = ASCMAIN1.Temp_Table
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            sql = "Delete From " & SOTSORD1 & " WHERE CUST_CODE IN ('BEALLS','ROSS') AND ORDR_QTY_X = ORDR_QTY_CANC_X"
+            ASCDATA1.ExecuteSQL(sql)
+        End If
+
 
         dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & SOTSORD1, "SOTSORD1", 0))
 

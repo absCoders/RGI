@@ -112,7 +112,8 @@ Public Class WBFSTYLW
             sqls.AppendLine("STA.WHSE_QTY_PICK,")
             sqls.AppendLine("STA.OPEN_TO_SELL,")
             sqls.AppendLine("STA.WHSE_QTY_OPEN,")
-            sqls.AppendLine("STA.FUT_AVAIL")
+            sqls.AppendLine("STA.FUT_AVAIL,")
+            sqls.AppendLine("NVL(ICTSTYL1.STYLE_SO_QTY_MIN,0) STYLE_SO_QTY_MIN")
             sqls.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC,")
             sqls.AppendLine("(")
             sqls.AppendLine("   SELECT")
@@ -146,7 +147,10 @@ Public Class WBFSTYLW
             sqls.AppendLine("AND WBTSTYLD.COLOR_CODE = STA.COLOR_CODE (+)")
             ASCMAIN1.sql = sqls.ToString
             Create_TDA(dst.Tables.Add, "WBTSTYLD", "**", 0, True)
-            .Tables("WBTSTYLD").Columns.Add("FILTER_SEL", GetType(System.String))
+            With .Tables("WBTSTYLD").Columns
+                .Add("FILTER_SEL", GetType(System.String))
+                .Add("ALL_DISC", GetType(System.String))
+            End With
             'Create_TDA(.Tables.Add, "WBTSTYLD", "*")
 
             Create_TDA(.Tables.Add, "ICTSTAT2", "*")
@@ -493,6 +497,8 @@ Public Class WBFSTYLW
             .Columns("PAGE_CNT").Format = "###,##0"
             .Columns("ALT_FUT_QTY").Format = "###,##0"
             '.Columns("QTY_AVL").Format = "###,##0"
+            .Columns("STYLE_SO_QTY_MIN").Format = "###,##0"
+
             .Columns("WHSE_QTY_ON_ORDER").Format = "###,##0"
             .Columns("WHSE_QTY_ON_ORDER").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
             .Columns("WHSE_QTY_ON_ORDER").Header.Appearance.BackColor2 = Drawing.Color.Yellow
@@ -530,7 +536,8 @@ Public Class WBFSTYLW
         Create_Summary(grdWBTPAGEX, "PAGE_CODE", "Count")
         Create_Summary(grdICTSTYLX, "STYLE_CODE", "Count")
 
-        ASCMAIN1.Add_Value_List(grdWBTSTYLD, "WEB_IND", , New String() {":", "X:Not On Web", "W:On Web", "U:Awaiting Update", "R:Awaiting Removal"})
+        'ASCMAIN1.Add_Value_List(grdWBTSTYLD, "WEB_IND", , New String() {":", "X:Not On Web", "W:On Web", "U:Awaiting Update", "R:Awaiting Removal"})
+        ASCMAIN1.Add_Value_List(grdWBTSTYLD, "WEB_IND", , New String() {":", "I:Inactive", "W:On Web", "U:Awaiting Update"})
         ASCMAIN1.Add_Value_List(grdWBTPAGEX, "PAGE_STATUS", , New String() {":", "A:Active"})
 
         WB_PARM_SITE_IP = (ROWs("WBTPARM1").Item("WB_PARM_SITE_IP") & String.Empty).ToString.Trim
@@ -799,7 +806,7 @@ Public Class WBFSTYLW
         For i As Integer = 0 To grdWBTSTYLD.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
-        For Each COLNAME As String In New String() {"WEB_IND", "UPLOAD_BATCH", "STYLE_SORT", "UPLOAD_IMG", "FULL_UPLOAD", "ALT_FUT_QTY", "ALT_FUT_DATE", "FLAG_NEW"}
+        For Each COLNAME As String In New String() {"UPLOAD_BATCH", "STYLE_SORT", "UPLOAD_IMG", "FULL_UPLOAD", "ALT_FUT_QTY", "ALT_FUT_DATE", "FLAG_NEW"}
             grdWBTSTYLD.DisplayLayout.Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
         Next
         For Each COLNAME As String In New String() {"UPLOAD_BATCH", "STYLE_SORT", "ALT_FUT_QTY"}
@@ -851,7 +858,8 @@ Public Class WBFSTYLW
         SQLW.AppendLine("STA.WHSE_QTY_PICK,")
         SQLW.AppendLine("STA.OPEN_TO_SELL,")
         SQLW.AppendLine("STA.WHSE_QTY_OPEN,")
-        SQLW.AppendLine("STA.FUT_AVAIL")
+        SQLW.AppendLine("STA.FUT_AVAIL,")
+        SQLW.AppendLine("NVL(ICTSTYL1.STYLE_SO_QTY_MIN,0) STYLE_SO_QTY_MIN")
         SQLW.AppendLine("FROM WBTSTYLD, WBTSTYLH, ICTSTYL1, (SELECT STYLE_CODE, COUNT(PAGE_CODE) AS PAGE_CNT FROM WBTPAGED GROUP BY STYLE_CODE) PGC,")
         SQLW.AppendLine("(")
         SQLW.AppendLine("   SELECT")
@@ -885,6 +893,7 @@ Public Class WBFSTYLW
         SQLW.AppendLine("AND WBTSTYLD.COLOR_CODE = STA.COLOR_CODE (+)")
         Fill_Records("WBTSTYLD", , , SQLW.ToString)
 
+
         UpdateInventory()
 
         Dim updatesFound As Boolean = UpdateStatus()
@@ -893,11 +902,57 @@ Public Class WBFSTYLW
             Update_Record_TDA("WBTSTYLD")
             CommitTrans()
         End If
+        markAllDisc()
 
         Me.Cursor = Cursors.Default
 
         'MsgBox("Data Loaded.", MsgBoxStyle.Information, "Success")
     End Sub
+
+    Private Sub markAllDisc()
+        Dim STYLE_DISC As New Dictionary(Of String, String)
+        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("", "STYLE_CODE")
+            Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
+            If Not STYLE_DISC.Keys.Contains(STYLE_CODE) Then
+                STYLE_DISC.Add(STYLE_CODE, "0")
+            End If
+        Next
+        For Each SK As KeyValuePair(Of String, String) In STYLE_DISC
+            Dim FLT As String = $"STYLE_CODE = '{SK.Key}'"
+            Dim ALL_DISC As String = "1"
+            For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(FLT, "STYLE_CODE")
+                Dim STYLE_STATUS As String = rowWBTSTYLD.Item("STYLE_STATUS").ToString & String.Empty
+                Dim FUT_AVAIL As Int64 = Val(rowWBTSTYLD.Item("FUT_AVAIL").ToString & String.Empty)
+                If STYLE_STATUS <> "D" Or FUT_AVAIL > 0 Then
+                    ALL_DISC = "0"
+                    Exit For
+                End If
+            Next
+            Dim FLT2 As String = $"STYLE_CODE = '{SK.Key}'"
+            For Each rowWBTSTYLD2 As DataRow In dst.Tables("WBTSTYLD").Select(FLT2, "STYLE_CODE")
+                rowWBTSTYLD2.Item("ALL_DISC") = ALL_DISC
+            Next
+        Next
+        For Each grow As UltraWinGrid.UltraGridRow In grdWBTSTYLD.Rows
+            If grow.Cells.Item("ALL_DISC").Value = "1" And grow.Cells.Item("WEB_IND").Value <> "I" Then
+                grow.Cells.Item("ALL_DISC").Appearance.BackColor = Drawing.Color.Salmon
+            Else
+                grow.Cells.Item("ALL_DISC").Appearance.BackColor = Drawing.Color.Empty
+            End If
+            If IsNumeric(grow.Cells.Item("FUT_AVAIL").Value) And IsNumeric(grow.Cells.Item("STYLE_SO_QTY_MIN").Value) Then
+                If Val(grow.Cells.Item("FUT_AVAIL").Value) > 0 Then
+                    If Val(grow.Cells.Item("FUT_AVAIL").Value) < Val(grow.Cells.Item("STYLE_SO_QTY_MIN").Value) Then
+                        grow.Cells.Item("STYLE_SO_QTY_MIN").Appearance.BackColor = Drawing.Color.MediumVioletRed
+                    Else
+                        grow.Cells.Item("STYLE_SO_QTY_MIN").Appearance.BackColor = Drawing.Color.Empty
+                    End If
+                Else
+                    grow.Cells.Item("STYLE_SO_QTY_MIN").Appearance.BackColor = Drawing.Color.Empty
+                End If
+            End If
+        Next
+    End Sub
+
     Private Function UpdateStatus() As Boolean
         Dim RetVal As Boolean = False
         For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select()
@@ -1007,24 +1062,56 @@ Public Class WBFSTYLW
 
     Overrides Sub Load_Popup_Menus()
         'Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBB", "Show Filter", "Show GroupBox", "Add To Web Immediately", "Remove From Web Immediately", "Style Status Inquiry", "Remove Style")
-        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Select All As New", "Clear All New", "Remove Style From Web")
+        Call Load_Popup_Menu(grdWBTSTYLD, "SSBBBBBBBB", "Show Filter", "Show GroupBox", "Create XML For This Style", "Select All For Full Upload", "Select None For Full Upload", "Select All As New", "Clear All New", "Move Selected To Inactive Group")
         Call Load_Popup_Menu(grdICTSTYLX, "SSB", "Show Filter", "Show GroupBox", "Add Selected Styles")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
         MyBase.tlb_BeforeToolDropdown(sender, e)
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+        If grd Is Nothing Then
+            e.Cancel = True
+            Exit Sub
+        End If
 
-        Select Case e.Tool.Key
+        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
+        Select Case grd.Name
             Case "grdWBTSTYLD"
-                ' Nothing 
-            Case "grdICTSTYLX"
-                ' Nothing
-            Case Else
-                e.Cancel = True
-                Exit Sub
-        End Select
+                tlb_pop = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+                tlb_btn = DirectCast(tlb_pop.Tools("Move Selected To Inactive Group"), UltraWinToolbars.ButtonTool)
+                Dim WEB_IND As New List(Of String)
+                Dim ALL_DISC As New List(Of String)
+                For Each grow As UltraWinGrid.UltraGridRow In grdWBTSTYLD.Selected.Rows
+                    If Not IsNothing(grow.Cells) Then
+                        If Not WEB_IND.Contains(grow.Cells.Item("WEB_IND").Value) Then
+                            WEB_IND.Add(grow.Cells.Item("WEB_IND").Value)
+                        End If
+                        If Not ALL_DISC.Contains(grow.Cells.Item("ALL_DISC").Value) Then
+                            ALL_DISC.Add(grow.Cells.Item("ALL_DISC").Value)
+                        End If
+                    End If
+                Next
+                If WEB_IND.Count = 1 And ALL_DISC.Count = 1 Then
+                    If WEB_IND(0) = "W" And ALL_DISC(0) = "1" Then
+                        If (ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "mariog") Then
+                            tlb_btn.SharedProps.Visible = True
+                        Else
+                            tlb_btn.SharedProps.Visible = False
+                        End If
+                    Else
+                        tlb_btn.SharedProps.Visible = False
+                    End If
+                Else
+                    tlb_btn.SharedProps.Visible = False
+                End If
 
+            Case "grdICTSTYLX"
+            Case Else
+
+        End Select
     End Sub
 
     Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
@@ -1051,7 +1138,42 @@ Public Class WBFSTYLW
                 If rowICTSTYL1 IsNot Nothing Then
                     Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
                 End If
+
+            Case "Move Selected To Inactive Group"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Inactive Group"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("This Will Move All Selected Styles")
+                iMSG.AppendLine("And Their Related Colors To The")
+                iMSG.AppendLine("Inactive Group.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Is This What You Want?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult = MsgBoxResult.Yes Then
+                    Dim STYLE_LIST As New List(Of String)
+                    For Each grow As UltraWinGrid.UltraGridRow In grdWBTSTYLD.Selected.Rows
+                        If Not STYLE_LIST.Contains(grow.Cells.Item("STYLE_CODE").Text) Then
+                            STYLE_LIST.Add(grow.Cells.Item("STYLE_CODE").Text)
+                        End If
+                    Next
+                    If STYLE_LIST.Count > 0 Then
+                        For Each STYLE_CODE As String In STYLE_LIST
+                            For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select($"STYLE_CODE = '{STYLE_CODE}'")
+                                rowWBTSTYLD.Item("WEB_IND") = "I"
+                                rowWBTSTYLD.Item("STYLE_GROUP") = "999"
+                            Next
+                        Next
+                    End If
+                    Update_Record(False)
+                    Application.DoEvents()
+                    MsgBox("Style(s) Updated.  Please Wait While Data Is Refreshed", vbOKOnly, "Added")
+                    Clear_Record()
+                    Application.DoEvents()
+                    Load_Record()
+                    Application.DoEvents()
+                End If
             Case "Remove Style From Web"
+                'This was removed from menu, so you should never get here.
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
                 'Dim AllX As Boolean = True
                 'For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(String.Format("STYLE_CODE = '{0}'", STYLE_CODE))
@@ -1085,7 +1207,7 @@ Public Class WBFSTYLW
                     MsgBox("Only Wayne Runs This Feature For Now", vbOKOnly, "Nope")
                 Else
                     Stop
-                    'Dim STYLE_UPDATE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
+                    Dim STYLE_UPDATE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
                     'If CreateProductXml(STYLE_UPDATE, "A", False, True, 99) Then
                     '    For Each STYLE_CODE As String In styleList
                     '        For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_CODE = '" & STYLE_CODE & "'")
@@ -1333,9 +1455,14 @@ Public Class WBFSTYLW
                 End If
             Next
             If CURR_QTY_AVAIL = 0 And MSOH > 0 Then
-                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
                 CURR_QTY_AVAIL = MSOH
             End If
+
+            'If STYLE_CODE = "MTF24040" Then
+            '    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            'End If
+
 
             'Lower Inventory For Items Not Divisable by MOQ.
             Dim MOQ As Int64 = Val(dst.Tables.Item("ICTSTYL1").Select($"STYLE_CODE = '{STYLE_CODE}'").FirstOrDefault.Item("STYLE_SO_QTY_MIN").ToString & String.Empty)
@@ -2957,34 +3084,36 @@ Public Class WBFSTYLW
     Private Sub grdWBTSTYLD_BeforeCellUpdate(sender As Object, e As BeforeCellUpdateEventArgs) Handles grdWBTSTYLD.BeforeCellUpdate
         If Not e.Cell.IsFilterRowCell Then
             If e.Cell.Column.Key = "WEB_IND" Then
-                Dim valFrom As String = e.Cell.Value
-                Dim valTo As String = e.Cell.Text
-                Dim cancelUpdate As Boolean = False
-                Dim msg As New StringBuilder With {.Length = 0}
-                Select Case valFrom
-                    Case "W"
-                        If valTo <> "Awaiting Removal" Then
-                            msg.AppendLine("You Can Only Set Items On Web To Awaiting Removal")
-                            cancelUpdate = True
-                        End If
-                    Case "X"
-                        If valTo <> "Awaiting Update" Then
-                            msg.AppendLine("You Can Only Set Items Not On Web To Awaiting Update")
-                            cancelUpdate = True
-                        End If
-                    Case "U"
-                        If valTo <> "Not On Web" Then
-                            msg.AppendLine("You Can Only Set Items Awaiting Update To Not On Web")
-                            cancelUpdate = True
-                        End If
-                    Case "R"
-                        msg.AppendLine("You Can Not Modify Items Awaiting Removal")
-                        cancelUpdate = True
-                End Select
-                If cancelUpdate Then
-                    MsgBox(msg.ToString, vbOKOnly, "Change Cancelled.  See The Rules.")
-                    e.Cancel = cancelUpdate
-                End If
+                MsgBox("No Changes Allowed To This Column.", vbOKOnly, "Change Cancelled.")
+                e.Cancel = True
+                'Dim valFrom As String = e.Cell.Value
+                'Dim valTo As String = e.Cell.Text
+                'Dim cancelUpdate As Boolean = False
+                'Dim msg As New StringBuilder With {.Length = 0}
+                'Select Case valFrom
+                '    Case "W"
+                '        If valTo <> "Awaiting Removal" Then
+                '            msg.AppendLine("You Can Only Set Items On Web To Awaiting Removal")
+                '            cancelUpdate = True
+                '        End If
+                '    Case "X"
+                '        If valTo <> "Awaiting Update" Then
+                '            msg.AppendLine("You Can Only Set Items Not On Web To Awaiting Update")
+                '            cancelUpdate = True
+                '        End If
+                '    Case "U"
+                '        If valTo <> "Not On Web" Then
+                '            msg.AppendLine("You Can Only Set Items Awaiting Update To Not On Web")
+                '            cancelUpdate = True
+                '        End If
+                '    Case "R"
+                '        msg.AppendLine("You Can Not Modify Items Awaiting Removal")
+                '        cancelUpdate = True
+                'End Select
+                'If cancelUpdate Then
+                '    MsgBox(msg.ToString, vbOKOnly, "Change Cancelled.  See The Rules.")
+                '    e.Cancel = cancelUpdate
+                'End If
 
             End If
         End If
@@ -3080,7 +3209,7 @@ Public Class WBFSTYLW
         Dim MIN_GP As Int64 = Val(ASCDATA1.GetDataValue)
 
         SQLS.Length = 0
-        SQLS.AppendLine("SELECT MAX(STYLE_GROUP) FROM WBTSTYLD")
+        SQLS.AppendLine("SELECT MAX(STYLE_GROUP) FROM WBTSTYLD WHERE STYLE_GROUP < 900")
         ASCMAIN1.sql = SQLS.ToString()
         Dim MAX_GP As Int64 = Val(ASCDATA1.GetDataValue)
 
@@ -3089,6 +3218,42 @@ Public Class WBFSTYLW
         Next
         Me.Cursor = Cursors.Default
         MsgBox("GetType Your File" & vbCrLf & WB_PARM_PRODUCTS_DIR, vbOKOnly, "Complete")
+    End Sub
+
+    Private Sub btnRun999Group_Click(sender As Object, e As EventArgs) Handles btnRun999Group.Click
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Run 999 Group"
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+        iMSG.AppendLine("This will Archive All Pending Shopsite")
+        iMSG.AppendLine("Upload Files And Generate A New One")
+        iMSG.AppendLine("For Only Group 999.")
+        iMSG.AppendLine("")
+        iMSG.AppendLine("They Should All Be Discontinued.")
+        iMSG.AppendLine("")
+        iMSG.AppendLine("Is That What You Want?")
+        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+        If iResult <> MsgBoxResult.Yes Then
+            Exit Sub
+        End If
+
+        Me.Cursor = Cursors.WaitCursor
+        Dim DoneMsg As String = "Shopsite Created.  Upload File Below To Site."
+        Dim LAST_UPDATE As DateTime = Now()
+        Dim UploadInventoryOnly As Boolean = True
+        Dim UpdatePricing As Boolean = True
+
+        Dim di As New DirectoryInfo(WB_PARM_PRODUCTS_DIR)
+        Dim fiArr As FileInfo() = di.GetFiles()
+        Dim fri As FileInfo
+        For Each fri In fiArr
+            Console.WriteLine(fri.Name)
+            System.IO.File.Move(WB_PARM_PRODUCTS_DIR & fri.Name, WB_PARM_PRODUCTS_DIR & "Archives\" & fri.Name)
+        Next
+
+        Dim DS As DataSet = MakeClassData()
+        CreateProductXmlALL(999, DS)
+        Me.Cursor = Cursors.Default
+        MsgBox("Get Your File" & vbCrLf & WB_PARM_PRODUCTS_DIR, vbOKOnly, "Complete")
     End Sub
 
     Private Function MakeClassData() As DataSet
@@ -3313,10 +3478,14 @@ Public Class WBFSTYLW
         Dim styleListInactiveAll As List(Of String) = New List(Of String)
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-            'Stop
-            batchFilter = String.Format("STYLE_CODE = '{0}'", "MTX67413")
+            Stop
+            batchFilter = String.Format("STYLE_CODE = '{0}'", "MTF24040")
         Else
-            batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
+            If GroupNo = 999 Then
+                batchFilter = String.Format("STYLE_GROUP = 999")
+            Else
+                batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
+            End If
         End If
 
         Try
@@ -4000,6 +4169,71 @@ Public Class WBFSTYLW
         End If
         Return RetVal
     End Function
+
+    Private Sub btnReGroup_Click(sender As Object, e As EventArgs) Handles btnReGroup.Click
+        If (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "site.admin" Or ASCMAIN1.USER_ID = "mariog") Then
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Make New Groups"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine("This Will Move All Syles Waiting For")
+            iMSG.AppendLine("Upload To On The Web And Create New")
+            iMSG.AppendLine("Groups For All Of Them Except 999.")
+            iMSG.AppendLine("")
+            iMSG.AppendLine("You Will Be Asked For How Many Styles")
+            iMSG.AppendLine("You Want in The Group.  The Default")
+            iMSG.AppendLine("Is 500 With A Range Between 200-1000.")
+            iMSG.AppendLine("")
+            iMSG.AppendLine("Are You Ready?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult <> MsgBoxResult.Yes Then
+                Exit Sub
+            End If
+            Dim frmASFMSGBF As New ASFMSGBF
+            Dim STYLES_GROUP As Int64 = 0
+            STYLES_GROUP = frmASFMSGBF.Get_numint_from_User("How Many Style / Group", "Groups", 1000, 200, 500)
+            If STYLES_GROUP < 200 Or STYLES_GROUP > 1000 Then
+                Exit Sub
+            End If
+
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Now Creating Groups", "")
+            Application.DoEvents()
+
+            Dim STYLE_LIST As New List(Of String)
+            For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select("STYLE_GROUP < 999", "STYLE_CODE, COLOR_CODE")
+                Dim STYLE_CODE As String = rowWBTSTYLD.Item("STYLE_CODE").ToString & String.Empty
+                If Not STYLE_LIST.Contains(STYLE_CODE) Then
+                    STYLE_LIST.Add(STYLE_CODE)
+                End If
+            Next
+
+            Dim THIS_GRP As Int64 = 1
+            Dim GRP_CNT As Int64 = 0
+            For Each STYLE As String In STYLE_LIST
+                GRP_CNT += 1
+                If GRP_CNT >= STYLES_GROUP Then
+                    GRP_CNT = 1
+                    THIS_GRP += 1
+                End If
+                ASCMAIN1.Progress("Now Creating Groups", THIS_GRP)
+                For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select($"STYLE_CODE = '{STYLE}'", "COLOR_CODE")
+                    If rowWBTSTYLD.Item("WEB_IND").ToString & String.Empty = "U" Then
+                        rowWBTSTYLD.Item("WEB_IND") = "W"
+                    End If
+                    rowWBTSTYLD.Item("STYLE_GROUP") = THIS_GRP
+                Next
+            Next
+
+            Update_Record(False)
+            Application.DoEvents()
+            MsgBox("Style(s) Updated.  Please Wait While Data Is Refreshed", vbOKOnly, "Complete")
+            Clear_Record()
+            Application.DoEvents()
+            Load_Record()
+            Application.DoEvents()
+            Me.Cursor = Cursors.Default
+        End If
+    End Sub
 #End Region
 
 End Class

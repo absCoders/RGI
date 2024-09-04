@@ -59,6 +59,7 @@ Partial Class SOFORDRO
         Dim Appearance99 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance100 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance101 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -82,7 +83,6 @@ Partial Class SOFORDRO
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance85 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance86 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance87 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -447,6 +447,13 @@ Partial Class SOFORDRO
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.chkWebImages = New ABSCS.ABSCheckBox()
+        Me.chkNewExcel = New System.Windows.Forms.CheckBox()
+        Me.grpNewExcel = New System.Windows.Forms.GroupBox()
+        Me.rdoFDFE = New System.Windows.Forms.RadioButton()
+        Me.rdoDomestic = New System.Windows.Forms.RadioButton()
         Me.UltraExplorerBarContainerControl5 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel5 = New System.Windows.Forms.Panel()
         Me.chkLapQuote = New System.Windows.Forms.CheckBox()
@@ -474,13 +481,6 @@ Partial Class SOFORDRO
         Me.numFEFDFACTOR = New System.Windows.Forms.NumericUpDown()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
-        Me.UltraExplorerBarContainerControl6 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel6 = New System.Windows.Forms.Panel()
-        Me.chkWebImages = New ABSCS.ABSCheckBox()
-        Me.chkNewExcel = New System.Windows.Forms.CheckBox()
-        Me.grpNewExcel = New System.Windows.Forms.GroupBox()
-        Me.rdoFDFE = New System.Windows.Forms.RadioButton()
-        Me.rdoDomestic = New System.Windows.Forms.RadioButton()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.priceDISC1 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -619,6 +619,10 @@ Partial Class SOFORDRO
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl6.SuspendLayout()
+        Me.Panel6.SuspendLayout()
+        CType(Me.chkWebImages, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpNewExcel.SuspendLayout()
         Me.UltraExplorerBarContainerControl5.SuspendLayout()
         Me.Panel5.SuspendLayout()
         CType(Me.optShowOrders, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -635,10 +639,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl4.SuspendLayout()
         Me.Panel4.SuspendLayout()
         CType(Me.numFEFDFACTOR, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl6.SuspendLayout()
-        Me.Panel6.SuspendLayout()
-        CType(Me.chkWebImages, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpNewExcel.SuspendLayout()
         Me.UltraTabPageControl3.SuspendLayout()
         Me.Panel1.SuspendLayout()
         CType(Me.priceDISC1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -828,7 +828,7 @@ Partial Class SOFORDRO
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
         Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(6)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(826, 638)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(960, 638)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -884,33 +884,113 @@ Partial Class SOFORDRO
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1039, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1173, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 638)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1039, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1173, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 638)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1039, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1173, 0)
         '
         'tlb
         '
         Me.tlb.MenuSettings.ForceSerialization = True
         Me.tlb.ToolbarSettings.ForceSerialization = True
         '
+        'UltraExplorerBarContainerControl6
+        '
+        Me.UltraExplorerBarContainerControl6.Controls.Add(Me.Panel6)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
+        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl6.TabIndex = 5
+        Me.UltraExplorerBarContainerControl6.Visible = False
+        '
+        'Panel6
+        '
+        Me.Panel6.Controls.Add(Me.chkWebImages)
+        Me.Panel6.Controls.Add(Me.chkNewExcel)
+        Me.Panel6.Controls.Add(Me.grpNewExcel)
+        Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel6.Location = New System.Drawing.Point(0, 0)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(172, 150)
+        Me.Panel6.TabIndex = 0
+        '
+        'chkWebImages
+        '
+        Me.chkWebImages.ABSChecked = "1"
+        Appearance13.BackColor = System.Drawing.Color.Transparent
+        Appearance13.BackColor2 = System.Drawing.Color.Transparent
+        Appearance13.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkWebImages.Appearance = Appearance13
+        Me.chkWebImages.BackColor = System.Drawing.Color.Transparent
+        Me.chkWebImages.BackColorInternal = System.Drawing.Color.Transparent
+        Me.chkWebImages.Checked = True
+        Me.chkWebImages.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkWebImages.Location = New System.Drawing.Point(3, 3)
+        Me.chkWebImages.Name = "chkWebImages"
+        Me.chkWebImages.Size = New System.Drawing.Size(149, 18)
+        Me.chkWebImages.TabIndex = 224
+        Me.chkWebImages.Text = "Use Web Images"
+        '
+        'chkNewExcel
+        '
+        Me.chkNewExcel.AutoSize = True
+        Me.chkNewExcel.Location = New System.Drawing.Point(3, 22)
+        Me.chkNewExcel.Name = "chkNewExcel"
+        Me.chkNewExcel.Size = New System.Drawing.Size(123, 20)
+        Me.chkNewExcel.TabIndex = 2
+        Me.chkNewExcel.Text = "Use New Excel"
+        Me.chkNewExcel.UseVisualStyleBackColor = True
+        '
+        'grpNewExcel
+        '
+        Me.grpNewExcel.Controls.Add(Me.rdoFDFE)
+        Me.grpNewExcel.Controls.Add(Me.rdoDomestic)
+        Me.grpNewExcel.Location = New System.Drawing.Point(8, 43)
+        Me.grpNewExcel.Name = "grpNewExcel"
+        Me.grpNewExcel.Size = New System.Drawing.Size(154, 44)
+        Me.grpNewExcel.TabIndex = 1
+        Me.grpNewExcel.TabStop = False
+        '
+        'rdoFDFE
+        '
+        Me.rdoFDFE.AutoSize = True
+        Me.rdoFDFE.Location = New System.Drawing.Point(12, 19)
+        Me.rdoFDFE.Name = "rdoFDFE"
+        Me.rdoFDFE.Size = New System.Drawing.Size(75, 20)
+        Me.rdoFDFE.TabIndex = 3
+        Me.rdoFDFE.Text = "FD / FE"
+        Me.rdoFDFE.UseVisualStyleBackColor = True
+        '
+        'rdoDomestic
+        '
+        Me.rdoDomestic.AutoSize = True
+        Me.rdoDomestic.Checked = True
+        Me.rdoDomestic.Location = New System.Drawing.Point(12, 0)
+        Me.rdoDomestic.Name = "rdoDomestic"
+        Me.rdoDomestic.Size = New System.Drawing.Size(86, 20)
+        Me.rdoDomestic.TabIndex = 2
+        Me.rdoDomestic.TabStop = True
+        Me.rdoDomestic.Text = "Domestic"
+        Me.rdoDomestic.UseVisualStyleBackColor = True
+        '
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 226)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'Panel5
         '
@@ -1051,7 +1131,7 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 420)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -108)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 120)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -1149,7 +1229,7 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpFindCustomer)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 584)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 56)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -1176,11 +1256,10 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 264)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel3
         '
@@ -1205,11 +1284,10 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 458)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'Panel4
         '
@@ -1251,84 +1329,6 @@ Partial Class SOFORDRO
         Me.Label1.Padding = New System.Windows.Forms.Padding(3)
         Me.Label1.Size = New System.Drawing.Size(6, 22)
         Me.Label1.TabIndex = 0
-        '
-        'UltraExplorerBarContainerControl6
-        '
-        Me.UltraExplorerBarContainerControl6.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 32)
-        Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
-        Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl6.TabIndex = 5
-        '
-        'Panel6
-        '
-        Me.Panel6.Controls.Add(Me.chkWebImages)
-        Me.Panel6.Controls.Add(Me.chkNewExcel)
-        Me.Panel6.Controls.Add(Me.grpNewExcel)
-        Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel6.Location = New System.Drawing.Point(0, 0)
-        Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(172, 150)
-        Me.Panel6.TabIndex = 0
-        '
-        'chkWebImages
-        '
-        Me.chkWebImages.ABSChecked = "1"
-        Appearance13.BackColor = System.Drawing.Color.Transparent
-        Appearance13.BackColor2 = System.Drawing.Color.Transparent
-        Appearance13.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkWebImages.Appearance = Appearance13
-        Me.chkWebImages.BackColor = System.Drawing.Color.Transparent
-        Me.chkWebImages.BackColorInternal = System.Drawing.Color.Transparent
-        Me.chkWebImages.Checked = True
-        Me.chkWebImages.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkWebImages.Location = New System.Drawing.Point(3, 3)
-        Me.chkWebImages.Name = "chkWebImages"
-        Me.chkWebImages.Size = New System.Drawing.Size(149, 18)
-        Me.chkWebImages.TabIndex = 224
-        Me.chkWebImages.Text = "Use Web Images"
-        '
-        'chkNewExcel
-        '
-        Me.chkNewExcel.AutoSize = True
-        Me.chkNewExcel.Location = New System.Drawing.Point(3, 22)
-        Me.chkNewExcel.Name = "chkNewExcel"
-        Me.chkNewExcel.Size = New System.Drawing.Size(123, 20)
-        Me.chkNewExcel.TabIndex = 2
-        Me.chkNewExcel.Text = "Use New Excel"
-        Me.chkNewExcel.UseVisualStyleBackColor = True
-        '
-        'grpNewExcel
-        '
-        Me.grpNewExcel.Controls.Add(Me.rdoFDFE)
-        Me.grpNewExcel.Controls.Add(Me.rdoDomestic)
-        Me.grpNewExcel.Location = New System.Drawing.Point(8, 43)
-        Me.grpNewExcel.Name = "grpNewExcel"
-        Me.grpNewExcel.Size = New System.Drawing.Size(154, 44)
-        Me.grpNewExcel.TabIndex = 1
-        Me.grpNewExcel.TabStop = False
-        '
-        'rdoFDFE
-        '
-        Me.rdoFDFE.AutoSize = True
-        Me.rdoFDFE.Location = New System.Drawing.Point(12, 19)
-        Me.rdoFDFE.Name = "rdoFDFE"
-        Me.rdoFDFE.Size = New System.Drawing.Size(75, 20)
-        Me.rdoFDFE.TabIndex = 3
-        Me.rdoFDFE.Text = "FD / FE"
-        Me.rdoFDFE.UseVisualStyleBackColor = True
-        '
-        'rdoDomestic
-        '
-        Me.rdoDomestic.AutoSize = True
-        Me.rdoDomestic.Checked = True
-        Me.rdoDomestic.Location = New System.Drawing.Point(12, 0)
-        Me.rdoDomestic.Name = "rdoDomestic"
-        Me.rdoDomestic.Size = New System.Drawing.Size(86, 20)
-        Me.rdoDomestic.TabIndex = 2
-        Me.rdoDomestic.TabStop = True
-        Me.rdoDomestic.Text = "Domestic"
-        Me.rdoDomestic.UseVisualStyleBackColor = True
         '
         'UltraTabPageControl3
         '
@@ -1707,7 +1707,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(818, 510)
         '
@@ -2198,9 +2198,9 @@ Partial Class SOFORDRO
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraPanel1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(818, 510)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(952, 510)
         '
         'UltraPanel1
         '
@@ -2234,7 +2234,7 @@ Partial Class SOFORDRO
         Me.UltraPanel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraPanel1.Location = New System.Drawing.Point(0, 0)
         Me.UltraPanel1.Name = "UltraPanel1"
-        Me.UltraPanel1.Size = New System.Drawing.Size(818, 510)
+        Me.UltraPanel1.Size = New System.Drawing.Size(952, 510)
         Me.UltraPanel1.TabIndex = 1
         '
         'btnShowPromo
@@ -3335,9 +3335,9 @@ Partial Class SOFORDRO
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOTORDRX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(822, 538)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(956, 538)
         '
         'grdSOTORDRX
         '
@@ -3550,16 +3550,16 @@ Partial Class SOFORDRO
         Me.grdSOTORDRX.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRX.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRX.Name = "grdSOTORDRX"
-        Me.grdSOTORDRX.Size = New System.Drawing.Size(822, 538)
+        Me.grdSOTORDRX.Size = New System.Drawing.Size(956, 538)
         Me.grdSOTORDRX.TabIndex = 13
         Me.grdSOTORDRX.Text = "Orders"
         '
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabORDERS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(822, 538)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(956, 538)
         '
         'tabORDERS
         '
@@ -3570,7 +3570,7 @@ Partial Class SOFORDRO
         Me.tabORDERS.Location = New System.Drawing.Point(0, 0)
         Me.tabORDERS.Name = "tabORDERS"
         Me.tabORDERS.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tabORDERS.Size = New System.Drawing.Size(822, 538)
+        Me.tabORDERS.Size = New System.Drawing.Size(956, 538)
         Me.tabORDERS.TabIndex = 0
         Me.tabORDERS.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab8.TabPage = Me.UltraTabPageControl1
@@ -3584,7 +3584,7 @@ Partial Class SOFORDRO
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(818, 510)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(952, 510)
         '
         'spl
         '
@@ -3601,7 +3601,7 @@ Partial Class SOFORDRO
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(826, 638)
+        Me.spl.Size = New System.Drawing.Size(960, 638)
         Me.spl.SplitterDistance = 68
         Me.spl.TabIndex = 4
         '
@@ -3621,7 +3621,7 @@ Partial Class SOFORDRO
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(826, 68)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(960, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
         'lblDESIGNER_STYLE
@@ -3737,7 +3737,7 @@ Partial Class SOFORDRO
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tab.Size = New System.Drawing.Size(826, 566)
+        Me.tab.Size = New System.Drawing.Size(960, 566)
         Me.tab.TabIndex = 1
         UltraTab5.TabPage = Me.UltraTabPageControl12
         UltraTab5.Text = "0"
@@ -3749,14 +3749,14 @@ Partial Class SOFORDRO
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(822, 538)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(956, 538)
         '
         'SOFORDRO
         '
         Me.Absx1.SetABSTableName(Me, "SOTORDR0")
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1039, 638)
+        Me.ClientSize = New System.Drawing.Size(1173, 638)
         Me.Margin = New System.Windows.Forms.Padding(6)
         Me.Name = "SOFORDRO"
         Me.Text = "SOFORDRO"
@@ -3769,6 +3769,12 @@ Partial Class SOFORDRO
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl6.ResumeLayout(False)
+        Me.Panel6.ResumeLayout(False)
+        Me.Panel6.PerformLayout()
+        CType(Me.chkWebImages, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpNewExcel.ResumeLayout(False)
+        Me.grpNewExcel.PerformLayout()
         Me.UltraExplorerBarContainerControl5.ResumeLayout(False)
         Me.Panel5.ResumeLayout(False)
         Me.Panel5.PerformLayout()
@@ -3788,12 +3794,6 @@ Partial Class SOFORDRO
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
         CType(Me.numFEFDFACTOR, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraExplorerBarContainerControl6.ResumeLayout(False)
-        Me.Panel6.ResumeLayout(False)
-        Me.Panel6.PerformLayout()
-        CType(Me.chkWebImages, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.grpNewExcel.ResumeLayout(False)
-        Me.grpNewExcel.PerformLayout()
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()

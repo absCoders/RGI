@@ -3900,6 +3900,10 @@ Public Class ICFQUOTV
             worksheet.Cells(I + CI - 1, COL - 1).Value = "'" & "***"
             worksheet.Cells(I + CI - 1, COL - 0).Value = "'" & "Total"
 
+            If chkShowComments.Checked Then
+                worksheet.Cells(I + CI, COL - 1).Value = row.Item("STYLE_DESC2")
+            End If
+
             If Not chkOmitPrice.Checked And Val(row.Item("STYLE_PRICE") & "") <> 0 Then
                 With worksheet.Cells((I + CI - 1) + 2, COL - 0)
                     .Value = row.Item("STYLE_PRICE")

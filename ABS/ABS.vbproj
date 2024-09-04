@@ -467,6 +467,12 @@
     <Compile Include="Forms\ASFMAIN1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ASFJSONG.Designer.vb">
+      <DependentUpon>ASFJSONG.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ASFJSONG.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ASFMSGBF.Designer.vb">
       <DependentUpon>ASFMSGBF.vb</DependentUpon>
     </Compile>
@@ -634,6 +640,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ASFMAIN1.resx">
       <DependentUpon>ASFMAIN1.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ASFJSONG.resx">
+      <DependentUpon>ASFJSONG.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ASFMSGBF.resx">

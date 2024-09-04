@@ -460,7 +460,7 @@ Public Class SOFSHIPB
             Create_TDA(.Tables.Add, "SOTSHIP0", "**", 0, False, "", 1)
 
             Create_TDA(.Tables.Add, "SOTINVH1", "*")
-            Create_TDA(.Tables.Add, "SOTINVH2", "*")
+            Create_TDA(.Tables.Add, "SOTINVH2", "*", 2)
             Create_TDA(.Tables.Add, "SOTINVH9", "*")
             Create_TDA(.Tables.Add, "SOTINVHM", "*")
 
@@ -4259,6 +4259,10 @@ Public Class SOFSHIPB
                 ASCMAIN1.Progress("Now Loading Data", "WHTSHPC1")
                 Fill_Records("WHTSHPC1", String.Empty, False, "SELECT * FROM WHTSHPC1 WHERE SHIP_BOL_NO = '" & rowSOTSHIP1.Item("SHIP_BOL_NO") & "' AND SHIP_CNTL_NO = (SELECT MAX(SHIP_CNTL_NO) FROM WHTSHPC1 WHERE SHIP_BOL_NO = '" & rowSOTSHIP1.Item("SHIP_BOL_NO") & "')")
             Next
+            If ASCMAIN1.CLIENT = "VAN" And dst.Tables("SOTSHIP2").Rows.Count = 0 Then
+                'for when Master ship bol no is replaced by new ship bol
+                Fill_Records("SOTSHIP2", String.Empty, False, "SELECT * FROM SOTSHIP2 WHERE SHIP_BOL_NO = '" & MASTER_SHIP_BOL_NO & "'")
+            End If
 
             Try
                 For Each rowWHTSHPC1 As DataRow In dst.Tables("WHTSHPC1").Select("")
@@ -7305,9 +7309,15 @@ Public Class SOFSHIPB
                     Else
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy to Pick Ticket Cartons"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = (grd.ActiveCell.Column.Key = "PKG_CODE" OrElse grd.ActiveCell.Column.Key = "CART_TOTAL_WGT_ACTUAL") AndAlso Not InquiryMode
+                        If ASCMAIN1.CLIENT = "VAN" Then
+                            tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        End If
 
                         tlb_btn = DirectCast(tlb_pop.Tools("Copy to Shipment Cartons"), UltraWinToolbars.ButtonTool)
                         tlb_btn.SharedProps.Enabled = (grd.ActiveCell.Column.Key = "PKG_CODE" OrElse grd.ActiveCell.Column.Key = "CART_TOTAL_WGT_ACTUAL") AndAlso Not InquiryMode
+                        If ASCMAIN1.CLIENT = "VAN" Then
+                            tlb_btn.SharedProps.Enabled = Not InquiryMode
+                        End If
                     End If
 
                     If grd.Selected.Rows.Count <= 1 Then
@@ -7940,6 +7950,7 @@ Public Class SOFSHIPB
                     End If
                 Next
 
+                Display_Totals()
                 MessageBox.Show("Copy Complete", "Copy", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
             Case "Cancel Carton Contents"
@@ -7993,6 +8004,7 @@ Public Class SOFSHIPB
                     Next
 
                     SetupgrdSOTCART1_SHIP()
+                    Display_Totals()
                     MessageBox.Show("The carton has been deleted and the contents marked as cancelled.", "Cancel Carton Contents", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
                 Catch ex As Exception
@@ -8013,16 +8025,26 @@ Public Class SOFSHIPB
                 Dim PKG_L As Decimal = 0
                 Dim PKG_W As Decimal = 0
                 Dim PKG_H As Decimal = 0
+                Dim PKG_Wght As Decimal = 0
 
                 Dim zMsg As String = String.Empty
-                If columnToCopy = "PKG_CODE" Then
-                    zMsg = "Do you want to use the value of this Package (" & valueToCopy & ") to " & e.Tool.Key & "? Note: box dimensions will be copied as well."
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    zMsg = "Do you want use this Carton (" & grd.ActiveRow.Cells("CART_NO").Value & ") to " & e.Tool.Key & "? Note: box dimensions and weight will be copied."
+                    PKG_Wght = grd.ActiveRow.Cells("CART_TOTAL_WGT_ACTUAL").Value
                     PKG_L = Val(grd.ActiveCell.Row.Cells("PKG_L").Value & String.Empty)
                     PKG_W = Val(grd.ActiveCell.Row.Cells("PKG_W").Value & String.Empty)
                     PKG_H = Val(grd.ActiveCell.Row.Cells("PKG_H").Value & String.Empty)
                 Else
-                    zMsg = "Do you want to use the value of this Weight (" & valueToCopy & ") to " & e.Tool.Key & "?"
-                    valueToCopy = Val(valueToCopy)
+                    If columnToCopy = "PKG_CODE" Then
+                        zMsg = "Do you want to use the value of this Package (" & valueToCopy & ") to " & e.Tool.Key & "? Note: box dimensions will be copied as well."
+                        PKG_L = Val(grd.ActiveCell.Row.Cells("PKG_L").Value & String.Empty)
+                        PKG_W = Val(grd.ActiveCell.Row.Cells("PKG_W").Value & String.Empty)
+                        PKG_H = Val(grd.ActiveCell.Row.Cells("PKG_H").Value & String.Empty)
+                    Else
+                        zMsg = "Do you want to use the value of this Weight (" & valueToCopy & ") to " & e.Tool.Key & "?"
+                        valueToCopy = Val(valueToCopy)
+                    End If
+
                 End If
 
                 If MessageBox.Show(zMsg, "Copy", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
@@ -8036,14 +8058,20 @@ Public Class SOFSHIPB
                         Continue For
                     End If
 
-                    rowSOTCART1.Item(columnToCopy) = valueToCopy
-
-                    If columnToCopy = "PKG_CODE" Then
+                    If ASCMAIN1.CLIENT = "VAN" Then
                         rowSOTCART1.Item("PKG_L") = PKG_L
                         rowSOTCART1.Item("PKG_W") = PKG_W
                         rowSOTCART1.Item("PKG_H") = PKG_H
-                    End If
+                        rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = PKG_Wght
+                    Else
+                        rowSOTCART1.Item(columnToCopy) = valueToCopy
 
+                        If columnToCopy = "PKG_CODE" Then
+                            rowSOTCART1.Item("PKG_L") = PKG_L
+                            rowSOTCART1.Item("PKG_W") = PKG_W
+                            rowSOTCART1.Item("PKG_H") = PKG_H
+                        End If
+                    End If
                     Dim pickWeight As Decimal = Val(dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")(0).Item("PICK_TOTAL_WGT") & String.Empty)
                     Dim totalCartWeight As Decimal = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", "PICK_NO = '" & PICK_NO & "'") & String.Empty)
 
@@ -8055,7 +8083,7 @@ Public Class SOFSHIPB
                         dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")(0).Item("PICK_TOTAL_WGT") = totalCartWeight
                     End If
                 Next
-
+                Display_Totals()
                 MessageBox.Show("Copy Complete", "Copy", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
         End Select
@@ -8685,8 +8713,9 @@ Public Class SOFSHIPB
             Exit Sub
         End If
 
-        If ASCMAIN1.CLIENT = "NYA" Then
+        If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Then
             Exit Sub
+            'do not add logic below unless that logic is related to sorting the dimensions
         End If
 
         ' Sort the values by length, width, height
@@ -8737,7 +8766,7 @@ Public Class SOFSHIPB
             End If
         Next
 
-        If displayBoxAttributes OrElse ASCMAIN1.CLIENT = "RGI" Then
+        If displayBoxAttributes OrElse ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" Then
             grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = False
             grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = False
             grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = False
@@ -10352,7 +10381,13 @@ Public Class SOFSHIPB
                     dsco_ship_method = dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMMNT_2 = 'dsco_ship_method'")(0).Item("EDI_CMT_REF") & String.Empty
                 End If
 
+                Dim RECEIPT_ID As String = String.Empty
+                If dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMT_CODE = 'BAF'").Length > 0 Then
+                    RECEIPT_ID = dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMT_CODE = 'BAF'")(0).Item("EDI_CMT_REF") & String.Empty
+                End If
+
                 rowEDT850T1.Item("SHIP_METHOD") = (dsco_ship_carrier & " " & dsco_ship_method).ToString.Trim
+                rowEDT850T1.Item("RECEIPT_ID") = RECEIPT_ID
 
                 rowEDT850T1.Item("TAX_TYPE_CODE_1") = String.Empty
                 rowEDT850T1.Item("TAX_TYPE_CODE_2") = String.Empty
@@ -10367,6 +10402,10 @@ Public Class SOFSHIPB
 
                 ' IS_GIFT
                 rowEDT850T1.Item("IS_GIFT") = "0"
+
+                If dst.Tables("EDT850T4").Select($"EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND EDI_CMT_CODE = 'EAJ'").Length > 0 Then
+                    isGiftMessage = True
+                End If
 
                 If isGiftMessage Then
                     rowEDT850T1.Item("IS_GIFT") = "1"
@@ -16501,11 +16540,15 @@ Public Class SOFSHIPB
                                 .LastName = String.Empty
                                 .MiddleInitial = String.Empty
                                 .Phone = rowARTCUSTS.Item("FDX_RTN_SHIP_PHONE") & String.Empty
+                                ' This is required
+                                If .Phone.Length = 0 Then
+                                    .Phone = clsShip.Sender.Phone
+                                End If
                                 .State = rowARTCUSTS.Item("FDX_RTN_SHIP_STATE") & String.Empty
                                 .ZipCode = rowARTCUSTS.Item("FDX_RTN_SHIP_ZIP_CODE") & String.Empty
-                            End If
+                                End If
 
-                        Case "U" ' UPS
+                                Case "U" ' UPS
                             If rowARTCUSTS.Item("UPS_RTN_SHIP_COMPANY") & String.Empty <> String.Empty Then
                                 .Address1 = rowARTCUSTS.Item("UPS_RTN_SHIP_ADDR1") & String.Empty
                                 .Address2 = rowARTCUSTS.Item("UPS_RTN_SHIP_ADDR2") & String.Empty
@@ -16521,6 +16564,10 @@ Public Class SOFSHIPB
                                 .LastName = String.Empty
                                 .MiddleInitial = String.Empty
                                 .Phone = rowARTCUSTS.Item("UPS_RTN_SHIP_PHONE") & String.Empty
+                                ' This is required
+                                If .Phone.Length = 0 Then
+                                    .Phone = clsShip.Sender.Phone
+                                End If
                                 .State = rowARTCUSTS.Item("UPS_RTN_SHIP_STATE") & String.Empty
                                 .ZipCode = rowARTCUSTS.Item("UPS_RTN_SHIP_ZIP_CODE") & String.Empty
                             End If
@@ -17017,8 +17064,6 @@ Public Class SOFSHIPB
             If clsShip.RequestedServiceType = fedexSmartPost Then
                 clsShip.FedexSmartPost.HubId = rowSOTCARR3.Item("FEDEX_HUB_ID") & String.Empty
             End If
-
-            clsShip.DropOffType = FedexshipintlDropoffTypes.dtRegularPickup
 
             ' The COLLECT payment type is only supported in FedEx Ground services. The CONSIGNEE type is only supported in UPS service.
 

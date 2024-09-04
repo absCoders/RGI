@@ -2145,6 +2145,9 @@ Public Class SOFCORD1
         grd.DisplayLayout.Bands(0).Columns.Item("SCAN_TIME").Hidden = False
         grd.DisplayLayout.Bands(0).Columns.Item("MULTI_PO").Header.VisiblePosition = 14
         grd.DisplayLayout.Bands(0).Columns.Item("MULTI_PO").Hidden = False
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_TRACKING_NO").Header.VisiblePosition = 15
+        grd.DisplayLayout.Bands(0).Columns.Item("CART_TRACKING_NO").Hidden = False
+
 
         'For Each gcol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
         '    Select Case gcol.Key
@@ -3524,7 +3527,9 @@ Public Class SOFCORD1
                 ASCMAIN1.sql = Sql.ToString()
                 Dim CARTON_VALUE As Double = Val(ASCDATA1.GetDataValue)
                 rowSOTCARTP.Item("CARTON_VALUE") = CARTON_VALUE
-
+                If rowSOTCARTP.Item("CART_TRACKING_NO") & "" = "" Then
+                    rowSOTCARTP.Item("CART_TRACKING_NO") = "NA"
+                End If
                 If PALLET_NO_LAST <> PALLET_NO Then
                     If IsMultiPO <> "" Then
                         Sql.Length = 0

@@ -1,3 +1,4 @@
+Imports System.Collections.Specialized
 Public Class ARFCINQ1
 
     Dim AGED_TOTALS() As Decimal
@@ -336,7 +337,7 @@ Public Class ARFCINQ1
             With .Tables("ARTCUST1_AGEDAR")
                 .Columns.Add("AGE_DATE", GetType(System.DateTime))
                 .Columns.Add("AGE_AMT", GetType(System.Double))
-                .PrimaryKey = New DataColumn() {.Columns("AGE_DATE")}
+                .PrimaryKey = New DataColumn() { .Columns("AGE_DATE")}
             End With
 
             .Tables.Add("ARTCUST1_AR_TYPE")
@@ -688,7 +689,7 @@ Public Class ARFCINQ1
             End With
 
             With .Tables("ARTPYMTT")
-                .PrimaryKey = New DataColumn() {.Columns("PYMT_TOTAL_CODE")}
+                .PrimaryKey = New DataColumn() { .Columns("PYMT_TOTAL_CODE")}
                 .Rows.Add(New Object() {"1", "Amt Applied", 0})
                 '.Rows.Add(New Object() {"2", "Discounts", 0})
                 '.Rows.Add(New Object() {"3", "Write-Off", 0})
@@ -2097,8 +2098,8 @@ Public Class ARFCINQ1
         Load_Popup_Menu(grdARTCUSTS, "B", "Customer Inquiry")
         If (ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA") Then
             Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Resend EDI Invoice")
-        ElseIf (ASCMAIN1.DBS_COMPANY = "RGI" AndAlso ASCMAIN1.DBS_SERVER = "RGI") Then
-            Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Send Invoice to Web", "Resend EDI Invoice")
+        ElseIf (ASCMAIN1.CLIENT = "RGI") Then 'AndAlso ASCMAIN1.DBS_SERVER = "RGI") Then
+            Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBBPBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice", "Send Invoice to Web", "Resend EDI Invoice", "Copy Invoice to clipboard")
         Else
             Load_Popup_Menu(grdSOTINVH1, "SSSPBPBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "email Invoice", "Fax Invoice", "Show Invoice")
         End If
@@ -2165,7 +2166,7 @@ Public Class ARFCINQ1
             tlb_sbt.Checked = Not grdARTOPEN1.DisplayLayout.Bands(0).Columns("BILL_OF_LADING_NO").Hidden
             'tlb_sbt.Tag = ""
         End If
- 
+
         If tlb_pop.Tools.Exists("Show Outline") Then
             tlb_btn = DirectCast(tlb_pop.Tools("Show Outline"), UltraWinToolbars.ButtonTool)
             tlb_btn.SharedProps.Visible = ScreenMode
@@ -2520,7 +2521,7 @@ Public Class ARFCINQ1
                     MessageBox.Show("The following error occurred: " & ex.Message, "Resend EDI Invoice", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End Try
 
-            Case "email", "email Invoice", "email Statement", "Fax", "Fax Invoice", "Fax Statement"
+            Case "email", "email Invoice", "email Statement", "Fax", "Fax Invoice", "Fax Statement", "Copy Invoice to clipboard"
 
                 Dim FILENAME As String = ""
                 Dim ATTACHMENT As String = ""
@@ -2596,7 +2597,15 @@ Public Class ARFCINQ1
 
                 ElseIf e.Tool.Key Like "Fax*" Then
                     Send_fax(FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT)
-
+                ElseIf e.Tool.Key Like "*clipboard" Then
+                    Dim paths As New StringCollection()
+                    paths.Add(FILENAME)
+                    If My.Computer.FileSystem.FileExists(FILENAME) Then
+                        Clipboard.SetFileDropList(paths)
+                        MsgBox(SUBJECT & " copied to clipboard", vbOKOnly, "File Copied")
+                    Else
+                        MsgBox("File not Found", MsgBoxStyle.OkOnly, "Error Attempting to Copy File ")
+                    End If
                 End If
 
             Case "Show", "Show Invoice", "Show Statement", "Show Credit"
@@ -3899,7 +3908,7 @@ Public Class ARFCINQ1
                 & " where CUST_CODE = :PARM19"
 
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDDVVVDVVVVDNDVNNVV", New Object() _
-                {.Item("CUST_CREDIT_LIMIT"),
+                { .Item("CUST_CREDIT_LIMIT"),
                 .Item("CUST_CRED_LIMIT_EST"),
                 .Item("CUST_CRED_LIMIT_REV"),
                 .Item("CUST_CREDIT_HOLD"),

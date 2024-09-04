@@ -1370,10 +1370,27 @@ Public Class ICFIADJ1
     End Sub
 
     Private Sub btnShortage_Click(sender As Object, e As EventArgs) Handles btnShortage.Click
+        ' - O status is for shortages in Pick, Negative Adj
+        Shortage_N_Found("O")
+    End Sub
+
+    Private Sub btnFoundOH_Click(sender As Object, e As EventArgs) Handles btnFoundOH.Click
+        ' - A status is for Found Items by Victor, Positive Adj
+        Shortage_N_Found("A")
+    End Sub
+    Private Sub Shortage_N_Found(ByRef STATUS As String)
         Dim rowICTIADJ2 As DataRow
+        Dim S As Integer
+
+        If STATUS = "O" Then
+            S = -1
+        Else
+            S = 1
+        End If
+
 
         BeginTrans()
-        ASCMAIN1.sql = $"UPDATE WHTPICKS SET STATUS = 'W', LAST_OPER = '{ASCMAIN1.USER_ID}', LAST_DATE = sysdate WHERE STATUS = 'O'"
+        ASCMAIN1.sql = $"UPDATE WHTPICKS SET STATUS = 'W', LAST_OPER = '{ASCMAIN1.USER_ID}', LAST_DATE = sysdate WHERE STATUS = '{STATUS}'"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         ASCMAIN1.sql = "SELECT * FROM WHTPICKS, (SELECT STYLE_CODE, COLOR_CODE, SUM(LOCATION_QTY) WHSE_QTY " & vbCrLf _
@@ -1391,8 +1408,14 @@ Public Class ICFIADJ1
             Dim STYLE_CLASS_CODE As String = cdr.Item("STYLE_CLASS_CODE") & ""
             Dim SALES_DIVISION_CODE As String = cdr.Item("SALES_DIVISION_CODE") & ""
             Dim STYLE_COST As Decimal = Val(cdr.Item("STYLE_COST") & "")
+            Dim ADJ_REF As String = ""
 
             Dim pickrow As DataRow = LookUp("SOTPICK1", row("PICK_NO") & "")
+            If pickrow Is Nothing Then
+                ADJ_REF = "Whse Found"
+            Else
+                ADJ_REF = pickrow("SHIP_BOL_NO") & ""
+            End If
 
             rowICTIADJ2 = dst.Tables("ICTIADJ2").NewRow
             With rowICTIADJ2
@@ -1402,13 +1425,13 @@ Public Class ICFIADJ1
                 .Item("STYLE_DESC") = row("STYLE_DESC")
                 .Item("COLOR_CODE") = row("COLOR_CODE")
                 .Item("COLOR_DESC") = row("COLOR_DESC")
-                .Item("ADJ_QTY") = Val(row("SHORTAGE") & "") * -1
+                .Item("ADJ_QTY") = Val(row("SHORTAGE") & "") * S
                 .Item("STYLE_COST") = STYLE_COST
                 .Item("STYLE_CLASS_CODE") = STYLE_CLASS_CODE
                 .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE
                 .Item("OPS_YYYYPP") = ASCMAIN1.CYP
                 .Item("LOCATION_CODE") = row("LOCATION_CODE")
-                .Item("ADJ_REF") = pickrow("SHIP_BOL_NO") & ""
+                .Item("ADJ_REF") = ADJ_REF
             End With
             dst.Tables("ICTIADJ2").Rows.Add(rowICTIADJ2)
 

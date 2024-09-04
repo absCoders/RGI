@@ -948,6 +948,7 @@ Public Class ECFSTYL1
                 .Add("SET_QTY", GetType(System.Int64))
                 .Add("SHIP_ECOM", GetType(System.String))
                 .Add("SHIP_DROP", GetType(System.String))
+                .Add("NET_PRICE", GetType(System.String))
                 .Add("ECOM_SET_PRICE", GetType(System.Double), "ISNULL(ECOM_UNIT_PRICE,0) * ISNULL(SET_QTY,0)")
                 .Add("ECOM_SET_PRICE_ALT", GetType(System.Double), "ISNULL(ALT_UNIT_PRICE,0) * ISNULL(SET_QTY,0)")
             End With
@@ -974,7 +975,8 @@ Public Class ECFSTYL1
             SQL.AppendLine("ECTESTY1.ECOM_STYLE_STATUS,")
             SQL.AppendLine("ECTESTY1.ECOM_UNIT_PRICE,")
             SQL.AppendLine("ECTESTY1.SHIP_ECOM,")
-            SQL.AppendLine("ECTESTY1.SHIP_DROP")
+            SQL.AppendLine("ECTESTY1.SHIP_DROP,")
+            SQL.AppendLine("ECTESTY1.NET_PRICE")
             SQL.AppendLine("FROM ECTESTY1, ICTSTYL1, ECTESTY2")
             SQL.AppendLine("WHERE ECTESTY1.STYLE_CODE = ICTSTYL1.STYLE_CODE")
             SQL.AppendLine("AND ECTESTY1.STYLE_CODE = ECTESTY2.STYLE_CODE")
@@ -995,6 +997,7 @@ Public Class ECFSTYL1
                 .Add("WHSE_QTY_OPEN", GetType(System.Int64))
                 .Add("FUT_AVAIL", GetType(System.Int64))
                 .Add("ECOM_SKU", GetType(System.String), "STYLE_CODE + '-' + COLOR_CODE")
+                .Add("ECOM_SET_PRICE", GetType(System.Double), "ISNULL(ECOM_UNIT_PRICE,0) * ISNULL(SET_QTY,0)")
             End With
 
             SQL.Length = 0
@@ -1554,6 +1557,7 @@ Public Class ECFSTYL1
             Dim ALT_UNIT_PRICE As String = ""
             Dim SHIP_ECOM As String = "0"
             Dim SHIP_DROP As String = "0"
+            Dim NET_PRICE As String = "0"
             Dim SET_QTY As Int64 = 1
             Dim ECOM_MIN_QTY_DEFAULT As Int64 = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
             Dim rowECTSTYL1 As DataRow = dst.Tables.Item("ECTSTYL1").Select.FirstOrDefault
@@ -1576,6 +1580,7 @@ Public Class ECFSTYL1
                 ALT_UNIT_PRICE = rowECTESTY1.Item("ALT_UNIT_PRICE").ToString & String.Empty
                 SHIP_ECOM = rowECTESTY1.Item("SHIP_ECOM").ToString & String.Empty
                 SHIP_DROP = rowECTESTY1.Item("SHIP_DROP").ToString & String.Empty
+                NET_PRICE = rowECTESTY1.Item("NET_PRICE").ToString & String.Empty
                 SET_QTY = Val(rowECTESTY1.Item("SET_QTY").ToString & String.Empty)
             End If
             rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT") = Val(ECOM_MIN_QTY_DEFAULT)
@@ -1584,6 +1589,7 @@ Public Class ECFSTYL1
             rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE") = Val(ALT_UNIT_PRICE)
             rowECTECOM1_PARTNER.Item("SHIP_ECOM") = SHIP_ECOM
             rowECTECOM1_PARTNER.Item("SHIP_DROP") = SHIP_DROP
+            rowECTECOM1_PARTNER.Item("NET_PRICE") = NET_PRICE
             rowECTECOM1_PARTNER.Item("SET_QTY") = SET_QTY
             If dst.Tables.Item("ECTESTY2").Select(FILTER2).Count > 0 Then
                 rowECTECOM1_PARTNER.Item("SEL") = "1"
@@ -1795,6 +1801,7 @@ Public Class ECFSTYL1
                 SQL.AppendLine("ECTESTY1.ECOM_UNIT_PRICE,")
                 SQL.AppendLine("ECTESTY1.SHIP_ECOM,")
                 SQL.AppendLine("ECTESTY1.SHIP_DROP,")
+                SQL.AppendLine("ECTESTY1.NET_PRICE,")
                 SQL.AppendLine("ECTSTYL1.SHORT_DESC,")
                 SQL.AppendLine("ECTSTYL1.LONG_DESC")
 
@@ -1811,6 +1818,7 @@ Public Class ECFSTYL1
                 SQLG.AppendLine("ECTESTY1.ECOM_UNIT_PRICE,")
                 SQLG.AppendLine("ECTESTY1.SHIP_ECOM,")
                 SQLG.AppendLine("ECTESTY1.SHIP_DROP,")
+                SQLG.AppendLine("ECTESTY1.NET_PRICE,")
                 SQLG.AppendLine("ECTSTYL1.SHORT_DESC,")
                 SQLG.AppendLine("ECTSTYL1.LONG_DESC")
             Else
@@ -1820,6 +1828,7 @@ Public Class ECFSTYL1
                 SQL.AppendLine("0 AS ECOM_UNIT_PRICE,")
                 SQL.AppendLine("0 AS SHIP_ECOM,")
                 SQL.AppendLine("0 AS SHIP_DROP,")
+                SQL.AppendLine("0 AS NET_PRICE,")
                 SQL.AppendLine("'X' AS SHORT_DESC,")
                 SQL.AppendLine("'X' AS LONG_DESC")
 
@@ -1993,7 +2002,7 @@ Public Class ECFSTYL1
             For Each grdCol As UltraWinGrid.UltraGridColumn In .Columns
                 grdCol.CellActivation = UltraWinGrid.Activation.NoEdit
             Next
-            Dim EditCols As String() = {"SEL", "ECOM_UNIT_PRICE", "ALT_UNIT_PCT", "ALT_UNIT_PRICE", "SHIP_ECOM", "SHIP_DROP", "SET_QTY", "ECOM_MIN_QTY_DEFAULT"}
+            Dim EditCols As String() = {"SEL", "ECOM_UNIT_PRICE", "ALT_UNIT_PCT", "ALT_UNIT_PRICE", "SHIP_ECOM", "SHIP_DROP", "SET_QTY", "ECOM_MIN_QTY_DEFAULT", "NET_PRICE"}
             For Each EditCol As String In EditCols
                 .Columns(EditCol).CellActivation = UltraWinGrid.Activation.AllowEdit
             Next
@@ -2090,6 +2099,8 @@ Public Class ECFSTYL1
             .Columns("SET_QTY").Format = "###,##0"
             .Columns("EDI_REPORT_DATE").Format = "MM/dd/yy hh:mm"
             .Columns("EDI_AVAIL_QTY").Format = "###,##0"
+            .Columns("ECOM_SET_PRICE").Format = "###,##0.00"
+            .Columns("ECOM_SET_PRICE").CellActivation = UltraWinGrid.Activation.NoEdit
             For Each COLUMN_NAME As String In New String() {"WHSE_QTY_ON_HAND", "WHSE_QTY_PICK", "OPEN_TO_SELL", "WHSE_QTY_TRAN", "WHSE_QTY_ON_ORDER", "WHSE_QTY_OPEN", "FUT_AVAIL"}
                 .Columns(COLUMN_NAME).Format = "###,##0"
                 .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
@@ -2205,6 +2216,7 @@ Public Class ECFSTYL1
         Create_Summary(grdECTSALS1, "SHIP_TOTAL")
         Create_Summary(grdECTSALSX, "ORDR_QTY_SHIP")
         Create_Summary(grdECTSALSX, "SHIP_TOTAL")
+        Create_Summary(grdECUPSERT, "STYLE_CODE", "Count")
     End Sub
 
     Private Sub setGridValueLists()
@@ -2230,8 +2242,8 @@ Public Class ECFSTYL1
     End Sub
 
     Private Sub showPartnerCols(ByVal showCols As Boolean)
-        Dim partnerCols As String() = {"SET_QTY", "ECOM_CODE", "ECOM_STYLE_STATUS", "ECOM_UNIT_PRICE", "SHIP_ECOM", "SHIP_DROP", "SHORT_DESC",
-            "LONG_DESC", "EDI_REPORT_DATE", "EDI_AVAIL_QTY", "EDI_STATUS", "ECOM_PARTNER_SKU"}
+        Dim partnerCols As String() = {"SET_QTY", "ECOM_CODE", "ECOM_STYLE_STATUS", "ECOM_SET_PRICE", "ECOM_UNIT_PRICE", "SHIP_ECOM", "SHIP_DROP", "SHORT_DESC",
+            "LONG_DESC", "EDI_REPORT_DATE", "EDI_AVAIL_QTY", "EDI_STATUS", "ECOM_PARTNER_SKU", "NET_PRICE"}
         For Each grdCol As UltraGridColumn In grdECTSTYLX.DisplayLayout.Bands(0).Columns
             If partnerCols.Contains(grdCol.Key) Then
                 grdCol.Hidden = Not showCols
@@ -2271,7 +2283,9 @@ Public Class ECFSTYL1
                                ByVal SET_QTY As Integer,
                                ByVal SHIP_ECOM As String,
                                ByVal SHIP_DROP As String,
-                               ByVal ECOM_MIN_QTY_DEFAULT As Integer)
+                               ByVal NET_PRICE As String,
+                               ByVal ECOM_MIN_QTY_DEFAULT As Integer
+                               )
 
         Dim FILTERST1 As String = String.Format("STYLE_CODE = '{0}' AND ECOM_CODE = '{1}'", STYLE_CODE, ECOM_CODE)
         Dim rowECTESTY1 As DataRow = dst.Tables("ECTESTY1").Select(FILTERST1).FirstOrDefault
@@ -2301,6 +2315,10 @@ Public Class ECFSTYL1
                 addAuditRecord(STYLE_CODE, ECOM_CODE, "SHIP_DROP", rowECTESTY1.Item("SHIP_DROP") & String.Empty, SHIP_DROP)
                 rowECTESTY1.Item("SHIP_DROP") = SHIP_DROP
             End If
+            If rowECTESTY1.Item("NET_PRICE") & String.Empty <> NET_PRICE Then
+                addAuditRecord(STYLE_CODE, ECOM_CODE, "NET_PRICE", rowECTESTY1.Item("SHIP_DROP") & String.Empty, NET_PRICE)
+                rowECTESTY1.Item("NET_PRICE") = NET_PRICE
+            End If
             If Val(rowECTESTY1.Item("SET_QTY") & String.Empty) <> SET_QTY Then
                 addAuditRecord(STYLE_CODE, ECOM_CODE, "SET_QTY", rowECTESTY1.Item("SET_QTY") & String.Empty, SET_QTY)
                 rowECTESTY1.Item("SET_QTY") = SET_QTY
@@ -2319,6 +2337,7 @@ Public Class ECFSTYL1
             newECTESTY1.Item("ALT_UNIT_PRICE") = ALT_UNIT_PRICE
             newECTESTY1.Item("SHIP_ECOM") = SHIP_ECOM
             newECTESTY1.Item("SHIP_DROP") = SHIP_DROP
+            newECTESTY1.Item("NET_PRICE") = NET_PRICE
             newECTESTY1.Item("SET_QTY") = SET_QTY
             newECTESTY1.Item("ECOM_MIN_QTY_OVERRIDE") = ECOM_MIN_QTY_DEFAULT
             dst.Tables("ECTESTY1").Rows.Add(newECTESTY1)
@@ -2388,6 +2407,7 @@ Public Class ECFSTYL1
                 Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                 Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                 Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                 Dim ALT_UNIT_PCT As Double = Val(rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT").ToString & String.Empty)
                 Dim ALT_UNIT_PCT_OFF As Double = (100 - ALT_UNIT_PCT) / 100
                 Dim ALT_UNIT_PRICE As Double = ECOM_UNIT_PRICE * ALT_UNIT_PCT_OFF
@@ -2397,7 +2417,7 @@ Public Class ECFSTYL1
                 Else
                     ECOM_STYLE_STATUS = "X"
                 End If
-                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
                 For Each rowECTPSTY2 As DataRow In dst.Tables("ECTPSTY2").Select()
                     rowECTPSTY2.Item("ECOM_MIN_" & RowNum) = Val(ECOM_MIN_QTY_DEFAULT)
                 Next
@@ -2412,6 +2432,7 @@ Public Class ECFSTYL1
                 Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                 Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                 Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                 Dim ALT_UNIT_PCT As Double = Val(rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT").ToString & String.Empty)
                 Dim ALT_UNIT_PRICE As Double = ECOM_UNIT_PRICE * ((100 - ALT_UNIT_PCT) / 100)
                 Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
@@ -2430,7 +2451,7 @@ Public Class ECFSTYL1
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT") = ALT_UNIT_PCT
                 rowECTECOM1_PARTNER.Item("ECOM_UNIT_PRICE") = ECOM_UNIT_PRICE
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE") = ALT_UNIT_PRICE
-                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
 
                 If Not IsNothing(rowECTECOM1_PARTNER) Then
                     For Each rowECTESTY2_FROM As DataRow In dst.Tables("ECTESTY2").Select()
@@ -2451,6 +2472,7 @@ Public Class ECFSTYL1
                 Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                 Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                 Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                 Dim ALT_UNIT_PCT As Double = Val(rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT").ToString & String.Empty)
                 Dim ALT_UNIT_PCT_OFF As Double = (100 - ALT_UNIT_PCT) / 100
                 Dim ALT_UNIT_PRICE As Double = ECOM_UNIT_PRICE * ALT_UNIT_PCT_OFF
@@ -2464,7 +2486,7 @@ Public Class ECFSTYL1
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT") = ALT_UNIT_PCT
                 rowECTECOM1_PARTNER.Item("ECOM_UNIT_PRICE") = ECOM_UNIT_PRICE
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE") = ALT_UNIT_PRICE
-                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
             Case "ALT_UNIT_PRICE"
                 Dim FILTERP1 As String = String.Format("ECOM_CODE = '{0}'", ECOM_CODE)
                 Dim rowECTECOM1_PARTNER As DataRow = dst.Tables.Item("ECTECOM1_PARTNER").Select(FILTERP1).FirstOrDefault
@@ -2472,6 +2494,7 @@ Public Class ECFSTYL1
                 Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                 Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                 Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                 Dim ALT_UNIT_PRICE As Double = Val(rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE").ToString & String.Empty)
                 Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
                 If ECOM_UNIT_PRICE = 0 And ALT_UNIT_PRICE > 0 Then
@@ -2490,7 +2513,7 @@ Public Class ECFSTYL1
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT") = ALT_UNIT_PCT
                 rowECTECOM1_PARTNER.Item("ECOM_UNIT_PRICE") = ECOM_UNIT_PRICE
                 rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE") = ALT_UNIT_PRICE
-                updateECTESTY1(STYLE_CODE, ECOM_CODE, "A", ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, "A", ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
             Case "SEL"
                 If e.Cell.Text = "1" Then
                     Dim FILTERP1 As String = String.Format("ECOM_CODE = '{0}'", ECOM_CODE)
@@ -2502,8 +2525,9 @@ Public Class ECFSTYL1
                         Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                         Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                         Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                        Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                         Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
-                        updateECTESTY1(STYLE_CODE, ECOM_CODE, "A", ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                        updateECTESTY1(STYLE_CODE, ECOM_CODE, "A", ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
 
                         Dim sql As New Text.StringBuilder With {.Length = 0}
                         sql.AppendLine("SELECT *")
@@ -2561,7 +2585,7 @@ Public Class ECFSTYL1
                         Dim rowECTESTY1 As DataRow = dst.Tables("ECTESTY1").Select(FILTERST1).FirstOrDefault
                         Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                         Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
-                        updateECTESTY1(STYLE_CODE, ECOM_CODE, "X", 0, 0, 0, SET_QTY, "", "", ECOM_MIN_QTY_DEFAULT)
+                        updateECTESTY1(STYLE_CODE, ECOM_CODE, "X", 0, 0, 0, SET_QTY, "", "", "", ECOM_MIN_QTY_DEFAULT)
                         For Each rowECTESTY2_FROM As DataRow In dst.Tables("ECTESTY2").Select()
                             Dim COLOR_CODE As String = rowECTESTY2_FROM.Item("COLOR_CODE").ToString & String.Empty
                             Dim FILTERST2 As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}' AND ECOM_CODE = '{2}'", STYLE_CODE, COLOR_CODE, ECOM_CODE)
@@ -2603,6 +2627,7 @@ Public Class ECFSTYL1
                 Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                 Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                 Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                 Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
                 Dim ECOM_STYLE_STATUS As String = "A"
                 If rowECTECOM1_PARTNER.Item("SEL").ToString & String.Empty = "1" Then
@@ -2610,7 +2635,7 @@ Public Class ECFSTYL1
                 Else
                     ECOM_STYLE_STATUS = "X"
                 End If
-                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
                 If Not IsNothing(rowECTECOM1_PARTNER) Then
                     For Each rowECTESTY2_FROM As DataRow In dst.Tables("ECTESTY2").Select()
                         Dim COLOR_CODE As String = rowECTESTY2_FROM.Item("COLOR_CODE").ToString & String.Empty
@@ -2633,6 +2658,7 @@ Public Class ECFSTYL1
                 Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
                 Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
                 Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
                 Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
                 Dim ECOM_STYLE_STATUS As String = "A"
                 If rowECTECOM1_PARTNER.Item("SEL").ToString & String.Empty = "1" Then
@@ -2640,7 +2666,26 @@ Public Class ECFSTYL1
                 Else
                     ECOM_STYLE_STATUS = "X"
                 End If
-                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, ECOM_MIN_QTY_DEFAULT)
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
+            Case "NET_PRICE"
+                Dim RowNum As Integer = e.Cell.Row.Index + 1
+                Dim FILTERP1 As String = String.Format("ECOM_CODE = '{0}'", ECOM_CODE)
+                Dim rowECTECOM1_PARTNER As DataRow = dst.Tables.Item("ECTECOM1_PARTNER").Select(FILTERP1).FirstOrDefault
+                Dim ECOM_UNIT_PRICE As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_UNIT_PRICE").ToString & String.Empty)
+                Dim ALT_UNIT_PCT As Integer = Val(rowECTECOM1_PARTNER.Item("ALT_UNIT_PCT").ToString & String.Empty)
+                Dim ALT_UNIT_PRICE As Double = Val(rowECTECOM1_PARTNER.Item("ALT_UNIT_PRICE").ToString & String.Empty)
+                Dim SET_QTY As Integer = Val(rowECTECOM1_PARTNER.Item("SET_QTY").ToString & String.Empty)
+                Dim SHIP_ECOM As String = rowECTECOM1_PARTNER.Item("SHIP_ECOM").ToString & String.Empty
+                Dim SHIP_DROP As String = rowECTECOM1_PARTNER.Item("SHIP_DROP").ToString & String.Empty
+                Dim NET_PRICE As String = rowECTECOM1_PARTNER.Item("NET_PRICE").ToString & String.Empty
+                Dim ECOM_MIN_QTY_DEFAULT As Double = Val(rowECTECOM1_PARTNER.Item("ECOM_MIN_QTY_DEFAULT").ToString & String.Empty)
+                Dim ECOM_STYLE_STATUS As String = "A"
+                If rowECTECOM1_PARTNER.Item("SEL").ToString & String.Empty = "1" Then
+                    ECOM_STYLE_STATUS = "A"
+                Else
+                    ECOM_STYLE_STATUS = "X"
+                End If
+                updateECTESTY1(STYLE_CODE, ECOM_CODE, ECOM_STYLE_STATUS, ECOM_UNIT_PRICE, ALT_UNIT_PCT, ALT_UNIT_PRICE, SET_QTY, SHIP_ECOM, SHIP_DROP, NET_PRICE, ECOM_MIN_QTY_DEFAULT)
         End Select
     End Sub
 
@@ -3892,6 +3937,10 @@ Public Class ECFSTYL1
 
     Private Sub btnClear_Click(sender As Object, e As EventArgs) Handles btnClear.Click
         dst.Tables.Item("ECUPSERT").Clear()
+    End Sub
+
+    Private Sub grdECTSTYLX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdECTSTYLX.InitializeLayout
+
     End Sub
 #End Region
 End Class

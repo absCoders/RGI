@@ -68,6 +68,7 @@ Public Class POFSHIP1
     Dim sqlPOTVBKGX As String
     Dim eMsg_Booking As String
     Dim POTVBKG2_RECORDS As Boolean = False
+    Dim Shipment_Invoiced As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -3303,11 +3304,17 @@ Public Class POFSHIP1
                 End If
 
             Case "Get 1st Cost from PO"
-                If MsgBox("Do you really want to Get Fresh Values for 1st Cost from the POs?",
-                           MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "Verification.") = MsgBoxResult.Cancel Then
-                    Exit Sub
-                End If
 
+                If MsgBox("Do you really want to Get Fresh Values for 1st Cost from the POs?",
+                        MsgBoxStyle.OkCancel + MsgBoxStyle.Critical, "Verification.") = MsgBoxResult.Cancel Then
+                    Exit Sub
+                Else
+                    If Shipment_Invoiced = True And (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN") Then
+                        MsgBox("Shipment Has been Received or Invoiced", MsgBoxStyle.Critical, "Cannot Update 1st Cost from PO")
+                        EMsg &= vbCr & ""
+                        Exit Sub
+                    End If
+                End If
             Case "Import Bookings"
 
                 If grdPOTVBKGX.Selected.Rows.Count = 0 Then
@@ -3697,6 +3704,9 @@ Public Class POFSHIP1
             Set_Read_Only_for_ctl(txtPO_NOTES, False)
         End If
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            If tf = False Then
+                eMsg_Booking = ""
+            End If
         Else
             Set_Read_Only_for_ctl(Absx1.optFor("FREIGHT_ENTERED_BY"), True)
         End If
@@ -3926,6 +3936,7 @@ Public Class POFSHIP1
             Sort_grdColumns(grdPOTVBKGX, "VBKG_NO".ToLower)
         End If
         POTVBKG2_RECORDS = False
+        Shipment_Invoiced = False
 
         WORKBOOK_COUNTER = 0
         QTY_PACKED.Clear()
@@ -4465,6 +4476,33 @@ Public Class POFSHIP1
             & "End;"
 
         ASCDATA1.ExecuteSQL()
+
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+
+            ' Do THIS IF Not BEEN INVOICED relying on accrual status = 0 in potship2
+            ASCMAIN1.sql = "" _
+            & "Begin Declare Cursor C1 is" & vbCrLf _
+            & " Select * from POTSHIP2 where PO_SHIPMENT_NO ='" & PO_SHIPMENT_NO & "' and ACCRUAL_STATUS = '0';" & vbCrLf _
+            & " Begin" & vbCrLf _
+            & "  For R1 in C1 Loop" & vbCrLf _
+            & "   Begin Declare Cursor C2 is" & vbCrLf _
+            & "    Select * from POTSHIP3 where PO_SHIPMENT_NO = R1.PO_SHIPMENT_NO and PO_SHIPMENT_LNO = R1.PO_SHIPMENT_LNO;" & vbCrLf _
+            & "    Begin" & vbCrLf _
+            & "     For R2 in C2 Loop" & vbCrLf _
+             & "     Update ICTIREC2 set PO_COST = R2.PO_COST, AP_COST = R2.PO_COST" & vbCrLf _
+            & "       where ICTIREC2.RECEIPT_NO = R1.TRAN_NO" & vbCrLf _
+            & "         and ICTIREC2.PO_ORDER_NO = R2.PO_ORDER_NO" & vbCrLf _
+            & "         and ICTIREC2.PO_ORDER_LNO = R2.PO_ORDER_LNO;" & vbCrLf _
+            & "     End Loop;" & vbCrLf _
+            & "    End;" & vbCrLf _
+            & "   End;" & vbCrLf _
+            & "  End Loop;" & vbCrLf _
+            & " End;" & vbCrLf _
+            & "End;"
+
+        ASCDATA1.ExecuteSQL()
+
+        End If
 
     End Sub
 
@@ -9196,6 +9234,13 @@ Public Class POFSHIP1
             If grdPOTSHIP2.Rows.Count = 0 Then Exit Sub
             tabBOL.SelectedTab = tabBOL.Tabs("PO Details")
         Else
+            If grdPOTSHIP2.ActiveRow.Cells("ACCRUAL_STATUS").Value & "" = "1" Then
+                Shipment_Invoiced = True
+            Else
+                Shipment_Invoiced = False
+            End If
+
+
             splMain.Panel2Collapsed = False
             grdPOTSHIP3.Visible = True
             Dim COMM_INV_NO As String = grdPOTSHIP2.ActiveRow.Cells("COMM_INV_NO").Value & ""
@@ -9466,6 +9511,7 @@ Public Class POFSHIP1
                                         rowSOTORDP2.Item("ORDR_QTY_SHIP") = 0
                                         dst.Tables("SOTORDP2").Rows.Add(rowSOTORDP2)
                                     End If
+                                    'this quantity is for initial setting, see below using PO_QTY_REC for reversal of X back to O
                                     rowSOTORDP2.Item("ORDR_QTY_SHIP") += Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
                                 Next
                             End If
@@ -9506,6 +9552,12 @@ Public Class POFSHIP1
                             ' Status was Received, clicked Reverse Receipt, Status will now show Reverse Now, button will now show Cancel Reverse
                             Dim ORDR_NO As String = e.Cell.Row.Cells("ORDR_NO").Value & ""
                             ' We bill the customer on BTB orders if receiving into a warehouse whose type is P
+                            If ASCMAIN1.CLIENT = "RGI" Then
+                                If MsgBox("Reversing This Line will generate a negative invoice!" + vbCrLf & "Continue?", MsgBoxStyle.YesNo + MsgBoxStyle.Critical, "Generate Negative Invoice?") = MsgBoxResult.No Then
+                                    Exit Select
+                                End If
+                            End If
+
                             If ORDR_NO <> "" And (WHSE_TYPE = "P" Or (ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "NC")) Then
 
                                 If dst.Tables("SOTORDP1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
@@ -9539,11 +9591,10 @@ Public Class POFSHIP1
                                         dst.Tables("SOTORDP2").Rows.Add(rowSOTORDP2)
                                     End If
 
-                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") -= Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") -= Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
 
                                 Next
                             End If
-
                             'If e.Cell.Row.Cells("ORDR_NO").Value & "" <> "" And WHSE_TYPE = "P" Then
                             'MsgBox("You May NOT De-Receive a BTB Shipment which has been Invoiced", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
                             'Else
@@ -9564,7 +9615,7 @@ Public Class POFSHIP1
                                                                                 rowPOTSHIP3.Item("PO_ORDER_LNO")})
                                     Dim ORDR_LNO As Integer = Val(rowPOTORDR2.Item("ORDR_LNO") & "")
                                     Dim rowSOTORDP2 As DataRow = dst.Tables("SOTORDP2").Rows.Find(New Object() {ORDR_NO, ORDR_NO, ORDR_LNO})
-                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") += Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+                                    rowSOTORDP2.Item("ORDR_QTY_SHIP") += Val(rowPOTSHIP3.Item("PO_QTY_REC") & "")
                                     If Val(rowSOTORDP2.Item("ORDR_QTY_SHIP") & "") = 0 Then
                                         rowSOTORDP2.Delete()
                                     End If
@@ -9763,6 +9814,24 @@ Public Class POFSHIP1
                 End If
 
                 Set_Landed_Cost_Needs_to_be_Calculated_Indicator(True)
+            Case "PO_COST_COMM"
+                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                    Dim PO_COST As Decimal = Val(e.Cell.Row.Cells("PO_COST").Value & "")
+                    Dim PO_COST_COMM As Decimal = Val(e.Cell.Row.Cells("PO_COST_COMM").Value & "")
+                    Dim FIRST_COST As Decimal = (Val(e.Cell.Row.Cells("PO_COST_MATLS").Value & "")) _
+                                            + (Val(e.Cell.Row.Cells("PO_COST_VCOST").Value & "")) _
+                                            + (Val(e.Cell.Row.Cells("PO_COST_OTHER").Value & ""))
+                    Dim NEW_PO_COST As Decimal = 0
+                    If PO_COST_COMM <> 0 Then
+                        NEW_PO_COST = Val(FIRST_COST) + (FIRST_COST * PO_COST_COMM / 100)
+                    Else
+                        NEW_PO_COST = FIRST_COST
+                        'If PO_COST <> NEW_PO_COST Then
+                        '    Stop
+                        'End If
+                    End If
+                    e.Cell.Row.Cells("PO_COST").Value = NEW_PO_COST
+                End If
         End Select
     End Sub
 
@@ -9834,6 +9903,32 @@ Public Class POFSHIP1
             Dim SUB_UNIT_PACK_QTY As Integer = Val(.Cells("SUB_UNIT_PACK_QTY").Value & "")
             If SUB_UNIT_PACK_QTY = 0 Then SUB_UNIT_PACK_QTY = 1
             Dim SPQ As Decimal = (12 / SUB_UNIT_PACK_QTY)
+
+            'If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            '    Dim PO_COST As Decimal = Val(.Cells("PO_COST").Value & "")
+            '    Dim PO_COST_COMM As Decimal = Val(.Cells("PO_COST_COMM").Value & "")
+            '    Dim FIRST_COST As Decimal = (Val(.Cells("PO_COST_MATLS").Value & "")) _
+            '                            + (Val(.Cells("PO_COST_VCOST").Value & "")) _
+            '                            + (Val(.Cells("PO_COST_OTHER").Value & ""))
+            '    Dim NEW_PO_COST As Decimal = 0
+            '    If PO_COST_COMM <> 0 Then
+            '        NEW_PO_COST = Val(FIRST_COST) + (FIRST_COST * PO_COST_COMM / 100)
+            '    Else
+            '        NEW_PO_COST = FIRST_COST
+            '        'If PO_COST <> NEW_PO_COST Then
+            '        '    Stop
+            '        'End If
+            '    End If
+            '    .Cells("PO_COST").Value = NEW_PO_COST
+            'End If
+
+            'If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            '    Dim PO_COST_NEW As Decimal = 0
+            '    Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
+            '    UPDATE_POTSHIP3_PO_COST(rowPOTSHIP3, PO_COST, PO_COST_COMM, PO_COST_NEW)
+            'End If
+
+
             If ship_entry Then
                 ' .Cells("PO_QTY_SHP_DZ").Value = Val(.Cells("PO_QTY_SHP").Value / SPQ & "")
             Else
@@ -9908,6 +10003,19 @@ Public Class POFSHIP1
                     End If
                 End If
 
+            Case "PO_COST_COMM"
+                If e.NewValue & "" <> "" Then
+                    If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                        If Shipment_Invoiced = True Then
+                            MsgBox("Line Has Already Been Invoiced. Cost Commision % changes prohibited",
+                                           MsgBoxStyle.OkOnly, "Cannot change Cost Commision %")
+                            e.Cancel = True
+                            ' Exit Sub
+                        End If
+
+                    End If
+                End If
+
         End Select
     End Sub
 
@@ -9967,7 +10075,7 @@ Public Class POFSHIP1
 
     Private Sub grdPOTSHIP3_DoubleClickRow(sender As Object, e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdPOTSHIP3.DoubleClickRow
         If cost_calc And Not InquiryMode And EntryMode = "E" And e.Row.IsDataRow And grdPOTSHIP3.ActiveCell IsNot Nothing Then
-            If grdPOTSHIP3.ActiveCell.Column.Key = "PO_COST_COMM" Then
+            If grdPOTSHIP3.ActiveCell.Column.Key = "PO_COST_COMM" And Not Shipment_Invoiced Then
                 Dim PO_COST_COMM As Decimal = Val(e.Row.Cells("PO_COST_COMM").Value & "")
                 If MsgBox("Do You Want To Update All Commissions on this BOL to " & Format(PO_COST_COMM, "#0.00") & "%",
                           MsgBoxStyle.YesNo, "Commission Update") = MsgBoxResult.Yes Then
@@ -9975,7 +10083,13 @@ Public Class POFSHIP1
                     Dim PO_SHIPMENT_LNO As Integer = Val(e.Row.Cells("PO_SHIPMENT_LNO").Value & "")
                     For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select _
                             ("PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and PO_SHIPMENT_LNO = " & CStr(PO_SHIPMENT_LNO))
+                        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                            Dim PO_COST_NEW As Decimal = 0
+                            Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
+                            UPDATE_POTSHIP3_PO_COST(rowPOTSHIP3, PO_COST, PO_COST_COMM, PO_COST_NEW)
+                        End If
                         rowPOTSHIP3.Item("PO_COST_COMM") = PO_COST_COMM
+
                     Next
                 End If
             End If
@@ -13902,7 +14016,7 @@ Public Class POFSHIP1
                     Dim rowPOTORDR2 As DataRow = TBLPOTORDR2.Rows.Find(New Object() {PO_ORDER_NO, PO_ORDER_LNO})
                     If IsNothing(rowPOTORDR2) Then
                         MsgBox("Purchase Order Not Matching", vbOKOnly, "Cannot Continue")
-                        Exit Function
+                        Return ""
                     End If
 
 
@@ -14104,14 +14218,14 @@ Public Class POFSHIP1
                             rowPOTORDR2.Item("PO_QTY_OPN") = 0
 
                             ' NEED TO FIX 11/11/2022
-                            '''If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
-                            '''    rowPOTORDR2.Item("PO_QTY_SHP") = 0
-                            '''    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
-                            '''Else
-                            '''    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
-                            '''    rowPOTORDR2.Item("PO_QTY_OPN") = 0
-                            '''End If
-                            ''''DGJ
+                            ''If PO_ORDER_LNO = PO_ORDER_LNO_ORIG_PO Then
+                            ''    rowPOTORDR2.Item("PO_QTY_SHP") = 0
+                            ''    rowPOTORDR2.Item("PO_QTY_OPN") = PO_QTY_SHP
+                            ''Else
+                            ''    rowPOTORDR2.Item("PO_QTY_SHP") = PO_QTY_SHP
+                            ''    rowPOTORDR2.Item("PO_QTY_OPN") = 0
+                            ''End If
+                            ''DGJ
                         End If
 
 
@@ -14882,6 +14996,24 @@ Public Class POFSHIP1
             grdICTIRECX.DisplayLayout.Bands(0).Columns("CUST_CODE").Hidden = True
         End If
     End Sub
+    Sub UPDATE_POTSHIP3_PO_COST(ROW As DataRow, PO_COST As Integer, PO_COST_COMM As Integer, PO_COST_NEW As Integer)
+        ROW.Item("PO_COST_COMM") = PO_COST_COMM
+        Dim FIRST_COST As Decimal = 0
+        FIRST_COST = (Val(ROW.Item("PO_COST_MATLS") & "")) _
+                        + (Val(ROW.Item("PO_COST_VCOST") & "")) _
+                        + (Val(ROW.Item("PO_COST_OTHER") & ""))
+        Dim NEW_PO_COST As Decimal = 0
+        If PO_COST_COMM <> 0 Then
+            NEW_PO_COST = Val(FIRST_COST) + (FIRST_COST * PO_COST_COMM / 100)
+        Else
+            NEW_PO_COST = FIRST_COST
+            'If PO_COST <> NEW_PO_COST Then
+            '    Stop
+            'End If
+        End If
+        ROW.Item("PO_COST") = NEW_PO_COST
+    End Sub
+
 End Class
 
 

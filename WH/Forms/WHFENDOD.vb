@@ -20,7 +20,7 @@ Public Class WHFENDOD
 
             ASCMAIN1.sql = " Select WHTSHPC1.CARRIER_CODE, WHTSHPC1.SHIP_DATE, " _
                 & " WHTSHPC1.SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO, SOTCART1.PICK_NO," _
-                & " SOTCART1.CART_NO, SOTCART1.CART_TRACKING_NO" _
+                & " SOTCART1.CART_NO, SOTCART1.CART_TRACKING_NO,SOTORDR1.CUST_CODE,SOTORDR1.ORDR_CUST_PO,WHTSHPC2.INV_NO" _
                 & " from WHTSHPC1, WHTSHPC2, SOTCART1, SOTPICK1, SOTORDR1" _
                 & " Where SOTCART1.CART_TRACKING_NO = WHTSHPC2.TRACKING_NO" _
                 & " And WHTSHPC1.SHIP_CNTL_NO = WHTSHPC2.SHIP_CNTL_NO" _
@@ -140,16 +140,24 @@ Public Class WHFENDOD
 
         MyBase.EnforceConstraints(False)
 
+        Dim SQL1 As String = ""
+        If Absx1.chkFor("CHKRANGE").Checked = True Then
+            SQL1 = " And SHIP_DATE >= '" & Format(dteShipDate.Value, "dd-MMM-yy") & "'"
+            SQL1 = SQL1 & " And SHIP_DATE <= '" & Format(dteShipDateTo.Value, "dd-MMM-yy") & "'"
+        Else
+            SQL1 = " And SHIP_DATE = '" & Format(dteShipDate.Value, "dd-MMM-yy") & "'"
+        End If
+
 
         ASCMAIN1.sql = " Select WHTSHPC1.CARRIER_CODE, WHTSHPC1.SHIP_DATE, " _
             & " WHTSHPC1.SHIP_BOL_NO, SOTORDR1.CUST_STORE_NO, SOTCART1.PICK_NO," _
-            & " SOTCART1.CART_NO, SOTCART1.CART_TRACKING_NO" _
+            & " SOTCART1.CART_NO, SOTCART1.CART_TRACKING_NO,SOTORDR1.CUST_CODE,SOTORDR1.ORDR_CUST_PO,WHTSHPC2.INV_NO, SOTPICK1.INV_NO MASTER_INV_NO" _
             & " from WHTSHPC1, WHTSHPC2, SOTCART1, SOTPICK1, SOTORDR1" _
             & " Where SOTCART1.CART_TRACKING_NO = WHTSHPC2.TRACKING_NO" _
             & " And WHTSHPC1.SHIP_CNTL_NO = WHTSHPC2.SHIP_CNTL_NO" _
             & " And SOTCART1.PICK_NO = SOTPICK1.PICK_NO" _
             & " And SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" _
-            & " And SHIP_DATE = '" & Format(dteShipDate.Value, "dd-MMM-yy") & "'"
+            & SQL1
         Fill_Records("WHTSHPCX", , , ASCMAIN1.sql)
 
         Sort_grdColumns(grdWHTSHPCX, "CUST_STORE_NO,CART_NO", False, 0)
@@ -249,7 +257,7 @@ Public Class WHFENDOD
             Exit Sub
         End If
 
-        If MessageBox.Show("Do you want to Close the Fedex Shipments for the day?", "Close Fedex Shipments", _
+        If MessageBox.Show("Do you want to Close the Fedex Shipments for the day?", "Close Fedex Shipments",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
             Exit Sub
         End If
@@ -466,6 +474,21 @@ Public Class WHFENDOD
         clsShip.FedexDeveloperKey = rowSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
         clsShip.LabelStockType = (rowSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
 
+    End Sub
+
+    Private Sub UltraLabel3_Click(sender As Object, e As EventArgs) Handles lblTO.Click
+
+    End Sub
+
+    Private Sub AbsCheckBox6_CheckedChanged(sender As Object, e As EventArgs) Handles AbsCheckBox6.CheckedChanged
+        If Absx1.chkFor("CHKRANGE").Checked = True Then
+            lblTO.Visible = True
+            dteShipDateTo.Visible = True
+
+        Else
+            lblTO.Visible = False
+            dteShipDateTo.Visible = False
+        End If
     End Sub
 
 #End Region

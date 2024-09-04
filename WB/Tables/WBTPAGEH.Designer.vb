@@ -59,6 +59,7 @@ Partial Class WBTPAGEH
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_STATUS")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CURR_ON_HAND")
+        Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -76,6 +77,7 @@ Partial Class WBTPAGEH
         Me.UltraOptionSet1 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.grpSOLDTO = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnUploadXLS = New System.Windows.Forms.Button()
         Me.btnDiscontinued = New System.Windows.Forms.Button()
         Me.btnBuildOnRules = New System.Windows.Forms.Button()
         Me.grdWBTPAGU2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -89,7 +91,6 @@ Partial Class WBTPAGEH
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSTYLE_CLASS_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grdWBTPAGED = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.btnUploadXLS = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -292,6 +293,15 @@ Partial Class WBTPAGEH
         Me.grpSOLDTO.Name = "grpSOLDTO"
         Me.grpSOLDTO.Size = New System.Drawing.Size(772, 181)
         Me.grpSOLDTO.TabIndex = 103
+        '
+        'btnUploadXLS
+        '
+        Me.btnUploadXLS.Location = New System.Drawing.Point(466, 152)
+        Me.btnUploadXLS.Name = "btnUploadXLS"
+        Me.btnUploadXLS.Size = New System.Drawing.Size(101, 23)
+        Me.btnUploadXLS.TabIndex = 56
+        Me.btnUploadXLS.Text = "Upload XLS"
+        Me.btnUploadXLS.UseVisualStyleBackColor = True
         '
         'btnDiscontinued
         '
@@ -503,8 +513,11 @@ Partial Class WBTPAGEH
         UltraGridColumn8.Width = 69
         UltraGridColumn4.Header.Caption = "Avail"
         UltraGridColumn4.Header.VisiblePosition = 4
-        UltraGridColumn4.Width = 14
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn4})
+        UltraGridColumn4.Width = 87
+        UltraGridColumn5.Header.Caption = "Theme"
+        UltraGridColumn5.Header.VisiblePosition = 5
+        UltraGridColumn5.Width = 421
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn4, UltraGridColumn5})
         Me.grdWBTPAGED.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWBTPAGED.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance18.TextHAlignAsString = "Left"
@@ -568,15 +581,6 @@ Partial Class WBTPAGEH
         Me.grdWBTPAGED.Size = New System.Drawing.Size(772, 322)
         Me.grdWBTPAGED.TabIndex = 4
         Me.grdWBTPAGED.TabStop = False
-        '
-        'btnUploadXLS
-        '
-        Me.btnUploadXLS.Location = New System.Drawing.Point(466, 152)
-        Me.btnUploadXLS.Name = "btnUploadXLS"
-        Me.btnUploadXLS.Size = New System.Drawing.Size(101, 23)
-        Me.btnUploadXLS.TabIndex = 56
-        Me.btnUploadXLS.Text = "Upload XLS"
-        Me.btnUploadXLS.UseVisualStyleBackColor = True
         '
         'WBTPAGEH
         '

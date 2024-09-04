@@ -8,6 +8,9 @@ Public MustInherit Class ShippingLabel
     Public Sub PrintLabel(Optional ByVal printQty As Integer = 1, Optional ByVal PrinterName As String = "", Optional ByVal labelTemplateOverride As String = "")
         Dim labelData As Dictionary(Of String, DataRow) = GetLabelData()
         Dim labelTemplate As String = ""
+        If IsNothing(labelData) Then
+            Exit Sub
+        End If
         If labelTemplateOverride <> "" Then
             labelTemplate = labelTemplateOverride
             If ASCMAIN1.CLIENT = "VAN" Then
@@ -419,7 +422,7 @@ Public Class CartonLabel
                     & " AC2.CUST_CITY CUST_STORE_CITY, AC2.CUST_STATE CUST_STORE_STATE, AC2.CUST_ZIP_CODE CUST_STORE_ZIP_CODE,AC2.CUST_ADDR_GROUP," & vbCrLf _
                     & " X.CART_SERIAL_NO || ' of ' || X.CART_SEQ_MAX CART_1_OF_9,ET1.EDI_PO_RELEASE_NO FROM" & vbCrLf _
                     & " (SELECT ROW_NUMBER() OVER (ORDER BY C1.CART_NO) CART_SERIAL_NO,C1.CART_NO,C1.PICK_NO,O1.EDI_DOC_SEQ_NO,C1.CART_TOTAL_UNITS, " & vbCrLf _
-                    & " COUNT(*) OVER () CART_SEQ_MAX,SUM(C2.QTY_PACKED) CART_QTY_PACKED, RPAD(MAX(C1.PKG_CODE),20,' ') PKG_CODE, " & vbCrLf _
+                    & " COUNT(*) OVER () CART_SEQ_MAX,SUM(C2.QTY_PACKED) CART_QTY_PACKED, RPAD(MAX(C1.PKG_CODE),35,' ') PKG_CODE, " & vbCrLf _
                     & " MAX(IS1.STYLE_CODE) STYLE_CODE," & vbCrLf _
                     & " NVL(MAX(O2.STYLE_CODE_SUB),MAX(IS1.STYLE_CODE)) STYLE_CODE_SUB," & vbCrLf _
                     & " MAX(IS1.STYLE_CODE || IC1.COLOR_CODE) STYLE_COLOR_CODE, " & vbCrLf _
@@ -436,7 +439,7 @@ Public Class CartonLabel
                     & " CASE WHEN COUNT(DISTINCT O2.CUST_SKU) > 1 THEN 'Mixed' ELSE MAX(O2.CUST_SKU) END CUST_SKU_MIX, " & vbCrLf _
                     & " CASE WHEN COUNT(DISTINCT IS1.STYLE_CODE || IC1.COLOR_CODE) > 1 THEN 'Mixed' ELSE TO_CHAR(C1.CART_TOTAL_UNITS) END CART_TOTAL_UNITS_MIX, " & vbCrLf _
                     & " MAX(O2.CUST_STYLE_CODE) CUST_STYLE_CODE, " & vbCrLf _
-                    & " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, " & vbCrLf _
+                    & " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, MAX(C1.CART_TOTAL_WGT_CALC) CART_TOTAL_WGT_CALC, " & vbCrLf _
                     & " MAX(O1.ORDR_CUST_PO) ORDR_CUST_PO, " & vbCrLf _
                     & " MAX(O1.ORDR_NO) ORDR_NO, " & vbCrLf _
                     & " MAX(O1.CUST_CODE) CUST_CODE, " & vbCrLf _
@@ -466,6 +469,7 @@ Public Class CartonLabel
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "ET1.EDI_PO_RELEASE_NO", " NULL EDI_PO_RELEASE_NO")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "AC2.CUST_ADDR_GROUP", " NULL CUST_ADDR_GROUP")
             ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE,", " MAX(O2.CUST_COLOR_CODE) CUST_COLOR_CODE, MAX(O2.CUST_SIZE_CODE) CUST_SIZE_CODE,")
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE", "MAX(O1.EDI_MERCH_TYPE) EDI_MERCH_TYPE, MAX(NVL(IS1.CASE_CUBE,0)) CASE_CUBE")
         End If
 
         Dim rowSOTCART1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {CartonNo})
@@ -477,13 +481,16 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns("EDI_PO_TYPE").MaxLength = 50
         rowSOTCART1.Table.Columns.Add("CUST_ADDR_NAME", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("GTIN_CODE", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("SHIP_VIA_DESC", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("BILL_OF_LADING_NO", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("SHIP_REF", GetType(System.String))
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
         Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
         Dim GTIN_CODE As String = ""
 
-        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" Then
+        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" And CUST_CODE = "WALMARTCOM" Then
             Select Case Val(rowSOTCART1("CART_TOTAL_UNITS") + 0)
                 Case 2
                     GTIN_CODE = "10"
@@ -493,7 +500,7 @@ Public Class CartonLabel
                     GTIN_CODE = "30"
                 Case 8
                     GTIN_CODE = "40"
-                Case 12
+                Case 12, 18
                     GTIN_CODE = "50"
                 Case 24
                     GTIN_CODE = "60"
@@ -502,7 +509,8 @@ Public Class CartonLabel
                 Case 48
                     GTIN_CODE = "80"
                 Case Else
-                    GTIN_CODE = "90"
+                    MsgBox("Walmartcom GTIN Error in label, label not printed!", MsgBoxStyle.Critical, "Label Error")
+                    Throw New NotImplementedException("GTIN Error")
             End Select
             GTIN_CODE &= rowSOTCART1("UPC_CODE_ONLY") & ""
             If GTIN_CODE.Length = 14 Then
@@ -537,7 +545,6 @@ Public Class CartonLabel
                 End If
             End If
         End If
-
         ' NEEDTO GET RID OF THIS TOO
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then  'If I see one more "If VAN Then" I am going to throw up...
             For Each dc In rowSOTCART1.Table.Columns
@@ -571,6 +578,19 @@ Public Class CartonLabel
         If ASCMAIN1.CLIENT = "VAN" Then
             ASCMAIN1.sql = "Select nvl(PICK_NO_CONS,PICK_NO) PICK_NO from SOTPICK1 where PICK_NO = :PARM1"
             PICK_NO = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {PICK_NO}) & ""
+
+            If CUST_CODE = "COSTCOUS" Then
+                ASCMAIN1.sql = $"select SHIP_REF, BILL_OF_LADING_NO, SHIP_VIA_DESC from SOTCART1, SOTPICK1, SOTSHIP1, SOTSVIA1
+                                where SOTSVIA1.SHIP_VIA_CODE = SOTSHIP1.SHIP_VIA_CODE 
+                                AND SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                                AND SOTPICK1.PICK_NO = SOTCART1.PICK_NO
+                                AND SOTCART1.CART_NO = '{CART_NO}'"
+                Dim rowCarrier As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+                rowSOTCART1("SHIP_REF") = rowCarrier.Item("SHIP_REF") & String.Empty
+                rowSOTCART1("BILL_OF_LADING_NO") = rowCarrier.Item("BILL_OF_LADING_NO") & String.Empty
+                rowSOTCART1("SHIP_VIA_DESC") = rowCarrier.Item("SHIP_VIA_DESC") & String.Empty
+            End If
+
         End If
 
         Dim sqlMultiPO As String = " (SELECT PICK_NO_CONS" & vbCrLf _
@@ -755,10 +775,19 @@ Public Class CartonLabel
                 '        labelTemplate = ASCDATA1.GetDataValue(String.Format("SELECT UCC128_COMMANDS FROM  SOTUCCL1 U1  WHERE U1.LABEL_TEMPLATE_CODE='{0}'", LABEL_TEMPLATE_CODE)) & ""
                 '    End If
                 'End If
-                S.Length = 0
-                S.AppendLine("select count(1) from SOTCART2")
-                S.AppendLine(String.Format("   where CART_NO = :PARM1", ORDR_NO))
-                ASCMAIN1.sql = S.ToString()
+                ' 8/20/2024 - count Range Styles not styles in range
+                'S.Length = 0
+                'S.AppendLine("select count(1) from SOTCART2")
+                'S.AppendLine(String.Format("   where CART_NO = :PARM1", ORDR_NO))
+                If RNG_CNT > 0 Then
+                    ASCMAIN1.sql = "select count(distinct RANGE_STYLE_CODE) from SOTCART2, SOTORDR2
+                                where SOTCART2.CART_NO = :PARM1
+                                and SOTORDR2.ORDR_NO = SOTCART2.ORDR_NO
+                                and SOTORDR2.ORDR_LNO = SOTCART2.ORDR_LNO"
+                Else
+                    ASCMAIN1.sql = "select count(1) from SOTCART2
+                                where SOTCART2.CART_NO = :PARM1"
+                End If
                 Dim UPC_CNT As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New String() {CartonNo}) & "")
                 If UPC_CNT = 1 Then
                     LABEL_TEMPLATE_CODE = "MEIJERR"
@@ -1019,10 +1048,30 @@ Public Class CartonLabel
                     Row.Item("CUST_ZIP_CODE") = Row.Item("CUST_ZIP_CODE").ToString.Substring(0, 5)
                 End If
             Case Is = "MARSHAL", Is = "COSTCOUS"
+                Dim CART_NO As String = Row.Item("CART_NO").ToString
+                Dim SQLS As String
+                SQLS = $"Select SOTSHIP1.BILL_OF_LADING_NO, SOTSHIP1.SHIP_REF, SOTSVIA1.SHIP_VIA_DESC 
+                         from SOTSHIP1, SOTPICK1, SOTCART1, SOTSVIA1
+                         where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                         and SOTPICK1.PICK_NO = SOTCART1.PICK_NO
+                         and SOTSHIP1.SHIP_VIA_CODE=SOTSVIA1.SHIP_VIA_CODE
+                         and SOTCART1.CART_NO = '{CART_NO}'"
+                Dim TmpRow As DataRow = ASCDATA1.GetDataRow(SQLS)
+                Row("BILL_OF_LADING_NO") = TmpRow("BILL_OF_LADING_NO")
+                Row("SHIP_REF") = TmpRow("SHIP_REF")
+                Row("SHIP_VIA_DESC") = TmpRow("SHIP_VIA_DESC")
+                If CUST_CODE = "COSTCOUS" Then
+                    Dim CASE_CUBE As Integer = 0
+                    SQLS = $"SELECT trunc(NVL(PKG_L,0) * NVL(PKG_W,0) * NVL(PKG_H,0) / 1728) CUBE FROM SOTCART1 WHERE SOTCART1.CART_NO = '{CART_NO}'"
+                    'get cubic inches transform to cubic feet / 1728
+                    CASE_CUBE = ASCDATA1.GetDataValue(SQLS)
+                    Row.Item("CASE_CUBE") = CASE_CUBE
+                    Row.Item("cart_total_wgt_calc") = ASCDATA1.GetDataValue($"SELECT CART_TOTAL_WGT_ACTUAL FROM SOTCART1 WHERE SOTCART1.CART_NO = '{CART_NO}'")
+                End If
+
                 If Row.Item("CUST_STORE_NO").ToString.Length > 4 Then
                     Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(Row.Item("CUST_STORE_NO").ToString.Length - 4, 4)
                 End If
-                Dim CART_NO As String = Row.Item("CART_NO").ToString
                 Dim Msg As String = FillSOTCART2(CART_NO, 3, labelData, , 25)
                 If Msg.Length > 0 Then
                     CartonError = Msg
@@ -1036,59 +1085,45 @@ Public Class CartonLabel
                 End If
                 Row.Item("CUST_STORE_NO") = CUST_STORE_NO
 
-                Dim SQLS As New Text.StringBuilder With {.Length = 0}
                 If RNG_CNT > 0 Then
                     Dim CART_NO As String = Row.Item("CART_NO").ToString
-                    For Each COL_NAME As String In New String() {"GTIN_UPC_CODE", "GTIN_CODE", "GTIN_DESC"}
-                        SQLS.Length = 0
-                        SQLS.AppendLine(String.Format("SELECT {0} AS RETVAL", COL_NAME))
-                        SQLS.AppendLine("FROM ICTGTINT")
-                        SQLS.AppendLine("WHERE GTIN_UPC_CODE IN")
-                        SQLS.AppendLine("  (")
-                        SQLS.AppendLine("    SELECT UPC_CODE")
-                        SQLS.AppendLine("    FROM ICVLUPC1")
-                        SQLS.AppendLine("    WHERE STYLE_CODE IN")
-                        SQLS.AppendLine("    (")
-                        SQLS.AppendLine("      SELECT RANGE_STYLE_CODE")
-                        SQLS.AppendLine("      FROM SOTORDR2")
-                        SQLS.AppendLine("      WHERE (ORDR_NO, ORDR_LNO) IN")
-                        SQLS.AppendLine("      (")
-                        SQLS.AppendLine("        SELECT MIN(ORDR_NO), MIN(ORDR_LNO)")
-                        SQLS.AppendLine("        FROM SOTCART2")
-                        SQLS.AppendLine(String.Format("        WHERE CART_NO = '{0}'", CART_NO))
-                        SQLS.AppendLine("      )")
-                        SQLS.AppendLine("    )")
-                        SQLS.AppendLine("  )")
-                        ASCMAIN1.sql = SQLS.ToString()
-                        Dim RETVAL As String = ASCDATA1.GetDataValue & ""
-                        If RETVAL.Length = 0 Then
-                            CartonError = String.Format("Carton {0} Has A Range With No GTIN Information!", CART_NO)
-                        Else
-                            Select Case COL_NAME
-                                Case Is = "GTIN_UPC_CODE"
-                                    Row.Item("UPC_CODE") = RETVAL
-                                Case Is = "GTIN_CODE"
-                                    Row.Item("UPC_CODE_ONLY") = RETVAL
-                                Case Is = "GTIN_DESC"
-                                    Row.Item("STYLE_DESC") = RETVAL
-                                Case Else
-                                    Stop 'Check the beginning of this For Each for your problem.
-                            End Select
-                        End If
-                    Next
-                    SQLS.Length = 0
-                    SQLS.AppendLine("SELECT RANGE_STYLE_CODE")
-                    SQLS.AppendLine("FROM SOTORDR2")
-                    SQLS.AppendLine("WHERE (ORDR_NO, ORDR_LNO) IN")
-                    SQLS.AppendLine("(")
-                    SQLS.AppendLine("  SELECT MIN(ORDR_NO), MIN(ORDR_LNO)")
-                    SQLS.AppendLine("  FROM SOTCART2")
-                    SQLS.AppendLine(String.Format("  WHERE CART_NO = '{0}'", CART_NO))
-                    SQLS.AppendLine(")")
-                    ASCMAIN1.sql = SQLS.ToString()
-                    Dim RANGE_STYLE_CODE As String = ASCDATA1.GetDataValue & ""
-                    Row.Item("STYLE_CODE") = RANGE_STYLE_CODE
+
+                    ASCMAIN1.sql = $"select ICTRSTY1.RANGE_STYLE_CODE, ICTRSTY1.RANGE_UPC_CODE from SOTORDR2, ICTRSTY1
+                                    where  ICTRSTY1.CUST_CODE = 'MEIJER'
+                                    and ICTRSTY1.RANGE_STYLE_CODE = SOTORDR2.RANGE_STYLE_CODE
+                                    and (ORDR_NO, ORDR_LNO) in (SELECT MIN(ORDR_NO), MIN(ORDR_LNO)
+                                    from SOTCART2
+                                    where CART_NO = '{CART_NO}')"
+
+                    Dim rowRANGE As DataRow = ASCDATA1.GetDataRow
+                    Row.Item("STYLE_CODE") = rowRANGE("RANGE_STYLE_CODE") & ""
+                    Row.Item("UPC_CODE") = rowRANGE("RANGE_UPC_CODE") & ""
+                    Row.Item("UPC_CODE_ONLY") = rowRANGE("RANGE_UPC_CODE") & ""
                 End If
+            Case Is = "SAMSCLUB"
+                Dim MaxRows = 8
+                Dim z = 0
+                Dim CART_NO As String = Row.Item("CART_NO").ToString
+                ASCMAIN1.sql = $"SELECT * FROM SOTCART1
+                                WHERE CART_NO = '{CART_NO}'"
+                Dim rowSOTCART2 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+                For i As Integer = 1 To MaxRows
+                    rowSOTCART2.Table.Columns.Add("EDI_SKU_" & Format(i, "0#"))
+                Next
+                ASCMAIN1.sql = $"SELECT SOTORDR2.* FROM SOTCART2, SOTORDR2
+                                WHERE CART_NO = '{CART_NO}'
+                                AND SOTCART2.ORDR_NO = SOTORDR2.ORDR_NO
+                                AND SOTCART2.ORDR_LNO = SOTORDR2.ORDR_LNO"
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                For Each rowSOTCARTX As DataRow In tbl.Rows
+                    z += 1
+                    If z > MaxRows Then
+                        Exit For
+                    End If
+                    rowSOTCART2.Item("EDI_SKU_" & Format(z, "0#")) = rowSOTCARTX.Item("CUST_SKU").ToString & ""
+                Next
+                labelData.Add("SOTCART2", rowSOTCART2)
+
             Case Is = "SEARS"
                 Dim SQLS As New Text.StringBuilder With {.Length = 0}
                 SQLS.Length = 0
@@ -1307,6 +1342,11 @@ Public Class TestLabel
         Dim labelTemplate = GetLabelTemplate()
         Dim labeltoPrint As String = FillLabelTemplateWithData(labelTemplate, labelData)
         ShippingLabel.SendToLabelPrinter(labeltoPrint, PrinterNAme)
+
+    End Sub
+    Public Sub PrintRawZPL(PrinterNAme As String, labelRawData As String)
+
+        ShippingLabel.SendToLabelPrinter(labelRawData, PrinterNAme)
 
     End Sub
     Protected Overrides Function GetLabelData() As Dictionary(Of String, DataRow)

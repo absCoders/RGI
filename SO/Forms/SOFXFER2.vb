@@ -31,6 +31,7 @@ Public Class SOFXFER2
     Dim API_CONTROLLER_SHIPTO As String = "api/Customer/UpdateShipTo"
     Dim API_CONTROLLER_TATCTLN1 As String = "api/ABS/GetTATCTLN1"
     Dim SB As New System.Text.StringBuilder With {.Length = 0}
+    Dim ImageGetProgress As Boolean = True
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -955,7 +956,24 @@ Public Class SOFXFER2
                 Else
                     Exit Sub
                 End If
-                ImageListFTP.Add(e.FileName, e.FileTime)
+                Dim etm As String = e.FileTime
+                If etm.Length > 5 Then
+                    If etm.Substring(etm.Length - 5, 5).Contains(":") Then
+                        If IsDate(etm.Replace(etm.Substring(etm.Length - 5, 5), Now.Year.ToString)) Then
+                            If CDate(etm.Replace(etm.Substring(etm.Length - 5, 5), Now.Year.ToString)) > Now() Then
+                                etm = etm.Replace(etm.Substring(etm.Length - 5, 5), Now.AddYears(-1).Year.ToString)
+                            Else
+                                etm = etm.Replace(etm.Substring(etm.Length - 5, 5), Now.Year.ToString)
+                            End If
+                        End If
+                    End If
+                End If
+                If IsDate(etm) Then
+                    ImageListFTP.Add(e.FileName, etm)
+                Else
+                    ImageListFTP.Add(e.FileName, Now())
+                End If
+
 
             End If
         Else
@@ -1624,6 +1642,7 @@ Public Class SOFXFER2
     End Sub
 
     Private Sub FillImageStats()
+        'FTPImages = True
         FTPImages = True
         ImageListDownload.Clear()
         ImageListDelete.Clear()
@@ -1632,6 +1651,7 @@ Public Class SOFXFER2
         Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
         Dim IMAGES_FOLDER As String = "C:\"
         Dim ImageFilter As String = "*.jpg"
+        Dim RemoteFolder As String = "/www/media/product/"
         If Not IsNothing(rowSOTPARM3) Then
             If rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString.EndsWith("\") Then
                 IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
@@ -1651,12 +1671,12 @@ Public Class SOFXFER2
                 End If
             Next
 
-            Ftp1.User = "ABS"
-            Ftp1.Password = "0ff1c3"
-            Ftp1.RemoteHost = "ftp.regency-rib.com"
+            Ftp1.User = "regency-rib"
+            Ftp1.Password = "joydHUJ3"
+            Ftp1.RemoteHost = "regency-rib.com"
             Ftp1.Logon()
             Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-            Ftp1.RemoteFile = "images\*"
+            Ftp1.RemoteFile = RemoteFolder & "*"
             Ftp1.LocalFile = IMAGES_FOLDER & "*"
             Ftp1.Overwrite = True
             FileList.Clear()
@@ -1665,20 +1685,67 @@ Public Class SOFXFER2
 
             ImageListDownload.Clear()
             ImageListDelete.Clear()
-            For Each RemoteFile As KeyValuePair(Of String, Date) In ImageListFTP
-                If ImageListLocal.Keys.Contains(RemoteFile.Key) Then
-                    If RemoteFile.Value > ImageListLocal.Item(RemoteFile.Key) Then
-                        ImageListDownload.Add(RemoteFile.Key)
+
+            Dim ImageListFTPtmp As New Dictionary(Of String, Date)
+            For Each image As KeyValuePair(Of String, Date) In ImageListFTP
+                If Not (ImageListFTPtmp.ContainsKey(image.Key) Or ImageListFTPtmp.ContainsKey(image.Key.Replace(".jpg", ".JPG")) Or ImageListFTPtmp.ContainsKey(image.Key.Replace(".JPG", ".jpg"))) Then
+                    ImageListFTPtmp.Add(image.Key.Replace(RemoteFolder, ""), image.Value)
+                End If
+            Next
+            ImageListFTP = ImageListFTPtmp
+
+            Dim ImageListLocaltmp As New Dictionary(Of String, Date)
+            For Each image As KeyValuePair(Of String, Date) In ImageListLocal
+                ImageListLocaltmp.Add(image.Key.Replace(RemoteFolder, ""), image.Value)
+            Next
+            ImageListLocal = ImageListLocaltmp
+
+            Dim sql As New Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT")
+            sql.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
+            sql.AppendLine("FROM")
+            sql.AppendLine("(")
+            sql.AppendLine("SELECT")
+            sql.AppendLine("S1.STYLE_CODE,")
+            sql.AppendLine("C1.COLOR_CODE,")
+            sql.AppendLine("S1.STYLE_STATUS,")
+            sql.AppendLine("C1.STYLE_COLOR_STATUS,")
+            sql.AppendLine("S1.STYLE_DESC,")
+            sql.AppendLine("SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))) AS AVAIL")
+            sql.AppendLine("FROM ICTSTYL1 S1, ICTSTYC1 C1, ICTSTAT2 S2")
+            sql.AppendLine("WHERE S1.STYLE_CODE = C1.STYLE_CODE")
+            sql.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
+            sql.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
+            sql.AppendLine("AND S2.WHSE_CODE = 'MS'")
+            sql.AppendLine("GROUP BY")
+            sql.AppendLine("S1.STYLE_CODE,")
+            sql.AppendLine("C1.COLOR_CODE,")
+            sql.AppendLine("S1.STYLE_STATUS,")
+            sql.AppendLine("C1.STYLE_COLOR_STATUS,")
+            sql.AppendLine("S1.STYLE_DESC")
+            sql.AppendLine(")")
+            If chkNoDiscInvPics.Checked Then
+                sql.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
+            End If
+            Dim tblMFLIST As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+
+            For Each image As KeyValuePair(Of String, Date) In ImageListFTPtmp
+                'If image.Key = "MT17903-CAIR.jpg" Then Stop
+                If tblMFLIST.Select($"SC = '{image.Key.Replace("'", "").ToUpper}'").Length > 0 Then
+                    If ImageListLocaltmp.Keys.Contains(image.Key) Then
+                        If image.Value > ImageListLocaltmp.Item(image.Key) Then
+                            ImageListDownload.Add(image.Key)
+                        End If
+                    Else
+                        ImageListDownload.Add(image.Key)
                     End If
-                Else
-                    ImageListDownload.Add(RemoteFile.Key)
                 End If
             Next
-            For Each localFile As KeyValuePair(Of String, Date) In ImageListLocal
-                If Not ImageListFTP.Keys.Contains(localFile.Key) Then
-                    ImageListDelete.Add(localFile.Key)
-                End If
-            Next
+            'For Each localFile As KeyValuePair(Of String, Date) In ImageListLocal
+            '    If Not ImageListFTP.Keys.Contains(localFile.Key) Then
+            '        ImageListDelete.Add(localFile.Key)
+            '    End If
+            'Next
         Else
             MsgBox("Error with Image Parameters", MsgBoxStyle.Critical, "Parameters")
         End If
@@ -1695,16 +1762,25 @@ Public Class SOFXFER2
     End Sub
 
     Private Sub btnGetImages_Click(sender As Object, e As EventArgs) Handles btnGetImages.Click
-        If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
+        If btnGetImages.Text = "Get Images" Then
+            btnGetImages.Text = "Stop Get"
+            ImageGetProgress = True
             getFTPImages()
+            ImageGetProgress = False
+            ASCMAIN1.Progress("")
+            btnGetImages.Text = "Get Images"
         Else
-            MsgBox("This Feature Is Waiting For Approval", vbOKOnly, "New Feature")
+            btnGetImages.Text = "Get Images"
+            ImageGetProgress = False
+            ASCMAIN1.Progress("")
         End If
+        Application.DoEvents()
     End Sub
 
     Private Sub getFTPImages()
         Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
         Dim IMAGES_FOLDER As String = "C:\"
+        Dim RemoteFolder As String = "/www/media/product/"
         If Not IsNothing(rowSOTPARM3) Then
             If rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString.EndsWith("\") Then
                 IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
@@ -1712,25 +1788,30 @@ Public Class SOFXFER2
                 IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString & "\"
             End If
         End If
-        Ftp1.User = "ABS"
-        Ftp1.Password = "0ff1c3"
-        Ftp1.RemoteHost = "ftp.regency-rib.com"
+        Ftp1.User = "regency-rib"
+        Ftp1.Password = "joydHUJ3"
+        Ftp1.RemoteHost = "regency-rib.com"
         Ftp1.Logon()
         Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-        Ftp1.RemoteFile = "images\*"
+        Ftp1.RemoteFile = RemoteFolder & "*"
         Ftp1.LocalFile = IMAGES_FOLDER & "*"
         Ftp1.Overwrite = True
         For Each DLFile As String In ImageListDownload
-            Ftp1.LocalFile = IMAGES_FOLDER & DLFile
-            Ftp1.RemoteFile = "images\" & DLFile
-            ASCMAIN1.Progress("Fetching " & DLFile)
-            Ftp1.Download()
+            Application.DoEvents()
+            If ImageGetProgress Then
+                Ftp1.LocalFile = IMAGES_FOLDER & DLFile
+                Ftp1.RemoteFile = RemoteFolder & DLFile
+                ASCMAIN1.Progress("Fetching " & DLFile)
+                Ftp1.Download()
+            Else
+                Exit For
+            End If
         Next
         Ftp1.Logoff()
-        For Each DELFile As String In ImageListDelete
-            System.IO.File.Delete(IMAGES_FOLDER & DELFile)
-            ASCMAIN1.Progress("Deleting " & DELFile)
-        Next
+        'For Each DELFile As String In ImageListDelete
+        '    System.IO.File.Delete(IMAGES_FOLDER & DELFile)
+        '    ASCMAIN1.Progress("Deleting " & DELFile)
+        'Next
         FillImageStats()
         MsgBox("File Sync Complete!", vbOKOnly, "Sync")
         btnGetImages.Visible = False
@@ -2203,6 +2284,26 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* New Order Entry Excel Features.")
+
+        VersionNo = "24.05.03.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* New Feature to Pull Images From Web.")
+
+        VersionNo = "24.05.30.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Web Images to Optionaly Use Only Active/Disc > 0.")
+
+        VersionNo = "24.06.27.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change To Search By Attribute For Sorting And Discount Pricing When Printing.")
+
+        VersionNo = "24.07.25.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Change To Customer Matrix to show all orders for SR.")
 
         lblVersionNo.Text = VersionNo
     End Sub

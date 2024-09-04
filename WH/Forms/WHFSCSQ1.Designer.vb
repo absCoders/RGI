@@ -617,7 +617,7 @@ Partial Class WHFSCSQ1
         Me.ExcelImport.Location = New System.Drawing.Point(4, 4)
         Me.ExcelImport.Name = "ExcelImport"
         Me.ExcelImport.Padding = New System.Windows.Forms.Padding(3)
-        Me.ExcelImport.Size = New System.Drawing.Size(767, 487)
+        Me.ExcelImport.Size = New System.Drawing.Size(956, 445)
         Me.ExcelImport.TabIndex = 2
         Me.ExcelImport.Text = "Excel Import"
         Me.ExcelImport.UseVisualStyleBackColor = True
@@ -714,7 +714,7 @@ Partial Class WHFSCSQ1
         Me.grdWHTSCTMP.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSCTMP.Location = New System.Drawing.Point(3, 3)
         Me.grdWHTSCTMP.Name = "grdWHTSCTMP"
-        Me.grdWHTSCTMP.Size = New System.Drawing.Size(761, 481)
+        Me.grdWHTSCTMP.Size = New System.Drawing.Size(950, 439)
         Me.grdWHTSCTMP.TabIndex = 18
         Me.grdWHTSCTMP.Text = "Style Sequences New"
         '

@@ -510,10 +510,12 @@
         If Not IsNothing(rowICTCOLR1) Then
             COLOR_CODE_LONG = rowICTCOLR1.Item("COLOR_CODE_LONG").ToString()
         End If
-        Dim WebVal As String = ""
+
         If Not IsNothing(rowSOTPARM3) Then
             RO_PARM_STYLE_IMG_DIR = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
             If RO_PARM_STYLE_IMG_DIR.Length > 0 Then
+                TryPullWebImage(STYLE_CODE, COLOR_CODE)
+
                 FileMatch = Dir(String.Format("{0}\{1}-{2}.jpg", RO_PARM_STYLE_IMG_DIR, STYLE_CODE, COLOR_CODE))
                 If FileMatch.Length > 0 Then
                     RetVal = String.Format("{0}\{1}", RO_PARM_STYLE_IMG_DIR, FileMatch)
@@ -540,25 +542,36 @@
                 End If
             End If
         End If
+        Return RetVal
+    End Function
+
+    Private Sub TryPullWebImage(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String)
         Try
-            If WebVal.Length > 0 Then
-                Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(WebVal)
-                Dim response As System.Net.WebResponse = req.GetResponse()
-                Dim stream As IO.Stream = response.GetResponseStream()
-                Dim img As System.Drawing.Image = System.Drawing.Image.FromStream(stream)
-                stream.Close()
-                If System.IO.File.Exists(RetVal) Then
-                    System.IO.File.Delete(RetVal)
-                    img.Save(RetVal)
-                Else
-                    RetVal = String.Format("{0}\{1}", RO_PARM_STYLE_IMG_DIR, String.Format("{0}-{1}.jpg", STYLE_CODE, COLOR_CODE))
-                    img.Save(RetVal)
+            Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
+            Dim RO_PARM_STYLE_IMG_DIR As String = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
+            If RO_PARM_STYLE_IMG_DIR.Length > 0 Then
+                Dim WEBURL As String = "https://www.regency-rib.com/media/product/"
+                Dim FILEURL As String = WEBURL & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+                Dim TMP_FILE As String = RO_PARM_STYLE_IMG_DIR & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
+                If Not RO_PARM_STYLE_IMG_DIR.EndsWith("\") Then
+                    RO_PARM_STYLE_IMG_DIR = RO_PARM_STYLE_IMG_DIR & "\"
+                End If
+                If IO.Directory.Exists(RO_PARM_STYLE_IMG_DIR) Then
+                    Dim web_client As New Net.WebClient
+                    Dim image_stream As New IO.MemoryStream(web_client.DownloadData(FILEURL))
+                    Dim img As Drawing.Image = Drawing.Image.FromStream(image_stream)
+                    If IO.File.Exists(TMP_FILE) Then
+                        IO.File.Delete(TMP_FILE)
+                    End If
+                    img.Save(TMP_FILE)
+                    'FILENAME = TMP_FILE
                 End If
             End If
         Catch ex As Exception
+            'Just Bail
         End Try
-        Return RetVal
-    End Function
+    End Sub
+
     Sub Add_Image_to_Worksheet(worksheet As SpreadsheetGear.IWorksheet, ITEM_CODE As String, cx As Integer, rx As Integer)
 
         'Dim IMAGE_NAME As String = ITEM_CODE

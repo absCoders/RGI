@@ -72,6 +72,14 @@ Partial Class WBFCUST1
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STREET2")
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STREET3")
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COUNTRY", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENTS")
+        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_ADDR_1")
+        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_ADDR_2")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_ADDR_3")
+        Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_CITY")
+        Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_STATE")
+        Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_ZIP_CODE")
+        Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHP_CNTRY")
         Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CLAIM_BY_OPER", 0)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -376,7 +384,7 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 159)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 319)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -533,7 +541,7 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 353)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 513)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 175)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -649,10 +657,11 @@ Partial Class WBFCUST1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 572)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel3
         '
@@ -807,10 +816,27 @@ Partial Class WBFCUST1
         UltraGridColumn11.Header.Caption = "Country"
         UltraGridColumn11.Header.VisiblePosition = 16
         UltraGridColumn11.Width = 75
+        UltraGridColumn15.Header.Caption = "Comments"
+        UltraGridColumn15.Header.VisiblePosition = 34
+        UltraGridColumn15.Width = 468
+        UltraGridColumn16.Header.Caption = "Shp Addr 1"
+        UltraGridColumn16.Header.VisiblePosition = 27
+        UltraGridColumn17.Header.Caption = "Shp Addr 2"
+        UltraGridColumn17.Header.VisiblePosition = 28
+        UltraGridColumn18.Header.Caption = "Shp Addr 3"
+        UltraGridColumn18.Header.VisiblePosition = 29
+        UltraGridColumn29.Header.Caption = "Shp City"
+        UltraGridColumn29.Header.VisiblePosition = 30
+        UltraGridColumn30.Header.Caption = "Shp State"
+        UltraGridColumn30.Header.VisiblePosition = 31
+        UltraGridColumn31.Header.Caption = "Shp Zip"
+        UltraGridColumn31.Header.VisiblePosition = 32
+        UltraGridColumn32.Header.Caption = "Shp Ctry"
+        UltraGridColumn32.Header.VisiblePosition = 33
         UltraGridColumn35.Header.Caption = "Claimed By"
         UltraGridColumn35.Header.VisiblePosition = 4
         UltraGridColumn35.Width = 92
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn33, UltraGridColumn34, UltraGridColumn1, UltraGridColumn2, UltraGridColumn11, UltraGridColumn35})
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn33, UltraGridColumn34, UltraGridColumn1, UltraGridColumn2, UltraGridColumn11, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn35})
         Me.grdWBTCUST1.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBTCUST1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"

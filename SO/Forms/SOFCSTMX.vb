@@ -722,11 +722,12 @@ Public Class SOFCSTMX
                 SQLB.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS ORDRED,")
                 SQLB.AppendLine("SUM(nvl(S2.ORDR_QTY_SHIP,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SHIPPED,")
                 SQLB.AppendLine("SUM(nvl(S2.ORDR_QTY_CANC,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS CANCELLED")
-                SQLB.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
+                SQLB.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, ARTCUST1 C1")
                 SQLB.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                SQLB.AppendLine("AND S1.CUST_CODE = C1.CUST_CODE")
                 If ASCMAIN1.DBS_COMPANY <> "RGI" Then
                     If Not Remote.IsUserSuper Then
-                        MAKE_SR_FILTER("S1", SQLB)
+                        MAKE_SR_FILTER("C1", SQLB)
                     End If
                 End If
                 SQLB.AppendLine("AND (S1.ORDR_STATUS <> 'C' AND S1.ORDR_STATUS <> 'D')")
@@ -764,18 +765,19 @@ Public Class SOFCSTMX
                 SQLB.AppendLine("SUM(CANCELLED_LY) AS CANCELLED_LY")
                 SQLB.AppendLine("FROM(")
                 SQLB.AppendLine("  SELECT")
-                SQLB.AppendLine("  CUST_CODE,")
+                SQLB.AppendLine("  S1.CUST_CODE,")
                 SQLB.AppendLine("  SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS ORDERED_TY,")
                 SQLB.AppendLine("  SUM(NVL(S2.ORDR_QTY_SHIP,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SHIPPED_TY,")
                 SQLB.AppendLine("  SUM(NVL(S2.ORDR_QTY_CANC,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS CANCELLED_TY,")
                 SQLB.AppendLine("  SUM(0) ORDERED_LY,")
                 SQLB.AppendLine("  SUM(0) SHIPPED_LY,")
                 SQLB.AppendLine("  SUM(0) CANCELLED_LY")
-                SQLB.AppendLine("  FROM SOTORDR1 S1, SOTORDR2 S2")
+                SQLB.AppendLine("  FROM SOTORDR1 S1, SOTORDR2 S2, ARTCUST1 C1")
                 SQLB.AppendLine("  WHERE S1.ORDR_NO = S2.ORDR_NO")
+                SQLB.AppendLine("  AND S1.CUST_CODE = C1.CUST_CODE")
                 If ASCMAIN1.DBS_COMPANY = "RGO" Then
                     If Not Remote.IsUserSuper Then
-                        MAKE_SR_FILTER("S1", SQLB)
+                        MAKE_SR_FILTER("C1", SQLB)
                     End If
                 End If
                 SQLB.AppendLine("  AND S1.ORDR_STATUS <> 'C'")
@@ -788,21 +790,22 @@ Public Class SOFCSTMX
                         SQLB.AppendLine(String.Format("  AND S1.ORDR_DATE <= '{0}'", Dates(1)))
                     End If
                 End If
-                SQLB.AppendLine("  GROUP BY CUST_CODE")
+                SQLB.AppendLine("  GROUP BY S1.CUST_CODE")
                 SQLB.AppendLine("  UNION")
                 SQLB.AppendLine("  SELECT")
-                SQLB.AppendLine("  CUST_CODE,")
+                SQLB.AppendLine("  S1.CUST_CODE,")
                 SQLB.AppendLine("  SUM(0) ORDERED_TY,")
                 SQLB.AppendLine("  SUM(0) SHIPPED_TY,")
                 SQLB.AppendLine("  SUM(0) CANCELLED_TY,")
                 SQLB.AppendLine("  SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS ORDERED_LY,")
                 SQLB.AppendLine("  SUM(NVL(S2.ORDR_QTY_SHIP,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SHIPPED_LY,")
                 SQLB.AppendLine("  SUM(NVL(S2.ORDR_QTY_CANC,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS CANCELLED_LY")
-                SQLB.AppendLine("  FROM SOTORDR1 S1, SOTORDR2 S2")
+                SQLB.AppendLine("  FROM SOTORDR1 S1, SOTORDR2 S2, ARTCUST1 C1")
                 SQLB.AppendLine("  WHERE S1.ORDR_NO = S2.ORDR_NO")
+                SQLB.AppendLine("  AND S1.CUST_CODE = C1.CUST_CODE")
                 If ASCMAIN1.DBS_COMPANY = "RGO" Then
                     If Not Remote.IsUserSuper Then
-                        MAKE_SR_FILTER("S1", SQLB)
+                        MAKE_SR_FILTER("C1", SQLB)
                     End If
                 End If
                 SQLB.AppendLine("  AND S1.ORDR_STATUS <> 'C'")
@@ -816,7 +819,7 @@ Public Class SOFCSTMX
                     End If
 
                 End If
-                SQLB.AppendLine("  GROUP BY CUST_CODE")
+                SQLB.AppendLine("  GROUP BY S1.CUST_CODE")
                 SQLB.AppendLine(")")
                 SQLB.AppendLine("GROUP BY CUST_CODE")
                 RETVAL = SQLB.ToString
