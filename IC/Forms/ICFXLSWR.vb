@@ -542,7 +542,7 @@ Public Class ICFXLSWR
                             .Item("XLS_STATUS") = IIf(calcCodeMaintenanceMode, "C", "G") ' G = GENERATED, R = REPLIED, D = DELETED
                             .Item("XLS_DESC") = Mid(STYLE_CLASS_CODEs, 2)
                             .Item("REPLY_BY_DATE") = dteREPLY_BY_DATE.Value
-                            .Item("SEASON_CODE") = "2025S"
+                            .Item("SEASON_CODE") = "2025F"
                             .Item("XLS_TYPE") = "R"
                             .Item("XLS_IMP_NO") = XLS_IMP_NO
                             .Item("XLS_SEQ_NO") = XLS_SEQ_NO
