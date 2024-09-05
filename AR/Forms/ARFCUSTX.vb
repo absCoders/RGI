@@ -27,7 +27,23 @@ Public Class ARFCUSTX
             .Tables("ARTCUST2").Columns.Add("CUST_DC_IND")
             .Tables("ARTCUST2").Columns("CUST_DC_IND").DefaultValue = "0"
             Create_TDA(.Tables.Add, "ARTCUST3", "*", 1)
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Select ARTCUST2.* FROM ARTCUST2 WHERE ARTCUST2.CUST_CODE = :PARM1"
+                '    Create_TDA(.Tables.Add, "ARTCUSTM", "**", 0, True, "V")
+
+                Create_TDA(.Tables.Add, "ARTCUSTM", "**", 0, False, "V", 3)
+
+                With .Tables.Add("ERROR_TBL")
+                    .Columns.Add("ERROR_CODE", GetType(System.String))
+                    .Columns.Add("ERROR_DETAIL", GetType(System.String))
+                End With
+            End If
+
+
         End With
+        grdARTCUSTM.DataSource = dst.Tables("ARTCUSTM")
+        Create_Summary(grdARTCUSTM, "CUST_ADDR_CODE", "Count")
 
         grdARTCUST2.DataSource = dst.Tables("ARTCUST2")
 
@@ -83,6 +99,17 @@ Public Class ARFCUSTX
         AUDIT.Add("ARTCUST2", "NED")
 
         ASCMAIN1.Add_Value_List(grdARTCUST2, "CUST_ADDR_STATUS", Nothing, New String() {":", "A:Active", "I:Inactive", "C:Closed"})
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With UltraExplorerBar1.Groups("Special Functions")
+                .Visible = False
+                With .Items.Add("Update Addresses/Excel")
+                    .Text = .Key
+                End With
+            End With
+        End If
+
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -164,10 +191,17 @@ Public Class ARFCUSTX
                 If EMsg = "" Then
                     If CUST_DC_NOs_to_delete.Count > 0 Then
                         If MsgBox("Please Note - the following Address Codes will no longer be defined as DCs:" _
-                                  & vbCrLf & " " & Join(CUST_DC_NOs_to_delete.ToArray, ","), _
+                                  & vbCrLf & " " & Join(CUST_DC_NOs_to_delete.ToArray, ","),
                                   MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then Exit Sub
                     End If
                 End If
+
+            Case "Update Excel"
+                If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                    EMsg &= vbCr & "There are errors to address in Excel Import. Cannot Update"
+
+                End If
+
         End Select
 
         If EMsg <> "" Then
@@ -195,6 +229,15 @@ Public Class ARFCUSTX
             Case "Cancel", "Done"
                 Mode_Settings(False)
 
+            Case "Cancel Excel", "Done"
+                Call SET_EXCEL_CONTROLS(False)
+                Mode_Settings(False)
+
+            Case "Update Excel", "Done"
+                Update_Excel()
+                Call SET_EXCEL_CONTROLS(False)
+                Mode_Settings(False)
+
         End Select
 
     End Sub
@@ -208,6 +251,10 @@ Public Class ARFCUSTX
                 .Groups("Screen Control").Items("Load").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Update").Settings.Enabled = iScreenMode
                 .Groups("Screen Control").Items("Cancel").Settings.Enabled = iScreenMode
+                .Groups("Screen Control").Items("Update Excel").Settings.Enabled = True
+                .Groups("Screen Control").Items("Cancel Excel").Settings.Enabled = True
+                .Groups("Screen Control").Items("Update Excel").Visible = False
+                .Groups("Screen Control").Items("Cancel Excel").Visible = False
                 .Groups("Display Options").Visible = ScreenMode
                 .Groups("Customer Info").Visible = ScreenMode
             End With
@@ -216,10 +263,33 @@ Public Class ARFCUSTX
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
         grpStores.Visible = tf
+        grdARTCUST2.Visible = True
+        grdARTCUSTM.Visible = False
+
+
 
         If ScreenMode Then
+            If ASCMAIN1.CLIENT = "VAN" And (CUST_CODE = "WALMART" Or CUST_CODE = "SAMSCLUB") Then
+                With UltraExplorerBar1.Groups("Special Functions")
+                    .Visible = True
+                End With
+                ' OPTION IN EXCEL BASED ON CUST
+                With optEXCEL.ValueList
+                    If CUST_CODE = "WALMART" Then
+                        .ValueListItems(0).DisplayText = "Walmart"
+                        .ValueListItems(1).DisplayText = "Walmart DC"
+                    ElseIf CUST_CODE = "SAMSCLUB" Then
+                        .ValueListItems(0).DisplayText = "SamsClub"
+                        .ValueListItems(1).DisplayText = "SamsClub DC"
+                    End If
+                End With
+
+            End If
         Else
             Clear_Record()
+            With UltraExplorerBar1.Groups("Special Functions")
+                .Visible = False
+            End With
         End If
 
     End Sub
@@ -231,6 +301,10 @@ Public Class ARFCUSTX
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
+        If ASCMAIN1.CLIENT = "VAN" Then
+            dst.Tables("ARTCUSTM").Rows.Clear()
+            dst.Tables("ERROR_TBL").Rows.Clear()
+        End If
 
         Absx1.txtFor("CUST_CODE").Text = ""
 
@@ -245,11 +319,15 @@ Public Class ARFCUSTX
         ASCMAIN1.Progress("Now Loading Data ...")
 
         Save_Header_Fields(UltraGroupBox1)
- 
+
         EnforceConstraints(False)
         rowARTCUST1 = Fill_Record("ARTCUST1", HFs("CUST_CODE"))
         Fill_Records("ARTCUST2", HFs("CUST_CODE"))
         Fill_Records("ARTCUST3", HFs("CUST_CODE"))
+        If ASCMAIN1.CLIENT = "VAN" Then
+            '  Fill_Records("ARTCUSTM", HFs("CUST_CODE"))
+        End If
+
         EnforceConstraints(True)
 
         Dim CUST_DC_NOs_nogood As New List(Of String)
@@ -272,7 +350,7 @@ Public Class ARFCUSTX
 
         If CUST_DC_NOs_nogood.Count > 0 Then
             MsgBox("The following Address Codes are referenced as DCs but no Address Record exists" _
-                   & vbCrLf & Join(CUST_DC_NOs_nogood.ToArray, ","), _
+                   & vbCrLf & Join(CUST_DC_NOs_nogood.ToArray, ","),
                    MsgBoxStyle.OkOnly, "Data Integrity Issue")
         End If
 
@@ -351,7 +429,7 @@ Public Class ARFCUSTX
         '    dst.Tables("ARTCUST3").Rows.Add(rowARTCUST3)
         'Next
 
-          
+
         BeginTrans()
 
         Update_Record_TDA("ARTCUST1")
@@ -437,7 +515,7 @@ Public Class ARFCUSTX
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             ' e.Cancel = True
         Else
-            
+
             Select Case e.SourceControl.Name
                 Case "grdARTCUST2"
                     'If grdARTCUST2.Tag = "" Then
@@ -698,4 +776,570 @@ Public Class ARFCUSTX
             End If
         Next
     End Sub
+
+    Private Sub cmdImportExcel_Click(sender As Object, e As EventArgs) Handles cmdImportExcel.Click
+        If ASCMAIN1.CLIENT = "VAN" Then
+            dst.Tables("ARTCUSTM").Rows.Clear()
+            dst.Tables("ERROR_TBL").Rows.Clear()
+            Import_Excel()
+            Call SET_EXCEL_CONTROLS(True)
+
+        End If
+
+
+    End Sub
+    Sub SET_EXCEL_CONTROLS(EXCELMODE As Boolean)
+
+        If UltraExplorerBar1.Groups.Count > 0 Then
+            With UltraExplorerBar1
+                .Groups("Screen Control").Items("Load").Visible = Not EXCELMODE
+                .Groups("Screen Control").Items("Update").Visible = Not EXCELMODE
+                .Groups("Screen Control").Items("Cancel").Visible = Not EXCELMODE
+                .Groups("Screen Control").Items("Update Excel").Settings.Enabled = Not EXCELMODE
+                .Groups("Screen Control").Items("Cancel Excel").Settings.Enabled = Not EXCELMODE
+                .Groups("Screen Control").Items("Update Excel").Visible = EXCELMODE
+                .Groups("Screen Control").Items("Cancel Excel").Visible = EXCELMODE
+                .Groups("Display Options").Visible = Not EXCELMODE
+                .Groups("Customer Info").Visible = Not EXCELMODE
+
+            End With
+        End If
+
+        If EXCELMODE Then
+            grdARTCUST2.Visible = False
+            grdARTCUSTM.Visible = True
+        Else
+            grdARTCUST2.Visible = True
+            grdARTCUSTM.Visible = False
+
+        End If
+
+
+    End Sub
+    Sub Update_Excel()
+
+
+        BeginTrans()
+
+        '     If Not ASCMAIN1.Logical_Lock("ARTCUST2", CUST_CODE, , , , 1) Then Exit Sub
+        Fill_Records("ARTCUST2", HFs("CUST_CODE"))
+
+
+        Try
+
+            Dim CUST_ADDR_TYPE As String = ""
+            Dim CUST_ADDR_CODE As String = ""
+
+            For Each rowARTCUSTM As DataRow In dst.Tables("ARTCUSTM").Select("", "")
+                CUST_ADDR_TYPE = rowARTCUSTM.Item("CUST_ADDR_TYPE")
+                CUST_ADDR_CODE = rowARTCUSTM.Item("CUST_ADDR_CODE")
+
+                Dim rowARTCUST2 As DataRow = dst.Tables("ARTCUST2").Rows.Find(New String() {CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE})
+                If rowARTCUST2 Is Nothing Then
+
+                    rowARTCUST2 = dst.Tables("ARTCUST2").NewRow
+                    With rowARTCUST2
+                        .Item("CUST_CODE") = CUST_CODE
+                        .Item("CUST_ADDR_TYPE") = CUST_ADDR_TYPE
+                        .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                        .Item("INIT_DATE") = DATETIME_STAMP
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    End With
+                    dst.Tables("ARTCUST2").Rows.Add(rowARTCUST2)
+
+                    ' NEW
+                End If
+                'OLD
+                With rowARTCUST2
+                    .Item("CUST_NAME") = Replace(rowARTCUSTM.Item("CUST_NAME") & "", "`", "") & ""
+                    .Item("CUST_ADDR1") = Replace(rowARTCUSTM.Item("CUST_ADDR1") & "", "`", "") & ""
+                    .Item("CUST_ADDR2") = Replace(rowARTCUSTM.Item("CUST_ADDR2") & "", "`", "") & ""
+                    .Item("CUST_CITY") = Replace(rowARTCUSTM.Item("CUST_CITY") & "", "`", "") & ""
+                    .Item("CUST_STATE") = rowARTCUSTM.Item("CUST_STATE") & ""
+                    .Item("CUST_ZIP_CODE") = rowARTCUSTM.Item("CUST_ZIP_CODE")
+                    .Item("CUST_COUNTRY") = rowARTCUSTM.Item("CUST_COUNTRY")
+                    .Item("CUST_CONTACT") = rowARTCUSTM.Item("CUST_CONTACT")
+                    .Item("CUST_PHONE") = rowARTCUSTM.Item("CUST_PHONE")
+                    '   .Item("INIT_DATE") = DATETIME_STAMP
+                    '   .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    .Item("LAST_DATE") = DATETIME_STAMP
+                    .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                    .Item("CUST_ADDR_NAME") = rowARTCUSTM.Item("CUST_ADDR_NAME")
+                    .Item("CUST_ADDR_STATUS") = rowARTCUSTM.Item("CUST_ADDR_STATUS")
+                    .Item("CUST_EMAIL") = rowARTCUSTM.Item("CUST_EMAIL")
+                    .Item("CUST_RANK") = rowARTCUSTM.Item("CUST_RANK")
+                    .Item("GLOBAL_LOCATION_NUMBER") = rowARTCUSTM.Item("GLOBAL_LOCATION_NUMBER")
+
+                End With
+            Next
+
+
+
+            Update_Record_TDA("ARTCUST2")
+
+            Dim FN_TO As String = ""
+            Dim SESSION_NO As String = ASCMAIN1.Next_Control_No(String.Format("{0}.SESSION_NO", "STYLE_UPLOAD"))
+            Dim S As String = Format(DATETIME_STAMP, "yyMMdd") & "_" & Format(DATETIME_STAMP, "HHmmss")
+
+            CommitTrans()
+            MsgBox("This Excel File has been successfully Updated to the Customer Store Table",
+                          MsgBoxStyle.OkOnly, "Verification")
+
+            ASCMAIN1.MultiTask_Release(, , 2)
+
+            dst.Tables("ARTCUSTM").Rows.Clear()
+            dst.Tables("ERROR_TBL").Rows.Clear()
+
+
+        Catch ex As Exception
+            MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Errors In Updating Item Spreadsheet, Send to ABS")
+            Rollback()
+        End Try
+
+        ''    If CUST_CODE <> "" Then
+        ''        iResponse = MultiTask("ARTCUST2", CUST_CODE, "x", -1, "", sessionid)
+        ''    End If
+
+        ''    Dim LAST_DATE As Date
+        ''    LAST_DATE = Now + NowTSD
+        ''    Screen.MousePointer = 11
+        ''    OraS.BeginTrans
+
+        ''    Dim dynWK As Recordset
+        ''    Dim tblARWCUST2 As Recordset
+        ''    Dim CUST_ADDR_TYPE As String
+        ''    Dim CUST_ADDR_CODE As String
+
+        ''    Call Prompt("Loading Master File to Update:", CUST_CODE)
+        ''    Sql = " Select * from ARTCUST2 where CUST_CODE = '" & CUST_CODE & "'"
+        ''    Call Ora_to_Acc(Nothing, "ARWCUST2", 3, "", Sql)
+
+        ''Set tblARWCUST2 = AccD.OpenRecordset("ARWCUST2", dbOpenTable)
+        ''tblARWCUST2.Index = "PrimaryKey"
+
+        ''Set dynWK = AccD.OpenRecordset("ARWCUSTI", dbOpenDynaset)
+
+        ''Do While Not dynWK.EOF
+        ''        CUST_ADDR_TYPE = dynWK.Fields("CUST_ADDR_TYPE").Value & ""
+        ''        CUST_ADDR_CODE = dynWK.Fields("CUST_ADDR_CODE").Value & ""
+        ''        tblARWCUST2.Seek "=", CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE
+        ''    If tblARWCUST2.NoMatch Then
+        ''            Call Prompt("Adding " & CUST_CODE & " Store: ", CUST_ADDR_CODE)
+        ''            tblARWCUST2.AddNew
+        ''            tblARWCUST2.Fields("CUST_CODE").Value = CUST_CODE
+        ''            tblARWCUST2.Fields("CUST_ADDR_TYPE").Value = CUST_ADDR_TYPE
+        ''            tblARWCUST2.Fields("CUST_ADDR_CODE").Value = CUST_ADDR_CODE
+        ''            tblARWCUST2.Fields("CUST_RANK").Value = Val(dynWK.Fields("CUST_RANK").Value & "")
+        ''            tblARWCUST2.Fields("INIT_DATE").Value = LAST_DATE
+        ''            tblARWCUST2.Fields("INIT_OPER").Value = UserID
+        ''        Else
+        ''            Call Prompt("Modifying " & CUST_CODE & " Store: ", CUST_ADDR_CODE)
+        ''            tblARWCUST2.Edit
+        ''            '  If tblARWCUST2.Fields("GLOBAL_LOCATION_NUMBER").Value <> dynWK.Fields("GLOBAL_LOCATION_NUMBER").Value & "" Then
+        ''            '  Stop
+        ''            ' End If
+        ''        End If
+        ''        tblARWCUST2.Fields("CUST_NAME").Value = Replace(dynWK.Fields("CUST_NAME").Value, "`", "") & ""
+        ''        tblARWCUST2.Fields("CUST_ADDR1").Value = Replace(dynWK.Fields("CUST_ADDR1").Value, "`", "") & ""
+        ''        tblARWCUST2.Fields("CUST_ADDR2").Value = Replace(dynWK.Fields("CUST_ADDR2").Value, "`", "") & ""
+        ''        tblARWCUST2.Fields("CUST_CITY").Value = Replace(dynWK.Fields("CUST_CITY").Value, "`", "") & ""
+        ''        tblARWCUST2.Fields("CUST_STATE").Value = dynWK.Fields("CUST_STATE").Value & ""
+        ''        tblARWCUST2.Fields("CUST_ZIP_CODE").Value = dynWK.Fields("CUST_ZIP_CODE").Value & ""
+        ''        tblARWCUST2.Fields("CUST_COUNTRY").Value = dynWK.Fields("CUST_COUNTRY").Value & ""
+        ''        tblARWCUST2.Fields("CUST_CONTACT").Value = dynWK.Fields("CUST_CONTACT").Value & ""
+        ''        tblARWCUST2.Fields("CUST_PHONE").Value = dynWK.Fields("CUST_PHONE").Value & ""
+        ''        tblARWCUST2.Fields("CUST_EXT").Value = dynWK.Fields("CUST_EXT").Value & ""
+        ''        tblARWCUST2.Fields("CUST_FAX").Value = dynWK.Fields("CUST_FAX").Value & ""
+        ''        tblARWCUST2.Fields("LAST_DATE").Value = LAST_DATE
+        ''        tblARWCUST2.Fields("LAST_OPER").Value = UserID
+        ''        tblARWCUST2.Fields("CUST_ADDR_NAME").Value = ""
+        ''        tblARWCUST2.Fields("CUST_ADDR_STATUS").Value = dynWK.Fields("CUST_ADDR_STATUS").Value & ""
+        ''        tblARWCUST2.Fields("CUST_EMAIL").Value = dynWK.Fields("CUST_EMAIL").Value & ""
+        ''        tblARWCUST2.Fields("GLOBAL_LOCATION_NUMBER").Value = dynWK.Fields("GLOBAL_LOCATION_NUMBER").Value & ""
+        ''        tblARWCUST2.Update
+        ''        dynWK.MoveNext
+        ''    Loop
+
+        ''    Call Delete_Records()
+        ''    Call Prompt("Updating Master File...", "")
+        ''    Call Acc_to_Ora("ARWCUST2", "")
+        ''    Call Prompt("Finished!", "")
+        ''    OraS.CommitTrans
+        ''    Call cmdExecute(4)
+
+
+
+
+    End Sub
+    Sub Import_Excel()
+
+        Dim FILENAME As String = ""
+        Using openFileDialog1 As New OpenFileDialog
+            openFileDialog1.Title = "Select an Excel Spreadsheet to Import"
+            Dim filter As String = "xlsx files (*.xlsx)|*.xlsx|xls files (*.xls)|*.xls"
+            openFileDialog1.Filter = filter
+            openFileDialog1.RestoreDirectory = True
+            If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                FILENAME = openFileDialog1.FileName
+            End If
+        End Using
+        'Try
+        Dim Vs As New Dictionary(Of String, Integer)
+        Dim SHEETNAME As String = ""
+        If FILENAME <> "" Then
+            If Absx1.txtFor("CUST_CODE").Text & "" = "WALMART" Then
+                If optEXCEL.Value = "H" Then
+                    SHEETNAME = "Wal-Mart Stores"
+                ElseIf optEXCEL.Value = "D" Then
+                    SHEETNAME = "Wal-Mart DC Receiving"
+                End If
+            ElseIf Absx1.txtFor("CUST_CODE").Text & "" = "SAMSCLUB" Then
+                If optEXCEL.Value = "H" Then
+                    SHEETNAME = "Sams Clubs"
+                ElseIf optEXCEL.Value = "D" Then
+                    SHEETNAME = "Sams DC Receiving Addesses"
+                End If
+            End If
+
+            Dim oWB As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook(FILENAME)
+            Dim oSheet As SpreadsheetGear.IWorksheet = oWB.Worksheets(SHEETNAME)
+            Dim range As SpreadsheetGear.IRange = Nothing
+            Dim r As Integer = 0
+            Dim ERROR_CODEs As List(Of String) = New List(Of String)
+            Dim BLANKCODES As Integer = 0
+
+            r = 4
+
+            Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text & ""
+
+            Do While oSheet.Cells(r, 0).Value & "" <> "END"
+                Try
+                    If BLANKCODES > 20 Then
+                        Exit Do
+                    End If
+                    Dim rowARTCUSTM As DataRow
+                    Dim PHONEVAR As String = ""
+                    Dim CUST_ADDR_TYPE As String = "MK"
+                    Dim DC_TYPE(8) As String
+                    Dim I As Integer
+
+                    Dim CUST_ADDR_CODE As String = ""
+                    If Val(Trim(oSheet.Cells(r, 0).Value & "")) <> 0 Then
+                        CUST_ADDR_CODE = Format(Val(Trim(oSheet.Cells(r, 0).Value & "")), "000000") & ""
+                    End If
+
+                    If CUST_ADDR_CODE & "" <> "" Then
+                        BLANKCODES = 0
+                    Else
+                        BLANKCODES = BLANKCODES + 1
+                    End If
+
+                    If optEXCEL.Value = "H" Then
+                        ' WALMART SAMSCLUB SHEET
+                        Select Case CUST_CODE
+                            Case "WALMART"
+                                ' CHECK TO SEE IF RECORD EXISTS (ERROR) ELSE ADD NEW
+                                Dim row As DataRow = dst.Tables("ARTCUSTM").Rows.Find(New Object() {CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE})
+                                If row Is Nothing And CUST_ADDR_CODE <> "" Then
+
+                                    rowARTCUSTM = dst.Tables("ARTCUSTM").NewRow
+                                    With rowARTCUSTM
+                                        .Item("CUST_CODE") = CUST_CODE
+                                        .Item("CUST_ADDR_TYPE") = "MK"
+                                        .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                                        .Item("CUST_NAME") = Trim(oSheet.Cells(r, 3).Value & "") & "" & " " & Format(Val(Trim(oSheet.Cells(r, 0).Value & "")), "0000") & ""
+                                        .Item("CUST_ADDR1") = Replace((Trim(oSheet.Cells(r, 4).Value & "")), "`", "") & ""
+                                        .Item("CUST_ADDR2") = ""
+                                        .Item("CUST_CITY") = Replace((Trim(oSheet.Cells(r, 5).Value & "")), "`", "") & ""
+                                        .Item("CUST_STATE") = Trim(oSheet.Cells(r, 6).Value & "")
+                                        .Item("CUST_ZIP_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
+                                        .Item("CUST_COUNTRY") = "USA"
+                                        .Item("CUST_CONTACT") = "Receiving"
+                                        PHONEVAR = Replace((Trim(oSheet.Cells(r, 12).Value & "")), "-", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), " ", "")
+                                        .Item("CUST_PHONE") = PHONEVAR & ""
+                                        .Item("INIT_DATE") = DATETIME_STAMP
+                                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        .Item("LAST_DATE") = DATETIME_STAMP
+                                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                        .Item("CUST_ADDR_NAME") = ""
+                                        .Item("CUST_ADDR_STATUS") = "A"
+                                        .Item("CUST_EMAIL") = ""
+                                        .Item("CUST_RANK") = Null
+                                        .Item("GLOBAL_LOCATION_NUMBER") = Trim(oSheet.Cells(r, 1).Value & "")
+                                    End With
+                                    dst.Tables("ARTCUSTM").Rows.Add(rowARTCUSTM)
+
+                                    rowARTCUSTM = dst.Tables("ARTCUSTM").NewRow
+                                    With rowARTCUSTM
+                                        .Item("CUST_CODE") = CUST_CODE
+                                        .Item("CUST_ADDR_TYPE") = "DC"
+                                        .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                                        .Item("CUST_NAME") = Trim(oSheet.Cells(r, 3).Value & "") & "" & " " & Format(Val(Trim(oSheet.Cells(r, 0).Value & "")), "0000") & ""
+                                        .Item("CUST_ADDR1") = Replace((Trim(oSheet.Cells(r, 4).Value & "")), "`", "") & ""
+                                        .Item("CUST_ADDR2") = ""
+                                        .Item("CUST_CITY") = Replace((Trim(oSheet.Cells(r, 5).Value & "")), "`", "") & ""
+                                        .Item("CUST_STATE") = Trim(oSheet.Cells(r, 6).Value & "")
+                                        .Item("CUST_ZIP_CODE") = Trim(oSheet.Cells(r, 7).Value & "")
+                                        .Item("CUST_COUNTRY") = "USA"
+                                        .Item("CUST_CONTACT") = "Receiving"
+                                        PHONEVAR = Replace((Trim(oSheet.Cells(r, 12).Value & "")), "-", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), " ", "")
+                                        .Item("CUST_PHONE") = PHONEVAR & ""
+                                        .Item("INIT_DATE") = DATETIME_STAMP
+                                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        .Item("LAST_DATE") = DATETIME_STAMP
+                                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                        .Item("CUST_ADDR_NAME") = ""
+                                        .Item("CUST_ADDR_STATUS") = "A"
+                                        .Item("CUST_EMAIL") = ""
+                                        .Item("CUST_RANK") = Null
+                                        .Item("GLOBAL_LOCATION_NUMBER") = Trim(oSheet.Cells(r, 1).Value & "")
+                                    End With
+                                    dst.Tables("ARTCUSTM").Rows.Add(rowARTCUSTM)
+                                Else
+                                    If CUST_ADDR_CODE <> "" Then
+                                        ERROR_CODEs.Add("Customer Store already present on Line No " & r)
+                                        Dim rowERROR_TBL As DataRow = Nothing
+                                        rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                                        With rowERROR_TBL
+                                            .Item("ERROR_CODE") = "Duplicate Customer/Store in Excel " & CUST_ADDR_CODE
+                                            .Item("ERROR_DETAIL") = "Ln# " & r
+                                        End With
+                                        dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                                    End If
+                                End If
+                            Case "SAMSCLUB"
+                                ' CHECK TO SEE IF RECORD EXISTS (ERROR) ELSE ADD NEW
+                                Dim row As DataRow = dst.Tables("ARTCUSTM").Rows.Find(New Object() {CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE})
+                                If row Is Nothing And CUST_ADDR_CODE <> "" Then
+
+                                    rowARTCUSTM = dst.Tables("ARTCUSTM").NewRow
+                                    With rowARTCUSTM
+                                        .Item("CUST_CODE") = CUST_CODE
+                                        .Item("CUST_ADDR_TYPE") = "MK"
+                                        .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                                        .Item("CUST_NAME") = Trim(oSheet.Cells(r, 3).Value & "") & "" & " " & Format(Val(Trim(oSheet.Cells(r, 0).Value & "")), "0000") & ""
+                                        .Item("CUST_ADDR1") = Replace((Trim(oSheet.Cells(r, 3).Value & "")), "`", "") & ""
+                                        .Item("CUST_ADDR2") = ""
+                                        .Item("CUST_CITY") = Replace((Trim(oSheet.Cells(r, 4).Value & "")), "`", "") & ""
+                                        .Item("CUST_STATE") = Trim(oSheet.Cells(r, 5).Value & "")
+                                        .Item("CUST_ZIP_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
+                                        .Item("CUST_COUNTRY") = "USA"
+                                        .Item("CUST_CONTACT") = "Receiving"
+                                        PHONEVAR = Replace((Trim(oSheet.Cells(r, 7).Value & "")), "-", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), " ", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), "(", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), ")", "")
+
+                                        .Item("CUST_PHONE") = PHONEVAR & ""
+                                        .Item("INIT_DATE") = DATETIME_STAMP
+                                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        .Item("LAST_DATE") = DATETIME_STAMP
+                                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                        .Item("CUST_ADDR_NAME") = ""
+                                        .Item("CUST_ADDR_STATUS") = "A"
+                                        .Item("CUST_EMAIL") = ""
+                                        .Item("CUST_RANK") = Null
+                                        .Item("GLOBAL_LOCATION_NUMBER") = Trim(oSheet.Cells(r, 1).Value & "")
+                                    End With
+                                    dst.Tables("ARTCUSTM").Rows.Add(rowARTCUSTM)
+
+                                    rowARTCUSTM = dst.Tables("ARTCUSTM").NewRow
+                                    With rowARTCUSTM
+                                        .Item("CUST_CODE") = CUST_CODE
+                                        .Item("CUST_ADDR_TYPE") = "DC"
+                                        .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                                        .Item("CUST_NAME") = Trim(oSheet.Cells(r, 3).Value & "") & "" & " " & Format(Val(Trim(oSheet.Cells(r, 0).Value & "")), "0000") & ""
+                                        .Item("CUST_ADDR1") = Replace((Trim(oSheet.Cells(r, 3).Value & "")), "`", "") & ""
+                                        .Item("CUST_ADDR2") = ""
+                                        .Item("CUST_CITY") = Replace((Trim(oSheet.Cells(r, 4).Value & "")), "`", "") & ""
+                                        .Item("CUST_STATE") = Trim(oSheet.Cells(r, 5).Value & "")
+                                        .Item("CUST_ZIP_CODE") = Trim(oSheet.Cells(r, 6).Value & "")
+                                        .Item("CUST_COUNTRY") = "USA"
+                                        .Item("CUST_CONTACT") = "Receiving"
+                                        PHONEVAR = Replace((Trim(oSheet.Cells(r, 7).Value & "")), "-", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), " ", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), "(", "")
+                                        PHONEVAR = Replace((PHONEVAR & ""), ")", "")
+
+                                        .Item("CUST_PHONE") = PHONEVAR & ""
+                                        .Item("INIT_DATE") = DATETIME_STAMP
+                                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                        .Item("LAST_DATE") = DATETIME_STAMP
+                                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                        .Item("CUST_ADDR_NAME") = ""
+                                        .Item("CUST_ADDR_STATUS") = "A"
+                                        .Item("CUST_EMAIL") = ""
+                                        .Item("CUST_RANK") = Null
+                                        .Item("GLOBAL_LOCATION_NUMBER") = Trim(oSheet.Cells(r, 1).Value & "")
+                                    End With
+                                    dst.Tables("ARTCUSTM").Rows.Add(rowARTCUSTM)
+                                Else
+                                    If CUST_ADDR_CODE <> "" Then
+                                        ERROR_CODEs.Add("Customer Store already present on Line No " & r)
+                                        Dim rowERROR_TBL As DataRow = Nothing
+                                        rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                                        With rowERROR_TBL
+                                            .Item("ERROR_CODE") = "Duplicate Customer/Store in Excel " & CUST_ADDR_CODE
+                                            .Item("ERROR_DETAIL") = "Ln# " & r
+                                        End With
+                                        dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                                    End If
+                                End If
+
+
+                        End Select
+                    ElseIf optEXCEL.Value = "D" Then
+                        ' DC RECEIVING SHEET
+                        Select Case CUST_CODE
+                            Case "WALMART"
+                                ReDim DC_TYPE(8)
+
+                                DC_TYPE(0) = "R"
+                                DC_TYPE(1) = "G"
+                                DC_TYPE(2) = "T"
+                                DC_TYPE(3) = "D"
+                                DC_TYPE(4) = "J"
+                                DC_TYPE(5) = "P"
+                                DC_TYPE(6) = "W"
+                                DC_TYPE(7) = "I"
+                                DC_TYPE(8) = "A"
+                                I = Val(Mid(Trim(oSheet.Cells(r, 4).Value & ""), 1, 1))
+                                If Trim(oSheet.Cells(r, 1).Value & "") & "" <> "" And Mid(Trim(oSheet.Cells(r, 4).Value & ""), 1, 1) <> "0" Then
+                                    CUST_ADDR_CODE = Format(Val(Trim(oSheet.Cells(r, 1).Value & "")), "0000") & "" & DC_TYPE(I - 1)
+                                    CUST_ADDR_TYPE = "DC"
+                                    ' CHECK TO SEE IF RECORD EXISTS (ERROR) ELSE ADD NEW
+
+                                    Dim row As DataRow = dst.Tables("ARTCUSTM").Rows.Find(New Object() {CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE})
+                                    If row Is Nothing And CUST_ADDR_CODE <> "" Then
+
+                                        rowARTCUSTM = dst.Tables("ARTCUSTM").NewRow
+                                        With rowARTCUSTM
+                                            .Item("CUST_CODE") = CUST_CODE
+                                            .Item("CUST_ADDR_TYPE") = CUST_ADDR_TYPE
+                                            .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                                            '        .Item("CUST_NAME") = Trim(oSheet.Cells(r, 7).Value & "") & ""
+                                            .Item("CUST_ADDR1") = Replace((Trim(oSheet.Cells(r, 8).Value & "")), "`", "") & ""
+                                            .Item("CUST_ADDR2") = ""
+                                            .Item("CUST_CITY") = Replace((Trim(oSheet.Cells(r, 11).Value & "")), "`", "") & ""
+                                            .Item("CUST_STATE") = Trim(oSheet.Cells(r, 12).Value & "")
+                                            .Item("CUST_ZIP_CODE") = Trim(oSheet.Cells(r, 13).Value & "")
+                                            .Item("CUST_COUNTRY") = "USA"
+                                            .Item("CUST_CONTACT") = "Receiving"
+                                            PHONEVAR = Replace((Trim(oSheet.Cells(r, 15).Value & "")), "-", "")
+                                            PHONEVAR = Replace((PHONEVAR & ""), " ", "")
+                                            .Item("CUST_PHONE") = PHONEVAR & ""
+                                            .Item("INIT_DATE") = DATETIME_STAMP
+                                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                            .Item("LAST_DATE") = DATETIME_STAMP
+                                            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                            .Item("CUST_ADDR_NAME") = ""
+                                            .Item("CUST_ADDR_STATUS") = "A"
+                                            .Item("CUST_EMAIL") = ""
+                                            .Item("CUST_RANK") = Null
+                                            .Item("GLOBAL_LOCATION_NUMBER") = Trim(oSheet.Cells(r, 2).Value & "")
+                                        End With
+                                        dst.Tables("ARTCUSTM").Rows.Add(rowARTCUSTM)
+                                    Else
+                                        ERROR_CODEs.Add("Customer Store already present on Line No " & r)
+                                        Dim rowERROR_TBL As DataRow = Nothing
+                                        rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                                        With rowERROR_TBL
+                                            .Item("ERROR_CODE") = "Duplicate Customer/Store in Excel " & CUST_ADDR_CODE
+                                            .Item("ERROR_DETAIL") = "Ln# " & r
+                                        End With
+                                        dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                                    End If
+                                End If
+
+                            Case "SAMSCLUB"
+                                ReDim DC_TYPE(8)
+
+                                DC_TYPE(0) = "R"
+                                DC_TYPE(1) = "G"
+                                DC_TYPE(2) = "T"
+                                DC_TYPE(3) = "D"
+                                DC_TYPE(4) = "J"
+                                DC_TYPE(5) = "P"
+                                DC_TYPE(6) = "W"
+                                DC_TYPE(7) = "I"
+                                DC_TYPE(8) = "A"
+                                I = Val(Mid(Trim(oSheet.Cells(r, 4).Value & ""), 1, 1))
+                                If Trim(oSheet.Cells(r, 1).Value & "") & "" <> "" Then
+                                    '  CUST_ADDR_CODE = Format(Val(Trim(oSheet.Cells(r, 1).Value & "")), "0000") & "" & DC_TYPE(I - 1)
+                                    ' CUST_ADDR_CODE = Format(Val(Trim(oSheet.Cells(r, 1).Value & "")), "0000") & "S"
+                                    CUST_ADDR_CODE = Format(Val(Trim(oSheet.Cells(r, 1).Value & "")), "000000")
+
+                                    CUST_ADDR_TYPE = "DC"
+                                    ' CHECK TO SEE IF RECORD EXISTS (ERROR) ELSE ADD NEW
+
+                                    Dim row As DataRow = dst.Tables("ARTCUSTM").Rows.Find(New Object() {CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE})
+                                    If row Is Nothing And CUST_ADDR_CODE <> "" Then
+
+                                        rowARTCUSTM = dst.Tables("ARTCUSTM").NewRow
+                                        With rowARTCUSTM
+                                            .Item("CUST_CODE") = CUST_CODE
+                                            .Item("CUST_ADDR_TYPE") = CUST_ADDR_TYPE
+                                            .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+                                            .Item("CUST_NAME") = Trim(oSheet.Cells(r, 7).Value & "") & ""
+                                            .Item("CUST_ADDR1") = Replace((Trim(oSheet.Cells(r, 8).Value & "")), "`", "") & ""
+                                            .Item("CUST_ADDR2") = ""
+                                            .Item("CUST_CITY") = Replace((Trim(oSheet.Cells(r, 11).Value & "")), "`", "") & ""
+                                            .Item("CUST_STATE") = Trim(oSheet.Cells(r, 12).Value & "")
+                                            .Item("CUST_ZIP_CODE") = Trim(oSheet.Cells(r, 13).Value & "")
+                                            .Item("CUST_COUNTRY") = "USA"
+                                            .Item("CUST_CONTACT") = "Receiving"
+                                            PHONEVAR = Replace((Trim(oSheet.Cells(r, 15).Value & "")), "-", "")
+                                            PHONEVAR = Replace((PHONEVAR & ""), " ", "")
+                                            .Item("CUST_PHONE") = PHONEVAR & ""
+                                            .Item("INIT_DATE") = DATETIME_STAMP
+                                            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                            .Item("LAST_DATE") = DATETIME_STAMP
+                                            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                            .Item("CUST_ADDR_NAME") = ""
+                                            .Item("CUST_ADDR_STATUS") = "A"
+                                            .Item("CUST_EMAIL") = ""
+                                            .Item("CUST_RANK") = Null
+                                            .Item("GLOBAL_LOCATION_NUMBER") = Trim(oSheet.Cells(r, 2).Value & "")
+                                        End With
+                                        dst.Tables("ARTCUSTM").Rows.Add(rowARTCUSTM)
+                                    Else
+                                        ERROR_CODEs.Add("Customer Store already present on Line No " & r)
+                                        Dim rowERROR_TBL As DataRow = Nothing
+                                        rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                                        With rowERROR_TBL
+                                            .Item("ERROR_CODE") = "Duplicate Customer/Store in Excel " & CUST_ADDR_CODE
+                                            .Item("ERROR_DETAIL") = "Ln# " & r
+                                        End With
+                                        dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                                    End If
+                                End If
+                        End Select
+                    End If
+                Catch ex As Exception
+                    MsgBox(ex.Message, MsgBoxStyle.OkOnly, "Errors In Updating Item Spreadsheet, Send to ABS")
+                    ' MsgBox("Errors In Updating Item Spreadsheet, Send to ABS")
+                    Exit Sub
+                End Try
+                r = r + 1
+            Loop
+            If ERROR_CODEs.Count <> 0 Then
+
+                If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                    Using F As New ASFMSGBF
+                        F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Import Errors have been identified", "DGJ")
+                    End Using
+                End If
+
+            Else
+                '  Stop ' GOOD TO UPDATE
+                MsgBox("This Excel File has been successfully Imported with no Errors. Click Excel Update to Update Database",
+                          MsgBoxStyle.OkOnly, "Verification")
+
+            End If
+
+        End If
+    End Sub
+
 End Class

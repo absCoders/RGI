@@ -478,7 +478,6 @@ Public Class POFVNLB1
         worksheet.Range(0, 0, 0, 18 - 1).Interior.Color = SpreadsheetGear.Colors.AliceBlue
         worksheet.Cells(1, 0, 1 + cdr, 18 - 1).Interior.Color = SpreadsheetGear.Colors.GhostWhite
 
-
         ' Headings
         worksheet.Range(0, 0, 0, COLS - 1).AutoFilter()
         For CX As Integer = 0 To COLS - 1
@@ -487,8 +486,6 @@ Public Class POFVNLB1
 
         worksheet.Cells(1, 0).Activate()
         worksheet.WindowInfo.FreezePanes = True
-
-        'worksheet.Protect("")
 
         workbook.SaveAs(ssgx, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
 
