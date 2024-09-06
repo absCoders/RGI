@@ -32,12 +32,20 @@ Public Class SOFATTR2
     Dim hotKeyPartOne As String = ""
     Dim xls_format As String = ".xls"
     Dim ORDR_NOs As New List(Of String)
+    Dim isLaptop As Boolean = False
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Me.KeyPreview = True 'used to grab hotkey combinations to circumvent this forms modality
+
+        If ASCMAIN1.DBS_COMPANY = "RGO" Or ASCMAIN1.DBS_SERVER = "RGO" Then
+            isLaptop = True
+        Else
+            isLaptop = False
+        End If
 
         With dst
             ASCMAIN1.sql = "Select * from ICTATTRQ where INIT_OPER = :PARM1"
@@ -169,26 +177,30 @@ Public Class SOFATTR2
             ASCMAIN1.sql = "SELECT * FROM ICTSTYL3 where STYLE_CODE = :PARM1"
             Create_TDA(.Tables.Add, "ICTSTYL3", "**", 0, False, "V", 0)
 
-            S.Length = 0
-            S.AppendLine("SELECT *")
-            S.AppendLine("FROM ECTPRCG1")
-            S.AppendLine("WHERE PRCG_NO = :PARM1")
-            ASCMAIN1.sql = S.ToString()
-            Create_TDA(.Tables.Add, "ECTPRCG1", "**", 0, True, "V", 1)
 
-            S.Length = 0
-            S.AppendLine("SELECT *")
-            S.AppendLine("FROM ECTPRCG2")
-            S.AppendLine("WHERE PRCG_NO = :PARM1")
-            ASCMAIN1.sql = S.ToString()
-            Create_TDA(.Tables.Add, "ECTPRCG2", "**", 2, True, "V", 2)
+            If Not isLaptop Then
+                S.Length = 0
+                S.AppendLine("SELECT *")
+                S.AppendLine("FROM ECTPRCG1")
+                S.AppendLine("WHERE PRCG_NO = :PARM1")
+                ASCMAIN1.sql = S.ToString()
+                Create_TDA(.Tables.Add, "ECTPRCG1", "**", 0, True, "V", 1)
 
-            S.Length = 0
-            S.AppendLine("SELECT *")
-            S.AppendLine("FROM ECTPRCG3")
-            S.AppendLine("WHERE PRCG_NO = :PARM1")
-            ASCMAIN1.sql = S.ToString()
-            Create_TDA(.Tables.Add, "ECTPRCG3", "**", 3, True, "V", 3)
+                S.Length = 0
+                S.AppendLine("SELECT *")
+                S.AppendLine("FROM ECTPRCG2")
+                S.AppendLine("WHERE PRCG_NO = :PARM1")
+                ASCMAIN1.sql = S.ToString()
+                Create_TDA(.Tables.Add, "ECTPRCG2", "**", 2, True, "V", 2)
+
+                S.Length = 0
+                S.AppendLine("SELECT *")
+                S.AppendLine("FROM ECTPRCG3")
+                S.AppendLine("WHERE PRCG_NO = :PARM1")
+                ASCMAIN1.sql = S.ToString()
+                Create_TDA(.Tables.Add, "ECTPRCG3", "**", 3, True, "V", 3)
+
+            End If
 
         End With
 
@@ -335,16 +347,18 @@ Public Class SOFATTR2
             rbadDir = "C:\"
         End If
 
-        Dim ECOM_LIST As New List(Of String)
-        ECOM_LIST.Add("")
-        Dim sql As New StringBuilder With {.Length = 0}
-        sql.AppendLine("SELECT ECOM_CODE FROM ECTECOM1 ORDER BY ECOM_CODE")
-        Dim tblE As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-        For Each rowE As DataRow In tblE.Rows
-            ECOM_LIST.Add(rowE.Item("ECOM_CODE").ToString & String.Empty)
-        Next
-        cboECOMPRICING.DataSource = ECOM_LIST
-        cboECOMPRICING.SelectedIndex = 0
+        If Not isLaptop Then
+            Dim ECOM_LIST As New List(Of String)
+            ECOM_LIST.Add("")
+            Dim sql As New StringBuilder With {.Length = 0}
+            sql.AppendLine("SELECT ECOM_CODE FROM ECTECOM1 ORDER BY ECOM_CODE")
+            Dim tblE As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+            For Each rowE As DataRow In tblE.Rows
+                ECOM_LIST.Add(rowE.Item("ECOM_CODE").ToString & String.Empty)
+            Next
+            cboECOMPRICING.DataSource = ECOM_LIST
+            cboECOMPRICING.SelectedIndex = 0
+        End If
 
         tab.Visible = False
 
@@ -741,7 +755,11 @@ Public Class SOFATTR2
                 .Groups("Screen Control").Items("Attribute Excel").Visible = ScreenMode
                 .Groups("Screen Control").Items("Import").Visible = True
                 .Groups("Screen Control").Items("Zip").Visible = ScreenMode
-                .Groups("Ecom Pricing").Visible = tf
+                If isLaptop Then
+                    .Groups("Ecom Pricing").Visible = False
+                Else
+                    .Groups("Ecom Pricing").Visible = tf
+                End If
                 SetOptionsVisible(ScreenMode)
             End With
         End If
