@@ -6,8 +6,8 @@ Public Class ARFCUSTX
     Dim ADDRESS() As String = {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3", _
              "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", _
              "CUST_CONTACT", "CUST_PHONE", "CUST_EXT", "CUST_FAX", "CUST_EMAIL", "GLOBAL_LOCATION_NUMBER"}
-    Dim ADDRESS_EXT() As String = {"CUST_ADDR2", "CUST_ADDR3", _
-          "CUST_COUNTRY", _
+    Dim ADDRESS_EXT() As String = {"CUST_ADDR3",
+          "CUST_COUNTRY",
          "CUST_CONTACT", "CUST_PHONE", "CUST_EXT", "CUST_FAX", "CUST_EMAIL"}
 
     Dim LAST_CHANGE_COLUMN_NAME As String
