@@ -160,8 +160,8 @@ Public Class WHFPNPK1
             End With
             dst.Tables("SOTSTAT1").PrimaryKey = New DataColumn() {dst.Tables("SOTSTAT1").Columns("XDATE")}
 
-            ASCMAIN1.sql = "select distinct o2.EDI_STYLE, o2.EDI_COLOR_CODE from edt846o1 o1, edt846o2 o2" & vbCrLf _
-                & "where trunc(o1.edi_report_date) = (select max(trunc(edi_report_date)) from edt846o1 where edi_report_date < = trunc(sysdate))" & vbCrLf _
+            ASCMAIN1.sql = "select distinct o2.EDI_STYLE, o2.EDI_COLOR_CODE from gen.edt846o1 o1, gen.edt846o2 o2" & vbCrLf _
+                & "where trunc(o1.edi_report_date) = (select max(trunc(edi_report_date)) from gen.edt846o1 where edi_report_date < = trunc(sysdate))" & vbCrLf _
                 & "And o2.EDI_OUTBOUND_DOC_NO = o1.EDI_OUTBOUND_DOC_NO" & vbCrLf _
                 & "and o2.EDI_MAINT_TYPE_CODE = '001'"
             Create_TDA(.Tables.Add, "EDT846OX", "**", 0, False)
@@ -216,7 +216,7 @@ Public Class WHFPNPK1
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.Gold
                 ElseIf New String() {"MIN_QTY_ECOM"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                ElseIf New String() {"QTY_IN_PICK", "QTY_SHIPPED", "AAVAIL"}.Contains(gcol.Key) Then
+                ElseIf New String() {"QQTY_IN_PICK", "QTY_SHIPPED", "AAVAIL"}.Contains(gcol.Key) Then
                     gcol.Hidden = True
                 End If
             Next
@@ -326,6 +326,11 @@ Public Class WHFPNPK1
                 If EMsg = "" Then
                     WHSE_CODE = rowICTWHSE1.Item("WHSE_CODE")
                     '  If Not ASCMAIN1.Logical_Open("WHTPACK1", WHSE_CODE) Then Exit Sub
+                End If
+
+            Case "Print"
+                If chkPICKONLY.Checked = True And Absx1.txtFor("LOCATION_CODE").Text & "" = "" Then
+                    EMsg = "Select a drop location for Pick replenishment"
                 End If
 
             Case "Update"
@@ -616,6 +621,13 @@ Public Class WHFPNPK1
                 Click_Command("View")
         End Select
     End Sub
+
+    Public Overrides Sub Prepare_for_View_Lookup_Special(ctl As Control, COLUMN_NAME As String, ByRef Optional sql_where As String = "", ByRef Optional Cancel As Boolean = False)
+        'MyBase.Prepare_for_View_Lookup_Special(ctl, COLUMN_NAME, sql_where, Cancel)
+        If COLUMN_NAME = "LOCATION_CODE" Then
+            sql_where = "LOCATION_USE = 'E'"
+        End If
+    End Sub
 #End Region
 
     Private Sub grdICTWHSEX_DoubleClickRow(sender As Object, e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdICTWHSEX.DoubleClickRow
@@ -898,6 +910,8 @@ Public Class WHFPNPK1
             MsgBox("Found Items with Picks flaged out of season", MsgBoxStyle.Exclamation, "Warning")
         End If
 
+        Absx1.txtFor("LOCATION_CODE").Text = rowICTWHSE1("WHSE_LOC_PNP") & ""
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
@@ -913,24 +927,39 @@ Public Class WHFPNPK1
             If String.IsNullOrEmpty(row("MAX_QTY_ECOM").ToString()) Then
                 row("MAX_QTY_ECOM") = 0
             End If
+            If String.IsNullOrEmpty(row("QTY_IN_PICK").ToString()) Then
+                row("QTY_IN_PICK") = 0
+            End If
         Next
 
-        For Each row As DataRow In dst.Tables("WHTPNPS1").Select("(QTY_IN_ECOM <> 0 and SHORTAGE < 1) and (EDI_STATUS = 'In-Active' or NOT_INSEASON = '1' or QTY_IN_ECOM > MAX_QTY_ECOM)")
+        For Each row As DataRow In dst.Tables("WHTPNPS1").Select("(QTY_IN_PICK <> 0 and SHORTAGE < 1) and (EDI_STATUS = 'In-Active' or NOT_INSEASON = '1' or QTY_IN_ECOM > MAX_QTY_ECOM)")
             ' Swap Route Sequences for putback
             row.Item("LOCATION_ROUTE_SEQ") = Val(ASCDATA1.GetDataValue("SELECT LOCATION_ROUTE_SEQ from WHTLOCM1 where LOCATION_CODE = '" & row.Item("ECOMM_LOC") & "'")) + 0
             row.Item("LOCATION_ROUTE_2") = Val(ASCDATA1.GetDataValue("SELECT LOCATION_ROUTE_SEQ from WHTLOCM1 where LOCATION_CODE = '" & row.Item("WHSE_LOC") & "'")) + 0
         Next
 
+        If chkPICKONLY.Checked And Absx1.txtFor("LOCATION_CODE").Text <> "" Then
+            For Each row As DataRow In dst.Tables("WHTPNPS1").Select("QTY_IN_ECOM > 0")
+                row.Item("ECOMM_LOC") = Absx1.txtFor("LOCATION_CODE").Text
+            Next
+            If Absx1.txtFor("LOCATION_CODE").Text <> rowICTWHSE1("WHSE_LOC_PNP") Then
+                ASCMAIN1.sql = $"update ICTWHSE1
+                                set WHSE_LOC_PNP = '{Absx1.txtFor("LOCATION_CODE").Text}'
+                                where WHSE_CODE = '{rowICTWHSE1("WHSE_CODE")}'"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            End If
+        End If
+
         'NOTE THAT THIS PRINT ROUTINE WAS USING THE DATA LAYER & DST THAT IS ASSOCIATED WITH THIS FORM   
         Dim sql As String = ""
-        Dim SubTitle As String = IIf(chkPICKONLY.Checked, "Fill Pick Qty", "")
+        Dim SubTitle As String = IIf(chkPICKONLY.Checked, "Fill Pick Qty Loc: " & Absx1.txtFor("LOCATION_CODE").Text, "")
 
         Print_Report_Begin()
         CR_params.Add("SUBT", SubTitle)
         Dim RPT As String = "WHRPNPK1"
 
         If chkPICKONLY.Checked Then
-            Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active' and {WHTPNPS1.QTY_IN_ECOM} + 1 < {WHTPNPS1.MAX_QTY_ECOM}")
+            Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.QTY_IN_PICK} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active'") ' and {WHTPNPS1.QTY_IN_ECOM} + 1 < {WHTPNPS1.MAX_QTY_ECOM}")
         Else
             Generate_Report(RPT, "E-Comm Styles - Replenish", "", "{WHTPNPS1.QTY_IN_WHSE} > 4 and {WHTPNPS1.SHORTAGE} > 0 and {WHTPNPS1.EDI_STATUS} = 'Active' and {WHTPNPS1.QTY_IN_WHSE} > {WHTPNPS1.QTY_IN_ECOM}")
 

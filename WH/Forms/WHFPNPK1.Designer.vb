@@ -320,6 +320,7 @@ Partial Class WHFPNPK1
         Dim Appearance117 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraTextEditor3 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkNotInSSN = New System.Windows.Forms.CheckBox()
         Me.chkPICKONLY = New System.Windows.Forms.CheckBox()
         Me.btnRefresh = New Infragistics.Win.Misc.UltraButton()
@@ -370,6 +371,7 @@ Partial Class WHFPNPK1
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl4.SuspendLayout()
         CType(Me.grdSOTPICKX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl9.SuspendLayout()
@@ -428,7 +430,7 @@ Partial Class WHFPNPK1
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 101
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 140
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Refresh"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3})
@@ -502,24 +504,36 @@ Partial Class WHFPNPK1
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 101)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 140)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.UltraTextEditor3)
         Me.UltraGroupBox3.Controls.Add(Me.chkNotInSSN)
         Me.UltraGroupBox3.Controls.Add(Me.chkPICKONLY)
         Me.UltraGroupBox3.Controls.Add(Me.btnRefresh)
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 101)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(189, 140)
         Me.UltraGroupBox3.TabIndex = 1
+        '
+        'UltraTextEditor3
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "LOCATION_CODE")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor3, True)
+        Me.Absx1.SetABSPrecedentKeys(Me.UltraTextEditor3, "WHSE_CODE")
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(33, 72)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4)
+        Me.UltraTextEditor3.Name = "UltraTextEditor3"
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(123, 25)
+        Me.UltraTextEditor3.TabIndex = 11
         '
         'chkNotInSSN
         '
         Me.chkNotInSSN.AutoSize = True
-        Me.chkNotInSSN.Location = New System.Drawing.Point(7, 71)
+        Me.chkNotInSSN.Location = New System.Drawing.Point(7, 108)
         Me.chkNotInSSN.Name = "chkNotInSSN"
         Me.chkNotInSSN.Size = New System.Drawing.Size(154, 20)
         Me.chkNotInSSN.TabIndex = 3
@@ -866,7 +880,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splShipments)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(771, 481)
         '
@@ -1339,7 +1353,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.splStats)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(771, 481)
         '
@@ -1594,7 +1608,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(775, 509)
         '
@@ -1622,7 +1636,7 @@ Partial Class WHFPNPK1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.tab1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(775, 509)
         '
@@ -1829,6 +1843,7 @@ Partial Class WHFPNPK1
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.UltraGroupBox3.PerformLayout()
+        CType(Me.UltraTextEditor3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl4.ResumeLayout(False)
         CType(Me.grdSOTPICKX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl9.ResumeLayout(False)
@@ -1918,4 +1933,5 @@ Partial Class WHFPNPK1
     Friend WithEvents grdSOTSTAT2 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents chkPICKONLY As CheckBox
     Friend WithEvents chkNotInSSN As CheckBox
+    Friend WithEvents UltraTextEditor3 As UltraWinEditors.UltraTextEditor
 End Class
