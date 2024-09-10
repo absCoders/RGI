@@ -531,8 +531,13 @@ Public Class ICFXLSWR
 
                         vendorEmails.Add(VEND_CODE, XLS_NO)
 
-                        ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
-                        Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
+                        'ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
+                        'Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
+
+                        Dim SEASON_CODE As String = "2025F"
+
+                        ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and SEASON_CODE = :PARM2"
+                        Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {VEND_CODE, SEASON_CODE})) + 1
 
                         With rowICTXLSW1
                             .Item("XLS_NO") = XLS_NO
@@ -542,7 +547,7 @@ Public Class ICFXLSWR
                             .Item("XLS_STATUS") = IIf(calcCodeMaintenanceMode, "C", "G") ' G = GENERATED, R = REPLIED, D = DELETED
                             .Item("XLS_DESC") = Mid(STYLE_CLASS_CODEs, 2)
                             .Item("REPLY_BY_DATE") = dteREPLY_BY_DATE.Value
-                            .Item("SEASON_CODE") = "2025F"
+                            .Item("SEASON_CODE") = SEASON_CODE
                             .Item("XLS_TYPE") = "R"
                             .Item("XLS_IMP_NO") = XLS_IMP_NO
                             .Item("XLS_SEQ_NO") = XLS_SEQ_NO
