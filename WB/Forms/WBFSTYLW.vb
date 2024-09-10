@@ -55,6 +55,8 @@ Public Class WBFSTYLW
     Private LASTMIN As Int64 = 0
     Private FTP_REMOTE_HOST As String = "regency-rib.com"
 
+    Private DISABLED_STYLES As New List(Of String)
+
 #Region "ABS Standard Routines"
     ' These Routines should be found in all Forms which Launch from the Menu.
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -465,6 +467,7 @@ Public Class WBFSTYLW
             sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
             sqls.AppendLine("   ON D1.STYLE_CODE  = S2.STYLE_CODE")
             sqls.AppendLine("   AND D1.COLOR_CODE = S2.COLOR_CODE")
+            sqls.AppendLine("   WHERE D1.WEB_IND = 'W'")
             sqls.AppendLine("   GROUP BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)), UPPER(D1.STYLE_CODE), UPPER(D1.COLOR_CODE), D1.ALT_FUT_QTY, D1.ALT_FUT_DATE")
             sqls.AppendLine("   ORDER BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE))")
             sqls.AppendLine("  )")
@@ -530,6 +533,8 @@ Public Class WBFSTYLW
             .Columns("FUT_AVAIL").Format = "###,##0"
             .Columns("FUT_AVAIL").Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
             .Columns("FUT_AVAIL").Header.Appearance.BackColor2 = Drawing.Color.Green
+
+            .Columns("DATE_DISABLED").Format = "MM/dd/yy"
         End With
 
         Create_Summary(grdWBTSTYLD, "STYLE_CODE", "Count")
@@ -3213,9 +3218,34 @@ Public Class WBFSTYLW
         ASCMAIN1.sql = SQLS.ToString()
         Dim MAX_GP As Int64 = Val(ASCDATA1.GetDataValue)
 
+        DISABLED_STYLES.Clear()
         For grp As Int64 = MIN_GP To MAX_GP
             CreateProductXmlALL(grp, DS)
         Next
+        If DISABLED_STYLES.Count > 0 Then
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Disabled Items"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine($"There Were {DISABLED_STYLES.Count} Styles Sent As Disabled.")
+            iMSG.AppendLine("")
+            iMSG.AppendLine("Do You Want To Mark Them As Inactive In Absoution?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult = MsgBoxResult.Yes Then
+                For Each DISABLED_STYLE As String In DISABLED_STYLES
+                    Dim fltr As String = $"STYLE_CODE = '{DISABLED_STYLE}'"
+                    For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(fltr)
+                        rowWBTSTYLD.Item("DATE_DISABLED") = Format(Now(), "MM/dd/yyyy")
+                        rowWBTSTYLD.Item("WEB_IND") = "I"
+                        rowWBTSTYLD.Item("STYLE_GROUP") = "999"
+                    Next
+                    'Also remove Style From Web Maint Screen.  9/5/24. W.R.
+                    Dim S As New System.Text.StringBuilder With {.Length = 0}
+                    S.AppendLine($"DELETE FROM WBTPAGED WHERE STYLE_CODE = '{DISABLED_STYLE}'")
+                    ASCMAIN1.sql = SQLS.ToString
+                    ASCDATA1.ExecuteSQL()
+                Next
+            End If
+        End If
         Me.Cursor = Cursors.Default
         MsgBox("GetType Your File" & vbCrLf & WB_PARM_PRODUCTS_DIR, vbOKOnly, "Complete")
     End Sub
@@ -3477,23 +3507,23 @@ Public Class WBFSTYLW
         Dim styleListAll As List(Of String) = New List(Of String)
         Dim styleListInactiveAll As List(Of String) = New List(Of String)
 
-        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-            Stop
-            batchFilter = String.Format("STYLE_CODE = '{0}'", "MTF24040")
+        'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+        '    Stop
+        '    batchFilter = String.Format("STYLE_CODE = '{0}'", "MTF24040")
+        'Else
+        If GroupNo = 999 Then
+            batchFilter = String.Format("STYLE_GROUP = 999")
         Else
-            If GroupNo = 999 Then
-                batchFilter = String.Format("STYLE_GROUP = 999")
-            Else
-                batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
-            End If
+            batchFilter = String.Format("WEB_IND = '{0}' AND STYLE_GROUP = {1}", "W", GroupNo)
         End If
+        'End If
 
         Try
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("Create Group " & GroupNo, "")
             'Dim productXML As New WBCITEM2(dst.Tables("WBTSTYLD"))
             shopSiteFilename = WB_PARM_PRODUCTS_DIR & "SHOP_" & DateTime.Now.ToString("yyyyMMddhhmm") & "_" & GroupNo & ".xml"
-            With New WBCITEMA(DS)
+            With New WBCITEMA(DS, DISABLED_STYLES)
                 Dim StyleCount As Int64 = 0
                 For Each rowWBTSTYLD As DataRow In dst.Tables("WBTSTYLD").Select(batchFilter)
 
