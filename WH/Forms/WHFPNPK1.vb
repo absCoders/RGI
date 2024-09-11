@@ -52,6 +52,7 @@ Public Class WHFPNPK1
                 .Columns.Add("LOCATION_ROUTE_2", GetType(System.Int64))
                 '.Columns.Add("MAX_AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(MAX_QTY_ECOM,ISNULL((QTY_IN_WHSE * PCT_QTY_ECOM /100),0))-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
                 .Columns.Add("MAX_AVAIL", GetType(System.Int64), "(ISNULL(QTY_IN_ECOM,0)-ISNULL(QTY_IN_PICK,0))*iif(NOT_INSEASON='1',0,1)")
+                .Columns.Add("CUSTOMERS", GetType(System.String))
             End With
             .Tables("WHTPNPS1").Columns("NOT_INSEASON").DefaultValue = "0"
             .Tables("WHTPNPS1").Columns("SET_QTY").DefaultValue = 1
@@ -799,8 +800,12 @@ Public Class WHFPNPK1
         For Each ROW As DataRow In dst.Tables("SOTPICKX").Select()
             Dim STYLE_CODE As String = ROW.Item("STYLE_CODE")
             Dim COLOR_CODE As String = ROW.Item("COLOR_CODE")
+            Dim CUST_NAME As String = ROW.Item("CUST_NAME")
             Dim rowWHTPNPS1 As DataRow = Get_WHTPNPS1(STYLE_CODE, COLOR_CODE)
             rowWHTPNPS1.Item("QTY_IN_PICK") = Val(rowWHTPNPS1.Item("QTY_IN_PICK") & "") + Val(ROW.Item("PICK_QTY") & "")
+            If Not rowWHTPNPS1.Item("CUSTOMERS").ToString.Contains(CUST_NAME) Then
+                rowWHTPNPS1.Item("CUSTOMERS") = rowWHTPNPS1.Item("CUSTOMERS") & ", " & CUST_NAME
+            End If
         Next
 
         ASCMAIN1.sql = "Select WHTLOCB1.*, LOCATION_ROUTE_SEQ from WHTLOCB1,WHTLOCM1" & vbCrLf _
