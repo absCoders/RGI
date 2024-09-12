@@ -15,6 +15,8 @@ Public Class ARFCUSTL
     Dim YR2 As String = ""
     Dim YR3 As String = ""
     Dim YR4 As String = ""
+    Dim YRFR As String = ""
+    Dim YRTO As String = ""
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -28,6 +30,9 @@ Public Class ARFCUSTL
         YR2 = (BaseYear - 1).ToString
         YR3 = (BaseYear - 2).ToString
         YR4 = (BaseYear - 3).ToString
+
+        YRFR = Now.AddYears(-2).Year.ToString().Substring(2, 2).ToString
+        YRTO = Now.Year.ToString().Substring(2, 2).ToString
 
         'Fill In The Gaps
         S.AppendLine("INSERT INTO ARTCUSTL")
@@ -110,6 +115,8 @@ Public Class ARFCUSTL
             S.AppendLine("SELECT ARTCUSTL.*, ARTCLST1.CLIST_DESC")
             S.AppendLine("FROM ARTCUSTL, ARTCLST1")
             S.AppendLine("WHERE ARTCUSTL.CLIST_CODE = ARTCLST1.CLIST_CODE")
+            S.AppendLine($"AND SUBSTR(ARTCLST1.CLIST_CODE,0,2) >= '{YRFR}'")
+            S.AppendLine($"AND SUBSTR(ARTCLST1.CLIST_CODE,0,2) <= '{YRTO}'")
             ASCMAIN1.sql = S.ToString
             Create_TDA(.Tables.Add, "ARTCUSTL", "**", 0, True)
             With .Tables("ARTCUSTL").Columns
@@ -120,6 +127,9 @@ Public Class ARFCUSTL
             S.Length = 0
             S.AppendLine("SELECT *")
             S.AppendLine("FROM ARTCLST1")
+            S.AppendLine($"WHERE SUBSTR(CLIST_CODE,0,2) >= '{YRFR}'")
+            S.AppendLine($"AND SUBSTR(CLIST_CODE,0,2) <= '{YRTO}'")
+
             ASCMAIN1.sql = S.ToString
             Create_TDA(.Tables.Add, "ARTCLST1", "**", 0, False)
             Create_TDA(.Tables.Add, "ARTCLSTF", "**", 0, False)
@@ -1321,5 +1331,9 @@ Public Class ARFCUSTL
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
+    End Sub
+
+    Private Sub grdARTCUSTX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdARTCUSTX.InitializeLayout
+
     End Sub
 End Class
