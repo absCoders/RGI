@@ -527,7 +527,7 @@ Public Class ECFPRC01
                 rowECTPRCG3.Item("SET_PRICE") = rowECTPRCG3.Item("STANDARD_PRICE").ToString & String.Empty
                 rowECTPRCG3.Item("IS_ECOM") = "0"
             Else
-                rowECTPRCG3.Item("SET_QTY") = rowECTESTYS.Item("SET_QTY").ToString & String.Empty
+                rowECTPRCG3.Item("SET_QTY") = Val(rowECTESTYS.Item("SET_QTY").ToString & String.Empty)
                 If Not IsNothing(rowECTESTYS.Item("ECOM_UNIT_PRICE")) Then
                     rowECTPRCG3.Item("ECOM_UNIT_PRICE") = Val(rowECTESTYS.Item("ECOM_UNIT_PRICE").ToString & String.Empty)
                 End If

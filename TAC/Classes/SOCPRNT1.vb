@@ -839,7 +839,7 @@ Public Class CartonLabel
         Return labelTemplate
     End Function
 
-    Private Shared Function FillSOTCART2(ByVal CART_NO As String, ByVal MaxRows As Integer, ByRef labelData As Dictionary(Of String, DataRow), Optional WarnIfMax As Boolean = False, Optional MaxDescLen As Integer = 0) As String
+    Private Shared Function FillSOTCART2(ByVal CART_NO As String, ByVal CUST_CODE As String, ByVal MaxRows As Integer, ByRef Row As DataRow, ByRef labelData As Dictionary(Of String, DataRow), Optional WarnIfMax As Boolean = False, Optional MaxDescLen As Integer = 0) As String
         Dim RetVal As String = ""
         Dim z As Integer = 0
         Dim S As New Text.StringBuilder With {.Length = 0}
@@ -903,6 +903,15 @@ Public Class CartonLabel
                     rowSOTCART2.Item("UPC_CODE_" & Format(z, "0#")) = rowSOTCARTX.Item("UPC_CODE").ToString & ""
                     rowSOTCART2.Item("QTY_PACKED_" & Format(z, "0#")) = rowSOTCARTX.Item("QTY_PACKED").ToString & ""
                 Next
+                If CUST_CODE = "COSTCOUS" And z > 1 Then
+                    Row.Item("EDI_SKU") = "Mixed"
+                    rowSOTCART2.Item("STYLE_CODE_" & Format(1, "0#")) = "Mixed"
+                    rowSOTCART2.Item("STYLE_DESC_" & Format(1, "0#")) = "Mixed"
+                    rowSOTCART2.Item("COLOR_CODE_" & Format(1, "0#")) = "AST"
+                    rowSOTCART2.Item("SIZE_DESC_" & Format(1, "0#")) = "AST"
+                    rowSOTCART2.Item("UPC_CODE_" & Format(1, "0#")) = "AST"
+                    rowSOTCART2.Item("QTY_PACKED_" & Format(1, "0#")) = Val(rowSOTCART2.Item("CART_TOTAL_UNITS").ToString & "")
+                End If
                 labelData.Add("SOTCART2", rowSOTCART2)
             Else
                 S.Length = 0
@@ -1072,7 +1081,7 @@ Public Class CartonLabel
                 If Row.Item("CUST_STORE_NO").ToString.Length > 4 Then
                     Row.Item("CUST_STORE_NO") = Row.Item("CUST_STORE_NO").ToString.Substring(Row.Item("CUST_STORE_NO").ToString.Length - 4, 4)
                 End If
-                Dim Msg As String = FillSOTCART2(CART_NO, 3, labelData, , 25)
+                Dim Msg As String = FillSOTCART2(CART_NO, CUST_CODE, 3, Row, labelData, , 25)
                 If Msg.Length > 0 Then
                     CartonError = Msg
                 End If

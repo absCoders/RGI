@@ -2244,36 +2244,36 @@ Public Class SOFXFER2
         'VersionInfo.AppendLine(VersionNo)
         'VersionInfo.AppendLine("* Software Updates Are Locked With Passwords.")
 
-        VersionNo = "23.01.26.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change SO Excel To Show Order List Price.")
-        VersionInfo.AppendLine("* Proviid Multiple Days Of Passwords.")
+        'VersionNo = "23.01.26.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change SO Excel To Show Order List Price.")
+        'VersionInfo.AppendLine("* Proviid Multiple Days Of Passwords.")
 
-        VersionNo = "23.02.22.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change SO Extended PVC for Importing.")
+        'VersionNo = "23.02.22.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change SO Extended PVC for Importing.")
 
-        VersionNo = "23.06.30.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change SO Excel To Show List From MF when Order Is Missing.")
+        'VersionNo = "23.06.30.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change SO Excel To Show List From MF when Order Is Missing.")
 
-        VersionNo = "23.08.03.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change Search By Attribute For Stock/Non-Stock.")
+        'VersionNo = "23.08.03.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change Search By Attribute For Stock/Non-Stock.")
 
-        VersionNo = "23.09.4.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change Order Transfer set Date Received & Init to Today.")
+        'VersionNo = "23.09.4.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change Order Transfer set Date Received & Init to Today.")
 
-        VersionNo = "23.11.30.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change Order Printing To Show Sub-UPCs.")
+        'VersionNo = "23.11.30.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change Order Printing To Show Sub-UPCs.")
 
         VersionNo = "24.02.15.03"
         VersionInfo.AppendLine("")
@@ -2303,7 +2303,12 @@ Public Class SOFXFER2
         VersionNo = "24.07.25.01"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change To Customer Matrix to show all orders for SR.")
+        VersionInfo.AppendLine("* Change To Customer Matrix to show all orders.")
+
+        VersionNo = "24.09.06.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Fix Issue With Search By Attribute To Ignore ECommerce When Running On Laptops.")
 
         lblVersionNo.Text = VersionNo
     End Sub

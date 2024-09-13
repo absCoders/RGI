@@ -47,6 +47,15 @@ Public Class EDTXREF4
                 If rowEDTTRPM1 Is Nothing Then
                     EMsg &= vbCr & "Qualifer and ID combination cannot be found in EDTTRPM1."
                 End If
+                'validate store number needed here due to multipart key
+                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text.Trim
+                'Dim CUST_ADDR_TYPE As String = "MK"
+                Dim CUST_STORE_NO As String = Absx1.txtFor("CUST_STORE_NO").Text.Trim
+                Dim rowARTCUST2 As DataRow = ASCDATA1.GetDataRow($"SELECT * FROM ARTCUST2 WHERE CUST_CODE = '{CUST_CODE}' and CUST_ADDR_TYPE = 'MK' and CUST_ADDR_CODE = '{CUST_STORE_NO}'")
+                If rowARTCUST2 Is Nothing Then
+                    EMsg &= "Store Number not found in Customer Address file"
+                End If
+
 
         End Select
     End Sub

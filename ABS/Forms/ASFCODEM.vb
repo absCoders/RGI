@@ -1079,7 +1079,11 @@ Public Class ASFCODEM
                 If EntryMode = "Defaults" Then
                 Else
                     Proceed_PreReq_Special(eItemKey)
-                    Validate_Lookups(Me)
+                    If ASCMAIN1.CLIENT = "RGI" And Me.Text = "EDTXREF4" Then
+                        'this screen uses multi key validation which code below doesn't support.
+                    Else
+                        Validate_Lookups(Me)
+                    End If
                 End If
 
 
