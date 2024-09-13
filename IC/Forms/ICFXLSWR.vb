@@ -529,12 +529,12 @@ Public Class ICFXLSWR
                         Dim XLS_NO As String = ASCMAIN1.Next_Control_No("ICTXLSW1.XLS_NO")
                         Dim XLS_IMP_NO As String = ASCMAIN1.Next_Control_No("ICTXLSW2.XLS_IMP_NO")
 
+                        Dim SEASON_CODE As String = "2025F"
+
                         vendorEmails.Add(VEND_CODE, XLS_NO)
 
                         'ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
                         'Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
-
-                        Dim SEASON_CODE As String = "2025F"
 
                         ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and SEASON_CODE = :PARM2"
                         Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {VEND_CODE, SEASON_CODE})) + 1
