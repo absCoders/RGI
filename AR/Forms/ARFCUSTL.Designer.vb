@@ -424,7 +424,7 @@ Partial Class ARFCUSTL
         '
         'btnRefreshList
         '
-        Me.btnRefreshList.Location = New System.Drawing.Point(6, 91)
+        Me.btnRefreshList.Location = New System.Drawing.Point(6, 124)
         Me.btnRefreshList.Name = "btnRefreshList"
         Me.btnRefreshList.Size = New System.Drawing.Size(177, 23)
         Me.btnRefreshList.TabIndex = 186
@@ -462,7 +462,7 @@ Partial Class ARFCUSTL
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1119, 554)
         '
@@ -826,7 +826,7 @@ Partial Class ARFCUSTL
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdARTLIST)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1119, 554)
         '
