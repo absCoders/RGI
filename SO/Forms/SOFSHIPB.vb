@@ -247,7 +247,7 @@ Public Class SOFSHIPB
                      & ", DECODE(SOTORDR0.EDI_DOC_SEQ_NO, NULL, nvl(SOTSHIPB.SHIP_TO_STATE,SOTORDR5.CUST_STATE),  DECODE(SOTORDR1.ECOM_CODE, NULL, NULL, nvl(SOTSHIPB.SHIP_TO_STATE,SOTORDR5.CUST_STATE))) SHIP_TO_STATE" _
                      & ", DECODE(SOTORDR0.EDI_DOC_SEQ_NO, NULL, nvl(SOTSHIPB.SHIP_TO_ZIP_CODE,SOTORDR5.CUST_ZIP_CODE), DECODE(SOTORDR1.ECOM_CODE, NULL, NULL, nvl(SOTSHIPB.SHIP_TO_ZIP_CODE,SOTORDR5.CUST_ZIP_CODE))) SHIP_TO_ZIP_CODE" _
                      & ", NVL(SOTSHIPB.SHIP_FREIGHT, 0) SHIP_FREIGHT" _
-                     & ", NVL(SOTSHIPB.SHIP_FREIGHT_EST, 0) SHIP_FREIGHT_EST_B, 0 SHIP_VALUE, 0 TOT_CUST_PT, 0 VALUE_CUST_PT" _
+                     & ", NVL(SOTSHIPB.SHIP_FREIGHT_EST, 0) SHIP_FREIGHT_EST_B, 0 SHIP_VALUE, 0 TOT_CUST_PT, 0 VALUE_CUST_PT, SOTORDR0.ORDR_TYPE_CODE" _
                      & " from SOTSHIP1, SOTORDR0, SOTORDR1, ICTWHSE1, ARTCUST1, SOTSHIPB, SOTORDR5" _
                      & " where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" _
                      & " And SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" _
@@ -987,7 +987,7 @@ Public Class SOFSHIPB
             Select Case ASCMAIN1.CLIENT
                 Case "RGI"
                     Dim startCol As Integer = .Columns("WHSE_CODE").Header.VisiblePosition
-                    For Each COLUMN_NAME As String In New String() {"SHIP_DATE_SHIPPED", "SHIP_VIA_CODE", "SHIP_REF"}
+                    For Each COLUMN_NAME As String In New String() {"ORDR_TYPE_CODE", "SHIP_DATE_SHIPPED", "SHIP_VIA_CODE", "SHIP_REF"}
                         .Columns(COLUMN_NAME).Header.VisiblePosition = startCol
                         startCol += 1
                     Next
@@ -1006,6 +1006,7 @@ Public Class SOFSHIPB
             .Columns("SHIP_CNT_PALLETS").Hidden = Not ASCMAIN1.CLIENT = "RGI"
             .Columns("SHIP_TOTAL_WGT").Hidden = Not ASCMAIN1.CLIENT = "RGI"
             .Columns("SHIP_CNT_CARTONS").Hidden = Not ASCMAIN1.CLIENT = "RGI"
+            .Columns("ORDR_TYPE_CODE").Hidden = Not ASCMAIN1.CLIENT = "RGI"
 
             If isEcommProcessing Then
                 .Columns("ORDR_CANCEL_DATE").Header.Fixed = True

@@ -335,6 +335,7 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn575 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_TO_ZIP_CODE", 4)
         Dim UltraGridColumn576 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_SALES", 5)
         Dim UltraGridColumn577 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHIP_CNT_PALLETS", 6)
+        Dim UltraGridColumn771 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_TYPE_CODE", 7)
         Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTSHIPX_SOTINVHX", 0)
         Dim UltraGridColumn581 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_NO")
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -2349,11 +2350,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, -14)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2501,11 +2501,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 240)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 149)
         Me.UltraExplorerBarContainerControl7.TabIndex = 8
-        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2593,11 +2592,10 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 433)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 207)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
-        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'grpDevices
         '
@@ -4178,8 +4176,8 @@ Partial Class SOFSHIPB
         UltraGridColumn8.Header.VisiblePosition = 8
         UltraGridColumn53.Header.Caption = "Appt No"
         UltraGridColumn53.Header.VisiblePosition = 5
-        UltraGridColumn580.Header.VisiblePosition = 80
-        UltraGridColumn590.Header.VisiblePosition = 79
+        UltraGridColumn580.Header.VisiblePosition = 81
+        UltraGridColumn590.Header.VisiblePosition = 80
         UltraGridColumn521.Header.Caption = "Ship To"
         UltraGridColumn521.Header.VisiblePosition = 14
         UltraGridColumn521.Hidden = True
@@ -4201,7 +4199,10 @@ Partial Class SOFSHIPB
         UltraGridColumn577.Header.Caption = "Pallets"
         UltraGridColumn577.Header.VisiblePosition = 27
         UltraGridColumn577.Hidden = True
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn93, UltraGridColumn97, UltraGridColumn130, UltraGridColumn131, UltraGridColumn132, UltraGridColumn133, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn163, UltraGridColumn164, UltraGridColumn166, UltraGridColumn167, UltraGridColumn168, UltraGridColumn169, UltraGridColumn170, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn181, UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190, UltraGridColumn191, UltraGridColumn192, UltraGridColumn193, UltraGridColumn194, UltraGridColumn195, UltraGridColumn196, UltraGridColumn197, UltraGridColumn198, UltraGridColumn199, UltraGridColumn200, UltraGridColumn201, UltraGridColumn202, UltraGridColumn203, UltraGridColumn204, UltraGridColumn205, UltraGridColumn206, UltraGridColumn241, UltraGridColumn243, UltraGridColumn244, UltraGridColumn245, UltraGridColumn259, UltraGridColumn260, UltraGridColumn261, UltraGridColumn263, UltraGridColumn264, UltraGridColumn366, UltraGridColumn579, UltraGridColumn578, UltraGridColumn601, UltraGridColumn27, UltraGridColumn464, UltraGridColumn467, UltraGridColumn536, UltraGridColumn537, UltraGridColumn8, UltraGridColumn53, UltraGridColumn580, UltraGridColumn590, UltraGridColumn521, UltraGridColumn522, UltraGridColumn523, UltraGridColumn574, UltraGridColumn575, UltraGridColumn576, UltraGridColumn577})
+        UltraGridColumn771.Header.Caption = "O/T"
+        UltraGridColumn771.Header.VisiblePosition = 79
+        UltraGridColumn771.Width = 45
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn93, UltraGridColumn97, UltraGridColumn130, UltraGridColumn131, UltraGridColumn132, UltraGridColumn133, UltraGridColumn160, UltraGridColumn161, UltraGridColumn162, UltraGridColumn163, UltraGridColumn164, UltraGridColumn166, UltraGridColumn167, UltraGridColumn168, UltraGridColumn169, UltraGridColumn170, UltraGridColumn171, UltraGridColumn172, UltraGridColumn173, UltraGridColumn174, UltraGridColumn175, UltraGridColumn176, UltraGridColumn177, UltraGridColumn178, UltraGridColumn179, UltraGridColumn180, UltraGridColumn181, UltraGridColumn182, UltraGridColumn183, UltraGridColumn184, UltraGridColumn185, UltraGridColumn186, UltraGridColumn187, UltraGridColumn188, UltraGridColumn189, UltraGridColumn190, UltraGridColumn191, UltraGridColumn192, UltraGridColumn193, UltraGridColumn194, UltraGridColumn195, UltraGridColumn196, UltraGridColumn197, UltraGridColumn198, UltraGridColumn199, UltraGridColumn200, UltraGridColumn201, UltraGridColumn202, UltraGridColumn203, UltraGridColumn204, UltraGridColumn205, UltraGridColumn206, UltraGridColumn241, UltraGridColumn243, UltraGridColumn244, UltraGridColumn245, UltraGridColumn259, UltraGridColumn260, UltraGridColumn261, UltraGridColumn263, UltraGridColumn264, UltraGridColumn366, UltraGridColumn579, UltraGridColumn578, UltraGridColumn601, UltraGridColumn27, UltraGridColumn464, UltraGridColumn467, UltraGridColumn536, UltraGridColumn537, UltraGridColumn8, UltraGridColumn53, UltraGridColumn580, UltraGridColumn590, UltraGridColumn521, UltraGridColumn522, UltraGridColumn523, UltraGridColumn574, UltraGridColumn575, UltraGridColumn576, UltraGridColumn577, UltraGridColumn771})
         Appearance27.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn581.Header.Appearance = Appearance27
         UltraGridColumn581.Header.Caption = "Invoice No"
@@ -4930,7 +4931,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splSOTPICK2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1005, 243)
         '
@@ -6326,7 +6327,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl19
         '
         Me.UltraTabPageControl19.Controls.Add(Me.splWHTSHPC4)
-        Me.UltraTabPageControl19.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
         Me.UltraTabPageControl19.Size = New System.Drawing.Size(1005, 243)
         '
@@ -8919,7 +8920,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1013, 570)
         '
@@ -8952,7 +8953,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1013, 570)
         '

@@ -21,11 +21,13 @@ Public Class WBCITEMA
     Private data As DataSet
     Private BASE As New ASFBASE0
     Private testing As Boolean = False
+    Private DISABLED_STYLES As List(Of String)
 
 #Region "Class Public Methods"
-    Public Sub New(ByRef _data As DataSet)
+    Public Sub New(ByRef _data As DataSet, ByRef _DISABLED_STYLES As List(Of String))
         Me.InitiailizeClass()
         data = _data
+        DISABLED_STYLES = _DISABLED_STYLES
     End Sub
 
     Public Sub Clear()
@@ -1177,6 +1179,10 @@ Public Class WBCITEMA
     End Function
 
     Private Function GetProductDisabled(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal isParent As Boolean, ByRef rowWBTSTYLD As DataRow) As String
+        'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+        '    If STYLE_CODE = "MT24880" Then Stop
+        'End If
+
         Dim RetVal As String = "uncheck"
         Dim hasValidColor As Boolean = False
         Dim filter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
@@ -1221,8 +1227,23 @@ Public Class WBCITEMA
         If AVL > 0 Then
             hasValidColor = True
         End If
-        If Not hasValidColor Then
+        If hasValidColor Then
+            If DISABLED_STYLES.Contains(STYLE_CODE) Then
+                DISABLED_STYLES.Remove(STYLE_CODE)
+            End If
+        Else
             RetVal = "checked"
+            If Not DISABLED_STYLES.Contains(STYLE_CODE) Then
+                DISABLED_STYLES.Add(STYLE_CODE)
+            End If
+            'Dim DATE_DISABLED As String = rowWBTSTYLD.Item("DATE_DISABLED").ToString & String.Empty
+            'Dim WEB_IND As String = rowWBTSTYLD.Item("WEB_IND").ToString & String.Empty
+            'Dim STYLE_GROUP As String = rowWBTSTYLD.Item("STYLE_GROUP").ToString & String.Empty
+            'If DATE_DISABLED.Length = 0 And WEB_IND = "W" And STYLE_GROUP <> "999" Then
+            '    rowWBTSTYLD.Item("DATE_DISABLED") = Format(Now(), "MM/DD/YYYY")
+            '    rowWBTSTYLD.Item("WEB_IND") = "I"
+            '    rowWBTSTYLD.Item("STYLE_GROUP") = "999"
+            'End If
         End If
         Return RetVal
     End Function
