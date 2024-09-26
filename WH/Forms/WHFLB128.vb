@@ -714,6 +714,7 @@ Public Class WHFLB128
                 printingPickTickets = True
                 Print_Pick_Tickets("")
                 Print_Documents()
+                printingPickTickets = False
 
             Case "Pallet Labels"
                 Print_Pallet_labels()
