@@ -927,14 +927,36 @@ Public Class CartonLabel
                     rowSOTCART2.Table.Columns.Add("QTY_PACKED_" & Format(i, "0#"))
                 Next
 
+                If CUST_CODE = "COSTCOUS" Then
+                    ASCMAIN1.sql = $"select EDI_SKU, EDI_STYLE_NAME from EDT850T2
+                                    where (edi_doc_seq_no, edi_dtl_seq) in (
+                                    select edi_doc_seq_no, edi_dtl_seq from SOTORDR2, SOTCART2
+                                    where SOTORDR2.ORDR_NO = SOTCART2.ORDR_NO
+                                    and SOTORDR2.ORDR_LNO = SOTCART2.ORDR_LNO
+                                    and SOTCART2.CART_NO = '{CART_NO}')"
+                    Dim rowEDISKU As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
+                    If rowEDISKU IsNot Nothing Then
+                        Row.Item("EDI_SKU") = rowEDISKU("EDI_SKU") & ""
+                        rowSOTCART2.Item("STYLE_CODE_" & Format(1, "0#")) = rowEDISKU("EDI_SKU") & ""
+                        rowSOTCART2.Item("STYLE_DESC_" & Format(1, "0#")) = rowEDISKU("EDI_STYLE_NAME") & ""
+                        rowSOTCART2.Item("COLOR_CODE_" & Format(1, "0#")) = "AST"
+                        rowSOTCART2.Item("SIZE_DESC_" & Format(1, "0#")) = "AST"
+                        rowSOTCART2.Item("UPC_CODE_" & Format(1, "0#")) = "AST"
+                        rowSOTCART2.Item("QTY_PACKED_" & Format(1, "0#")) = Val(rowSOTCART2.Item("CART_TOTAL_UNITS").ToString & "")
+                        labelData.Add("SOTCART2", rowSOTCART2)
+                    Else
+                        Throw New Exception("Costco Label EDI SKU not found")
+                    End If
+                Else
 
-                rowSOTCART2.Item("STYLE_CODE_" & Format(1, "0#")) = RANGE_STYLE_CODE
-                rowSOTCART2.Item("STYLE_DESC_" & Format(1, "0#")) = ""
-                rowSOTCART2.Item("COLOR_CODE_" & Format(1, "0#")) = "AST"
-                rowSOTCART2.Item("SIZE_DESC_" & Format(1, "0#")) = "AST"
-                rowSOTCART2.Item("UPC_CODE_" & Format(1, "0#")) = "AST"
-                rowSOTCART2.Item("QTY_PACKED_" & Format(1, "0#")) = Val(rowSOTCART2.Item("CART_TOTAL_UNITS").ToString & "")
-                labelData.Add("SOTCART2", rowSOTCART2)
+                    rowSOTCART2.Item("STYLE_CODE_" & Format(1, "0#")) = RANGE_STYLE_CODE
+                    rowSOTCART2.Item("STYLE_DESC_" & Format(1, "0#")) = ""
+                    rowSOTCART2.Item("COLOR_CODE_" & Format(1, "0#")) = "AST"
+                    rowSOTCART2.Item("SIZE_DESC_" & Format(1, "0#")) = "AST"
+                    rowSOTCART2.Item("UPC_CODE_" & Format(1, "0#")) = "AST"
+                    rowSOTCART2.Item("QTY_PACKED_" & Format(1, "0#")) = Val(rowSOTCART2.Item("CART_TOTAL_UNITS").ToString & "")
+                    labelData.Add("SOTCART2", rowSOTCART2)
+                End If
             End If
         End If
         Return RetVal
