@@ -1666,6 +1666,16 @@ Public Class SOFSHIP0
                     End If
                 End If
 
+                ' Verify that the Shipment status hasn't changed since the record was loaded, avoid duplicate invoicing
+                For Each SHIP_BOL_NO As String In SHIP_BOL_NOs
+                    Dim rowSOTSHIP1 As DataRow = LookUp("SOTSHIP1", SHIP_BOL_NO)
+                    If rowSOTSHIP1("SHIP_STATUS") & "" = "F" Then
+                        EMsg &= vbCr & $"Shipment Status is Finalized for Shipment '{SHIP_BOL_NO}', Possible double billing, Check Shipment."
+                    End If
+                Next
+
+
+
                 ' Clean Up SOTINVHM
                 If EMsg.Length = 0 Then
                     dst.Tables("SOTINVHM").AcceptChanges()
