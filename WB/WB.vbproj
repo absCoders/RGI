@@ -200,6 +200,12 @@
     <Compile Include="Classes\WBCSHIPT.vb" />
     <Compile Include="Classes\WBCNXTPN.vb" />
     <Compile Include="Classes\WBCNXTPA.vb" />
+    <Compile Include="Forms\WBFIMGWB.Designer.vb">
+      <DependentUpon>WBFIMGWB.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WBFIMGWB.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WBFIMGLT.Designer.vb">
       <DependentUpon>WBFIMGLT.vb</DependentUpon>
     </Compile>
@@ -355,6 +361,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\WBFIMGWB.resx">
+      <DependentUpon>WBFIMGWB.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WBFIMGLT.resx">
       <DependentUpon>WBFIMGLT.vb</DependentUpon>
     </EmbeddedResource>

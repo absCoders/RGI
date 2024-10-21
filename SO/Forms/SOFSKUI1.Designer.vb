@@ -222,12 +222,12 @@ Partial Class SOFSKUI1
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblDESIGNER_STYLE = New System.Windows.Forms.Label()
         Me.btnShowPromo = New System.Windows.Forms.Button()
         Me.lblPromo = New System.Windows.Forms.Label()
         Me.lblEXCLUSIVE_STYLE = New System.Windows.Forms.Label()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.lblDESIGNER_STYLE = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -439,7 +439,7 @@ Partial Class SOFSKUI1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 184)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 114)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 130)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -537,7 +537,7 @@ Partial Class SOFSKUI1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 358)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 288)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -575,7 +575,7 @@ Partial Class SOFSKUI1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 552)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 482)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -1867,6 +1867,19 @@ Partial Class SOFSKUI1
         Me.UltraGroupBox1.Size = New System.Drawing.Size(967, 68)
         Me.UltraGroupBox1.TabIndex = 6
         '
+        'lblDESIGNER_STYLE
+        '
+        Me.lblDESIGNER_STYLE.AutoSize = True
+        Me.lblDESIGNER_STYLE.BackColor = System.Drawing.Color.Yellow
+        Me.lblDESIGNER_STYLE.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblDESIGNER_STYLE.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblDESIGNER_STYLE.Location = New System.Drawing.Point(227, 30)
+        Me.lblDESIGNER_STYLE.Name = "lblDESIGNER_STYLE"
+        Me.lblDESIGNER_STYLE.Size = New System.Drawing.Size(121, 19)
+        Me.lblDESIGNER_STYLE.TabIndex = 3
+        Me.lblDESIGNER_STYLE.Text = "Designer Style"
+        Me.lblDESIGNER_STYLE.Visible = False
+        '
         'btnShowPromo
         '
         Me.btnShowPromo.Location = New System.Drawing.Point(366, 27)
@@ -1922,19 +1935,6 @@ Partial Class SOFSKUI1
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(963, 612)
-        '
-        'lblDESIGNER_STYLE
-        '
-        Me.lblDESIGNER_STYLE.AutoSize = True
-        Me.lblDESIGNER_STYLE.BackColor = System.Drawing.Color.Yellow
-        Me.lblDESIGNER_STYLE.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.lblDESIGNER_STYLE.Font = New System.Drawing.Font("Verdana", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblDESIGNER_STYLE.Location = New System.Drawing.Point(227, 30)
-        Me.lblDESIGNER_STYLE.Name = "lblDESIGNER_STYLE"
-        Me.lblDESIGNER_STYLE.Size = New System.Drawing.Size(121, 19)
-        Me.lblDESIGNER_STYLE.TabIndex = 3
-        Me.lblDESIGNER_STYLE.Text = "Designer Style"
-        Me.lblDESIGNER_STYLE.Visible = False
         '
         'SOFSKUI1
         '
