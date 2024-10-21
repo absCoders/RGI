@@ -55,6 +55,7 @@ Public Class SOROREL1
     Dim blnFORCE_PICK As Boolean = False
     Dim blnREL_PAST_CANCEL As Boolean = False
     Dim blnRELEASE_FUT As Boolean = False
+    Dim bln846_UPDATE As Boolean = False
 
     Dim numCANCEL_FUTURE_DAYS As Integer = 0
 
@@ -99,6 +100,12 @@ Public Class SOROREL1
             If ASCMAIN1.DBS_SERVER <> ASCMAIN1.DBS_COMPANY Then
                 chkRelFutAvail.Visible = True
             End If
+        End If
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            chk846Update.Visible = True
+        Else
+            chk846Update.Visible = False
         End If
 
         dteSHIP_DATE.CalendarInfo.MaxSelectedDays = 1
@@ -274,6 +281,7 @@ Public Class SOROREL1
 
         blnALLOCATION_ONLY = Absx1.chkFor("CHKALLOCATION_ONLY").Checked
         blnFORCE_PICK = Absx1.chkFor("CHKFORCE_PICK").Checked
+        bln846_UPDATE = Absx1.chkFor("CHK846_UPDATE").Checked ' RGI only
         selWHSE = Absx1.optFor("OPTWHSE").Value
 
         SQL_ins.Clear()
@@ -518,12 +526,12 @@ Public Class SOROREL1
             Next
         Else
 
-            TAC.SOCMAIN1.Allocation(Me, _
-                blnFORCE_PICK, _
-                blnALLOCATION_ONLY, _
-                 IIf(selWHSE = "A", "", WHSE_CODE), _
-                 ORDR_GROUP_NO_sql, edi850cust, _
-                SOTSUPP1, SOTDEMD1, TABLE_NAMEs, , (ROWs("SOTPARM1").Item("SO_PARM_ALLO_SEQ") & "" = "1"), "", "", manual_release, chkCustCreditHold.Checked)
+            TAC.SOCMAIN1.Allocation(Me,
+                blnFORCE_PICK,
+                blnALLOCATION_ONLY,
+                 IIf(selWHSE = "A", "", WHSE_CODE),
+                 ORDR_GROUP_NO_sql, edi850cust,
+                SOTSUPP1, SOTDEMD1, TABLE_NAMEs, , (ROWs("SOTPARM1").Item("SO_PARM_ALLO_SEQ") & "" = "1"), "", "", manual_release, chkCustCreditHold.Checked, True, bln846_UPDATE)
 
         End If
 
@@ -3608,6 +3616,27 @@ Public Class SOROREL1
                     If LookUp("ECTECOM1", Absx1.txtFor("ECOM_CODE").Text) Is Nothing Then
                         EMsg &= vbCr & "e-Commerce Release must specify a valid e-Commerce Partner"
                     End If
+                End If
+            End If
+            If chk846Update.Checked Then
+                If Not chkAllocateNoRelease.Checked Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when releasing orders"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("CUST_CODE")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Customers are selected"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Order Groups are selected"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("SALES_DIVISION_CODE")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Sales Divisions are selected"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("TERM_CODE")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Terms are selected"
                 End If
             End If
         End If
