@@ -6,7 +6,7 @@ Public Class WHFQACT1
     Dim sqlWHTQACTX As String = ""
 
     Dim ORDR_NO As String
-    Dim CUST_CODE As String = "('KOHLS','MEIJER')"
+    Dim CUST_CODE As String = "('KOHLS','MEIJER','BOSCOVS')"
 
     Dim rowARTCUST1 As DataRow
     Dim SOTORDR0 As String
