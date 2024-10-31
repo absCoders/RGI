@@ -288,6 +288,13 @@
 
         Update_Record_TDA("WHTPICKS")
 
+        ASCMAIN1.sql = "INSERT INTO ASTNOTEM " &
+                       "Select 'SHORTAGES' NOTE_CODE, " &
+                       "NVL((SELECT max(SEND_LNO) FROM ASTNOTEM WHERE NOTE_CODE = 'SHORTAGES'), 0) + 1 SEND_LNO, " &
+                       $"'Units Found {STYLE_CODE}-{COLOR_CODE}' NOTE_MEMO " &
+                       "from DUAL"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
         CommitTrans()
 
         CASES_MOVED = 0
