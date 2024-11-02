@@ -2921,10 +2921,15 @@ Public Class SOFSHIPB
 
                         Case "SP"
                             If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSSurePost1LBOrGreater Then
-                                EMsg &= vbCr & "QVC requests the shipment ship UPS SurePost"
+                                EMsg &= vbCr & "QVC requests the shipment ship UPS SurePost 1 lb or Greater"
                                 Exit Select
                             End If
 
+                        Case "asdf"
+                            If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSSurePostLessThan1LB Then
+                                EMsg &= vbCr & "QVC requests the shipment ship UPS SurePost Less Than 1 lb."
+                                Exit Select
+                            End If
                         Case "SU"
                             If rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty <> ServiceTypes.stUPSPriorityMailInnovations Then
                                 EMsg &= vbCr & "QVC requests the shipment ship UPS Mail Innovations"
@@ -17064,6 +17069,13 @@ Public Class SOFSHIPB
 
             If clsShip.RequestedServiceType = fedexSmartPost Then
                 clsShip.FedexSmartPost.HubId = rowSOTCARR3.Item("FEDEX_HUB_ID") & String.Empty
+            End If
+
+            clsShip.USPSEndorsement = WHCSHIP1.USPSEndorsements.NoServiceSelected
+            If ASCMAIN1.CLIENT = "RGI" AndAlso isEcommProcessing AndAlso CUST_CODE = RegencyQVCCustCode Then
+                If clsShip.RequestedServiceType = ServiceTypes.stUPSSurePost1LBOrGreater OrElse clsShip.RequestedServiceType = ServiceTypes.stUPSSurePostLessThan1LB Then
+                    clsShip.USPSEndorsement = WHCSHIP1.USPSEndorsements.ReturnServiceSelected
+                End If
             End If
 
             ' The COLLECT payment type is only supported in FedEx Ground services. The CONSIGNEE type is only supported in UPS service.
