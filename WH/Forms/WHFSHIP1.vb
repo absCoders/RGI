@@ -102,11 +102,18 @@ Public Class WHFSHIP1
             Fill_Records("SOTCARR1", "", True, "SELECT * FROM SOTCARR1")
             Fill_Records("SOTSVIA1", "", True, "SELECT * FROM SOTSVIA1")
             Fill_Records("SOTCARR3", "", True, "Select SOTCARR3.*, SOTCARR1.CARRIER_DESC, SOTCARR1.CARRIER_SHIP_TYPE, " _
-                         & " SOTCARR1.PROVIDER_TYPE, SOTCARR1.CARRIER_CODE || ' - ' || SOTCARR3.SHIPPER_DIVISION_CODE CARRIER_DESC_DISP" _
-                         & " From SOTCARR3, SOTCARR1" _
-                         & " Where SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE" _
-                         & " AND SOTCARR3.SHIPPER_DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'")
+                             & " SOTCARR1.PROVIDER_TYPE, SOTCARR1.CARRIER_CODE || ' - ' || SOTCARR3.SHIPPER_DIVISION_CODE CARRIER_DESC_DISP" _
+                             & " From SOTCARR3, SOTCARR1" _
+                             & " Where SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE" _
+                             & " AND SOTCARR3.SHIPPER_DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'")
 
+            If ASCMAIN1.USER_SECURITY_CODEs.Contains("SY") AndAlso ASCMAIN1.CLIENT = "RGI" Then
+                Fill_Records("SOTCARR3", "", True, "Select SOTCARR3.*, SOTCARR1.CARRIER_DESC, SOTCARR1.CARRIER_SHIP_TYPE, " _
+                             & " SOTCARR1.PROVIDER_TYPE, SOTCARR1.CARRIER_CODE || ' - ' || SOTCARR3.SHIPPER_DIVISION_CODE CARRIER_DESC_DISP" _
+                             & " From SOTCARR3, SOTCARR1" _
+                             & " Where SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE" _
+                             & " AND SOTCARR3.DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'")
+            End If
             Create_TDA(.Tables.Add, "WHTSHPC4", "*", 1)
             .Tables("WHTSHPC4").Columns.Add("SHIP_VIA_CODE", GetType(System.String))
             .Tables("WHTSHPC4").Columns.Add("ADDON_TOTAL", GetType(System.Decimal))
@@ -151,7 +158,11 @@ Public Class WHFSHIP1
 
         cmbWarehouse.DataSource = dst.Tables("ICTWHSE1")
 
-        divisionView = New DataView(ASCDATA1.SelectDistinct(dst.Tables("SOTCARR3"), New String() {"DIVISION_CODE"}))
+        If ASCMAIN1.USER_SECURITY_CODEs.Contains("SY") AndAlso ASCMAIN1.CLIENT = "RGI" Then
+            divisionView = New DataView(ASCDATA1.SelectDistinct(dst.Tables("SOTCARR3"), New String() {"DIVISION_CODE", "CARRIER_ACCOUNT_NO", "SHIPPER_DIVISION_CODE"}))
+        Else
+            divisionView = New DataView(ASCDATA1.SelectDistinct(dst.Tables("SOTCARR3"), New String() {"DIVISION_CODE"}))
+        End If
         divisionView.Sort = "DIVISION_CODE"
         cmbDivision.DataSource = divisionView
         If cmbDivision.Rows.Count > 0 Then
@@ -1885,6 +1896,12 @@ Public Class WHFSHIP1
         rowWHTSHPC1.Item("CARRIER_ACCOUNT_NO") = rowSOTCARR3.Item("CARRIER_ACCOUNT_NO") & String.Empty
         rowWHTSHPC1.Item("CARRIER_CODE") = CARRIER_CODE
         clsShip.LabelStockType = (rowSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
+
+        clsShip.USPSEndorsement = WHCSHIP1.USPSEndorsements.NoServiceSelected
+        If ASCMAIN1.CLIENT = "RGI" AndAlso clsShip.AccountNumber = "200734" Then
+            clsShip.USPSEndorsement = WHCSHIP1.USPSEndorsements.ReturnServiceSelected
+            clsShip.Sender.Company = txtFromCompany.Text.Trim
+        End If
 
     End Sub
 

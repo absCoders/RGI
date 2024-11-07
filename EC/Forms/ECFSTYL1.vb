@@ -195,6 +195,8 @@ Public Class ECFSTYL1
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
+        grdEDT846ST.Text = "Last Allocation " & dst.Tables("EDT846ST").Rows(0)("SO_PARM_846_UPDATED")
+        Sort_grdColumns(grdEDT846ST, "DATE_SENT")
         'SplitContainer1.Visible = ScreenMode
 
         Panel1.Visible = Not ScreenMode
@@ -1462,6 +1464,22 @@ Public Class ECFSTYL1
             ASCMAIN1.sql = SQL.ToString()
             Create_TDA(.Tables.Add, "ECTECOMB", "**", 0, True, "V")
 
+            ASCMAIN1.sql = "select EDT846O2.EDI_OUTBOUND_DOC_NO, EDTSYSIH.EDI_TP_ID, ECOM_CODE, 
+                                   sum(1) COUNT, max(INIT_DATE) DATE_SENT, max(SO_PARM_846_UPDATED) SO_PARM_846_UPDATED
+                            from EDT846O2, SOTPARM1, 
+                                (select EDTSYSIH.EDI_TP_ID, ECOM_CODE, 
+                                        max(EDTSYSIH.EDI_OUTBOUND_DOC_NO) EDI_OUTBOUND_DOC_NO, 
+                                        max (INIT_DATE) INIT_DATE
+                                from EDTSYSIH, ECTECOM1
+                                     where ECTECOM1.EDI_TP_ID = EDTSYSIH.EDI_TP_ID
+                                     and EDTSYSIH.EDI_APPLICATION_ID = 'IB'
+                                group by EDTSYSIH.EDI_TP_ID, ECOM_CODE) EDTSYSIH
+                            where EDT846O2.EDI_OUTBOUND_DOC_NO = EDTSYSIH.EDI_OUTBOUND_DOC_NO
+                            and EDI_AVAIL_QTY > 0
+                            group by EDT846O2.EDI_OUTBOUND_DOC_NO, EDTSYSIH.EDI_TP_ID, ECOM_CODE"
+            Create_TDA(.Tables.Add, "EDT846ST", "**", 0, False)
+            Fill_Records("EDT846ST")
+
             'SQL.Length = 0
             'SQL.AppendLine("SELECT *")
             'SQL.AppendLine(" FROM ASTAUDT1")
@@ -1982,6 +2000,8 @@ Public Class ECFSTYL1
         grdECUPSERT.DataSource = dst.Tables("ECUPSERT")
         grdICTEDI01.DataSource = dst.Tables("ICTEDI01")
         grdECTECOMB.DataSource = dst.Tables("ECTECOMB")
+        grdEDT846ST.DataSource = dst.Tables("EDT846ST")
+
     End Sub
 
     Private Sub setGridDefaults()

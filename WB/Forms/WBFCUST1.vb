@@ -2356,6 +2356,12 @@ Public Class WBFCUST1
                                             'We Only take the passwords when new.
                                         Case 13
                                             'No Need to to re-record Regency Acct.  It May be blank this time around.
+                                        Case 26 'COMMENTS
+                                            Dim CMTS As String = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                            If CMTS.Length > 2500 Then
+                                                CMTS = CMTS.Substring(0, 2499)
+                                            End If
+                                            newWBTCUST2.Item(CM.ABS_COL_NAME) = CMTS
                                         Case Else
                                             If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
                                                 newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
@@ -2385,6 +2391,13 @@ Public Class WBFCUST1
                                                 newWBTCUST9.Item("PSWDE") = psEncrypt(currentRow(CM.FILE_INDEX).ToString & String.Empty, EncryptType.Encrypt)
                                                 dst.Tables.Item("WBTCUST9").Rows.Add(newWBTCUST9)
                                             End If
+                                        Case 26 'COMMENTS
+                                            Dim CMTS As String = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                            If CMTS.Length > 2500 Then
+                                                CMTS = CMTS.Substring(0, 2499)
+                                            End If
+                                            newWBTCUST1.Item(CM.ABS_COL_NAME) = CMTS
+                                            newWBTCUST2.Item(CM.ABS_COL_NAME) = CMTS
                                         Case Else
                                             If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
                                                 newWBTCUST1.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty

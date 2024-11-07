@@ -172,6 +172,7 @@ Partial Class SOROREL1
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkECommerce = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chk846Update = New ABSCS.ABSCheckBox()
         Me.chkemailSReps = New ABSCS.ABSCheckBox()
         Me.chkCheck_OOBAL = New ABSCS.ABSCheckBox()
         Me.optWHSE = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
@@ -266,6 +267,7 @@ Partial Class SOROREL1
         CType(Me.chkECommerce, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox4.SuspendLayout()
+        CType(Me.chk846Update, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkemailSReps, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkCheck_OOBAL, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optWHSE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -645,6 +647,7 @@ Partial Class SOROREL1
         '
         'UltraGroupBox4
         '
+        Me.UltraGroupBox4.Controls.Add(Me.chk846Update)
         Me.UltraGroupBox4.Controls.Add(Me.chkemailSReps)
         Me.UltraGroupBox4.Controls.Add(Me.chkCheck_OOBAL)
         Me.UltraGroupBox4.Controls.Add(Me.optWHSE)
@@ -654,9 +657,18 @@ Partial Class SOROREL1
         Me.UltraGroupBox4.Controls.Add(Me.UltraTextEditor62)
         Me.UltraGroupBox4.Location = New System.Drawing.Point(15, 12)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(301, 140)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(301, 168)
         Me.UltraGroupBox4.TabIndex = 186
         Me.UltraGroupBox4.Text = "Allocate && Release"
+        '
+        'chk846Update
+        '
+        Me.Absx1.SetABSColumnName(Me.chk846Update, "CHK846_UPDATE")
+        Me.chk846Update.Location = New System.Drawing.Point(6, 138)
+        Me.chk846Update.Name = "chk846Update"
+        Me.chk846Update.Size = New System.Drawing.Size(289, 20)
+        Me.chk846Update.TabIndex = 189
+        Me.chk846Update.Text = "Preserve for EDI allocations"
         '
         'chkemailSReps
         '
@@ -784,7 +796,7 @@ Partial Class SOROREL1
         '
         Me.grpREL_DATE.Controls.Add(Me.lblSHIP_DATE)
         Me.grpREL_DATE.Controls.Add(Me.dteSHIP_DATE)
-        Me.grpREL_DATE.Location = New System.Drawing.Point(12, 158)
+        Me.grpREL_DATE.Location = New System.Drawing.Point(12, 186)
         Me.grpREL_DATE.Name = "grpREL_DATE"
         Me.grpREL_DATE.Size = New System.Drawing.Size(304, 195)
         Me.grpREL_DATE.TabIndex = 36
@@ -818,7 +830,7 @@ Partial Class SOROREL1
         Me.lblAllUnReleasable.Name = "lblAllUnReleasable"
         Me.lblAllUnReleasable.Size = New System.Drawing.Size(289, 46)
         Me.lblAllUnReleasable.TabIndex = 41
-        Me.lblAllUnReleasable.Text = "All Un-Releasable Orders with Ship Date On or Before 00/00/00 will be Shown on Ex" & _
+        Me.lblAllUnReleasable.Text = "All Un-Releasable Orders with Ship Date On or Before 00/00/00 will be Shown on Ex" &
     "ception Reports"
         '
         'grpReleaseOptions
@@ -1566,7 +1578,7 @@ Partial Class SOROREL1
         Me.grdEDT850TM.Name = "grdEDT850TM"
         Me.grdEDT850TM.Size = New System.Drawing.Size(769, 279)
         Me.grdEDT850TM.TabIndex = 304
-        Me.grdEDT850TM.Text = "Open Walmart Orders - Select the Orders to Consolidate and then click 'Consolidat" & _
+        Me.grdEDT850TM.Text = "Open Walmart Orders - Select the Orders to Consolidate and then click 'Consolidat" &
     "e Selected Orders"""
         '
         'UltraTabSharedControlsPage2
@@ -1654,6 +1666,7 @@ Partial Class SOROREL1
         CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox4.ResumeLayout(False)
         Me.UltraGroupBox4.PerformLayout()
+        CType(Me.chk846Update, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkemailSReps, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkCheck_OOBAL, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optWHSE, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1773,4 +1786,5 @@ Partial Class SOROREL1
     Friend WithEvents SplitContainer9 As System.Windows.Forms.SplitContainer
     Friend WithEvents btnConsolidateWalmart As Infragistics.Win.Misc.UltraButton
     Friend WithEvents grdEDT850TM As Infragistics.Win.UltraWinGrid.UltraGrid
+    Friend WithEvents chk846Update As ABSCS.ABSCheckBox
 End Class

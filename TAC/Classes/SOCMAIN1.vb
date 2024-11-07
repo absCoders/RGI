@@ -1123,23 +1123,24 @@
         Return TABLE_NAMEs
     End Function
 
-    Public Shared Sub Allocation( _
-        frmASFBASE0 As ASFBASE0, _
-        force_pick As Boolean, _
-        allocation_only As Boolean, _
-        WHSE_CODE_to_allocate As String, _
-        ORDR_GROUP_NOs As String, _
-        edi850cust As List(Of String), _
-       ByRef SOTSUPP1 As String, _
-       ByRef SOTDEMD1 As String, _
-       TABLE_NAMEs As Dictionary(Of String, String), _
-        Optional read_only As Boolean = False, _
-        Optional allocate_as_late_as_possible As Boolean = False, _
-        Optional STYLE_CODE_to_Allocate As String = "", _
-        Optional COLOR_CODE_to_Allocate As String = "", _
-        Optional manual_release As Boolean = False, _
-        Optional doNotAllocateToCreditHoldCustomers As Boolean = False, _
-        Optional showProgress As Boolean = True)
+    Public Shared Sub Allocation(
+        frmASFBASE0 As ASFBASE0,
+        force_pick As Boolean,
+        allocation_only As Boolean,
+        WHSE_CODE_to_allocate As String,
+        ORDR_GROUP_NOs As String,
+        edi850cust As List(Of String),
+       ByRef SOTSUPP1 As String,
+       ByRef SOTDEMD1 As String,
+       TABLE_NAMEs As Dictionary(Of String, String),
+        Optional read_only As Boolean = False,
+        Optional allocate_as_late_as_possible As Boolean = False,
+        Optional STYLE_CODE_to_Allocate As String = "",
+        Optional COLOR_CODE_to_Allocate As String = "",
+        Optional manual_release As Boolean = False,
+        Optional doNotAllocateToCreditHoldCustomers As Boolean = False,
+        Optional showProgress As Boolean = True,
+        Optional Update846 As Boolean = False)
 
         Dim SOTORDR0 As String = TABLE_NAMEs("SOTORDR0")
         Dim SOTORDR1 As String = TABLE_NAMEs("SOTORDR1")
@@ -2720,7 +2721,7 @@
                 '      & IIf(WHSE_CODE_to_allocate = "", "", " and WHSE_CODE = '" & WHSE_CODE_to_allocate & "'"))
                 'ASCDATA1.ExecuteSQL()
 
-                TAC.SOCMAIN1.Update_Status_by_Date(frmASFBASE0, ICTSTDQ1, ICTSTDQ2, ICTSTDQ3, WHSE_CODE_to_allocate, allocation_only, SOTORDR2, force_pick, manual_release)
+                TAC.SOCMAIN1.Update_Status_by_Date(frmASFBASE0, ICTSTDQ1, ICTSTDQ2, ICTSTDQ3, WHSE_CODE_to_allocate, allocation_only, SOTORDR2, force_pick, manual_release, Update846)
             End If
         End If
     End Sub
@@ -3939,7 +3940,8 @@
                                            allocation_only As Boolean,
                                            SOTORDR2 As String,
                                            force_pick As Boolean,
-                                           manual_release As Boolean)
+                                           manual_release As Boolean,
+                                           Optional update846 As Boolean = False)
 
         Dim sqlx As String = IIf(WHSE_CODE_to_allocate = "", "", " and WHSE_CODE = '" & WHSE_CODE_to_allocate & "'")
         Dim sqlx2 As String = ""
@@ -3958,6 +3960,12 @@
 
         ASCDATA1.ExecuteSQL("Delete from ICTSTDQ1 where STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTSTDQ1 & ")" & sqlx & sqlx2)
         ASCDATA1.ExecuteSQL("Insert into ICTSTDQ1 Select * from " & ICTSTDQ1 & " where STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTSTDQ1 & ")" & sqlx & sqlx2)
+
+        If frmASFBASE0.Name = "SOROREL1" AndAlso update846 Then
+            ASCDATA1.ExecuteSQL("Delete from ICTSTDQE where STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTSTDQ1 & ")" & sqlx & sqlx2)
+            ASCDATA1.ExecuteSQL("Insert into ICTSTDQE Select * from " & ICTSTDQ1 & " where STYLE_CODE in (Select Distinct STYLE_CODE from " & ICTSTDQ1 & ")" & sqlx & sqlx2)
+            ASCDATA1.ExecuteSQL("Update SOTPARM1 Set SO_PARM_846_UPDATED = SYSDATE where SO_PARM_KEY = 'Z'")
+        End If
 
         Dim WSC As String = ""
         Dim WSCi As Integer = 0

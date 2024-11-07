@@ -1417,7 +1417,7 @@ Public Class SORORDRL
         If STATE_CODE.Length > 0 Then
             RetVal = STATE_CODE
         End If
-        If RetVal > 2 Then
+        If RetVal.Length > 2 Then
             RetVal = ""
         End If
         Return RetVal

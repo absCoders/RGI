@@ -35,28 +35,7 @@ Public Class ARFCUSTL
         YRTO = Now.Year.ToString().Substring(2, 2).ToString
 
         'Fill In The Gaps
-        S.AppendLine("INSERT INTO ARTCUSTL")
-        S.AppendLine("SELECT")
-        S.AppendLine("ARTCUSTD.CUST_CODE,")
-        S.AppendLine("ARTCUSTD.CONTACT_NO,")
-        S.AppendLine("ARTCLST1.CLIST_CODE,")
-        S.AppendLine("'0' AS CLIST_ACTIVE,")
-        S.AppendLine("'wayne' AS INIT_OPER,")
-        S.AppendLine("SYSDATE AS INIT_DATE,")
-        S.AppendLine("'wayne' AS LAST_OPER,")
-        S.AppendLine("SYSDATE AS LAST_DATE")
-        S.AppendLine("FROM ARTCUSTD, ARTCLST1")
-        S.AppendLine("WHERE (ARTCUSTD.CUST_CODE, ARTCUSTD.CONTACT_NO, ARTCLST1.CLIST_CODE)")
-        S.AppendLine("NOT IN")
-        S.AppendLine("(")
-        S.AppendLine("  SELECT")
-        S.AppendLine("  CUST_CODE,")
-        S.AppendLine("  CONTACT_NO,")
-        S.AppendLine("  CLIST_CODE")
-        S.AppendLine("  FROM ARTCUSTL")
-        S.AppendLine(")")
-        ASCMAIN1.sql = S.ToString
-        ASCDATA1.ExecuteSQL()
+        REFRESH_CONTACTS()
 
         RefreshSalesTempTable()
 
@@ -306,6 +285,40 @@ Public Class ARFCUSTL
         'Call Load_Record()
         Call Mode_Settings(True)
         Loading = False
+    End Sub
+
+    Private Sub REFRESH_CONTACTS()
+        S.Length = 0
+        S.AppendLine("INSERT INTO ARTCUSTL")
+        S.AppendLine("SELECT")
+        S.AppendLine("ARTCUSTD.CUST_CODE,")
+        S.AppendLine("ARTCUSTD.CONTACT_NO,")
+        S.AppendLine("ARTCLST1.CLIST_CODE,")
+        S.AppendLine("'0' AS CLIST_ACTIVE,")
+        S.AppendLine("'wayne' AS INIT_OPER,")
+        S.AppendLine("SYSDATE AS INIT_DATE,")
+        S.AppendLine("'wayne' AS LAST_OPER,")
+        S.AppendLine("SYSDATE AS LAST_DATE")
+        S.AppendLine("FROM ARTCUSTD, ARTCLST1")
+        S.AppendLine("WHERE (ARTCUSTD.CUST_CODE, ARTCUSTD.CONTACT_NO, ARTCLST1.CLIST_CODE)")
+        S.AppendLine("NOT IN")
+        S.AppendLine("(")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  CUST_CODE,")
+        S.AppendLine("  CONTACT_NO,")
+        S.AppendLine("  CLIST_CODE")
+        S.AppendLine("  FROM ARTCUSTL")
+        S.AppendLine(")")
+        ASCMAIN1.sql = S.ToString
+        ASCDATA1.ExecuteSQL()
+
+        S.Length = 0
+        S.AppendLine("DELETE")
+        S.AppendLine("FROM ARTCUSTL")
+        S.AppendLine("WHERE (CUST_CODE, CONTACT_NO) NOT IN")
+        S.AppendLine("(SELECT CUST_CODE, CONTACT_NO FROM ARTCUSTD)")
+        ASCMAIN1.sql = S.ToString
+        ASCDATA1.ExecuteSQL()
     End Sub
 
     Private Sub RefreshSalesTempTable()

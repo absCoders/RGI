@@ -552,10 +552,10 @@
             If RO_PARM_STYLE_IMG_DIR.Length > 0 Then
                 Dim WEBURL As String = "https://www.regency-rib.com/media/product/"
                 Dim FILEURL As String = WEBURL & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
-                Dim TMP_FILE As String = RO_PARM_STYLE_IMG_DIR & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
                 If Not RO_PARM_STYLE_IMG_DIR.EndsWith("\") Then
                     RO_PARM_STYLE_IMG_DIR = RO_PARM_STYLE_IMG_DIR & "\"
                 End If
+                Dim TMP_FILE As String = RO_PARM_STYLE_IMG_DIR & STYLE_CODE & "-" & COLOR_CODE & ".jpg"
                 If IO.Directory.Exists(RO_PARM_STYLE_IMG_DIR) Then
                     Dim web_client As New Net.WebClient
                     Dim image_stream As New IO.MemoryStream(web_client.DownloadData(FILEURL))
