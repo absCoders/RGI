@@ -3491,33 +3491,33 @@ Public Class SOFORDRO
         Return RetVal
     End Function
 
-    Private Function TryWebImage(ImageName As String) As String
-        Dim API_BASE As String = ""
-        'Dim url As New System.Uri("http://50.75.200.254:8181/images/product/" & ImageName)
-        Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & ImageName)
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
-        Dim resptest As System.Net.WebResponse
-        Dim ErrorsFound As Boolean = False
-        Try
-            resptest = req.GetResponse()
-            'ImageName = "http://50.75.200.254:8181/images/product/" & ImageName
-            ImageName = "http://api.regency-rib.com:8181/images/product/" & ImageName
-        Catch ex As Exception
-            'Try
-            '    Dim url2 As New System.Uri("http://192.168.110.224:8181/images/product/" & ImageName)
-            '    Dim req2 As System.Net.WebRequest = System.Net.WebRequest.Create(url2)
-            '    resptest = req2.GetResponse()
-            '    ImageName = "http://192.168.110.224:8181/images/product/" & ImageName
-            '    resptest.Close()
-            '    req2 = Nothing
-            'Catch ex2 As Exception
-            ErrorsFound = True
-            ImageName = ""
-            req = Nothing
-            'End Try
-        End Try
-        Return ImageName
-    End Function
+    'Private Function TryWebImage(ImageName As String) As String
+    '    Dim API_BASE As String = ""
+    '    'Dim url As New System.Uri("http://50.75.200.254:8181/images/product/" & ImageName)
+    '    Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & ImageName)
+    '    Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+    '    Dim resptest As System.Net.WebResponse
+    '    Dim ErrorsFound As Boolean = False
+    '    Try
+    '        resptest = req.GetResponse()
+    '        'ImageName = "http://50.75.200.254:8181/images/product/" & ImageName
+    '        ImageName = "http://api.regency-rib.com:8181/images/product/" & ImageName
+    '    Catch ex As Exception
+    '        'Try
+    '        '    Dim url2 As New System.Uri("http://192.168.110.224:8181/images/product/" & ImageName)
+    '        '    Dim req2 As System.Net.WebRequest = System.Net.WebRequest.Create(url2)
+    '        '    resptest = req2.GetResponse()
+    '        '    ImageName = "http://192.168.110.224:8181/images/product/" & ImageName
+    '        '    resptest.Close()
+    '        '    req2 = Nothing
+    '        'Catch ex2 As Exception
+    '        ErrorsFound = True
+    '        ImageName = ""
+    '        req = Nothing
+    '        'End Try
+    '    End Try
+    '    Return ImageName
+    'End Function
 
     Private Function GetImageFolder() As String
         Dim RetVal As String = ""
