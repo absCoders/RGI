@@ -220,12 +220,12 @@ Public Class SOFSKUI1
             Case "Hang Tag All"
                 PrintHangTag(True)
                 Absx1.txtFor("STYLE_CODE").Focus()
-            Case "Find Style by Attribute"
-                Dim ms As New Text.StringBuilder With {.Length = 0}
-                ms.AppendLine("This Feature Has Been Moved To")
-                ms.AppendLine("It's Own Screen That Is Now Avalable")
-                ms.AppendLine(String.Format("On The Main Menu As {0}Search By Attribute{0}", Chr(34)))
-                MsgBox(ms.ToString, vbOKOnly, "This Feature Has Moved")
+                'Case "Find Style by Attribute"
+                '    Dim ms As New Text.StringBuilder With {.Length = 0}
+                '    ms.AppendLine("This Feature Has Been Moved To")
+                '    ms.AppendLine("It's Own Screen That Is Now Avalable")
+                '    ms.AppendLine(String.Format("On The Main Menu As {0}Search By Attribute{0}", Chr(34)))
+                '    MsgBox(ms.ToString, vbOKOnly, "This Feature Has Moved")
                 'Dim STYLE_CODE_selected As String = ""
                 'Using F As New TAC.ICFATTR2(Me)
                 '    Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
@@ -853,37 +853,37 @@ Public Class SOFSKUI1
         Call CommitTrans("Update Complete")
     End Sub
 
-    Private Function TryWebImage(ImageName As String) As String
-        Dim API_BASE As String = ""
-        'Dim url As New System.Uri("http://50.75.200.254:8181/images/product/" & ImageName)
-        Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & ImageName)
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
-        req.Timeout = 2000
-        Dim resptest As System.Net.WebResponse
-        Dim ErrorsFound As Boolean = False
-        Try
-            resptest = req.GetResponse()
-            'ImageName = "http://50.75.200.254:8181/images/product/" & ImageName
-            ImageName = "http://api.regency-rib.com:8181/images/product/" & ImageName
-        Catch ex As Exception
-            'Try
-            '    Dim url2 As New System.Uri("http://192.168.110.224:8181/images/product/" & ImageName)
-            '    'Dim url2 As New System.Uri("http://api.regency-rib.com/images/product/" & ImageName)
-            '    Dim req2 As System.Net.WebRequest = System.Net.WebRequest.Create(url2)
-            '    req2.Timeout = 2000
-            '    resptest = req2.GetResponse()
-            '    ImageName = "http://192.168.110.224:8181/images/product/" & ImageName
-            '    'ImageName = "http://api.regency-rib.com/images/product/" & ImageName
-            '    resptest.Close()
-            '    req2 = Nothing
-            'Catch ex2 As Exception
-            ErrorsFound = True
-            ImageName = ""
-            req = Nothing
-            'End Try
-        End Try
-        Return ImageName
-    End Function
+    'Private Function TryWebImage(ImageName As String) As String
+    '    Dim API_BASE As String = ""
+    '    'Dim url As New System.Uri("http://50.75.200.254:8181/images/product/" & ImageName)
+    '    Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & ImageName)
+    '    Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+    '    req.Timeout = 2000
+    '    Dim resptest As System.Net.WebResponse
+    '    Dim ErrorsFound As Boolean = False
+    '    Try
+    '        resptest = req.GetResponse()
+    '        'ImageName = "http://50.75.200.254:8181/images/product/" & ImageName
+    '        ImageName = "http://api.regency-rib.com:8181/images/product/" & ImageName
+    '    Catch ex As Exception
+    '        'Try
+    '        '    Dim url2 As New System.Uri("http://192.168.110.224:8181/images/product/" & ImageName)
+    '        '    'Dim url2 As New System.Uri("http://api.regency-rib.com/images/product/" & ImageName)
+    '        '    Dim req2 As System.Net.WebRequest = System.Net.WebRequest.Create(url2)
+    '        '    req2.Timeout = 2000
+    '        '    resptest = req2.GetResponse()
+    '        '    ImageName = "http://192.168.110.224:8181/images/product/" & ImageName
+    '        '    'ImageName = "http://api.regency-rib.com/images/product/" & ImageName
+    '        '    resptest.Close()
+    '        '    req2 = Nothing
+    '        'Catch ex2 As Exception
+    '        ErrorsFound = True
+    '        ImageName = ""
+    '        req = Nothing
+    '        'End Try
+    '    End Try
+    '    Return ImageName
+    'End Function
 
     Function UpdateICTSTAT2(ByVal STYLE_CODE As String, ByVal WHSE_CODE As String) As Boolean
         Dim iresult As Boolean = False

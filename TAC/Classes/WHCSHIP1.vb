@@ -443,6 +443,8 @@ Public Class WHCSHIP1
         pbService.ServiceDescription = "Library Mail"
         PitneyBowesServiceDictionary.Add("LIB", pbService)
 
+        USPSEndorsement = USPSEndorsements.NoServiceSelected
+
     End Sub
 
 #End Region
@@ -617,6 +619,16 @@ Public Class WHCSHIP1
             Return cMasterTrackingNumber
         End Get
     End Property
+
+    Public Enum USPSEndorsements
+        NoServiceSelected
+        ReturnServiceSelected
+        ForwardingServiceRequested
+        AddressServiceRequested
+        ChangeServiceRequested
+    End Enum
+
+    Public USPSEndorsement As USPSEndorsements = USPSEndorsements.NoServiceSelected
 
     ''' <summary>
     ''' Get / Set Service Provider
@@ -4828,7 +4840,7 @@ Public Class WHCSHIP1
             Select Case EzshipLabelImage
                 Case EzshipLabelImageTypes.itEPL
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitEPL
-                Case EzshipLabelImageTypes.itGIF
+                Case EzshipLabelImageTypes.itGIF, EzshipLabelImageTypes.itJPG
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitGIF
                 Case EzshipLabelImageTypes.itSPL
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitSPL
@@ -4961,7 +4973,18 @@ Public Class WHCSHIP1
             Select Case objUpsShip.ServiceType
                 Case ServiceTypes.stUPSEconomyMailInnovations, ServiceTypes.stUPSExpeditedMailInnovations, ServiceTypes.stUPSPriorityMailInnovations,
                     ServiceTypes.stUPSSurePost1LBOrGreater, ServiceTypes.stUPSSurePostBPM, ServiceTypes.stUPSSurePostLessThan1LB, ServiceTypes.stUPSSurePostMedia
-                    objUpsShip.Config("USPSEndorsement=0")
+                    Select Case USPSEndorsement
+                        Case USPSEndorsements.NoServiceSelected
+                            objUpsShip.Config("USPSEndorsement=0")
+                        Case USPSEndorsements.ReturnServiceSelected
+                            objUpsShip.Config("USPSEndorsement=1")
+                        Case USPSEndorsements.ForwardingServiceRequested
+                            objUpsShip.Config("USPSEndorsement=2")
+                        Case USPSEndorsements.AddressServiceRequested
+                            objUpsShip.Config("USPSEndorsement=3")
+                        Case USPSEndorsements.ChangeServiceRequested
+                            objUpsShip.Config("USPSEndorsement=4")
+                    End Select
             End Select
 
             objUpsShip.GetShipmentLabels()

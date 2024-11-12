@@ -615,7 +615,9 @@ Public Class TAFCARDF
         objCCProcessor.CustomerCreditCard.CardHolderZipCode = ZIP_CODE
         objCCProcessor.CustomerCreditCard.CardHolderCountry = cbeCountry.Value
         objCCProcessor.CustomerCreditCard.CardHolderTelephone = ""
-        objCCProcessor.CustomerCreditCard.CardCVVData = Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").Text
+        If Not chkNoCVV2.Checked Then
+            objCCProcessor.CustomerCreditCard.CardCVVData = Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").Text
+        End If
         objCCProcessor.CustomerCreditCard.CustomerID = CUST_CODE
         objCCProcessor.XmlDirectory = CC_PROC_FOLDER
 

@@ -104,6 +104,7 @@ Partial Class TAFCARDF
         Me.lblResponseText = New Infragistics.Win.Misc.UltraLabel()
         Me.grpReasonVoid = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.chkNoCVV2 = New System.Windows.Forms.CheckBox()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -189,6 +190,7 @@ Partial Class TAFCARDF
         '
         'grpCCData
         '
+        Me.grpCCData.Controls.Add(Me.chkNoCVV2)
         Me.grpCCData.Controls.Add(Me.cbeCountry)
         Me.grpCCData.Controls.Add(Me.UltraButton1)
         Me.grpCCData.Controls.Add(Me.txtCUST_CREDIT_CARD_VER_CODE)
@@ -391,7 +393,7 @@ Partial Class TAFCARDF
         Me.UltraNumericEditor7.Appearance = Appearance14
         Me.UltraNumericEditor7.BackColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer))
         Me.UltraNumericEditor7.FormatString = "#,##0.00"
-        Me.UltraNumericEditor7.Location = New System.Drawing.Point(445, 331)
+        Me.UltraNumericEditor7.Location = New System.Drawing.Point(445, 337)
         Me.UltraNumericEditor7.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraNumericEditor7.MaxValue = 9999999.99R
         Me.UltraNumericEditor7.MinValue = -9999999.99R
@@ -405,7 +407,7 @@ Partial Class TAFCARDF
         '
         'UltraLabel4
         '
-        Me.UltraLabel4.Location = New System.Drawing.Point(461, 305)
+        Me.UltraLabel4.Location = New System.Drawing.Point(461, 318)
         Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel4.Name = "UltraLabel4"
         Me.UltraLabel4.Size = New System.Drawing.Size(63, 18)
@@ -515,7 +517,7 @@ Partial Class TAFCARDF
         'UltraTextEditor22
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "CCPA_NOTE")
-        Me.UltraTextEditor22.Location = New System.Drawing.Point(100, 331)
+        Me.UltraTextEditor22.Location = New System.Drawing.Point(100, 337)
         Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor22.MaxLength = 60
         Me.UltraTextEditor22.Name = "UltraTextEditor22"
@@ -543,7 +545,7 @@ Partial Class TAFCARDF
         '
         'UltraLabel15
         '
-        Me.UltraLabel15.Location = New System.Drawing.Point(7, 338)
+        Me.UltraLabel15.Location = New System.Drawing.Point(7, 344)
         Me.UltraLabel15.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel15.Name = "UltraLabel15"
         Me.UltraLabel15.Size = New System.Drawing.Size(36, 18)
@@ -929,6 +931,17 @@ Partial Class TAFCARDF
         Me.UltraTextEditor1.Size = New System.Drawing.Size(257, 25)
         Me.UltraTextEditor1.TabIndex = 21
         '
+        'chkNoCVV2
+        '
+        Me.chkNoCVV2.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.chkNoCVV2.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.chkNoCVV2.Location = New System.Drawing.Point(100, 303)
+        Me.chkNoCVV2.Name = "chkNoCVV2"
+        Me.chkNoCVV2.Size = New System.Drawing.Size(348, 33)
+        Me.chkNoCVV2.TabIndex = 137
+        Me.chkNoCVV2.Text = "If you get a CVV2 error check this box to not send the CVV2 and try again."
+        Me.chkNoCVV2.UseVisualStyleBackColor = True
+        '
         'TAFCARDF
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1047,4 +1060,5 @@ Partial Class TAFCARDF
     Friend WithEvents UltraButton1 As Infragistics.Win.Misc.UltraButton
     Friend WithEvents cbeCountry As UltraWinEditors.UltraComboEditor
     Friend WithEvents UltraLabel5 As Misc.UltraLabel
+    Friend WithEvents chkNoCVV2 As CheckBox
 End Class

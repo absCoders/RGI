@@ -324,6 +324,32 @@ Public Class SOTCUST1
                     End If
                 End If
 
+                If IsNothing(Absx1.optFor("CUST_XMIT_INV_VIA").Value) Then
+                    Dim CopyEmail As String = Absx1.txtFor("CUST_EMAIL").Text.Trim()
+                    If CopyEmail.Length = 0 Then
+                        EMsg &= vbCr & "You Must Select An Invoice Mailing Option In Accounting."
+                    Else
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Accounting"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("You Have Not Selected An Invoice Mailing")
+                        iMSG.AppendLine("Option In The Accounting Tab.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Would You Like To Select EMAIL ONLY and use")
+                        iMSG.AppendLine($"{CopyEmail} As The Email Address?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            If dst.Tables.Item("ARTCUST1").Rows.Count = 1 Then
+                                dst.Tables.Item("ARTCUST1").Rows(0).Item("CUST_XMIT_INV_VIA") = "E"
+                                dst.Tables.Item("ARTCUST1").Rows(0).Item("CUST_INV_EMAIL") = CopyEmail
+                            End If
+                            'Absx1.optFor("CUST_XMIT_INV_VIA").Value = "E"
+                            'Absx1.txtFor("CUST_INV_EMAIL").Value = CopyEmail
+                        Else
+                            EMsg &= vbCr & "You Must Select An Invoice Mailing Option In Accounting."
+                        End If
+                    End If
+                End If
                 If Absx1.optFor("CUST_XMIT_INV_VIA").Value = "E" Then
                     If Absx1.txtFor("CUST_INV_EMAIL").Text.Trim().Length = 0 Then
                         EMsg &= vbCr & "You Must Provide An Invoice E-mail."
