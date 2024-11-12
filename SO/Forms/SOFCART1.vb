@@ -185,7 +185,7 @@ Public Class SOFCART1
 
         With grdSOTCART2.DisplayLayout.Bands(0)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If New String() {"CART_LNO", "STYLE_CODE", "QTY_PACKED"}.Contains(gcol.Key) Then
+                If New String() {"ORDR_LNO", "STYLE_CODE", "QTY_PACKED"}.Contains(gcol.Key) Then
                     gcol.Header.Fixed = True
                 End If
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
@@ -214,7 +214,7 @@ Public Class SOFCART1
         Create_Summary(grdSOTCART1, New String() _
             {"CART_FREIGHT", "CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL", "CART_TOTAL_UNITS_ORIG", "CART_TOTAL_UNITS_CALC"})
 
-        Create_Summary(grdSOTCART2, "CART_LNO", "Count")
+        Create_Summary(grdSOTCART2, "ORDR_LNO", "Count")
         Create_Summary(grdSOTCART2, New String() _
             {"QTY_PACKED", "QTY_PACKED_ORIG"})
 
@@ -847,9 +847,15 @@ Public Class SOFCART1
         With e.Cell.Row
             Select Case e.Cell.Column.Key
                 Case "ADD_TO_CARTON"
+                    Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value
+
+                    If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}' and ORDR_NO = '{grdSOTPICK2.ActiveRow.Cells("ORDR_NO").Value}' and ORDR_LNO = '{grdSOTPICK2.ActiveRow.Cells("ORDR_LNO").Value}'").Length > 0 Then
+                        MsgBox($"Line {grdSOTPICK2.ActiveRow.Cells("ORDR_LNO").Value} already in Carton", MsgBoxStyle.Critical, "Cannot Add Line")
+                        Exit Sub
+                    End If
                     If grdSOTCART1.ActiveRow IsNot Nothing And grdSOTPICK2.ActiveRow IsNot Nothing Then
                         Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
-                        Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value
+
 
                         rowSOTCART2.Item("CART_NO") = CART_NO
                         rowSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", "CART_NO = '" & CART_NO & "'") & "") + 1
@@ -960,7 +966,7 @@ Public Class SOFCART1
             Dim dvw As DataView = DirectCast(grdSOTCART2.DataSource, DataTable).DefaultView
             dvw.RowFilter = "CART_NO = '" & CART_NO & "'"
             grdSOTCART2.Text = "Contents of Carton " & CART_NO
-            Sort_grdColumns(grdSOTCART2, "CART_LNO")
+            Sort_grdColumns(grdSOTCART2, "ORDR_LNO")
             grdSOTCART2.Visible = True
         End If
     End Sub
