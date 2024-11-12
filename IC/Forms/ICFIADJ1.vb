@@ -1393,15 +1393,21 @@ Public Class ICFIADJ1
         ASCMAIN1.sql = $"UPDATE WHTPICKS SET STATUS = 'W', LAST_OPER = '{ASCMAIN1.USER_ID}', LAST_DATE = sysdate WHERE STATUS = '{STATUS}'"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
-        ASCMAIN1.sql = "SELECT * FROM WHTPICKS, (SELECT STYLE_CODE, COLOR_CODE, SUM(LOCATION_QTY) WHSE_QTY " & vbCrLf _
-                    & " FROM WHTLOCB1, WHTLOCM1" & vbCrLf _
-                    & " Where WHTLOCB1.WHSE_CODE =  WHTLOCM1.WHSE_CODE" & vbCrLf _
-                    & " And WHTLOCB1.LOCATION_CODE =  WHTLOCM1.LOCATION_CODE" & vbCrLf _
-                    & " And WHTLOCM1.LOCATION_USE in ('A','E','R')" & vbCrLf _
-                    & $" And WHTLOCM1.WHSE_CODE = '{Absx1.txtFor("WHSE_CODE").Text}' GROUP BY STYLE_CODE, COLOR_CODE) WHTLOCM1" & vbCrLf _
-                    & " WHERE WHTPICKS.STYLE_CODE = WHTLOCM1.STYLE_CODE" & vbCrLf _
-                    & " And WHTPICKS.COLOR_CODE = WHTLOCM1.COLOR_CODE" & vbCrLf _
-                    & " And WHTPICKS.STATUS = 'W'"
+        ASCMAIN1.sql = $"SELECT WHTPICKS.PICK_NO ,WHTPICKS.STYLE_CODE ,WHTPICKS.COLOR_CODE ,WHTPICKS.STYLE_DESC ,
+                        WHTPICKS.COLOR_DESC ,NVL(WHTPICKS.LOCATION_CODE, WHTLOCM1.LOCATION_CODE)  LOCATION_CODE,
+                        WHTPICKS.SHORTAGE ,WHTPICKS.STATUS ,WHTPICKS.INIT_OPER ,WHTPICKS.INIT_DATE ,
+                        WHTPICKS.LAST_OPER ,WHTPICKS.LAST_DATE, WHSE_QTY
+                        FROM WHTPICKS, (SELECT distinct STYLE_CODE, COLOR_CODE, 
+                        SUM(LOCATION_QTY) over(partition by STYLE_CODE, COLOR_CODE) WHSE_QTY,
+                        first_value(WHTLOCB1.LOCATION_CODE) over(partition by STYLE_CODE, COLOR_CODE order by WHTLOCB1.LOCATION_QTY desc) LOCATION_CODE
+                         FROM WHTLOCB1, WHTLOCM1
+                         Where WHTLOCB1.WHSE_CODE =  WHTLOCM1.WHSE_CODE
+                         And WHTLOCB1.LOCATION_CODE =  WHTLOCM1.LOCATION_CODE
+                         And WHTLOCM1.LOCATION_USE in ('A','E','R')
+                         And WHTLOCM1.WHSE_CODE = '{Absx1.txtFor("WHSE_CODE").Text}' ) WHTLOCM1
+                         WHERE WHTPICKS.STYLE_CODE = WHTLOCM1.STYLE_CODE
+                         And WHTPICKS.COLOR_CODE = WHTLOCM1.COLOR_CODE
+                         And WHTPICKS.STATUS = 'W'"
         For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
 
             cdr = LookUp("ICTSTYL1", row("STYLE_CODE"))
