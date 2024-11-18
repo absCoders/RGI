@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class APRMCHK1
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
+Partial Class APRROYL1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFSRPTM
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class APRMCHK1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -72,16 +72,21 @@ Partial Class APRMCHK1
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Me.grpPERIOD_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
-        Me.grpCHECK_DATE_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.UltraDateTimeEditor2 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
-        Me.UltraDateTimeEditor1 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.AbsCheckBox4 = New ABSCS.ABSCheckBox()
+        Me.AbsCheckBox3 = New ABSCS.ABSCheckBox()
+        Me.AbsCheckBox1 = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.optRANGE = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.OPTRC = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -117,43 +122,46 @@ Partial Class APRMCHK1
         Me.grpPERIOD_RANGE.SuspendLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.grpCHECK_DATE_RANGE, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.grpCHECK_DATE_RANGE.SuspendLayout()
-        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox4, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
-        CType(Me.optRANGE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.OPTRC, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         '
         'UltraTabControl1
         '
-        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
+        Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
-        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         '
         'SplitContainer5
         '
+        Me.SplitContainer5.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         '
         'SplitContainer5.Panel1
         '
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox3)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.grpCHECK_DATE_RANGE)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox4)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox3)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox1)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox1)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpPERIOD_RANGE)
-        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
         '
         'txtDescription
         '
-        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         '
         'grdASTRECAP
         '
@@ -246,22 +254,22 @@ Partial Class APRMCHK1
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
+        Me.grdASTEXPT1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         '
         'tabDataExports
         '
-        Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
+        Me.tabDataExports.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'grdASFBASEX
         '
@@ -310,22 +318,22 @@ Partial Class APRMCHK1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
         '
         'tlb
         '
@@ -336,11 +344,10 @@ Partial Class APRMCHK1
         '
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo2)
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo1)
-        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(12, 3)
-        Me.grpPERIOD_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(10, 22)
         Me.grpPERIOD_RANGE.Name = "grpPERIOD_RANGE"
-        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(202, 102)
-        Me.grpPERIOD_RANGE.TabIndex = 10
+        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(167, 92)
+        Me.grpPERIOD_RANGE.TabIndex = 263
         Me.grpPERIOD_RANGE.Text = "Period Range"
         '
         'UltraCombo2
@@ -403,10 +410,9 @@ Partial Class APRMCHK1
         Me.UltraCombo2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo2.DisplayMember = "LEGEND"
         Me.UltraCombo2.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo2.Location = New System.Drawing.Point(8, 62)
-        Me.UltraCombo2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraCombo2.Location = New System.Drawing.Point(6, 55)
         Me.UltraCombo2.Name = "UltraCombo2"
-        Me.UltraCombo2.Size = New System.Drawing.Size(188, 30)
+        Me.UltraCombo2.Size = New System.Drawing.Size(150, 26)
         Me.UltraCombo2.TabIndex = 1
         '
         'UltraCombo1
@@ -469,77 +475,111 @@ Partial Class APRMCHK1
         Me.UltraCombo1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo1.DisplayMember = "LEGEND"
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo1.Location = New System.Drawing.Point(8, 26)
-        Me.UltraCombo1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraCombo1.Location = New System.Drawing.Point(6, 23)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
+        Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
         Me.UltraCombo1.TabIndex = 0
         '
-        'grpCHECK_DATE_RANGE
+        'UltraGroupBox1
         '
-        Me.grpCHECK_DATE_RANGE.Controls.Add(Me.UltraDateTimeEditor2)
-        Me.grpCHECK_DATE_RANGE.Controls.Add(Me.UltraDateTimeEditor1)
-        Me.grpCHECK_DATE_RANGE.Location = New System.Drawing.Point(12, 112)
-        Me.grpCHECK_DATE_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.grpCHECK_DATE_RANGE.Name = "grpCHECK_DATE_RANGE"
-        Me.grpCHECK_DATE_RANGE.Size = New System.Drawing.Size(202, 102)
-        Me.grpCHECK_DATE_RANGE.TabIndex = 16
-        Me.grpCHECK_DATE_RANGE.Text = "Check Date Range"
-        Me.grpCHECK_DATE_RANGE.Visible = False
+        Me.UltraGroupBox1.Controls.Add(Me.optASN)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(315, 28)
+        Me.UltraGroupBox1.Name = "UltraGroupBox1"
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(152, 92)
+        Me.UltraGroupBox1.TabIndex = 264
+        Me.UltraGroupBox1.Text = "Style Option"
         '
-        'UltraDateTimeEditor2
+        'optASN
         '
-        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor2, "DTE1")
-        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(8, 61)
-        Me.UltraDateTimeEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.UltraDateTimeEditor2.Name = "UltraDateTimeEditor2"
-        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(188, 29)
-        Me.UltraDateTimeEditor2.TabIndex = 1
+        Me.Absx1.SetABSColumnName(Me.optASN, "OPTASN")
+        Me.optASN.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.optASN.CheckedIndex = 0
+        ValueListItem3.DataValue = "A"
+        ValueListItem3.DisplayText = "All Styles"
+        ValueListItem1.DataValue = "S"
+        ValueListItem1.DisplayText = "Stock Only"
+        ValueListItem6.DataValue = "N"
+        ValueListItem6.DisplayText = "Non-Stock Only"
+        Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem1, ValueListItem6})
+        Me.optASN.Location = New System.Drawing.Point(7, 24)
+        Me.optASN.Name = "optASN"
+        Me.optASN.Size = New System.Drawing.Size(137, 55)
+        Me.optASN.TabIndex = 0
+        Me.optASN.Text = "All Styles"
         '
-        'UltraDateTimeEditor1
+        'AbsCheckBox4
         '
-        Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor1, "DTE0")
-        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(8, 26)
-        Me.UltraDateTimeEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.UltraDateTimeEditor1.Name = "UltraDateTimeEditor1"
-        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(188, 29)
-        Me.UltraDateTimeEditor1.TabIndex = 0
+        Me.AbsCheckBox4.ABSChecked = "1"
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox4, "CHKXTRANSF")
+        Me.AbsCheckBox4.Checked = True
+        Me.AbsCheckBox4.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.AbsCheckBox4.Location = New System.Drawing.Point(488, 54)
+        Me.AbsCheckBox4.Name = "AbsCheckBox4"
+        Me.AbsCheckBox4.Size = New System.Drawing.Size(163, 20)
+        Me.AbsCheckBox4.TabIndex = 273
+        Me.AbsCheckBox4.Text = "Exclude Transfers"
+        Me.AbsCheckBox4.Visible = False
+        '
+        'AbsCheckBox3
+        '
+        Me.AbsCheckBox3.ABSChecked = "1"
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox3, "CHKXSAMPLES")
+        Me.AbsCheckBox3.Checked = True
+        Me.AbsCheckBox3.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.AbsCheckBox3.Location = New System.Drawing.Point(488, 80)
+        Me.AbsCheckBox3.Name = "AbsCheckBox3"
+        Me.AbsCheckBox3.Size = New System.Drawing.Size(144, 20)
+        Me.AbsCheckBox3.TabIndex = 272
+        Me.AbsCheckBox3.Text = "Exclude Samples"
+        Me.AbsCheckBox3.Visible = False
+        '
+        'AbsCheckBox1
+        '
+        Me.AbsCheckBox1.ABSChecked = "1"
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "CHKCOSTS")
+        Me.AbsCheckBox1.Checked = True
+        Me.AbsCheckBox1.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(488, 28)
+        Me.AbsCheckBox1.Name = "AbsCheckBox1"
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(163, 20)
+        Me.AbsCheckBox1.TabIndex = 271
+        Me.AbsCheckBox1.Text = "Show Costs & $GP"
+        Me.AbsCheckBox1.Visible = False
         '
         'UltraGroupBox3
         '
-        Me.UltraGroupBox3.Controls.Add(Me.optRANGE)
-        Me.UltraGroupBox3.Location = New System.Drawing.Point(222, 3)
-        Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraGroupBox3.Controls.Add(Me.OPTRC)
+        Me.UltraGroupBox3.Location = New System.Drawing.Point(183, 29)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(186, 102)
-        Me.UltraGroupBox3.TabIndex = 17
-        Me.UltraGroupBox3.Text = "Select Checks by"
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(126, 91)
+        Me.UltraGroupBox3.TabIndex = 275
+        Me.UltraGroupBox3.Text = "Report Type"
         '
-        'optRANGE
+        'OPTRC
         '
-        Me.Absx1.SetABSColumnName(Me.optRANGE, "RANGE")
-        Me.optRANGE.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        Me.optRANGE.CheckedIndex = 0
-        ValueListItem1.DataValue = "P"
-        ValueListItem1.DisplayText = "Period Range"
-        ValueListItem2.DataValue = "D"
-        ValueListItem2.DisplayText = "Check Date"
-        Me.optRANGE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
-        Me.optRANGE.Location = New System.Drawing.Point(9, 27)
-        Me.optRANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.optRANGE.Name = "optRANGE"
-        Me.optRANGE.Size = New System.Drawing.Size(165, 44)
-        Me.optRANGE.TabIndex = 0
-        Me.optRANGE.Text = "Period Range"
+        Me.Absx1.SetABSColumnName(Me.OPTRC, "OPTRC")
+        Me.OPTRC.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.OPTRC.CheckedIndex = 0
+        ValueListItem4.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem4.DataValue = "R"
+        ValueListItem4.DisplayText = "Royalties"
+        ValueListItem5.DataValue = "C"
+        ValueListItem5.DisplayText = "Commissions"
+        Me.OPTRC.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem4, ValueListItem5})
+        Me.OPTRC.Location = New System.Drawing.Point(7, 24)
+        Me.OPTRC.Name = "OPTRC"
+        Me.OPTRC.Size = New System.Drawing.Size(110, 39)
+        Me.OPTRC.TabIndex = 0
+        Me.OPTRC.Text = "Royalties"
         '
-        'APRMCHK1
+        'APRROYL1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1238, 646)
-        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
-        Me.Name = "APRMCHK1"
-        Me.Text = "APRMCHK1"
+        Me.ClientSize = New System.Drawing.Size(990, 574)
+        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.Name = "APRROYL1"
+        Me.Text = "PORACCR1"
         Me.UltraTabPageControl2.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
@@ -576,23 +616,27 @@ Partial Class APRMCHK1
         Me.grpPERIOD_RANGE.PerformLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.grpCHECK_DATE_RANGE, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.grpCHECK_DATE_RANGE.ResumeLayout(False)
-        Me.grpCHECK_DATE_RANGE.PerformLayout()
-        CType(Me.UltraDateTimeEditor2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraDateTimeEditor1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox1.ResumeLayout(False)
+        CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
-        CType(Me.optRANGE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.OPTRC, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents grpPERIOD_RANGE As Infragistics.Win.Misc.UltraGroupBox
-    Friend WithEvents UltraCombo2 As Infragistics.Win.UltraWinGrid.UltraCombo
-    Friend WithEvents UltraCombo1 As Infragistics.Win.UltraWinGrid.UltraCombo
-    Friend WithEvents grpCHECK_DATE_RANGE As Infragistics.Win.Misc.UltraGroupBox
-    Friend WithEvents UltraDateTimeEditor2 As Infragistics.Win.UltraWinEditors.UltraDateTimeEditor
-    Friend WithEvents UltraDateTimeEditor1 As Infragistics.Win.UltraWinEditors.UltraDateTimeEditor
-    Friend WithEvents UltraGroupBox3 As Infragistics.Win.Misc.UltraGroupBox
-    Friend WithEvents optRANGE As Infragistics.Win.UltraWinEditors.UltraOptionSet
+
+    Friend WithEvents grpPERIOD_RANGE As Misc.UltraGroupBox
+    Friend WithEvents UltraCombo2 As UltraWinGrid.UltraCombo
+    Friend WithEvents UltraCombo1 As UltraWinGrid.UltraCombo
+    Friend WithEvents UltraGroupBox1 As Misc.UltraGroupBox
+    Friend WithEvents optASN As UltraWinEditors.UltraOptionSet
+    Friend WithEvents AbsCheckBox4 As ABSCS.ABSCheckBox
+    Friend WithEvents AbsCheckBox3 As ABSCS.ABSCheckBox
+    Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox3 As Misc.UltraGroupBox
+    Friend WithEvents OPTRC As UltraWinEditors.UltraOptionSet
 End Class

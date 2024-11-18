@@ -77,7 +77,7 @@ Public Class SOFCART1
            & ", SOTORDR1.SALES_DIVISION_CODE, SOTORDR1.CUST_BILL_TO_CUST" & vbCrLf _
            & ", SOTORDR1.POST_CODE, SOTORDR1.WHSE_CODE" & vbCrLf _
            & ", SOTORDR1.TERM_CODE, SOTORDR1.SREP_CODE, SOTORDR1.SREP2_CODE, SOTORDR1.ORDR_DEPT" & vbCrLf _
-           & ", SOTSHIP1.BILL_OF_LADING_NO, SOTORDR1.ORDR_INV_COMMENT, SOTORDR1.CUST_FACTOR_IND" & vbCrLf _
+           & ", SOTSHIP1.BILL_OF_LADING_NO, SOTORDR1.ORDR_INV_COMMENT, SOTORDR1.CUST_FACTOR_IND, SOTCONF1.CONFIG_NO CONFIG_NO_NEW" & vbCrLf _
            & " from SOTPICK1,SOTORDR1,SOTSHIP1," & SOTCONF1 & " SOTCONF1" & vbCrLf _
            & " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
            & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
@@ -297,7 +297,7 @@ Public Class SOFCART1
 
             Case "Copy to Like Configs"
                 Dim PICK_NO As String = grdSOTPICK1.ActiveRow.Cells("PICK_NO").Value
-                Dim CONFIG_NO As String = grdSOTPICK1.ActiveRow.Cells("CONFIG_NO").Value
+                Dim CONFIG_NO As String = grdSOTPICK1.ActiveRow.Cells("CONFIG_NO").Value & ""
                 Dim sqlp As String = " and PICK_NO = '" & PICK_NO & "'"
                 EMsg = Check_Carton_Pack_Integrity(sqlp)
 
@@ -466,7 +466,16 @@ Public Class SOFCART1
                 & sqlwhere_SOTSHIP1
             Fill_Records("SOTPICK1", "", True, ASCMAIN1.sql)
 
-            Dim row As DataRow = dst.Tables("SOTSHIP1").Rows(0)
+
+            For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
+                Dim CONFIG_NO_NEW As String = rowSOTPICK1.Item("CONFIG_NO_NEW")
+                rowSOTPICK1.Item("CONFIG_NO") = CONFIG_nO_NEW
+            Next
+
+
+
+
+                Dim row As DataRow = dst.Tables("SOTSHIP1").Rows(0)
             rowSOTSHIP0 = dst.Tables("SOTSHIP0").NewRow
             For i As Integer = 0 To dst.Tables("SOTSHIP0").Columns.Count - 1
                 rowSOTSHIP0.Item(i) = row.Item(i)
@@ -1161,7 +1170,15 @@ Public Class SOFCART1
             ASCDATA1.DeleteRows(dst.Tables("SOTCART1"), "PICK_NO = '" & PICK_NO & "'")
 
             For Each rowSOTCART1_gold As DataRow In rowSOTPICK1_gold.GetChildRows("SOTPICK1_SOTCART1")
-                Dim CART_NO As String = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("SOTCART1.CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
+
+                Dim CART_NO As String = String.Empty
+                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                    CART_NO = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
+                Else
+                    CART_NO = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("SOTCART1.CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
+                End If
+
+                'Dim CART_NO As String = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
                 Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").NewRow
                 rowSOTCART1.ItemArray = rowSOTCART1_gold.ItemArray
                 rowSOTCART1.Item("CART_NO") = CART_NO
