@@ -359,6 +359,10 @@ Public Class SORSORD1
             ASCDATA1.ExecuteSQL(sql)
         End If
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            sql = "Update " & SOTSORD1 & " Set ORDR_QTY_X = ORDR_QTY_OPEN_X  + ORDR_QTY_PICK_X, ORDR_AMT_X = ORDR_AMT_X - ORDR_AMT_CANC_X  WHERE CUST_CODE IN ('BEALLS','ROSS') AND ORDR_QTY_X <> ORDR_QTY_CANC_X and ORDR_QTY_CANC_X <> 0 and (ORDR_QTY_OPEN_X <> 0 OR ORDR_QTY_PICK_X <> 0)"
+            ASCDATA1.ExecuteSQL(sql)
+        End If
 
         dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & SOTSORD1, "SOTSORD1", 0))
 
