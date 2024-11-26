@@ -2315,6 +2315,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* New version to solve newtonsoft issues and have new full distribution.")
 
+        VersionNo = "24.11.26.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Hang Tag Changes and Tariff Warnings.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

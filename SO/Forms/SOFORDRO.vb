@@ -4523,6 +4523,19 @@ Public Class SOFORDRO
                 oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
             End With
         Next i
+        '2025 Tariff Notice
+        Dim LastRow As Int64 = SCD + RowCount + 2
+        With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
+            .Merge()
+            .Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+            .Font.Bold = True
+            .Font.Color = Color.Red
+            '.RowHeight = 45
+            .WrapText = True
+            .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
+            .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
+        End With
+
         'Begin - tariff Notification
         'Removed 10:30AM on a dark and rainy day April 16th 2020
         'Dim LastRow As Int64 = SCD + RowCount + 2
