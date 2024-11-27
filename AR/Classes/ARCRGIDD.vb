@@ -4,7 +4,7 @@ Public Class ARCRGIDD
     'Systemic
     Private _FF As ASFBASE1
     Private S As New Text.StringBuilder With {.Length = 0}
-    Private YYYY As String = "2024"
+    'Private YYYY As String = "2025"
     Private YYYYBP As String = ""
     Private YYYYEP As String = ""
 
@@ -38,14 +38,10 @@ Public Class ARCRGIDD
     Public Sub New(ByVal F As ASFBASE1)
         _FF = F
         Dim frmASFMSGBF As New ASFMSGBF
-        YYYY = frmASFMSGBF.Get_txtblock_from_User("Please Provide The Period", "Period", YYYY, False, 6)
-        If YYYY = "" Or YYYY.Length <> 4 Then
-            eMsg = "Invalid Period Provided"
-            'MsgBox(eMsg, vbCritical, "Bad Bad")
-        Else
-            YYYYBP = YYYY & "09"
-            'YYYYEP = YYYY & "12"
-            YYYYEP = YYYY & "11"
+        YYYYBP = GetPeriod("Please Select Beginning Period")
+        YYYYEP = GetPeriod("Please Select Ending Period")
+        If YYYYBP.Length = 0 Or YYYYEP.Length = 0 Then
+            eMsg = $"Invalid Periods {YYYYBP} | {YYYYEP}"
         End If
         If eMsg.Length = 0 Then
             ASCMAIN1.Progress("Now Loading Excel Data", "")
@@ -56,6 +52,35 @@ Public Class ARCRGIDD
             InitializeFormatting()
         End If
     End Sub
+
+    Private Function GetPeriod(ByVal Caption As String) As String
+        Dim RetVal As String = ""
+        Dim S As New Text.StringBuilder With {.Length = 0}
+        S.AppendLine("SELECT OPS_YYYYPP, LEGEND")
+        S.AppendLine("FROM GLTPARM2")
+        S.AppendLine("WHERE SUBSTR(OPS_YYYYPP,0,4) IN ('2024','2025')")
+        S.AppendLine("ORDER BY OPS_YYYYPP")
+        With ASCMAIN1.CodeSelector
+            .SQL = S.ToString
+            .MultipleSelections = False
+            .PreviouslySelectedCodes0 = ""
+            .Caption = Caption
+            .TABLE_NAME = ""
+            .VIEW_NAME = ""
+            .VIEW_DESC = ""
+            .COLUMN_NAME = ""
+            .COLUMN_PREKEYs = New Dictionary(Of String, String)
+            .Custom_sql_where = ""
+            .tblASTVIEW1 = New DataTable
+        End With
+        Dim F As New ASFCODE1
+        F.ShowDialog()
+        If ASCMAIN1.CodeSelector.Selections <> 0 Then
+            RetVal = ASCMAIN1.CodeSelector.SelectedRows(0).Item("OPS_YYYYPP") & ""
+        End If
+        Return RetVal
+    End Function
+
     Private Sub InitializeVariables()
         S.Length = 0
         TRB = 1
@@ -63,6 +88,16 @@ Public Class ARCRGIDD
         TC = 0
     End Sub
     Private Sub InitializeTempTables()
+        Dim rowGLTPARM2 As DataRow = _FF.LookUp("GLTPARM2", YYYYBP)
+        Dim BEG_DATE As DateTime = rowGLTPARM2.Item("PRD_END_DATE")
+        BEG_DATE = BEG_DATE.AddDays(1).AddMonths(-1)
+        Dim BEG_DATE_STR As String = Format(BEG_DATE, "dd-MMM-yyyy")
+
+        rowGLTPARM2 = _FF.LookUp("GLTPARM2", YYYYEP)
+        Dim END_DATE As DateTime = rowGLTPARM2.Item("PRD_END_DATE")
+        Dim END_DATE_STR As String = Format(END_DATE, "dd-MMM-yyyy")
+
+
         S.Length = 0
         S.AppendLine("SELECT")
         S.AppendLine("I1.ORDR_YYYYPP_UPDATED,")
@@ -72,6 +107,7 @@ Public Class ARCRGIDD
         S.AppendLine("    ELSE 'OTHER'")
         S.AppendLine("END AS INV_TYPE_D,")
         S.AppendLine("I1.INV_DATE,")
+        S.AppendLine("I1.INIT_DATE,")
         S.AppendLine("I1.INV_NO,")
         S.AppendLine("I2.INV_LNO,")
         S.AppendLine("O1.ORDR_DATE,")
@@ -138,25 +174,44 @@ Public Class ARCRGIDD
         S.AppendLine("10000000 AS CANCELED,")
         S.AppendLine("10000000 AS SHIPPED")
         S.AppendLine("FROM ARTCUST1")
-        S.AppendLine($"WHERE CUST_CODE IN (SELECT DISTINCT CUST_CODE FROM {tmpSOTINVH1})")
+        S.AppendLine("WHERE CUST_CODE IN (")
+        S.AppendLine("  SELECT")
+        S.AppendLine("  DISTINCT O1.CUST_CODE")
+        S.AppendLine("  FROM SOTORDR1 O1")
+        S.AppendLine($"  WHERE O1.ORDR_DATE >= '{BEG_DATE_STR}'")
+        S.AppendLine($"  AND O1.ORDR_DATE <= '{END_DATE_STR}'")
+        S.AppendLine(")")
+        S.AppendLine("ORDER BY CUST_NAME")
+        'S.AppendLine($"WHERE CUST_CODE IN (SELECT DISTINCT CUST_CODE FROM {tmpSOTINVH1})")
+        'S.AppendLine($"WHERE CUST_CODE IN (SELECT DISTINCT CUST_CODE FROM {tmpSOTORDR1})")
         ASCMAIN1.sql = S.ToString
         tmpARTCUST1 = ASCMAIN1.Temp_Table
+
 
         S.Length = 0
         S.AppendLine("SELECT")
         S.AppendLine("O1.ORDR_NO,")
         S.AppendLine("O1.ORDR_DATE,")
+        S.AppendLine("O1.ORDR_DATE_RECD,")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("O1.CUST_NAME,")
         S.AppendLine("SUM(NVL(O2.ORDR_QTY,0) * NVL(O2.ORDR_UNIT_PRICE,0)) ORDR_AMT,")
         S.AppendLine("SUM(NVL(O2.ORDR_QTY_OPEN,0) * NVL(O2.ORDR_UNIT_PRICE,0)) OPEN_AMT,")
         S.AppendLine("SUM(NVL(O2.ORDR_QTY_CANC,0) * NVL(O2.ORDR_UNIT_PRICE,0)) CANC_AMT,")
         S.AppendLine("SUM(NVL(O2.ORDR_QTY_SHIP,0) * NVL(O2.ORDR_UNIT_PRICE,0)) SHIP_AMT")
         S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
         S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
-        S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED >= '{YYYYBP}'")
-        S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED <= '{YYYYEP}'")
+        'S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED >= '{YYYYBP}'")
+        'S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED <= '{YYYYEP}'")
+        S.AppendLine($"AND O1.ORDR_DATE >= '{BEG_DATE_STR}'")
+        S.AppendLine($"AND O1.ORDR_DATE <= '{END_DATE_STR}'")
         S.AppendLine("GROUP BY")
         S.AppendLine("O1.ORDR_NO,")
-        S.AppendLine("O1.ORDR_DATE")
+        S.AppendLine("O1.ORDR_DATE,")
+        S.AppendLine("O1.ORDR_DATE_RECD,")
+        S.AppendLine("O1.CUST_CODE,")
+        S.AppendLine("O1.CUST_NAME")
+        S.AppendLine("ORDER BY O1.ORDR_DATE")
         ASCMAIN1.sql = S.ToString
         tmpSOTORDR1 = ASCMAIN1.Temp_Table
 
@@ -172,12 +227,14 @@ Public Class ARCRGIDD
         S.Length = 0
         S.AppendLine("Select *")
         S.AppendLine($" from {tmpARTCUST1}")
+        S.AppendLine($" ORDER BY CUST_NAME")
         ASCMAIN1.sql = S.ToString
         tblARTCUST1 = ASCDATA1.GetDataTable
 
         S.Length = 0
         S.AppendLine("Select *")
         S.AppendLine($" from {tmpSOTORDR1}")
+        S.AppendLine($" ORDER BY ORDR_DATE")
         ASCMAIN1.sql = S.ToString
         tblSOTORDR1 = ASCDATA1.GetDataTable
 
@@ -186,6 +243,15 @@ Public Class ARCRGIDD
     End Sub
 
     Private Sub fillExtraData()
+        Dim rowGLTPARM2 As DataRow = _FF.LookUp("GLTPARM2", YYYYBP)
+        Dim BEG_DATE As DateTime = rowGLTPARM2.Item("PRD_END_DATE")
+        BEG_DATE = BEG_DATE.AddDays(1).AddMonths(-1)
+        Dim BEG_DATE_STR As String = Format(BEG_DATE, "dd-MMM-yyyy")
+
+        rowGLTPARM2 = _FF.LookUp("GLTPARM2", YYYYEP)
+        Dim END_DATE As DateTime = rowGLTPARM2.Item("PRD_END_DATE")
+        Dim END_DATE_STR As String = Format(END_DATE, "dd-MMM-yyyy")
+
         S.Length = 0
         S.AppendLine("SELECT")
         S.AppendLine("CUST_CODE,")
@@ -195,8 +261,12 @@ Public Class ARCRGIDD
         S.AppendLine("SUM(NVL(O2.ORDR_QTY_SHIP,0) * NVL(O2.ORDR_UNIT_PRICE,0)) SHIP_AMT")
         S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
         S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
-        S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED >= '{YYYYBP}'")
-        S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED <= '{YYYYEP}'")
+        'S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED >= '{YYYYBP}'")
+        'S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED <= '{YYYYEP}'")
+        'S.AppendLine($"AND O1.ORDR_DATE >= '01-MAY-2024'")
+        'S.AppendLine($"AND O1.ORDR_DATE <= '30-JUN-2024'")
+        S.AppendLine($"AND O1.ORDR_DATE >= '{BEG_DATE_STR}'")
+        S.AppendLine($"AND O1.ORDR_DATE <= '{END_DATE_STR}'")
         S.AppendLine("GROUP BY")
         S.AppendLine("CUST_CODE")
         ASCMAIN1.sql = S.ToString
@@ -364,46 +434,50 @@ Public Class ARCRGIDD
         tblEXCEL.Rows.Add({"Invoices", 0, "ORDR_YYYYPP_UPDATED", "S", 10, "Period", ""})
         tblEXCEL.Rows.Add({"Invoices", 1, "INV_TYPE_D", "S", 10, "Type", ""})
         tblEXCEL.Rows.Add({"Invoices", 2, "INV_DATE", "D", 10, "Invoice Date", ""})
-        tblEXCEL.Rows.Add({"Invoices", 3, "INV_NO", "S", 14, "Invoice No", ""})
-        tblEXCEL.Rows.Add({"Invoices", 4, "INV_LNO", "0", 5, "LNo", ""})
-        tblEXCEL.Rows.Add({"Invoices", 5, "ORDR_DATE", "D", 10, "Order Date", ""})
-        tblEXCEL.Rows.Add({"Invoices", 6, "ORDR_NO", "S", 14, "Order No", ""})
-        tblEXCEL.Rows.Add({"Invoices", 7, "SREP_CODE", "S", 10, "Sales Rep", ""})
-        tblEXCEL.Rows.Add({"Invoices", 8, "CUST_NAME", "S", 30, "Customer Name", ""})
-        tblEXCEL.Rows.Add({"Invoices", 9, "CUST_CODE", "S", 16, "Customer Code", ""})
-        tblEXCEL.Rows.Add({"Invoices", 10, "CUST_TYPE", "S", 16, "Customer Type", ""})
-        tblEXCEL.Rows.Add({"Invoices", 11, "WHSE_CODE", "S", 16, "Warehouse", ""})
-        tblEXCEL.Rows.Add({"Invoices", 12, "STATE_COUNTRY", "S", 16, "State / Country", ""})
-        tblEXCEL.Rows.Add({"Invoices", 13, "CUST_ZIP_CODE", "S", 10, "Zip Code", ""})
-        tblEXCEL.Rows.Add({"Invoices", 14, "FIRST_SALE", "D", 10, "1st Sale", ""})
-        tblEXCEL.Rows.Add({"Invoices", 15, "SKU", "S", 18, "SKU", ""})
-        tblEXCEL.Rows.Add({"Invoices", 16, "STYLE_DESC", "S", 45, "Description", ""})
-        tblEXCEL.Rows.Add({"Invoices", 17, "STYLE_CLASS_CODE", "S", 12, "Class Code", ""})
-        tblEXCEL.Rows.Add({"Invoices", 18, "SUB_STYLE_CLASS_CODE", "S", 20, "Sub Class Code", ""})
-        tblEXCEL.Rows.Add({"Invoices", 19, "LIST_PRICE", "2", 12, "List Price", ""})
-        tblEXCEL.Rows.Add({"Invoices", 20, "ORDR_QTY_SHIP", "0", 10, "Qty Shipped", ""})
-        tblEXCEL.Rows.Add({"Invoices", 21, "ORDR_UNIT_PRICE", "2", 10, "Price", ""})
-        tblEXCEL.Rows.Add({"Invoices", 22, "ORDR_REVENUE", "2", 10, "Revenue", ""})
-        tblEXCEL.Rows.Add({"Invoices", 23, "ORDR_UNIT_COST", "2", 10, "1st Cost", ""})
-        tblEXCEL.Rows.Add({"Invoices", 24, "ORDR_COGS", "2", 10, "COGS", ""})
-        tblEXCEL.Rows.Add({"Invoices", 25, "STD_LANDED_PCT", "P", 12, "Std Land Pct", ""})
-        tblEXCEL.Rows.Add({"Invoices", 26, "LANDED_COST", "2", 12, "Landed Cost", ""})
-        tblEXCEL.Rows.Add({"Invoices", 27, "GP", "2", 12, "GP", ""})
-        tblEXCEL.Rows.Add({"Invoices", 28, "GP_PCT", "P", 12, "GP%", ""})
-        tblEXCEL.Rows.Add({"Invoices", 29, "COMM_RATE", "2", 12, "Comm Rate", ""})
-        tblEXCEL.Rows.Add({"Invoices", 30, "VEND_ID", "S", 10, "Vendor ID", ""})
-        tblEXCEL.Rows.Add({"Invoices", 31, "VEND_CODE", "S", 12, "Vendor", ""})
-        tblEXCEL.Rows.Add({"Invoices", 32, "PORT_CODE", "S", 12, "Port Code", ""})
-        tblEXCEL.Rows.Add({"Invoices", 33, "PORT_NAME", "S", 12, "Port Name", ""})
-        tblEXCEL.Rows.Add({"Invoices", 34, "LAST_PORT", "S", 12, "Last Port", ""})
-        tblEXCEL.Rows.Add({"Invoices", 35, "COUNTRY_NAME", "S", 10, "Country", ""})
+        tblEXCEL.Rows.Add({"Invoices", 3, "INIT_DATE", "D", 10, "Date Created", ""})
+        tblEXCEL.Rows.Add({"Invoices", 4, "INV_NO", "S", 14, "Invoice No", ""})
+        tblEXCEL.Rows.Add({"Invoices", 5, "INV_LNO", "0", 5, "LNo", ""})
+        tblEXCEL.Rows.Add({"Invoices", 6, "ORDR_DATE", "D", 10, "Order Date", ""})
+        tblEXCEL.Rows.Add({"Invoices", 7, "ORDR_NO", "S", 14, "Order No", ""})
+        tblEXCEL.Rows.Add({"Invoices", 8, "SREP_CODE", "S", 10, "Sales Rep", ""})
+        tblEXCEL.Rows.Add({"Invoices", 9, "CUST_NAME", "S", 30, "Customer Name", ""})
+        tblEXCEL.Rows.Add({"Invoices", 10, "CUST_CODE", "S", 16, "Customer Code", ""})
+        tblEXCEL.Rows.Add({"Invoices", 11, "CUST_TYPE", "S", 16, "Customer Type", ""})
+        tblEXCEL.Rows.Add({"Invoices", 12, "WHSE_CODE", "S", 16, "Warehouse", ""})
+        tblEXCEL.Rows.Add({"Invoices", 13, "STATE_COUNTRY", "S", 16, "State / Country", ""})
+        tblEXCEL.Rows.Add({"Invoices", 14, "CUST_ZIP_CODE", "S", 10, "Zip Code", ""})
+        tblEXCEL.Rows.Add({"Invoices", 15, "FIRST_SALE", "D", 10, "1st Sale", ""})
+        tblEXCEL.Rows.Add({"Invoices", 16, "SKU", "S", 18, "SKU", ""})
+        tblEXCEL.Rows.Add({"Invoices", 17, "STYLE_DESC", "S", 45, "Description", ""})
+        tblEXCEL.Rows.Add({"Invoices", 18, "STYLE_CLASS_CODE", "S", 12, "Class Code", ""})
+        tblEXCEL.Rows.Add({"Invoices", 19, "SUB_STYLE_CLASS_CODE", "S", 20, "Sub Class Code", ""})
+        tblEXCEL.Rows.Add({"Invoices", 20, "LIST_PRICE", "2", 12, "List Price", ""})
+        tblEXCEL.Rows.Add({"Invoices", 21, "ORDR_QTY_SHIP", "0", 10, "Qty Shipped", ""})
+        tblEXCEL.Rows.Add({"Invoices", 22, "ORDR_UNIT_PRICE", "2", 10, "Price", ""})
+        tblEXCEL.Rows.Add({"Invoices", 23, "ORDR_REVENUE", "2", 10, "Revenue", ""})
+        tblEXCEL.Rows.Add({"Invoices", 24, "ORDR_UNIT_COST", "2", 10, "1st Cost", ""})
+        tblEXCEL.Rows.Add({"Invoices", 25, "ORDR_COGS", "2", 10, "COGS", ""})
+        tblEXCEL.Rows.Add({"Invoices", 26, "STD_LANDED_PCT", "P", 12, "Std Land Pct", ""})
+        tblEXCEL.Rows.Add({"Invoices", 27, "LANDED_COST", "2", 12, "Landed Cost", ""})
+        tblEXCEL.Rows.Add({"Invoices", 28, "GP", "2", 12, "GP", ""})
+        tblEXCEL.Rows.Add({"Invoices", 29, "GP_PCT", "P", 12, "GP%", ""})
+        tblEXCEL.Rows.Add({"Invoices", 30, "COMM_RATE", "2", 12, "Comm Rate", ""})
+        tblEXCEL.Rows.Add({"Invoices", 31, "VEND_ID", "S", 10, "Vendor ID", ""})
+        tblEXCEL.Rows.Add({"Invoices", 32, "VEND_CODE", "S", 12, "Vendor", ""})
+        tblEXCEL.Rows.Add({"Invoices", 33, "PORT_CODE", "S", 12, "Port Code", ""})
+        tblEXCEL.Rows.Add({"Invoices", 34, "PORT_NAME", "S", 12, "Port Name", ""})
+        tblEXCEL.Rows.Add({"Invoices", 35, "LAST_PORT", "S", 12, "Last Port", ""})
+        tblEXCEL.Rows.Add({"Invoices", 36, "COUNTRY_NAME", "S", 10, "Country", ""})
 
         tblEXCEL.Rows.Add({"Orders", 0, "ORDR_NO", "S", 10, "Order No", ""})
         tblEXCEL.Rows.Add({"Orders", 1, "ORDR_DATE", "D", 10, "Date", ""})
-        tblEXCEL.Rows.Add({"Orders", 2, "ORDR_AMT", "2", 10, "Amount", ""})
-        tblEXCEL.Rows.Add({"Orders", 3, "OPEN_AMT", "2", 10, "Open", ""})
-        tblEXCEL.Rows.Add({"Orders", 4, "CANC_AMT", "2", 10, "Cancelled", ""})
-        tblEXCEL.Rows.Add({"Orders", 5, "SHIP_AMT", "2", 10, "Shipped", ""})
+        tblEXCEL.Rows.Add({"Orders", 2, "ORDR_DATE_RECD", "D", 10, "Recd", ""})
+        tblEXCEL.Rows.Add({"Orders", 3, "CUST_CODE", "S", 10, "Cust Code", ""})
+        tblEXCEL.Rows.Add({"Orders", 4, "CUST_NAME", "S", 40, "Name", ""})
+        tblEXCEL.Rows.Add({"Orders", 5, "ORDR_AMT", "2", 10, "Amount", ""})
+        tblEXCEL.Rows.Add({"Orders", 6, "OPEN_AMT", "2", 10, "Open", ""})
+        tblEXCEL.Rows.Add({"Orders", 7, "CANC_AMT", "2", 10, "Cancelled", ""})
+        tblEXCEL.Rows.Add({"Orders", 8, "SHIP_AMT", "2", 10, "Shipped", ""})
 
         tblEXCEL.Rows.Add({"Customers", 0, "CUST_CODE", "S", 10, "Cust Code", ""})
         tblEXCEL.Rows.Add({"Customers", 1, "CUST_NAME", "S", 40, "Name", ""})
@@ -437,7 +511,7 @@ Public Class ARCRGIDD
             oSheet = oWB.Worksheets(0)
             oSheet.Name = "Invoices"
             ASCMAIN1.Progress("-", oSheet.Name)
-            _FF.Load_DataTable_into_SGXLS(TRC + 1, TC + 1, tblSOTINVH1, oSheet, Nothing, Nothing, "INV_NO", "")
+            _FF.Load_DataTable_into_SGXLS(TRC + 1, TC + 1, tblSOTINVH1, oSheet, Nothing, Nothing, "INV_DATE", "")
             setWorkBookHeadings(oSheet)
             setWorkBookTotals(oSheet)
             oSheet.Range(TRC, 0).EntireRow.AutoFilter()
@@ -449,7 +523,7 @@ Public Class ARCRGIDD
             oSheet = oWB.Worksheets.Add()
             oSheet.Name = "Orders"
             ASCMAIN1.Progress("-", oSheet.Name)
-            _FF.Load_DataTable_into_SGXLS(TRC + 1, TC + 1, tblSOTORDR1, oSheet, Nothing, Nothing, "ORDR_NO", "")
+            _FF.Load_DataTable_into_SGXLS(TRC + 1, TC + 1, tblSOTORDR1, oSheet, Nothing, Nothing, "ORDR_DATE", "")
             setWorkBookHeadings(oSheet)
             setWorkBookTotals(oSheet)
             oSheet.Range(TRC, 0).EntireRow.AutoFilter()
@@ -460,7 +534,7 @@ Public Class ARCRGIDD
             oSheet = oWB.Worksheets.Add()
             oSheet.Name = "Customers"
             ASCMAIN1.Progress("-", oSheet.Name)
-            _FF.Load_DataTable_into_SGXLS(TRC + 1, TC + 1, tblARTCUST1, oSheet, Nothing, Nothing, "CUST_CODE", "")
+            _FF.Load_DataTable_into_SGXLS(TRC + 1, TC + 1, tblARTCUST1, oSheet, Nothing, Nothing, "CUST_NAME", "")
             setWorkBookHeadings(oSheet)
             setWorkBookTotals(oSheet)
             oSheet.Range(TRC, 0).EntireRow.AutoFilter()
