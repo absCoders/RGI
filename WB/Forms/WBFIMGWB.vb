@@ -6,16 +6,12 @@ Public Class WBFIMGWB
     Dim S As New System.Text.StringBuilder() With {.Length = 0}
     Dim isFormLoading As Boolean = True
     Dim TTM As New UltraWinToolTip.UltraToolTipManager
-    Dim IMAGES_FOLDER_HIGH As String = ""
-    Dim IMAGES_FOLDER_LOW As String = ""
-    Dim IMAGE_DEFAULT As String = ""
     Dim FTPImages As Boolean = False
     Dim ImageListDownload As New List(Of String)
     Dim FileList As New Dictionary(Of String, String)
     Dim ImageGetProgress As Boolean = True
-    Dim ImageListFTP As New Dictionary(Of String, Date)
-    Dim ImageListLocal As New Dictionary(Of String, Date)
-    Dim ImageListDelete As New List(Of String)
+    Dim ImageListFTP As New Dictionary(Of String, Int64)
+    Dim ImageListLocal As New Dictionary(Of String, Int64)
 
     Private Event OnDirList As nsoftware.IPWorks.Ftp.OnDirListHandler
     'Private Event OnDirListS As nsoftware.IPWorksSSH.Sftp.OnDirListHandler
@@ -27,21 +23,14 @@ Public Class WBFIMGWB
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            IMAGES_FOLDER_HIGH = "S:\RGI\Images\High\"
-            IMAGES_FOLDER_LOW = "S:\RGI\Images\Low\"
-        Else
-            IMAGES_FOLDER_HIGH = ROWs("ICTPARMI").Item("IMAGES_FOLDER_HIGH") & String.Empty
-            IMAGES_FOLDER_LOW = ROWs("ICTPARMI").Item("IMAGES_FOLDER_LOW") & String.Empty
-        End If
+        SetFileLocations()
 
         With dst
 
             S.Length = 0
             S.AppendLine("SELECT")
             S.AppendLine("RSLT.*,")
-            S.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC,")
-            S.AppendLine("'0' ON_WEB")
+            S.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
             S.AppendLine("FROM")
             S.AppendLine("(")
             S.AppendLine("SELECT")
@@ -66,6 +55,22 @@ Public Class WBFIMGWB
             S.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "WBTIMGWB", "**", 0, False)
+            With .Tables("WBTIMGWB").Columns
+                .Add("IS_WEB", GetType(System.String))
+                .Add("IS_LOCAL", GetType(System.String))
+                .Add("IS_FTP", GetType(System.String))
+                .Add("LOCAL_SIZE", GetType(System.Int64))
+                .Add("FTP_SIZE", GetType(System.Int64))
+                .Add("IS_MATCHED", GetType(System.String), "LOCAL_SIZE = FTP_SIZE")
+            End With
+
+            S.Length = 0
+            S.AppendLine("SELECT STYLE_CODE, COLOR_CODE")
+            S.AppendLine("FROM WBTSTYLD")
+            S.AppendLine("WHERE WEB_IND = 'W'")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "WBTSTYLD", "**", 0, False)
+            Fill_Records("WBTSTYLD")
 
         End With
 
@@ -97,12 +102,30 @@ Public Class WBFIMGWB
 
     End Sub
 
+    Private Sub SetFileLocations()
+        txtREMOTE_FOLDER.Text = "/www/media/product/"
+        txtLOCAL_FOLDER.Text = "S:\Images\"
+        txtFILE_EXT.Text = "*.jpg"
+
+        If Not (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
+            If Not IsNothing(rowSOTPARM3) Then
+                If rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString.EndsWith("\") Then
+                    txtLOCAL_FOLDER.Text = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString & String.Empty
+                Else
+                    txtLOCAL_FOLDER.Text = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString & "\"
+                End If
+            End If
+        End If
+    End Sub
+
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
         EMsg = ""
         Select Case eItemKey
             Case "Refresh"
 
             Case "Exit"
+
         End Select
 
         If EMsg <> "" Then
@@ -123,6 +146,7 @@ Public Class WBFIMGWB
 
             Case "Exit"
                 Call Mode_Settings(False)
+                Me.Close()
         End Select
     End Sub
 
@@ -198,7 +222,7 @@ Public Class WBFIMGWB
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdWBTIMGWB, "SSB", "Show Filter", "Show GroupBox", "View Image")
+        Load_Popup_Menu(grdWBTIMGWB, "SSB", "Show Filter", "Show GroupBox", "View Local Image", "View FTP Image")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -253,17 +277,22 @@ Public Class WBFIMGWB
         '    Exit Sub
         'End If
 
-        Select Case e.Tool.Key
-            Case "View Image"
-                Dim STYLE_CODE As String = grd.ActiveRow.Cells.Item("STYLE_CODE").Value
-                Dim COLOR_CODE As String = grd.ActiveRow.Cells.Item("COLOR_CODE").Value
-                Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, COLOR_CODE, "M")
-                With frmIMAGE
-                    .ShowDialog(Me)
-                End With
-                'grd.ActiveRow.Cells.Item("ORDR_NO_WEB").Value = ""
-        End Select
-
+        Dim STYLE_CODE As String = grd.ActiveRow.Cells.Item("STYLE_CODE").Value & String.Empty
+        Dim COLOR_CODE As String = grd.ActiveRow.Cells.Item("COLOR_CODE").Value & String.Empty
+        If Not (STYLE_CODE.Length = 0 Or COLOR_CODE.Length = 0) Then
+            Select Case e.Tool.Key
+                Case "View Local Image"
+                    Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, COLOR_CODE, "M", False)
+                    With frmIMAGE
+                        .ShowDialog(Me)
+                    End With
+                Case "View FTP Image"
+                    Dim frmIMAGE As New TAC.TAFIMGV1(Me, STYLE_CODE, COLOR_CODE, "M", True)
+                    With frmIMAGE
+                        .ShowDialog(Me)
+                    End With
+            End Select
+        End If
         Update_Record()
     End Sub
 #End Region
@@ -291,55 +320,58 @@ Public Class WBFIMGWB
 #Region "Custom Methods"
     Private Sub RefreshData()
         ASCMAIN1.Progress("Refreshing Styles", "")
+        btnAddNew.Visible = False
+        chkAddBothLocations.Visible = False
+        grdWBTIMGWB.Enabled = False
         Fill_Records("WBTIMGWB")
-        'getFTPImages()
+
         FillImageStats()
 
-        'For Each rowWBTIMGWB As DataRow In dst.Tables("WBTIMGWB").Select()
-        '    rowWBTIMGWB.Item("COLOUM_NAME") = "XXXXX"
-        'Next
+        grdWBTIMGWB.Enabled = True
+        btnAddNew.Visible = True
+        chkAddBothLocations.Visible = True
         ASCMAIN1.Progress("", "")
     End Sub
 
-    Private Sub getFTPImages()
-        Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
-        Dim IMAGES_FOLDER As String = "C:\"
-        Dim RemoteFolder As String = "/www/media/product/"
-        If Not IsNothing(rowSOTPARM3) Then
-            If rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString.EndsWith("\") Then
-                IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
-            Else
-                IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString & "\"
-            End If
-        End If
-        Ftp1.User = "regency-rib"
-        Ftp1.Password = "joydHUJ3"
-        Ftp1.RemoteHost = "regency-rib.com"
-        Ftp1.Logon()
-        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-        Ftp1.RemoteFile = RemoteFolder & "*"
-        Ftp1.LocalFile = IMAGES_FOLDER & "*"
-        Ftp1.Overwrite = True
-        For Each DLFile As String In ImageListDownload
-            Application.DoEvents()
-            If ImageGetProgress Then
-                Ftp1.LocalFile = IMAGES_FOLDER & DLFile
-                Ftp1.RemoteFile = RemoteFolder & DLFile
-                ASCMAIN1.Progress("Fetching " & DLFile)
-                Ftp1.Download()
-            Else
-                Exit For
-            End If
-        Next
-        Ftp1.Logoff()
-        'For Each DELFile As String In ImageListDelete
-        '    System.IO.File.Delete(IMAGES_FOLDER & DELFile)
-        '    ASCMAIN1.Progress("Deleting " & DELFile)
-        'Next
-        'FillImageStats()
-        MsgBox("File Sync Complete!", vbOKOnly, "Sync")
-        'btnGetImages.Visible = False
-    End Sub
+    'Private Sub getFTPImages()
+    '    Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
+    '    Dim IMAGES_FOLDER As String = "C:\"
+
+    '    If Not IsNothing(rowSOTPARM3) Then
+    '        If rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString.EndsWith("\") Then
+    '            IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
+    '        Else
+    '            IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString & "\"
+    '        End If
+    '    End If
+    '    Ftp1.User = "regency-rib"
+    '    Ftp1.Password = "joydHUJ3"
+    '    Ftp1.RemoteHost = "regency-rib.com"
+    '    Ftp1.Logon()
+    '    Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+    '    Ftp1.RemoteFile = RemoteFolder & "*"
+    '    Ftp1.LocalFile = IMAGES_FOLDER & "*"
+    '    Ftp1.Overwrite = True
+    '    For Each DLFile As String In ImageListDownload
+    '        Application.DoEvents()
+    '        If ImageGetProgress Then
+    '            Ftp1.LocalFile = IMAGES_FOLDER & DLFile
+    '            Ftp1.RemoteFile = RemoteFolder & DLFile
+    '            ASCMAIN1.Progress("Fetching " & DLFile)
+    '            Ftp1.Download()
+    '        Else
+    '            Exit For
+    '        End If
+    '    Next
+    '    Ftp1.Logoff()
+    '    'For Each DELFile As String In ImageListDelete
+    '    '    System.IO.File.Delete(IMAGES_FOLDER & DELFile)
+    '    '    ASCMAIN1.Progress("Deleting " & DELFile)
+    '    'Next
+    '    'FillImageStats()
+    '    MsgBox("File Sync Complete!", vbOKOnly, "Sync")
+    '    'btnGetImages.Visible = False
+    'End Sub
 
     Private Sub GetFileInfo(sender As Object, e As nsoftware.IPWorks.FtpDirListEventArgs) Handles Ftp1.OnDirList
         If FTPImages Then
@@ -351,22 +383,13 @@ Public Class WBFIMGWB
                 Else
                     Exit Sub
                 End If
-                Dim etm As String = e.FileTime
-                If etm.Length > 5 Then
-                    If etm.Substring(etm.Length - 5, 5).Contains(":") Then
-                        If IsDate(etm.Replace(etm.Substring(etm.Length - 5, 5), Now.Year.ToString)) Then
-                            If CDate(etm.Replace(etm.Substring(etm.Length - 5, 5), Now.Year.ToString)) > Now() Then
-                                etm = etm.Replace(etm.Substring(etm.Length - 5, 5), Now.AddYears(-1).Year.ToString)
-                            Else
-                                etm = etm.Replace(etm.Substring(etm.Length - 5, 5), Now.Year.ToString)
-                            End If
-                        End If
+                Dim FileSize As String = e.FileSize
+                If IsNumeric(FileSize) Then
+                    If Not ImageListFTP.ContainsKey(e.FileName.Replace(txtREMOTE_FOLDER.Text, "").ToUpper) Then
+                        ImageListFTP.Add(e.FileName.Replace(txtREMOTE_FOLDER.Text, "").ToUpper, FileSize)
                     End If
-                End If
-                If IsDate(etm) Then
-                    ImageListFTP.Add(e.FileName, etm)
                 Else
-                    ImageListFTP.Add(e.FileName, Now())
+                    ImageListFTP.Add(e.FileName, 0)
                 End If
 
 
@@ -400,31 +423,23 @@ Public Class WBFIMGWB
     End Sub
 
     Private Sub FillImageStats()
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Refreshing File Information", "")
+        Application.DoEvents()
+
         FTPImages = True
         ImageListDownload.Clear()
-        ImageListDelete.Clear()
         ImageListLocal.Clear()
         ImageListFTP.Clear()
-        Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
-        Dim IMAGES_FOLDER As String = "C:\"
-        Dim ImageFilter As String = "*.jpg"
-        Dim RemoteFolder As String = "/www/media/product/"
-        If Not IsNothing(rowSOTPARM3) Then
-            If rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString.EndsWith("\") Then
-                IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
-            Else
-                IMAGES_FOLDER = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString & "\"
-            End If
-        End If
-        If System.IO.Directory.Exists(IMAGES_FOLDER) Then
 
-            For Each file As String In System.IO.Directory.GetFiles(IMAGES_FOLDER, ImageFilter)
-                If file.Length >= 3 Then
-                    If file.EndsWith(".JPG") Or file.EndsWith(".jpg") Then
-                        Dim LastWriteTime As Date = CDate(System.IO.File.GetLastWriteTime(file))
-                        Dim FileName As String = System.IO.Path.GetFileName(file)
-                        ImageListLocal.Add(FileName, LastWriteTime)
-                    End If
+        If System.IO.Directory.Exists(txtLOCAL_FOLDER.Text) Then
+
+            Dim LocalFiles As String() = System.IO.Directory.GetFiles(txtLOCAL_FOLDER.Text, txtFILE_EXT.Text)
+            For Each LocalFile As String In LocalFiles
+                If System.IO.File.Exists(LocalFile) Then
+                    Dim fileInfo As New FileInfo(LocalFile)
+                    Dim LocalAttrib As FileAttributes = System.IO.File.GetAttributes(LocalFile)
+                    ImageListLocal.Add(LocalFile.Replace(txtLOCAL_FOLDER.Text, "").ToUpper(), fileInfo.Length)
                 End If
             Next
 
@@ -433,88 +448,110 @@ Public Class WBFIMGWB
             Ftp1.RemoteHost = "regency-rib.com"
             Ftp1.Logon()
             Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-            Ftp1.RemoteFile = RemoteFolder & "*"
-            Ftp1.LocalFile = IMAGES_FOLDER & "*"
+            Ftp1.RemoteFile = txtREMOTE_FOLDER.Text & "*"
+            Ftp1.LocalFile = txtLOCAL_FOLDER.Text & "*"
             Ftp1.Overwrite = True
             FileList.Clear()
             Ftp1.ListDirectoryLong()
             Ftp1.Logoff()
 
-            ImageListDownload.Clear()
-            ImageListDelete.Clear()
+            'Dim ImageListFTPtmp As New Dictionary(Of String, Date)
 
-            Dim ImageListFTPtmp As New Dictionary(Of String, Date)
-            For Each image As KeyValuePair(Of String, Date) In ImageListFTP
-                If Not (ImageListFTPtmp.ContainsKey(image.Key) Or ImageListFTPtmp.ContainsKey(image.Key.Replace(".jpg", ".JPG")) Or ImageListFTPtmp.ContainsKey(image.Key.Replace(".JPG", ".jpg"))) Then
-                    ImageListFTPtmp.Add(image.Key.Replace(RemoteFolder, ""), image.Value)
+            Dim iCNT As Int64 = dst.Tables("WBTIMGWB").Rows.Count
+            Dim cCNT As Int64 = 0
+            For Each rowWBTIMGWB As DataRow In dst.Tables("WBTIMGWB").Select("", "STYLE_CODE, COLOR_CODE")
+                cCNT += 1
+                Dim STYLE_CODE As String = (rowWBTIMGWB.Item("STYLE_CODE").ToString & String.Empty).ToUpper()
+                Dim COLOR_CODE As String = (rowWBTIMGWB.Item("COLOR_CODE").ToString & String.Empty).ToUpper()
+                Dim FLTR As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+                ASCMAIN1.Progress($"{STYLE_CODE} - {COLOR_CODE}", $"{cCNT} of {iCNT}")
+                Dim IMG_NAME As String = $"{STYLE_CODE}-{COLOR_CODE}.JPG"
+                If ImageListLocal.ContainsKey(IMG_NAME) Then
+                    rowWBTIMGWB.Item("IS_LOCAL") = "1"
+                    rowWBTIMGWB.Item("LOCAL_SIZE") = Val(ImageListLocal.Item(IMG_NAME).ToString)
+                End If
+                If ImageListFTP.ContainsKey(IMG_NAME) Then
+                    rowWBTIMGWB.Item("IS_FTP") = "1"
+                    rowWBTIMGWB.Item("FTP_SIZE") = Val(ImageListFTP.Item(IMG_NAME).ToString)
+                End If
+                If Not IsNothing(dst.Tables.Item("WBTSTYLD").Select(FLTR).FirstOrDefault) Then
+                    rowWBTIMGWB.Item("IS_WEB") = "1"
                 End If
             Next
-            ImageListFTP = ImageListFTPtmp
-
-            Dim ImageListLocaltmp As New Dictionary(Of String, Date)
-            For Each image As KeyValuePair(Of String, Date) In ImageListLocal
-                ImageListLocaltmp.Add(image.Key.Replace(RemoteFolder, ""), image.Value)
-            Next
-            ImageListLocal = ImageListLocaltmp
-
-            'Dim sql As New Text.StringBuilder With {.Length = 0}
-            'sql.AppendLine("SELECT")
-            'sql.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
-            'sql.AppendLine("FROM")
-            'sql.AppendLine("(")
-            'sql.AppendLine("SELECT")
-            'sql.AppendLine("S1.STYLE_CODE,")
-            'sql.AppendLine("C1.COLOR_CODE,")
-            'sql.AppendLine("S1.STYLE_STATUS,")
-            'sql.AppendLine("C1.STYLE_COLOR_STATUS,")
-            'sql.AppendLine("S1.STYLE_DESC,")
-            'sql.AppendLine("SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))) AS AVAIL")
-            'sql.AppendLine("FROM ICTSTYL1 S1, ICTSTYC1 C1, ICTSTAT2 S2")
-            'sql.AppendLine("WHERE S1.STYLE_CODE = C1.STYLE_CODE")
-            'sql.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
-            'sql.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
-            'sql.AppendLine("AND S2.WHSE_CODE = 'MS'")
-            'sql.AppendLine("GROUP BY")
-            'sql.AppendLine("S1.STYLE_CODE,")
-            'sql.AppendLine("C1.COLOR_CODE,")
-            'sql.AppendLine("S1.STYLE_STATUS,")
-            'sql.AppendLine("C1.STYLE_COLOR_STATUS,")
-            'sql.AppendLine("S1.STYLE_DESC")
-            'sql.AppendLine(")")
-            'sql.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
-            'Dim tblMFLIST As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-            Dim iCNT As Int64 = 0
-
-            For Each image As KeyValuePair(Of String, Date) In ImageListFTPtmp
-                iCNT += 1
-                'If image.Key = "MT17903-CAIR.jpg" Then Stop
-                Dim SC As String = image.Key.Replace("'", "").ToUpper
-                ASCMAIN1.Progress($"{iCNT} of {ImageListFTPtmp.Count}", SC)
-                Dim rowWBTIMGWB As DataRow = dst.Tables.Item("WBTIMGWB").Select($"SC = '{image.Key.Replace("'", "").ToUpper}'").FirstOrDefault
-                If Not IsNothing(rowWBTIMGWB) Then
-                    rowWBTIMGWB.Item("ON_WEB") = "1"
-                Else
-                    'rowWBTIMGWB.Item("ON_WEB") = "0"
-                    'If ImageListLocaltmp.Keys.Contains(image.Key) Then
-                    '    If image.Value > ImageListLocaltmp.Item(image.Key) Then
-                    '        ImageListDownload.Add(image.Key)
-                    '    End If
-                    'Else
-                    '    ImageListDownload.Add(image.Key)
-                    'End If
-                End If
-            Next
-            'For Each localFile As KeyValuePair(Of String, Date) In ImageListLocal
-            '    If Not ImageListFTP.Keys.Contains(localFile.Key) Then
-            '        ImageListDelete.Add(localFile.Key)
-            '    End If
-            'Next
         Else
             MsgBox("Error with Image Parameters", MsgBoxStyle.Critical, "Parameters")
         End If
+        Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
+        Application.DoEvents()
+
 
         FTPImages = False
+    End Sub
+
+    Private Sub btnAddNew_Click(sender As Object, e As EventArgs) Handles btnAddNew.Click
+        Dim eMsg As New StringBuilder With {.Length = 0}
+        Dim openFileDialog As New OpenFileDialog()
+        openFileDialog.Title = "Select Image(s) To Add"
+        openFileDialog.Filter = $"Files|{txtFILE_EXT.Text}"
+        openFileDialog.Multiselect = True ' Allow multiple file selection
+        If openFileDialog.ShowDialog() = DialogResult.OK Then
+            Dim selectedFiles As String() = openFileDialog.FileNames
+            For Each file As String In selectedFiles
+                Dim slashAt As Int64 = file.LastIndexOf("\")
+                If slashAt = -1 Then
+                    eMsg.AppendLine($"Bad File Name: {file}")
+                Else
+                    Dim fileName As String = file.Substring(slashAt + 1, file.Length - slashAt - 1)
+                    Dim dashAt As Int64 = fileName.LastIndexOf("-")
+                    Dim dotAt As Int64 = fileName.LastIndexOf(".")
+                    If dashAt = -1 Or dotAt = -1 Then
+                        eMsg.AppendLine($"Bad File Name: {file}")
+                    Else
+                        Dim STYLE_CODE As String = fileName.Substring(0, dashAt)
+                        Dim COLOR_CODE As String = fileName.Substring(dashAt + 1, fileName.Length - dotAt)
+                        Dim EXT As String = fileName.Substring(dotAt + 1, fileName.Length - dotAt - 1)
+                        If EXT <> "jpg" Then
+                            eMsg.AppendLine($"Bad Extension: {file}")
+                        Else
+                            Dim fltr As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+                            If dst.Tables("WBTIMGWB").Select(fltr).Count <> 0 Then
+                                eMsg.AppendLine($"Not Valid Style / Color: {file}")
+                            End If
+                        End If
+                    End If
+                End If
+            Next
+            If eMsg.Length > 0 Then
+                MsgBox(eMsg.ToString, vbCritical, "Problem With Selected File(s)")
+            Else
+                If chkAddBothLocations.Checked Then
+                    Ftp1.User = "regency-rib"
+                    Ftp1.Password = "joydHUJ3"
+                    Ftp1.RemoteHost = "regency-rib.com"
+                    Ftp1.Logon()
+                    Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    Ftp1.Overwrite = True
+                End If
+
+                For Each file As String In selectedFiles
+                    Dim slashAt As Int64 = file.LastIndexOf("\")
+                    Dim fileName As String = file.Substring(slashAt + 1, file.Length - slashAt - 1)
+                    System.IO.File.Copy(file, txtLOCAL_FOLDER.Text & fileName)
+                    Application.DoEvents()
+                    If chkAddBothLocations.Checked Then
+                        Ftp1.LocalFile = file
+                        Ftp1.RemoteFile = txtREMOTE_FOLDER.Text & fileName
+                        Ftp1.Upload()
+                    End If
+                Next
+                If chkAddBothLocations.Checked Then
+                    Ftp1.Logoff()
+                End If
+            End If
+        Else
+            MsgBox("No files selected.", vbCritical, "What?")
+        End If
     End Sub
 #End Region
 

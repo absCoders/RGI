@@ -27,6 +27,7 @@ Partial Class WBFIMGWB
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -45,7 +46,12 @@ Partial Class WBFIMGWB
         Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVAIL")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SC")
-        Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ON_WEB")
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_WEB")
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_LOCAL")
+        Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_FTP")
+        Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCAL_SIZE")
+        Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FTP_SIZE")
+        Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_MATCHED")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -61,7 +67,13 @@ Partial Class WBFIMGWB
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.pnlOptions = New System.Windows.Forms.Panel()
+        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.txtREMOTE_FOLDER = New System.Windows.Forms.TextBox()
+        Me.lblREMOTE_FOLDER = New System.Windows.Forms.Label()
+        Me.txtLOCAL_FOLDER = New System.Windows.Forms.TextBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdWBTIMGWB = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -76,6 +88,10 @@ Partial Class WBFIMGWB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.txtFILE_EXT = New System.Windows.Forms.TextBox()
+        Me.lblFILE_EXT = New System.Windows.Forms.Label()
+        Me.chkAddBothLocations = New System.Windows.Forms.CheckBox()
+        Me.btnAddNew = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -86,6 +102,9 @@ Partial Class WBFIMGWB
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        Me.pnlOptions.SuspendLayout()
+        Me.UltraExplorerBarContainerControl1.SuspendLayout()
+        Me.Panel3.SuspendLayout()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.grdWBTIMGWB, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl12.SuspendLayout()
@@ -108,6 +127,7 @@ Partial Class WBFIMGWB
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem5.Key = "Refresh"
         UltraExplorerBarItem5.Text = "Refresh"
         UltraExplorerBarItem4.Key = "Exit"
@@ -120,7 +140,11 @@ Partial Class WBFIMGWB
         UltraExplorerBarGroup3.Key = "Options"
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Options"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3})
+        UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
+        UltraExplorerBarGroup2.Key = "File Locations"
+        UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup2.Text = "File Locations"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -207,19 +231,77 @@ Partial Class WBFIMGWB
         '
         'UltraExplorerBarContainerControl2
         '
-        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.pnlOptions)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 130)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         '
-        'Panel4
+        'pnlOptions
         '
-        Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel4.Location = New System.Drawing.Point(0, 0)
-        Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(189, 150)
-        Me.Panel4.TabIndex = 0
+        Me.pnlOptions.Controls.Add(Me.btnAddNew)
+        Me.pnlOptions.Controls.Add(Me.chkAddBothLocations)
+        Me.pnlOptions.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pnlOptions.Location = New System.Drawing.Point(0, 0)
+        Me.pnlOptions.Name = "pnlOptions"
+        Me.pnlOptions.Size = New System.Drawing.Size(189, 150)
+        Me.pnlOptions.TabIndex = 0
+        '
+        'UltraExplorerBarContainerControl1
+        '
+        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 324)
+        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl1.TabIndex = 2
+        '
+        'Panel3
+        '
+        Me.Panel3.Controls.Add(Me.txtFILE_EXT)
+        Me.Panel3.Controls.Add(Me.lblFILE_EXT)
+        Me.Panel3.Controls.Add(Me.txtREMOTE_FOLDER)
+        Me.Panel3.Controls.Add(Me.lblREMOTE_FOLDER)
+        Me.Panel3.Controls.Add(Me.txtLOCAL_FOLDER)
+        Me.Panel3.Controls.Add(Me.Label1)
+        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(189, 150)
+        Me.Panel3.TabIndex = 1
+        '
+        'txtREMOTE_FOLDER
+        '
+        Me.txtREMOTE_FOLDER.Location = New System.Drawing.Point(11, 77)
+        Me.txtREMOTE_FOLDER.Name = "txtREMOTE_FOLDER"
+        Me.txtREMOTE_FOLDER.ReadOnly = True
+        Me.txtREMOTE_FOLDER.Size = New System.Drawing.Size(171, 23)
+        Me.txtREMOTE_FOLDER.TabIndex = 3
+        '
+        'lblREMOTE_FOLDER
+        '
+        Me.lblREMOTE_FOLDER.AutoSize = True
+        Me.lblREMOTE_FOLDER.Location = New System.Drawing.Point(8, 60)
+        Me.lblREMOTE_FOLDER.Name = "lblREMOTE_FOLDER"
+        Me.lblREMOTE_FOLDER.Size = New System.Drawing.Size(76, 16)
+        Me.lblREMOTE_FOLDER.TabIndex = 2
+        Me.lblREMOTE_FOLDER.Text = "Local Files"
+        '
+        'txtLOCAL_FOLDER
+        '
+        Me.txtLOCAL_FOLDER.Location = New System.Drawing.Point(12, 27)
+        Me.txtLOCAL_FOLDER.Name = "txtLOCAL_FOLDER"
+        Me.txtLOCAL_FOLDER.ReadOnly = True
+        Me.txtLOCAL_FOLDER.Size = New System.Drawing.Size(171, 23)
+        Me.txtLOCAL_FOLDER.TabIndex = 1
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(9, 10)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(76, 16)
+        Me.Label1.TabIndex = 0
+        Me.Label1.Text = "Local Files"
         '
         'UltraTabPageControl1
         '
@@ -251,11 +333,26 @@ Partial Class WBFIMGWB
         UltraGridColumn1.Header.Caption = "Style - Color"
         UltraGridColumn1.Header.VisiblePosition = 6
         UltraGridColumn1.Width = 188
-        UltraGridColumn2.Header.Caption = "On Web"
-        UltraGridColumn2.Header.VisiblePosition = 7
-        UltraGridColumn2.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
-        UltraGridColumn2.Width = 70
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn1, UltraGridColumn2})
+        UltraGridColumn3.Header.Caption = "Web"
+        UltraGridColumn3.Header.VisiblePosition = 7
+        UltraGridColumn3.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn3.Width = 69
+        UltraGridColumn4.Header.Caption = "Local"
+        UltraGridColumn4.Header.VisiblePosition = 8
+        UltraGridColumn4.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn4.Width = 78
+        UltraGridColumn5.Header.Caption = "FTP"
+        UltraGridColumn5.Header.VisiblePosition = 10
+        UltraGridColumn5.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn5.Width = 79
+        UltraGridColumn2.Header.Caption = "Local Size"
+        UltraGridColumn2.Header.VisiblePosition = 9
+        UltraGridColumn6.Header.Caption = "FTP Size"
+        UltraGridColumn6.Header.VisiblePosition = 11
+        UltraGridColumn7.Header.Caption = "Matched"
+        UltraGridColumn7.Header.VisiblePosition = 12
+        UltraGridColumn7.Width = 104
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn1, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn2, UltraGridColumn6, UltraGridColumn7})
         Me.grdWBTIMGWB.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBTIMGWB.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -442,6 +539,46 @@ Partial Class WBFIMGWB
         '
         Me.Timer1.Interval = 1000
         '
+        'txtFILE_EXT
+        '
+        Me.txtFILE_EXT.Location = New System.Drawing.Point(107, 114)
+        Me.txtFILE_EXT.Name = "txtFILE_EXT"
+        Me.txtFILE_EXT.ReadOnly = True
+        Me.txtFILE_EXT.Size = New System.Drawing.Size(75, 23)
+        Me.txtFILE_EXT.TabIndex = 5
+        '
+        'lblFILE_EXT
+        '
+        Me.lblFILE_EXT.AutoSize = True
+        Me.lblFILE_EXT.Location = New System.Drawing.Point(8, 117)
+        Me.lblFILE_EXT.Name = "lblFILE_EXT"
+        Me.lblFILE_EXT.Size = New System.Drawing.Size(56, 16)
+        Me.lblFILE_EXT.TabIndex = 4
+        Me.lblFILE_EXT.Text = "File Ext"
+        '
+        'chkAddBothLocations
+        '
+        Me.chkAddBothLocations.AutoSize = True
+        Me.chkAddBothLocations.Checked = True
+        Me.chkAddBothLocations.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkAddBothLocations.Location = New System.Drawing.Point(12, 36)
+        Me.chkAddBothLocations.Name = "chkAddBothLocations"
+        Me.chkAddBothLocations.Size = New System.Drawing.Size(176, 20)
+        Me.chkAddBothLocations.TabIndex = 0
+        Me.chkAddBothLocations.Text = "Add To Both Locations"
+        Me.chkAddBothLocations.UseVisualStyleBackColor = True
+        Me.chkAddBothLocations.Visible = False
+        '
+        'btnAddNew
+        '
+        Me.btnAddNew.Location = New System.Drawing.Point(11, 12)
+        Me.btnAddNew.Name = "btnAddNew"
+        Me.btnAddNew.Size = New System.Drawing.Size(170, 23)
+        Me.btnAddNew.TabIndex = 1
+        Me.btnAddNew.Text = "Add Images"
+        Me.btnAddNew.UseVisualStyleBackColor = True
+        Me.btnAddNew.Visible = False
+        '
         'WBFIMGWB
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -459,6 +596,11 @@ Partial Class WBFIMGWB
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        Me.pnlOptions.ResumeLayout(False)
+        Me.pnlOptions.PerformLayout()
+        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
         Me.UltraTabPageControl1.ResumeLayout(False)
         CType(Me.grdWBTIMGWB, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl12.ResumeLayout(False)
@@ -487,7 +629,7 @@ Partial Class WBFIMGWB
     Friend WithEvents UltraTabPageControl13 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents UltraExplorerBarContainerControl2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl
-    Friend WithEvents Panel4 As System.Windows.Forms.Panel
+    Friend WithEvents pnlOptions As System.Windows.Forms.Panel
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Panel2 As Panel
@@ -495,4 +637,14 @@ Partial Class WBFIMGWB
     Friend WithEvents UltraTabSharedControlsPage1 As UltraWinTabControl.UltraTabSharedControlsPage
     Friend WithEvents UltraTabPageControl1 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdWBTIMGWB As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraExplorerBarContainerControl1 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents Panel3 As Panel
+    Friend WithEvents txtLOCAL_FOLDER As TextBox
+    Friend WithEvents Label1 As Label
+    Friend WithEvents txtREMOTE_FOLDER As TextBox
+    Friend WithEvents lblREMOTE_FOLDER As Label
+    Friend WithEvents txtFILE_EXT As TextBox
+    Friend WithEvents lblFILE_EXT As Label
+    Friend WithEvents btnAddNew As Button
+    Friend WithEvents chkAddBothLocations As CheckBox
 End Class
