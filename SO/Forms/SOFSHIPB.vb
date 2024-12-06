@@ -696,6 +696,8 @@ Public Class SOFSHIPB
             dst.Tables("SOTPICK1").Columns("INV_MISC_CHG").DefaultValue = 0
             dst.Tables("SOTPICK1").Columns.Add("PICKED")
             dst.Tables("SOTPICK1").Columns.Add("INV_COMMENT", GetType(System.String))
+            dst.Tables("SOTPICK1").Columns.Add("PICK_FREIGHT_ORIG", GetType(System.Decimal))
+            dst.Tables("SOTPICK1").Columns("PICK_FREIGHT_ORIG").DefaultValue = 0
 
             For Each fieldname As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_ADDR3",
                                                           "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY",
@@ -4233,6 +4235,10 @@ Public Class SOFSHIPB
                 & sqlwhere_SOTSHIP1
             Fill_Records("SOTPICK1", "", True, ASCMAIN1.sql)
 
+            For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
+                rowSOTPICK1.Item("PICK_FREIGHT_ORIG") = rowSOTPICK1.Item("PICK_FREIGHT")
+            Next
+
             If fillPickBol Then
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
                     rowSOTPICK1.Item("BILL_OF_LADING_NO") = BOL_NO
@@ -5295,7 +5301,7 @@ Public Class SOFSHIPB
                         ' ErrorMessage should have the error text available
                         ' What to do if an error occurs in the requesting of a label??
                         If ErrorMessage.Length > 0 Then
-                            MessageBox.Show("Update Aborted! The following error occurred when processing the shipping label: " & ErrorMessage, "Ship Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            MessageBox.Show("Update Aborted! The following error occurred when processing the shipping label: " & Environment.NewLine & Environment.NewLine & ErrorMessage, "Ship Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         Else
                             MessageBox.Show("Update Aborted! An error occurred when processing the shipping label.", "Ship Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         End If
@@ -17496,6 +17502,38 @@ Public Class SOFSHIPB
                     End If
                 Next
 
+                Dim totalLabelCharge As Decimal = Math.Round(Val(dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "") & String.Empty), 2)
+                Dim rateCharge As Decimal = Math.Round(Val(dst.Tables("WHTSHPC4").Select($"CARRIER_CODE = '{CARRIER_CODE}' AND SERVICE_TYPE = '{CARRIER_PROD_CODE}'", "")(0).Item("TOTAL_CHARGE") & String.Empty))
+
+                If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommProcessing Then
+                    If CInt(totalLabelCharge) > CInt(rateCharge) Then
+                        Dim diff As Decimal = Math.Round(totalLabelCharge - rateCharge, 2)
+                        Dim userMessage As String = $"The Customer Freight Rate is {rateCharge.ToString("#,##0.00")} and the Label Charge is {totalLabelCharge.ToString("#,##0.00")}. This is a difference of {diff.ToString("#,##0.00")}."
+                        userMessage &= Environment.NewLine & Environment.NewLine & "Do you want to continue?"
+                        If MessageBox.Show(userMessage, "Freight Difference", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                            ErrorMessage = "Discrepency in Customer Freight Rate and Label Charge. User cancelled Finalization."
+                            For Each rowSOTPICK1x As DataRow In dst.Tables("SOTPICK1").Select("")
+                                rowSOTPICK1x.Item("PICK_FREIGHT") = rowSOTPICK1x.Item("PICK_FREIGHT_ORIG")
+                                rowSOTPICK1x.Item("OUR_FREIGHT") = 0
+                            Next
+                            Return False
+                        Else
+                            For Each rowSOTPICK1x As DataRow In dst.Tables("SOTPICK1").Select("")
+                                Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
+                                rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                                rowTATEVNT1.Item("TABLE_KEY") = rowSOTPICK1x.Item("ORDR_NO")
+                                rowTATEVNT1.Item("INIT_DATE") = DateTime.Now
+                                rowTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                rowTATEVNT1.Item("EVENT_TYPE") = "LBFRT"
+                                rowTATEVNT1.Item("EVENT_DESC") = $"User {ASCMAIN1.USER_ID} choose to ship when the Customer Freight Rate was {rateCharge.ToString("#,##0.00")} and the Label Charge was {totalLabelCharge.ToString("#,##0.00")}"
+                                rowTATEVNT1.Item("EVENT_KEY") = ""
+                                rowTATEVNT1.Item("FORM_NAME") = "SOFSHIPB"
+                                dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
+                            Next
+                        End If
+                    End If
+                End If
+
                 Try
                     BeginTrans()
                     Update_Record_TDA("WHTSHPC1")
@@ -18507,11 +18545,10 @@ Public Class SOFSHIPB
                 & " and SOTSHIP1.SHIP_BOL_NO in " & inListSHIP_BOL_NO
             Fill_Records("SOTPICK1", "", False, ASCMAIN1.sql)
 
-            'If Not processingMasterBOL Then
-            '    For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
-            '        rowSOTPICK1.Item("BILL_OF_LADING_NO") = BOL_NO
-            '    Next
-            'End If
+            For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
+                rowSOTPICK1.Item("PICK_FREIGHT_ORIG") = rowSOTPICK1.Item("PICK_FREIGHT")
+            Next
+
             If Not processingMasterBOL Then
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
                     rowSOTPICK1.Item("BILL_OF_LADING_NO") = BOL_NO
@@ -18900,6 +18937,7 @@ Public Class SOFSHIPB
 
             For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
                 rowSOTPICK1.Item("BILL_OF_LADING_NO") = BOL_NO
+                rowSOTPICK1.Item("PICK_FREIGHT_ORIG") = rowSOTPICK1.Item("PICK_FREIGHT")
             Next
 
             If ASCMAIN1.CLIENT = "VAN" Then
