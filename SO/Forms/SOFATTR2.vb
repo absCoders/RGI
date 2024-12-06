@@ -674,7 +674,9 @@ Public Class SOFATTR2
                 End If
             End If
         Next
+        Dim r As Int64 = 0
         For rw As Int64 = 1 To dbRows
+            r += 1
             oSheet.Cells(rw, 1).RowHeight = 100
             If STYLE_COL > 0 And COLOR_COL > 0 Then
                 Dim STYLE_CODE As String = oSheet.Cells(rw, STYLE_COL).Text
@@ -688,6 +690,17 @@ Public Class SOFATTR2
                 End If
             End If
         Next
+
+        '2025 Tariff Notice
+        r += 3
+        oSheet.Range($"A{r}:N{r}").Merge()
+        oSheet.Range($"A{r}:N{r}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+        oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+        oSheet.Range($"A{r}:N{r}").Font.Bold = True
+        oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
+
+
         oSheet.Range(0, 0).Select()
         oSheet.WindowInfo.FreezePanes = True
         oSheet.Range("A1:A1").Select()
@@ -2988,6 +3001,25 @@ Public Class SOFATTR2
             rng.Font.Bold = True
             rng.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight
         End If
+
+        '2025 Tariff Notice
+        R += 1
+        rng = XWS.Range($"A{R}:N{R}")
+        rng.Merge()
+        rng.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
+        rng.Font.Bold = True
+        rng.Font.Color = Color.Red
+        'With XWS.Range(Excel_Cell(R, 1), Excel_Cell(R, 14))
+        '    .Merge()
+        '    .Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        '    '.Font.Bold = True
+        '    '.Font.Color = Color.Red
+        '    '.RowHeight = 45
+        '    .WrapText = True
+        '    '.VerticalAlignment = excel.XlVAlign.xlVAlignTop
+        '    .BorderAround(excel.XlLineStyle.xlContinuous, excel.XlBorderWeight.xlThin)
+        'End With
 
         rng = XWS.Range("D:E")
         rng.EntireColumn.AutoFit()

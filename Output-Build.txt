@@ -1,0 +1,15 @@
+﻿Rebuild started...
+1>------ Rebuild All started: Project: ABSX, Configuration: Debug x86 ------
+2>------ Rebuild All started: Project: ABSCS, Configuration: Debug x86 ------
+1>  ABSX -> C:\VS\VDI\ABSX\bin\x86\Debug\ABSX.dll
+2>  ABSCS -> C:\VS\VDI\ABSCS\bin\x86\Debug\ABSCS.dll
+3>------ Rebuild All started: Project: ABS, Configuration: Debug x86 ------
+3>  Consider app.config remapping of assembly "Newtonsoft.Json, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed" from Version "6.0.0.0" [] to Version "13.0.1.0" [C:\Program Files (x86)\Microsoft Visual Studio\Shared\SDKs\Azure\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll] to solve conflict and get rid of warning.
+3>C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(2182,5): warning MSB3276: Found conflicts between different versions of the same dependent assembly. Please set the "AutoGenerateBindingRedirects" property to true in the project file. For more information, see http://go.microsoft.com/fwlink/?LinkId=294190.
+3>  ABS -> C:\VS\VDI\ABS\bin\x86\Debug\ABS.exe
+4>------ Rebuild All started: Project: TAC, Configuration: Debug x86 ------
+4>C:\VS\VDI\TAC\Forms\TAFIMGV1.vb(17,16): warning BC40054: 'Public Sub New(FORM_BASE As ASFBASE1, STYLE_CODE As String, COLOR_CODE As String, mode As String)' in designer-generated type 'TAFIMGV1' should call InitializeComponent method.
+4>  TAC -> C:\VS\VDI\TAC\bin\x86\Debug\TAC.dll
+5>------ Rebuild All started: Project: SO, Configuration: Debug x86 ------
+5>  SO -> C:\VS\VDI\SO\bin\x86\Debug\SO.dll
+========== Rebuild All: 5 succeeded, 0 failed, 0 skipped ==========

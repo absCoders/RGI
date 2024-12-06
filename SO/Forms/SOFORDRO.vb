@@ -3491,33 +3491,33 @@ Public Class SOFORDRO
         Return RetVal
     End Function
 
-    Private Function TryWebImage(ImageName As String) As String
-        Dim API_BASE As String = ""
-        'Dim url As New System.Uri("http://50.75.200.254:8181/images/product/" & ImageName)
-        Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & ImageName)
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
-        Dim resptest As System.Net.WebResponse
-        Dim ErrorsFound As Boolean = False
-        Try
-            resptest = req.GetResponse()
-            'ImageName = "http://50.75.200.254:8181/images/product/" & ImageName
-            ImageName = "http://api.regency-rib.com:8181/images/product/" & ImageName
-        Catch ex As Exception
-            'Try
-            '    Dim url2 As New System.Uri("http://192.168.110.224:8181/images/product/" & ImageName)
-            '    Dim req2 As System.Net.WebRequest = System.Net.WebRequest.Create(url2)
-            '    resptest = req2.GetResponse()
-            '    ImageName = "http://192.168.110.224:8181/images/product/" & ImageName
-            '    resptest.Close()
-            '    req2 = Nothing
-            'Catch ex2 As Exception
-            ErrorsFound = True
-            ImageName = ""
-            req = Nothing
-            'End Try
-        End Try
-        Return ImageName
-    End Function
+    'Private Function TryWebImage(ImageName As String) As String
+    '    Dim API_BASE As String = ""
+    '    'Dim url As New System.Uri("http://50.75.200.254:8181/images/product/" & ImageName)
+    '    Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & ImageName)
+    '    Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+    '    Dim resptest As System.Net.WebResponse
+    '    Dim ErrorsFound As Boolean = False
+    '    Try
+    '        resptest = req.GetResponse()
+    '        'ImageName = "http://50.75.200.254:8181/images/product/" & ImageName
+    '        ImageName = "http://api.regency-rib.com:8181/images/product/" & ImageName
+    '    Catch ex As Exception
+    '        'Try
+    '        '    Dim url2 As New System.Uri("http://192.168.110.224:8181/images/product/" & ImageName)
+    '        '    Dim req2 As System.Net.WebRequest = System.Net.WebRequest.Create(url2)
+    '        '    resptest = req2.GetResponse()
+    '        '    ImageName = "http://192.168.110.224:8181/images/product/" & ImageName
+    '        '    resptest.Close()
+    '        '    req2 = Nothing
+    '        'Catch ex2 As Exception
+    '        ErrorsFound = True
+    '        ImageName = ""
+    '        req = Nothing
+    '        'End Try
+    '    End Try
+    '    Return ImageName
+    'End Function
 
     Private Function GetImageFolder() As String
         Dim RetVal As String = ""
@@ -4523,6 +4523,19 @@ Public Class SOFORDRO
                 oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
             End With
         Next i
+        '2025 Tariff Notice
+        Dim LastRow As Int64 = SCD + RowCount + 2
+        With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
+            .Merge()
+            .Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+            .Font.Bold = True
+            .Font.Color = Color.Red
+            '.RowHeight = 45
+            .WrapText = True
+            .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
+            .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
+        End With
+
         'Begin - tariff Notification
         'Removed 10:30AM on a dark and rainy day April 16th 2020
         'Dim LastRow As Int64 = SCD + RowCount + 2

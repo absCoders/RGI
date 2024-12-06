@@ -228,12 +228,6 @@
     <Compile Include="Classes\TACMAIL1.vb" />
     <Compile Include="Classes\TACMAIN1.vb" />
     <Compile Include="Classes\WHCSHIP1.vb" />
-    <Compile Include="Forms\ICFATTR2.Designer.vb">
-      <DependentUpon>ICFATTR2.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ICFATTR2.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\TAFIMAGX.Designer.vb">
       <DependentUpon>TAFIMAGX.vb</DependentUpon>
     </Compile>
@@ -335,9 +329,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\ICFATTR2.resx">
-      <DependentUpon>ICFATTR2.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\TAFIMAGX.resx">
       <DependentUpon>TAFIMAGX.vb</DependentUpon>
     </EmbeddedResource>

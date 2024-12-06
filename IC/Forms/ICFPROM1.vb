@@ -217,7 +217,15 @@ Public Class ICFPROM1
 
             Case "Upload Spreadsheet"
                 UploadSpreadsheet()
-
+            Case "Change Description"
+                Dim frmASFMSGBF As New ASFMSGBF
+                'UpDatesReqNotes = True
+                Dim UpDatesNotes As String = frmASFMSGBF.Get_txtblock_from_User("New Description", "Change Description", txtPROMO_DESC.Text, False, 75)
+                If UpDatesNotes = "" Or UpDatesNotes = txtPROMO_DESC.Text Then
+                    MsgBox("Blank Or No Change Detected", vbCritical, "No Change")
+                Else
+                    txtPROMO_DESC.Text = UpDatesNotes
+                End If
         End Select
 
     End Sub
@@ -263,6 +271,7 @@ Public Class ICFPROM1
                     .Items("Cancel").Settings.Enabled = Not ScreenMode
                     .Items("Add Style").Settings.Enabled = Not ScreenMode
                     .Items("Upload Spreadsheet").Settings.Enabled = Not ScreenMode
+                    .Items("Change Description").Settings.Enabled = Not ScreenMode
                 End With
                 .Groups("Pricing").Visible = ScreenMode
                 .Groups("Options").Visible = ScreenMode
@@ -376,6 +385,7 @@ Public Class ICFPROM1
             SQL.Length = 0
             SQL.AppendLine("UPDATE ICTPROM1")
             SQL.AppendLine(String.Format("SET PROMO_END_DATE = '{0}'", Format(txtPROMO_END_DATE.DateTime, "dd-MMM-yy")))
+            SQL.AppendLine(String.Format(", PROMO_DESC = '{0}'", txtPROMO_DESC.Text))
             SQL.AppendLine(String.Format("WHERE PROMO_CTL_NO = '{0}'", PROMO_CTL_NO))
             ASCMAIN1.sql = SQL.ToString
             ASCDATA1.ExecuteSQL()
