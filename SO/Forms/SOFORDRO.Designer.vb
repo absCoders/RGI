@@ -610,6 +610,7 @@ Partial Class SOFORDRO
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkShowDiscColors = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -907,11 +908,10 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 643)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl6.TabIndex = 5
-        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'Panel6
         '
@@ -1131,10 +1131,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -108)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 120)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'grpBatch
         '
@@ -1229,10 +1230,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpFindCustomer)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 56)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpFindCustomer
         '
@@ -1256,10 +1258,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 264)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel3
         '
@@ -1284,10 +1287,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 458)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'Panel4
         '
@@ -1709,7 +1713,7 @@ Partial Class SOFORDRO
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(818, 510)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(952, 510)
         '
         'SplitContainer1
         '
@@ -1725,7 +1729,7 @@ Partial Class SOFORDRO
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnAddShipTo)
-        Me.SplitContainer1.Size = New System.Drawing.Size(818, 510)
+        Me.SplitContainer1.Size = New System.Drawing.Size(952, 510)
         Me.SplitContainer1.SplitterDistance = 383
         Me.SplitContainer1.TabIndex = 17
         '
@@ -1743,7 +1747,7 @@ Partial Class SOFORDRO
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdSOTORDR2)
-        Me.SplitContainer2.Size = New System.Drawing.Size(818, 383)
+        Me.SplitContainer2.Size = New System.Drawing.Size(952, 383)
         Me.SplitContainer2.SplitterDistance = 109
         Me.SplitContainer2.TabIndex = 16
         '
@@ -1966,7 +1970,7 @@ Partial Class SOFORDRO
         Me.grdSOTORDR1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDR1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR1.Name = "grdSOTORDR1"
-        Me.grdSOTORDR1.Size = New System.Drawing.Size(818, 109)
+        Me.grdSOTORDR1.Size = New System.Drawing.Size(952, 109)
         Me.grdSOTORDR1.TabIndex = 16
         Me.grdSOTORDR1.Text = "Ship-To Selector"
         '
@@ -2183,7 +2187,7 @@ Partial Class SOFORDRO
         Me.grdSOTORDR2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDR2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR2.Name = "grdSOTORDR2"
-        Me.grdSOTORDR2.Size = New System.Drawing.Size(818, 270)
+        Me.grdSOTORDR2.Size = New System.Drawing.Size(952, 270)
         Me.grdSOTORDR2.TabIndex = 17
         Me.grdSOTORDR2.Text = "Order Details"
         '
@@ -2873,6 +2877,7 @@ Partial Class SOFORDRO
         'grpSTYL1
         '
         Me.Absx1.SetABSTableName(Me.grpSTYL1, "ICTSTYL1")
+        Me.grpSTYL1.Controls.Add(Me.chkShowDiscColors)
         Me.grpSTYL1.Controls.Add(Me.UltraTextEditor7)
         Me.grpSTYL1.Controls.Add(Me.txtPort)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel9)
@@ -3751,6 +3756,16 @@ Partial Class SOFORDRO
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(956, 538)
         '
+        'chkShowDiscColors
+        '
+        Me.chkShowDiscColors.AutoSize = True
+        Me.chkShowDiscColors.Location = New System.Drawing.Point(9, 481)
+        Me.chkShowDiscColors.Name = "chkShowDiscColors"
+        Me.chkShowDiscColors.Size = New System.Drawing.Size(197, 20)
+        Me.chkShowDiscColors.TabIndex = 102
+        Me.chkShowDiscColors.Text = "Show Discontinued Colors"
+        Me.chkShowDiscColors.UseVisualStyleBackColor = True
+        '
         'SOFORDRO
         '
         Me.Absx1.SetABSTableName(Me, "SOTORDR0")
@@ -4057,4 +4072,5 @@ Partial Class SOFORDRO
     Friend WithEvents rdoDomestic As RadioButton
     Friend WithEvents chkNewExcel As CheckBox
     Friend WithEvents chkWebImages As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowDiscColors As CheckBox
 End Class

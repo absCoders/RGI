@@ -2320,6 +2320,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Hang Tag Changes and Tariff Warnings.")
 
+        VersionNo = "24.12.08.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Option To Show / Hide Discontinued Colors In Order Entry.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class
