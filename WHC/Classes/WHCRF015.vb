@@ -270,10 +270,10 @@
         Dim QtyFound = (CASES_MOVED * CARTON_PACK_QTY + UNITS_MOVED)
 
         BeginTrans()
-
+        Dim PICK_NO As String = "OH" & ASCMAIN1.Next_Control_No("WHTPICKS.ADD_OH")
         Dim rowWHTPICKS As DataRow = dst.Tables("WHTPICKS").NewRow
         With rowWHTPICKS
-            .Item("PICK_NO") = "+OH"
+            .Item("PICK_NO") = PICK_NO
             .Item("STYLE_CODE") = STYLE_CODE
             .Item("COLOR_CODE") = COLOR_CODE
             .Item("STYLE_DESC") = STYLE_DESC
