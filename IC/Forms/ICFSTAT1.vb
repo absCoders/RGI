@@ -1819,20 +1819,20 @@ Public Class ICFSTAT1
                 Modes_At_Once(False)
                 Refresh_AtOnce()
 
-            Case "Find Style by Attribute"
-                'Dim STYLE_CODE_selected As String = ""
-                Using F As New TAC.ICFATTR2(Me)
-                    F.rbadDir = ASCMAIN1.Folders("Work") & "RBAD\"
-                    'F.IMAGES_FOLDER = "\\192.168.110.221\Shared\rich\MASTER ITEM PHOTO FOLDER\"
-                    F.IMAGES_FOLDER = "C:\Shared\"
-                    F.IMAGES_FOLDER = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR")
-                    F.ShowDialog()
-                    STYLE_CODE = F.STYLE_CODE
-                End Using
-                If STYLE_CODE <> "" Then
-                    Absx1.txtFor("STYLE_CODE").Text = STYLE_CODE
-                    Click_Command("Select")
-                End If
+                'Case "Find Style by Attribute"
+                '    'Dim STYLE_CODE_selected As String = ""
+                '    Using F As New TAC.ICFATTR2(Me)
+                '        F.rbadDir = ASCMAIN1.Folders("Work") & "RBAD\"
+                '        'F.IMAGES_FOLDER = "\\192.168.110.221\Shared\rich\MASTER ITEM PHOTO FOLDER\"
+                '        F.IMAGES_FOLDER = "C:\Shared\"
+                '        F.IMAGES_FOLDER = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR")
+                '        F.ShowDialog()
+                '        STYLE_CODE = F.STYLE_CODE
+                '    End Using
+                '    If STYLE_CODE <> "" Then
+                '        Absx1.txtFor("STYLE_CODE").Text = STYLE_CODE
+                '        Click_Command("Select")
+                '    End If
         End Select
 
 
@@ -1863,12 +1863,12 @@ Public Class ICFSTAT1
                 .Items("Import Markdowns").Visible = (ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN") And ASCMAIN1.USER_SECURITY_CODEs.Contains("X5")
 
                 '.Items("New Quote Sheet").Visible = (splQuoteMain.Panel2Collapsed)
-                .Items("Find Style by Attribute").Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGO" Or ASCMAIN1.DBS_SERVER = "RGO")
-                If ScreenMode Then
-                    .Items("Find Style by Attribute").Text = "Find Substitutes"
-                Else
-                    .Items("Find Style by Attribute").Text = .Items("Find Style by Attribute").Key
-                End If
+                '.Items("Find Style by Attribute").Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGO" Or ASCMAIN1.DBS_SERVER = "RGO")
+                'If ScreenMode Then
+                '    .Items("Find Style by Attribute").Text = "Find Substitutes"
+                'Else
+                '    .Items("Find Style by Attribute").Text = .Items("Find Style by Attribute").Key
+                'End If
 
                 .Items("Integrity Check").Visible = Not ScreenMode And ASCMAIN1.Running_in_VS
 
