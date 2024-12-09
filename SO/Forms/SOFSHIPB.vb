@@ -17502,10 +17502,11 @@ Public Class SOFSHIPB
                     End If
                 Next
 
-                Dim totalLabelCharge As Decimal = Math.Round(Val(dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "") & String.Empty), 2)
-                Dim rateCharge As Decimal = Math.Round(Val(dst.Tables("WHTSHPC4").Select($"CARRIER_CODE = '{CARRIER_CODE}' AND SERVICE_TYPE = '{CARRIER_PROD_CODE}'", "")(0).Item("TOTAL_CHARGE") & String.Empty))
-
                 If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommProcessing Then
+
+                    Dim totalLabelCharge As Decimal = Math.Round(Val(dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "") & String.Empty), 2)
+                    Dim rateCharge As Decimal = Math.Round(Val(dst.Tables("WHTSHPC4").Select($"CARRIER_CODE = '{CARRIER_CODE}' AND SERVICE_TYPE = '{CARRIER_PROD_CODE}'", "")(0).Item("TOTAL_CHARGE") & String.Empty))
+
                     If CInt(totalLabelCharge) > CInt(rateCharge) Then
                         Dim diff As Decimal = Math.Round(totalLabelCharge - rateCharge, 2)
                         Dim userMessage As String = $"The Customer Freight Rate is {rateCharge.ToString("#,##0.00")} and the Label Charge is {totalLabelCharge.ToString("#,##0.00")}. This is a difference of {diff.ToString("#,##0.00")}."
