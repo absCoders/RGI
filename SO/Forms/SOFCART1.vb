@@ -645,7 +645,7 @@ Public Class SOFCART1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTSHIPX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdSOTPICK1, "B", "Sales Order Inquiry")
-        Load_Popup_Menu(grdSOTPICK2, "B", "Item Status Inquiry")
+        Load_Popup_Menu(grdSOTPICK2, "BB", "Item Status Inquiry", "Add Selected Styles to Carton")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -702,6 +702,59 @@ Public Class SOFCART1
         End If
 
         Select Case e.Tool.Key
+            Case "Add Selected Styles to Carton"
+                If grd.Selected.Rows.Count = 0 Then
+                    If grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.IsDataRow Then
+                        grd.ActiveRow.Selected = True
+                    End If
+                End If
+
+                '    Dim Lines_to_batch As New List(Of String) ' ??
+                '   For Each grow As UltraWinGrid.UltraGridRow In grdSOTORDR0.Selected.Rows
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim PICK_NO As String = grow.Cells("PICK_NO").Text
+                    Dim PICK_LNO As String = grow.Cells("PICK_LNO").Text
+                    Dim PICK_QTY As Integer = Val(grow.Cells("PICK_QTY").Text)
+                    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Text
+                    Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Text
+                    Dim ORDR_NO As String = grow.Cells("ORDR_NO").Text
+                    Dim ORDR_LNO As String = grow.Cells("ORDR_LNO").Text
+
+
+                    ' add Carton
+                    Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value
+
+                    If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}' and ORDR_NO = '{ORDR_NO}' and ORDR_LNO = '{ORDR_LNO}'").Length > 0 Then
+                        MsgBox($"Line {ORDR_LNO} already in Carton", MsgBoxStyle.Critical, "Cannot Add Line")
+                        Exit Sub
+                    End If
+                    '     If grdSOTCART1.ActiveRow IsNot Nothing And grdSOTPICK2.ActiveRow IsNot Nothing Then
+                    Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
+
+
+                    rowSOTCART2.Item("CART_NO") = CART_NO
+                    rowSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", "CART_NO = '" & CART_NO & "'") & "") + 1
+                    rowSOTCART2.Item("ORDR_NO") = ORDR_NO
+                    rowSOTCART2.Item("ORDR_LNO") = PICK_LNO
+                    Dim QTY_PACKED As Int64 = PICK_QTY
+                    If QTY_PACKED < 0 Then QTY_PACKED = 0
+                    rowSOTCART2.Item("QTY_PACKED") = QTY_PACKED
+
+                    Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", STYLE_CODE)
+
+                    If rowICTSTYC1 IsNot Nothing Then
+                        rowSOTCART2.Item("UPC_CODE") = rowICTSTYC1.Item("UPC_CODE") & String.Empty
+                    Else
+                        rowSOTCART2.Item("UPC_CODE") = DBNull.Value
+                    End If
+                    rowSOTCART2.Item("STYLE_CODE") = STYLE_CODE
+                    rowSOTCART2.Item("COLOR_CODE") = COLOR_CODE
+                    rowSOTCART2.Item("PICK_NO") = PICK_NO
+
+                    dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
+                    '      End If
+                Next
+
             Case "Item Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)

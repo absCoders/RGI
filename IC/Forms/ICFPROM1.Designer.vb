@@ -30,6 +30,7 @@ Partial Class ICFPROM1
         Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance45 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -106,6 +107,7 @@ Partial Class ICFPROM1
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.chkOffListPrice = New System.Windows.Forms.CheckBox()
         Me.btnMarkDownPct = New System.Windows.Forms.Button()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.lblOffPrice = New System.Windows.Forms.Label()
@@ -148,7 +150,7 @@ Partial Class ICFPROM1
         Me.numSTYLE_RETAIL = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtECOM_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtPROMO_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtPROMO_END_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtPROMO_START_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -165,7 +167,6 @@ Partial Class ICFPROM1
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl14 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
-        Me.chkOffListPrice = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -205,7 +206,7 @@ Partial Class ICFPROM1
         CType(Me.numSTYLE_RETAIL, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
-        CType(Me.txtECOM_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPROMO_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPROMO_END_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPROMO_START_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -231,7 +232,9 @@ Partial Class ICFPROM1
         UltraExplorerBarItem5.Text = "Add Style"
         UltraExplorerBarItem6.Key = "Upload Spreadsheet"
         UltraExplorerBarItem6.Text = "Upload Spreadsheet"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem7, UltraExplorerBarItem5, UltraExplorerBarItem6})
+        UltraExplorerBarItem8.Key = "Change Description"
+        UltraExplorerBarItem8.Text = "Change Description"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem7, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem8})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -334,7 +337,7 @@ Partial Class ICFPROM1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 265)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 292)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -352,6 +355,16 @@ Partial Class ICFPROM1
         Me.Panel2.Name = "Panel2"
         Me.Panel2.Size = New System.Drawing.Size(172, 150)
         Me.Panel2.TabIndex = 0
+        '
+        'chkOffListPrice
+        '
+        Me.chkOffListPrice.AutoSize = True
+        Me.chkOffListPrice.Location = New System.Drawing.Point(7, 107)
+        Me.chkOffListPrice.Name = "chkOffListPrice"
+        Me.chkOffListPrice.Size = New System.Drawing.Size(164, 20)
+        Me.chkOffListPrice.TabIndex = 205
+        Me.chkOffListPrice.Text = "Update Off List Price"
+        Me.chkOffListPrice.UseVisualStyleBackColor = True
         '
         'btnMarkDownPct
         '
@@ -406,7 +419,7 @@ Partial Class ICFPROM1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 459)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 486)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -1017,7 +1030,7 @@ Partial Class ICFPROM1
         'UltraGroupBox1
         '
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel3)
-        Me.UltraGroupBox1.Controls.Add(Me.txtECOM_CODE)
+        Me.UltraGroupBox1.Controls.Add(Me.txtPROMO_DESC)
         Me.UltraGroupBox1.Controls.Add(Me.txtPROMO_END_DATE)
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel1)
         Me.UltraGroupBox1.Controls.Add(Me.txtPROMO_START_DATE)
@@ -1039,17 +1052,17 @@ Partial Class ICFPROM1
         Me.UltraLabel3.TabIndex = 200
         Me.UltraLabel3.Text = "Promo Description"
         '
-        'txtECOM_CODE
+        'txtPROMO_DESC
         '
-        Me.Absx1.SetABSBindToTable(Me.txtECOM_CODE, False)
-        Me.Absx1.SetABSColumnName(Me.txtECOM_CODE, "PROMO_DESC")
-        Me.Absx1.SetABSHasButton(Me.txtECOM_CODE, True)
-        Me.Absx1.SetABSTableName(Me.txtECOM_CODE, "ICTPROM1")
-        Me.txtECOM_CODE.Location = New System.Drawing.Point(162, 36)
-        Me.txtECOM_CODE.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtECOM_CODE.Name = "txtECOM_CODE"
-        Me.txtECOM_CODE.Size = New System.Drawing.Size(310, 25)
-        Me.txtECOM_CODE.TabIndex = 199
+        Me.Absx1.SetABSBindToTable(Me.txtPROMO_DESC, False)
+        Me.Absx1.SetABSColumnName(Me.txtPROMO_DESC, "PROMO_DESC")
+        Me.Absx1.SetABSHasButton(Me.txtPROMO_DESC, True)
+        Me.Absx1.SetABSTableName(Me.txtPROMO_DESC, "ICTPROM1")
+        Me.txtPROMO_DESC.Location = New System.Drawing.Point(162, 36)
+        Me.txtPROMO_DESC.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtPROMO_DESC.Name = "txtPROMO_DESC"
+        Me.txtPROMO_DESC.Size = New System.Drawing.Size(310, 25)
+        Me.txtPROMO_DESC.TabIndex = 199
         '
         'txtPROMO_END_DATE
         '
@@ -1198,16 +1211,6 @@ Partial Class ICFPROM1
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(784, 439)
         '
-        'chkOffListPrice
-        '
-        Me.chkOffListPrice.AutoSize = True
-        Me.chkOffListPrice.Location = New System.Drawing.Point(7, 107)
-        Me.chkOffListPrice.Name = "chkOffListPrice"
-        Me.chkOffListPrice.Size = New System.Drawing.Size(164, 20)
-        Me.chkOffListPrice.TabIndex = 205
-        Me.chkOffListPrice.Text = "Update Off List Price"
-        Me.chkOffListPrice.UseVisualStyleBackColor = True
-        '
         'ICFPROM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1259,7 +1262,7 @@ Partial Class ICFPROM1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
-        CType(Me.txtECOM_CODE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPROMO_DESC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPROMO_END_DATE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPROMO_START_DATE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1294,7 +1297,7 @@ Partial Class ICFPROM1
     Friend WithEvents txtPROMO_START_DATE As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents UltraLabel25 As Misc.UltraLabel
     Friend WithEvents UltraLabel3 As Misc.UltraLabel
-    Friend WithEvents txtECOM_CODE As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtPROMO_DESC As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraExplorerBarContainerControl1 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents Panel2 As Panel
     Friend WithEvents UltraExplorerBarContainerControl2 As UltraWinExplorerBar.UltraExplorerBarContainerControl
