@@ -693,7 +693,12 @@ Public Class WBFCUST1
 
     Private Sub ViewTaxDoc(ByVal TAX_ID As String, ByVal TAX_ID_DOC As String)
         TAX_ID_DOC = TAX_ID_DOC.Replace(TAX_ID & "-", "")
-        Dim FTP_FOLDER As String = "customers\" & TAX_ID & "\"
+        Dim slashPOS As Int64 = TAX_ID_DOC.IndexOf("/")
+        Dim FTP_FOLDER As String = ""
+        If slashPOS > 0 Then
+            FTP_FOLDER = TAX_ID_DOC.Substring(0, slashPOS)
+            TAX_ID_DOC = TAX_ID_DOC.Substring(slashPOS + 1, TAX_ID_DOC.Length - slashPOS - 1)
+        End If
         Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
         If Not TempFolder.EndsWith("\") Then
             TempFolder = TempFolder & "\"
@@ -710,7 +715,7 @@ Public Class WBFCUST1
                 .User = UserName
                 .Password = Password
                 .RemoteHost = RemoteHost
-                .RemotePath = RemotePath & "/tax_id/" & TAX_ID
+                .RemotePath = RemotePath & "/tax_id/" & FTP_FOLDER & "/"
                 .Logon()
                 .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
                 .LocalFile = LocalFile
