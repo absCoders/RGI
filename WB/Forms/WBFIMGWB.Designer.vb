@@ -68,8 +68,12 @@ Partial Class WBFIMGWB
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.pnlOptions = New System.Windows.Forms.Panel()
+        Me.btnAddNew = New System.Windows.Forms.Button()
+        Me.chkAddBothLocations = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.txtFILE_EXT = New System.Windows.Forms.TextBox()
+        Me.lblFILE_EXT = New System.Windows.Forms.Label()
         Me.txtREMOTE_FOLDER = New System.Windows.Forms.TextBox()
         Me.lblREMOTE_FOLDER = New System.Windows.Forms.Label()
         Me.txtLOCAL_FOLDER = New System.Windows.Forms.TextBox()
@@ -88,10 +92,6 @@ Partial Class WBFIMGWB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.txtFILE_EXT = New System.Windows.Forms.TextBox()
-        Me.lblFILE_EXT = New System.Windows.Forms.Label()
-        Me.chkAddBothLocations = New System.Windows.Forms.CheckBox()
-        Me.btnAddNew = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -247,6 +247,29 @@ Partial Class WBFIMGWB
         Me.pnlOptions.Size = New System.Drawing.Size(189, 150)
         Me.pnlOptions.TabIndex = 0
         '
+        'btnAddNew
+        '
+        Me.btnAddNew.Location = New System.Drawing.Point(11, 12)
+        Me.btnAddNew.Name = "btnAddNew"
+        Me.btnAddNew.Size = New System.Drawing.Size(170, 23)
+        Me.btnAddNew.TabIndex = 1
+        Me.btnAddNew.Text = "Add Images"
+        Me.btnAddNew.UseVisualStyleBackColor = True
+        Me.btnAddNew.Visible = False
+        '
+        'chkAddBothLocations
+        '
+        Me.chkAddBothLocations.AutoSize = True
+        Me.chkAddBothLocations.Checked = True
+        Me.chkAddBothLocations.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkAddBothLocations.Location = New System.Drawing.Point(12, 36)
+        Me.chkAddBothLocations.Name = "chkAddBothLocations"
+        Me.chkAddBothLocations.Size = New System.Drawing.Size(176, 20)
+        Me.chkAddBothLocations.TabIndex = 0
+        Me.chkAddBothLocations.Text = "Add To Both Locations"
+        Me.chkAddBothLocations.UseVisualStyleBackColor = True
+        Me.chkAddBothLocations.Visible = False
+        '
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
@@ -269,6 +292,23 @@ Partial Class WBFIMGWB
         Me.Panel3.Size = New System.Drawing.Size(189, 150)
         Me.Panel3.TabIndex = 1
         '
+        'txtFILE_EXT
+        '
+        Me.txtFILE_EXT.Location = New System.Drawing.Point(107, 114)
+        Me.txtFILE_EXT.Name = "txtFILE_EXT"
+        Me.txtFILE_EXT.ReadOnly = True
+        Me.txtFILE_EXT.Size = New System.Drawing.Size(75, 23)
+        Me.txtFILE_EXT.TabIndex = 5
+        '
+        'lblFILE_EXT
+        '
+        Me.lblFILE_EXT.AutoSize = True
+        Me.lblFILE_EXT.Location = New System.Drawing.Point(8, 117)
+        Me.lblFILE_EXT.Name = "lblFILE_EXT"
+        Me.lblFILE_EXT.Size = New System.Drawing.Size(56, 16)
+        Me.lblFILE_EXT.TabIndex = 4
+        Me.lblFILE_EXT.Text = "File Ext"
+        '
         'txtREMOTE_FOLDER
         '
         Me.txtREMOTE_FOLDER.Location = New System.Drawing.Point(11, 77)
@@ -282,9 +322,9 @@ Partial Class WBFIMGWB
         Me.lblREMOTE_FOLDER.AutoSize = True
         Me.lblREMOTE_FOLDER.Location = New System.Drawing.Point(8, 60)
         Me.lblREMOTE_FOLDER.Name = "lblREMOTE_FOLDER"
-        Me.lblREMOTE_FOLDER.Size = New System.Drawing.Size(76, 16)
+        Me.lblREMOTE_FOLDER.Size = New System.Drawing.Size(67, 16)
         Me.lblREMOTE_FOLDER.TabIndex = 2
-        Me.lblREMOTE_FOLDER.Text = "Local Files"
+        Me.lblREMOTE_FOLDER.Text = "FTP Files"
         '
         'txtLOCAL_FOLDER
         '
@@ -538,46 +578,6 @@ Partial Class WBFIMGWB
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'txtFILE_EXT
-        '
-        Me.txtFILE_EXT.Location = New System.Drawing.Point(107, 114)
-        Me.txtFILE_EXT.Name = "txtFILE_EXT"
-        Me.txtFILE_EXT.ReadOnly = True
-        Me.txtFILE_EXT.Size = New System.Drawing.Size(75, 23)
-        Me.txtFILE_EXT.TabIndex = 5
-        '
-        'lblFILE_EXT
-        '
-        Me.lblFILE_EXT.AutoSize = True
-        Me.lblFILE_EXT.Location = New System.Drawing.Point(8, 117)
-        Me.lblFILE_EXT.Name = "lblFILE_EXT"
-        Me.lblFILE_EXT.Size = New System.Drawing.Size(56, 16)
-        Me.lblFILE_EXT.TabIndex = 4
-        Me.lblFILE_EXT.Text = "File Ext"
-        '
-        'chkAddBothLocations
-        '
-        Me.chkAddBothLocations.AutoSize = True
-        Me.chkAddBothLocations.Checked = True
-        Me.chkAddBothLocations.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkAddBothLocations.Location = New System.Drawing.Point(12, 36)
-        Me.chkAddBothLocations.Name = "chkAddBothLocations"
-        Me.chkAddBothLocations.Size = New System.Drawing.Size(176, 20)
-        Me.chkAddBothLocations.TabIndex = 0
-        Me.chkAddBothLocations.Text = "Add To Both Locations"
-        Me.chkAddBothLocations.UseVisualStyleBackColor = True
-        Me.chkAddBothLocations.Visible = False
-        '
-        'btnAddNew
-        '
-        Me.btnAddNew.Location = New System.Drawing.Point(11, 12)
-        Me.btnAddNew.Name = "btnAddNew"
-        Me.btnAddNew.Size = New System.Drawing.Size(170, 23)
-        Me.btnAddNew.TabIndex = 1
-        Me.btnAddNew.Text = "Add Images"
-        Me.btnAddNew.UseVisualStyleBackColor = True
-        Me.btnAddNew.Visible = False
         '
         'WBFIMGWB
         '
