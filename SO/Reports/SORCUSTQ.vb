@@ -1465,92 +1465,94 @@ Public Class SORCUSTQ
         I += 2
         COL = COL0
 
-        If chkPrice.Checked Then
-            worksheet.Cells(I - 1, COL - 0).Value = "'" & "Totals"
-
+        If chkStyleStats.Checked Then
+            worksheet.Cells(I - 1, COL - 0).Value = "'" & ""
         Else
             worksheet.Cells(I - 1, COL - 0).Value = "'" & "Totals"
         End If
 
         Dim GT = ""
 
-        If chkPrice.Checked Then
-            For iCOL As Integer = 1 To 10
-                COL += 1
-                Select Case iCOL
-                    Case 5
-                        If chkReservations.Checked Then
-                            '  worksheet.Cells(I + ci - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + ci - 1 - 1, COL).Address, "$", "") & ")"
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 2
-                        End If
-                    Case 7
-                        If chkOpen.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-                    Case 8
-                        If chkOpen.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-                    Case 9
-                        If chkPick.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-
-                    Case 10
-                        If chkPick.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-
-                End Select
-
-                '    RT(iCOL) &= "+" & Replace(worksheet.Cells(I + ci - 1, COL).Address, "$", "")
-            Next
+        If chkStyleStats.Checked Then
         Else
-            For iCOL As Integer = 1 To 6
-                COL += 1
-                Select Case iCOL
-                    Case 4
-                        If chkReservations.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-                    Case 5
-                        If chkOpen.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-                    Case 6
-                        If chkPick.Checked Then
-                            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                            GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                        Else
-                            COL -= 1
-                        End If
-                End Select
-            Next
+            If chkPrice.Checked Then
+                For iCOL As Integer = 1 To 10
+                    COL += 1
+                    Select Case iCOL
+                        Case 5
+                            If chkReservations.Checked Then
+                                '  worksheet.Cells(I + ci - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + ci - 1 - 1, COL).Address, "$", "") & ")"
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 2
+                            End If
+                        Case 7
+                            If chkOpen.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+                        Case 8
+                            If chkOpen.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+                        Case 9
+                            If chkPick.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+
+                        Case 10
+                            If chkPick.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+
+                    End Select
+
+                    '    RT(iCOL) &= "+" & Replace(worksheet.Cells(I + ci - 1, COL).Address, "$", "")
+                Next
+            Else
+                For iCOL As Integer = 1 To 6
+                    COL += 1
+                    Select Case iCOL
+                        Case 4
+                            If chkReservations.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+                        Case 5
+                            If chkOpen.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+                        Case 6
+                            If chkPick.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+                    End Select
+                Next
+            End If
+
+            worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
+
         End If
-
-        worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
-
         Excel_Header(worksheet)
 
         Excel_PageSetup(worksheet)
