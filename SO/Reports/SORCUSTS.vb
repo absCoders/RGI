@@ -712,6 +712,11 @@ Public Class SORCUSTS
         SQLS.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
         SQLS.AppendLine(String.Format("AND S2.COLOR_CODE = '{0}'", COLOR_CODE))
         SQLS.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", txtCUST_CODE.Text))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE >= '{0}'", Format(dteShip_Beg.DateTime, "dd-MMM-yy")))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE <= '{0}'", Format(dteShip_End.DateTime, "dd-MMM-yy")))
+        ' new DGJ 2 LINES ABOVE Only consider Shipments in Date Range
+
+
         ASCMAIN1.sql = SQLS.ToString()
         Dim MIN_INV_DATE As String = ASCDATA1.GetDataValue
 
@@ -724,6 +729,10 @@ Public Class SORCUSTS
         SQLS.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
         SQLS.AppendLine(String.Format("AND S2.COLOR_CODE = '{0}'", COLOR_CODE))
         SQLS.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", txtCUST_CODE.Text))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE >= '{0}'", Format(dteShip_Beg.DateTime, "dd-MMM-yy")))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE <= '{0}'", Format(dteShip_End.DateTime, "dd-MMM-yy")))
+        ' new DGJ 2 LINES ABOVE Only consider Shipments in Date Range
+
         ASCMAIN1.sql = SQLS.ToString()
         Dim MAX_INV_DATE As String = ASCDATA1.GetDataValue
 
@@ -771,7 +780,8 @@ Public Class SORCUSTS
             Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
             SQLS.AppendLine("SELECT NVL(STYLE_COLOR_DESC,'') STYLE_COLOR_DESC")
             SQLS.AppendLine("FROM ICTSTYC1")
-            SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", COLOR_CODE))
+            SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
+            SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
             ASCMAIN1.sql = SQLS.ToString()
             Dim COLOR_DESC_MF As String = ASCDATA1.GetDataValue
             If COLOR_DESC_MF.Length > 35 Then
@@ -867,12 +877,12 @@ Public Class SORCUSTS
                         '    Else
                         '        COL -= 1
                         '    End If
-                        'Case 3
-                        '    If chkShip3.Checked Then
-                        '        worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
-                        '    Else
-                        '        COL -= 1
-                        '    End If
+                    Case 3
+                        If chkAveragePrice.Checked Then
+                            worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
+                        Else
+                            COL -= 1
+                        End If
                 End Select
 
                 RT(iCOL) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
@@ -888,9 +898,9 @@ Public Class SORCUSTS
                 colsLess += 1
             End If
 
-            worksheet.Cells(I + CI - 1, COL0 - 1 - colsLess, I + CI - 1, COL - 1 - colsLess).Interior.Color = SpreadsheetGear.Colors.LightGray
+            worksheet.Cells(I + CI - 1, COL0 - 1, I + CI - 1, COL - colsLess).Interior.Color = SpreadsheetGear.Colors.LightGray
 
-            With worksheet.Cells(I, COL0 - 1 - colsLess, I + CI - 1, COL - 1 - colsLess)
+            With worksheet.Cells(I, COL0 - 1, I + CI - 1, COL - colsLess)
                 .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
                 .Borders.Color = SpreadsheetGear.Colors.LightSlateGray
             End With
@@ -989,6 +999,12 @@ Public Class SORCUSTS
 
             If chkAveragePrice.Checked Then
                 worksheet.Cells(i + CI - 1, COL + chkcnt).Value = rowSOTCUSTS.Item("AVG_PRICE") & String.Empty
+                chkcnt += 1
+            End If
+
+
+            If chkAveragePrice.Checked Then
+                worksheet.Cells(i + CI - 1, COL + chkcnt).Value = rowSOTCUSTS.Item("VAL_SHP") & String.Empty
                 chkcnt += 1
             End If
 
@@ -1093,9 +1109,9 @@ Public Class SORCUSTS
         Dim interior As SpreadsheetGear.IInterior
         Dim range As SpreadsheetGear.IRange
 
-        worksheet.Cells(i, COL - 1).Value = "Color"
+        worksheet.Cells(i, COL - 1).Value = "" & Chr(13) & Chr(10) & "Color"
         worksheet.Cells(i, COL - 1).Font.Size = 12
-        worksheet.Cells(i, COL).Value = "Description"
+        worksheet.Cells(i, COL).Value = "" & Chr(13) & Chr(10) & "Description"
         worksheet.Cells(i, COL).Font.Size = 12
 
         'COL += 1
@@ -1122,11 +1138,10 @@ Public Class SORCUSTS
             Dim d1TEXT As String = Format(dteShip_Beg.DateTime, "MM/dd/yy")
             Dim d2TEXT As String = Format(dteShip_End.DateTime, "MM/dd/yy")
             If optSelectBy.Value = "D" Then
-                .Value = String.Format("{0} to {1}", d1TEXT, d2TEXT)
+                .Value = String.Format("{0} to {1}", d1TEXT, d2TEXT) & Chr(13) & Chr(10) & "Shp Units"
             Else
-                .Value = "Selected POs"
+                .Value = "Selected POs" & Chr(13) & Chr(10) & "Shp Units"
             End If
-
             .Font.Size = 12
         End With
 
@@ -1134,7 +1149,21 @@ Public Class SORCUSTS
             COL += 1
             With worksheet.Cells(i, COL)
                 .HorizontalAlignment = SpreadsheetGear.HAlign.Right
-                .Value = "Avg Price"
+                .Value = "" & Chr(13) & Chr(10) & "Price"
+                .Font.Size = 12
+            End With
+        End If
+
+        If chkAveragePrice.Checked Then
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                If optSelectBy.Value = "D" Then
+                    .Value = "" & Chr(13) & Chr(10) & "Shp Amt"
+                Else
+                    .Value = ""
+                End If
+
                 .Font.Size = 12
             End With
         End If
@@ -1154,7 +1183,7 @@ Public Class SORCUSTS
             COL += 1
             With worksheet.Cells(i, COL)
                 .HorizontalAlignment = SpreadsheetGear.HAlign.Right
-                .Value = "Ship Dates"
+                .Value = "" & Chr(13) & Chr(10) & "1st & Last Ship Dates"
                 .Font.Size = 12
             End With
         End If
@@ -1311,6 +1340,16 @@ Public Class SORCUSTS
                 .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                 .HorizontalAlignment = SpreadsheetGear.HAlign.Right
             End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 12
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
         End If
 
         If chkShipDates.Checked Then
