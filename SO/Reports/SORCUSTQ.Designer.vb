@@ -39,6 +39,8 @@ Partial Class SORCUSTQ
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -113,6 +115,13 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.grpDATE_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.DTE1 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.DTE0 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.chkStyleStats = New ABSCS.ABSCheckBox()
+        Me.chkShipDates = New ABSCS.ABSCheckBox()
+        Me.chkPrice = New ABSCS.ABSCheckBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.chkNewLinks = New ABSCS.ABSCheckBox()
         Me.chkWebLinks = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -131,7 +140,6 @@ Partial Class SORCUSTQ
         Me.grdSOTRSRV1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -168,6 +176,13 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.grpDATE_RANGE, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grpDATE_RANGE.SuspendLayout()
+        CType(Me.DTE1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DTE0, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkPrice, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -192,17 +207,20 @@ Partial Class SORCUSTQ
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
         'UltraTabControl1
         '
         Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
         '
         'SplitContainer5
         '
@@ -211,6 +229,11 @@ Partial Class SORCUSTQ
         'SplitContainer5.Panel1
         '
         Me.SplitContainer5.Panel1.Controls.Add(Me.Panel3)
+        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
+        '
+        'txtDescription
+        '
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         'grdASTRECAP
         '
@@ -303,19 +326,27 @@ Partial Class SORCUSTQ
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
         '
         'tabDataExports
         '
+        Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
         Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
+        UltraExplorerBarItem1.Text = "Buyer Sheet"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1})
+        UltraExplorerBarGroup1.Text = "Special Functions"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'grdASFBASEX
         '
@@ -362,24 +393,17 @@ Partial Class SORCUSTQ
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
-        '_ASFBASE1_Toolbars_Dock_Area_Left
-        '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
         '
         'tlb
         '
@@ -391,19 +415,25 @@ Partial Class SORCUSTQ
         Me.Panel3.Controls.Add(Me.SplitContainer8)
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(773, 358)
+        Me.Panel3.Size = New System.Drawing.Size(1021, 402)
         Me.Panel3.TabIndex = 0
         '
         'SplitContainer8
         '
         Me.SplitContainer8.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer8.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer8.Name = "SplitContainer8"
         Me.SplitContainer8.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.grpDATE_RANGE)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStats)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkShipDates)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkPrice)
         Me.SplitContainer8.Panel1.Controls.Add(Me.Label1)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkNewLinks)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkWebLinks)
@@ -414,16 +444,93 @@ Partial Class SORCUSTQ
         'SplitContainer8.Panel2
         '
         Me.SplitContainer8.Panel2.Controls.Add(Me.TabControl1)
-        Me.SplitContainer8.Size = New System.Drawing.Size(773, 358)
-        Me.SplitContainer8.SplitterDistance = 105
+        Me.SplitContainer8.Size = New System.Drawing.Size(1021, 402)
+        Me.SplitContainer8.SplitterDistance = 186
         Me.SplitContainer8.TabIndex = 265
+        '
+        'grpDATE_RANGE
+        '
+        Me.grpDATE_RANGE.Controls.Add(Me.DTE1)
+        Me.grpDATE_RANGE.Controls.Add(Me.DTE0)
+        Me.grpDATE_RANGE.Location = New System.Drawing.Point(13, 113)
+        Me.grpDATE_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.grpDATE_RANGE.Name = "grpDATE_RANGE"
+        Me.grpDATE_RANGE.Size = New System.Drawing.Size(207, 101)
+        Me.grpDATE_RANGE.TabIndex = 275
+        Me.grpDATE_RANGE.Text = "Order Date Range"
+        '
+        'DTE1
+        '
+        Me.Absx1.SetABSColumnName(Me.DTE1, "DTE1")
+        Me.DTE1.DateTime = New Date(2015, 3, 11, 0, 0, 0, 0)
+        Me.DTE1.Location = New System.Drawing.Point(8, 61)
+        Me.DTE1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.DTE1.Name = "DTE1"
+        Me.DTE1.Size = New System.Drawing.Size(188, 29)
+        Me.DTE1.TabIndex = 1
+        Me.DTE1.Value = New Date(2015, 3, 11, 0, 0, 0, 0)
+        '
+        'DTE0
+        '
+        Me.Absx1.SetABSColumnName(Me.DTE0, "DTE0")
+        Me.DTE0.DateTime = New Date(2015, 3, 11, 0, 0, 0, 0)
+        Me.DTE0.Location = New System.Drawing.Point(8, 26)
+        Me.DTE0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.DTE0.Name = "DTE0"
+        Me.DTE0.Size = New System.Drawing.Size(188, 29)
+        Me.DTE0.TabIndex = 0
+        Me.DTE0.Value = New Date(2015, 3, 11, 0, 0, 0, 0)
+        '
+        'chkStyleStats
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
+        Me.chkStyleStats.CausesValidation = False
+        Me.chkStyleStats.Location = New System.Drawing.Point(671, 82)
+        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkStyleStats.Name = "chkStyleStats"
+        Me.chkStyleStats.Size = New System.Drawing.Size(348, 22)
+        Me.chkStyleStats.TabIndex = 274
+        Me.chkStyleStats.Text = "Show On Hand/In-Transit Details"
+        '
+        'chkShipDates
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShipDates, False)
+        Me.chkShipDates.CausesValidation = False
+        Me.chkShipDates.Location = New System.Drawing.Point(671, 62)
+        Me.chkShipDates.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShipDates.Name = "chkShipDates"
+        Me.chkShipDates.Size = New System.Drawing.Size(303, 22)
+        Me.chkShipDates.TabIndex = 273
+        Me.chkShipDates.Text = "Show 1st Start/ Last Cancel."
+        '
+        'chkPrice
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkPrice, False)
+        Me.chkPrice.CausesValidation = False
+        Me.chkPrice.Location = New System.Drawing.Point(671, 42)
+        Me.chkPrice.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkPrice.Name = "chkPrice"
+        Me.chkPrice.Size = New System.Drawing.Size(150, 22)
+        Me.chkPrice.TabIndex = 272
+        Me.chkPrice.Text = "Show Price"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(934, 39)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(86, 20)
+        Me.Label1.TabIndex = 270
+        Me.Label1.Text = "v24.3.19"
         '
         'chkNewLinks
         '
         Me.Absx1.SetABSBindToTable(Me.chkNewLinks, False)
-        Me.chkNewLinks.Location = New System.Drawing.Point(555, 36)
+        Me.chkNewLinks.Location = New System.Drawing.Point(796, 25)
+        Me.chkNewLinks.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkNewLinks.Name = "chkNewLinks"
-        Me.chkNewLinks.Size = New System.Drawing.Size(90, 20)
+        Me.chkNewLinks.Size = New System.Drawing.Size(112, 22)
         Me.chkNewLinks.TabIndex = 269
         Me.chkNewLinks.Text = "New Links"
         '
@@ -434,9 +541,10 @@ Partial Class SORCUSTQ
         Me.chkWebLinks.CausesValidation = False
         Me.chkWebLinks.Checked = True
         Me.chkWebLinks.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkWebLinks.Location = New System.Drawing.Point(537, 19)
+        Me.chkWebLinks.Location = New System.Drawing.Point(671, 9)
+        Me.chkWebLinks.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkWebLinks.Name = "chkWebLinks"
-        Me.chkWebLinks.Size = New System.Drawing.Size(216, 20)
+        Me.chkWebLinks.Size = New System.Drawing.Size(270, 22)
         Me.chkWebLinks.TabIndex = 268
         Me.chkWebLinks.Text = "Save Report To Web Links"
         '
@@ -444,17 +552,19 @@ Partial Class SORCUSTQ
         '
         Me.UltraGroupBox3.Controls.Add(Me.btnLoadOrders)
         Me.UltraGroupBox3.Controls.Add(Me.txtCUST_CODE)
-        Me.UltraGroupBox3.Location = New System.Drawing.Point(356, 7)
+        Me.UltraGroupBox3.Location = New System.Drawing.Point(445, 8)
+        Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(166, 93)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(208, 105)
         Me.UltraGroupBox3.TabIndex = 267
         Me.UltraGroupBox3.Text = "Selected Customer"
         '
         'btnLoadOrders
         '
-        Me.btnLoadOrders.Location = New System.Drawing.Point(15, 56)
+        Me.btnLoadOrders.Location = New System.Drawing.Point(19, 63)
+        Me.btnLoadOrders.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnLoadOrders.Name = "btnLoadOrders"
-        Me.btnLoadOrders.Size = New System.Drawing.Size(137, 23)
+        Me.btnLoadOrders.Size = New System.Drawing.Size(171, 26)
         Me.btnLoadOrders.TabIndex = 2
         Me.btnLoadOrders.Text = "Load Orders"
         Me.btnLoadOrders.UseVisualStyleBackColor = True
@@ -463,9 +573,10 @@ Partial Class SORCUSTQ
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_CODE, "CUST_CODE")
         Me.Absx1.SetABSHasButton(Me.txtCUST_CODE, True)
-        Me.txtCUST_CODE.Location = New System.Drawing.Point(15, 24)
+        Me.txtCUST_CODE.Location = New System.Drawing.Point(19, 27)
+        Me.txtCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtCUST_CODE.Name = "txtCUST_CODE"
-        Me.txtCUST_CODE.Size = New System.Drawing.Size(137, 25)
+        Me.txtCUST_CODE.Size = New System.Drawing.Size(171, 29)
         Me.txtCUST_CODE.TabIndex = 1
         '
         'UltraGroupBox1
@@ -473,9 +584,10 @@ Partial Class SORCUSTQ
         Me.UltraGroupBox1.Controls.Add(Me.chkPick)
         Me.UltraGroupBox1.Controls.Add(Me.chkOpen)
         Me.UltraGroupBox1.Controls.Add(Me.chkReservations)
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(182, 7)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(228, 8)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(166, 93)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(208, 105)
         Me.UltraGroupBox1.TabIndex = 266
         Me.UltraGroupBox1.Text = "Columns To Show"
         '
@@ -486,9 +598,10 @@ Partial Class SORCUSTQ
         Me.chkPick.CausesValidation = False
         Me.chkPick.Checked = True
         Me.chkPick.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkPick.Location = New System.Drawing.Point(6, 60)
+        Me.chkPick.Location = New System.Drawing.Point(8, 68)
+        Me.chkPick.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkPick.Name = "chkPick"
-        Me.chkPick.Size = New System.Drawing.Size(117, 20)
+        Me.chkPick.Size = New System.Drawing.Size(146, 22)
         Me.chkPick.TabIndex = 194
         Me.chkPick.Text = "In Pick"
         '
@@ -498,9 +611,10 @@ Partial Class SORCUSTQ
         Me.chkOpen.ABSChecked = "1"
         Me.chkOpen.Checked = True
         Me.chkOpen.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkOpen.Location = New System.Drawing.Point(6, 42)
+        Me.chkOpen.Location = New System.Drawing.Point(8, 47)
+        Me.chkOpen.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkOpen.Name = "chkOpen"
-        Me.chkOpen.Size = New System.Drawing.Size(117, 20)
+        Me.chkOpen.Size = New System.Drawing.Size(146, 22)
         Me.chkOpen.TabIndex = 193
         Me.chkOpen.Text = "Open"
         '
@@ -510,18 +624,20 @@ Partial Class SORCUSTQ
         Me.chkReservations.ABSChecked = "1"
         Me.chkReservations.Checked = True
         Me.chkReservations.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkReservations.Location = New System.Drawing.Point(6, 24)
+        Me.chkReservations.Location = New System.Drawing.Point(8, 27)
+        Me.chkReservations.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkReservations.Name = "chkReservations"
-        Me.chkReservations.Size = New System.Drawing.Size(117, 20)
+        Me.chkReservations.Size = New System.Drawing.Size(146, 22)
         Me.chkReservations.TabIndex = 192
         Me.chkReservations.Text = "Reservations"
         '
         'UltraGroupBox2
         '
         Me.UltraGroupBox2.Controls.Add(Me.optASN)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(10, 7)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(12, 8)
+        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(166, 93)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(208, 105)
         Me.UltraGroupBox2.TabIndex = 265
         Me.UltraGroupBox2.Text = "Style Option"
         '
@@ -537,9 +653,10 @@ Partial Class SORCUSTQ
         ValueListItem6.DataValue = "N"
         ValueListItem6.DisplayText = "Non-Stock Only"
         Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem4, ValueListItem5, ValueListItem6})
-        Me.optASN.Location = New System.Drawing.Point(7, 24)
+        Me.optASN.Location = New System.Drawing.Point(9, 27)
+        Me.optASN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optASN.Name = "optASN"
-        Me.optASN.Size = New System.Drawing.Size(137, 55)
+        Me.optASN.Size = New System.Drawing.Size(171, 56)
         Me.optASN.TabIndex = 0
         Me.optASN.Text = "All Styles"
         '
@@ -550,18 +667,20 @@ Partial Class SORCUSTQ
         Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
+        Me.TabControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(773, 249)
+        Me.TabControl1.Size = New System.Drawing.Size(1021, 212)
         Me.TabControl1.TabIndex = 0
         '
         'Orders
         '
         Me.Orders.Controls.Add(Me.grdSOTORDR0)
-        Me.Orders.Location = New System.Drawing.Point(4, 25)
+        Me.Orders.Location = New System.Drawing.Point(4, 27)
+        Me.Orders.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Orders.Name = "Orders"
-        Me.Orders.Padding = New System.Windows.Forms.Padding(3)
-        Me.Orders.Size = New System.Drawing.Size(765, 220)
+        Me.Orders.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Orders.Size = New System.Drawing.Size(1013, 181)
         Me.Orders.TabIndex = 0
         Me.Orders.Text = "Orders"
         Me.Orders.UseVisualStyleBackColor = True
@@ -651,18 +770,20 @@ Partial Class SORCUSTQ
         Me.grdSOTORDR0.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTORDR0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDR0.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdSOTORDR0.Location = New System.Drawing.Point(3, 3)
+        Me.grdSOTORDR0.Location = New System.Drawing.Point(4, 3)
+        Me.grdSOTORDR0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDR0.Name = "grdSOTORDR0"
-        Me.grdSOTORDR0.Size = New System.Drawing.Size(759, 214)
+        Me.grdSOTORDR0.Size = New System.Drawing.Size(1005, 175)
         Me.grdSOTORDR0.TabIndex = 14
         '
         'Reservations
         '
         Me.Reservations.Controls.Add(Me.grdSOTRSRV1)
-        Me.Reservations.Location = New System.Drawing.Point(4, 25)
+        Me.Reservations.Location = New System.Drawing.Point(4, 27)
+        Me.Reservations.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Reservations.Name = "Reservations"
-        Me.Reservations.Padding = New System.Windows.Forms.Padding(3)
-        Me.Reservations.Size = New System.Drawing.Size(765, 220)
+        Me.Reservations.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.Reservations.Size = New System.Drawing.Size(1013, 181)
         Me.Reservations.TabIndex = 1
         Me.Reservations.Text = "Reservations"
         Me.Reservations.UseVisualStyleBackColor = True
@@ -749,17 +870,19 @@ Partial Class SORCUSTQ
         Me.grdSOTRSRV1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTRSRV1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTRSRV1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdSOTRSRV1.Location = New System.Drawing.Point(3, 3)
+        Me.grdSOTRSRV1.Location = New System.Drawing.Point(4, 3)
+        Me.grdSOTRSRV1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTRSRV1.Name = "grdSOTRSRV1"
-        Me.grdSOTRSRV1.Size = New System.Drawing.Size(759, 214)
+        Me.grdSOTRSRV1.Size = New System.Drawing.Size(1005, 175)
         Me.grdSOTRSRV1.TabIndex = 14
         '
         'TabPage1
         '
         Me.TabPage1.Controls.Add(Me.grdWEBLINKS)
-        Me.TabPage1.Location = New System.Drawing.Point(4, 25)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 27)
+        Me.TabPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Size = New System.Drawing.Size(765, 220)
+        Me.TabPage1.Size = New System.Drawing.Size(1013, 181)
         Me.TabPage1.TabIndex = 2
         Me.TabPage1.Text = "Web Links"
         Me.TabPage1.UseVisualStyleBackColor = True
@@ -849,25 +972,17 @@ Partial Class SORCUSTQ
         Me.grdWEBLINKS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWEBLINKS.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWEBLINKS.Location = New System.Drawing.Point(0, 0)
+        Me.grdWEBLINKS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWEBLINKS.Name = "grdWEBLINKS"
-        Me.grdWEBLINKS.Size = New System.Drawing.Size(765, 220)
+        Me.grdWEBLINKS.Size = New System.Drawing.Size(1013, 181)
         Me.grdWEBLINKS.TabIndex = 15
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(534, 84)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(66, 16)
-        Me.Label1.TabIndex = 270
-        Me.Label1.Text = "v24.3.19"
         '
         'SORCUSTQ
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
-        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ClientSize = New System.Drawing.Size(1238, 646)
+        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.Name = "SORCUSTQ"
         Me.Text = "SORCUSTQ"
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -907,6 +1022,14 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.grpDATE_RANGE, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grpDATE_RANGE.ResumeLayout(False)
+        Me.grpDATE_RANGE.PerformLayout()
+        CType(Me.DTE1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DTE0, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkPrice, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkNewLinks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -953,4 +1076,10 @@ Partial Class SORCUSTQ
     Friend WithEvents grdWEBLINKS As UltraWinGrid.UltraGrid
     Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
     Friend WithEvents Label1 As Label
+    Friend WithEvents chkPrice As ABSCS.ABSCheckBox
+    Friend WithEvents chkShipDates As ABSCS.ABSCheckBox
+    Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents grpDATE_RANGE As Misc.UltraGroupBox
+    Friend WithEvents DTE1 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents DTE0 As UltraWinEditors.UltraDateTimeEditor
 End Class
