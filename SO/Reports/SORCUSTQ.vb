@@ -133,7 +133,7 @@ Public Class SORCUSTQ
         S.Length = 0
         S.AppendLine("SELECT")
         S.AppendLine("JN.CUST_CODE, JN.CUST_NAME,")
-        S.AppendLine("JN.ORDR_CUST_PO, JN.ORDR_SHIP_DATE, JN.ORDR_CANCEL_DATE,")
+        S.AppendLine("JN.ORDR_CUST_PO, JN.ORDR_DATE, JN.ORDR_SHIP_DATE, JN.ORDR_CANCEL_DATE,")
         S.AppendLine("JN.STYLE_CODE, JN.COLOR_CODE, JN.COLOR_DESC, JN.STYLE_DESC, JN.FABRIC_CODE, JN.SEASON_CODE,")
         S.AppendLine("JN.SUB_BODY_CODE, JN.SALES_DIVISION_CODE, JN.INNER_PACK_QTY, JN.CARTON_PACK_QTY, JN.STYLE_CUST_CODE, JN.IMAGE_NAME,")
         S.AppendLine("SUM(JN.RSRV_QTY) RSRV_QTY,")
@@ -155,7 +155,7 @@ Public Class SORCUSTQ
         S.AppendLine("  O1.ORDR_GROUP_NO,")
         S.AppendLine("  '0000000000' AS RSRV_NO,")
         S.AppendLine("  A1.CUST_CODE, A1.CUST_NAME,")
-        S.AppendLine("  O1.ORDR_CUST_PO, O1.ORDR_SHIP_DATE, O1.ORDR_CANCEL_DATE,")
+        S.AppendLine("  O1.ORDR_CUST_PO, O1.ORDR_DATE, O1.ORDR_SHIP_DATE, O1.ORDR_CANCEL_DATE,")
         S.AppendLine("  I1.STYLE_CODE, O2.COLOR_CODE, C1.COLOR_DESC, I1.STYLE_DESC, I1.FABRIC_CODE, I1.SEASON_CODE, I1.SUB_BODY_CODE,")
         S.AppendLine("  I1.SALES_DIVISION_CODE, I1.INNER_PACK_QTY, I1.CARTON_PACK_QTY, I1.CUST_CODE STYLE_CUST_CODE, I1.IMAGE_NAME,")
         S.AppendLine("  0 RSRV_QTY,")
@@ -183,7 +183,7 @@ Public Class SORCUSTQ
         S.AppendLine("  GROUP BY")
         S.AppendLine("  O1.ORDR_GROUP_NO,")
         S.AppendLine("  A1.CUST_CODE, A1.CUST_NAME,")
-        S.AppendLine("  O1.ORDR_CUST_PO, O1.ORDR_SHIP_DATE, ORDR_CANCEL_DATE,")
+        S.AppendLine("  O1.ORDR_CUST_PO, O1.ORDR_DATE, O1.ORDR_SHIP_DATE, ORDR_CANCEL_DATE,")
         S.AppendLine("  I1.STYLE_CODE, O2.COLOR_CODE, C1.COLOR_DESC, I1.STYLE_DESC, I1.FABRIC_CODE, I1.SEASON_CODE, I1.SUB_BODY_CODE,")
         S.AppendLine("  I1.SALES_DIVISION_CODE, I1.INNER_PACK_QTY, I1.CARTON_PACK_QTY, I1.CUST_CODE, I1.IMAGE_NAME")
         S.AppendLine("  UNION")
@@ -191,7 +191,7 @@ Public Class SORCUSTQ
         S.AppendLine("  '0000000000' AS ORDR_GROUP_NO,")
         S.AppendLine("  R1.RSRV_NO,")
         S.AppendLine("  A1.CUST_CODE, A1.CUST_NAME,")
-        S.AppendLine("  'RESERVATION' ORDR_CUST_PO, R1.ORDR_SHIP_DATE, R1.ORDR_CANCEL_DATE,")
+        S.AppendLine("  'RESERVATION' ORDR_CUST_PO, R1.INIT_DATE ORDR_DATE, R1.ORDR_SHIP_DATE, R1.ORDR_CANCEL_DATE,")
         S.AppendLine("  I1.STYLE_CODE, R2.COLOR_CODE, C1.COLOR_DESC, I1.STYLE_DESC, I1.FABRIC_CODE, I1.SEASON_CODE,")
         S.AppendLine("  I1.SUB_BODY_CODE, I1.SALES_DIVISION_CODE, I1.INNER_PACK_QTY, I1.CARTON_PACK_QTY, I1.CUST_CODE STYLE_CUST_CODE, I1.IMAGE_NAME,")
         S.AppendLine("  SUM(NVL(R2.RSRV_QTY,0)) RSRV_QTY,")
@@ -218,7 +218,7 @@ Public Class SORCUSTQ
         S.AppendLine("  GROUP BY")
         S.AppendLine("  R1.RSRV_NO,")
         S.AppendLine("  A1.CUST_CODE, A1.CUST_NAME,")
-        S.AppendLine("  R1.ORDR_SHIP_DATE, R1.ORDR_CANCEL_DATE,")
+        S.AppendLine("  R1.INIT_DATE, R1.ORDR_SHIP_DATE, R1.ORDR_CANCEL_DATE,")
         S.AppendLine("  I1.STYLE_CODE, R2.COLOR_CODE, C1.COLOR_DESC, I1.STYLE_DESC, I1.FABRIC_CODE, I1.SEASON_CODE,")
         S.AppendLine("  I1.SUB_BODY_CODE, I1.SALES_DIVISION_CODE, I1.INNER_PACK_QTY, I1.CARTON_PACK_QTY, I1.CUST_CODE, I1.IMAGE_NAME")
         S.AppendLine(") JN")
@@ -233,7 +233,7 @@ Public Class SORCUSTQ
         End If
         S.AppendLine("GROUP BY")
         S.AppendLine("JN.CUST_CODE, JN.CUST_NAME,")
-        S.AppendLine("JN.ORDR_CUST_PO, JN.ORDR_SHIP_DATE, JN.ORDR_CANCEL_DATE,")
+        S.AppendLine("JN.ORDR_CUST_PO, JN.ORDR_DATE,JN.ORDR_SHIP_DATE, JN.ORDR_CANCEL_DATE,")
         S.AppendLine("JN.STYLE_CODE, JN.COLOR_CODE, JN.COLOR_DESC, JN.STYLE_DESC, JN.FABRIC_CODE, JN.SEASON_CODE,")
         S.AppendLine("JN.SUB_BODY_CODE, JN.SALES_DIVISION_CODE, JN.INNER_PACK_QTY, JN.CARTON_PACK_QTY, JN.STYLE_CUST_CODE, JN.IMAGE_NAME")
         S.AppendLine("ORDER BY")
@@ -1129,7 +1129,7 @@ Public Class SORCUSTQ
 
         Dim I0 As Integer = 0
         Dim IA As Integer = 0
-        Dim RT(10) As String
+        Dim RT(11) As String
         Dim ROW0 As Integer = I
         Dim style_count As Integer = 0
         Dim pages As Integer = 0
@@ -1159,20 +1159,14 @@ Public Class SORCUSTQ
 
 
             If chkPrice.Checked Then
-                For iCOL As Integer = 1 To 10
+                For iCOL As Integer = 1 To 11
                     COL += 1
                     Select Case iCOL
-                        Case 5
+                        Case 6
                             If chkReservations.Checked Then
                                 worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                             Else
                                 COL -= 2
-                            End If
-                        Case 7
-                            If chkOpen.Checked Then
-                                worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
-                            Else
-                                COL -= 1
                             End If
                         Case 8
                             If chkOpen.Checked Then
@@ -1181,13 +1175,19 @@ Public Class SORCUSTQ
                                 COL -= 1
                             End If
                         Case 9
+                            If chkOpen.Checked Then
+                                worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
+                            Else
+                                COL -= 1
+                            End If
+                        Case 10
                             If chkPick.Checked Then
                                 worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                             Else
                                 COL -= 1
                             End If
 
-                        Case 10
+                        Case 11
                             If chkPick.Checked Then
                                 worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                             Else
@@ -1199,22 +1199,22 @@ Public Class SORCUSTQ
                     RT(iCOL) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
                 Next
             Else
-                For iCOL As Integer = 1 To 6
+                For iCOL As Integer = 1 To 7
                     COL += 1
                     Select Case iCOL
-                        Case 4
+                        Case 5
                             If chkReservations.Checked Then
                                 worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                             Else
                                 COL -= 1
                             End If
-                        Case 5
+                        Case 6
                             If chkOpen.Checked Then
                                 worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                             Else
                                 COL -= 1
                             End If
-                        Case 6
+                        Case 7
                             If chkPick.Checked Then
                                 worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                             Else
@@ -1476,23 +1476,16 @@ Public Class SORCUSTQ
         If chkStyleStats.Checked Then
         Else
             If chkPrice.Checked Then
-                For iCOL As Integer = 1 To 10
+                For iCOL As Integer = 1 To 11
                     COL += 1
                     Select Case iCOL
-                        Case 5
+                        Case 6
                             If chkReservations.Checked Then
                                 '  worksheet.Cells(I + ci - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + ci - 1 - 1, COL).Address, "$", "") & ")"
                                 worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                                 GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
                             Else
                                 COL -= 2
-                            End If
-                        Case 7
-                            If chkOpen.Checked Then
-                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
-                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                            Else
-                                COL -= 1
                             End If
                         Case 8
                             If chkOpen.Checked Then
@@ -1502,6 +1495,13 @@ Public Class SORCUSTQ
                                 COL -= 1
                             End If
                         Case 9
+                            If chkOpen.Checked Then
+                                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                            Else
+                                COL -= 1
+                            End If
+                        Case 10
                             If chkPick.Checked Then
                                 worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                                 GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
@@ -1509,7 +1509,7 @@ Public Class SORCUSTQ
                                 COL -= 1
                             End If
 
-                        Case 10
+                        Case 11
                             If chkPick.Checked Then
                                 worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                                 GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
@@ -1522,24 +1522,24 @@ Public Class SORCUSTQ
                     '    RT(iCOL) &= "+" & Replace(worksheet.Cells(I + ci - 1, COL).Address, "$", "")
                 Next
             Else
-                For iCOL As Integer = 1 To 6
+                For iCOL As Integer = 1 To 7
                     COL += 1
                     Select Case iCOL
-                        Case 4
+                        Case 5
                             If chkReservations.Checked Then
                                 worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                                 GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
                             Else
                                 COL -= 1
                             End If
-                        Case 5
+                        Case 6
                             If chkOpen.Checked Then
                                 worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                                 GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
                             Else
                                 COL -= 1
                             End If
-                        Case 6
+                        Case 7
                             If chkPick.Checked Then
                                 worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                                 GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
@@ -1572,15 +1572,16 @@ Public Class SORCUSTQ
         For Each rowSOTCUSTQ As DataRow In dst.Tables("SOTCUSTQ").Select("STYLE_CODE = '" & STYLE_CODE & "'", "COLOR_CODE, ORDR_SHIP_DATE")
             CI += 1
             COL = COL0
-            Dim chkcnt As Int64 = 4
+            Dim chkcnt As Int64 = 5
             If LAST_COLOR <> rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty Then
                 worksheet.Cells(i + CI - 1, COL - 1).Value = "'" & rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty
                 worksheet.Cells(i + CI - 1, COL).Value = rowSOTCUSTQ.Item("COLOR_DESC") & String.Empty
                 LAST_COLOR = rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty
             End If
             worksheet.Cells(i + CI - 1, COL + 1).Value = rowSOTCUSTQ.Item("ORDR_CUST_PO") & String.Empty
-            worksheet.Cells(i + CI - 1, COL + 2).Value = rowSOTCUSTQ.Item("ORDR_SHIP_DATE") & String.Empty
-            worksheet.Cells(i + CI - 1, COL + 3).Value = rowSOTCUSTQ.Item("ORDR_CANCEL_DATE") & String.Empty
+            worksheet.Cells(i + CI - 1, COL + 2).Value = rowSOTCUSTQ.Item("ORDR_DATE") & String.Empty
+            worksheet.Cells(i + CI - 1, COL + 3).Value = rowSOTCUSTQ.Item("ORDR_SHIP_DATE") & String.Empty
+            worksheet.Cells(i + CI - 1, COL + 4).Value = rowSOTCUSTQ.Item("ORDR_CANCEL_DATE") & String.Empty
             If chkPrice.Checked Then
                 Dim PRICE_DISPLAY As String = ""
                 If rowSOTCUSTQ.Item("MIN_PRICE") = rowSOTCUSTQ.Item("MAX_PRICE") Then
@@ -1759,6 +1760,12 @@ Public Class SORCUSTQ
         With worksheet.Cells(i, COL)
             .HorizontalAlignment = SpreadsheetGear.HAlign.Left
             .Value = "PO"
+        End With
+
+        COL += 1
+        With worksheet.Cells(i, COL)
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Left
+            .Value = "Date"
         End With
 
         COL += 1
@@ -1981,6 +1988,16 @@ Public Class SORCUSTQ
             .ColumnWidth = 20
             .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
             .HorizontalAlignment = SpreadsheetGear.HAlign.Left
+        End With
+
+        'Order Date Column
+        COL += 1
+        _COL += 1
+        With worksheet.Cells(_COL, COL)
+            .ColumnWidth = 15
+            .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Left
+            .EntireColumn.NumberFormat = "MM/dd/yy"
         End With
 
         'Ship Date Column
