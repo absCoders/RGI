@@ -319,6 +319,20 @@ Public Class ICRFIFO1
                         EMsg &= vbCr & "FIFO G/L Journal Has already been Updated for this period, Cannot Rebuild FIFO Lot Costs"
                     End If
                     ' CHECK TO SEE UF MONTH END HAS BEEN UPDATED FOR PERIOD
+
+                    If chkGL.Checked Then
+                        '  Make Sure previous period GL Updated before Updating GL for Period selected
+                        ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                    & " where NVL(ICTCOSTP.UPDATED,'0') = '0' and ICTCOSTP.OPS_YYYYPP < '" & RYP & "' And ICTCOSTP.OPS_YYYYPP > '202207'"
+                        rowICTCOSTP = ASCDATA1.GetDataRow
+                        If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
+                            'MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL For this period")
+                            'lblWarning.Visible = False
+                            EMsg &= vbCr & "FIFO G/L Journal Has Not been Updated For Prior periods, Cannot Update GL For this period"
+                        End If
+
+                    End If
+
                 End If
             End If
         End If
