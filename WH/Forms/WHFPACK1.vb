@@ -178,6 +178,8 @@ Public Class WHFPACK1
                                 )"
             Create_TDA(.Tables.Add, "WHTPACKC", ASCMAIN1.sql, 0, False, "V", 0)
 
+            If ASCMAIN1.USER_ID = "rick" Then MsgBox("About to open Label Printers")
+
             Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
             For Each row As DataRow In rows
                 cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
@@ -200,6 +202,7 @@ Public Class WHFPACK1
                 End If
             Next
 
+            If ASCMAIN1.USER_ID = "rick" Then MsgBox("Done with Label Printers")
         End With
 
         With ultraComboPackage.DisplayLayout.Bands(0)
