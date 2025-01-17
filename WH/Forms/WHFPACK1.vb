@@ -191,6 +191,7 @@ Public Class WHFPACK1
                 If printer.ToLower.Contains("zebra") Or printer.ToLower.Contains("upc") Or printer.ToLower.Contains("microsoft") _
                     Or printer.ToLower.Contains("brother ql") Or printer.ToLower.Contains("pdf") Then
                 Else
+                    If ASCMAIN1.USER_ID = "rick" Then MsgBox($"About to open Printer {printer}")
                     settings.PrinterName = printer
                     Debug.Print(printer)
                     If settings.DefaultPageSettings.PaperSize.PaperName = "Letter" Then
