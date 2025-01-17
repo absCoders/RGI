@@ -201,6 +201,7 @@ Public Class WHFPACK1
                         End If
                     End If
                 End If
+                If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
             Next
 
             If ASCMAIN1.USER_ID = "rick" Then MsgBox("Done with Label Printers")
