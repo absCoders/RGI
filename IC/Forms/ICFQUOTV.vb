@@ -1333,7 +1333,7 @@ Public Class ICFQUOTV
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdICTQUOHF, "BBBBB", "View File", "Replace File", "Copy Link", "Copy All Links", "Extend Expiration")
+        Load_Popup_Menu(grdICTQUOHF, "BBBBBB", "View File", "Replace File", "Copy Link", "Copy All Links", "Extend Expiration", "Open Excel")
         Load_Popup_Menu(grdICTQUOTX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdICTSTYCX, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry", "Style Master")
         Load_Popup_Menu(grdICTQUOT2, "BBBBBBB", "Sequence as Shown", "Select All", "De-Select All", "Style Status Inquiry", "Collapse All", "Expand All", "Sort by Style")
@@ -1525,7 +1525,7 @@ Public Class ICFQUOTV
                     Dim FN As String = grd.ActiveRow.Cells.Item("FILENAME").Text
                     Dim SESSION_NO As String = grd.ActiveRow.Cells.Item("SESSION_NO").Text
                     Dim PDFD As String = ASCMAIN1.Folders("Archive") & "QuotePDFs\" & SESSION_NO & "\" & FN & ".pdf"
-                    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+                    If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
                         PDFD = "S:\VDI\ARCHIVE\VAN\QuotePDFs\" & SESSION_NO & "\" & FN & ".pdf"
                     End If
                     Show_Document(PDFD)
@@ -1549,7 +1549,7 @@ Public Class ICFQUOTV
                     Dim FILE_NO As String = grd.ActiveRow.Cells.Item("FILE_NO").Text
                     If FN_TO.EndsWith(".pdf") Then
                         Dim PDFD As String = ASCMAIN1.Folders("Archive") & "QuotePDFs\" & SESSION_NO & "\" & FN_TO & ".pdf"
-                        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+                        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
                             PDFD = "S:\VDI\ARCHIVE\VAN\QuotePDFs\" & SESSION_NO & "\" & FN_TO & ".pdf"
                         End If
                         Dim iResult As MsgBoxResult
@@ -1595,7 +1595,7 @@ Public Class ICFQUOTV
                         iMSG.AppendLine("Is That What You Want?")
                         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
                         Dim FN_TO_EXCL As String = ""
-                        If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+                        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
                             Stop
                             FN_TO_EXCL = "G:\VDI\Attach\VAN\" & ATTACHMENT_NO
                         Else
@@ -1659,6 +1659,11 @@ Public Class ICFQUOTV
                     Next
                 End If
                 My.Computer.Clipboard.SetText(clipbrd)
+            Case "Open Excel"
+                If Not IsNothing(grd.ActiveRow) Then
+                    Dim FN As String = grd.ActiveRow.Cells.Item("FILENAME").Text
+                    Show_Document(FN)
+                End If
         End Select
     End Sub
 
@@ -2816,6 +2821,9 @@ Public Class ICFQUOTV
                 CODES = "STYLE_GROUP_CODE,FABRIC_CODE,SUB_BODY_CODE"
                 ' CODES = "STYLE_GROUP_CODE"
                 ' DGJ
+            ElseIf opt1Sheet.Value = "D" Then
+                CODES = "SALES_DIVISION_CODE"
+
             End If
 
             For Each rowSB As DataRow In ASCDATA1.SelectDistinct(dst.Tables("ICTQUOT2").Select(Mid(sqlWB & sql0, 6)), Split(CODES, ",")).Select("")
@@ -2831,7 +2839,20 @@ Public Class ICFQUOTV
                     End If
                 Next
 
-                SHEET_NAME = Mid(SHEET_NAME, 2)
+                If CODES = "SALES_DIVISION_CODE" Then
+                    Dim SALES_DIVISION_NAME As String = ""
+                    ASCMAIN1.sql = "Select SALES_DIVISION_NAME from SOTSDIV1 where SALES_DIVISION_CODE = :PARM1"
+                    Dim rowSOTDIV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", Mid(SHEET_NAME, 2))
+                    If rowSOTDIV1 IsNot Nothing Then
+                        SALES_DIVISION_NAME = rowSOTDIV1.Item("SALES_DIVISION_NAME")
+                    Else
+                        SALES_DIVISION_NAME = ""
+                    End If
+                    SHEET_NAME = "Sls Div -" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
+                Else
+                    SHEET_NAME = Mid(SHEET_NAME, 2)
+                End If
+
 
                 If dst.Tables("ICTQUOT2").Select(Mid(sqlWB & sqlSB & sql0, 6)).Length > 0 Then
                     Dim worksheet As SpreadsheetGear.IWorksheet
@@ -3447,16 +3468,47 @@ Public Class ICFQUOTV
                     SRT = "FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
                 Case "G"
                     SRT = "STYLE_GROUP_CODE, STYLE_CODE_PLM"
+                Case "D"
+                    SRT = "SALES_DIVISION_CODE"
             End Select
+        Else
+            If opt1Sheet.Value = "D" Then
+                SRT = "SALES_DIVISION_CODE"
 
+            End If
         End If
         For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, SRT) ' SEQ")
 
             If opt1Sheet.Value = "G" And chk1Sheet.Checked = True Then
-
-
                 With worksheet.Cells(2, 7)
-                    .Value = "Group " & row.Item("STYLE_GROUP_CODE")
+                    .Value = "Group -" & row.Item("STYLE_GROUP_CODE")
+                    .Font.Color = SpreadsheetGear.Colors.Red
+                    .Font.Bold = True
+                    .Font.Size = 16
+                End With
+            End If
+
+            If opt1Sheet.Value = "FS" And chk1Sheet.Checked = True Then
+                With worksheet.Cells(2, 7)
+                    .Value = row.Item("FABRIC_CODE") & "-" & row.Item("SUB_BODY_CODE")
+                    .Font.Color = SpreadsheetGear.Colors.Red
+                    .Font.Bold = True
+                    .Font.Size = 16
+                End With
+            End If
+
+            If opt1Sheet.Value = "S" And chk1Sheet.Checked = True Then
+                With worksheet.Cells(2, 7)
+                    .Value = "Sub -" & row.Item("SUB_BODY_CODE")
+                    .Font.Color = SpreadsheetGear.Colors.Red
+                    .Font.Bold = True
+                    .Font.Size = 16
+                End With
+            End If
+
+            If opt1Sheet.Value = "D" And chk1Sheet.Checked = True Then
+                With worksheet.Cells(2, 7)
+                    .Value = "Sales Div -" & row.Item("SALES_DIVISION_CODE")
                     .Font.Color = SpreadsheetGear.Colors.Red
                     .Font.Bold = True
                     .Font.Size = 16
@@ -3510,7 +3562,21 @@ Public Class ICFQUOTV
                         If iCol = 2 Then .Value = Format(dte1.DateTime.AddDays(1), "MM/dd") & "-" & Format(dte2.Value, "MM/dd")
                         If iCol = 3 Then .Value = Format(dte2.DateTime.AddDays(1), "MM/dd") & "-" & Format(dte3.Value, "MM/dd")
 
-                        If iCol = 4 Then .Value = "Beyond"
+
+                        If iCol = 4 Then
+                            With worksheet.Cells(I, COL)
+                                .Value = "Beyond"
+                                .ColumnWidth = 11
+                            End With
+                            With worksheet.Cells(I, COL + 1)
+                                .ColumnWidth = 11
+                            End With
+                        End If
+                        If iCol = 5 Then
+                            With worksheet.Cells(I, COL)
+                                .ColumnWidth = 11
+                            End With
+                        End If
 
                         If iCol = 0 Or iCol = 4 Then
                         Else
@@ -3586,10 +3652,16 @@ Public Class ICFQUOTV
             End If
 
             If chkStyleStats.Checked Then
-                COL += 1
+                If chkShowLastRcd.Checked Then
+                    COL += 1
+                Else
+                    COL += 2
+                End If
+
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
+                    ' .NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "On Hand"
@@ -3643,9 +3715,20 @@ Public Class ICFQUOTV
                     .Value = "" & Chr(13) & Chr(10) & "Net Pos"
                 End With
 
-                range = worksheet.Cells(I, COL - 6, I, COL)
-                interior = range.Interior
-                interior.Color = SpreadsheetGear.Colors.Aquamarine
+
+                If chkStyleStats.Checked Then
+                    If chkShowLastRcd.Checked Then
+                        range = worksheet.Cells(I, COL - 6, I, COL)
+                        interior = range.Interior
+                        interior.Color = SpreadsheetGear.Colors.Aquamarine
+                    Else
+                        range = worksheet.Cells(I, COL - 7, I, COL)
+                        interior = range.Interior
+                        interior.Color = SpreadsheetGear.Colors.Aquamarine
+
+                    End If
+                End If
+
 
             End If
 
@@ -4066,6 +4149,12 @@ Public Class ICFQUOTV
 
                 If chkStyleStats.Checked Then
                     Dim chkcnt As Int64 = 1
+                    If chkShowLastRcd.Checked Then
+
+                    Else
+                        chkcnt = 2
+                    End If
+
 
                     ' ASCMAIN1.sql = "Select * from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty & "'"
                     '       For Each rowICTSTAT2 As DataRow In ASCDATA1.GetDataTable.Select("")
@@ -4073,6 +4162,7 @@ Public Class ICFQUOTV
 
 
                         worksheet.Cells(I + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                        worksheet.Cells(I + CI - 1, COL + chkcnt).NumberFormat = "#,###,##0"
                         chkcnt += 1
                         worksheet.Cells(I + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
                         chkcnt += 1
@@ -4188,7 +4278,7 @@ Public Class ICFQUOTV
             If chkStyleStats.Checked Then
                 '   Dim interior As SpreadsheetGear.IInterior
                 '  Dim range As SpreadsheetGear.IRange
-                '  I += 1
+                I += 2
                 COL = COL0
                 Dim chkcnt As Int64 = 0
                 Dim NEWSTYLE As Boolean = True
@@ -4202,6 +4292,9 @@ Public Class ICFQUOTV
                         I += 1
                         ' Headinds and headingsFOrmat
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Color"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        End With
                         chkcnt += 1
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Factory"
                         With worksheet.Cells(I - 1, COL - 1 + chkcnt)
@@ -4247,7 +4340,7 @@ Public Class ICFQUOTV
 
                     With worksheet.Cells(I - 1, COL - 2 + chkcnt)
                         .HorizontalAlignment = SpreadsheetGear.HAlign.Center
-                        .Value = Val(rowICTSTATD.Item("COLOR_CODE") & String.Empty)
+                        .Value = Format(Val(rowICTSTATD.Item("COLOR_CODE") & String.Empty), "000")
                         .Font.Size = 14
                         If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
                             .Font.Color = SpreadsheetGear.Colors.Green
@@ -4379,24 +4472,29 @@ Public Class ICFQUOTV
         I += 2
         COL = COL0
 
-        worksheet.Cells(I - 1, COL - 1).Value = "'" & "All"
-        worksheet.Cells(I - 1, COL - 0).Value = "'" & "Totals"
+        If chkStyleStats.Checked Then
+        Else
+            worksheet.Cells(I - 1, COL - 1).Value = "'" & "All"
+            worksheet.Cells(I - 1, COL - 0).Value = "'" & "Totals"
 
-        Dim GT = ""
-        For iCOL As Integer = BegAlloPeriod To 4
-            If ColVisible(iCOL) Then
-                COL += 1
-                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+            Dim GT = ""
+            For iCOL As Integer = BegAlloPeriod To 4
+                If ColVisible(iCOL) Then
+                    COL += 1
+                    worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
 
-                GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                COL += 1
-            End If
-        Next
-        COL += 1
-        worksheet.Cells(I - 1, COL).Formula = "=" & Mid(GT, 2)
+                    GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+                    COL += 1
+                End If
+            Next
+            COL += 1
+            worksheet.Cells(I - 1, COL).Formula = "=" & Mid(GT, 2)
 
 
-        worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
+            worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
+        End If
+
+
 
 
 
@@ -4877,6 +4975,8 @@ Public Class ICFQUOTV
                             SRT = "FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
                         Case "G"
                             SRT = "STYLE_GROUP_CODE, STYLE_CODE_PLM"
+                        Case "D"
+                            SRT = "SALES_DIVISION_CODE"
                     End Select
                     For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, SRT)
                         STYLE_count += 1
@@ -6448,6 +6548,9 @@ Public Class ICFQUOTV
             sqlWB &= ",FABRIC_CODE,SUB_BODY_CODE,STYLE_GROUP_CODE"
         ElseIf opt1Sheet.Value = "G" Then
             sqlWB &= ",STYLE_GROUP_CODE,FABRIC_CODE,SUB_BODY_CODE"
+        ElseIf opt1Sheet.Value = "D" Then
+            sqlWB &= ",SALES_DIVISION_CODE"
+
 
         End If
         sqlWB &= ",STYLE_CODE_PLM"

@@ -160,6 +160,7 @@ Partial Class ICFQUOTV
         Dim ValueListItem9 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem10 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem13 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem14 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -1975,7 +1976,7 @@ Partial Class ICFQUOTV
         '
         Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
         Me.chkStyleStats.CausesValidation = False
-        Me.chkStyleStats.Location = New System.Drawing.Point(6, 293)
+        Me.chkStyleStats.Location = New System.Drawing.Point(6, 322)
         Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkStyleStats.Name = "chkStyleStats"
         Me.chkStyleStats.Size = New System.Drawing.Size(191, 22)
@@ -1988,7 +1989,7 @@ Partial Class ICFQUOTV
         Me.chkShowComments.ABSChecked = "1"
         Me.chkShowComments.Checked = True
         Me.chkShowComments.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowComments.Location = New System.Drawing.Point(5, 274)
+        Me.chkShowComments.Location = New System.Drawing.Point(5, 303)
         Me.chkShowComments.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowComments.Name = "chkShowComments"
         Me.chkShowComments.Size = New System.Drawing.Size(200, 22)
@@ -2043,7 +2044,7 @@ Partial Class ICFQUOTV
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowFactory, False)
         Me.Absx1.SetABSColumnName(Me.chkShowFactory, "QUOTE_SHOW_FACTORY")
-        Me.chkShowFactory.Location = New System.Drawing.Point(5, 255)
+        Me.chkShowFactory.Location = New System.Drawing.Point(5, 284)
         Me.chkShowFactory.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowFactory.Name = "chkShowFactory"
         Me.chkShowFactory.Size = New System.Drawing.Size(141, 22)
@@ -2133,7 +2134,7 @@ Partial Class ICFQUOTV
         Me.Absx1.SetABSColumnName(Me.chkShowRetail, "QUOTE_SHOW_RETAIL")
         Me.chkShowRetail.Checked = True
         Me.chkShowRetail.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowRetail.Location = New System.Drawing.Point(5, 236)
+        Me.chkShowRetail.Location = New System.Drawing.Point(5, 265)
         Me.chkShowRetail.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowRetail.Name = "chkShowRetail"
         Me.chkShowRetail.Size = New System.Drawing.Size(141, 22)
@@ -2147,7 +2148,7 @@ Partial Class ICFQUOTV
         Me.Absx1.SetABSColumnName(Me.chkShowCost, "QUOTE_SHOW_COST")
         Me.chkShowCost.Checked = True
         Me.chkShowCost.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowCost.Location = New System.Drawing.Point(5, 217)
+        Me.chkShowCost.Location = New System.Drawing.Point(5, 246)
         Me.chkShowCost.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowCost.Name = "chkShowCost"
         Me.chkShowCost.Size = New System.Drawing.Size(129, 22)
@@ -2157,7 +2158,7 @@ Partial Class ICFQUOTV
         'chkOmitPrice
         '
         Me.Absx1.SetABSColumnName(Me.chkOmitPrice, "QUOTE_OMIT_PRICE")
-        Me.chkOmitPrice.Location = New System.Drawing.Point(5, 198)
+        Me.chkOmitPrice.Location = New System.Drawing.Point(5, 227)
         Me.chkOmitPrice.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkOmitPrice.Name = "chkOmitPrice"
         Me.chkOmitPrice.Size = New System.Drawing.Size(166, 22)
@@ -2170,7 +2171,7 @@ Partial Class ICFQUOTV
         Me.Absx1.SetABSColumnName(Me.chkShowLastRcd, "QUOTE_SHOW_LAST_REC")
         Me.chkShowLastRcd.Checked = True
         Me.chkShowLastRcd.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowLastRcd.Location = New System.Drawing.Point(6, 178)
+        Me.chkShowLastRcd.Location = New System.Drawing.Point(6, 207)
         Me.chkShowLastRcd.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowLastRcd.Name = "chkShowLastRcd"
         Me.chkShowLastRcd.Size = New System.Drawing.Size(198, 22)
@@ -2221,11 +2222,13 @@ Partial Class ICFQUOTV
         ValueListItem10.DisplayText = "Fabric / Sub Body"
         ValueListItem13.DataValue = "G"
         ValueListItem13.DisplayText = "Style Group"
-        Me.opt1Sheet.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem9, ValueListItem10, ValueListItem13})
+        ValueListItem14.DataValue = "D"
+        ValueListItem14.DisplayText = "Division"
+        Me.opt1Sheet.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem9, ValueListItem10, ValueListItem13, ValueListItem14})
         Me.opt1Sheet.Location = New System.Drawing.Point(29, 61)
         Me.opt1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.opt1Sheet.Name = "opt1Sheet"
-        Me.opt1Sheet.Size = New System.Drawing.Size(184, 62)
+        Me.opt1Sheet.Size = New System.Drawing.Size(184, 89)
         Me.opt1Sheet.TabIndex = 209
         Me.opt1Sheet.Text = "Fabric / Sub Body"
         '
@@ -2233,7 +2236,7 @@ Partial Class ICFQUOTV
         '
         Me.Absx1.SetABSBindToTable(Me.chkNoBoxes, False)
         Me.Absx1.SetABSColumnName(Me.chkNoBoxes, "EXCEL_NO_BOXES")
-        Me.chkNoBoxes.Location = New System.Drawing.Point(6, 158)
+        Me.chkNoBoxes.Location = New System.Drawing.Point(6, 187)
         Me.chkNoBoxes.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkNoBoxes.Name = "chkNoBoxes"
         Me.chkNoBoxes.Size = New System.Drawing.Size(130, 22)
@@ -2244,7 +2247,7 @@ Partial Class ICFQUOTV
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowPOs, False)
         Me.Absx1.SetABSColumnName(Me.chkShowPOs, "EXCEL_SHOW_POS")
-        Me.chkShowPOs.Location = New System.Drawing.Point(6, 138)
+        Me.chkShowPOs.Location = New System.Drawing.Point(6, 167)
         Me.chkShowPOs.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowPOs.Name = "chkShowPOs"
         Me.chkShowPOs.Size = New System.Drawing.Size(114, 22)
@@ -2255,7 +2258,7 @@ Partial Class ICFQUOTV
         '
         Me.Absx1.SetABSBindToTable(Me.chkNoPictures, False)
         Me.Absx1.SetABSColumnName(Me.chkNoPictures, "EXCEL_NO_PICTURES")
-        Me.chkNoPictures.Location = New System.Drawing.Point(6, 120)
+        Me.chkNoPictures.Location = New System.Drawing.Point(6, 149)
         Me.chkNoPictures.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkNoPictures.Name = "chkNoPictures"
         Me.chkNoPictures.Size = New System.Drawing.Size(130, 22)
