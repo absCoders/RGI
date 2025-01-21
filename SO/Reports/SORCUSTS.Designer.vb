@@ -116,6 +116,7 @@ Partial Class SORCUSTS
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -173,6 +174,7 @@ Partial Class SORCUSTS
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl2.SuspendLayout()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -486,7 +488,7 @@ Partial Class SORCUSTS
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdWEBLINKS)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-12500, -11250)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1017, 249)
@@ -601,6 +603,7 @@ Partial Class SORCUSTS
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer8.Panel1.Controls.Add(Me.Label1)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShipDates)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkAveragePrice)
@@ -619,7 +622,7 @@ Partial Class SORCUSTS
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(762, 94)
+        Me.Label1.Location = New System.Drawing.Point(762, 100)
         Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(86, 20)
@@ -787,6 +790,17 @@ Partial Class SORCUSTS
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1017, 249)
         '
+        'chkStyleStats
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
+        Me.chkStyleStats.CausesValidation = False
+        Me.chkStyleStats.Location = New System.Drawing.Point(762, 78)
+        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkStyleStats.Name = "chkStyleStats"
+        Me.chkStyleStats.Size = New System.Drawing.Size(348, 22)
+        Me.chkStyleStats.TabIndex = 275
+        Me.chkStyleStats.Text = "Show In-Transit Details"
+        '
         'SORCUSTS
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -855,6 +869,7 @@ Partial Class SORCUSTS
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl2.ResumeLayout(False)
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -880,4 +895,5 @@ Partial Class SORCUSTS
     Friend WithEvents chkShipDates As ABSCS.ABSCheckBox
     Friend WithEvents chkAveragePrice As ABSCS.ABSCheckBox
     Friend WithEvents Label1 As Label
+    Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
 End Class

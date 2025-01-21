@@ -2848,7 +2848,7 @@ Public Class ICFQUOTV
                     Else
                         SALES_DIVISION_NAME = ""
                     End If
-                    SHEET_NAME = "Sls Div -" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
+                    SHEET_NAME = "Div-" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
                 Else
                     SHEET_NAME = Mid(SHEET_NAME, 2)
                 End If
@@ -3469,11 +3469,11 @@ Public Class ICFQUOTV
                 Case "G"
                     SRT = "STYLE_GROUP_CODE, STYLE_CODE_PLM"
                 Case "D"
-                    SRT = "SALES_DIVISION_CODE"
+                    SRT = "SALES_DIVISION_CODE, FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
             End Select
         Else
             If opt1Sheet.Value = "D" Then
-                SRT = "SALES_DIVISION_CODE"
+                SRT = "SALES_DIVISION_CODE, FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
 
             End If
         End If
@@ -3507,8 +3507,18 @@ Public Class ICFQUOTV
             End If
 
             If opt1Sheet.Value = "D" And chk1Sheet.Checked = True Then
+                Dim SALES_DIVISION_NAME As String = ""
+                ASCMAIN1.sql = "Select SALES_DIVISION_NAME from SOTSDIV1 where SALES_DIVISION_CODE = :PARM1"
+                Dim rowSOTDIV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", row.Item("SALES_DIVISION_CODE"))
+                If rowSOTDIV1 IsNot Nothing Then
+                    SALES_DIVISION_NAME = rowSOTDIV1.Item("SALES_DIVISION_NAME")
+                Else
+                    SALES_DIVISION_NAME = ""
+                End If
+
+
                 With worksheet.Cells(2, 7)
-                    .Value = "Sales Div -" & row.Item("SALES_DIVISION_CODE")
+                    .Value = SALES_DIVISION_NAME
                     .Font.Color = SpreadsheetGear.Colors.Red
                     .Font.Bold = True
                     .Font.Size = 16
