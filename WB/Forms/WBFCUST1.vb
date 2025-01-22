@@ -176,9 +176,17 @@ Public Class WBFCUST1
             SQLs.AppendLine("AND NVL(WC1.LAST_DATE,'01-JAN-1900') <> '01-JAN-1900'")
             ASCMAIN1.sql = SQLs.ToString()
             Create_TDA(.Tables.Add, "WBTCUSTR", "**", 0, False)
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT")
+            SQLs.AppendLine("WC1.EMAIL")
+            SQLs.AppendLine("FROM WBTCUST1 WC1")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "WBTCUSTE", "**", 0, False)
         End With
 
         grdWBTCUST1.DataSource = dst.Tables("WBTCUST1")
+        grdWBTCUST2.DataSource = dst.Tables("WBTCUST2")
         grdARTCUSTX.DataSource = dst.Tables("ARTCONTX")
         grdWBTCUSTP.DataSource = dst.Tables("WBTCUSTP")
         grdWBTCUSTR.DataSource = dst.Tables("WBTCUSTR")
@@ -204,7 +212,11 @@ Public Class WBFCUST1
         Sort_grdColumns(grdWBTCUSTP, "DATE_CHANGED".ToLower, False)
         Sort_grdColumns(grdWBTCUSTR, "LAST_DATE".ToLower, False)
 
+        Sort_grdColumns(grdWBTCUST2, "WEB_CUST_BATCH", False)
+
         CheckForCustomers()
+
+        Setup_WBTCUST2()
 
         tab.Visible = False
     End Sub
@@ -310,6 +322,16 @@ Public Class WBFCUST1
                 If Success Then
                     Print_Record()
                     MsgBox("Import Customers Complete", vbOKOnly, "Import Customers")
+                End If
+                If dst.Tables("WBTCUSTE").Rows.Count > 0 Then
+                    Using F As New ASFMSGBF
+                        Dim eMAils As String = ""
+                        For Each rowWBTCUSTE As DataRow In dst.Tables("WBTCUSTE").Select("", "EMAIL")
+                            eMAils = eMAils & "<br>" & rowWBTCUSTE.Item("EMAIL").ToString & String.Empty
+                        Next
+                        F.Show_Formatted_txt("List Of Duplicate E-Mails Received.", eMAils, Me)
+                        'F.Show_grd(dst.Tables("WHTCUSTE"), Me, "List Of Duplicate E-Mails Received.")
+                    End Using
                 End If
             Case "Send Customers"
                 Dim Success As Boolean = ExportCustomersToShopsite(False)
@@ -671,7 +693,12 @@ Public Class WBFCUST1
 
     Private Sub ViewTaxDoc(ByVal TAX_ID As String, ByVal TAX_ID_DOC As String)
         TAX_ID_DOC = TAX_ID_DOC.Replace(TAX_ID & "-", "")
-        Dim FTP_FOLDER As String = "customers\" & TAX_ID & "\"
+        Dim slashPOS As Int64 = TAX_ID_DOC.IndexOf("/")
+        Dim FTP_FOLDER As String = ""
+        If slashPOS > 0 Then
+            FTP_FOLDER = TAX_ID_DOC.Substring(0, slashPOS)
+            TAX_ID_DOC = TAX_ID_DOC.Substring(slashPOS + 1, TAX_ID_DOC.Length - slashPOS - 1)
+        End If
         Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
         If Not TempFolder.EndsWith("\") Then
             TempFolder = TempFolder & "\"
@@ -688,7 +715,7 @@ Public Class WBFCUST1
                 .User = UserName
                 .Password = Password
                 .RemoteHost = RemoteHost
-                .RemotePath = RemotePath & "/tax_id/" & TAX_ID
+                .RemotePath = RemotePath & "/tax_id/" & FTP_FOLDER & "/"
                 .Logon()
                 .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
                 .LocalFile = LocalFile
@@ -2221,6 +2248,20 @@ Public Class WBFCUST1
         Return HStr.ToString
     End Function
 
+
+    Sub Setup_WBTCUST2()
+        Dim dvw As DataView = DirectCast(grdWBTCUST2.DataSource, DataTable).DefaultView
+
+        If Not (grdWBTCUST1.ActiveRow Is Nothing OrElse (Not grdWBTCUST1.ActiveRow.IsDataRow Or grdWBTCUST1.ActiveRow.IsAddRow)) Then
+            Dim EMAIL As String = grdWBTCUST1.ActiveRow.Cells("EMAIL").Value & String.Empty
+            dvw.RowFilter = $"EMAIL = '{EMAIL}'"
+            grdWBTCUST2.Text = $"History For {EMAIL}."
+        Else
+            dvw.RowFilter = "EMAIL = 'XXXXXXXXX'"
+            grdWBTCUST2.Text = "Contact History."
+        End If
+    End Sub
+
 #End Region
 
 #Region "Inbound Customer Transfers"
@@ -2307,6 +2348,7 @@ Public Class WBFCUST1
     Private Sub WebCustInboundCreate(ByRef errMsg As StringBuilder, ByVal localFile As String)
         'Write to BATCH file, New Customer table and Encrypted Password File.
         Try
+            dst.Tables.Item("WBTCUSTE").Clear()
             Dim RecsUpdated As Int64 = 0
             Dim RecsAdded As Int64 = 0
             Dim RecWarnings As Int64 = 0
@@ -2348,6 +2390,12 @@ Public Class WBFCUST1
                             newWBTCUST2.Item("BATCH_LNO") = BATCH_LNO
                             newWBTCUST2.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty
                             If Not IsNothing(rowWBTCUST1) Then
+                                Dim fltr As String = $"EMAIL = '{currentRow(4).ToString.ToUpper & String.Empty}'"
+                                If dst.Tables.Item("WBTCUSTE").Select(fltr).Count = 0 Then
+                                    Dim newWBTCUSTE As DataRow = dst.Tables.Item("WBTCUSTE").NewRow
+                                    newWBTCUSTE.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty
+                                    dst.Tables.Item("WBTCUSTE").Rows.Add(newWBTCUSTE)
+                                End If
                                 For Each CM As CustMap In cMap
                                     Select Case CM.FILE_INDEX
                                         Case 4
@@ -2926,6 +2974,9 @@ Public Class WBFCUST1
 
     End Sub
 
+    Private Sub grdWBTCUST1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWBTCUST1.AfterRowActivate
+        Setup_WBTCUST2()
+    End Sub
 #End Region
 
 #Region "Old Space Code"

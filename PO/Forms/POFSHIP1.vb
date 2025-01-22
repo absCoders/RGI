@@ -873,6 +873,41 @@ Public Class POFSHIP1
                     .Add("SEL", GetType(System.String), "PARENT.SEL")
                 End With
 
+
+                ' DGJ ADD SO Details for Print Order Details Checkbox
+                ASCMAIN1.sql = ""
+                ASCMAIN1.sql &= "SELECT SOTORDR2.STYLE_CODE,SOTORDR2.COLOR_CODE, 'O' ORDR_TYPE, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                    & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
+                    & ", MIN(SOTORDR1.SREP_CODE) SREP_CODE, MIN(SOTORDR1.WHSE_CODE) WHSE_CODE, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY) ORDR, SUM (SOTORDR2.ORDR_QTY_OPEN) OPEN" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY_PICK) PICK, SUM (SOTORDR2.ORDR_QTY_ALLO) ALLO" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY_SHIP) SHIP, SUM (SOTORDR2.ORDR_QTY_CANC) CANC" & vbCrLf _
+                    & ", COUNT (DISTINCT SOTORDR1.ORDR_NO) ORDERS" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY      * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY_OPEN * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_OPEN" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY_PICK * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
+                    & ", SUM (SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
+                    & ", ARTCUST1.CUST_NAME" & vbCrLf _
+                    & ", MIN (SOTORDR1.ORDR_DATE_RECD) ORDR_DATE_RECD, MIN (SOTORDR1.INIT_DATE) INIT_DATE" & vbCrLf _
+                    & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                    & " From SOTORDR2, SOTORDR1, SOTORDR0, ARTCUST1, ICTATOP1" & vbCrLf
+                ASCMAIN1.sql &= " where (SOTORDR2.ORDR_STATUS = 'O' OR SOTORDR2.ORDR_STATUS = 'P')" & vbCrLf
+                ASCMAIN1.sql &= "" _
+                    & "   and SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                    & "   and ICTATOP1.ORDR_TYPE (+) = 'O'" & vbCrLf _
+                    & "   and ICTATOP1.ORDR_NO (+) = SOTORDR2.ORDR_NO" & vbCrLf _
+                    & "   and SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
+                    & "   and ARTCUST1.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
+                    & " And (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) In (Select DISTINCT POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE from POTORDR2 where (PO_ORDER_NO, PO_ORDER_LNO) " & vbCrLf _
+                    & " In (Select Distinct PO_ORDER_NO, PO_ORDER_LNO from POTSHIP3 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'))" & vbCrLf
+                ASCMAIN1.sql &= "" _
+                    & " group by SOTORDR2.STYLE_CODE,SOTORDR2.COLOR_CODE,SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                    & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+                    & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf
+                Create_TDA(.Tables.Add, "SOTORDRX", "**", 0, False, "", 4)
+
+
             End If
 
 
@@ -3667,7 +3702,14 @@ Public Class POFSHIP1
                 End If
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
                 .Groups("Packing Slips").Visible = False
+
+                .Groups("Special Functions").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie")) And ship_entry
+
+
+
+
             End With
+
 
             With UltraExplorerBar1.Groups("Cost Options")
                 .Items("Get Duty").Visible = (Not (EntryMode = "V") And ScreenMode) And cost_calc
@@ -4178,6 +4220,74 @@ Public Class POFSHIP1
         Fill_Records("POTORDR2", "", True, ASCMAIN1.sql)
         'End If
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = ""
+            ASCMAIN1.sql &= "SELECT SOTORDR2.STYLE_CODE,SOTORDR2.COLOR_CODE, 'O' ORDR_TYPE, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+            & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
+            & ", MIN(SOTORDR1.SREP_CODE) SREP_CODE, MIN(SOTORDR1.WHSE_CODE) WHSE_CODE, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY) ORDR, SUM (SOTORDR2.ORDR_QTY_OPEN) OPEN" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_PICK) PICK, SUM (SOTORDR2.ORDR_QTY_ALLO) ALLO" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_SHIP) SHIP, SUM (SOTORDR2.ORDR_QTY_CANC) CANC" & vbCrLf _
+            & ", COUNT (DISTINCT SOTORDR1.ORDR_NO) ORDERS" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY      * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_OPEN * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_OPEN" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_PICK * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
+            & ", ARTCUST1.CUST_NAME" & vbCrLf _
+            & ", MIN (SOTORDR1.ORDR_DATE_RECD) ORDR_DATE_RECD, MIN (SOTORDR1.INIT_DATE) INIT_DATE" & vbCrLf _
+            & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & " From SOTORDR2, SOTORDR1, SOTORDR0, ARTCUST1, ICTATOP1" & vbCrLf
+            ASCMAIN1.sql &= " where (SOTORDR2.ORDR_STATUS = 'O' OR SOTORDR2.ORDR_STATUS = 'P')" & vbCrLf
+            ASCMAIN1.sql &= "" _
+            & "   and SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+            & "   and ICTATOP1.ORDR_TYPE (+) = 'O'" & vbCrLf _
+            & "   and ICTATOP1.ORDR_NO (+) = SOTORDR2.ORDR_NO" & vbCrLf _
+            & "   and SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
+            & "   and ARTCUST1.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
+            & " And (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) In (Select DISTINCT POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE from POTORDR2 where (PO_ORDER_NO, PO_ORDER_LNO) " & vbCrLf _
+            & " In (Select Distinct PO_ORDER_NO, PO_ORDER_LNO from POTSHIP3 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'))" & vbCrLf
+            ASCMAIN1.sql &= "" _
+            & " group by SOTORDR2.STYLE_CODE,SOTORDR2.COLOR_CODE,SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+            & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+            & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf
+            ASCMAIN1.sql &= " union " & vbCrLf _
+            & "SELECT SOTRSRV2.STYLE_CODE,SOTRSRV2.COLOR_CODE,'R' ORDR_TYPE, SOTRSRV2.RSRV_NO ORDR_GROUP_NO, SOTRSRV1.CUST_CODE, SOTRSRV1.ORDR_CUST_PO ORDR_CUST_PO" & vbCrLf _
+            & ", SOTRSRV1.ORDR_SHIP_DATE, SOTRSRV1.ORDR_CANCEL_DATE" & vbCrLf _
+            & ", MIN(SOTRSRV1.SREP_CODE) SREP_CODE, MIN(SOTRSRV1.WHSE_CODE) WHSE_CODE, NULL ORDR_TYPE_CODE" & vbCrLf _
+            & ", SUM (SOTRSRV2.RSRV_QTY) ORDR, SUM (SOTRSRV2.RSRV_QTY_OPEN) OPEN" & vbCrLf _
+            & ", SUM (0) PICK, SUM (SOTRSRV2.RSRV_QTY_ALLO) ALLO" & vbCrLf _
+            & ", 0 SHIP, 0 CANC" & vbCrLf _
+            & ", 0 ORDERS" & vbCrLf _
+            & ", SUM (SOTRSRV2.RSRV_QTY      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+            & ", SUM (SOTRSRV2.RSRV_QTY_OPEN * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_OPEN" & vbCrLf _
+            & ", SUM (0                      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
+            & ", SUM (0                      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
+            & ", SUM (SOTRSRV2.RSRV_QTY_CANC * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
+            & ", ARTCUST1.CUST_NAME" & vbCrLf _
+            & ", SOTRSRV1.INIT_DATE AS ORDR_DATE_RECD, SOTRSRV1.INIT_DATE" & vbCrLf _
+            & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & " From SOTRSRV2, SOTRSRV1, ARTCUST1, ICTATOP1" & vbCrLf _
+            & " where SOTRSRV1.RSRV_STATUS = 'O'" & vbCrLf _
+            & "   and SOTRSRV2.RSRV_QTY_OPEN <> 0" & vbCrLf _
+            & "   and SOTRSRV1.RSRV_NO = SOTRSRV2.RSRV_NO" & vbCrLf _
+            & "   and ICTATOP1.ORDR_TYPE (+) = 'R'" & vbCrLf _
+            & "   and ICTATOP1.ORDR_NO (+) = SOTRSRV2.RSRV_NO" & vbCrLf _
+            & "   and ARTCUST1.CUST_CODE = SOTRSRV1.CUST_CODE" & vbCrLf _
+            & " And (SOTRSRV2.STYLE_CODE, SOTRSRV2.COLOR_CODE) In (Select DISTINCT POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE from POTORDR2 where (PO_ORDER_NO, PO_ORDER_LNO) " & vbCrLf _
+            & " In (Select Distinct PO_ORDER_NO, PO_ORDER_LNO from POTSHIP3 where PO_SHIPMENT_NO  = '" & PO_SHIPMENT_NO & "'))" & vbCrLf
+            ASCMAIN1.sql &= "" _
+            & " group by SOTRSRV2.STYLE_CODE,SOTRSRV2.COLOR_CODE,SOTRSRV2.RSRV_NO, SOTRSRV1.CUST_CODE, SOTRSRV1.ORDR_CUST_PO" & vbCrLf _
+            & ", SOTRSRV1.ORDR_SHIP_DATE, SOTRSRV1.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTRSRV1.INIT_DATE" & vbCrLf _
+            & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & "" & vbCrLf
+
+            Fill_Records("SOTORDRX", "", True, ASCMAIN1.sql)
+
+        End If
+
+
+
         EnforceConstraints(True)
 
 
@@ -4500,7 +4610,7 @@ Public Class POFSHIP1
             & " End;" & vbCrLf _
             & "End;"
 
-        ASCDATA1.ExecuteSQL()
+            ASCDATA1.ExecuteSQL()
 
         End If
 
@@ -11326,6 +11436,15 @@ Public Class POFSHIP1
                 CR_params.Add("COST_DTL_DEC", "1")
             End If
         End If
+
+        If ASCMAIN1.CLIENT = "VAN" And chkOrderDetails.Checked Then
+            If MENU_ITEM_OBJECT = "POFSHIP1" Then
+                RPT_TITLE = "PO Shipment Status Report (Order Details)"
+                RPT = "PORSHIPD"
+            End If
+        End If
+
+
         Generate_Report(RPT, RPT_TITLE,
                         "Shipment " & PO_SHIPMENT_NO & IIf((EntryMode = "E"), " - Edit in Process (" & Me.Text & ")", IIf(Absx1.chkFor("COST_COMPLETE").Checked, " - Costs Complete", " - Incomplete")),
                         FILTER)

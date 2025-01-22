@@ -178,6 +178,8 @@ Public Class WHFPACK1
                                 )"
             Create_TDA(.Tables.Add, "WHTPACKC", ASCMAIN1.sql, 0, False, "V", 0)
 
+            If ASCMAIN1.USER_ID = "rick" Then MsgBox("About to open Label Printers")
+
             Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
             For Each row As DataRow In rows
                 cbxLabelPrinter.Items.Add(row.Item("LABEL_PRINTER_ID"))
@@ -189,6 +191,7 @@ Public Class WHFPACK1
                 If printer.ToLower.Contains("zebra") Or printer.ToLower.Contains("upc") Or printer.ToLower.Contains("microsoft") _
                     Or printer.ToLower.Contains("brother ql") Or printer.ToLower.Contains("pdf") Then
                 Else
+                    If ASCMAIN1.USER_ID = "rick" Then MsgBox($"About to open Printer {printer}")
                     settings.PrinterName = printer
                     Debug.Print(printer)
                     If settings.DefaultPageSettings.PaperSize.PaperName = "Letter" Then
@@ -198,8 +201,10 @@ Public Class WHFPACK1
                         End If
                     End If
                 End If
+                If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
             Next
 
+            If ASCMAIN1.USER_ID = "rick" Then MsgBox("Done with Label Printers")
         End With
 
         With ultraComboPackage.DisplayLayout.Bands(0)

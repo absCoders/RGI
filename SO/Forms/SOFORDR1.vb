@@ -6964,8 +6964,8 @@ Public Class SOFORDR1
     Sub Print_Record()
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Preparing Order")
-
         Dim REPORT_NAME As String = "SORORDR1"
+
         If Not REPORTS.ContainsKey(REPORT_NAME) Then
             REPORTS.Add(REPORT_NAME, Load_rptClass(REPORT_NAME))
             REPORTS(REPORT_NAME).Prepare_dst(False, "")
@@ -6976,6 +6976,9 @@ Public Class SOFORDR1
             .Print_Report_Begin()
             Dim SUBT As String = ""
             .CR_params.Add("SUBT", SUBT)
+            If ASCMAIN1.CLIENT = "RGI" Then
+                REPORT_NAME = "SORORDRR"
+            End If
             .Generate_Report(REPORT_NAME, "Sales Order", SUBT, True, , , , , False)
             .Print_Report_End()
         End With

@@ -77,7 +77,7 @@ Public Class SOFCART1
            & ", SOTORDR1.SALES_DIVISION_CODE, SOTORDR1.CUST_BILL_TO_CUST" & vbCrLf _
            & ", SOTORDR1.POST_CODE, SOTORDR1.WHSE_CODE" & vbCrLf _
            & ", SOTORDR1.TERM_CODE, SOTORDR1.SREP_CODE, SOTORDR1.SREP2_CODE, SOTORDR1.ORDR_DEPT" & vbCrLf _
-           & ", SOTSHIP1.BILL_OF_LADING_NO, SOTORDR1.ORDR_INV_COMMENT, SOTORDR1.CUST_FACTOR_IND" & vbCrLf _
+           & ", SOTSHIP1.BILL_OF_LADING_NO, SOTORDR1.ORDR_INV_COMMENT, SOTORDR1.CUST_FACTOR_IND, SOTCONF1.CONFIG_NO CONFIG_NO_NEW" & vbCrLf _
            & " from SOTPICK1,SOTORDR1,SOTSHIP1," & SOTCONF1 & " SOTCONF1" & vbCrLf _
            & " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
            & "   and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
@@ -185,7 +185,7 @@ Public Class SOFCART1
 
         With grdSOTCART2.DisplayLayout.Bands(0)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If New String() {"CART_LNO", "STYLE_CODE", "QTY_PACKED"}.Contains(gcol.Key) Then
+                If New String() {"ORDR_LNO", "STYLE_CODE", "QTY_PACKED"}.Contains(gcol.Key) Then
                     gcol.Header.Fixed = True
                 End If
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
@@ -214,7 +214,7 @@ Public Class SOFCART1
         Create_Summary(grdSOTCART1, New String() _
             {"CART_FREIGHT", "CART_TOTAL_UNITS", "CART_TOTAL_WGT_ACTUAL", "CART_TOTAL_UNITS_ORIG", "CART_TOTAL_UNITS_CALC"})
 
-        Create_Summary(grdSOTCART2, "CART_LNO", "Count")
+        Create_Summary(grdSOTCART2, "ORDR_LNO", "Count")
         Create_Summary(grdSOTCART2, New String() _
             {"QTY_PACKED", "QTY_PACKED_ORIG"})
 
@@ -297,7 +297,7 @@ Public Class SOFCART1
 
             Case "Copy to Like Configs"
                 Dim PICK_NO As String = grdSOTPICK1.ActiveRow.Cells("PICK_NO").Value
-                Dim CONFIG_NO As String = grdSOTPICK1.ActiveRow.Cells("CONFIG_NO").Value
+                Dim CONFIG_NO As String = grdSOTPICK1.ActiveRow.Cells("CONFIG_NO").Value & ""
                 Dim sqlp As String = " and PICK_NO = '" & PICK_NO & "'"
                 EMsg = Check_Carton_Pack_Integrity(sqlp)
 
@@ -466,7 +466,16 @@ Public Class SOFCART1
                 & sqlwhere_SOTSHIP1
             Fill_Records("SOTPICK1", "", True, ASCMAIN1.sql)
 
-            Dim row As DataRow = dst.Tables("SOTSHIP1").Rows(0)
+
+            For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
+                Dim CONFIG_NO_NEW As String = rowSOTPICK1.Item("CONFIG_NO_NEW")
+                rowSOTPICK1.Item("CONFIG_NO") = CONFIG_nO_NEW
+            Next
+
+
+
+
+                Dim row As DataRow = dst.Tables("SOTSHIP1").Rows(0)
             rowSOTSHIP0 = dst.Tables("SOTSHIP0").NewRow
             For i As Integer = 0 To dst.Tables("SOTSHIP0").Columns.Count - 1
                 rowSOTSHIP0.Item(i) = row.Item(i)
@@ -636,7 +645,7 @@ Public Class SOFCART1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTSHIPX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdSOTPICK1, "B", "Sales Order Inquiry")
-        Load_Popup_Menu(grdSOTPICK2, "B", "Item Status Inquiry")
+        Load_Popup_Menu(grdSOTPICK2, "BB", "Item Status Inquiry", "Add Selected Styles to Carton")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -693,6 +702,59 @@ Public Class SOFCART1
         End If
 
         Select Case e.Tool.Key
+            Case "Add Selected Styles to Carton"
+                If grd.Selected.Rows.Count = 0 Then
+                    If grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.IsDataRow Then
+                        grd.ActiveRow.Selected = True
+                    End If
+                End If
+
+                '    Dim Lines_to_batch As New List(Of String) ' ??
+                '   For Each grow As UltraWinGrid.UltraGridRow In grdSOTORDR0.Selected.Rows
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim PICK_NO As String = grow.Cells("PICK_NO").Text
+                    Dim PICK_LNO As String = grow.Cells("PICK_LNO").Text
+                    Dim PICK_QTY As Integer = Val(grow.Cells("PICK_QTY").Text)
+                    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Text
+                    Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Text
+                    Dim ORDR_NO As String = grow.Cells("ORDR_NO").Text
+                    Dim ORDR_LNO As String = grow.Cells("ORDR_LNO").Text
+
+
+                    ' add Carton
+                    Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value
+
+                    If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}' and ORDR_NO = '{ORDR_NO}' and ORDR_LNO = '{ORDR_LNO}'").Length > 0 Then
+                        MsgBox($"Line {ORDR_LNO} already in Carton", MsgBoxStyle.Critical, "Cannot Add Line")
+                        Exit Sub
+                    End If
+                    '     If grdSOTCART1.ActiveRow IsNot Nothing And grdSOTPICK2.ActiveRow IsNot Nothing Then
+                    Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
+
+
+                    rowSOTCART2.Item("CART_NO") = CART_NO
+                    rowSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", "CART_NO = '" & CART_NO & "'") & "") + 1
+                    rowSOTCART2.Item("ORDR_NO") = ORDR_NO
+                    rowSOTCART2.Item("ORDR_LNO") = PICK_LNO
+                    Dim QTY_PACKED As Int64 = PICK_QTY
+                    If QTY_PACKED < 0 Then QTY_PACKED = 0
+                    rowSOTCART2.Item("QTY_PACKED") = QTY_PACKED
+
+                    Dim rowICTSTYC1 As DataRow = LookUp("ICTSTYC1", STYLE_CODE)
+
+                    If rowICTSTYC1 IsNot Nothing Then
+                        rowSOTCART2.Item("UPC_CODE") = rowICTSTYC1.Item("UPC_CODE") & String.Empty
+                    Else
+                        rowSOTCART2.Item("UPC_CODE") = DBNull.Value
+                    End If
+                    rowSOTCART2.Item("STYLE_CODE") = STYLE_CODE
+                    rowSOTCART2.Item("COLOR_CODE") = COLOR_CODE
+                    rowSOTCART2.Item("PICK_NO") = PICK_NO
+
+                    dst.Tables("SOTCART2").Rows.Add(rowSOTCART2)
+                    '      End If
+                Next
+
             Case "Item Status Inquiry"
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
@@ -847,9 +909,15 @@ Public Class SOFCART1
         With e.Cell.Row
             Select Case e.Cell.Column.Key
                 Case "ADD_TO_CARTON"
+                    Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value
+
+                    If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}' and ORDR_NO = '{grdSOTPICK2.ActiveRow.Cells("ORDR_NO").Value}' and ORDR_LNO = '{grdSOTPICK2.ActiveRow.Cells("ORDR_LNO").Value}'").Length > 0 Then
+                        MsgBox($"Line {grdSOTPICK2.ActiveRow.Cells("ORDR_LNO").Value} already in Carton", MsgBoxStyle.Critical, "Cannot Add Line")
+                        Exit Sub
+                    End If
                     If grdSOTCART1.ActiveRow IsNot Nothing And grdSOTPICK2.ActiveRow IsNot Nothing Then
                         Dim rowSOTCART2 As DataRow = dst.Tables("SOTCART2").NewRow
-                        Dim CART_NO As String = grdSOTCART1.ActiveRow.Cells("CART_NO").Value
+
 
                         rowSOTCART2.Item("CART_NO") = CART_NO
                         rowSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", "CART_NO = '" & CART_NO & "'") & "") + 1
@@ -960,7 +1028,7 @@ Public Class SOFCART1
             Dim dvw As DataView = DirectCast(grdSOTCART2.DataSource, DataTable).DefaultView
             dvw.RowFilter = "CART_NO = '" & CART_NO & "'"
             grdSOTCART2.Text = "Contents of Carton " & CART_NO
-            Sort_grdColumns(grdSOTCART2, "CART_LNO")
+            Sort_grdColumns(grdSOTCART2, "ORDR_LNO")
             grdSOTCART2.Visible = True
         End If
     End Sub
@@ -1155,7 +1223,15 @@ Public Class SOFCART1
             ASCDATA1.DeleteRows(dst.Tables("SOTCART1"), "PICK_NO = '" & PICK_NO & "'")
 
             For Each rowSOTCART1_gold As DataRow In rowSOTPICK1_gold.GetChildRows("SOTPICK1_SOTCART1")
-                Dim CART_NO As String = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("SOTCART1.CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
+
+                Dim CART_NO As String = String.Empty
+                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                    CART_NO = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
+                Else
+                    CART_NO = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("SOTCART1.CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
+                End If
+
+                'Dim CART_NO As String = TAC.SOCMAIN1.UPC(Me, ASCMAIN1.Next_Control_No("CART_NO"), "0000" & ROWs("SOTPARM1").Item("SO_PARM_UPC_VENDOR_ID"))
                 Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").NewRow
                 rowSOTCART1.ItemArray = rowSOTCART1_gold.ItemArray
                 rowSOTCART1.Item("CART_NO") = CART_NO

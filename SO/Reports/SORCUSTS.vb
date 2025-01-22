@@ -5,6 +5,7 @@ Public Class SORCUSTS
     Dim S As New StringBuilder With {.Length = 0}
     Dim SQL_WHERE_ORDR_RSV As String
     Dim REPORT_NAME As String = "SORCUSTS"
+    Dim ICTSTATDSQL As String = ""
     Dim SQL_REPORT As New StringBuilder With {.Length = 0}
     Dim GRP_IN As String = ""
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
@@ -82,6 +83,64 @@ Public Class SORCUSTS
         S = BUILD_SOTCUSTS(False)
         ASCMAIN1.sql = S.ToString
         Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False)
+
+        Dim TABLE_TEMP As String = ASCMAIN1.Temp_Table
+
+        ASCMAIN1.sql = "Select * from (" & vbCrLf _
+            & " Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.INIT_DATE, POTSHIP1.WHSE_CODE, POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
+            & ", POTORDR1.FACTORY_CODE, POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            & ", POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
+            & ", POTSHIP1.PO_DATE_SHIPPED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO" & vbCrLf _
+            & ", POTSHIP2.PO_DATE_RECEIVED" & vbCrLf _
+            & ", POTSHIP3.PO_QTY_SHP, POTSHIP3.PO_QTY_REC" & vbCrLf _
+            & ", POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE, POTORDR1.PO_SPEC_ORDR_NO" & vbCrLf _
+            & ", POTORDR2.PO_QTY_ORD, 0 PO_QTY_OPN" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0) PO_ARRIVAL_DATE" & vbCrLf _
+            & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & "From POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2, ICTATOP2" & vbCrLf _
+            & "Where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+            & " And POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & "  And POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & " And POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            & "  And ICTATOP2.PS_CODE (+) = 'S'" & vbCrLf _
+            & " And ICTATOP2.PS_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf _
+            & " And (POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE) IN  (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & TABLE_TEMP & ")" & vbCrLf _
+            & " ) union (" & vbCrLf _
+            & "Select  POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE,POTORDR1.INIT_DATE, POTORDR1.WHSE_CODE, POTORDR2.PO_ORDER_NO" & vbCrLf _
+            & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
+            & ", POTORDR1.FACTORY_CODE, POTORDR2.PO_ORDER_LNO" & vbCrLf _
+            & ", Null PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf _
+            & ", Decode(nvl(POTORDR2.PO_QTY_OPN,0),0,'ClosedPO','OpenPO') PO_SHIP_VESSEL" & vbCrLf _
+            & ", POTORDR2.PO_DATE_SHIP_BY, POTORDR2.PO_DATE_ETA" & vbCrLf _
+            & ", 10 PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
+            & ", Null PO_SHIP_REF_NO, Null CONTAINER_NO" & vbCrLf _
+            & ", NULL PO_DATE_RECEIVED" & vbCrLf _
+            & ", 0 PO_QTY_SHP, 0 PO_QTY_REC" & vbCrLf _
+            & ", POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE, POTORDR1.PO_SPEC_ORDR_NO" & vbCrLf _
+            & ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_OPN" & vbCrLf _
+            & ", POTORDR2.PO_DATE_ETA + 10 PO_ARRIVAL_DATE" & vbCrLf _
+            & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & " From POTORDR1, POTORDR2, ICTATOP2" & vbCrLf _
+            & "Where POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO" & vbCrLf _
+            & "  And ICTATOP2.PS_CODE (+) = 'P'" & vbCrLf _
+            & "   And ICTATOP2.PS_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
+            & "   And POTORDR2.PO_QTY_OPN <> 0" & vbCrLf _
+            & " And (POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE) IN  (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & TABLE_TEMP & ")" & vbCrLf _
+            & ")"
+
+        ICTSTATDSQL = ASCMAIN1.sql
+        Create_TDA(dst.Tables.Add, "ICTSTATD", "**", 0, False)
+
+
         'Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False, "VDDVDDVDD")
 
         Prepare_dst(True, sql_filter)
@@ -262,6 +321,10 @@ Public Class SORCUSTS
         EnforceConstraints(False)
         S = BUILD_SOTCUSTS(False)
         Fill_Records("SOTCUSTS",,, S.ToString)
+
+        Fill_Records("ICTSTATD", "", True, ICTSTATDSQL)
+
+
         EnforceConstraints(True)
     End Sub
 
@@ -712,6 +775,11 @@ Public Class SORCUSTS
         SQLS.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
         SQLS.AppendLine(String.Format("AND S2.COLOR_CODE = '{0}'", COLOR_CODE))
         SQLS.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", txtCUST_CODE.Text))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE >= '{0}'", Format(dteShip_Beg.DateTime, "dd-MMM-yy")))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE <= '{0}'", Format(dteShip_End.DateTime, "dd-MMM-yy")))
+        ' new DGJ 2 LINES ABOVE Only consider Shipments in Date Range
+
+
         ASCMAIN1.sql = SQLS.ToString()
         Dim MIN_INV_DATE As String = ASCDATA1.GetDataValue
 
@@ -724,6 +792,10 @@ Public Class SORCUSTS
         SQLS.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
         SQLS.AppendLine(String.Format("AND S2.COLOR_CODE = '{0}'", COLOR_CODE))
         SQLS.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", txtCUST_CODE.Text))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE >= '{0}'", Format(dteShip_Beg.DateTime, "dd-MMM-yy")))
+        SQLS.AppendLine(String.Format(" AND S1.INV_DATE <= '{0}'", Format(dteShip_End.DateTime, "dd-MMM-yy")))
+        ' new DGJ 2 LINES ABOVE Only consider Shipments in Date Range
+
         ASCMAIN1.sql = SQLS.ToString()
         Dim MAX_INV_DATE As String = ASCDATA1.GetDataValue
 
@@ -771,7 +843,8 @@ Public Class SORCUSTS
             Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
             SQLS.AppendLine("SELECT NVL(STYLE_COLOR_DESC,'') STYLE_COLOR_DESC")
             SQLS.AppendLine("FROM ICTSTYC1")
-            SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", COLOR_CODE))
+            SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
+            SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
             ASCMAIN1.sql = SQLS.ToString()
             Dim COLOR_DESC_MF As String = ASCDATA1.GetDataValue
             If COLOR_DESC_MF.Length > 35 Then
@@ -867,12 +940,12 @@ Public Class SORCUSTS
                         '    Else
                         '        COL -= 1
                         '    End If
-                        'Case 3
-                        '    If chkShip3.Checked Then
-                        '        worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
-                        '    Else
-                        '        COL -= 1
-                        '    End If
+                    Case 3
+                        If chkAveragePrice.Checked Then
+                            worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
+                        Else
+                            COL -= 1
+                        End If
                 End Select
 
                 RT(iCOL) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
@@ -888,9 +961,9 @@ Public Class SORCUSTS
                 colsLess += 1
             End If
 
-            worksheet.Cells(I + CI - 1, COL0 - 1 - colsLess, I + CI - 1, COL - 1 - colsLess).Interior.Color = SpreadsheetGear.Colors.LightGray
+            worksheet.Cells(I + CI - 1, COL0 - 1, I + CI - 1, COL - colsLess).Interior.Color = SpreadsheetGear.Colors.LightGray
 
-            With worksheet.Cells(I, COL0 - 1 - colsLess, I + CI - 1, COL - 1 - colsLess)
+            With worksheet.Cells(I, COL0 - 1, I + CI - 1, COL - colsLess)
                 .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
                 .Borders.Color = SpreadsheetGear.Colors.LightSlateGray
             End With
@@ -915,6 +988,203 @@ Public Class SORCUSTS
                 style_count = 1
                 pages += 1
             End If
+
+            If chkStyleStats.Checked Then
+                Dim interior As SpreadsheetGear.IInterior
+                Dim range As SpreadsheetGear.IRange
+                '  I += 1
+                COL = COL0
+                Dim chkcnt As Int64 = 0
+                Dim NEWSTYLE As Boolean = True
+
+
+                For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "'", "COLOR_CODE, PO_DATE_SHIP_BY")
+                    If NEWSTYLE = True Then
+                        worksheet.Cells(I - 1, COL - 1).Value = "In-Transit Details"
+                        I += 1
+                        ' Headinds and headingsFOrmat
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Color"
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Factory"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        End With
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Qty Ord"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        End With
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Qty Shp"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        End With
+                        If chkAveragePrice.Checked Or chkShipDates.Checked Then
+                        Else
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
+                        End If
+
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Rev Ship Dt"
+                        If chkAveragePrice.Checked And chkShipDates.Checked Then
+                        Else
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
+                        End If
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "ETA"
+                        If chkAveragePrice.Checked And chkShipDates.Checked Then
+                        Else
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
+                        End If
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Vessel"
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 20
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        End With
+
+                        chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Shp Dt Rev"
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
+                        range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
+                        interior = range.Interior
+                        interior.Color = SpreadsheetGear.Colors.Aquamarine
+
+                        NEWSTYLE = False
+                    End If
+
+
+
+                    I += 1
+                    chkcnt = 1
+                    If sql = sql Then
+                        ' avoid printing if no records in ICTSTATD
+                        ' worksheet.Cells(i + CI - 1, COL - 1).Value = "'" & "***"
+
+                    End If
+
+
+
+                    '  worksheet.Cells(I - 1, COL - 2 + chkcnt).Value = Val(rowICTSTATD.Item(1) & String.Empty)
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        .Value = Val(rowICTSTATD.Item("COLOR_CODE") & String.Empty)
+                        .Font.Size = 14
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+                    End With
+                    chkcnt += 1
+
+                    '   worksheet.Cells(I - 1, COL - 2 + chkcnt).Value = Val(rowICTSTATD.Item(4) & String.Empty)
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        .Value = rowICTSTATD.Item("FACTORY_CODE") & String.Empty
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .Value = Val(rowICTSTATD.Item("PO_QTY_ORD") & String.Empty)
+                        .NumberFormat = "#,##0"
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .Value = Val(rowICTSTATD.Item("PO_QTY_SHP") & String.Empty)
+                        .NumberFormat = "#,##0"
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .Value = rowICTSTATD.Item("PO_DATE_SHIP_BY") & String.Empty
+                        .NumberFormat = "MM/dd/yy"
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .NumberFormat = "MM/dd/yy"
+                        .Value = rowICTSTATD.Item("PO_SHIP_ETA") & String.Empty
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Left
+                        .Value = rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .NumberFormat = "MM/dd/yy"
+                        .Value = rowICTSTATD.Item("LAST_DATE_SHIP_BY") & String.Empty
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+
+                Next
+                'T = ""
+                'COL += 1
+
+
+            End If
+
+
+
+
 
             With worksheet.Cells(I0, 0, I + 1 - 1, COL)
                 .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continuous
@@ -989,6 +1259,12 @@ Public Class SORCUSTS
 
             If chkAveragePrice.Checked Then
                 worksheet.Cells(i + CI - 1, COL + chkcnt).Value = rowSOTCUSTS.Item("AVG_PRICE") & String.Empty
+                chkcnt += 1
+            End If
+
+
+            If chkAveragePrice.Checked Then
+                worksheet.Cells(i + CI - 1, COL + chkcnt).Value = rowSOTCUSTS.Item("VAL_SHP") & String.Empty
                 chkcnt += 1
             End If
 
@@ -1093,9 +1369,9 @@ Public Class SORCUSTS
         Dim interior As SpreadsheetGear.IInterior
         Dim range As SpreadsheetGear.IRange
 
-        worksheet.Cells(i, COL - 1).Value = "Color"
+        worksheet.Cells(i, COL - 1).Value = "" & Chr(13) & Chr(10) & "Color"
         worksheet.Cells(i, COL - 1).Font.Size = 12
-        worksheet.Cells(i, COL).Value = "Description"
+        worksheet.Cells(i, COL).Value = "" & Chr(13) & Chr(10) & "Description"
         worksheet.Cells(i, COL).Font.Size = 12
 
         'COL += 1
@@ -1122,11 +1398,10 @@ Public Class SORCUSTS
             Dim d1TEXT As String = Format(dteShip_Beg.DateTime, "MM/dd/yy")
             Dim d2TEXT As String = Format(dteShip_End.DateTime, "MM/dd/yy")
             If optSelectBy.Value = "D" Then
-                .Value = String.Format("{0} to {1}", d1TEXT, d2TEXT)
+                .Value = String.Format("{0} to {1}", d1TEXT, d2TEXT) & Chr(13) & Chr(10) & "Shp Units"
             Else
-                .Value = "Selected POs"
+                .Value = "Selected POs" & Chr(13) & Chr(10) & "Shp Units"
             End If
-
             .Font.Size = 12
         End With
 
@@ -1134,7 +1409,21 @@ Public Class SORCUSTS
             COL += 1
             With worksheet.Cells(i, COL)
                 .HorizontalAlignment = SpreadsheetGear.HAlign.Right
-                .Value = "Avg Price"
+                .Value = "" & Chr(13) & Chr(10) & "Price"
+                .Font.Size = 12
+            End With
+        End If
+
+        If chkAveragePrice.Checked Then
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                If optSelectBy.Value = "D" Then
+                    .Value = "" & Chr(13) & Chr(10) & "Shp Amt"
+                Else
+                    .Value = ""
+                End If
+
                 .Font.Size = 12
             End With
         End If
@@ -1154,7 +1443,7 @@ Public Class SORCUSTS
             COL += 1
             With worksheet.Cells(i, COL)
                 .HorizontalAlignment = SpreadsheetGear.HAlign.Right
-                .Value = "Ship Dates"
+                .Value = "" & Chr(13) & Chr(10) & "1st & Last Ship Dates"
                 .Font.Size = 12
             End With
         End If
@@ -1311,6 +1600,16 @@ Public Class SORCUSTS
                 .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                 .HorizontalAlignment = SpreadsheetGear.HAlign.Right
             End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 12
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
         End If
 
         If chkShipDates.Checked Then

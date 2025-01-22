@@ -26,7 +26,6 @@ Partial Class SOFSKUI1
         Dim UltraExplorerBarItem9 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
-        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
@@ -331,9 +330,7 @@ Partial Class SOFSKUI1
         UltraExplorerBarItem8.Key = "Hang Tag"
         UltraExplorerBarItem8.Text = "Hang Tag"
         UltraExplorerBarItem2.Text = "Hang Tag All"
-        UltraExplorerBarItem1.Key = "Find Style by Attribute"
-        UltraExplorerBarItem1.Text = "Find Style by Attribute"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem9, UltraExplorerBarItem8, UltraExplorerBarItem2, UltraExplorerBarItem1})
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem9, UltraExplorerBarItem8, UltraExplorerBarItem2})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -439,7 +436,7 @@ Partial Class SOFSKUI1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 114)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 157)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 130)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -537,7 +534,7 @@ Partial Class SOFSKUI1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel1)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 288)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 331)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -575,7 +572,7 @@ Partial Class SOFSKUI1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 482)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 525)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 200)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1

@@ -57,6 +57,7 @@ Partial Class POFSHIP1
         Dim UltraExplorerBarItem20 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem21 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem22 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarGroup12 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance444 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance445 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance446 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -74,8 +75,8 @@ Partial Class POFSHIP1
         Dim ValueListItem14 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem9 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem10 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1509,6 +1510,9 @@ Partial Class POFSHIP1
         Me.cbxLabelPrinter = New System.Windows.Forms.ComboBox()
         Me.btnPrintLabels = New Infragistics.Win.Misc.UltraButton()
         Me.UltraLabel28 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraExplorerBarContainerControl9 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.UltraGroupBox8 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkOrderDetails = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdPOTSHIPI = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -1719,6 +1723,10 @@ Partial Class POFSHIP1
         Me.UltraExplorerBarContainerControl8.SuspendLayout
         CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraGroupBox6.SuspendLayout
+        Me.UltraExplorerBarContainerControl9.SuspendLayout
+        CType(Me.UltraGroupBox8, System.ComponentModel.ISupportInitialize).BeginInit
+        Me.UltraGroupBox8.SuspendLayout
+        CType(Me.chkOrderDetails, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl5.SuspendLayout
         CType(Me.grdPOTSHIPI, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraTabPageControl13.SuspendLayout
@@ -1912,6 +1920,7 @@ Partial Class POFSHIP1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl6)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl7)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl8)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl9)
         UltraExplorerBarGroup1.Expanded = False
         UltraExplorerBarItem1.Text = "New"
         UltraExplorerBarItem16.Text = "Select"
@@ -1950,7 +1959,6 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Receipts History"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Expanded = False
         UltraExplorerBarGroup2.Settings.ContainerHeight = 50
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Receipt Type"
@@ -1960,6 +1968,7 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup7.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup7.Text = "Back-to-Back"
         UltraExplorerBarGroup8.Container = Me.UltraExplorerBarContainerControl6
+        UltraExplorerBarGroup8.Expanded = False
         UltraExplorerBarGroup8.Settings.ContainerHeight = 111
         UltraExplorerBarGroup8.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup8.Text = "Options"
@@ -1982,7 +1991,13 @@ Partial Class POFSHIP1
         UltraExplorerBarItem22.Text = "Cancel"
         UltraExplorerBarGroup11.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem23, UltraExplorerBarItem18, UltraExplorerBarItem19, UltraExplorerBarItem24, UltraExplorerBarItem20, UltraExplorerBarItem21, UltraExplorerBarItem22})
         UltraExplorerBarGroup11.Text = "Packing Slips"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup5, UltraExplorerBarGroup6, UltraExplorerBarGroup2, UltraExplorerBarGroup7, UltraExplorerBarGroup8, UltraExplorerBarGroup9, UltraExplorerBarGroup10, UltraExplorerBarGroup11})
+        UltraExplorerBarGroup12.Container = Me.UltraExplorerBarContainerControl9
+        UltraExplorerBarGroup12.Expanded = False
+        UltraExplorerBarGroup12.Settings.ContainerHeight = 62
+        UltraExplorerBarGroup12.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup12.Text = "Special Functions"
+        UltraExplorerBarGroup12.Visible = False
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup5, UltraExplorerBarGroup6, UltraExplorerBarGroup2, UltraExplorerBarGroup7, UltraExplorerBarGroup8, UltraExplorerBarGroup9, UltraExplorerBarGroup10, UltraExplorerBarGroup11, UltraExplorerBarGroup12})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -2301,7 +2316,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 232)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, -53)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 145)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -2367,11 +2382,10 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 136)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 50)
         Me.UltraExplorerBarContainerControl1.TabIndex = 4
-        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2386,11 +2400,11 @@ Partial Class POFSHIP1
         '
         Me.optReceiptType.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         Me.optReceiptType.CheckedIndex = 0
-        ValueListItem3.DataValue = "REG"
-        ValueListItem3.DisplayText = "Warehouse"
-        ValueListItem4.DataValue = "BTB"
-        ValueListItem4.DisplayText = "Back-to-Back"
-        Me.optReceiptType.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem3, ValueListItem4})
+        ValueListItem7.DataValue = "REG"
+        ValueListItem7.DisplayText = "Warehouse"
+        ValueListItem8.DataValue = "BTB"
+        ValueListItem8.DisplayText = "Back-to-Back"
+        Me.optReceiptType.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem7, ValueListItem8})
         Me.optReceiptType.Location = New System.Drawing.Point(6, 3)
         Me.optReceiptType.Name = "optReceiptType"
         Me.optReceiptType.Size = New System.Drawing.Size(139, 41)
@@ -2514,10 +2528,11 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.UltraGroupBox4)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 471)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 111)
         Me.UltraExplorerBarContainerControl6.TabIndex = 6
+        Me.UltraExplorerBarContainerControl6.Visible = False
         '
         'UltraGroupBox4
         '
@@ -2724,6 +2739,32 @@ Partial Class POFSHIP1
         Me.UltraLabel28.Size = New System.Drawing.Size(95, 18)
         Me.UltraLabel28.TabIndex = 117
         Me.UltraLabel28.Text = "Select Printer"
+        '
+        'UltraExplorerBarContainerControl9
+        '
+        Me.UltraExplorerBarContainerControl9.Controls.Add(Me.UltraGroupBox8)
+        Me.UltraExplorerBarContainerControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl9.Name = "UltraExplorerBarContainerControl9"
+        Me.UltraExplorerBarContainerControl9.Size = New System.Drawing.Size(172, 62)
+        Me.UltraExplorerBarContainerControl9.TabIndex = 9
+        Me.UltraExplorerBarContainerControl9.Visible = False
+        '
+        'UltraGroupBox8
+        '
+        Me.UltraGroupBox8.Controls.Add(Me.chkOrderDetails)
+        Me.UltraGroupBox8.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox8.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox8.Name = "UltraGroupBox8"
+        Me.UltraGroupBox8.Size = New System.Drawing.Size(172, 62)
+        Me.UltraGroupBox8.TabIndex = 1
+        '
+        'chkOrderDetails
+        '
+        Me.chkOrderDetails.Location = New System.Drawing.Point(3, 6)
+        Me.chkOrderDetails.Name = "chkOrderDetails"
+        Me.chkOrderDetails.Size = New System.Drawing.Size(180, 20)
+        Me.chkOrderDetails.TabIndex = 145
+        Me.chkOrderDetails.Text = "Print Order Details"
         '
         'UltraTabPageControl5
         '
@@ -3477,7 +3518,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdPOTSHIPX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1009, 383)
         '
@@ -3918,7 +3959,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.splICTIRECX)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(1009, 383)
         '
@@ -8783,6 +8824,10 @@ Partial Class POFSHIP1
         CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraGroupBox6.ResumeLayout(False)
         Me.UltraGroupBox6.PerformLayout
+        Me.UltraExplorerBarContainerControl9.ResumeLayout(False)
+        CType(Me.UltraGroupBox8, System.ComponentModel.ISupportInitialize).EndInit
+        Me.UltraGroupBox8.ResumeLayout(False)
+        CType(Me.chkOrderDetails, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl5.ResumeLayout(False)
         CType(Me.grdPOTSHIPI, System.ComponentModel.ISupportInitialize).EndInit
         Me.UltraTabPageControl13.ResumeLayout(False)
@@ -9187,4 +9232,7 @@ Partial Class POFSHIP1
     Friend WithEvents UltraTextEditor18 As UltraWinEditors.UltraTextEditor
     Friend WithEvents btnGR_EXP As Button
     Friend WithEvents chkGetCust As ABSCS.ABSCheckBox
+    Friend WithEvents UltraExplorerBarContainerControl9 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents UltraGroupBox8 As Misc.UltraGroupBox
+    Friend WithEvents chkOrderDetails As ABSCS.ABSCheckBox
 End Class

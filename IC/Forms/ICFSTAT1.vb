@@ -1714,20 +1714,6 @@ Public Class ICFSTAT1
             Case "Pre-Allocate"
                 PreAllocate()
 
-            Case "Find Style by Attribute"
-                'Dim STYLE_CODE_selected As String = ""
-                Using F As New TAC.ICFATTR2(Me)
-                    F.rbadDir = ASCMAIN1.Folders("Work") & "RBAD\"
-                    F.IMAGES_FOLDER = "\\192.168.110.221\Shared\rich\MASTER ITEM PHOTO FOLDER\"
-                    F.IMAGES_FOLDER = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR")
-                    F.ShowDialog()
-                    STYLE_CODE = F.STYLE_CODE
-                End Using
-                If STYLE_CODE <> "" Then
-                    Absx1.txtFor("STYLE_CODE").Text = STYLE_CODE
-                    Click_Command("Select")
-                End If
-
             Case "Integrity Check"
 
                 Integrity_Check()
@@ -1833,7 +1819,24 @@ Public Class ICFSTAT1
                 Modes_At_Once(False)
                 Refresh_AtOnce()
 
+            Case "Find Style by Attribute"
+                'Dim STYLE_CODE_selected As String = ""
+                Using F As New TAC.ICFATTR2(Me)
+                    F.rbadDir = ASCMAIN1.Folders("Work") & "RBAD\"
+                    'F.IMAGES_FOLDER = "\\192.168.110.221\Shared\rich\MASTER ITEM PHOTO FOLDER\"
+                    F.IMAGES_FOLDER = "\\192.168.110.221\Shared\images\"
+                    F.IMAGES_FOLDER = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR")
+                    F.ShowDialog()
+                    STYLE_CODE = F.STYLE_CODE
+                End Using
+                If STYLE_CODE <> "" Then
+                    Absx1.txtFor("STYLE_CODE").Text = STYLE_CODE
+                    Click_Command("Select")
+                End If
         End Select
+
+
+
 
     End Sub
 

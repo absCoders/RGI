@@ -25,11 +25,6 @@ Partial Class TAFIMGV1
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.panIMAGE = New System.Windows.Forms.Panel()
         Me.imgSTYLE = New System.Windows.Forms.PictureBox()
-        Me.cmdSave = New Infragistics.Win.Misc.UltraButton()
-        Me.rdoRezH = New System.Windows.Forms.RadioButton()
-        Me.rdoRezL = New System.Windows.Forms.RadioButton()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.cboICTIMAGT = New System.Windows.Forms.ComboBox()
         Me.cmdDone = New Infragistics.Win.Misc.UltraButton()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -86,11 +81,6 @@ Partial Class TAFIMGV1
         '
         'SplitContainer1.Panel2
         '
-        Me.SplitContainer1.Panel2.Controls.Add(Me.cmdSave)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.rdoRezH)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.rdoRezL)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.Label1)
-        Me.SplitContainer1.Panel2.Controls.Add(Me.cboICTIMAGT)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdDone)
         Me.SplitContainer1.Size = New System.Drawing.Size(553, 516)
         Me.SplitContainer1.SplitterDistance = 437
@@ -116,54 +106,6 @@ Partial Class TAFIMGV1
         Me.imgSTYLE.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.imgSTYLE.TabIndex = 1
         Me.imgSTYLE.TabStop = False
-        '
-        'cmdSave
-        '
-        Me.cmdSave.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.cmdSave.Location = New System.Drawing.Point(68, 38)
-        Me.cmdSave.Name = "cmdSave"
-        Me.cmdSave.Size = New System.Drawing.Size(50, 25)
-        Me.cmdSave.TabIndex = 16
-        Me.cmdSave.Text = "Save"
-        '
-        'rdoRezH
-        '
-        Me.rdoRezH.AutoSize = True
-        Me.rdoRezH.Checked = True
-        Me.rdoRezH.Location = New System.Drawing.Point(418, 43)
-        Me.rdoRezH.Name = "rdoRezH"
-        Me.rdoRezH.Size = New System.Drawing.Size(82, 20)
-        Me.rdoRezH.TabIndex = 13
-        Me.rdoRezH.TabStop = True
-        Me.rdoRezH.Text = "High Rez"
-        Me.rdoRezH.UseVisualStyleBackColor = True
-        '
-        'rdoRezL
-        '
-        Me.rdoRezL.AutoSize = True
-        Me.rdoRezL.Location = New System.Drawing.Point(418, 19)
-        Me.rdoRezL.Name = "rdoRezL"
-        Me.rdoRezL.Size = New System.Drawing.Size(80, 20)
-        Me.rdoRezL.TabIndex = 12
-        Me.rdoRezL.Text = "Low Rez"
-        Me.rdoRezL.UseVisualStyleBackColor = True
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(135, 16)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(85, 16)
-        Me.Label1.TabIndex = 11
-        Me.Label1.Text = "Image Type"
-        '
-        'cboICTIMAGT
-        '
-        Me.cboICTIMAGT.FormattingEnabled = True
-        Me.cboICTIMAGT.Location = New System.Drawing.Point(138, 38)
-        Me.cboICTIMAGT.Name = "cboICTIMAGT"
-        Me.cboICTIMAGT.Size = New System.Drawing.Size(260, 24)
-        Me.cboICTIMAGT.TabIndex = 10
         '
         'cmdDone
         '
@@ -191,7 +133,6 @@ Partial Class TAFIMGV1
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
-        Me.SplitContainer1.Panel2.PerformLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         Me.panIMAGE.ResumeLayout(False)
@@ -201,11 +142,6 @@ Partial Class TAFIMGV1
     End Sub
     Friend WithEvents SplitContainer1 As System.Windows.Forms.SplitContainer
     Friend WithEvents cmdDone As Infragistics.Win.Misc.UltraButton
-    Friend WithEvents rdoRezH As RadioButton
-    Friend WithEvents rdoRezL As RadioButton
-    Friend WithEvents Label1 As Label
-    Friend WithEvents cboICTIMAGT As ComboBox
     Friend WithEvents panIMAGE As Panel
     Friend WithEvents imgSTYLE As PictureBox
-    Friend WithEvents cmdSave As Misc.UltraButton
 End Class

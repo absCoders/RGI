@@ -2310,6 +2310,21 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Fix Issue With Search By Attribute To Ignore ECommerce When Running On Laptops.")
 
+        VersionNo = "24.10.24.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* New version to solve newtonsoft issues and have new full distribution.")
+
+        VersionNo = "24.11.26.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Hang Tag Changes and Tariff Warnings.")
+
+        VersionNo = "24.12.08.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Option To Show / Hide Discontinued Colors In Order Entry.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class
