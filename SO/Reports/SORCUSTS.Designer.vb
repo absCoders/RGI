@@ -102,6 +102,7 @@ Partial Class SORCUSTS
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.chkShipDates = New ABSCS.ABSCheckBox()
         Me.chkAveragePrice = New ABSCS.ABSCheckBox()
@@ -116,7 +117,6 @@ Partial Class SORCUSTS
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -159,6 +159,7 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpShip1.SuspendLayout()
@@ -174,7 +175,6 @@ Partial Class SORCUSTS
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl2.SuspendLayout()
-        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -619,6 +619,17 @@ Partial Class SORCUSTS
         Me.SplitContainer8.SplitterDistance = 117
         Me.SplitContainer8.TabIndex = 265
         '
+        'chkStyleStats
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
+        Me.chkStyleStats.CausesValidation = False
+        Me.chkStyleStats.Location = New System.Drawing.Point(762, 78)
+        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkStyleStats.Name = "chkStyleStats"
+        Me.chkStyleStats.Size = New System.Drawing.Size(348, 22)
+        Me.chkStyleStats.TabIndex = 275
+        Me.chkStyleStats.Text = "Show On Hand/In-Transit Details"
+        '
         'Label1
         '
         Me.Label1.AutoSize = True
@@ -790,17 +801,6 @@ Partial Class SORCUSTS
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1017, 249)
         '
-        'chkStyleStats
-        '
-        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
-        Me.chkStyleStats.CausesValidation = False
-        Me.chkStyleStats.Location = New System.Drawing.Point(762, 78)
-        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.chkStyleStats.Name = "chkStyleStats"
-        Me.chkStyleStats.Size = New System.Drawing.Size(348, 22)
-        Me.chkStyleStats.TabIndex = 275
-        Me.chkStyleStats.Text = "Show In-Transit Details"
-        '
         'SORCUSTS
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -852,6 +852,7 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpShip1.ResumeLayout(False)
@@ -869,7 +870,6 @@ Partial Class SORCUSTS
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl2.ResumeLayout(False)
-        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
