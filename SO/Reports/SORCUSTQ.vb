@@ -1924,9 +1924,43 @@ Public Class SORCUSTQ
         End With
 
         Dim H1 As Integer = 11
+        Dim HEAD1 As String = ""
+        Dim HEAD2 As String = ""
+        If optASN.Value = "S" Then
+            HEAD1 = "Stock"
+        ElseIf optASN.Value = "N" Then
+            HEAD1 = "NonStock"
+        Else
+            HEAD1 = "All Styles"
+        End If
+
+        If chkOpen.Checked Then
+            HEAD2 = "Open"
+        End If
+        If chkPick.Checked Then
+            If HEAD2 = "" Then
+                HEAD2 = "Pick"
+            Else
+                HEAD2 = HEAD2 & "," & "Pick"
+            End If
+        End If
+        If chkReservations.Checked Then
+            If HEAD2 = "" Then
+                HEAD2 = "Res"
+            Else
+                HEAD2 = HEAD2 & "," & "Res"
+            End If
+        End If
+
+
+
 
         worksheet.Cells(0, 2).Value = "Customer Open Order Report with Pictures"
         worksheet.Cells(0, 2).Font.Bold = True
+        worksheet.Cells(1, 2).Value = "Customer: " & txtCUST_CODE.Text & "   Styles: " & HEAD1 & "   Type Ord: " & HEAD2
+        worksheet.Cells(1, 2).Font.Bold = True
+        worksheet.Cells(2, 2).Value = "Date Range: " & Absx1.dteFor("DTE0").Value & " - " & Absx1.dteFor("DTE1").Value
+        worksheet.Cells(2, 2).Font.Bold = True
 
         worksheet.Cells(0, H1).Value = "Note"
         worksheet.Cells(1, H1).Value = "For"
