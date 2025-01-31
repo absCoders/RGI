@@ -4,6 +4,7 @@ Public Class SORSORD1
     Dim REPORT_DATE0 As Date
     Dim REPORT_DATE1 As Date
     Dim dtSOTRSRV1 As New DataTable
+    Dim ICTSTATDSQL As String
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Absx1.dteFor("DTE0").Value = Now.Date
@@ -14,8 +15,11 @@ Public Class SORSORD1
         grdSOTRSRV1.DataSource = dtSOTRSRV1
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
             Absx1.chkFor("CHKTRANONLY").Visible = True
+            Absx1.chkFor("CHKSTYLESTATS").Visible = True
         Else
             Absx1.chkFor("CHKTRANONLY").Visible = False
+            Absx1.chkFor("CHKSTYLESTATS").Visible = False
+
         End If
         Absx1.chkFor("CHKTRANONLY").Checked = False
     End Sub
@@ -406,7 +410,65 @@ Public Class SORSORD1
             '& " (Select Distinct STYLE_CODE from " & SOTSORD1 & ")" & vbCrLf _
             '& " GROUP BY ICTBODY2.SUB_BODY_CODE,ICTBODY2.SUB_BODY_DESC,ICTBODY2.MASTER_BODY_CODE HAVING MAX(NVL(STANDARD_CUBE_PER_UNIT,0)) = 0"
             'dst.Tables.Add(ASCDATA1.GetDataTable("", "ICTBODYX", 1))
+            If chkStyleStats.Checked Then
+                ASCMAIN1.sql = "Select * from (" & vbCrLf _
+            & " Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.INIT_DATE, POTSHIP1.WHSE_CODE, POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
+            & ", POTORDR1.FACTORY_CODE, POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            & ", POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
+            & ", POTSHIP1.PO_DATE_SHIPPED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO" & vbCrLf _
+            & ", POTSHIP2.PO_DATE_RECEIVED" & vbCrLf _
+            & ", POTSHIP3.PO_QTY_SHP, POTSHIP3.PO_QTY_REC" & vbCrLf _
+            & ", POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE, POTORDR1.PO_SPEC_ORDR_NO" & vbCrLf _
+            & ", POTORDR2.PO_QTY_ORD, 0 PO_QTY_OPN" & vbCrLf _
+            & ", POTSHIP1.PO_SHIP_ETA + NVL(POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS,0) PO_ARRIVAL_DATE" & vbCrLf _
+            & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & "From POTSHIP1, POTSHIP2, POTSHIP3, POTORDR1, POTORDR2, ICTATOP2" & vbCrLf _
+            & "Where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+            & " And POTORDR1.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & "  And POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+            & " And POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+            & "  And ICTATOP2.PS_CODE (+) = 'S'" & vbCrLf _
+            & " And ICTATOP2.PS_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+            & " And POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf _
+            & " And (POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE) IN  (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & SOTSORD1 & ")" & vbCrLf _
+            & " ) union (" & vbCrLf _
+            & "Select  POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE,POTORDR1.INIT_DATE, POTORDR1.WHSE_CODE, POTORDR2.PO_ORDER_NO" & vbCrLf _
+            & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
+            & ", POTORDR1.FACTORY_CODE, POTORDR2.PO_ORDER_LNO" & vbCrLf _
+            & ", Null PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf _
+            & ", Decode(nvl(POTORDR2.PO_QTY_OPN,0),0,'ClosedPO','OpenPO') PO_SHIP_VESSEL" & vbCrLf _
+            & ", POTORDR2.PO_DATE_SHIP_BY, POTORDR2.PO_DATE_ETA" & vbCrLf _
+            & ", 10 PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
+            & ", Null PO_SHIP_REF_NO, Null CONTAINER_NO" & vbCrLf _
+            & ", NULL PO_DATE_RECEIVED" & vbCrLf _
+            & ", 0 PO_QTY_SHP, 0 PO_QTY_REC" & vbCrLf _
+            & ", POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE, POTORDR1.PO_SPEC_ORDR_NO" & vbCrLf _
+            & ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_OPN" & vbCrLf _
+            & ", POTORDR2.PO_DATE_ETA + 10 PO_ARRIVAL_DATE" & vbCrLf _
+            & ", POTORDR2.LAST_DATE_SHIP_BY, POTORDR2.LAST_OPER_SHIP_BY" & vbCrLf _
+            & ", ICTATOP2.STYLE_ARRIVAL_BUFFER_DAYS, ICTATOP2.STYLE_AT_ONCE_UNTIL, ICTATOP2.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+            & " From POTORDR1, POTORDR2, ICTATOP2" & vbCrLf _
+            & "Where POTORDR2.PO_ORDER_NO = POTORDR1.PO_ORDER_NO" & vbCrLf _
+            & "  And ICTATOP2.PS_CODE (+) = 'P'" & vbCrLf _
+            & "   And ICTATOP2.PS_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
+            & "   And POTORDR2.PO_QTY_OPN <> 0" & vbCrLf _
+            & " And (POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE) IN  (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & SOTSORD1 & ")" & vbCrLf _
+            & ")"
 
+                ICTSTATDSQL = ASCMAIN1.sql
+                Create_TDA(dst.Tables.Add, "ICTSTATD", "**", 0, False)
+
+                Fill_Records("ICTSTATD", "", True, ICTSTATDSQL)
+
+
+            End If
         End If
 
 
@@ -574,7 +636,15 @@ Public Class SORSORD1
             '    SUBT = "Enter Standard Cube Per Unit for these Sub Body Codes in Body Types (Sub) Maint"
             '    Generate_Report(RPT, RPT_TITLE, SUBT)
             'End If
+            If chkStyleStats.Checked Then
 
+
+                SUBT &= " (w/In-Transit Details)"
+                CR_params.Add("NO_PRICING", IIf(Absx1.chkFor("CHKNO_PRICING").Checked, "1", "0"))
+                RPT_NAME = "SORSORDZ"
+
+                Generate_Report(RPT_NAME, , SUBT)
+            End If
 
 
         End If

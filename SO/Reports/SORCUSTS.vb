@@ -1597,9 +1597,46 @@ Public Class SORCUSTS
         End With
 
         Dim H1 As Integer = 11
+        Dim HEAD1 As String = ""
+        Dim HEAD2 As String = ""
+        If optASN.Value = "S" Then
+            HEAD1 = "Stock"
+        ElseIf optASN.Value = "N" Then
+            HEAD1 = "NonStock"
+        Else
+            HEAD1 = "All Styles"
+        End If
+
+        'If chkOpen.Checked Then
+        '    HEAD2 = "Open"
+        'End If
+        'If chkPick.Checked Then
+        '    If HEAD2 = "" Then
+        '        HEAD2 = "Pick"
+        '    Else
+        '        HEAD2 = HEAD2 & "," & "Pick"
+        '    End If
+        'End If
+        'If chkReservations.Checked Then
+        '    If HEAD2 = "" Then
+        '        HEAD2 = "Res"
+        '    Else
+        '        HEAD2 = HEAD2 & "," & "Res"
+        '    End If
+        'End If
 
         worksheet.Cells(0, 2).Value = "Customer Shipped Report with Pictures"
         worksheet.Cells(0, 2).Font.Bold = True
+        worksheet.Cells(1, 2).Value = "Customer: " & txtCUST_CODE.Text & "   Styles: " & HEAD1
+        worksheet.Cells(1, 2).Font.Bold = True
+        If optSelectBy.Value = "D" Then
+            worksheet.Cells(2, 2).Value = "Ship Date Range: " & dteShip_Beg.Value & " - " & dteShip_End.Value
+            worksheet.Cells(2, 2).Font.Bold = True
+        Else
+            worksheet.Cells(2, 2).Value = "Report By Selected PO's"
+            worksheet.Cells(2, 2).Font.Bold = True
+        End If
+
 
         worksheet.Cells(0, H1).Value = "Note"
         worksheet.Cells(1, H1).Value = "For"
