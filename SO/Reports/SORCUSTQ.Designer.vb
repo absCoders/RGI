@@ -115,6 +115,7 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chk1Sheet = New ABSCS.ABSCheckBox()
         Me.grpDATE_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.DTE1 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.DTE0 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -176,6 +177,7 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpDATE_RANGE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpDATE_RANGE.SuspendLayout()
         CType(Me.DTE1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -430,6 +432,7 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chk1Sheet)
         Me.SplitContainer8.Panel1.Controls.Add(Me.grpDATE_RANGE)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShipDates)
@@ -447,6 +450,17 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Size = New System.Drawing.Size(1021, 402)
         Me.SplitContainer8.SplitterDistance = 186
         Me.SplitContainer8.TabIndex = 265
+        '
+        'chk1Sheet
+        '
+        Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
+        Me.chk1Sheet.CausesValidation = False
+        Me.chk1Sheet.Location = New System.Drawing.Point(236, 119)
+        Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chk1Sheet.Name = "chk1Sheet"
+        Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
+        Me.chk1Sheet.TabIndex = 277
+        Me.chk1Sheet.Text = "1 Sheet/Div"
         '
         'grpDATE_RANGE
         '
@@ -1022,6 +1036,7 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpDATE_RANGE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpDATE_RANGE.ResumeLayout(False)
         Me.grpDATE_RANGE.PerformLayout()
@@ -1082,4 +1097,5 @@ Partial Class SORCUSTQ
     Friend WithEvents grpDATE_RANGE As Misc.UltraGroupBox
     Friend WithEvents DTE1 As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents DTE0 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
 End Class

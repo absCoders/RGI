@@ -7,6 +7,8 @@ Public Class SORCUSTS
     Dim REPORT_NAME As String = "SORCUSTS"
     Dim ICTSTATDSQL As String = ""
     Dim ICTSTAT2SQL As String = ""
+    Dim XLS_NO As Integer = 0
+    Dim exlExt As String = ".xlsx"
     Dim SQL_REPORT As New StringBuilder With {.Length = 0}
     Dim GRP_IN As String = ""
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
@@ -186,36 +188,46 @@ Public Class SORCUSTS
             End If
         Next
 
-        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
-        Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
-        worksheet.Name = "Style Info"
-        Create_Excel_WorkSheet(worksheet, StyleList)
 
-
-        If ASCMAIN1.Folders("Temp").EndsWith("\") Then
-            XLS_FILENAME = ASCMAIN1.Folders("Temp") & String.Format("{0}.XLSX", REPORT_NAME)
+        If chk1Sheet.Checked Then
+            Dim fileName As String = ""
+            fileName = Create_Excel()
         Else
-            XLS_FILENAME = ASCMAIN1.Folders("Temp") & "\" & String.Format("{0}.XLSX", REPORT_NAME)
+            Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+            Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+            worksheet.Name = "Style Info
+"
+            Create_Excel_WorkSheet(worksheet, StyleList)
+
+
+            If ASCMAIN1.Folders("Temp").EndsWith("\") Then
+                XLS_FILENAME = ASCMAIN1.Folders("Temp") & String.Format("{0}.XLSX", REPORT_NAME)
+            Else
+                XLS_FILENAME = ASCMAIN1.Folders("Temp") & "\" & String.Format("{0}.XLSX", REPORT_NAME)
+            End If
+            Dim success As Boolean = False
+
+            ASCMAIN1.Progress("Now Saving Workbook")
+
+            Do Until success
+                Try
+                    If System.IO.File.Exists(XLS_FILENAME) Then
+                        System.IO.File.Delete(XLS_FILENAME)
+                    End If
+                    workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                    If chkWebLinks.Checked Then
+                        SaveLinks(XLS_FILENAME)
+                    End If
+                    success = True
+                Catch ex As Exception
+
+                End Try
+            Loop
+            Return XLS_FILENAME
+
+
         End If
-        Dim success As Boolean = False
 
-        ASCMAIN1.Progress("Now Saving Workbook")
-
-        Do Until success
-            Try
-                If System.IO.File.Exists(XLS_FILENAME) Then
-                    System.IO.File.Delete(XLS_FILENAME)
-                End If
-                workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
-                If chkWebLinks.Checked Then
-                    SaveLinks(XLS_FILENAME)
-                End If
-                success = True
-            Catch ex As Exception
-
-            End Try
-        Loop
-        Return XLS_FILENAME
     End Function
 
     Private Sub SaveLinks(ByVal FILENAME_FULL As String)
@@ -882,7 +894,7 @@ Public Class SORCUSTS
 
 #Region "Excel Methods"
     Sub Create_Excel_WorkSheet(worksheet As SpreadsheetGear.IWorksheet,
-                               ByVal StyleList As List(Of String))
+                               ByVal StyleList As List(Of String), Optional sqlWB As String = "")
 
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
         If (ASCMAIN1.Running_in_VS) Then
@@ -1854,6 +1866,176 @@ Public Class SORCUSTS
 
 
     End Sub
+    Private Function Create_Excel(Optional SALES_DIVISION_CODE As String = "") As String
+        Dim RetVal As String = ""
+
+
+
+        ''  RESEQ()
+
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+        Dim sqlWB As String = ""
+        If SALES_DIVISION_CODE <> "" Then
+            sqlWB = " and SALES_DIVISION_CODE = '" & SALES_DIVISION_CODE & "'"
+            ASCMAIN1.Progress("Now Creating Workbook for Divison " & SALES_DIVISION_CODE, "")
+        Else
+            ASCMAIN1.Progress("Now Creating Workbook", "")
+        End If
+        Dim sql0 As String = ""
+        ''  Dim sql0 As String = " and COUNT_COLOR > 0" ' & Val(numMinQty.Value & "")
+        ''If chkShowSelectedOnly.Checked Then
+        ''    sql0 &= " and SELECTED = '1'"
+        ''End If
+
+
+        ''  CUSTPOSs.Clear()
+
+        Dim CUSTPOi As Integer = 0
+        ''dst.Tables("SOTORDRC").Rows.Clear()
+
+        ''For Each row As DataRow In dst.Tables("ICTSTYC1").Select("")
+        ''    row.Item("OPEN_PICK_RSRV") = 0
+        ''Next
+
+        ''If chkShowPOs.Checked Then
+        ''    For Each row As DataRow In dst.Tables("ICTQUOT2").Select("")
+        ''        STYLE_CODE = row.Item("STYLE_CODE_PLM")
+        ''        Fill_Records("SOTORDRC", New String() {txtQuoteCUST_CODE.Text, STYLE_CODE}, False)
+        ''    Next
+        ''    For Each row As DataRow In dst.Tables("SOTORDRC").Select("", "ORDR_CANCEL_DATE")
+        ''        Dim OPO As String = row.Item("ORDR_TYPE") & vbTab & row.Item("ORDR_CUST_PO") & vbTab & Format(row.Item("ORDR_SHIP_DATE"), "MM/dd/yyyy") & vbTab & Format(row.Item("ORDR_CANCEL_DATE"), "MM/dd/yyyy")
+        ''        If Not CUSTPOSs.ContainsKey(OPO) Then
+        ''            CUSTPOi += 1
+        ''            CUSTPOSs.Add(OPO, CUSTPOi)
+        ''        End If
+        ''        Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+        ''        Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+        ''        Dim QTY As Int64 = Val(row.Item("QTY") & "")
+        ''        Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+        ''        If rowICTSTYC1 IsNot Nothing Then
+        ''            rowICTSTYC1.Item("OPEN_PICK_RSRV") = Val(rowICTSTYC1.Item("OPEN_PICK_RSRV") & "") + QTY
+        ''        End If
+        ''    Next
+        ''End If
+
+        Dim XLS_CREATED As Boolean = False
+
+        If chk1Sheet.Checked Then
+            Dim wsi As Integer = 0
+            'Dim WJZ As Integer = dst.Tables("ICTQUOT2").Rows.Count
+
+            Dim CODES As String = ""
+            ''If opt1Sheet.Value = "S" Then
+            ''    CODES = "SUB_BODY_CODE"
+            ''ElseIf opt1Sheet.Value = "FS" Then
+            ''    CODES = "FABRIC_CODE,SUB_BODY_CODE,STYLE_GROUP_CODE"
+            ''ElseIf opt1Sheet.Value = "G" Then
+            ''    CODES = "STYLE_GROUP_CODE,FABRIC_CODE,SUB_BODY_CODE"
+            ''    ' CODES = "STYLE_GROUP_CODE"
+            ''    ' DGJ
+            ''ElseIf opt1Sheet.Value = "D" Then
+            CODES = "SALES_DIVISION_CODE"
+
+            '' End If
+
+            For Each rowSB As DataRow In ASCDATA1.SelectDistinct(dst.Tables("SOTCUSTS").Select(Mid(sqlWB & sql0, 6)), Split(CODES, ",")).Select("")
+                Dim SHEET_NAME As String = ""
+                Dim sqlSB As String = ""
+                For Each COLUMN_NAME As String In Split(CODES, ",")
+                    Dim CODE_VALUE As String = rowSB.Item(COLUMN_NAME) & ""
+                    SHEET_NAME &= "-" & CODE_VALUE
+                    If CODE_VALUE = "" Then
+                        sqlSB &= " and " & COLUMN_NAME & " IS NULL"
+                    Else
+                        sqlSB &= " and " & COLUMN_NAME & " = '" & CODE_VALUE & "'"
+                    End If
+                Next
+
+                If CODES = "SALES_DIVISION_CODE" Then
+                    Dim SALES_DIVISION_NAME As String = ""
+                    SALES_DIVISION_CODE = Mid(SHEET_NAME, 2)
+                    ASCMAIN1.sql = "Select SALES_DIVISION_NAME from SOTSDIV1 where SALES_DIVISION_CODE = :PARM1"
+                    Dim rowSOTDIV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", Mid(SHEET_NAME, 2))
+                    If rowSOTDIV1 IsNot Nothing Then
+                        SALES_DIVISION_NAME = rowSOTDIV1.Item("SALES_DIVISION_NAME")
+                    Else
+                        SALES_DIVISION_NAME = ""
+                    End If
+                    SHEET_NAME = "Div-" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
+                Else
+                    SHEET_NAME = Mid(SHEET_NAME, 2)
+                End If
+
+
+                If dst.Tables("SOTCUSTS").Select(Mid(sqlWB & sqlSB & sql0, 6)).Length > 0 Then
+                    Dim worksheet As SpreadsheetGear.IWorksheet
+                    If wsi = 0 Then
+                        worksheet = workbook.Worksheets(0)
+                    Else
+                        worksheet = workbook.Worksheets.Add
+                    End If
+                    wsi += 1
+                    If SHEET_NAME <> "" Then
+                        worksheet.Name = SHEET_NAME
+                    Else
+                        worksheet.Name = "Unknown"
+                    End If
+
+                    Dim StyleList As New List(Of String)
+
+                    '        For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "'", "COLOR_CODE, PO_DATE_SHIP_BY")
+
+                    For Each rowSOTCUSTQ As DataRow In dst.Tables("SOTCUSTS").Select("SALES_DIVISION_CODE = '" & SALES_DIVISION_CODE & "'", "FABRIC_CODE,SUB_BODY_CODE")
+                        Dim STYLE_CODE As String = rowSOTCUSTQ.Item("STYLE_CODE").ToString & String.Empty
+                        If Not StyleList.Contains(STYLE_CODE) Then
+                            StyleList.Add(STYLE_CODE)
+                        End If
+                    Next
+
+                    Create_Excel_WorkSheet(worksheet, StyleList, sqlWB & sqlSB & sql0)
+                    XLS_CREATED = True
+                End If
+            Next
+        Else
+            ''If dst.Tables("SOTCUSTS").Select(Mid(sqlWB & sql0, 6)).Length > 0 Then
+            ''    Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+            ''    worksheet.Name = "Style Info"
+            ''    Create_Excel_WorkSheet(worksheet, StyleList, sqlWB & sql0)
+            ''    XLS_CREATED = True
+            ''End If
+        End If
+
+        If XLS_CREATED Then
+            Dim XLS_FILENAME As String = ""
+            Dim success As Boolean = False
+
+            ASCMAIN1.Progress("Now Saving Workbook")
+
+            Do Until success
+                Try
+                    XLS_NO += 1
+                    ' XLS_FILENAME = Absx1.txtFor("QUOTE_NO").Text
+                    XLS_FILENAME = "ShipReport"
+
+                    If SALES_DIVISION_CODE <> "" Then
+                        XLS_FILENAME &= "-" & SALES_DIVISION_CODE
+                    End If
+                    XLS_FILENAME &= "-" & Format(XLS_NO, "000") & exlExt
+                    workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                    'workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                    RetVal = XLS_FILENAME
+                    success = True
+                Catch ex As Exception
+
+                End Try
+            Loop
+
+            Show_Document(ASCMAIN1.Folders("Temp") & XLS_FILENAME)
+        End If
+
+        ASCMAIN1.Progress("")
+        Return RetVal
+    End Function
 
 #End Region
 
@@ -1877,7 +2059,7 @@ Public Class SORCUSTS
                 Ftp1.User = FTPUser
                 Ftp1.Password = FTPPassword
                 Ftp1.RemoteHost = FTPHost
-
+                '               Ftp1.Logoff()
                 Ftp1.Logon()
 
                 Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary

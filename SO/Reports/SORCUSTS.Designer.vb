@@ -112,6 +112,7 @@ Partial Class SORCUSTS
         Me.dteShip_End = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.chkWebLinks = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chk1Sheet = New ABSCS.ABSCheckBox()
         Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
@@ -169,6 +170,7 @@ Partial Class SORCUSTS
         CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
@@ -729,6 +731,7 @@ Partial Class SORCUSTS
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chk1Sheet)
         Me.UltraGroupBox3.Controls.Add(Me.txtCUST_CODE)
         Me.UltraGroupBox3.Location = New System.Drawing.Point(228, 8)
         Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -736,6 +739,17 @@ Partial Class SORCUSTS
         Me.UltraGroupBox3.Size = New System.Drawing.Size(208, 105)
         Me.UltraGroupBox3.TabIndex = 267
         Me.UltraGroupBox3.Text = "Selected Customer"
+        '
+        'chk1Sheet
+        '
+        Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
+        Me.chk1Sheet.CausesValidation = False
+        Me.chk1Sheet.Location = New System.Drawing.Point(7, 77)
+        Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chk1Sheet.Name = "chk1Sheet"
+        Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
+        Me.chk1Sheet.TabIndex = 276
+        Me.chk1Sheet.Text = "1 Sheet/Div"
         '
         'txtCUST_CODE
         '
@@ -864,6 +878,7 @@ Partial Class SORCUSTS
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.UltraGroupBox3.PerformLayout()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
@@ -896,4 +911,5 @@ Partial Class SORCUSTS
     Friend WithEvents chkAveragePrice As ABSCS.ABSCheckBox
     Friend WithEvents Label1 As Label
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
 End Class
