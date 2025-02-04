@@ -1317,7 +1317,7 @@ Public Class WHFPACK1
                     If ASCMAIN1.Running_in_VS Then
                         ipp.Connect("192.168.1.3", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
                     Else
-                        ipp.Connect("192.168.110.223", "4444")
+                        ipp.Connect("192.168.110.239", "4444")
                     End If
 
                     ipp.SendLine(label)

@@ -3671,7 +3671,7 @@ Public Class ICFQUOTV
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
-                    ' .NumberFormat = "#,###,##0"
+                    '  worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "On Hand"
@@ -3679,7 +3679,8 @@ Public Class ICFQUOTV
                 COL += 1
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
-                    .EntireColumn.NumberFormat = "#,###,##0"
+                    '   .Column.NumberFormat = "#,###,##0"
+                    worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "In Pick"
@@ -3688,6 +3689,7 @@ Public Class ICFQUOTV
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
+                    ' worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "OTS"
@@ -3696,6 +3698,7 @@ Public Class ICFQUOTV
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
+                    'worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "In Transit"
@@ -3704,6 +3707,7 @@ Public Class ICFQUOTV
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
+                    '  worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "WIP"
@@ -3712,6 +3716,7 @@ Public Class ICFQUOTV
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
+                    ' worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "Open"
@@ -3720,6 +3725,7 @@ Public Class ICFQUOTV
                 With worksheet.Cells(I, COL)
                     .ColumnWidth = 17
                     .EntireColumn.NumberFormat = "#,###,##0"
+                    'worksheet.Cells(I, COL).NumberFormat = "#,###,##0"
                     .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "" & Chr(13) & Chr(10) & "Net Pos"
@@ -4175,6 +4181,7 @@ Public Class ICFQUOTV
                         worksheet.Cells(I + CI - 1, COL + chkcnt).NumberFormat = "#,###,##0"
                         chkcnt += 1
                         worksheet.Cells(I + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
+                        worksheet.Cells(I + CI - 1, COL + chkcnt).NumberFormat = "#,###,##0"
                         chkcnt += 1
                         Dim OTS As Integer = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "") - Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & "")
                         worksheet.Cells(I + CI - 1, COL + chkcnt).Value = OTS
@@ -4250,6 +4257,7 @@ Public Class ICFQUOTV
                 COL += 1
                 For iCOL As Integer = 1 To 7
                     COL += 1
+                    worksheet.Cells(I + CI - 1, COL).NumberFormat = "#,###,##0"
                     worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
 
                     'worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
@@ -4350,6 +4358,7 @@ Public Class ICFQUOTV
 
                     With worksheet.Cells(I - 1, COL - 2 + chkcnt)
                         .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        worksheet.Cells(I - 1, COL - 2 + chkcnt).NumberFormat = "000"
                         .Value = Format(Val(rowICTSTATD.Item("COLOR_CODE") & String.Empty), "000")
                         .Font.Size = 14
                         If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then

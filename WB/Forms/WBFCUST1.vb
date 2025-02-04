@@ -12,6 +12,7 @@ Public Class WBFCUST1
     Dim sqlARTCONTX As String = ""
     Dim EMAIL_NAME As String = ""
     Dim EMAIL_ADDRESS As String = ""
+    Dim isLoading As Boolean = True
     'Dim WithEvents FtpShopSite As New nsoftware.IPWorks.Ftp
     Private Enum EncryptType
         Encrypt
@@ -42,6 +43,7 @@ Public Class WBFCUST1
     Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        isLoading = True
         Dim SQLs As New StringBuilder() With {.Length = 0}
         With dst
 
@@ -219,6 +221,7 @@ Public Class WBFCUST1
         Setup_WBTCUST2()
 
         tab.Visible = False
+        isLoading = False
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -384,7 +387,7 @@ Public Class WBFCUST1
         For i As Integer = 0 To grdWBTCUST1.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBTCUST1.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
-        Dim editColumns As String() = New String() {"CUST_CODE_PROVIDED", "DATEREGISTERED", "FAMILYNAME", "GIVENNAME", "GROUPNAME", "GROUPNOTE", "COMPANY", "STREET", "CITY", "STATE", "ZIP_CODE", "TELEPHONE", "TAX_ID", "SREP_CODE"}
+        Dim editColumns As String() = New String() {"CUST_CODE_PROVIDED", "DATEREGISTERED", "FAMILYNAME", "GIVENNAME", "GROUPNAME", "GROUPNOTE", "COMPANY", "STREET", "CITY", "STATE", "ZIP_CODE", "TELEPHONE", "TAX_ID", "TAX_ID_DOC", "SREP_CODE", "SREP_NOTIFY", "IS_CUST_NEW"}
         For Each COLNAME As String In editColumns
             grdWBTCUST1.DisplayLayout.Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
         Next
@@ -392,7 +395,7 @@ Public Class WBFCUST1
             grdWBTCUST1.DisplayLayout.Bands(0).Columns(COLNAME).CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
         Next
         With grdWBTCUST1.DisplayLayout.Bands(0)
-            For Each COL_NAME As String In New String() {"EMAIL", "GIVENNAME", "FAMILYNAME", "CLAIM_BY_OPER"}
+            For Each COL_NAME As String In New String() {"SREP_NOTIFY", "IS_CUST_NEW", "EMAIL", "GIVENNAME", "FAMILYNAME"} '"CLAIM_BY_OPER"
                 .Columns(COL_NAME).Header.Fixed = True
             Next
         End With
@@ -691,7 +694,57 @@ Public Class WBFCUST1
         End Select
     End Sub
 
-    Private Sub ViewTaxDoc(ByVal TAX_ID As String, ByVal TAX_ID_DOC As String)
+    Private Function ViewTaxDocOld(ByVal TAX_ID As String, ByVal TAX_ID_DOC As String) As String
+        Dim eMsg As New Text.StringBuilder With {.Length = 0}
+        'TAX_ID_DOC = TAX_ID_DOC.Replace(TAX_ID & "-", "")
+        Dim slashPOS As Int64 = TAX_ID_DOC.IndexOf("/")
+        Dim ROOT_FOLDER As String = "/tax_id/"
+        Dim SUB_FOLDER As String = TAX_ID
+        Dim FILE_NAME As String = TAX_ID_DOC.Replace(TAX_ID & "-", "")
+        Dim TempFolder As String = ASCMAIN1.Folders("Temp").ToString
+        If Not TempFolder.EndsWith("\") Then
+            TempFolder = TempFolder & "\"
+        End If
+        Dim LocalFile As String = TempFolder & TAX_ID_DOC
+        If System.IO.File.Exists(LocalFile) Then
+            System.IO.File.Delete(LocalFile)
+        End If
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If File.Exists(LocalFile) Then
+                    File.Delete(LocalFile)
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = UserName
+                .Password = Password
+                .RemoteHost = RemoteHost
+                .RemotePath = RemotePath & ROOT_FOLDER & SUB_FOLDER & "/"
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = LocalFile
+                .RemoteFile = FILE_NAME
+                .Overwrite = False
+                If Not .FileExists() Then
+                    eMsg.AppendLine("File Not Found On Shopsite")
+                    .Logoff()
+                Else
+                    .Download()
+                    .Logoff()
+                End If
+            Catch ex As Exception
+                eMsg.AppendLine(ex.Message.ToString)
+                FtpShopSite.Logoff()
+            End Try
+        End With
+        If eMsg.Length = 0 Then
+            Show_Document(LocalFile)
+        End If
+        Return eMsg.ToString
+    End Function
+
+    Private Function ViewTaxDocNew(ByVal TAX_ID As String, ByVal TAX_ID_DOC As String) As String
+        Dim eMsg As New Text.StringBuilder With {.Length = 0}
         TAX_ID_DOC = TAX_ID_DOC.Replace(TAX_ID & "-", "")
         Dim slashPOS As Int64 = TAX_ID_DOC.IndexOf("/")
         Dim FTP_FOLDER As String = ""
@@ -704,7 +757,6 @@ Public Class WBFCUST1
             TempFolder = TempFolder & "\"
         End If
         Dim LocalFile As String = TempFolder & TAX_ID_DOC
-        Dim ErrMsg As New StringBuilder With {.Length = 0}
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite
             Try
@@ -722,24 +774,23 @@ Public Class WBFCUST1
                 .RemoteFile = TAX_ID_DOC
                 .Overwrite = False
                 If Not .FileExists() Then
-                    ErrMsg.AppendLine("File Not Found On Shopsite")
+                    eMsg.AppendLine("File Not Found On Shopsite")
                     .Logoff()
                 Else
                     .Download()
                     .Logoff()
                 End If
             Catch ex As Exception
-                ErrMsg.AppendLine(ex.Message.ToString)
+                eMsg.AppendLine(ex.Message.ToString)
+                'ErrMsg.AppendLine(ex.Message.ToString)
                 FtpShopSite.Logoff()
             End Try
         End With
-        If ErrMsg.Length > 0 Then
-            MsgBox(ErrMsg.ToString, vbExclamation, "Problems Fetching Document.")
-        Else
+        If eMsg.Length = 0 Then
             Show_Document(LocalFile)
         End If
-    End Sub
-
+        Return eMsg.ToString
+    End Function
     Public Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
         MyBase.tlb_ToolClick(sender, e)
 
@@ -974,14 +1025,25 @@ Public Class WBFCUST1
                     End If
                 End If
             Case "View Tax Doc"
+                Me.Cursor = Cursors.WaitCursor
+                ASCMAIN1.Progress("Fetching Tax File From FTP", "")
+                Application.DoEvents()
                 Dim TAX_ID As String = grdWBTCUST1.ActiveRow.Cells("TAX_ID").Text & String.Empty
                 Dim TAX_ID_DOC As String = grdWBTCUST1.ActiveRow.Cells("TAX_ID_DOC").Text & String.Empty
                 If TAX_ID.Length = 0 Or TAX_ID_DOC.Length = 0 Then
                     MsgBox("No Tax Document Available.")
                 Else
-                    ViewTaxDoc(TAX_ID, TAX_ID_DOC)
+                    Dim E1 As String = ViewTaxDocNew(TAX_ID, TAX_ID_DOC)
+                    If E1.Length > 0 Then
+                        Dim E2 As String = ViewTaxDocOld(TAX_ID, TAX_ID_DOC)
+                        If E2.Length > 0 Then
+                            MsgBox(E2, vbCritical, "Error Fetching FTP File")
+                        End If
+                    End If
                 End If
-
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("")
+                Application.DoEvents()
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -1181,7 +1243,31 @@ Public Class WBFCUST1
                 rowWBTCUST1.Item("CLAIM_BY_OPER") = Null
                 rowWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
                 rowWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                NotifySalesRep(rowWBTCUST1)
             End If
+        End If
+    End Sub
+
+    Private Sub NotifySalesRep(ByRef rowWBTCUST1 As DataRow)
+        Dim eMsg As New StringBuilder With {.Length = 0}
+        Dim CUST_CODE_ACTUAL As String = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
+        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE_ACTUAL)
+        If IsNothing(rowARTCUST1) Then
+            eMsg.AppendLine("No Matching Customer Found To Notify Rep.")
+        Else
+            Dim SREP_CODE As String = rowARTCUST1.Item("SREP_CODE").ToString & String.Empty
+            Dim rowSOTSREP1 As DataRow = LookUp("SOTSREP1", SREP_CODE)
+            If IsNothing(rowSOTSREP1) Then
+                eMsg.AppendLine("No Matching Sales Rep Found To Notify.")
+            End If
+        End If
+        If eMsg.Length = 0 Then
+            rowWBTCUST1.Item("SREP_NOTIFY") = "1"
+            rowWBTCUST1.Item("IS_CUST_NEW") = "1"
+        Else
+            rowWBTCUST1.Item("SREP_NOTIFY") = "0"
+            rowWBTCUST1.Item("IS_CUST_NEW") = "0"
+            MsgBox(eMsg.ToString, vbOKOnly, "Notify Sales Rep Error")
         End If
     End Sub
 
@@ -1419,6 +1505,7 @@ Public Class WBFCUST1
     End Sub
 
     Private Sub FilterWBTCUST1()
+        Dim HideUploadCols As Boolean = True
         If rdoShowAccepted.Checked = False _
             And rdoShowCredit.Checked = False _
             And rdoShowDisabled.Checked = False _
@@ -1460,6 +1547,7 @@ Public Class WBFCUST1
             End If
             If rdoShowUpload.Checked Then
                 GrdFilter = "STATUS = 'U'"
+                HideUploadCols = False
                 'If GrdFilter.Length > 0 Then
                 '    GrdFilter += " OR (STATUS = 'A' OR STATUS = 'U' OR STATUS = 'T')"
                 'Else
@@ -1484,8 +1572,16 @@ Public Class WBFCUST1
             End If
             Dim dvw As DataView = DirectCast(grdWBTCUST1.DataSource, DataTable).DefaultView
             dvw.RowFilter = GrdFilter
+
         End If
         ShowSelectedMatches()
+
+        If isLoading = False Then
+            With grdWBTCUST1.DisplayLayout.Bands(0)
+                .Columns.Item("SREP_NOTIFY").Hidden = HideUploadCols
+                .Columns.Item("IS_CUST_NEW").Hidden = HideUploadCols
+            End With
+        End If
     End Sub
 
     Private Sub FindAndReplace(ByVal doc As Microsoft.Office.Interop.Word.Document,
@@ -2155,6 +2251,7 @@ Public Class WBFCUST1
                     If AddSalesRep Then
                         EMAIL_ADDRESSs.Add(ccSREPEmail, ccSPREPName)
                     End If
+                    EMAIL_ADDRESSs.Add("danielle@regency-rib.com", "Danielle Rouse")
                     EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
                 End If
                 If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
@@ -2192,6 +2289,34 @@ Public Class WBFCUST1
 
         Catch ex As Exception
             MsgBox("Error Trying to Generate Document" & vbCrLf & ex.Message)
+        End Try
+        Return ""
+    End Function
+
+    Private Function SendEMailSrep(ByRef rowWBTCUST1 As DataRow, ByRef rowARTCUST1 As DataRow, ByRef rowSOTSREP1 As DataRow) As String
+        Dim TO_SUBJECT As String = "Regency Website Customer"
+        Try
+            Dim SREP_EMAIL As String = rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty
+            Dim SREP_NAME As String = rowSOTSREP1.Item("SREP_NAME").ToString & String.Empty
+
+            Dim HTMLBody As String = MakeHTMLBodySrep(rowSOTSREP1, rowWBTCUST1)
+            Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+            Dim ATTACHMENTs As New Dictionary(Of String, String)
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+            Else
+                EMAIL_ADDRESSs.Add(SREP_EMAIL, SREP_NAME)
+                If Now <= DateSerial(2025, 2, 15) Then
+                    EMAIL_ADDRESSs.Add("danielle@regency-rib.com", "Danielle Rouse")
+                End If
+            End If
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            Dim TEMPLATE_NAME As String = "CREDIT"
+            Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                        TO_SUBJECT, TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, TO_SUBJECT, HTMLBody)
+        Catch ex As Exception
+            'MsgBox("Error Trying to Generate Document" & vbCrLf & ex.Message)
         End Try
         Return ""
     End Function
@@ -2248,6 +2373,61 @@ Public Class WBFCUST1
         Return HStr.ToString
     End Function
 
+    Private Function MakeHTMLBodySrep(ByRef rowSOTSREP1 As DataRow, ByRef rowWBTCUST1 As DataRow) As String
+        Dim HStr As New StringBuilder With {.Length = 0}
+
+        Dim SREP_NAME As String = rowSOTSREP1.Item("SREP_NAME").ToString & String.Empty
+        Dim SREP_EMAIL As String = rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty
+
+        Dim WEB_EMAIL As String = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
+        Dim WEB_COMPANY As String = rowWBTCUST1.Item("COMPANY").ToString & String.Empty
+        Dim CUST_CODE_ACTUAL As String = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
+        Dim WEB_GIVENNAME As String = rowWBTCUST1.Item("GIVENNAME").ToString & String.Empty
+        Dim WEB_FAMILYNAME As String = rowWBTCUST1.Item("FAMILYNAME").ToString & String.Empty
+        Dim WEB_TELEPHONE As String = rowWBTCUST1.Item("TELEPHONE").ToString & String.Empty
+        Dim WEB_STREET As String = rowWBTCUST1.Item("STREET").ToString & String.Empty
+        Dim WEB_CITY As String = rowWBTCUST1.Item("CITY").ToString & String.Empty
+        Dim WEB_STATE As String = rowWBTCUST1.Item("STATE").ToString & String.Empty
+        Dim WEB_ZIP_CODE As String = rowWBTCUST1.Item("ZIP_CODE").ToString & String.Empty
+
+        Dim SHP_ADDR_1 As String = rowWBTCUST1.Item("SHP_ADDR_1").ToString & String.Empty
+        Dim SHP_CITY As String = rowWBTCUST1.Item("SHP_CITY").ToString & String.Empty
+        Dim SHP_STATE As String = rowWBTCUST1.Item("SHP_STATE").ToString & String.Empty
+        Dim SHP_ZIP_CODE As String = rowWBTCUST1.Item("SHP_ZIP_CODE").ToString & String.Empty
+
+        Dim IS_CUST_NEW As Boolean = (rowWBTCUST1.Item("IS_CUST_NEW").ToString & String.Empty) = "1"
+
+
+        HStr.Append("<html>")
+        HStr.Append("<head>")
+        HStr.Append("</head>")
+        HStr.Append("<body>")
+        HStr.Append($"Hi {SREP_NAME},<br>")
+        HStr.Append("<br>")
+        HStr.Append("Please find below the details of a new web account created for your customer. <br><br>")
+        HStr.Append($"CUSTOMER #: {CUST_CODE_ACTUAL}<br>")
+        HStr.Append($"COMPANY NAME: {WEB_COMPANY}<br>")
+        HStr.Append($"BILLING ADDRESS: {WEB_STREET} {WEB_CITY} {WEB_STATE} {WEB_ZIP_CODE}<br>")
+        HStr.Append($"SHIPPING ADDRESS: {SHP_ADDR_1} {SHP_CITY} {SHP_STATE} {SHP_ZIP_CODE}<br>")
+        HStr.Append($"CONTACT NAME: {WEB_GIVENNAME} {WEB_FAMILYNAME}<br>")
+        HStr.Append($"PHONE: {WEB_TELEPHONE}<br>")
+        HStr.Append($"EMAIL: {WEB_EMAIL}<br>")
+        HStr.Append($"NEW?: {IS_CUST_NEW}<br>")
+        HStr.Append("<br>")
+        HStr.Append("If you see any changes that need to be made, please reach out to Danielle at danielle@regency-rib.com or contact customer service.")
+        HStr.Append("<br>")
+        HStr.Append("<br>")
+        HStr.Append("Thank you,")
+        HStr.Append("<br>")
+        HStr.Append("<br>")
+        HStr.Append("Web Customer Admin")
+        HStr.Append("Regency International<br>")
+        HStr.Append("<a href='http://www.regency-rib.com'>www.regency-rib.com</a><br>")
+        HStr.Append($"<img src='https://www.regency-rib.com/media/logo.png' width='157' height='116' >")
+        HStr.Append("</body>")
+        HStr.Append("</html>")
+        Return HStr.ToString
+    End Function
 
     Sub Setup_WBTCUST2()
         Dim dvw As DataView = DirectCast(grdWBTCUST2.DataSource, DataTable).DefaultView
@@ -2621,6 +2801,9 @@ Public Class WBFCUST1
         If ErrMsg.Length = 0 Then
             If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             WebCustOutboundSend(ErrMsg, LocalFile)
+            If ErrMsg.Length = 0 Then
+                SendSrepNotification()
+            End If
         End If
 
         If ErrMsg.Length = 0 Then
@@ -2655,6 +2838,24 @@ Public Class WBFCUST1
         End If
         Return RetVal
     End Function
+
+    Private Sub SendSrepNotification()
+        For Each rowWBTCUST1 As DataRow In dst.Tables("WBTCUST1").Select("STATUS = 'U' AND SREP_NOTIFY = '1'")
+            Dim CUST_CODE_ACTUAL As String = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
+            Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE_ACTUAL)
+            Dim rowSOTSREP1 As DataRow = Nothing
+            If Not IsNothing(rowARTCUST1) Then
+                Dim SREP_CODE As String = rowARTCUST1.Item("SREP_CODE").ToString & String.Empty
+                rowSOTSREP1 = LookUp("SOTSREP1", SREP_CODE)
+                If Not IsNothing(rowSOTSREP1) Then
+                    If (rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty).Length > 0 Then
+                        SendEMailSrep(rowWBTCUST1, rowARTCUST1, rowSOTSREP1)
+                    End If
+
+                End If
+            End If
+        Next
+    End Sub
 
     Private Sub uploadShipTos()
         Dim UserName As String = "regency-rib"

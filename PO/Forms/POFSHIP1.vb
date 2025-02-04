@@ -12476,7 +12476,7 @@ Public Class POFSHIP1
 
             Using ipp As New nsoftware.IPWorks.Ipport
                 ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
-                ipp.Connect("192.168.110.223", "4444")
+                ipp.Connect("192.168.110.239", "4444")
                 Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
                 Try
                     For Each grow As UltraWinGrid.UltraGridRow In grdPOTSHIP7.Selected.Rows

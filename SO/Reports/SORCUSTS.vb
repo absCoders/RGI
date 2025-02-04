@@ -6,6 +6,9 @@ Public Class SORCUSTS
     Dim SQL_WHERE_ORDR_RSV As String
     Dim REPORT_NAME As String = "SORCUSTS"
     Dim ICTSTATDSQL As String = ""
+    Dim ICTSTAT2SQL As String = ""
+    Dim XLS_NO As Integer = 0
+    Dim exlExt As String = ".xlsx"
     Dim SQL_REPORT As New StringBuilder With {.Length = 0}
     Dim GRP_IN As String = ""
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
@@ -86,6 +89,11 @@ Public Class SORCUSTS
 
         Dim TABLE_TEMP As String = ASCMAIN1.Temp_Table
 
+        ASCMAIN1.sql = "select *  from ictstat2 WHERE (STYLE_CODE,COLOR_CODE) IN (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & TABLE_TEMP & ")"
+        ICTSTAT2SQL = ASCMAIN1.sql
+        Create_TDA(dst.Tables.Add, "ICTSTAT2", "**", 2, False)
+
+
         ASCMAIN1.sql = "Select * from (" & vbCrLf _
             & " Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.INIT_DATE, POTSHIP1.WHSE_CODE, POTSHIP3.PO_ORDER_NO" & vbCrLf _
             & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
@@ -112,7 +120,7 @@ Public Class SORCUSTS
             & "  And ICTATOP2.PS_CODE (+) = 'S'" & vbCrLf _
             & " And ICTATOP2.PS_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
             & " And POTSHIP2.PO_SHIP_STATUS = 'O'" & vbCrLf _
-            & " And (POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE) IN  (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & TABLE_TEMP & ")" & vbCrLf _
+            & " And (POTORDR2.STYLE_CODE) IN  (SELECT DISTINCT STYLE_CODE FROM  " & TABLE_TEMP & ")" & vbCrLf _
             & " ) union (" & vbCrLf _
             & "Select  POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE,POTORDR1.INIT_DATE, POTORDR1.WHSE_CODE, POTORDR2.PO_ORDER_NO" & vbCrLf _
             & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
@@ -134,7 +142,7 @@ Public Class SORCUSTS
             & "  And ICTATOP2.PS_CODE (+) = 'P'" & vbCrLf _
             & "   And ICTATOP2.PS_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
             & "   And POTORDR2.PO_QTY_OPN <> 0" & vbCrLf _
-            & " And (POTORDR2.STYLE_CODE,POTORDR2.COLOR_CODE) IN  (SELECT DISTINCT STYLE_CODE,COLOR_CODE FROM  " & TABLE_TEMP & ")" & vbCrLf _
+            & " And (POTORDR2.STYLE_CODE) IN  (SELECT DISTINCT STYLE_CODE FROM  " & TABLE_TEMP & ")" & vbCrLf _
             & ")"
 
         ICTSTATDSQL = ASCMAIN1.sql
@@ -180,36 +188,46 @@ Public Class SORCUSTS
             End If
         Next
 
-        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
-        Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
-        worksheet.Name = "Style Info"
-        Create_Excel_WorkSheet(worksheet, StyleList)
 
-
-        If ASCMAIN1.Folders("Temp").EndsWith("\") Then
-            XLS_FILENAME = ASCMAIN1.Folders("Temp") & String.Format("{0}.XLSX", REPORT_NAME)
+        If chk1Sheet.Checked Then
+            Dim fileName As String = ""
+            fileName = Create_Excel()
         Else
-            XLS_FILENAME = ASCMAIN1.Folders("Temp") & "\" & String.Format("{0}.XLSX", REPORT_NAME)
+            Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+            Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+            worksheet.Name = "Style Info
+"
+            Create_Excel_WorkSheet(worksheet, StyleList)
+
+
+            If ASCMAIN1.Folders("Temp").EndsWith("\") Then
+                XLS_FILENAME = ASCMAIN1.Folders("Temp") & String.Format("{0}.XLSX", REPORT_NAME)
+            Else
+                XLS_FILENAME = ASCMAIN1.Folders("Temp") & "\" & String.Format("{0}.XLSX", REPORT_NAME)
+            End If
+            Dim success As Boolean = False
+
+            ASCMAIN1.Progress("Now Saving Workbook")
+
+            Do Until success
+                Try
+                    If System.IO.File.Exists(XLS_FILENAME) Then
+                        System.IO.File.Delete(XLS_FILENAME)
+                    End If
+                    workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                    If chkWebLinks.Checked Then
+                        SaveLinks(XLS_FILENAME)
+                    End If
+                    success = True
+                Catch ex As Exception
+
+                End Try
+            Loop
+            Return XLS_FILENAME
+
+
         End If
-        Dim success As Boolean = False
 
-        ASCMAIN1.Progress("Now Saving Workbook")
-
-        Do Until success
-            Try
-                If System.IO.File.Exists(XLS_FILENAME) Then
-                    System.IO.File.Delete(XLS_FILENAME)
-                End If
-                workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
-                If chkWebLinks.Checked Then
-                    SaveLinks(XLS_FILENAME)
-                End If
-                success = True
-            Catch ex As Exception
-
-            End Try
-        Loop
-        Return XLS_FILENAME
     End Function
 
     Private Sub SaveLinks(ByVal FILENAME_FULL As String)
@@ -321,6 +339,8 @@ Public Class SORCUSTS
         EnforceConstraints(False)
         S = BUILD_SOTCUSTS(False)
         Fill_Records("SOTCUSTS",,, S.ToString)
+
+        Fill_Records("ICTSTAT2", "", True, ICTSTAT2SQL)
 
         Fill_Records("ICTSTATD", "", True, ICTSTATDSQL)
 
@@ -874,7 +894,7 @@ Public Class SORCUSTS
 
 #Region "Excel Methods"
     Sub Create_Excel_WorkSheet(worksheet As SpreadsheetGear.IWorksheet,
-                               ByVal StyleList As List(Of String))
+                               ByVal StyleList As List(Of String), Optional sqlWB As String = "")
 
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
         If (ASCMAIN1.Running_in_VS) Then
@@ -901,7 +921,7 @@ Public Class SORCUSTS
 
         Dim I0 As Integer = 0
         Dim IA As Integer = 0
-        Dim RT(6) As String
+        Dim RT(11) As String
         Dim ROW0 As Integer = I
         Dim style_count As Integer = 0
         Dim pages As Integer = 0
@@ -960,8 +980,22 @@ Public Class SORCUSTS
             If chkShipDates.Checked = False Then
                 colsLess += 1
             End If
+            If chkStyleStats.Checked Then
+                COL = COL - colsLess
+                For iCOL As Integer = 1 To 7
+                    COL += 1
+                    worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
+                    RT(iCOL) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
+                Next
+                COL += 0
+            End If
 
-            worksheet.Cells(I + CI - 1, COL0 - 1, I + CI - 1, COL - colsLess).Interior.Color = SpreadsheetGear.Colors.LightGray
+            If chkStyleStats.Checked Then
+                worksheet.Cells(I + CI - 1, COL0 - 1, I + CI - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
+            Else
+                worksheet.Cells(I + CI - 1, COL0 - 1, I + CI - 1, COL - colsLess).Interior.Color = SpreadsheetGear.Colors.LightGray
+            End If
+
 
             With worksheet.Cells(I, COL0 - 1, I + CI - 1, COL - colsLess)
                 .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
@@ -1069,7 +1103,7 @@ Public Class SORCUSTS
 
                     With worksheet.Cells(I - 1, COL - 2 + chkcnt)
                         .HorizontalAlignment = SpreadsheetGear.HAlign.Center
-                        .Value = Val(rowICTSTATD.Item("COLOR_CODE") & String.Empty)
+                        .Value = Format(Val(rowICTSTATD.Item("COLOR_CODE") & String.Empty), "000")
                         .Font.Size = 14
                         If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
                             .Font.Color = SpreadsheetGear.Colors.Green
@@ -1282,9 +1316,42 @@ Public Class SORCUSTS
             '    worksheet.Cells(i + CI - 1, COL + 2).Value = rowSOTCUSTS.Item("QTY_SHP_03") & String.Empty
             '    'chkcnt += 1
             'End If
+            'T = ""
+            'COL += 1
 
-            T = ""
-            COL += 1
+            If chkStyleStats.Checked Then
+
+                ' ASCMAIN1.sql = "Select * from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty & "'"
+                '       For Each rowICTSTAT2 As DataRow In ASCDATA1.GetDataTable.Select("")
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowSOTCUSTS.Item("COLOR_CODE") & String.Empty & "'")
+
+
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                    chkcnt += 1
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
+                    chkcnt += 1
+                    Dim OTS As Integer = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "") - Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & "")
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = OTS
+                    chkcnt += 1
+
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty)
+                    chkcnt += 1
+
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty)
+                    chkcnt += 1
+
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    chkcnt += 1
+
+                    worksheet.Cells(i + CI - 1, COL + chkcnt).Value = OTS + Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty) + Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty) - Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    chkcnt += 1
+
+                Next
+                T = ""
+                COL += 1
+            End If
+
+
         Next
 
         CI += 2
@@ -1465,6 +1532,53 @@ Public Class SORCUSTS
         range = worksheet.Cells(i, COL0 - 1, i, COL)
         interior = range.Interior
         interior.Color = SpreadsheetGear.Colors.Gold
+
+        If chkStyleStats.Checked Then
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "On Hand"
+            End With
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "In Pick"
+            End With
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "OTS"
+            End With
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "In Transit"
+            End With
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "WIP"
+            End With
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "Open"
+            End With
+            COL += 1
+            With worksheet.Cells(i, COL)
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .Value = "" & Chr(13) & Chr(10) & "Net Pos"
+            End With
+
+            range = worksheet.Cells(i, COL - 6, i, COL)
+            interior = range.Interior
+            interior.Color = SpreadsheetGear.Colors.Aquamarine
+
+        End If
+
+
+
+
     End Sub
 
     Private Sub Excel_Header(worksheet As IWorksheet)
@@ -1495,9 +1609,46 @@ Public Class SORCUSTS
         End With
 
         Dim H1 As Integer = 11
+        Dim HEAD1 As String = ""
+        Dim HEAD2 As String = ""
+        If optASN.Value = "S" Then
+            HEAD1 = "Stock"
+        ElseIf optASN.Value = "N" Then
+            HEAD1 = "NonStock"
+        Else
+            HEAD1 = "All Styles"
+        End If
+
+        'If chkOpen.Checked Then
+        '    HEAD2 = "Open"
+        'End If
+        'If chkPick.Checked Then
+        '    If HEAD2 = "" Then
+        '        HEAD2 = "Pick"
+        '    Else
+        '        HEAD2 = HEAD2 & "," & "Pick"
+        '    End If
+        'End If
+        'If chkReservations.Checked Then
+        '    If HEAD2 = "" Then
+        '        HEAD2 = "Res"
+        '    Else
+        '        HEAD2 = HEAD2 & "," & "Res"
+        '    End If
+        'End If
 
         worksheet.Cells(0, 2).Value = "Customer Shipped Report with Pictures"
         worksheet.Cells(0, 2).Font.Bold = True
+        worksheet.Cells(1, 2).Value = "Customer: " & txtCUST_CODE.Text & "   Styles: " & HEAD1
+        worksheet.Cells(1, 2).Font.Bold = True
+        If optSelectBy.Value = "D" Then
+            worksheet.Cells(2, 2).Value = "Ship Date Range: " & dteShip_Beg.Value & " - " & dteShip_End.Value
+            worksheet.Cells(2, 2).Font.Bold = True
+        Else
+            worksheet.Cells(2, 2).Value = "Report By Selected PO's"
+            worksheet.Cells(2, 2).Font.Bold = True
+        End If
+
 
         worksheet.Cells(0, H1).Value = "Note"
         worksheet.Cells(1, H1).Value = "For"
@@ -1648,7 +1799,243 @@ Public Class SORCUSTS
 
         'End If
 
+        If chkStyleStats.Checked Then
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+
+            COL += 1
+            _COL += 1
+            With worksheet.Cells(_COL, COL)
+                .ColumnWidth = 17
+                .EntireColumn.NumberFormat = "#,###,##0"
+                .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            End With
+        End If
+
+
     End Sub
+    Private Function Create_Excel(Optional SALES_DIVISION_CODE As String = "") As String
+        Dim RetVal As String = ""
+
+
+
+        ''  RESEQ()
+
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+        Dim sqlWB As String = ""
+        If SALES_DIVISION_CODE <> "" Then
+            sqlWB = " and SALES_DIVISION_CODE = '" & SALES_DIVISION_CODE & "'"
+            ASCMAIN1.Progress("Now Creating Workbook for Divison " & SALES_DIVISION_CODE, "")
+        Else
+            ASCMAIN1.Progress("Now Creating Workbook", "")
+        End If
+        Dim sql0 As String = ""
+        ''  Dim sql0 As String = " and COUNT_COLOR > 0" ' & Val(numMinQty.Value & "")
+        ''If chkShowSelectedOnly.Checked Then
+        ''    sql0 &= " and SELECTED = '1'"
+        ''End If
+
+
+        ''  CUSTPOSs.Clear()
+
+        Dim CUSTPOi As Integer = 0
+        ''dst.Tables("SOTORDRC").Rows.Clear()
+
+        ''For Each row As DataRow In dst.Tables("ICTSTYC1").Select("")
+        ''    row.Item("OPEN_PICK_RSRV") = 0
+        ''Next
+
+        ''If chkShowPOs.Checked Then
+        ''    For Each row As DataRow In dst.Tables("ICTQUOT2").Select("")
+        ''        STYLE_CODE = row.Item("STYLE_CODE_PLM")
+        ''        Fill_Records("SOTORDRC", New String() {txtQuoteCUST_CODE.Text, STYLE_CODE}, False)
+        ''    Next
+        ''    For Each row As DataRow In dst.Tables("SOTORDRC").Select("", "ORDR_CANCEL_DATE")
+        ''        Dim OPO As String = row.Item("ORDR_TYPE") & vbTab & row.Item("ORDR_CUST_PO") & vbTab & Format(row.Item("ORDR_SHIP_DATE"), "MM/dd/yyyy") & vbTab & Format(row.Item("ORDR_CANCEL_DATE"), "MM/dd/yyyy")
+        ''        If Not CUSTPOSs.ContainsKey(OPO) Then
+        ''            CUSTPOi += 1
+        ''            CUSTPOSs.Add(OPO, CUSTPOi)
+        ''        End If
+        ''        Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+        ''        Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+        ''        Dim QTY As Int64 = Val(row.Item("QTY") & "")
+        ''        Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+        ''        If rowICTSTYC1 IsNot Nothing Then
+        ''            rowICTSTYC1.Item("OPEN_PICK_RSRV") = Val(rowICTSTYC1.Item("OPEN_PICK_RSRV") & "") + QTY
+        ''        End If
+        ''    Next
+        ''End If
+
+        Dim XLS_CREATED As Boolean = False
+
+        If chk1Sheet.Checked Then
+            Dim wsi As Integer = 0
+            'Dim WJZ As Integer = dst.Tables("ICTQUOT2").Rows.Count
+
+            Dim CODES As String = ""
+            ''If opt1Sheet.Value = "S" Then
+            ''    CODES = "SUB_BODY_CODE"
+            ''ElseIf opt1Sheet.Value = "FS" Then
+            ''    CODES = "FABRIC_CODE,SUB_BODY_CODE,STYLE_GROUP_CODE"
+            ''ElseIf opt1Sheet.Value = "G" Then
+            ''    CODES = "STYLE_GROUP_CODE,FABRIC_CODE,SUB_BODY_CODE"
+            ''    ' CODES = "STYLE_GROUP_CODE"
+            ''    ' DGJ
+            ''ElseIf opt1Sheet.Value = "D" Then
+            CODES = "SALES_DIVISION_CODE"
+
+            '' End If
+
+            For Each rowSB As DataRow In ASCDATA1.SelectDistinct(dst.Tables("SOTCUSTS").Select(Mid(sqlWB & sql0, 6)), Split(CODES, ",")).Select("")
+                Dim SHEET_NAME As String = ""
+                Dim sqlSB As String = ""
+                For Each COLUMN_NAME As String In Split(CODES, ",")
+                    Dim CODE_VALUE As String = rowSB.Item(COLUMN_NAME) & ""
+                    SHEET_NAME &= "-" & CODE_VALUE
+                    If CODE_VALUE = "" Then
+                        sqlSB &= " and " & COLUMN_NAME & " IS NULL"
+                    Else
+                        sqlSB &= " and " & COLUMN_NAME & " = '" & CODE_VALUE & "'"
+                    End If
+                Next
+
+                If CODES = "SALES_DIVISION_CODE" Then
+                    Dim SALES_DIVISION_NAME As String = ""
+                    SALES_DIVISION_CODE = Mid(SHEET_NAME, 2)
+                    ASCMAIN1.sql = "Select SALES_DIVISION_NAME from SOTSDIV1 where SALES_DIVISION_CODE = :PARM1"
+                    Dim rowSOTDIV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", Mid(SHEET_NAME, 2))
+                    If rowSOTDIV1 IsNot Nothing Then
+                        SALES_DIVISION_NAME = rowSOTDIV1.Item("SALES_DIVISION_NAME")
+                    Else
+                        SALES_DIVISION_NAME = ""
+                    End If
+                    SHEET_NAME = "Div-" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
+                Else
+                    SHEET_NAME = Mid(SHEET_NAME, 2)
+                End If
+
+
+                If dst.Tables("SOTCUSTS").Select(Mid(sqlWB & sqlSB & sql0, 6)).Length > 0 Then
+                    Dim worksheet As SpreadsheetGear.IWorksheet
+                    If wsi = 0 Then
+                        worksheet = workbook.Worksheets(0)
+                    Else
+                        worksheet = workbook.Worksheets.Add
+                    End If
+                    wsi += 1
+                    If SHEET_NAME <> "" Then
+                        worksheet.Name = SHEET_NAME
+                    Else
+                        worksheet.Name = "Unknown"
+                    End If
+
+                    Dim StyleList As New List(Of String)
+
+                    '        For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "'", "COLOR_CODE, PO_DATE_SHIP_BY")
+
+                    For Each rowSOTCUSTQ As DataRow In dst.Tables("SOTCUSTS").Select("SALES_DIVISION_CODE = '" & SALES_DIVISION_CODE & "'", "FABRIC_CODE,SUB_BODY_CODE")
+                        Dim STYLE_CODE As String = rowSOTCUSTQ.Item("STYLE_CODE").ToString & String.Empty
+                        If Not StyleList.Contains(STYLE_CODE) Then
+                            StyleList.Add(STYLE_CODE)
+                        End If
+                    Next
+
+                    Create_Excel_WorkSheet(worksheet, StyleList, sqlWB & sqlSB & sql0)
+                    XLS_CREATED = True
+                End If
+            Next
+        Else
+            ''If dst.Tables("SOTCUSTS").Select(Mid(sqlWB & sql0, 6)).Length > 0 Then
+            ''    Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+            ''    worksheet.Name = "Style Info"
+            ''    Create_Excel_WorkSheet(worksheet, StyleList, sqlWB & sql0)
+            ''    XLS_CREATED = True
+            ''End If
+        End If
+
+        If XLS_CREATED Then
+            Dim XLS_FILENAME As String = ""
+            Dim success As Boolean = False
+
+            ASCMAIN1.Progress("Now Saving Workbook")
+
+            Do Until success
+                Try
+                    XLS_NO += 1
+                    ' XLS_FILENAME = Absx1.txtFor("QUOTE_NO").Text
+                    XLS_FILENAME = "ShipReport"
+
+                    If SALES_DIVISION_CODE <> "" Then
+                        XLS_FILENAME &= "-" & SALES_DIVISION_CODE
+                    End If
+                    XLS_FILENAME &= "-" & Format(XLS_NO, "000") & exlExt
+                    workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                    'workbook.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                    RetVal = XLS_FILENAME
+                    success = True
+                Catch ex As Exception
+
+                End Try
+            Loop
+
+            Show_Document(ASCMAIN1.Folders("Temp") & XLS_FILENAME)
+        End If
+
+        ASCMAIN1.Progress("")
+        Return RetVal
+    End Function
 
 #End Region
 
@@ -1672,7 +2059,7 @@ Public Class SORCUSTS
                 Ftp1.User = FTPUser
                 Ftp1.Password = FTPPassword
                 Ftp1.RemoteHost = FTPHost
-
+                '               Ftp1.Logoff()
                 Ftp1.Logon()
 
                 Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary

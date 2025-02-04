@@ -3777,21 +3777,21 @@ End Class
 
 <Serializable()>
 Public Class ARTCUSTQ_L
-    Public Property CUST_CODE() As String
-    Public Property CUST_ADDR_CODE() As String
-    Public Property LAST_DATE() As Date
-    Public Property LAST_OPER() As String
-    Public Property LAST_ORDR_NO() As String
-    Public Property RESIDENTIAL_ORDR() As String
-    Public Property INSIDE_REQ() As String
-    Public Property GATE_LIFT_REQ() As String
-    Public Property LIMITED_ACCESS() As String
-    Public Property LIMITED_ACCESS_NOTE() As String
-    Public Property IRREGULAR_HOURS() As String
-    Public Property IRREGULAR_HOURS_NOTE() As String
-    Public Property APPOINTMENT_REQUIRED() As String
-    Public Property APPOINTMENT_REQUIRED_NOTE() As String
-    Public Property BROKER() As String
-    Public Property BROKER_NOTE() As String
+    Public Property CUST_CODE As String
+    Public Property CUST_ADDR_CODE As String
+    Public Property LAST_DATE As Date
+    Public Property LAST_OPER As String
+    Public Property LAST_ORDR_NO As String
+    Public Property RESIDENTIAL_ORDR As String
+    Public Property INSIDE_REQ As String
+    Public Property GATE_LIFT_REQ As String
+    Public Property LIMITED_ACCESS As String
+    Public Property LIMITED_ACCESS_NOTE As String
+    Public Property IRREGULAR_HOURS As String
+    Public Property IRREGULAR_HOURS_NOTE As String
+    Public Property APPOINTMENT_REQUIRED As String
+    Public Property APPOINTMENT_REQUIRED_NOTE As String
+    Public Property BROKER As String
+    Public Property BROKER_NOTE As String
 
 End Class

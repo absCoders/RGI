@@ -102,6 +102,7 @@ Partial Class SORCUSTS
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.chkShipDates = New ABSCS.ABSCheckBox()
         Me.chkAveragePrice = New ABSCS.ABSCheckBox()
@@ -111,12 +112,12 @@ Partial Class SORCUSTS
         Me.dteShip_End = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.chkWebLinks = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chk1Sheet = New ABSCS.ABSCheckBox()
         Me.txtCUST_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optASN = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraTabControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -159,6 +160,7 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpShip1.SuspendLayout()
@@ -168,13 +170,13 @@ Partial Class SORCUSTS
         CType(Me.chkWebLinks, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl2.SuspendLayout()
-        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -619,6 +621,17 @@ Partial Class SORCUSTS
         Me.SplitContainer8.SplitterDistance = 117
         Me.SplitContainer8.TabIndex = 265
         '
+        'chkStyleStats
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
+        Me.chkStyleStats.CausesValidation = False
+        Me.chkStyleStats.Location = New System.Drawing.Point(762, 78)
+        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkStyleStats.Name = "chkStyleStats"
+        Me.chkStyleStats.Size = New System.Drawing.Size(348, 22)
+        Me.chkStyleStats.TabIndex = 275
+        Me.chkStyleStats.Text = "Show On Hand/In-Transit Details"
+        '
         'Label1
         '
         Me.Label1.AutoSize = True
@@ -718,6 +731,7 @@ Partial Class SORCUSTS
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.chk1Sheet)
         Me.UltraGroupBox3.Controls.Add(Me.txtCUST_CODE)
         Me.UltraGroupBox3.Location = New System.Drawing.Point(228, 8)
         Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
@@ -725,6 +739,17 @@ Partial Class SORCUSTS
         Me.UltraGroupBox3.Size = New System.Drawing.Size(208, 105)
         Me.UltraGroupBox3.TabIndex = 267
         Me.UltraGroupBox3.Text = "Selected Customer"
+        '
+        'chk1Sheet
+        '
+        Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
+        Me.chk1Sheet.CausesValidation = False
+        Me.chk1Sheet.Location = New System.Drawing.Point(7, 77)
+        Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chk1Sheet.Name = "chk1Sheet"
+        Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
+        Me.chk1Sheet.TabIndex = 276
+        Me.chk1Sheet.Text = "1 Sheet/Div"
         '
         'txtCUST_CODE
         '
@@ -790,17 +815,6 @@ Partial Class SORCUSTS
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1017, 249)
         '
-        'chkStyleStats
-        '
-        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
-        Me.chkStyleStats.CausesValidation = False
-        Me.chkStyleStats.Location = New System.Drawing.Point(762, 78)
-        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.chkStyleStats.Name = "chkStyleStats"
-        Me.chkStyleStats.Size = New System.Drawing.Size(348, 22)
-        Me.chkStyleStats.TabIndex = 275
-        Me.chkStyleStats.Text = "Show In-Transit Details"
-        '
         'SORCUSTS
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -852,6 +866,7 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpShip1.ResumeLayout(False)
@@ -863,13 +878,13 @@ Partial Class SORCUSTS
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.UltraGroupBox3.PerformLayout()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtCUST_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         CType(Me.optASN, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl2.ResumeLayout(False)
-        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -896,4 +911,5 @@ Partial Class SORCUSTS
     Friend WithEvents chkAveragePrice As ABSCS.ABSCheckBox
     Friend WithEvents Label1 As Label
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
 End Class
