@@ -2396,7 +2396,7 @@ Public Class SORCUSTQ
                 Try
                     XLS_NO += 1
                     ' XLS_FILENAME = Absx1.txtFor("QUOTE_NO").Text
-                    XLS_FILENAME = "ShipReport"
+                    XLS_FILENAME = "OpenOrderReport"
 
                     If SALES_DIVISION_CODE <> "" Then
                         XLS_FILENAME &= "-" & SALES_DIVISION_CODE
