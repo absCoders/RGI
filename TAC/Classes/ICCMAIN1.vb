@@ -3279,7 +3279,14 @@ Public Class ICCMAIN1
         End If
 
         STYLE_PRICE = Math.Round(STYLE_PRICE, 1)
-        Return STYLE_PRICE
+
+        ASCMAIN1.sql = "Select * from ICTPARM1 where IC_PARM_KEY = 'Z'"
+        Dim rowICTPARM1 As DataRow = ASCDATA1.GetDataRow
+        Dim TARIFF_OFFSET_PCT As Double = Val(rowICTPARM1.Item("TARIFF_OFFSET_PCT") & "")
+        Dim trumpTax_amt As Double = STYLE_PRICE * (TARIFF_OFFSET_PCT / 100)
+
+
+        Return Math.Round(STYLE_PRICE + trumpTax_amt, 1)
 
 
     End Function
