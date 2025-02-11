@@ -1940,7 +1940,6 @@ Partial Class POFSHIP1
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem16, UltraExplorerBarItem2, UltraExplorerBarItem7, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem12, UltraExplorerBarItem6, UltraExplorerBarItem14, UltraExplorerBarItem15, UltraExplorerBarItem11, UltraExplorerBarItem13, UltraExplorerBarItem17})
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
-        UltraExplorerBarGroup3.Expanded = False
         UltraExplorerBarGroup3.Settings.ContainerHeight = 195
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "BOL Data"
@@ -2092,11 +2091,10 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpShipment)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 57)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 195)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpShipment
         '
@@ -2140,6 +2138,7 @@ Partial Class POFSHIP1
         '
         Me.numPlusDuty.AlwaysInEditMode = True
         Me.numPlusDuty.Location = New System.Drawing.Point(63, 157)
+        Me.numPlusDuty.MaskInput = "nn.nn"
         Me.numPlusDuty.MaxValue = 99.99R
         Me.numPlusDuty.MinValue = 0R
         Me.numPlusDuty.Name = "numPlusDuty"
@@ -2147,7 +2146,7 @@ Partial Class POFSHIP1
         Me.numPlusDuty.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.numPlusDuty.Size = New System.Drawing.Size(60, 25)
         Me.numPlusDuty.TabIndex = 143
-        Me.numPlusDuty.Value = 15.0R
+        Me.numPlusDuty.Value = 7.5R
         Me.numPlusDuty.Visible = False
         '
         'optCOST_FRT_METHOD
@@ -2316,7 +2315,7 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, -53)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 446)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 145)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
@@ -2382,10 +2381,11 @@ Partial Class POFSHIP1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 136)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 50)
         Me.UltraExplorerBarContainerControl1.TabIndex = 4
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'UltraGroupBox3
         '

@@ -2306,8 +2306,9 @@ Public Class WBFCUST1
                 EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
             Else
                 EMAIL_ADDRESSs.Add(SREP_EMAIL, SREP_NAME)
-                If Now <= DateSerial(2025, 2, 15) Then
+                If Now() <= DateSerial(2025, 2, 28) Then
                     EMAIL_ADDRESSs.Add("danielle@regency-rib.com", "Danielle Rouse")
+                    EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
                 End If
             End If
             If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
@@ -2316,7 +2317,9 @@ Public Class WBFCUST1
                        (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                         TO_SUBJECT, TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, TO_SUBJECT, HTMLBody)
         Catch ex As Exception
-            'MsgBox("Error Trying to Generate Document" & vbCrLf & ex.Message)
+            With New WBCMAIN1
+                .SendWebError("SendEMailSrep Error", $"Exception: {ex.Message} | Inner: {ex.InnerException}")
+            End With
         End Try
         Return ""
     End Function
@@ -2842,6 +2845,7 @@ Public Class WBFCUST1
     Private Sub SendSrepNotification()
         For Each rowWBTCUST1 As DataRow In dst.Tables("WBTCUST1").Select("STATUS = 'U' AND SREP_NOTIFY = '1'")
             Dim CUST_CODE_ACTUAL As String = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
+            Dim EMAIL As String = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
             Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE_ACTUAL)
             Dim rowSOTSREP1 As DataRow = Nothing
             If Not IsNothing(rowARTCUST1) Then
@@ -2851,8 +2855,15 @@ Public Class WBFCUST1
                     If (rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty).Length > 0 Then
                         SendEMailSrep(rowWBTCUST1, rowARTCUST1, rowSOTSREP1)
                     End If
-
+                Else
+                    With New WBCMAIN1
+                        .SendWebError("SendSrepNotification Error", $"Could not find SPRE_CODE: {SREP_CODE}")
+                    End With
                 End If
+            Else
+                With New WBCMAIN1
+                    .SendWebError("SendSrepNotification Error", $"Could not find CUST_CODE_ACTUAL: {CUST_CODE_ACTUAL} For Web Customer {EMAIL}")
+                End With
             End If
         Next
     End Sub
