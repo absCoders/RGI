@@ -419,14 +419,26 @@ Public Class ICFTHEM1
 
         Select Case e.Tool.Key
             Case "Assign to Theme"
+                Dim themeCountToUpdate As Integer = 0
                 For Each grow As UltraWinGrid.UltraGridRow In grdICTSTYC1.Selected.Rows
-                    grow.Cells("THEME_DESC_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_DESC").Value
-                    grow.Cells("SEASON_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("SEASON_CODE").Value
-                    grow.Cells("THEME_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_CODE").Value
-                    grow.Update()
+                    If Not grow.IsFilteredOut Then
+                        themeCountToUpdate += 1
+                    End If
                 Next
-                grdICTSTYC1.Selected.Rows.Clear()
-                Autosave_Work()
+                If themeCountToUpdate > 0 Then
+                    Dim iResult As MsgBoxResult = MsgBox($"You are about to modify {themeCountToUpdate} records.", vbYesNo, "OK to Proceed?")
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTSTYC1.Selected.Rows
+                        If Not grow.IsFilteredOut Then
+                            grow.Cells("THEME_DESC_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_DESC").Value
+                            grow.Cells("SEASON_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("SEASON_CODE").Value
+                            grow.Cells("THEME_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_CODE").Value
+                            grow.Update()
+                        End If
+                    Next
+                    grdICTSTYC1.Selected.Rows.Clear()
+                    Autosave_Work()
+                End If
+
 
             Case "Show Active - No Theme"
                 incActiveUnassigned = Not incActiveUnassigned
