@@ -590,6 +590,7 @@ Public Class POFSHIP1
                 For Each rowPOTCATG1 As DataRow In ASCDATA1.GetDataTable.Select("", "COST_CATGY_CODE")
                     sqlstuff = sqlstuff & ",SUM(DECODE (POTLCST1.COST_CATGY_CODE, '" & rowPOTCATG1.Item("COST_CATGY_CODE") & "' , NVL(POTLCST2.COST_ACT_PO,0))) AS " & rowPOTCATG1.Item("COST_CATGY_CODE") & vbCrLf
                 Next
+                sqlstuff = Replace(sqlstuff, "AS THC/ORC", "AS THCORC")
 
                 ASCMAIN1.sql = "SELECT POTSHIP1.PO_SHIPMENT_NO" & vbCrLf _
                 & sqlstuff _
