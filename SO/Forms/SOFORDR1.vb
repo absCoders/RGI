@@ -1604,7 +1604,7 @@ Public Class SOFORDR1
 
                 End If
 
-            Case "Update"
+            Case "Update", "Save"
 
                 Dim TERM_TYPE As String = String.Empty
 
@@ -2636,7 +2636,18 @@ Public Class SOFORDR1
                 Else
                     Mode_Settings(False)
                 End If
-
+            Case "Save"
+                If EntryMode = "M" Or multiple_order_maintenance Then
+                    Update_Record_multiple_order_group()
+                Else
+                    Update_Record()
+                End If
+                Dim ORDR_NO_now As String = ORDR_NO
+                Mode_Settings(False)
+                'Allocate_Order(ORDR_NO_now)
+                Absx1.txtFor("ORDR_NO").Text = ORDR_NO_now
+                Click_Command("Edit")
+                tabMain.SelectedTab = tabMain.Tabs("Line Items")
             Case "Delete"
                 'Delete_Record()
                 Delete_Order()
@@ -2919,8 +2930,18 @@ Public Class SOFORDR1
                 End If
 
                 .Items("Update").Settings.Enabled = iScreenMode
+                If ASCMAIN1.DBS_COMPANY = "RGI" Then
+                    .Items("Save").Settings.Enabled = iScreenMode
+                Else
+                    .Items("Save").Settings.Enabled = DefaultableBoolean.False
+                    .Items("Save").Visible = False
+                End If
                 If disable_update Then
                     .Items("Update").Settings.Enabled = DefaultableBoolean.False
+                    .Items("Save").Settings.Enabled = DefaultableBoolean.False
+                    If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+                        .Items("Save").Visible = False
+                    End If
                 End If
                 .Items("Delete").Settings.Enabled = iScreenMode
                 .Items("Cancel").Settings.Enabled = iScreenMode
@@ -2942,6 +2963,12 @@ Public Class SOFORDR1
                 .Items("Pro-Forma").Visible = (EntryMode = "V" And ScreenMode) Or InquiryMode
 
                 .Items("Update").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
+                If ASCMAIN1.DBS_COMPANY = "RGI" Then
+                    .Items("Save").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
+                Else
+                    .Items("Save").Visible = False
+                End If
+
                 .Items("Delete").Visible = (EntryMode = "E") And Not InquiryMode AndAlso (rowSOTORDR1.Item("ORDR_TYPE_CODE") & "" <> "BTB")
                 .Items("Cancel").Visible = (Not (EntryMode = "V") Or Not ScreenMode) And Not InquiryMode
 
