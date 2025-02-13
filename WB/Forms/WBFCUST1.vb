@@ -2541,6 +2541,7 @@ Public Class WBFCUST1
             Dim WEB_CUST_BATCH As String = ASCMAIN1.Next_Control_No("WBTCUST2.WEB_CUST_BATCH")
             Dim BATCHDATE As Date = Now()
             Dim BATCH_LNO As Int64 = 0
+            Dim INVALID_EMAILS As New StringBuilder
             Using MyReader As New FileIO.TextFieldParser(localFile)
                 MyReader.TextFieldType = FileIO.FieldType.Delimited
                 MyReader.SetDelimiters(",")
@@ -2564,103 +2565,112 @@ Public Class WBFCUST1
                         If currentRow(4).ToString & String.Empty = "" Then
                             emptyCount += 1
                         Else
-                            BATCH_LNO += 1
-                            Dim FILTER As String = String.Format("EMAIL = '{0}'", currentRow(4).ToString.ToUpper & String.Empty)
-                            Dim rowWBTCUST1 As DataRow = dst.Tables.Item("WBTCUST1").Select(FILTER).FirstOrDefault
-                            Dim newWBTCUST2 As DataRow = dst.Tables.Item("WBTCUST2").NewRow
-                            newWBTCUST2.Item("WEB_CUST_BATCH") = WEB_CUST_BATCH
-                            newWBTCUST2.Item("BATCHDATE") = BATCHDATE
-                            newWBTCUST2.Item("BATCH_LNO") = BATCH_LNO
-                            newWBTCUST2.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty
-                            If Not IsNothing(rowWBTCUST1) Then
-                                Dim fltr As String = $"EMAIL = '{currentRow(4).ToString.ToUpper & String.Empty}'"
-                                If dst.Tables.Item("WBTCUSTE").Select(fltr).Count = 0 Then
-                                    Dim newWBTCUSTE As DataRow = dst.Tables.Item("WBTCUSTE").NewRow
-                                    newWBTCUSTE.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty
-                                    dst.Tables.Item("WBTCUSTE").Rows.Add(newWBTCUSTE)
-                                End If
-                                For Each CM As CustMap In cMap
-                                    Select Case CM.FILE_INDEX
-                                        Case 4
-                                            'No Need to Store this was the match
-                                        Case 5
-                                            'We Only take the passwords when new.
-                                        Case 13
-                                            'No Need to to re-record Regency Acct.  It May be blank this time around.
-                                        Case 26 'COMMENTS
-                                            Dim CMTS As String = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                            If CMTS.Length > 2500 Then
-                                                CMTS = CMTS.Substring(0, 2499)
-                                            End If
-                                            newWBTCUST2.Item(CM.ABS_COL_NAME) = CMTS
-                                        Case Else
-                                            If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
-                                                newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                            End If
-                                    End Select
-                                Next
-                                newWBTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-                                newWBTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                                dst.Tables.Item("WBTCUST2").Rows.Add(newWBTCUST2)
+                            Dim invalidChars As Char() = {" ", ":", ";", "/", "\", "'", """", "(", ")", "[", "]", "{", "}", "<", ">", ",", "*", "&", "^", "%", "$", "#", "!", "?"}
+                            Dim CURR_EMAIL As String = String.Format("EMAIL = '{0}'", currentRow(4).ToString.ToUpper & String.Empty)
+                            If invalidChars.Any(Function(ch) CURR_EMAIL.Contains(ch)) Then
+                                INVALID_EMAILS.AppendLine(CURR_EMAIL)
                             Else
-                                Dim newWBTCUST1 As DataRow = dst.Tables.Item("WBTCUST1").NewRow
+                                BATCH_LNO += 1
+                                Dim FILTER As String = String.Format("EMAIL = '{0}'", CURR_EMAIL)
+                                Dim rowWBTCUST1 As DataRow = dst.Tables.Item("WBTCUST1").Select(FILTER).FirstOrDefault
+                                Dim newWBTCUST2 As DataRow = dst.Tables.Item("WBTCUST2").NewRow
+                                newWBTCUST2.Item("WEB_CUST_BATCH") = WEB_CUST_BATCH
+                                newWBTCUST2.Item("BATCHDATE") = BATCHDATE
+                                newWBTCUST2.Item("BATCH_LNO") = BATCH_LNO
+                                newWBTCUST2.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty
+                                If Not IsNothing(rowWBTCUST1) Then
+                                    Dim fltr As String = $"EMAIL = '{CURR_EMAIL}'"
+                                    If dst.Tables.Item("WBTCUSTE").Select(fltr).Count = 0 Then
+                                        Dim newWBTCUSTE As DataRow = dst.Tables.Item("WBTCUSTE").NewRow
+                                        newWBTCUSTE.Item("EMAIL") = CURR_EMAIL
+                                        dst.Tables.Item("WBTCUSTE").Rows.Add(newWBTCUSTE)
+                                    End If
+                                    For Each CM As CustMap In cMap
+                                        Select Case CM.FILE_INDEX
+                                            Case 4
+                                            'No Need to Store this was the match
+                                            Case 5
+                                            'We Only take the passwords when new.
+                                            Case 13
+                                            'No Need to to re-record Regency Acct.  It May be blank this time around.
+                                            Case 26 'COMMENTS
+                                                Dim CMTS As String = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                If CMTS.Length > 2500 Then
+                                                    CMTS = CMTS.Substring(0, 2499)
+                                                End If
+                                                newWBTCUST2.Item(CM.ABS_COL_NAME) = CMTS
+                                            Case Else
+                                                If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
+                                                    newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                End If
+                                        End Select
+                                    Next
+                                    newWBTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                                    newWBTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                    dst.Tables.Item("WBTCUST2").Rows.Add(newWBTCUST2)
+                                Else
+                                    Dim newWBTCUST1 As DataRow = dst.Tables.Item("WBTCUST1").NewRow
 
-                                For Each CM As CustMap In cMap
-                                    Select Case CM.FILE_INDEX
-                                        Case 2
-                                            If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
-                                                newWBTCUST1.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                                newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                            End If
-                                            newWBTCUST1.Item("FULLNAME") = currentRow(1).ToString & String.Empty & " " & currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                            newWBTCUST2.Item("FULLNAME") = currentRow(1).ToString & String.Empty & " " & currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                        Case 5
-                                            If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
-                                                Dim newWBTCUST9 As DataRow = dst.Tables.Item("WBTCUST9").NewRow
-                                                newWBTCUST9.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty 'Started Storing Passwords Per Mario 2/15/19
-                                                'newWBTCUST9.Item("PASSWORD") = currentRow(5).ToString & String.Empty 'Started Storing Passwords Per Mario 2/15/19
-                                                newWBTCUST9.Item("PSWDE") = psEncrypt(currentRow(CM.FILE_INDEX).ToString & String.Empty, EncryptType.Encrypt)
-                                                dst.Tables.Item("WBTCUST9").Rows.Add(newWBTCUST9)
-                                            End If
-                                        Case 26 'COMMENTS
-                                            Dim CMTS As String = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                            If CMTS.Length > 2500 Then
-                                                CMTS = CMTS.Substring(0, 2499)
-                                            End If
-                                            newWBTCUST1.Item(CM.ABS_COL_NAME) = CMTS
-                                            newWBTCUST2.Item(CM.ABS_COL_NAME) = CMTS
-                                        Case Else
-                                            If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
-                                                newWBTCUST1.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                                newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
-                                            End If
-                                    End Select
-                                Next
-                                newWBTCUST1.Item("DATEREGISTERED") = Now + ASCMAIN1.NowTSD
-                                newWBTCUST2.Item("DATEREGISTERED") = Now + ASCMAIN1.NowTSD
+                                    For Each CM As CustMap In cMap
+                                        Select Case CM.FILE_INDEX
+                                            Case 2
+                                                If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
+                                                    newWBTCUST1.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                    newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                End If
+                                                newWBTCUST1.Item("FULLNAME") = currentRow(1).ToString & String.Empty & " " & currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                newWBTCUST2.Item("FULLNAME") = currentRow(1).ToString & String.Empty & " " & currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                            Case 5
+                                                If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
+                                                    Dim newWBTCUST9 As DataRow = dst.Tables.Item("WBTCUST9").NewRow
+                                                    newWBTCUST9.Item("EMAIL") = currentRow(4).ToString.ToUpper & String.Empty 'Started Storing Passwords Per Mario 2/15/19
+                                                    'newWBTCUST9.Item("PASSWORD") = currentRow(5).ToString & String.Empty 'Started Storing Passwords Per Mario 2/15/19
+                                                    newWBTCUST9.Item("PSWDE") = psEncrypt(currentRow(CM.FILE_INDEX).ToString & String.Empty, EncryptType.Encrypt)
+                                                    dst.Tables.Item("WBTCUST9").Rows.Add(newWBTCUST9)
+                                                End If
+                                            Case 26 'COMMENTS
+                                                Dim CMTS As String = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                If CMTS.Length > 2500 Then
+                                                    CMTS = CMTS.Substring(0, 2499)
+                                                End If
+                                                newWBTCUST1.Item(CM.ABS_COL_NAME) = CMTS
+                                                newWBTCUST2.Item(CM.ABS_COL_NAME) = CMTS
+                                            Case Else
+                                                If currentRow(CM.FILE_INDEX).ToString & String.Empty <> "" Then
+                                                    newWBTCUST1.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                    newWBTCUST2.Item(CM.ABS_COL_NAME) = currentRow(CM.FILE_INDEX).ToString & String.Empty
+                                                End If
+                                        End Select
+                                    Next
+                                    newWBTCUST1.Item("DATEREGISTERED") = Now + ASCMAIN1.NowTSD
+                                    newWBTCUST2.Item("DATEREGISTERED") = Now + ASCMAIN1.NowTSD
 
-                                newWBTCUST1.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                                newWBTCUST2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                                    newWBTCUST1.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                                    newWBTCUST2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
 
-                                newWBTCUST1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                newWBTCUST2.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                    newWBTCUST1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                                    newWBTCUST2.Item("INIT_OPER") = ASCMAIN1.USER_ID
 
-                                newWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-                                newWBTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                                    newWBTCUST1.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
+                                    newWBTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
 
-                                newWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                                newWBTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                    newWBTCUST1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                    newWBTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
 
-                                newWBTCUST1.Item("STATUS") = "N"
-                                newWBTCUST2.Item("STATUS") = "N"
+                                    newWBTCUST1.Item("STATUS") = "N"
+                                    newWBTCUST2.Item("STATUS") = "N"
 
-                                dst.Tables.Item("WBTCUST1").Rows.Add(newWBTCUST1)
-                                dst.Tables.Item("WBTCUST2").Rows.Add(newWBTCUST2)
+                                    dst.Tables.Item("WBTCUST1").Rows.Add(newWBTCUST1)
+                                    dst.Tables.Item("WBTCUST2").Rows.Add(newWBTCUST2)
+                                End If
                             End If
                         End If
                     End If
                 End While
             End Using
+            If INVALID_EMAILS.Length > 0 Then
+                MsgBox(INVALID_EMAILS.ToString, vbOKOnly, "Invalid Emails Found And Skipped")
+            End If
         Catch ex As Exception
             errMsg.AppendLine(ex.Message.ToString)
         End Try
@@ -2797,6 +2807,9 @@ Public Class WBFCUST1
 
         If ErrMsg.Length = 0 Then
             If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            If ErrMsg.Length = 0 Then
+                SendSrepNotification()
+            End If
             WebCustOutboundCreate(ErrMsg, LocalFile, RefreshAll)
             uploadShipTos()
         End If
@@ -2804,9 +2817,6 @@ Public Class WBFCUST1
         If ErrMsg.Length = 0 Then
             If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
             WebCustOutboundSend(ErrMsg, LocalFile)
-            If ErrMsg.Length = 0 Then
-                SendSrepNotification()
-            End If
         End If
 
         If ErrMsg.Length = 0 Then
@@ -2843,27 +2853,30 @@ Public Class WBFCUST1
     End Function
 
     Private Sub SendSrepNotification()
-        For Each rowWBTCUST1 As DataRow In dst.Tables("WBTCUST1").Select("STATUS = 'U' AND SREP_NOTIFY = '1'")
+        For Each rowWBTCUST1 As DataRow In dst.Tables("WBTCUST1").Select("STATUS = 'U'")
             Dim CUST_CODE_ACTUAL As String = rowWBTCUST1.Item("CUST_CODE_ACTUAL").ToString & String.Empty
-            Dim EMAIL As String = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
-            Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE_ACTUAL)
-            Dim rowSOTSREP1 As DataRow = Nothing
-            If Not IsNothing(rowARTCUST1) Then
-                Dim SREP_CODE As String = rowARTCUST1.Item("SREP_CODE").ToString & String.Empty
-                rowSOTSREP1 = LookUp("SOTSREP1", SREP_CODE)
-                If Not IsNothing(rowSOTSREP1) Then
-                    If (rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty).Length > 0 Then
-                        SendEMailSrep(rowWBTCUST1, rowARTCUST1, rowSOTSREP1)
+            Dim SREP_NOTIFY As String = rowWBTCUST1.Item("SREP_NOTIFY").ToString & String.Empty
+            If SREP_NOTIFY = "1" Then
+                Dim EMAIL As String = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
+                Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE_ACTUAL)
+                Dim rowSOTSREP1 As DataRow = Nothing
+                If Not IsNothing(rowARTCUST1) Then
+                    Dim SREP_CODE As String = rowARTCUST1.Item("SREP_CODE").ToString & String.Empty
+                    rowSOTSREP1 = LookUp("SOTSREP1", SREP_CODE)
+                    If Not IsNothing(rowSOTSREP1) Then
+                        If (rowSOTSREP1.Item("SREP_EMAIL").ToString & String.Empty).Length > 0 Then
+                            SendEMailSrep(rowWBTCUST1, rowARTCUST1, rowSOTSREP1)
+                        End If
+                    Else
+                        With New WBCMAIN1
+                            .SendWebError("SendSrepNotification Error", $"Could not find SPRE_CODE: {SREP_CODE}")
+                        End With
                     End If
                 Else
                     With New WBCMAIN1
-                        .SendWebError("SendSrepNotification Error", $"Could not find SPRE_CODE: {SREP_CODE}")
+                        .SendWebError("SendSrepNotification Error", $"Could not find CUST_CODE_ACTUAL: {CUST_CODE_ACTUAL} For Web Customer {EMAIL}")
                     End With
                 End If
-            Else
-                With New WBCMAIN1
-                    .SendWebError("SendSrepNotification Error", $"Could not find CUST_CODE_ACTUAL: {CUST_CODE_ACTUAL} For Web Customer {EMAIL}")
-                End With
             End If
         Next
     End Sub
