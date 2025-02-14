@@ -251,16 +251,18 @@ Public Class ICFTHEM1
         For Each rowICTSTYT1 As DataRow In dst.Tables("ICTSTYT1").Select("")
             Dim STYLE_CODE As String = rowICTSTYT1.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowICTSTYT1.Item("COLOR_CODE")
-            Dim THEME_CODE As String = rowICTSTYT1.Item("THEME_CODE")
+            Dim THEME_CODE As String = rowICTSTYT1.Item("THEME_CODE") & ""
             Dim rowICTSTYC1s() As DataRow = dst.Tables("ICTSTYC1").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
             If rowICTSTYC1s.Length = 1 Then
-                rowICTSTYC1s(0).Item("THEME_CODE_NEW") = rowICTSTYT1.Item("THEME_CODE")
-                ASCMAIN1.Progress("Loading saved work for: " & STYLE_CODE & ":" & COLOR_CODE, rowICTSTYC1s(0).Item("THEME_CODE_NEW"))
-                Dim rowICTTHEMEs() As DataRow = dst.Tables("ICTTHEME").Select("THEME_CODE = '" & THEME_CODE & "'")
-                Dim rowICTTHEME As DataRow = LookUp("ICTTHEME", THEME_CODE)
-                If rowICTTHEME IsNot Nothing Then
-                    rowICTSTYC1s(0).Item("THEME_DESC_NEW") = rowICTTHEME.Item("THEME_DESC")
-                    rowICTSTYC1s(0).Item("SEASON_CODE_NEW") = rowICTTHEME.Item("SEASON_CODE")
+                If THEME_CODE <> "" Then
+                    rowICTSTYC1s(0).Item("THEME_CODE_NEW") = THEME_CODE
+                    ASCMAIN1.Progress("Loading saved work for: " & STYLE_CODE & ":" & COLOR_CODE, THEME_CODE)
+                    Dim rowICTTHEMEs() As DataRow = dst.Tables("ICTTHEME").Select("THEME_CODE = '" & THEME_CODE & "'")
+                    Dim rowICTTHEME As DataRow = LookUp("ICTTHEME", THEME_CODE)
+                    If rowICTTHEME IsNot Nothing Then
+                        rowICTSTYC1s(0).Item("THEME_DESC_NEW") = rowICTTHEME.Item("THEME_DESC")
+                        rowICTSTYC1s(0).Item("SEASON_CODE_NEW") = rowICTTHEME.Item("SEASON_CODE")
+                    End If
                 End If
             End If
         Next
@@ -419,14 +421,26 @@ Public Class ICFTHEM1
 
         Select Case e.Tool.Key
             Case "Assign to Theme"
+                Dim themeCountToUpdate As Integer = 0
                 For Each grow As UltraWinGrid.UltraGridRow In grdICTSTYC1.Selected.Rows
-                    grow.Cells("THEME_DESC_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_DESC").Value
-                    grow.Cells("SEASON_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("SEASON_CODE").Value
-                    grow.Cells("THEME_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_CODE").Value
-                    grow.Update()
+                    If Not grow.IsFilteredOut Then
+                        themeCountToUpdate += 1
+                    End If
                 Next
-                grdICTSTYC1.Selected.Rows.Clear()
-                Autosave_Work()
+                If themeCountToUpdate > 0 Then
+                    Dim iResult As MsgBoxResult = MsgBox($"You are about to modify {themeCountToUpdate} records.", vbYesNo, "OK to Proceed?")
+                    For Each grow As UltraWinGrid.UltraGridRow In grdICTSTYC1.Selected.Rows
+                        If Not grow.IsFilteredOut Then
+                            grow.Cells("THEME_DESC_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_DESC").Value
+                            grow.Cells("SEASON_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("SEASON_CODE").Value
+                            grow.Cells("THEME_CODE_NEW").Value = grdICTTHEME.ActiveRow.Cells("THEME_CODE").Value
+                            grow.Update()
+                        End If
+                    Next
+                    grdICTSTYC1.Selected.Rows.Clear()
+                    Autosave_Work()
+                End If
+
 
             Case "Show Active - No Theme"
                 incActiveUnassigned = Not incActiveUnassigned

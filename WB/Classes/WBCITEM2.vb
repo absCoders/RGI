@@ -1124,22 +1124,22 @@ Public Class WBCITEM2
         Return retVal
     End Function
 
-    Private Function GetImageName(ByVal STYLE_CODE As Object, ByVal COLOR_CODE As String) As String
-        Dim RetVal As String = String.Format("{0}-{1}.jpg", STYLE_CODE, COLOR_CODE)
-        Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & RetVal)
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
-        Dim resptest As System.Net.WebResponse
-        Dim ErrorsFound As Boolean = False
-        req.Timeout = 3000
-        Try
-            resptest = req.GetResponse()
-        Catch ex As Exception
-            ErrorsFound = True
-            RetVal = ""
-            req = Nothing
-        End Try
-        Return RetVal
-    End Function
+    'Private Function GetImageName(ByVal STYLE_CODE As Object, ByVal COLOR_CODE As String) As String
+    '    Dim RetVal As String = String.Format("{0}-{1}.jpg", STYLE_CODE, COLOR_CODE)
+    '    Dim url As New System.Uri("http://api.regency-rib.com:8181/images/product/" & RetVal)
+    '    Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+    '    Dim resptest As System.Net.WebResponse
+    '    Dim ErrorsFound As Boolean = False
+    '    req.Timeout = 3000
+    '    Try
+    '        resptest = req.GetResponse()
+    '    Catch ex As Exception
+    '        ErrorsFound = True
+    '        RetVal = ""
+    '        req = Nothing
+    '    End Try
+    '    Return RetVal
+    'End Function
 
     Private Function GetMinimumQuantity(ByVal STYLE_CODE As String) As Int16
         Dim MinimumQuantity As Int16 = 0

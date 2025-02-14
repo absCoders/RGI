@@ -839,4 +839,14 @@
         aCheckBoxOnHeader_CreationFilter.ColumnNames = columnList
         grd.CreationFilter = aCheckBoxOnHeader_CreationFilter
     End Sub
+
+    Public Sub SendWebError(ByVal TO_SUBJECT As String, ByVal HTMLBody As String)
+        Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+        Dim ATTACHMENTs As New Dictionary(Of String, String)
+        Dim TEMPLATE_NAME As String = "CREDIT"
+        EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+        Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                        TO_SUBJECT, TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, TO_SUBJECT, HTMLBody)
+    End Sub
 End Class

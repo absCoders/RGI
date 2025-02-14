@@ -590,6 +590,7 @@ Public Class POFSHIP1
                 For Each rowPOTCATG1 As DataRow In ASCDATA1.GetDataTable.Select("", "COST_CATGY_CODE")
                     sqlstuff = sqlstuff & ",SUM(DECODE (POTLCST1.COST_CATGY_CODE, '" & rowPOTCATG1.Item("COST_CATGY_CODE") & "' , NVL(POTLCST2.COST_ACT_PO,0))) AS " & rowPOTCATG1.Item("COST_CATGY_CODE") & vbCrLf
                 Next
+                sqlstuff = Replace(sqlstuff, "AS THC/ORC", "AS THCORC")
 
                 ASCMAIN1.sql = "SELECT POTSHIP1.PO_SHIPMENT_NO" & vbCrLf _
                 & sqlstuff _
@@ -2382,22 +2383,47 @@ Public Class POFSHIP1
                                     & vbCrLf & "    the CGS of sales reported in prior periods may be altered" & vbCrLf
                             End If
                             'If rowPOTSHIP1.Item("COST_COMPLETE_OPS_YYYYPP") = ASCMAIN1.CYP Then
-                            If MsgBox(EMsg & warning & vbCrLf & vbCrLf & "Would you like to Re-Open this Shipment for Costing?", MsgBoxStyle.YesNo, "Option to Re-Open Shipment for Further Costing") = MsgBoxResult.Yes Then
-                                ASCMAIN1.sql = "Update POTSHIP1 Set COST_COMPLETE = NULL" _
+                            If ASCMAIN1.CLIENT = "VAN" Then
+                                If (ASCMAIN1.USER_ID = "anna" Or ASCMAIN1.USER_ID = "upatel" Or ASCMAIN1.USER_ID = "erodriguez" Or ASCMAIN1.USER_ID = "dgj") Then
+
+                                    If MsgBox(EMsg & warning & vbCrLf & vbCrLf & "Would you like to Re-Open this Shipment for Costing?", MsgBoxStyle.YesNo, "Option to Re-Open Shipment for Further Costing") = MsgBoxResult.Yes Then
+                                        ASCMAIN1.sql = "Update POTSHIP1 Set COST_COMPLETE = NULL" _
+                                                & ", COST_COMPLETE_INIT_DATE = NULL" _
+                                                & ", COST_COMPLETE_INIT_OPER = NULL" _
+                                                & ", COST_COMPLETE_OPS_YYYYPP = NULL" _
+                                                & " where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'"
+                                        ASCDATA1.ExecuteSQL()
+                                        MsgBox("Shipment " & "" & " has been Re-Opened for Costing", MsgBoxStyle.OkOnly, "Verification")
+                                        EMsg = ""
+                                        ASCDATA1.ExecuteSQL()
+
+                                        ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)" _
+                                            & " Select 'POTSHIP1', PO_SHIPMENT_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'CST_COM_REOPN','PO Shipment Cost Complete Re-opened', ''" _
+                                            & " from POTSHIP1 " & vbCrLf _
+                                            & " where (PO_SHIPMENT_NO) in ('" & PO_SHIPMENT_NO & "')"
+                                        ASCDATA1.ExecuteSQL()
+                                        EnforceConstraints(False)
+                                        rowPOTSHIP1 = Fill_Record("POTSHIP1", PO_SHIPMENT_NO)
+                                        EnforceConstraints(True)
+                                    End If
+                                Else
+                                    EMsg &= " Cost Completed - No further changes permitted."
+                                End If
+                            Else
+                                If MsgBox(EMsg & warning & vbCrLf & vbCrLf & "Would you like to Re-Open this Shipment for Costing?", MsgBoxStyle.YesNo, "Option to Re-Open Shipment for Further Costing") = MsgBoxResult.Yes Then
+                                    ASCMAIN1.sql = "Update POTSHIP1 Set COST_COMPLETE = NULL" _
                                     & ", COST_COMPLETE_INIT_DATE = NULL" _
                                     & ", COST_COMPLETE_INIT_OPER = NULL" _
                                     & ", COST_COMPLETE_OPS_YYYYPP = NULL" _
                                     & " where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'"
-                                ASCDATA1.ExecuteSQL()
-                                MsgBox("Shipment " & "" & " has been Re-Opened for Costing", MsgBoxStyle.OkOnly, "Verification")
-                                EMsg = ""
-                                EnforceConstraints(False)
-                                rowPOTSHIP1 = Fill_Record("POTSHIP1", PO_SHIPMENT_NO)
-                                EnforceConstraints(True)
+                                    ASCDATA1.ExecuteSQL()
+                                    MsgBox("Shipment " & "" & " has been Re-Opened for Costing", MsgBoxStyle.OkOnly, "Verification")
+                                    EMsg = ""
+                                    EnforceConstraints(False)
+                                    rowPOTSHIP1 = Fill_Record("POTSHIP1", PO_SHIPMENT_NO)
+                                    EnforceConstraints(True)
+                                End If
                             End If
-                            'Else
-                            '    EMsg &= " - no further changes permitted"
-                            'End If
                         End If
                     Else
                         Dim rowPOTSHIP1 As DataRow = LookUp("POTSHIP1", PO_SHIPMENT_NO)
@@ -3225,7 +3251,38 @@ Public Class POFSHIP1
                         End If
                     End If
                 End If
+                If cost_calc And ASCMAIN1.CLIENT = "VAN" Then
 
+                    Dim sqlw As String = "COST_CATGY_CODE = 'TARIFF'"
+                    Dim TARIFF As Decimal = System.Math.Round(Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_AMT)", sqlw) & ""), 2)
+                    Dim TARIFF_PCT As Decimal = Val(Val(rowPOTSHIP1.Item("TARIFF_PCT") & ""))
+                    If tariff <> 0 Or TARIFF_PCT <> 0 Then
+                        Dim FIRST_COST As Decimal = 0
+                        For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
+                            Dim PO_COST_VCOST As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
+                            Dim PO_COST_MATLS As Decimal = Val(rowPOTSHIP3.Item("PO_COST_MATLS") & "")
+                            Dim PO_COST_OTHER As Decimal = Val(rowPOTSHIP3.Item("PO_COST_OTHER") & "")
+                            Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
+                            Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
+                            FIRST_COST += (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER) * PO_QTY_SR
+                        Next
+                        Dim TARIFF_new As Decimal = System.Math.Round(FIRST_COST * TARIFF_PCT / 100, 2)
+
+                        If TARIFF_new <> TARIFF Then
+                            ' If System.Math.Round(tariff / FIRST_COST * 100, 2) <> TARIFF_PCT Then
+                            If MsgBox("The TARIFF Amt " & TARIFF & " does not agree with the Shipment Details Tariff Calculation " & TARIFF_new & "" _
+                                      & vbCrLf & " Would you like to update the Tariff Amt based on the Tariff %" _
+                                                & vbCrLf & vbCrLf & "OK to Continue with Updating Tariff Amount?",
+                                      MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                                Exit Sub
+                            Else
+                                ' fire off numPlusDuty
+                                ' btnPlusDuty.PerformClick()
+                                UPDATE_TARIFF__DUTY(TARIFF_PCT)
+                            End If
+                        End If
+                    End If
+                End If
 
                 If cost_calc And EMsg = "" Then
                     If chkCostComplete.Checked Then
@@ -3720,6 +3777,14 @@ Public Class POFSHIP1
         btnABSonly.Visible = ASCMAIN1.Running_in_VS And Not ScreenMode
 
         chkNoDuty.Visible = ScreenMode And cost_calc
+
+        If cost_calc And ASCMAIN1.CLIENT = "VAN" Then
+            If EntryMode = "E" Or EntryMode = "V" Then
+                numPlusDuty.Value = Val(rowPOTSHIP1.Item("TARIFF_PCT") & "")
+            Else
+                numPlusDuty.Value = 7.5
+            End If
+        End If
         ' And _
         '((ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Or _
         ' (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA"))
@@ -4546,6 +4611,15 @@ Public Class POFSHIP1
             rowPOTSHIP1.Item("COST_COMPLETE_OPS_YYYYPP") = ASCMAIN1.CYP
             rowPOTSHIP1.Item("COST_COMPLETE_INIT_OPER") = ASCMAIN1.USER_ID
             rowPOTSHIP1.Item("COST_COMPLETE_INIT_DATE") = DATETIME_STAMP
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)" _
+                                        & " Select 'POTSHIP1', PO_SHIPMENT_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "', 'CST_COM','PO Shipment Cost Complete', ''" _
+                                        & " from POTSHIP1 " & vbCrLf _
+                                        & " where (PO_SHIPMENT_NO) in ('" & PO_SHIPMENT_NO & "')"
+                ASCDATA1.ExecuteSQL()
+            End If
+
         End If
 
         '   ASCDATA1.DeleteRows("POTSHIP5", "ISNULL(CTL_NO,'') <> ''")
@@ -13702,53 +13776,8 @@ Public Class POFSHIP1
         If Not ScreenMode Or EntryMode <> "E" Then
             Exit Sub
         End If
-
         Dim DP As Decimal = Val(numPlusDuty.Value & "")
-        If DP = 0 Then
-            MsgBox("Cannot add $0 Tariff", MsgBoxStyle.OkOnly, "Cannot Proceed")
-            Exit Sub
-        End If
-
-        'For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
-        '    Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
-        '    Dim PO_COST_QUOTA As Decimal = PO_COST * DP / 100
-        '    rowPOTSHIP3.Item("PO_COST_QUOTA") = PO_COST_QUOTA
-        'Next
-
-        Calculate_Landed_Cost()
-        Dim sqlw As String = "PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and LANDING_COST_DIST = 'D' and COST_CATGY_CODE = 'TARIFF' and CTL_NO is Null"
-        Dim rowPOTSHIP5s() As DataRow = dst.Tables("POTSHIP5").Select(sqlw)
-        Dim rowPOTSHIP5 As DataRow = Nothing
-        If rowPOTSHIP5s.Length = 0 Then
-            rowPOTSHIP5 = dst.Tables("POTSHIP5").NewRow
-            rowPOTSHIP5.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
-            rowPOTSHIP5.Item("PO_SHIPMENT_LNO") = Val(dst.Tables("POTSHIP5").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
-            rowPOTSHIP5.Item("COST_CATGY_CODE") = "TARIFF"
-            rowPOTSHIP5.Item("COST_CATGY_DESC") = "Tariff (Additional Duty)"
-            rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
-            dst.Tables("POTSHIP5").Rows.Add(rowPOTSHIP5)
-        Else
-            rowPOTSHIP5 = rowPOTSHIP5s(0)
-        End If
-
-        Dim FIRST_COST As Decimal = 0
-        For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
-            Dim PO_COST_VCOST As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
-            Dim PO_COST_MATLS As Decimal = Val(rowPOTSHIP3.Item("PO_COST_MATLS") & "")
-            Dim PO_COST_OTHER As Decimal = Val(rowPOTSHIP3.Item("PO_COST_OTHER") & "")
-
-            Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
-            Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
-            '   FIRST_COST += PO_COST * PO_QTY_SR
-            FIRST_COST += (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER) * PO_QTY_SR
-        Next
-
-        Dim TARIFF As Decimal = FIRST_COST * DP / 100
-        'rowPOTSHIP5.Item("LANDING_COST_AMT") = Val(rowPOTSHIP5.Item("LANDING_COST_AMT") & "") + TARIFF
-        rowPOTSHIP5.Item("LANDING_COST_AMT") = TARIFF
-        Calculate_Landed_Cost()
-
-        MsgBox("Tariff added to Duty", MsgBoxStyle.OkOnly, "Verification")
+        UPDATE_TARIFF__DUTY(DP)
     End Sub
 
     Sub Transmit_Discrepancies(PO_SHIPMENT_NO As String, Optional email_to_myself As Boolean = False)
@@ -15131,6 +15160,66 @@ Public Class POFSHIP1
             'End If
         End If
         ROW.Item("PO_COST") = NEW_PO_COST
+    End Sub
+    Sub UPDATE_TARIFF__DUTY(PERC As Decimal)
+        If Not ScreenMode Or EntryMode <> "E" Then
+            Exit Sub
+        End If
+
+        Dim DP As Decimal = Val(PERC)
+        If DP = 0 Then
+            MsgBox("Cannot add $0 Tariff", MsgBoxStyle.OkOnly, "Cannot Proceed")
+            Exit Sub
+        End If
+
+        'For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
+        '    Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
+        '    Dim PO_COST_QUOTA As Decimal = PO_COST * DP / 100
+        '    rowPOTSHIP3.Item("PO_COST_QUOTA") = PO_COST_QUOTA
+        'Next
+
+        Calculate_Landed_Cost()
+        Dim sqlw As String = "PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and LANDING_COST_DIST = 'D' and COST_CATGY_CODE = 'TARIFF' and CTL_NO is Null"
+        Dim rowPOTSHIP5s() As DataRow = dst.Tables("POTSHIP5").Select(sqlw)
+        Dim rowPOTSHIP5 As DataRow = Nothing
+        If rowPOTSHIP5s.Length = 0 Then
+            rowPOTSHIP5 = dst.Tables("POTSHIP5").NewRow
+            rowPOTSHIP5.Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+            rowPOTSHIP5.Item("PO_SHIPMENT_LNO") = Val(dst.Tables("POTSHIP5").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
+            rowPOTSHIP5.Item("COST_CATGY_CODE") = "TARIFF"
+            rowPOTSHIP5.Item("COST_CATGY_DESC") = "Tariff (Additional Duty)"
+            rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
+            dst.Tables("POTSHIP5").Rows.Add(rowPOTSHIP5)
+        Else
+            rowPOTSHIP5 = rowPOTSHIP5s(0)
+        End If
+
+
+
+        Dim FIRST_COST As Decimal = 0
+        For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
+            Dim PO_COST_VCOST As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
+            Dim PO_COST_MATLS As Decimal = Val(rowPOTSHIP3.Item("PO_COST_MATLS") & "")
+            Dim PO_COST_OTHER As Decimal = Val(rowPOTSHIP3.Item("PO_COST_OTHER") & "")
+
+            Dim PO_COST As Decimal = Val(rowPOTSHIP3.Item("PO_COST") & "")
+            Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
+            '   FIRST_COST += PO_COST * PO_QTY_SR
+            FIRST_COST += (PO_COST_VCOST + PO_COST_MATLS + PO_COST_OTHER) * PO_QTY_SR
+        Next
+
+        Dim TARIFF As Decimal = FIRST_COST * DP / 100
+        'rowPOTSHIP5.Item("LANDING_COST_AMT") = Val(rowPOTSHIP5.Item("LANDING_COST_AMT") & "") + TARIFF
+        rowPOTSHIP5.Item("LANDING_COST_AMT") = TARIFF
+        Calculate_Landed_Cost()
+
+        For Each rowPOTSHIP1 As DataRow In dst.Tables("POTSHIP1").Select("")
+            rowPOTSHIP1.Item("TARIFF_PCT") = DP
+            rowPOTSHIP1.Item("TARIFF_PCT_LAST_DATE") = DATETIME_STAMP
+            rowPOTSHIP1.Item("TARIFF_PCT_LAST_OPER") = ASCMAIN1.USER_ID
+        Next
+
+        MsgBox("Tariff added to Duty", MsgBoxStyle.OkOnly, "Verification")
     End Sub
 
 End Class

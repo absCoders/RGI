@@ -10,7 +10,11 @@ Public Class ICRFIFO1
         Get_PARM("ICTPARM1")
         Get_PARM("GLTPARM1")
 
-        ASCMAIN1.sql = "Select * from ICTCOSTP where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -12) & "'"
+        If ASCMAIN1.DBS_COMPANY = "RGI" Then
+            ASCMAIN1.sql = "Select * from ICTCOSTP where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -60) & "'"
+        Else
+            ASCMAIN1.sql = "Select * from ICTCOSTP where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -12) & "'"
+        End If
         grdICTCOSTP.DataSource = ASCDATA1.GetDataTable
         Sort_grdColumns(grdICTCOSTP, "OPS_YYYYPP".ToLower)
 

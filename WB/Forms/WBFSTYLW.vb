@@ -1420,6 +1420,9 @@ Public Class WBFSTYLW
         ASCMAIN1.Progress("Uploading Invetory", Now.ToShortTimeString)
         Dim RemotePath As String = "www/inventory"
         Dim FileName As String = "inventory.csv"
+        If chkMultiFuture.Checked Then
+            FileName = "inventory_mult.csv"
+        End If
         Dim str As New StringBuilder
         Dim sql As New StringBuilder With {.Length = 0}
         Fill_Records("ICTINVTR")
@@ -1446,7 +1449,7 @@ Public Class WBFSTYLW
             'If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
             '    If STYLE_CODE = "MTX66844" Then Stop
             'End If
-
+            Dim FUT_MULT As New Dictionary(Of Date, Int64)
             For Each rowICTSTDQ1 As DataRow In dst.Tables.Item("ICTSTDQ1").Select(SFilter, "STATUS_DATE")
                 If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
                     If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
@@ -1455,6 +1458,13 @@ Public Class WBFSTYLW
                         If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
                             FUT_DATE = CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty).ToShortDateString
                             FUT_QTY_AVAIL = FUT_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                            If IsDate(FUT_DATE) Then
+                                If FUT_MULT.ContainsKey(CDate(FUT_DATE)) Then
+                                    FUT_MULT(CDate(FUT_DATE)) = FUT_MULT(CDate(FUT_DATE)) + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                                Else
+                                    FUT_MULT.Add(CDate(FUT_DATE), Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty))
+                                End If
+                            End If
                         End If
                     End If
                 End If
@@ -1495,8 +1505,17 @@ Public Class WBFSTYLW
             If IsDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty) And Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty) > 0 Then
                 FAVL = CDate(rowICTINVTR.Item("ALT_FUT_DATE").ToString & String.Empty).ToShortDateString & "|" & Val(rowICTINVTR.Item("ALT_FUT_QTY").ToString & String.Empty)
             Else
-                If IsDate(FUT_DATE) And Val(FUT_QTY_AVAIL) > 0 Then
-                    FAVL = FUT_DATE & "|" & FUT_QTY_AVAIL
+                If chkMultiFuture.Checked Then
+                    For Each KVP As KeyValuePair(Of Date, Int64) In FUT_MULT
+                        FAVL = FAVL & "+" & KVP.Key & "|" & KVP.Value
+                    Next
+                    If FAVL.Length > 1 Then
+                        FAVL = FAVL.Substring(1, FAVL.Length - 1)
+                    End If
+                Else
+                    If IsDate(FUT_DATE) And Val(FUT_QTY_AVAIL) > 0 Then
+                        FAVL = FUT_DATE & "|" & FUT_QTY_AVAIL
+                    End If
                 End If
             End If
             str.Append(Chr(34) & FAVL & Chr(34) & ",")
@@ -1517,38 +1536,39 @@ Public Class WBFSTYLW
         End If
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-
-        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
-        With FtpShopSite
-            Try
-                If .Connected = True Then
+        If chkMultiFuture.Checked = False Then
+            Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+            With FtpShopSite
+                Try
+                    If .Connected = True Then
+                        .Logoff()
+                    End If
+                    .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                    .User = WB_PARM_SITE_USER
+                    .Password = WB_PARM_SITE_PWD
+                    .RemoteHost = FTP_REMOTE_HOST
+                    .RemotePath = RemotePath
+                    .Logon()
+                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    .LocalFile = localFile
+                    .RemoteFile = FileName
+                    '.Overwrite = False
+                    .Overwrite = True
+                    'If Not .FileExists() Then
+                    .Upload()
                     .Logoff()
-                End If
-                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-                .User = WB_PARM_SITE_USER
-                .Password = WB_PARM_SITE_PWD
-                .RemoteHost = FTP_REMOTE_HOST
-                .RemotePath = RemotePath
-                .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-                .LocalFile = localFile
-                .RemoteFile = FileName
-                '.Overwrite = False
-                .Overwrite = True
-                'If Not .FileExists() Then
-                .Upload()
-                .Logoff()
-                Do While .Connected
-                    .DoEvents()
-                Loop
-                'End If
-            Catch ex As Exception
-                .Logoff()
-                Do While .Connected
-                    .DoEvents()
-                Loop
-            End Try
-        End With
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                    'End If
+                Catch ex As Exception
+                    .Logoff()
+                    Do While .Connected
+                        .DoEvents()
+                    Loop
+                End Try
+            End With
+        End If
 
         ASCMAIN1.Progress("", "")
 
@@ -2273,38 +2293,38 @@ Public Class WBFSTYLW
     '    Ftp1.Logoff()
     'End Sub
 
-    Private Sub MakeSendZipFile()
-        Dim Web_Dest_Folder As String = "\\192.168.110.224\product\zip\" 'Parameterize this before live
-        Dim Web_Dest_URL As String = "http://api.regency-rib.com:8181/images/product/zip/" 'Parameterize this before live
-        Dim SQLW As New StringBuilder
-        SQLW.Length = 0
-        SQLW.AppendLine("SELECT *")
-        SQLW.AppendLine("FROM WBTIMGR1")
-        SQLW.AppendLine("WHERE REQ_STATUS = 'W'")
-        Fill_Records("WBTIMGR1", , , SQLW.ToString)
-        MyBase.BeginTrans()
-        For Each rowWBTIMGR1 As DataRow In dst.Tables("WBTIMGR1").Select()
-            CreateZipOrder(rowWBTIMGR1.Item("ORDR_NO").ToString, Web_Dest_Folder)
-            CreateZipEmail(rowWBTIMGR1.Item("ORDR_NO").ToString, rowWBTIMGR1.Item("REQ_EMAIL").ToString, Web_Dest_URL)
-            rowWBTIMGR1.Item("REQ_STATUS") = "A"
-        Next
+    'Private Sub MakeSendZipFile()
+    '    Dim Web_Dest_Folder As String = "\\192.168.110.224\product\zip\" 'Parameterize this before live
+    '    Dim Web_Dest_URL As String = "http://api.regency-rib.com:8181/images/product/zip/" 'Parameterize this before live
+    '    Dim SQLW As New StringBuilder
+    '    SQLW.Length = 0
+    '    SQLW.AppendLine("SELECT *")
+    '    SQLW.AppendLine("FROM WBTIMGR1")
+    '    SQLW.AppendLine("WHERE REQ_STATUS = 'W'")
+    '    Fill_Records("WBTIMGR1", , , SQLW.ToString)
+    '    MyBase.BeginTrans()
+    '    For Each rowWBTIMGR1 As DataRow In dst.Tables("WBTIMGR1").Select()
+    '        CreateZipOrder(rowWBTIMGR1.Item("ORDR_NO").ToString, Web_Dest_Folder)
+    '        CreateZipEmail(rowWBTIMGR1.Item("ORDR_NO").ToString, rowWBTIMGR1.Item("REQ_EMAIL").ToString, Web_Dest_URL)
+    '        rowWBTIMGR1.Item("REQ_STATUS") = "A"
+    '    Next
 
-        Update_Record_TDA("WBTIMGR1")
-        MyBase.CommitTrans("")
-        SQLW.Length = 0
-        SQLW.AppendLine("SELECT *")
-        SQLW.AppendLine("FROM WBTIMGR1")
-        SQLW.AppendLine("WHERE REQ_DATE <= sysdate-10")
-        SQLW.AppendLine("AND REQ_STATUS = 'A'")
-        Fill_Records("WBTIMGR1", , , SQLW.ToString)
-        MyBase.BeginTrans()
-        For Each rowWBTIMGR1 As DataRow In dst.Tables("WBTIMGR1").Select()
-            System.IO.File.Delete(String.Format("{0}{1}.zip", Web_Dest_Folder, rowWBTIMGR1.Item("ORDR_NO").ToString))
-            rowWBTIMGR1.Item("REQ_STATUS") = "X"
-        Next
-        Update_Record_TDA("WBTIMGR1")
-        MyBase.CommitTrans("")
-    End Sub
+    '    Update_Record_TDA("WBTIMGR1")
+    '    MyBase.CommitTrans("")
+    '    SQLW.Length = 0
+    '    SQLW.AppendLine("SELECT *")
+    '    SQLW.AppendLine("FROM WBTIMGR1")
+    '    SQLW.AppendLine("WHERE REQ_DATE <= sysdate-10")
+    '    SQLW.AppendLine("AND REQ_STATUS = 'A'")
+    '    Fill_Records("WBTIMGR1", , , SQLW.ToString)
+    '    MyBase.BeginTrans()
+    '    For Each rowWBTIMGR1 As DataRow In dst.Tables("WBTIMGR1").Select()
+    '        System.IO.File.Delete(String.Format("{0}{1}.zip", Web_Dest_Folder, rowWBTIMGR1.Item("ORDR_NO").ToString))
+    '        rowWBTIMGR1.Item("REQ_STATUS") = "X"
+    '    Next
+    '    Update_Record_TDA("WBTIMGR1")
+    '    MyBase.CommitTrans("")
+    'End Sub
 
     Private Sub MoveToParents()
         WebBrowser1.Parent = grdWBTSTYLD.Parent
@@ -3616,7 +3636,7 @@ Public Class WBFSTYLW
             INT.Add(i)
         Next
 
-        If ASCMAIN1.Running_in_VS Then Stop
+        'If ASCMAIN1.Running_in_VS Then Stop
         If INT.Contains(MN) And MN <> LASTMIN Then
             If ASCMAIN1.Running_in_VS Then Stop
             LASTMIN = MN
@@ -3633,8 +3653,8 @@ Public Class WBFSTYLW
     End Sub
 
     Private Sub sendImagesEmail()
-        Dim ZIP_FOLDER As String = "\\192.168.110.233\c$\ShopsiteService\Data\OrderImageZips\"
-        Dim TXT_FOLDER As String = "\\192.168.110.233\c$\ShopsiteService\Data\Files\"
+        Dim ZIP_FOLDER As String = "\\192.168.110.233\ShopsiteService\Data\OrderImageZips\"
+        Dim TXT_FOLDER As String = "\\192.168.110.233\ShopsiteService\Data\Files\"
         Dim BASE_URL As String = "https://www.regency-rib.com/images/"
         'Dim ORDR_NO As String = "0000771989"
         'Dim GIVENNAME As String = "Mario (Big Pappa)"
@@ -3694,13 +3714,15 @@ Public Class WBFSTYLW
                                 BDY.AppendLine("For questions, please contact <a href='mailto:hq@regency-rib.com'>Customer Service</a> or your <a href='https://www.regency-rib.com/locate-sales-representative.html/'>Sales Representative</a> directly.")
 
                                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
-                                'EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                                If Now() <= DateSerial(2025, 2, 28) Then
+                                    EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                                End If
                                 EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
                                 EMAIL_ADDRESSs.Add(EMAIL, $"{GIVENNAME} {FAMILYNAME}")
 
                                 Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-                                       (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
-                                        SUBJECT, "SHOPSI", True, False, ORDR_NO, "Order Images", "Order Images", BDY.ToString)
+                                    (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                                    SUBJECT, "SHOPSI", True, False, ORDR_NO, "Order Images", "Order Images", BDY.ToString)
                                 If SEND_NO.Length > 0 Then
                                     Dim newWBTIMGR1 As DataRow = dst.Tables("WBTIMGR1").NewRow
                                     newWBTIMGR1.Item("ORDR_NO") = ORDR_NO
@@ -3711,7 +3733,7 @@ Public Class WBFSTYLW
                                     Update_Record_TDA("WBTIMGR1")
                                 End If
                             End If
-                        End If
+                            End If
                     End If
                 End If
             End If
