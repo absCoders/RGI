@@ -2464,30 +2464,46 @@ Public Class WBFCUST1
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
         'Skip the inbound and set FileFound To True After putting the fake file in C:\VS\VDI\Temp\
         WebCustFTPInbound(ErrMsg, LocalFile, FileFound)
-        If FileFound Then
-            If ErrMsg.Length = 0 Then
+        If ErrMsg.Length > 0 Then
+            If FileFound Then
+                If ErrMsg.Length = 0 Then
+                    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                    WebCustInboundCreate(ErrMsg, LocalFile)
+                End If
                 If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-                WebCustInboundCreate(ErrMsg, LocalFile)
-            End If
-            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-            WebCustTMPDelete(ErrMsg, LocalFile)
-            If ErrMsg.Length = 0 Then
-                WebCustFTPDelete(ErrMsg, LocalFile)
-                retVal = True
-                UpdateAndRefreshData(False)
+                If ErrMsg.Length = 0 Then
+                    WebCustTMPDelete(ErrMsg, LocalFile)
+                    If ErrMsg.Length = 0 Then
+                        WebCustFTPDelete(ErrMsg, LocalFile)
+                        retVal = True
+                        UpdateAndRefreshData(False)
+                    Else
+                        retVal = False
+                        EnforceConstraints(False)
+                        Call Fill_Records("WBTCUST1")
+                        Call Fill_Records("WBTCUST2")
+                        Call Fill_Records("WBTCUST9")
+                        Call Fill_Records("ARTCONTX")
+                        EnforceConstraints(True)
+                        MsgBox(ErrMsg.ToString, vbExclamation, "Error Importing Customers")
+                    End If
+                Else
+                    retVal = False
+                    EnforceConstraints(False)
+                    Call Fill_Records("WBTCUST1")
+                    Call Fill_Records("WBTCUST2")
+                    Call Fill_Records("WBTCUST9")
+                    Call Fill_Records("ARTCONTX")
+                    EnforceConstraints(True)
+                    MsgBox(ErrMsg.ToString, vbExclamation, "Error Importing Customers")
+                End If
             Else
-                retVal = False
-                EnforceConstraints(False)
-                Call Fill_Records("WBTCUST1")
-                Call Fill_Records("WBTCUST2")
-                Call Fill_Records("WBTCUST9")
-                Call Fill_Records("ARTCONTX")
-                EnforceConstraints(True)
-                MsgBox(ErrMsg.ToString, vbExclamation, "Error Importing Customers")
+                MsgBox("No InBound Customers Waiting On Shopsite.", vbOKOnly, "Nothing To Do Now")
             End If
         Else
-            MsgBox("No InBound Customers Waiting On Shopsite.", vbOKOnly, "Nothing To Do Now")
+            MsgBox(ErrMsg.ToString, vbExclamation, "Error Importing Customers")
         End If
+
         Me.Cursor = Cursors.Default
         Return retVal
     End Function
@@ -2498,34 +2514,35 @@ Public Class WBFCUST1
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite
             If File.Exists(LocalFile) Then
-                File.Delete(LocalFile)
-            End If
-            Try
-                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-                .User = UserName
-                .Password = Password
-                .RemoteHost = RemoteHost
-                .RemotePath = RemotePath
-                .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-                .LocalFile = LocalFile
-                .RemoteFile = inBoundFile
-                .Overwrite = False
-                If Not .FileExists() Then
+                'File.Delete(LocalFile) We Let The User Know Now W.R. - 2/14/25
+                ErrMsg.AppendLine($"Local File Exists: {LocalFile}")
+            Else
+                Try
+                    .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                    .User = UserName
+                    .Password = Password
+                    .RemoteHost = RemoteHost
+                    .RemotePath = RemotePath
+                    .Logon()
+                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    .LocalFile = LocalFile
+                    .RemoteFile = inBoundFile
+                    .Overwrite = False
+                    If Not .FileExists() Then
+                        FileFound = False
+                        .Logoff()
+                    Else
+                        FileFound = True
+                        .Download()
+                        .Logoff()
+                    End If
+                Catch ex As Exception
                     FileFound = False
-                    .Logoff()
-                Else
-                    FileFound = True
-                    .Download()
-                    .Logoff()
-                End If
-            Catch ex As Exception
-                FileFound = False
-                ErrMsg.AppendLine(ex.Message.ToString)
-                FtpShopSite.Logoff()
-            End Try
+                    ErrMsg.AppendLine(ex.Message.ToString)
+                    FtpShopSite.Logoff()
+                End Try
+            End If
         End With
-
     End Sub
 
     Private Sub WebCustInboundCreate(ByRef errMsg As StringBuilder, ByVal localFile As String)
@@ -2567,6 +2584,8 @@ Public Class WBFCUST1
                         Else
                             Dim invalidChars As Char() = {" ", ":", ";", "/", "\", "'", """", "(", ")", "[", "]", "{", "}", "<", ">", ",", "*", "&", "^", "%", "$", "#", "!", "?"}
                             Dim CURR_EMAIL As String = String.Format("EMAIL = '{0}'", currentRow(4).ToString.ToUpper & String.Empty)
+                            CURR_EMAIL = CURR_EMAIL.Replace("'", "")
+                            CURR_EMAIL = CURR_EMAIL.Replace(" ", "")
                             If invalidChars.Any(Function(ch) CURR_EMAIL.Contains(ch)) Then
                                 INVALID_EMAILS.AppendLine(CURR_EMAIL)
                             Else
@@ -2670,6 +2689,7 @@ Public Class WBFCUST1
             End Using
             If INVALID_EMAILS.Length > 0 Then
                 MsgBox(INVALID_EMAILS.ToString, vbOKOnly, "Invalid Emails Found And Skipped")
+                errMsg.AppendLine("Invalid E-Mails.  File Not Delted.")
             End If
         Catch ex As Exception
             errMsg.AppendLine(ex.Message.ToString)
