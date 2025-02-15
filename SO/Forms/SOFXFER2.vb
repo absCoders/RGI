@@ -24,12 +24,21 @@ Public Class SOFXFER2
     Dim ImageListDelete As New List(Of String)
     Dim BackupComplete As Boolean = False
     Private VersionInfo As New Text.StringBuilder With {.Length = 0}
+
     Dim ServerLive As String = "http://api.regency-rib.com:8181/"
+    'Dim ServerLive As String = "http://api2.regency-rib.com:8086/" ' this is the new home for the APIs below
     Dim ServerTest As String = "http://kreativekode.ngrok.io/"
+    'Dim ServerTest As String = "https://absapi.absolution1.com/" ' use our sever as a test if you would like; it updates PDBRGI (at the moment)
     Dim API_CONTROLLER_ORDERS As String = "api/SalesOrder/CreateSalesOrder"
     Dim API_CONTROLLER_CUSTOMERS As String = "api/Customer/CreateCustomer"
     Dim API_CONTROLLER_SHIPTO As String = "api/Customer/UpdateShipTo"
     Dim API_CONTROLLER_TATCTLN1 As String = "api/ABS/GetTATCTLN1"
+    'Dim ctlPfx As String = "api/RGI/LT/"
+    'Dim API_CONTROLLER_ORDERS As String = $"{ctlPfx}/CreateSalesOrder"
+    'Dim API_CONTROLLER_CUSTOMERS As String = $"{ctlPfx}/CreateCustomer"
+    'Dim API_CONTROLLER_SHIPTO As String = $"{ctlPfx}/UpdateShipTo" 'api/RGI/LT/UpdateShipTo
+    'Dim API_CONTROLLER_TATCTLN1 As String = $"{ctlPfx}/GetTATCTLN1"
+
     Dim SB As New System.Text.StringBuilder With {.Length = 0}
     Dim ImageGetProgress As Boolean = True
 
