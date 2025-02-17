@@ -2462,9 +2462,9 @@ Public Class WBFCUST1
         Dim LocalFile As String = String.Format("{0}{1}", TempFolder, inBoundFile)
         Dim FileFound As Boolean = False
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-        'Skip the inbound and set FileFound To True After putting the fake file in C:\VS\VDI\Temp\
+        'Skip the inbound and set FileFound To True After putting the fake file in C:\dev_live\VAN\VDI\Temp\
         WebCustFTPInbound(ErrMsg, LocalFile, FileFound)
-        If ErrMsg.Length > 0 Then
+        If ErrMsg.Length = 0 Then
             If FileFound Then
                 If ErrMsg.Length = 0 Then
                     If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
