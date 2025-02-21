@@ -877,9 +877,9 @@ Public Class ECFSTYL1
         For Each rowECTSTYLX As DataRow In dst.Tables("ECTSTYLX").Select()
             Dim STYLE_CODE As String = rowECTSTYLX.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowECTSTYLX.Item("COLOR_CODE").ToString & String.Empty
-            Fill_Records("ICTSTATC", New String() {STYLE_CODE, COLOR_CODE})
-            If dst.Tables.Item("ICTSTATC").Rows.Count = 1 Then
-                Dim rowICTSTATC As DataRow = dst.Tables.Item("ICTSTATC").Rows(0)
+            Dim FLTR As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+            Dim rowICTSTATC As DataRow = dst.Tables.Item("ICTSTATC").Select(FLTR).FirstOrDefault
+            If Not IsNothing(rowICTSTATC) Then
                 rowECTSTYLX.Item("WHSE_QTY_ON_HAND") = Val(rowICTSTATC.Item("WHSE_QTY_ON_HAND").ToString & String.Empty)
                 rowECTSTYLX.Item("WHSE_QTY_PICK") = Val(rowICTSTATC.Item("WHSE_QTY_PICK").ToString & String.Empty)
                 rowECTSTYLX.Item("OPEN_TO_SELL") = Val(rowICTSTATC.Item("OPEN_TO_SELL").ToString & String.Empty)
@@ -896,6 +896,26 @@ Public Class ECFSTYL1
                 rowECTSTYLX.Item("WHSE_QTY_OPEN") = 0
                 rowECTSTYLX.Item("FUT_AVAIL") = 0
             End If
+
+            'Fill_Records("ICTSTATC", New String() {STYLE_CODE, COLOR_CODE})
+            'If dst.Tables.Item("ICTSTATC").Rows.Count = 1 Then
+            '    Dim rowICTSTATC As DataRow = dst.Tables.Item("ICTSTATC").Rows(0)
+            '    rowECTSTYLX.Item("WHSE_QTY_ON_HAND") = Val(rowICTSTATC.Item("WHSE_QTY_ON_HAND").ToString & String.Empty)
+            '    rowECTSTYLX.Item("WHSE_QTY_PICK") = Val(rowICTSTATC.Item("WHSE_QTY_PICK").ToString & String.Empty)
+            '    rowECTSTYLX.Item("OPEN_TO_SELL") = Val(rowICTSTATC.Item("OPEN_TO_SELL").ToString & String.Empty)
+            '    rowECTSTYLX.Item("WHSE_QTY_TRAN") = Val(rowICTSTATC.Item("WHSE_QTY_TRAN").ToString & String.Empty)
+            '    rowECTSTYLX.Item("WHSE_QTY_ON_ORDER") = Val(rowICTSTATC.Item("WHSE_QTY_ON_ORDER").ToString & String.Empty)
+            '    rowECTSTYLX.Item("WHSE_QTY_OPEN") = Val(rowICTSTATC.Item("WHSE_QTY_OPEN").ToString & String.Empty)
+            '    rowECTSTYLX.Item("FUT_AVAIL") = Val(rowICTSTATC.Item("FUT_AVAIL").ToString & String.Empty)
+            'Else
+            '    rowECTSTYLX.Item("WHSE_QTY_ON_HAND") = 0
+            '    rowECTSTYLX.Item("WHSE_QTY_PICK") = 0
+            '    rowECTSTYLX.Item("OPEN_TO_SELL") = 0
+            '    rowECTSTYLX.Item("WHSE_QTY_TRAN") = 0
+            '    rowECTSTYLX.Item("WHSE_QTY_ON_ORDER") = 0
+            '    rowECTSTYLX.Item("WHSE_QTY_OPEN") = 0
+            '    rowECTSTYLX.Item("FUT_AVAIL") = 0
+            'End If
         Next
     End Sub
 
@@ -1346,10 +1366,12 @@ Public Class ECFSTYL1
             SQL.AppendLine("(NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) FUT_AVAIL")
             SQL.AppendLine("FROM ICTSTAT2")
             SQL.AppendLine("WHERE WHSE_CODE = 'MS'")
-            SQL.AppendLine("AND STYLE_CODE = :PARM1")
-            SQL.AppendLine("AND COLOR_CODE = :PARM2")
+            'SQL.AppendLine("AND STYLE_CODE = :PARM1")
+            'SQL.AppendLine("AND COLOR_CODE = :PARM2")
             ASCMAIN1.sql = SQL.ToString()
-            Create_TDA(.Tables.Add, "ICTSTATC", "**", 0, False, "VV")
+            'Create_TDA(.Tables.Add, "ICTSTATC", "**", 0, False, "VV")
+            Create_TDA(.Tables.Add, "ICTSTATC", "**", 0, False)
+            Fill_Records("ICTSTATC")
 
             SQL.Length = 0
             'SQL.AppendLine("SELECT")
@@ -3805,9 +3827,11 @@ Public Class ECFSTYL1
                 rowICTEDI01.Item("EDI_STATUS") = rowEDT846OX.Item("EDI_STATUS").ToString & String.Empty
             End If
 
-            Fill_Records("ICTSTATC", New String() {STYLE_CODE, COLOR_CODE})
-            If dst.Tables.Item("ICTSTATC").Rows.Count = 1 Then
-                Dim rowICTSTATC As DataRow = dst.Tables.Item("ICTSTATC").Rows(0)
+            Dim FLTR As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+            Dim rowICTSTATC As DataRow = dst.Tables.Item("ICTSTATC").Select(FLTR).FirstOrDefault
+
+            'Fill_Records("ICTSTATC", New String() {STYLE_CODE, COLOR_CODE})
+            If Not IsNothing(rowICTSTATC) Then
                 If Val(rowICTSTATC.Item("WHSE_QTY_ON_HAND").ToString & String.Empty) = 0 Then
                     rowICTEDI01.Item("WHSE_QTY_ON_HAND") = 0
                 Else
