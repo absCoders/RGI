@@ -2071,14 +2071,14 @@ Public Class SOFSHIP0
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTPICK1", "SOTPICK2", "SOTPICK4", _
-             "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", _
-             "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", _
-             "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR", _
-             "SOTSHIP0", "SOTSHIP1", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTRNGA1", _
-             "SOTORDC1", "SOTORDC2", _
-             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA", _
-             "EDT945T1", "EDT945T2", _
+            {"SOTPICK1", "SOTPICK2", "SOTPICK4",
+             "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1",
+             "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX",
+             "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR5_BT", "SOTORDXR",
+             "SOTSHIP0", "SOTSHIP1", "SOTSHIP3", "SOTSHIP4", "SOTSHIP6", "SOTRNGA1",
+             "SOTORDC1", "SOTORDC2",
+             "ARTCCPA1", "ARTCCPA2", "ARTCCPDA",
+             "EDT945T1", "EDT945T2",
              "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC5", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP"}
             If dst.Tables.Contains(TABLE_NAME) Then
                 dst.Tables(TABLE_NAME).Rows.Clear()
@@ -2584,6 +2584,8 @@ Public Class SOFSHIP0
             Dim CreditCardProcessed As Boolean = True
             Dim ship_ref As String = String.Empty
 
+            Dim clsSOCINVH1 As New TAC.SOCINVH1(dst)
+
             ' Capture Credit Card Approved $$
             Try
                 dst.Tables("TATEVNT1").Rows.Clear()
@@ -2598,6 +2600,7 @@ Public Class SOFSHIP0
                     Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
                     Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
                     Dim CCPA_NO_ORDR As String = rowSOTPICK1.Item("CCPA_NO_ORDR")
+                    Dim tariffCharges As Decimal = clsSOCINVH1.GetTotalTariffsForPickTicket(PICK_NO)
 
                     If dst.Tables("SOTORDC1").Select("ORDR_NO = '" & ORDR_NO & "'").Length = 0 Then
                         Fill_Records("SOTORDC1", ORDR_NO)
@@ -2643,7 +2646,7 @@ Public Class SOFSHIP0
                     INV_STAX = 0
 
                     shippingFreight = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty) ' + Val(rowSOTPICK1.Item("PPA_FREIGHT") & String.Empty)
-                    chargeAmount += shippingFreight + INV_MISC_CHG + INV_STAX
+                    chargeAmount += shippingFreight + INV_MISC_CHG + INV_STAX + tariffCharges
 
                     ' do we need to add additional funds??
                     For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
@@ -6010,7 +6013,6 @@ Public Class SOFSHIP0
 
             rowSOTINVH1.Item("PICK_NO") = PICK_NO_new
             rowSOTINVH1.Item("INV_COMMENT") = INV_REVERSAL_REASON
-
 
             Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
             ' For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")

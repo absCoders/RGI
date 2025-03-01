@@ -5579,6 +5579,7 @@ Public Class SOFSHIPB
                 If INV_NO.Length = 0 Then Continue For
 
                 For Each rowSOTINVHM As DataRow In dst.Tables("SOTINVHM").Select($"INV_NO = '{PICK_NO}'")
+                    rowSOTINVHM.Item("INV_MNO") = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", $"INV_NO = '{INV_NO}'") & String.Empty) + 1
                     rowSOTINVHM.Item("INV_NO") = INV_NO
                 Next
             Next
