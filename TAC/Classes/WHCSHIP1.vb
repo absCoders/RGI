@@ -4367,7 +4367,7 @@ Public Class WHCSHIP1
                     With requestedRateList(iLoop)
                         .ServiceType = objFedexRates.Services(iLoop).ServiceType
                         .ServiceTypeDescription = StrConv(objFedexRates.Services(iLoop).ServiceTypeDescription.Replace("_", " "), VbStrConv.ProperCase)
-                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty)
+                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty) + Val(objFedexRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
                         .DeliveryTime = objFedexRates.Services(iLoop).DeliveryTime
                         .ListNetCharge = Val(objFedexRates.Services(iLoop).ListNetCharge & String.Empty)
                         .TransitTime = objFedexRates.Services(iLoop).TransitTime & String.Empty
@@ -4377,6 +4377,36 @@ Public Class WHCSHIP1
                                 .AccountNetCharge = .ListNetCharge
                             End If
                         End If
+
+                        .Disclaimer = String.Empty
+
+                        Try
+                            Dim aggregate As String = (objFedexRates.Services(iLoop).Aggregate & String.Empty).ToString.Replace("v9:", "").Replace("v12:", "") ' "<?xml version=""1.0""?>" & vbCrLf & 
+
+                            If aggregate.Length > 0 Then
+                                Dim dst As New DataSet
+
+                                ' Convert Json to XML then convert XML to Dataset
+                                Dim doc As XmlDocument = JsonConvert.DeserializeXmlNode("{ 'root': " & aggregate & "}")
+                                Dim result As String = "<?xml version=""1.0"" encoding=""UTF-8""?><ImportedOrders>" & doc.ChildNodes(0).InnerXml & "</ImportedOrders>"
+                                result = result.Replace("><", $">{Environment.NewLine}<")
+
+                                doc.LoadXml(result)
+                                Dim sr As StringReader = New StringReader(doc.InnerXml)
+                                Dim xtr As XmlTextReader = New XmlTextReader(sr)
+                                dst.ReadXml(xtr)
+
+                                If dst IsNot Nothing AndAlso dst.Tables.Contains("customermessages") Then
+                                    For Each row As DataRow In dst.Tables("customermessages").Select("")
+                                        .Disclaimer &= "  " & row.Item("Code") & " " & row.Item("Message")
+                                    Next
+                                End If
+
+                                .Disclaimer = .Disclaimer.Trim
+                            End If
+
+                        Catch ex As Exception
+                        End Try
 
                         If Val(.TransitTime) <= 0 Then
                             Select Case objFedexRates.Services(iLoop).TransitTime
@@ -5214,7 +5244,7 @@ Public Class WHCSHIP1
                     If isGroundFreight AndAlso .ServiceType = "43" Then
                         .ServiceTypeDescription = "UPS Ground Freight"
                     End If
-                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty)
+                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty) + Val(objUpsRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
                     .DeliveryTime = objUpsRates.Services(iLoop).DeliveryTime
                     .ListNetCharge = Val(objUpsRates.Services(iLoop).ListNetCharge & String.Empty)
                     .TransitTime = objUpsRates.Services(iLoop).TransitTime
@@ -5235,17 +5265,25 @@ Public Class WHCSHIP1
                         Dim aggregate As String = (objUpsRates.Services(iLoop).Aggregate & String.Empty).ToString.Replace("v9:", "").Replace("v12:", "") ' "<?xml version=""1.0""?>" & vbCrLf & 
 
                         If aggregate.Length > 0 Then
-                            Dim upsPackageAgg As New System.Xml.XmlDocument
-                            upsPackageAgg.LoadXml(aggregate)
+                            Dim dst As New DataSet
 
-                            Using XmlReader = New XmlNodeReader(upsPackageAgg)
-                                While XmlReader.Read
-                                    Select Case XmlReader.Name.ToString()
-                                        Case "RatedShipmentWarning"
-                                            .Disclaimer &= XmlReader.ReadInnerXml
-                                    End Select
-                                End While
-                            End Using
+                            ' Convert Json to XML then convert XML to Dataset
+                            Dim doc As XmlDocument = JsonConvert.DeserializeXmlNode("{ 'root': " & aggregate & "}")
+                            Dim result As String = "<?xml version=""1.0"" encoding=""UTF-8""?><ImportedOrders>" & doc.ChildNodes(0).InnerXml & "</ImportedOrders>"
+                            result = result.Replace("><", $">{Environment.NewLine}<")
+
+                            doc.LoadXml(result)
+                            Dim sr As StringReader = New StringReader(doc.InnerXml)
+                            Dim xtr As XmlTextReader = New XmlTextReader(sr)
+                            dst.ReadXml(xtr)
+
+                            If dst IsNot Nothing AndAlso dst.Tables.Contains("RatedShipmentAlert") Then
+                                For Each row As DataRow In dst.Tables("RatedShipmentAlert").Select("")
+                                    .Disclaimer &= "  " & row.Item("Code") & " " & row.Item("Description")
+                                Next
+                            End If
+
+                            .Disclaimer = .Disclaimer.Trim
                         End If
 
                     Catch ex As Exception
