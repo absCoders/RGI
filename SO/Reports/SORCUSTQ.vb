@@ -1610,7 +1610,7 @@ Public Class SORCUSTQ
                 If rowSOTCUSTQ.Item("MIN_PRICE") = rowSOTCUSTQ.Item("MAX_PRICE") Then
                     PRICE_DISPLAY = rowSOTCUSTQ.Item("MIN_PRICE") & String.Empty
                 Else
-                    PRICE_DISPLAY = "Max " & rowSOTCUSTQ.Item("MIN_PRICE") & String.Empty & "Max " & rowSOTCUSTQ.Item("MAX_PRICE") & String.Empty
+                    PRICE_DISPLAY = "Min " & rowSOTCUSTQ.Item("MIN_PRICE") & String.Empty & " Max " & rowSOTCUSTQ.Item("MAX_PRICE") & String.Empty
                 End If
                 worksheet.Cells(i + CI - 1, COL + chkcnt).Value = PRICE_DISPLAY
                 chkcnt += 1
