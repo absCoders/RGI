@@ -2583,7 +2583,7 @@ Public Class WBFCUST1
                             emptyCount += 1
                         Else
                             Dim invalidChars As Char() = {" ", ":", ";", "/", "\", "'", """", "(", ")", "[", "]", "{", "}", "<", ">", ",", "*", "&", "^", "%", "$", "#", "!", "?"}
-                            Dim CURR_EMAIL As String = String.Format("EMAIL = '{0}'", currentRow(4).ToString.ToUpper & String.Empty)
+                            Dim CURR_EMAIL As String = String.Format("{0}", currentRow(4).ToString.ToUpper & String.Empty)
                             CURR_EMAIL = CURR_EMAIL.Replace("'", "")
                             CURR_EMAIL = CURR_EMAIL.Replace(" ", "")
                             If invalidChars.Any(Function(ch) CURR_EMAIL.Contains(ch)) Then

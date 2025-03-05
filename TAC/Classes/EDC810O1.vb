@@ -724,7 +724,7 @@
 
                     If caseFactor = 1 Then
                         ' Modified 04/20/2018
-                        rowEDT810O2.Item("EDI_UNIT_PRICE") = rowSOTINVH2.Item("ORDR_UNIT_PRICE" & CURR_EXT)
+                        rowEDT810O2.Item("EDI_UNIT_PRICE") = Math.Round(rowSOTINVH2.Item("ORDR_UNIT_PRICE" & CURR_EXT), 2)
                     Else
                         ' done incase 25.50 ends up loking like 24.49999
                         ' Modified 04/20/2018
@@ -759,7 +759,7 @@
 
                     ' Regency Wayfair Set Quantity
                     If SET_QTY > 1 AndAlso ASCMAIN1.CLIENT = "RGI" Then
-                        rowEDT810O2.Item("EDI_UNIT_PRICE") = Val(rowEDT810O2.Item("EDI_UNIT_PRICE") & String.Empty) * SET_QTY
+                        rowEDT810O2.Item("EDI_UNIT_PRICE") = Math.Round(Val(rowEDT810O2.Item("EDI_UNIT_PRICE") & String.Empty) * SET_QTY, 2)
                         rowEDT810O2.Item("EDI_QTY_INVOICED") = Val(rowEDT810O2.Item("EDI_QTY_INVOICED") & String.Empty) / SET_QTY
                     End If
 

@@ -75,15 +75,15 @@
     ''' <param name="SOTSHIP1"></param>
     ''' <param name="SOTORDR5"></param>
     ''' <remarks></remarks>
-    Public Sub New(ByRef SOTINVH1 As DataTable, _
-                   ByRef SOTINVH2 As DataTable, _
-                   ByRef SOTPICK1 As DataTable, _
-                   ByRef SOTPICK2 As DataTable, _
-                   ByRef ARTOPEN1 As DataTable, _
-                   ByRef SOTSHIP1 As DataTable, _
-                   ByRef SOTORDR5 As DataTable, _
-                   ByRef SOTINVH9 As DataTable, _
-                   ByRef SOTINVHM As DataTable, _
+    Public Sub New(ByRef SOTINVH1 As DataTable,
+                   ByRef SOTINVH2 As DataTable,
+                   ByRef SOTPICK1 As DataTable,
+                   ByRef SOTPICK2 As DataTable,
+                   ByRef ARTOPEN1 As DataTable,
+                   ByRef SOTSHIP1 As DataTable,
+                   ByRef SOTORDR5 As DataTable,
+                   ByRef SOTINVH9 As DataTable,
+                   ByRef SOTINVHM As DataTable,
                    ByRef SOTRNGA1 As DataTable)
 
         tblSOTINVH1 = SOTINVH1
@@ -109,10 +109,10 @@
     ''' <param name="SOTRTRN2"></param>
     ''' <param name="ARTOPEN1"></param>
     ''' <remarks></remarks>
-    Public Sub New(ByRef SOTINVH1 As DataTable, _
-                   ByRef SOTINVH2 As DataTable, _
-                   ByRef SOTRTRN1 As DataTable, _
-                   ByRef SOTRTRN2 As DataTable, _
+    Public Sub New(ByRef SOTINVH1 As DataTable,
+                   ByRef SOTINVH2 As DataTable,
+                   ByRef SOTRTRN1 As DataTable,
+                   ByRef SOTRTRN2 As DataTable,
                    ByRef ARTOPEN1 As DataTable)
 
 
@@ -176,7 +176,6 @@
         Dim INV_TYPE As String = "I"
         Dim INV_MISC_CHG As Decimal = 0
         Dim foreignExchange As Boolean = False
-
 
         rowSOTSHIP1 = tblSOTSHIP1.Rows.Find(SHIP_BOL_NO)
         If rowSOTSHIP1 Is Nothing Then
@@ -242,6 +241,7 @@
 
         For Each rowSOTPICK1 As DataRow In tblSOTPICK1.Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'", "PICK_NO")
 
+            Dim isEcommerce As Boolean = False
             Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
             Dim PICK_QTY_CONF As Int32 = Val(tblSOTPICK2.Compute("SUM(PICK_QTY_CONF)", "PICK_NO = '" & PICK_NO & "'") & String.Empty)
             If PICK_QTY_CONF = 0 Then Continue For
@@ -256,8 +256,14 @@
                 rowSOTORDR1 = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_NO = :PARM1", "V", New Object() {ORDR_NO})
             End If
 
+            isEcommerce = (rowSOTORDR1.Item("ECOM_CODE") & String.Empty).ToString.Trim.Length > 0
+            Dim ORDR_DATE As Date = CDate(rowSOTORDR1.Item("ORDR_DATE") & String.Empty).ToShortDateString
+            Dim INV_DATE As Date = CDate(rowSOTSHIP1.Item("INV_DATE") & String.Empty).ToShortDateString
+
             Dim tblICTSTYL1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE IN (SELECT STYLE_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)", "ICTSTYL1", "V", New Object() {ORDR_NO})
             Dim tblICTSTYC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTSTYC1 WHERE (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)", "ICTSTYC1", "V", New Object() {ORDR_NO})
+            Dim tblPOTTRFF1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM POTTRFF1", "POTTRFF1")
+            Dim tblSOTMISC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTMISC1", "SOTMISC1")
 
             Dim SALES_DIVISION_CODE As String = rowSOTPICK1.Item("SALES_DIVISION_CODE") & String.Empty
             INV_NO = rowSOTPICK1.Item("INV_NO") & String.Empty
@@ -279,6 +285,7 @@
             Dim INV_COGS As Decimal = 0
             Dim INV_SALES As Decimal = 0
             Dim INV_SALES_CURR As Decimal = 0
+            Dim INV_MISC_CHG_TARIFF As Decimal = 0
 
             For Each rowSOTPICK2 As DataRow In tblSOTPICK2.Select("PICK_NO = '" & PICK_NO & "'")
                 Dim ORDR_QTY_SHIP As Int64 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "")
@@ -337,6 +344,52 @@
                 End With
 
                 tblSOTINVH2.Rows.Add(rowSOTINVH2)
+
+                Dim ORDR_UNIT_PRICE As Decimal = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
+                ' 07/07/2025 - New Tariffs.
+                If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommerce AndAlso ORDR_UNIT_PRICE <> 0 AndAlso ORDR_QTY_SHIP <> 0 Then
+                    Dim COUNTRY_CODE As String = rowICTSTYL1.Item("COUNTRY_CODE") & String.Empty
+                    Dim rowPOTTRFF1 As DataRow = tblPOTTRFF1.Rows.Find(COUNTRY_CODE)
+                    If rowPOTTRFF1 IsNot Nothing Then
+                        Dim SURCHARGE_PERC As Decimal = Val(rowPOTTRFF1.Item("SURCHARGE_PERC") & String.Empty)
+                        If rowPOTTRFF1.Item("SURCHARGE_ACTIVE") & String.Empty = "1" AndAlso SURCHARGE_PERC > 0 Then
+                            If rowPOTTRFF1.Item("ORDER_START_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTRFF1.Item("ORDER_START_DATE") & String.Empty)) >= 0 Then
+                                If rowPOTTRFF1.Item("ORDER_ENDING_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTRFF1.Item("ORDER_ENDING_DATE") & String.Empty)) <= 0 Then
+                                    If rowPOTTRFF1.Item("INVOICE_START_DATE") & String.Empty = String.Empty OrElse INV_DATE.CompareTo(CDate(rowPOTTRFF1.Item("INVOICE_START_DATE") & String.Empty)) >= 0 Then
+                                        If rowPOTTRFF1.Item("INVOICE_ENDING_DATE") & String.Empty = String.Empty OrElse INV_DATE.CompareTo(CDate(rowPOTTRFF1.Item("INVOICE_ENDING_DATE") & String.Empty)) <= 0 Then
+                                            Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
+                                            rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
+                                            rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
+                                            rowSOTINVHM.Item("INV_MNO") = Val(tblSOTINVHM.Compute("MAX(INV_MNO)", $"INV_TYPE = '{rowSOTINVHM.Item("INV_TYPE")}' AND INV_NO = {rowSOTINVHM.Item("INV_NO")}") & String.Empty) + 1
+                                            rowSOTINVHM.Item("MISC_CHG_CODE") = rowPOTTRFF1.Item("MISC_CHG_CODE")
+                                            Dim rowSOTMISC1 As DataRow = tblSOTMISC1.Rows.Find(rowPOTTRFF1.Item("MISC_CHG_CODE"))
+                                            If rowSOTMISC1 IsNot Nothing Then
+                                                rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                                            End If
+                                            rowSOTINVHM.Item("MISC_CHG_NOTE") = "Tariff Surcharge"
+
+                                            ' Get this number to be evenly divisible by ORDR_QTY_SHIP
+                                            ' So we do not have rounding issues on the Invoice
+                                            Dim INV_MISC_CHG_TAR As Decimal = Math.Round(ORDR_UNIT_PRICE * (SURCHARGE_PERC / 100), 2) * ORDR_QTY_SHIP
+
+                                            rowSOTINVHM.Item("INV_MISC_CHG") = INV_MISC_CHG_TAR
+                                            'rowSOTINVHM.Item("CTL_NO ") = ""
+                                            'rowSOTINVHM.Item("PO_ORDER_NO") = ""
+                                            rowSOTINVHM.Item("INV_MISC_CHG_CURR") = rowSOTINVHM.Item("INV_MISC_CHG")
+                                            rowSOTINVHM.Item("MISC_CHARGE_TYPE") = "T"
+                                            rowSOTINVHM.Item("COUNTRY_CODE") = COUNTRY_CODE
+                                            rowSOTINVHM.Item("SURCHARGE_PERC") = SURCHARGE_PERC
+                                            rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
+
+                                            tblSOTINVHM.Rows.Add(rowSOTINVHM)
+                                            INV_MISC_CHG_TARIFF += rowSOTINVHM.Item("INV_MISC_CHG")
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
             Next
 
             INV_SALES = Math.Round(INV_SALES, 2)
@@ -410,9 +463,9 @@
                 End If
 
                 ' Miscellaneous Charges
-                .Item("INV_MISC_CHG") = 0
+                .Item("INV_MISC_CHG") = INV_MISC_CHG_TARIFF
                 If rowSOTPICK1.Table.Columns.Contains("INV_MISC_CHG") Then
-                    .Item("INV_MISC_CHG") = Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty)
+                    .Item("INV_MISC_CHG") += Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty)
                 End If
 
                 .Item("INV_TOTAL_AMOUNT") = INV_SALES + Val(.Item("INV_FREIGHT") & "") + Val(.Item("INV_MISC_CHG") & "")
@@ -456,7 +509,6 @@
                 '.Item("ORIG_CUST_STORE_NO") = ""
                 .Item("CURR_CODE") = CURR_CODE
                 .Item("CURR_EXCH_RATE") = CURR_EXCH_RATE
-
 
                 ' Walmart gets a hard-coded 2.5% discount, on all invoices.
                 ' Do not do this yet, will do only in factored 810 to Rosenthal
@@ -635,9 +687,9 @@
         End If
 
         For Each fieldName As String In New String() _
-                {"CUST_CODE", "INV_TYPE", "INV_DATE", "CUST_STORE_NO", "POST_CODE", _
-                 "TERM_CODE", "SREP_CODE", "SREP2_CODE", "ORDR_TYPE_CODE", _
-                 "ORDR_NO", "INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT", _
+                {"CUST_CODE", "INV_TYPE", "INV_DATE", "CUST_STORE_NO", "POST_CODE",
+                 "TERM_CODE", "SREP_CODE", "SREP2_CODE", "ORDR_TYPE_CODE",
+                 "ORDR_NO", "INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT",
                  "REASON_CODE", "INIT_OPER", "INIT_DATE", "INV_MISC_CHG", "ORDR_TYPE_CODE", "SALES_DIVISION_CODE", "INV_NO_CONS", "INV_STAX", "GST_TAX", "GST_TAX_CURR"}
             rowARTOPEN1.Item(fieldName) = rowSOTINVH1.Item(fieldName)
         Next
@@ -756,9 +808,9 @@
     ''' <param name="tblSOTINVH2">reference to SOTINVH2 datatable</param>
     ''' <returns>returns True if no errors; otherwise, returns false</returns>
     ''' <remarks></remarks>
-    Public Function CreateConsolidatedInvoice(ByVal invoiceNumber As String, _
-                                              ByRef rowSOTINVH1 As DataRow, _
-                                              ByRef tblSOTINVH2 As DataTable, _
+    Public Function CreateConsolidatedInvoice(ByVal invoiceNumber As String,
+                                              ByRef rowSOTINVH1 As DataRow,
+                                              ByRef tblSOTINVH2 As DataTable,
                                               Optional useSLN As Boolean = False) As Boolean
 
         Try
@@ -782,7 +834,7 @@
 
             Dim sqlInvoices As String = "Select * from Sotinvh1 where Inv_no = :PARM1 or INV_NO_CONS = :PARM2"
 
-            Dim tblHeader As DataTable = ASCDATA1.GetDataTable(sqlInvoices, "SOTINVH1", _
+            Dim tblHeader As DataTable = ASCDATA1.GetDataTable(sqlInvoices, "SOTINVH1",
                                                                "VV", New Object() {invoiceNumber, invoiceNumber})
 
             tblHeader.PrimaryKey = New System.Data.DataColumn() {tblHeader.Columns("INV_NO")}
@@ -862,7 +914,7 @@
                 sql = " SELECT ORDR_NO, EDI_DOC_SEQ_NO, EDI_DTL_SEQ, EDI_PRICE_UOM, SUM(QTY_PACKED) / SUM(EDI_SLN_QTY) QTY"
                 sql &= " FROM  " & wkSLN
                 sql &= " GROUP BY ORDR_NO, EDI_DOC_SEQ_NO, EDI_DTL_SEQ, EDI_PRICE_UOM"
- 
+
                 tblcartons = ASCDATA1.GetDataTable(sql)
 
                 For Each row As DataRow In tblcartons.Select("", "ORDR_NO, EDI_DOC_SEQ_NO, EDI_DTL_SEQ")
@@ -1311,5 +1363,84 @@
             Next
         Next
     End Sub
+
+    ''' <summary>
+    '''  Gets the total Tariff Dollars that would be applied to this Pick Tickt. Uses PICK_QTY_CONF for the number of Units
+    ''' </summary>
+    ''' <param name="PickTicketNumber"></param>
+    ''' <returns></returns>
+    Public Function GetTotalTariffsForPickTicket(ByVal PickTicketNumber As String) As Decimal
+
+        Dim tariffCharge As Decimal = 0
+
+        If ASCMAIN1.CLIENT <> "RGI" Then
+            Return tariffCharge
+        End If
+
+        If tblSOTPICK2 Is Nothing OrElse tblSOTPICK2.Rows.Count = 0 Then
+            Return tariffCharge
+        End If
+
+        Dim ORDR_NO As String = tblSOTPICK2.Rows(0).Item("ORDR_NO") & String.Empty
+
+        Dim rowSOTORDR1 As DataRow = tblSOTORDR1.Rows.Find(ORDR_NO)
+        If rowSOTORDR1 Is Nothing OrElse rowSOTORDR1.Item("ECOM_CODE") & String.Empty <> String.Empty Then
+            Return tariffCharge
+        End If
+
+        Dim ORDR_DATE As Date = rowSOTORDR1.Item("ORDR_DATE")
+
+        Dim tblICTSTYL1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE IN (SELECT STYLE_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)", "ICTSTYL1", "V", New Object() {ORDR_NO})
+        Dim tblICTSTYC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTSTYC1 WHERE (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)", "ICTSTYC1", "V", New Object() {ORDR_NO})
+        Dim tblPOTTRFF1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM POTTRFF1", "POTTRFF1")
+        Dim tblSOTMISC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTMISC1", "SOTMISC1")
+
+        For Each rowSOTPICK2 As DataRow In tblSOTPICK2.Select($"PICK_NO = '{PickTicketNumber}'")
+            Dim PICK_QTY_CONF As Int32 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+            If PICK_QTY_CONF = 0 Then
+                Continue For
+            End If
+
+            Dim ORDR_LNO As Int16 = Val(rowSOTPICK2.Item("ORDR_LNO") & String.Empty)
+
+            Dim rowSOTORDR2 As DataRow = tblSOTORDR2.Rows.Find({ORDR_NO, ORDR_LNO})
+            If rowSOTORDR2 Is Nothing Then
+                Continue For
+            End If
+
+            Dim ORDR_UNIT_PRICE As Decimal = Val(rowSOTORDR2.Item("ORDR_UNIT_PRICE") & String.Empty)
+            If ORDR_UNIT_PRICE = 0 Then
+                Continue For
+            End If
+
+            Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE") & String.Empty
+            Dim rowICTSTYL1 As DataRow = tblICTSTYC1.Rows.Find(STYLE_CODE)
+            If rowICTSTYL1 Is Nothing Then
+                Continue For
+            End If
+
+            Dim COUNTRY_CODE As String = rowICTSTYL1.Item("COUNTRY_CODE") & String.Empty
+            Dim rowPOTTARR1 As DataRow = tblPOTTRFF1.Rows.Find(COUNTRY_CODE)
+            If rowPOTTARR1 Is Nothing Then
+                Continue For
+            End If
+
+            Dim SURCHARGE_PERC As Decimal = Val(rowPOTTARR1.Item("SURCHARGE_PERC") & String.Empty)
+
+            If rowPOTTARR1.Item("SURCHARGE_ACTIVE") & String.Empty <> "1" OrElse SURCHARGE_PERC = 0 Then
+                Continue For
+            End If
+
+            If rowPOTTARR1.Item("ORDER_START_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTARR1.Item("ORDER_START_DATE") & String.Empty)) >= 0 Then
+                If rowPOTTARR1.Item("ORDER_ENDING_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTARR1.Item("ORDER_ENDING_DATE") & String.Empty)) < 0 Then
+                    tariffCharge += Math.Round((ORDR_UNIT_PRICE * PICK_QTY_CONF) * (SURCHARGE_PERC / 100), 2)
+                End If
+            End If
+
+        Next
+
+        Return tariffCharge
+
+    End Function
 
 End Class

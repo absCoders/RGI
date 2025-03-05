@@ -672,7 +672,7 @@ Public Class ECFESTYP
         ASCMAIN1.Progress("Reading File")
         Me.Cursor = Cursors.WaitCursor
 
-        Using cn As New System.Data.OleDb.OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & fileToImport & ";Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""")
+        Using cn As New System.Data.OleDb.OleDbConnection("Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" & fileToImport & ";Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""")
             Using cmd As New System.Data.OleDb.OleDbDataAdapter("select * from [Styles On Promotion$]", cn)
                 ' Select the data from Sheet1 of the workbook.
                 cn.Open()
