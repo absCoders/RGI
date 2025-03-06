@@ -3564,10 +3564,10 @@ Public Class SOROREL1
                     Next
 
 
-                    If CUST_CODEs.Contains("WALMART") Then
+                    If OG_CUSTs.Contains("WALMART") Then
                         dst.Tables("ERROR_TBL").Rows.Clear()
 
-                        ASCMAIN1.sql = "Select STYLE_CODE,STYLE_DESC,SUB_BODY_CODE,CARTON_PACK_QTY,CASE_CUBE,CUST_CODE FROM ICTSTYL1 WHERE CASE_CUBE Is NULL And STYLE_CODE In (" _
+                        ASCMAIN1.sql = "Select STYLE_CODE,STYLE_DESC,SUB_BODY_CODE,CARTON_PACK_QTY,CASE_CUBE,CUST_CODE FROM ICTSTYL1 WHERE (CASE_CUBE Is NULL or case_cube = 0 OR CARTON_PACK_qty = 0 OR CARTON_PACK_qty IS NULL)  And STYLE_CODE In (" _
                         & " Select  DISTINCT STYLE_CODE FROM SOTORDR2 WHERE ORDR_NO In (" _
                         & " Select  ORDR_NO  FROM SOTORDR1 WHERE ORDR_GROUP_NO in (" & sqlOG & ")))"
 
