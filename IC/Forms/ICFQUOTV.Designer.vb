@@ -453,6 +453,7 @@ Partial Class ICFQUOTV
         Me.chk1perPage = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl10 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grpExcelOptions = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkCostCode = New ABSCS.ABSCheckBox()
         Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.chkShowComments = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -619,6 +620,7 @@ Partial Class ICFQUOTV
         Me.UltraTabPageControl10.SuspendLayout()
         CType(Me.grpExcelOptions, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpExcelOptions.SuspendLayout()
+        CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowComments, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1947,6 +1949,7 @@ Partial Class ICFQUOTV
         'grpExcelOptions
         '
         Me.grpExcelOptions.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpExcelOptions.Controls.Add(Me.chkCostCode)
         Me.grpExcelOptions.Controls.Add(Me.chkStyleStats)
         Me.grpExcelOptions.Controls.Add(Me.chkShowComments)
         Me.grpExcelOptions.Controls.Add(Me.UltraGroupBox4)
@@ -1971,6 +1974,16 @@ Partial Class ICFQUOTV
         Me.grpExcelOptions.Size = New System.Drawing.Size(208, 563)
         Me.grpExcelOptions.TabIndex = 221
         Me.grpExcelOptions.Text = "Excel"
+        '
+        'chkCostCode
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkCostCode, False)
+        Me.chkCostCode.Location = New System.Drawing.Point(142, 246)
+        Me.chkCostCode.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkCostCode.Name = "chkCostCode"
+        Me.chkCostCode.Size = New System.Drawing.Size(112, 22)
+        Me.chkCostCode.TabIndex = 276
+        Me.chkCostCode.Text = "Cost Cd"
         '
         'chkStyleStats
         '
@@ -2151,7 +2164,7 @@ Partial Class ICFQUOTV
         Me.chkShowCost.Location = New System.Drawing.Point(5, 246)
         Me.chkShowCost.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowCost.Name = "chkShowCost"
-        Me.chkShowCost.Size = New System.Drawing.Size(129, 22)
+        Me.chkShowCost.Size = New System.Drawing.Size(132, 22)
         Me.chkShowCost.TabIndex = 222
         Me.chkShowCost.Text = "Show Cost"
         '
@@ -4084,6 +4097,7 @@ Partial Class ICFQUOTV
         CType(Me.grpExcelOptions, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpExcelOptions.ResumeLayout(False)
         Me.grpExcelOptions.PerformLayout()
+        CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowComments, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
@@ -4344,4 +4358,5 @@ Partial Class ICFQUOTV
     Friend WithEvents chkNewLinks As ABSCS.ABSCheckBox
     Friend WithEvents chkShowComments As ABSCS.ABSCheckBox
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents chkCostCode As ABSCS.ABSCheckBox
 End Class

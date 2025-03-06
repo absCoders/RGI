@@ -3054,6 +3054,9 @@ Public Class ICFQUOTV
             worksheet.Cells("Q1").EntireColumn.ColumnWidth = 0
         End If
         worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
+        worksheet.Cells("S1").EntireColumn.ColumnWidth = 12.83
+        worksheet.Cells("T1").EntireColumn.ColumnWidth = 29.83
+
         worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("K1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
         worksheet.Cells("L1: M1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
@@ -3061,6 +3064,7 @@ Public Class ICFQUOTV
         worksheet.Cells("P1: Q1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("J1").EntireColumn.WrapText = True
         worksheet.Cells("K1").EntireColumn.WrapText = True
+        worksheet.Cells("T1").EntireColumn.WrapText = True
         worksheet.Cells("A1").RowHeight = 12
         worksheet.Cells("A2").RowHeight = 48.75
         worksheet.Cells("A3").RowHeight = 12
@@ -3093,6 +3097,9 @@ Public Class ICFQUOTV
             worksheet.Cells("Q4").Value = ""
         End If
         worksheet.Cells("R4").Value = ""
+        worksheet.Cells("S4").Value = "FOB date"
+        worksheet.Cells("T4").Value = "Factory Name"
+
         worksheet.Cells("F2").Value = "Buyer Chart"
         With worksheet.Cells("E2:R2")
             .VerticalAlignment = SpreadsheetGear.VAlign.Center
@@ -3152,6 +3159,15 @@ Public Class ICFQUOTV
             .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
             .Interior.Color = SpreadsheetGear.Colors.Yellow
         End With
+        With worksheet.Cells("S4:T4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+
+
 
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
         Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
@@ -3175,9 +3191,18 @@ Public Class ICFQUOTV
             Dim COUNTRY_NAME As String = ""
             Dim SALES_DIVISION_NAME As String = ""
             Dim STYLE_RETAIL As String = ""
+            Dim FACTORY_DESC As String = ""
+
 
             If tblSTYLE.Rows.Count = 1 Then
                 FACTORY_CODE = tblSTYLE.Rows(0).Item("FACTORY_CODE").ToString & String.Empty
+                Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
+                If rowICTFACT1 Is Nothing Then
+                    FACTORY_DESC = ""
+                Else
+                    FACTORY_DESC = rowICTFACT1.Item("FACTORY_DESC") & ""
+                End If
+
                 COUNTRY_NAME = tblSTYLE.Rows(0).Item("COUNTRY_NAME").ToString & String.Empty
                 SALES_DIVISION_NAME = tblSTYLE.Rows(0).Item("SALES_DIVISION_NAME").ToString & String.Empty
                 If chkShowMSRP.Checked Then
@@ -3256,6 +3281,8 @@ Public Class ICFQUOTV
                 .Font.Color = SpreadsheetGear.Colors.Red
                 .VerticalAlignment = SpreadsheetGear.VAlign.Center
             End With
+            worksheet.Cells("T" & curRow.ToString).Value = FACTORY_DESC
+
             curRow += 1
         Next
 
@@ -4032,21 +4059,47 @@ Public Class ICFQUOTV
 
                 If chkShowCost.Checked Then
                     With worksheet.Cells(I + CI - 1, COL - 2) '  worksheet.Cells(I, CX + 5)
-
-                        ASCMAIN1.sql = "Select STYLE_COST from (" & vbCrLf _
-                            & "Select STYLE_COST from ICTCOSTA " & vbCrLf _
+                        Dim COSTTYPE As String = "FC"
+                        Dim STYLE_COST As Decimal = 0
+                        Dim COST_PERIOD As String = ""
+                        ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
+                            & "Select OPS_YYYYPP,STYLE_COST from ICTCOSTA " & vbCrLf _
                             & "where (STYLE_CODE, COLOR_CODE) in (" & vbCrLf _
                             & "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
                             & " from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & row2.Item("COLOR_CODE") & "'" _
                             & " and WHSE_QTY_ON_HAND > 0)" & vbCrLf _
                             & " order by OPS_YYYYPP DESC) where ROWNUM < 2"
-                        Dim STYLE_COST As Decimal = Val(ASCDATA1.GetDataValue)
 
+                        For Each rowICTCOSTA As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                            STYLE_COST = Val(rowICTCOSTA.Item("STYLE_COST") & "")
+                            COST_PERIOD = rowICTCOSTA.Item("OPS_YYYYPP") & ""
+                        Next
+                        ' CHECK FOR MULTIPLE Costs that make it up LC(*), ONE COST MAKES ITS UP LC(TI) TARIFF INC, LC(TNA) TARIFF Not Incl
+
+                        If STYLE_COST <> 0 And chkCostCode.Checked Then
+                            Dim ICTCOSTL_COSTS As Integer = 0
+                            ASCMAIN1.sql = "Select * From ICTCOSTL Where LOT_QTY_ONHD <> 0 AND OPS_YYYYPP_FIFO = '" & COST_PERIOD & "'AND STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & row2.Item("COLOR_CODE") & "'"
+                            For Each rowICTCOSTL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                                If ICTCOSTL_COSTS > 0 Then
+                                    COSTTYPE = "FLC(*)"
+                                    Exit For
+                                End If
+                                If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
+                                    COSTTYPE = "FLC"
+                                Else
+                                    ' COSTTYPE = "LC(TNA)"
+                                    COSTTYPE = "FLC"
+                                End If
+                                ICTCOSTL_COSTS += 1
+                            Next
+                        End If
+
+                        ' CHANGE PO_COST FIRST TO PO_COST_VCOST FOB A PER GABE 03/05/2025 DGJ
                         If STYLE_COST = 0 Then
-                            ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST) STYLE_COST" & vbCrLf _
+                            ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST_VCOST) STYLE_COST, PO_COST_VCOST,PO_COST_LANDED,PO_SHIPMENT_NO" & vbCrLf _
                                 & " from (" & vbCrLf _
                                 & " Select POTSHIP3.PO_SHIPMENT_NO, POTORDR2.PO_ORDER_NO, " & vbCrLf _
-                                & " POTORDR2.PO_COST, POTSHIP3.PO_COST_LANDED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
+                                & " POTORDR2.PO_COST_VCOST, POTSHIP3.PO_COST_LANDED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
                                 & " from POTORDR2,POTSHIP3,POTSHIP2,POTSHIP1" & vbCrLf _
                                 & " where POTORDR2.STYLE_CODE = '" & STYLE_CODE & "' and POTORDR2.COLOR_CODE = '" & row2.Item("COLOR_CODE") & "'" & vbCrLf _
                                 & "   and POTSHIP3.PO_ORDER_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
@@ -4056,14 +4109,44 @@ Public Class ICFQUOTV
                                 & "   and POTSHIP1.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
                                 & " order by POTSHIP3.PO_SHIPMENT_NO DESC, POTORDR2.PO_ORDER_NO DESC" & vbCrLf _
                                 & ") where ROWNUM <2"
-                            STYLE_COST = Val(ASCDATA1.GetDataValue)
+                            '  STYLE_COST = Val(ASCDATA1.GetDataValue)
+                            For Each rowPOTSHIP3 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                                STYLE_COST = Val(rowPOTSHIP3.Item("STYLE_COST") & "")
+                                If chkCostCode.Checked Then
+                                    If STYLE_COST = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "") Then
+                                        COSTTYPE = "FOB"
+                                    Else
+                                        Dim PO_SHIPMENT_NO As String = rowPOTSHIP3.Item("PO_SHIPMENT_NO") & ""
+                                        If PO_SHIPMENT_NO <> "" Then
+                                            ASCMAIN1.sql = "Select SUM(LANDING_COST_AMT) From POTSHIP5 Where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' AND COST_CATGY_CODE = 'TARIFF'"
+                                            Dim TARIFF_AMT As Integer = Val(ASCDATA1.GetDataValue)
+                                            If TARIFF_AMT <> 0 Then
+                                                COSTTYPE = "PC(TI)"
+                                            Else
+                                                COSTTYPE = "PC(TNA)"
+                                            End If
+
+                                        End If
+                                    End If
+                                End If
+                            Next
+
                         End If
 
                         If STYLE_COST = 0 Then
                             STYLE_COST = Val(row.Item("STYLE_COST") & "")
+                            COSTTYPE = "SC"
+                            COSTTYPE = ""
                         End If
-                        .Value = STYLE_COST
-                        .NumberFormat = "$#,##0.00"
+                        STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
+
+                        If chkCostCode.Checked = True Then
+                            COSTTYPE = " - " & COSTTYPE
+                        Else
+                            COSTTYPE = ""
+                        End If
+                        .Value = STYLE_COST & COSTTYPE
+                        ' .NumberFormat = "$#,##0.00"
                         .Font.Size = 12
                         .Font.Color = SpreadsheetGear.Colors.Red
                     End With
@@ -4513,7 +4596,30 @@ Public Class ICFQUOTV
             worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
         End If
 
+        If chkCostCode.Checked Then
+            I += 1
+            Dim rr As Integer = 0
+            worksheet.Cells(I + rr, 2).Value = "FLC = Final Landed Cost (On Hand)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "FLC(*) = Final Landed Cost (On Hand, made up of multiple Receipt records)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "PC(TNA) = Partially Costed Tariff Not Applied (In-Transit, Shipped)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "PC(TI) = Partially Costed Tariff Included (In-Transit, Shipped)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "FOB = FOB Cost"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
 
+        End If
 
 
 
@@ -6902,6 +7008,13 @@ Public Class ICFQUOTV
             mid(grdICTWHSE1.Text, 6, 3) = "Exc"
         End If
 
+    End Sub
+    Private Sub chkShowCost_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowCost.CheckedChanged
+        If chkShowCost.Checked Then
+            chkCostCode.Checked = True
+        Else
+            chkCostCode.Checked = False
+        End If
     End Sub
 End Class
 
