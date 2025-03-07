@@ -3054,7 +3054,7 @@ Public Class ICFQUOTV
             worksheet.Cells("Q1").EntireColumn.ColumnWidth = 0
         End If
         worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
-        worksheet.Cells("S1").EntireColumn.ColumnWidth = 12.83
+        worksheet.Cells("S1").EntireColumn.ColumnWidth = 15.83
         worksheet.Cells("T1").EntireColumn.ColumnWidth = 29.83
 
         worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
@@ -3064,6 +3064,7 @@ Public Class ICFQUOTV
         worksheet.Cells("P1: Q1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("J1").EntireColumn.WrapText = True
         worksheet.Cells("K1").EntireColumn.WrapText = True
+        worksheet.Cells("S1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("T1").EntireColumn.WrapText = True
         worksheet.Cells("A1").RowHeight = 12
         worksheet.Cells("A2").RowHeight = 48.75
@@ -3244,6 +3245,7 @@ Public Class ICFQUOTV
             worksheet.Cells("L" & curRow.ToString).Value = COUNTRY_NAME
             Dim TOT_AVAIL As Int64 = 0
             Dim DATES As New System.Text.StringBuilder With {.Length = 0}
+            Dim FOBDATES As New System.Text.StringBuilder With {.Length = 0}
             For w As Int64 = 0 To 4
                 Dim THIS_AVAIL As Int64 = Val(rowSB.Item("QTY_AVA" & w).ToString & String.Empty)
                 If THIS_AVAIL > 0 Then
@@ -3252,12 +3254,27 @@ Public Class ICFQUOTV
                 Dim THIS_DATE As String = rowSB.Item("DTE" & w).ToString & String.Empty
                 If IsDate(THIS_DATE) Then
                     DATES.AppendLine(Format(CDate(THIS_DATE), "MM/dd/yy"))
+                    ' REM GO GET Datefrom ICTSTATD
+                    If Format(CDate(THIS_DATE), "MM/dd/yy") <> Format(Now, "MM/dd/yy") Then
+                        For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                            If Format(CDate(THIS_DATE), "MM/dd/yy") = Format(CDate(rowICTSTATD.Item("PO_ARRIVAL_DATE") & ""), "MM/dd/yy") Then
+                                '        FOBDATES.AppendLine(Format(rowICTSTATD.Item("PO_DATE_SHIP_BY") & "", "MM/dd/yy"))
+                                FOBDATES.AppendLine(Format(CDate(rowICTSTATD.Item("PO_DATE_SHIP_BY") & ""), "MM/dd/yy"))
+                            End If
+                        Next
+                    Else
+                    End If
                 End If
             Next
             Dim DATES_STRING As String = ""
             If DATES.ToString.Length > 2 Then
                 DATES_STRING = DATES.ToString.Substring(0, DATES.Length - 2)
             End If
+            Dim FOBDATES_STRING As String = ""
+            If FOBDATES.ToString.Length > 2 Then
+                FOBDATES_STRING = FOBDATES.ToString.Substring(0, FOBDATES.Length - 2)
+            End If
+
             With worksheet.Cells("M" & curRow.ToString)
                 .Value = DATES_STRING
                 .Font.Color = SpreadsheetGear.Colors.Red
@@ -3280,6 +3297,10 @@ Public Class ICFQUOTV
                 .Interior.Color = SpreadsheetGear.Colors.Yellow
                 .Font.Color = SpreadsheetGear.Colors.Red
                 .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            End With
+            With worksheet.Cells("S" & curRow.ToString)
+                .Value = FOBDATES_STRING
+                .Font.Color = SpreadsheetGear.Colors.Red
             End With
             worksheet.Cells("T" & curRow.ToString).Value = FACTORY_DESC
 

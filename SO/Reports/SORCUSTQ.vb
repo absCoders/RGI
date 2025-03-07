@@ -1575,6 +1575,31 @@ Public Class SORCUSTQ
 
         worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
 
+        If chkCostCode.Checked Then
+            I += 1
+            Dim rr As Integer = 0
+            worksheet.Cells(I + rr, 2).Value = "FLC = Final Landed Cost (On Hand)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "FLC(*) = Final Landed Cost (On Hand, made up of multiple Receipt records)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "PC(TNA) = Partially Costed Tariff Not Applied (In-Transit, Shipped)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "PC(TI) = Partially Costed Tariff Included (In-Transit, Shipped)"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+            rr += 1
+            worksheet.Cells(I + rr, 2).Value = "FOB = FOB Cost"
+            worksheet.Cells(I + rr, 2).Font.Size = 12
+            worksheet.Cells(I + rr, 2).Font.Color = SpreadsheetGear.Colors.Red
+
+        End If
+
 
         Excel_Header(worksheet)
 
@@ -1601,6 +1626,113 @@ Public Class SORCUSTQ
                 worksheet.Cells(i + CI - 1, COL).Value = rowSOTCUSTQ.Item("COLOR_DESC") & String.Empty
                 LAST_COLOR = rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty
             End If
+
+            If chkShowCost.Checked Then
+                With worksheet.Cells(i + CI - 1, COL - 2) '  worksheet.Cells(I, CX + 5)
+                    Dim COSTTYPE As String = ""
+                    Dim STYLE_COST As Decimal = 0
+                    Dim COST_PERIOD As String = ""
+                    ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
+                            & "Select OPS_YYYYPP,STYLE_COST from ICTCOSTA " & vbCrLf _
+                            & "where (STYLE_CODE, COLOR_CODE) in (" & vbCrLf _
+                            & "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+                            & " from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & "'" _
+                            & " and WHSE_QTY_ON_HAND > 0)" & vbCrLf _
+                            & " order by OPS_YYYYPP DESC) where ROWNUM < 2"
+
+                    For Each rowICTCOSTA As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                        STYLE_COST = Val(rowICTCOSTA.Item("STYLE_COST") & "")
+                        COST_PERIOD = rowICTCOSTA.Item("OPS_YYYYPP") & ""
+                    Next
+                    ' CHECK FOR MULTIPLE Costs that make it up LC(*), ONE COST MAKES ITS UP LC(TI) TARIFF INC, LC(TNA) TARIFF Not Incl
+
+                    If STYLE_COST <> 0 And chkCostCode.Checked Then
+                        Dim ICTCOSTL_COSTS As Integer = 0
+                        ASCMAIN1.sql = "Select * From ICTCOSTL Where LOT_QTY_ONHD <> 0 AND OPS_YYYYPP_FIFO = '" & COST_PERIOD & "'AND STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & "'"
+                        For Each rowICTCOSTL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                            If ICTCOSTL_COSTS > 0 Then
+                                COSTTYPE = "FLC(*)"
+                                Exit For
+                            End If
+                            If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
+                                COSTTYPE = "FLC"
+                            Else
+                                ' COSTTYPE = "LC(TNA)"
+                                COSTTYPE = "FLC"
+                            End If
+                            ICTCOSTL_COSTS += 1
+                        Next
+                    End If
+
+                    ' CHANGE PO_COST FIRST TO PO_COST_VCOST FOB A PER GABE 03/05/2025 DGJ
+                    If STYLE_COST = 0 Then
+                        ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST_VCOST) STYLE_COST, PO_COST_VCOST,PO_COST_LANDED,PO_SHIPMENT_NO" & vbCrLf _
+                                & " from (" & vbCrLf _
+                                & " Select POTSHIP3.PO_SHIPMENT_NO, POTORDR2.PO_ORDER_NO, " & vbCrLf _
+                                & " POTORDR2.PO_COST_VCOST, POTSHIP3.PO_COST_LANDED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
+                                & " from POTORDR2,POTSHIP3,POTSHIP2,POTSHIP1" & vbCrLf _
+                                & " where POTORDR2.STYLE_CODE = '" & STYLE_CODE & "' and POTORDR2.COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & "'" & vbCrLf _
+                                & "   and POTSHIP3.PO_ORDER_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
+                                & "   and POTSHIP3.PO_ORDER_LNO (+) = POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                                & "   and POTSHIP2.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                                & "   and POTSHIP2.PO_SHIPMENT_LNO (+) = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                                & "   and POTSHIP1.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                                & " order by POTSHIP3.PO_SHIPMENT_NO DESC, POTORDR2.PO_ORDER_NO DESC" & vbCrLf _
+                                & ") where ROWNUM <2"
+                        '  STYLE_COST = Val(ASCDATA1.GetDataValue)
+                        For Each rowPOTSHIP3 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                            STYLE_COST = Val(rowPOTSHIP3.Item("STYLE_COST") & "")
+                            If chkCostCode.Checked Then
+                                If STYLE_COST = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "") Then
+                                    COSTTYPE = "FOB"
+                                Else
+                                    Dim PO_SHIPMENT_NO As String = rowPOTSHIP3.Item("PO_SHIPMENT_NO") & ""
+                                    If PO_SHIPMENT_NO <> "" Then
+                                        ASCMAIN1.sql = "Select SUM(LANDING_COST_AMT) From POTSHIP5 Where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' AND COST_CATGY_CODE = 'TARIFF'"
+                                        Dim TARIFF_AMT As Integer = Val(ASCDATA1.GetDataValue)
+                                        If TARIFF_AMT <> 0 Then
+                                            COSTTYPE = "PC(TI)"
+                                        Else
+                                            COSTTYPE = "PC(TNA)"
+                                        End If
+
+                                    End If
+                                End If
+                            End If
+                        Next
+
+                    End If
+
+                    If STYLE_COST = 0 Then
+                        STYLE_COST = 0 'Val(rowSOTCUSTQ.Item("STYLE_COST") & "")
+                        COSTTYPE = "NC"
+                        COSTTYPE = ""
+                    End If
+                    STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
+
+                    If chkCostCode.Checked = True Then
+                        COSTTYPE = " - " & COSTTYPE
+                    Else
+                        COSTTYPE = ""
+                    End If
+                    .Value = STYLE_COST & COSTTYPE
+                    ' .NumberFormat = "$#,##0.00"
+                    .Font.Size = 12
+                    .Font.Color = SpreadsheetGear.Colors.Red
+                End With
+            End If
+
+
+
+
+
+
+
+
+
+
+
+
             worksheet.Cells(i + CI - 1, COL + 1).Value = rowSOTCUSTQ.Item("ORDR_CUST_PO") & String.Empty
             worksheet.Cells(i + CI - 1, COL + 2).Value = rowSOTCUSTQ.Item("ORDR_DATE") & String.Empty
             worksheet.Cells(i + CI - 1, COL + 3).Value = rowSOTCUSTQ.Item("ORDR_SHIP_DATE") & String.Empty
@@ -2417,6 +2549,15 @@ Public Class SORCUSTQ
         ASCMAIN1.Progress("")
         Return RetVal
     End Function
+
+    Private Sub chkShowCost_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowCost.CheckedChanged
+        If chkShowCost.Checked Then
+            chkCostCode.Checked = True
+        Else
+            chkCostCode.Checked = False
+        End If
+    End Sub
+
 
 #End Region
 End Class

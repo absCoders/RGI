@@ -115,6 +115,8 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.chkCostCode = New ABSCS.ABSCheckBox()
+        Me.chkShowCost = New ABSCS.ABSCheckBox()
         Me.chk1Sheet = New ABSCS.ABSCheckBox()
         Me.grpDATE_RANGE = New Infragistics.Win.Misc.UltraGroupBox()
         Me.DTE1 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -177,6 +179,8 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowCost, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpDATE_RANGE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpDATE_RANGE.SuspendLayout()
@@ -432,6 +436,8 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkCostCode)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkShowCost)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chk1Sheet)
         Me.SplitContainer8.Panel1.Controls.Add(Me.grpDATE_RANGE)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStats)
@@ -450,6 +456,27 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Size = New System.Drawing.Size(1021, 402)
         Me.SplitContainer8.SplitterDistance = 186
         Me.SplitContainer8.TabIndex = 265
+        '
+        'chkCostCode
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkCostCode, False)
+        Me.chkCostCode.Location = New System.Drawing.Point(373, 145)
+        Me.chkCostCode.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkCostCode.Name = "chkCostCode"
+        Me.chkCostCode.Size = New System.Drawing.Size(112, 22)
+        Me.chkCostCode.TabIndex = 281
+        Me.chkCostCode.Text = "Cost Cd"
+        '
+        'chkShowCost
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowCost, False)
+        Me.Absx1.SetABSColumnName(Me.chkShowCost, "QUOTE_SHOW_COST")
+        Me.chkShowCost.Location = New System.Drawing.Point(236, 145)
+        Me.chkShowCost.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowCost.Name = "chkShowCost"
+        Me.chkShowCost.Size = New System.Drawing.Size(132, 22)
+        Me.chkShowCost.TabIndex = 280
+        Me.chkShowCost.Text = "Show Cost"
         '
         'chk1Sheet
         '
@@ -1036,6 +1063,8 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowCost, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpDATE_RANGE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpDATE_RANGE.ResumeLayout(False)
@@ -1098,4 +1127,6 @@ Partial Class SORCUSTQ
     Friend WithEvents DTE1 As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents DTE0 As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
+    Friend WithEvents chkCostCode As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowCost As ABSCS.ABSCheckBox
 End Class
