@@ -655,7 +655,7 @@ Public Class ECFESTYP
 
         Using openFileDialog1 As New OpenFileDialog
             openFileDialog1.Title = "Open File To Upsert"
-            openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx"
+            openFileDialog1.Filter = "Excel files (*.xls)|*.xls"
             openFileDialog1.FilterIndex = 1
             openFileDialog1.RestoreDirectory = True
 
@@ -672,7 +672,11 @@ Public Class ECFESTYP
         ASCMAIN1.Progress("Reading File")
         Me.Cursor = Cursors.WaitCursor
 
-        Using cn As New System.Data.OleDb.OleDbConnection("Provider=Microsoft.ACE.OLEDB.16.0;Data Source=" & fileToImport & ";Extended Properties=""Excel 12.0;HDR=YES;IMEX=1""")
+        Dim strConnection As String = "Provider=Microsoft.Jet.OleDb.4.0;" &
+                "data source=" & fileToImport & ";" &
+                "Extended Properties=Excel 8.0;"
+
+        Using cn As New System.Data.OleDb.OleDbConnection(strConnection)
             Using cmd As New System.Data.OleDb.OleDbDataAdapter("select * from [Styles On Promotion$]", cn)
                 ' Select the data from Sheet1 of the workbook.
                 cn.Open()
