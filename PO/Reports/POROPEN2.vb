@@ -1096,12 +1096,12 @@ Public Class POROPEN2
             ' ASCMAIN1.sql = "Select * from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowPOTORDRQ.Item("COLOR_CODE") & String.Empty & "'"
             '       For Each rowICTSTAT2 As DataRow In ASCDATA1.GetDataTable.Select("")
             For Each rowPOTSHIPX As DataRow In dst.Tables("POTSHIPX").Select("SHIP_STATUS = 'O' AND PO_ORDER_NO = '" & rowPOTORDRX.Item("PO_ORDER_NO") & String.Empty & "' and PO_ORDER_LNO = '" & rowPOTORDRX.Item("PO_ORDER_LNO") & String.Empty & "'")
-                If rowPOTORDRX.Item("PO_ORDER_NO") & String.Empty = "162223" Then
-                    Stop
-                End If
-                If II > 1 Then
-                    Stop
-                End If
+                ''If rowPOTORDRX.Item("PO_ORDER_NO") & String.Empty = "162223" Then
+                ''    Stop
+                ''End If
+                ''If II > 1 Then
+                ''    Stop
+                ''End If
                 SHP_OPN = SHP_OPN + Val(rowPOTSHIPX.Item("PO_QTY_SHP") & String.Empty)
                 PO_SHIP_ETA = rowPOTSHIPX.Item("PO_SHIP_ETA") & String.Empty
                 VESSEL = rowPOTSHIPX.Item("PO_SHIP_VESSEL") & String.Empty
