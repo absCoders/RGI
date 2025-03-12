@@ -90,6 +90,8 @@ Partial Class POROPEN2
         Me.AbsCheckBox11 = New ABSCS.ABSCheckBox()
         Me.AbsCheckBox12 = New ABSCS.ABSCheckBox()
         Me.chkDZNCOST = New ABSCS.ABSCheckBox()
+        Me.chk1Sheet = New ABSCS.ABSCheckBox()
+        Me.chkExcel = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -162,21 +164,26 @@ Partial Class POROPEN2
         CType(Me.AbsCheckBox11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AbsCheckBox12, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkDZNCOST, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkExcel, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
         'UltraTabControl1
         '
         Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
         '
         'SplitContainer5
         '
@@ -184,6 +191,8 @@ Partial Class POROPEN2
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkExcel)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chk1Sheet)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkDZNCOST)
         Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox12)
         Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox11)
@@ -196,6 +205,11 @@ Partial Class POROPEN2
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox1)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox2)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpShow)
+        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
+        '
+        'txtDescription
+        '
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         'grdASTRECAP
         '
@@ -288,15 +302,23 @@ Partial Class POROPEN2
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
+        '
+        'tabDataExports
+        '
+        Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
+        Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'grdASFBASEX
         '
@@ -343,24 +365,17 @@ Partial Class POROPEN2
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
-        '_ASFBASE1_Toolbars_Dock_Area_Left
-        '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
         '
         'tlb
         '
@@ -370,9 +385,10 @@ Partial Class POROPEN2
         'grpShow
         '
         Me.grpShow.Controls.Add(Me.optShow)
-        Me.grpShow.Location = New System.Drawing.Point(10, 15)
+        Me.grpShow.Location = New System.Drawing.Point(12, 17)
+        Me.grpShow.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpShow.Name = "grpShow"
-        Me.grpShow.Size = New System.Drawing.Size(162, 85)
+        Me.grpShow.Size = New System.Drawing.Size(202, 96)
         Me.grpShow.TabIndex = 25
         Me.grpShow.Text = "Show"
         '
@@ -386,18 +402,20 @@ Partial Class POROPEN2
         ValueListItem7.DataValue = "O"
         ValueListItem7.DisplayText = "Open Only"
         Me.optShow.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem6, ValueListItem7})
-        Me.optShow.Location = New System.Drawing.Point(6, 24)
+        Me.optShow.Location = New System.Drawing.Point(8, 27)
+        Me.optShow.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optShow.Name = "optShow"
-        Me.optShow.Size = New System.Drawing.Size(108, 38)
+        Me.optShow.Size = New System.Drawing.Size(135, 43)
         Me.optShow.TabIndex = 21
         Me.optShow.Text = "Open Only"
         '
         'UltraGroupBox2
         '
         Me.UltraGroupBox2.Controls.Add(Me.optASN)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(178, 15)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(222, 17)
+        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(162, 85)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(202, 96)
         Me.UltraGroupBox2.TabIndex = 261
         Me.UltraGroupBox2.Text = "Style Option"
         '
@@ -413,9 +431,10 @@ Partial Class POROPEN2
         ValueListItem3.DataValue = "N"
         ValueListItem3.DisplayText = "Non-Stock Only"
         Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2, ValueListItem3})
-        Me.optASN.Location = New System.Drawing.Point(7, 24)
+        Me.optASN.Location = New System.Drawing.Point(9, 27)
+        Me.optASN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optASN.Name = "optASN"
-        Me.optASN.Size = New System.Drawing.Size(137, 55)
+        Me.optASN.Size = New System.Drawing.Size(171, 62)
         Me.optASN.TabIndex = 0
         Me.optASN.Text = "All Styles"
         '
@@ -423,9 +442,10 @@ Partial Class POROPEN2
         '
         Me.UltraGroupBox1.Controls.Add(Me.AbsCheckBox3)
         Me.UltraGroupBox1.Controls.Add(Me.AbsCheckBox1)
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(346, 15)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(432, 17)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(162, 85)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(202, 96)
         Me.UltraGroupBox1.TabIndex = 271
         Me.UltraGroupBox1.Text = "Include"
         '
@@ -435,9 +455,10 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox3, "CHKINCL_S")
         Me.AbsCheckBox3.Checked = True
         Me.AbsCheckBox3.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox3.Location = New System.Drawing.Point(6, 42)
+        Me.AbsCheckBox3.Location = New System.Drawing.Point(8, 47)
+        Me.AbsCheckBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox3.Name = "AbsCheckBox3"
-        Me.AbsCheckBox3.Size = New System.Drawing.Size(114, 20)
+        Me.AbsCheckBox3.Size = New System.Drawing.Size(142, 22)
         Me.AbsCheckBox3.TabIndex = 266
         Me.AbsCheckBox3.Text = "Shipped PO's"
         '
@@ -447,9 +468,10 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "CHKINCL_O")
         Me.AbsCheckBox1.Checked = True
         Me.AbsCheckBox1.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox1.Location = New System.Drawing.Point(6, 24)
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(8, 27)
+        Me.AbsCheckBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox1.Name = "AbsCheckBox1"
-        Me.AbsCheckBox1.Size = New System.Drawing.Size(114, 20)
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(142, 22)
         Me.AbsCheckBox1.TabIndex = 265
         Me.AbsCheckBox1.Text = "Open PO's"
         '
@@ -459,9 +481,10 @@ Partial Class POROPEN2
         Me.grpPO_DATE_SHIP_BY.Controls.Add(Me.AbsCheckBox6)
         Me.grpPO_DATE_SHIP_BY.Controls.Add(Me.UltraDateTimeEditor1)
         Me.grpPO_DATE_SHIP_BY.Controls.Add(Me.UltraDateTimeEditor2)
-        Me.grpPO_DATE_SHIP_BY.Location = New System.Drawing.Point(10, 106)
+        Me.grpPO_DATE_SHIP_BY.Location = New System.Drawing.Point(12, 119)
+        Me.grpPO_DATE_SHIP_BY.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPO_DATE_SHIP_BY.Name = "grpPO_DATE_SHIP_BY"
-        Me.grpPO_DATE_SHIP_BY.Size = New System.Drawing.Size(162, 125)
+        Me.grpPO_DATE_SHIP_BY.Size = New System.Drawing.Size(202, 141)
         Me.grpPO_DATE_SHIP_BY.TabIndex = 273
         Me.grpPO_DATE_SHIP_BY.Text = "Ship by Date Range"
         '
@@ -471,9 +494,10 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox5, "CHKPO_DATE_SHIP_BY_F")
         Me.AbsCheckBox5.Checked = True
         Me.AbsCheckBox5.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox5.Location = New System.Drawing.Point(6, 20)
+        Me.AbsCheckBox5.Location = New System.Drawing.Point(8, 22)
+        Me.AbsCheckBox5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox5.Name = "AbsCheckBox5"
-        Me.AbsCheckBox5.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox5.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox5.TabIndex = 32
         Me.AbsCheckBox5.Text = "First on File"
         '
@@ -483,26 +507,29 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox6, "CHKPO_DATE_SHIP_BY_L")
         Me.AbsCheckBox6.Checked = True
         Me.AbsCheckBox6.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox6.Location = New System.Drawing.Point(6, 70)
+        Me.AbsCheckBox6.Location = New System.Drawing.Point(8, 79)
+        Me.AbsCheckBox6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox6.Name = "AbsCheckBox6"
-        Me.AbsCheckBox6.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox6.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox6.TabIndex = 32
         Me.AbsCheckBox6.Text = "Last on File"
         '
         'UltraDateTimeEditor1
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor1, "PO_DATE_SHIP_BY_L")
-        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(6, 90)
+        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(8, 101)
+        Me.UltraDateTimeEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor1.Name = "UltraDateTimeEditor1"
-        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor1.TabIndex = 1
         '
         'UltraDateTimeEditor2
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor2, "PO_DATE_SHIP_BY_F")
-        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(6, 40)
+        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(8, 45)
+        Me.UltraDateTimeEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor2.Name = "UltraDateTimeEditor2"
-        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor2.TabIndex = 0
         '
         'grpPO_DATE_ETA
@@ -511,9 +538,10 @@ Partial Class POROPEN2
         Me.grpPO_DATE_ETA.Controls.Add(Me.AbsCheckBox8)
         Me.grpPO_DATE_ETA.Controls.Add(Me.UltraDateTimeEditor3)
         Me.grpPO_DATE_ETA.Controls.Add(Me.UltraDateTimeEditor4)
-        Me.grpPO_DATE_ETA.Location = New System.Drawing.Point(178, 106)
+        Me.grpPO_DATE_ETA.Location = New System.Drawing.Point(222, 119)
+        Me.grpPO_DATE_ETA.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPO_DATE_ETA.Name = "grpPO_DATE_ETA"
-        Me.grpPO_DATE_ETA.Size = New System.Drawing.Size(162, 125)
+        Me.grpPO_DATE_ETA.Size = New System.Drawing.Size(202, 141)
         Me.grpPO_DATE_ETA.TabIndex = 274
         Me.grpPO_DATE_ETA.Text = "ETA Date Range"
         '
@@ -523,9 +551,10 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox7, "CHKPO_DATE_ETA_F")
         Me.AbsCheckBox7.Checked = True
         Me.AbsCheckBox7.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox7.Location = New System.Drawing.Point(6, 20)
+        Me.AbsCheckBox7.Location = New System.Drawing.Point(8, 22)
+        Me.AbsCheckBox7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox7.Name = "AbsCheckBox7"
-        Me.AbsCheckBox7.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox7.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox7.TabIndex = 32
         Me.AbsCheckBox7.Text = "First on File"
         '
@@ -535,26 +564,29 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox8, "CHKPO_DATE_ETA_L")
         Me.AbsCheckBox8.Checked = True
         Me.AbsCheckBox8.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox8.Location = New System.Drawing.Point(6, 70)
+        Me.AbsCheckBox8.Location = New System.Drawing.Point(8, 79)
+        Me.AbsCheckBox8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox8.Name = "AbsCheckBox8"
-        Me.AbsCheckBox8.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox8.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox8.TabIndex = 32
         Me.AbsCheckBox8.Text = "Last on File"
         '
         'UltraDateTimeEditor3
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor3, "PO_DATE_ETA_L")
-        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(6, 90)
+        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(8, 101)
+        Me.UltraDateTimeEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor3.Name = "UltraDateTimeEditor3"
-        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor3.TabIndex = 1
         '
         'UltraDateTimeEditor4
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor4, "PO_DATE_ETA_F")
-        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(6, 40)
+        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(8, 45)
+        Me.UltraDateTimeEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor4.Name = "UltraDateTimeEditor4"
-        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor4.TabIndex = 0
         '
         'grpPO_DATE_RECEIVED
@@ -563,9 +595,10 @@ Partial Class POROPEN2
         Me.grpPO_DATE_RECEIVED.Controls.Add(Me.AbsCheckBox10)
         Me.grpPO_DATE_RECEIVED.Controls.Add(Me.UltraDateTimeEditor5)
         Me.grpPO_DATE_RECEIVED.Controls.Add(Me.UltraDateTimeEditor6)
-        Me.grpPO_DATE_RECEIVED.Location = New System.Drawing.Point(346, 106)
+        Me.grpPO_DATE_RECEIVED.Location = New System.Drawing.Point(432, 119)
+        Me.grpPO_DATE_RECEIVED.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPO_DATE_RECEIVED.Name = "grpPO_DATE_RECEIVED"
-        Me.grpPO_DATE_RECEIVED.Size = New System.Drawing.Size(162, 125)
+        Me.grpPO_DATE_RECEIVED.Size = New System.Drawing.Size(202, 141)
         Me.grpPO_DATE_RECEIVED.TabIndex = 275
         Me.grpPO_DATE_RECEIVED.Text = "Date Received Range"
         '
@@ -575,9 +608,10 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox9, "CHKPO_DATE_RECEIVED_F")
         Me.AbsCheckBox9.Checked = True
         Me.AbsCheckBox9.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox9.Location = New System.Drawing.Point(6, 20)
+        Me.AbsCheckBox9.Location = New System.Drawing.Point(8, 22)
+        Me.AbsCheckBox9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox9.Name = "AbsCheckBox9"
-        Me.AbsCheckBox9.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox9.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox9.TabIndex = 32
         Me.AbsCheckBox9.Text = "First on File"
         '
@@ -587,34 +621,38 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox10, "CHKPO_DATE_RECEIVED_L")
         Me.AbsCheckBox10.Checked = True
         Me.AbsCheckBox10.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox10.Location = New System.Drawing.Point(6, 70)
+        Me.AbsCheckBox10.Location = New System.Drawing.Point(8, 79)
+        Me.AbsCheckBox10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox10.Name = "AbsCheckBox10"
-        Me.AbsCheckBox10.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox10.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox10.TabIndex = 32
         Me.AbsCheckBox10.Text = "Last on File"
         '
         'UltraDateTimeEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor5, "PO_DATE_RECEIVED_L")
-        Me.UltraDateTimeEditor5.Location = New System.Drawing.Point(6, 90)
+        Me.UltraDateTimeEditor5.Location = New System.Drawing.Point(8, 101)
+        Me.UltraDateTimeEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor5.Name = "UltraDateTimeEditor5"
-        Me.UltraDateTimeEditor5.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor5.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor5.TabIndex = 1
         '
         'UltraDateTimeEditor6
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor6, "PO_DATE_RECEIVED_F")
-        Me.UltraDateTimeEditor6.Location = New System.Drawing.Point(6, 40)
+        Me.UltraDateTimeEditor6.Location = New System.Drawing.Point(8, 45)
+        Me.UltraDateTimeEditor6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor6.Name = "UltraDateTimeEditor6"
-        Me.UltraDateTimeEditor6.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor6.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor6.TabIndex = 0
         '
         'UltraGroupBox3
         '
         Me.UltraGroupBox3.Controls.Add(Me.optSORT)
-        Me.UltraGroupBox3.Location = New System.Drawing.Point(514, 15)
+        Me.UltraGroupBox3.Location = New System.Drawing.Point(642, 17)
+        Me.UltraGroupBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(295, 85)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(369, 96)
         Me.UltraGroupBox3.TabIndex = 276
         Me.UltraGroupBox3.Text = "Sort Details"
         '
@@ -632,18 +670,20 @@ Partial Class POROPEN2
         ValueListItem9.DataValue = "O"
         ValueListItem9.DisplayText = "Date Ordered"
         Me.optSORT.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem4, ValueListItem5, ValueListItem8, ValueListItem9})
-        Me.optSORT.Location = New System.Drawing.Point(6, 23)
+        Me.optSORT.Location = New System.Drawing.Point(8, 26)
+        Me.optSORT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optSORT.Name = "optSORT"
-        Me.optSORT.Size = New System.Drawing.Size(249, 39)
+        Me.optSORT.Size = New System.Drawing.Size(311, 44)
         Me.optSORT.TabIndex = 21
         Me.optSORT.Text = "By PO No, Line"
         '
         'chkShowCustomerStyleInfo
         '
         Me.Absx1.SetABSColumnName(Me.chkShowCustomerStyleInfo, "CHKCUSTSTYLEINFO")
-        Me.chkShowCustomerStyleInfo.Location = New System.Drawing.Point(16, 237)
+        Me.chkShowCustomerStyleInfo.Location = New System.Drawing.Point(20, 267)
+        Me.chkShowCustomerStyleInfo.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowCustomerStyleInfo.Name = "chkShowCustomerStyleInfo"
-        Me.chkShowCustomerStyleInfo.Size = New System.Drawing.Size(207, 20)
+        Me.chkShowCustomerStyleInfo.Size = New System.Drawing.Size(259, 22)
         Me.chkShowCustomerStyleInfo.TabIndex = 277
         Me.chkShowCustomerStyleInfo.Text = "Show Customer Style Info"
         Me.chkShowCustomerStyleInfo.Visible = False
@@ -654,9 +694,10 @@ Partial Class POROPEN2
         Me.grpPO_INIT_DATE.Controls.Add(Me.AbsCheckBox4)
         Me.grpPO_INIT_DATE.Controls.Add(Me.UltraDateTimeEditor7)
         Me.grpPO_INIT_DATE.Controls.Add(Me.UltraDateTimeEditor8)
-        Me.grpPO_INIT_DATE.Location = New System.Drawing.Point(514, 106)
+        Me.grpPO_INIT_DATE.Location = New System.Drawing.Point(642, 119)
+        Me.grpPO_INIT_DATE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPO_INIT_DATE.Name = "grpPO_INIT_DATE"
-        Me.grpPO_INIT_DATE.Size = New System.Drawing.Size(162, 125)
+        Me.grpPO_INIT_DATE.Size = New System.Drawing.Size(202, 141)
         Me.grpPO_INIT_DATE.TabIndex = 278
         Me.grpPO_INIT_DATE.Text = "Date Ordered Range"
         '
@@ -666,9 +707,10 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "CHKPO_INIT_DATE_F")
         Me.AbsCheckBox2.Checked = True
         Me.AbsCheckBox2.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(6, 20)
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(8, 22)
+        Me.AbsCheckBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox2.TabIndex = 32
         Me.AbsCheckBox2.Text = "First on File"
         '
@@ -678,34 +720,38 @@ Partial Class POROPEN2
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox4, "CHKPO_INIT_DATE_L")
         Me.AbsCheckBox4.Checked = True
         Me.AbsCheckBox4.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox4.Location = New System.Drawing.Point(6, 70)
+        Me.AbsCheckBox4.Location = New System.Drawing.Point(8, 79)
+        Me.AbsCheckBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox4.Name = "AbsCheckBox4"
-        Me.AbsCheckBox4.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox4.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox4.TabIndex = 32
         Me.AbsCheckBox4.Text = "Last on File"
         '
         'UltraDateTimeEditor7
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor7, "PO_INIT_DATE_L")
-        Me.UltraDateTimeEditor7.Location = New System.Drawing.Point(6, 90)
+        Me.UltraDateTimeEditor7.Location = New System.Drawing.Point(8, 101)
+        Me.UltraDateTimeEditor7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor7.Name = "UltraDateTimeEditor7"
-        Me.UltraDateTimeEditor7.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor7.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor7.TabIndex = 1
         '
         'UltraDateTimeEditor8
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor8, "PO_INIT_DATE_F")
-        Me.UltraDateTimeEditor8.Location = New System.Drawing.Point(6, 40)
+        Me.UltraDateTimeEditor8.Location = New System.Drawing.Point(8, 45)
+        Me.UltraDateTimeEditor8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor8.Name = "UltraDateTimeEditor8"
-        Me.UltraDateTimeEditor8.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor8.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor8.TabIndex = 0
         '
         'AbsCheckBox11
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox11, "CHKUSEFIFOCOST")
-        Me.AbsCheckBox11.Location = New System.Drawing.Point(16, 255)
+        Me.AbsCheckBox11.Location = New System.Drawing.Point(20, 287)
+        Me.AbsCheckBox11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox11.Name = "AbsCheckBox11"
-        Me.AbsCheckBox11.Size = New System.Drawing.Size(207, 20)
+        Me.AbsCheckBox11.Size = New System.Drawing.Size(259, 22)
         Me.AbsCheckBox11.TabIndex = 279
         Me.AbsCheckBox11.Text = "Use Initial Cost"
         Me.AbsCheckBox11.Visible = False
@@ -713,9 +759,10 @@ Partial Class POROPEN2
         'AbsCheckBox12
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox12, "CHKCOLLAPSEDETAILS")
-        Me.AbsCheckBox12.Location = New System.Drawing.Point(16, 292)
+        Me.AbsCheckBox12.Location = New System.Drawing.Point(20, 328)
+        Me.AbsCheckBox12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox12.Name = "AbsCheckBox12"
-        Me.AbsCheckBox12.Size = New System.Drawing.Size(207, 20)
+        Me.AbsCheckBox12.Size = New System.Drawing.Size(259, 22)
         Me.AbsCheckBox12.TabIndex = 280
         Me.AbsCheckBox12.Text = "Collapse Details"
         Me.AbsCheckBox12.Visible = False
@@ -724,18 +771,42 @@ Partial Class POROPEN2
         '
         Me.Absx1.SetABSBindToTable(Me.chkDZNCOST, False)
         Me.Absx1.SetABSColumnName(Me.chkDZNCOST, "CHKDZNCOST")
-        Me.chkDZNCOST.Location = New System.Drawing.Point(16, 274)
+        Me.chkDZNCOST.Location = New System.Drawing.Point(20, 308)
+        Me.chkDZNCOST.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkDZNCOST.Name = "chkDZNCOST"
-        Me.chkDZNCOST.Size = New System.Drawing.Size(207, 20)
+        Me.chkDZNCOST.Size = New System.Drawing.Size(259, 22)
         Me.chkDZNCOST.TabIndex = 281
         Me.chkDZNCOST.Text = "Show Cost In Dozen"
         '
+        'chk1Sheet
+        '
+        Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
+        Me.chk1Sheet.CausesValidation = False
+        Me.chk1Sheet.Location = New System.Drawing.Point(363, 308)
+        Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chk1Sheet.Name = "chk1Sheet"
+        Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
+        Me.chk1Sheet.TabIndex = 282
+        Me.chk1Sheet.Text = "1 Sheet/Div"
+        Me.chk1Sheet.Visible = False
+        '
+        'chkExcel
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkExcel, False)
+        Me.chkExcel.CausesValidation = False
+        Me.chkExcel.Location = New System.Drawing.Point(20, 349)
+        Me.chkExcel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkExcel.Name = "chkExcel"
+        Me.chkExcel.Size = New System.Drawing.Size(164, 22)
+        Me.chkExcel.TabIndex = 283
+        Me.chkExcel.Text = "Create Excel"
+        '
         'POROPEN2
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
-        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ClientSize = New System.Drawing.Size(1238, 646)
+        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.Name = "POROPEN2"
         Me.Text = "POROPEN2"
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -814,6 +885,8 @@ Partial Class POROPEN2
         CType(Me.AbsCheckBox11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.AbsCheckBox12, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkDZNCOST, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkExcel, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -850,4 +923,6 @@ Partial Class POROPEN2
     Friend WithEvents AbsCheckBox11 As ABSCS.ABSCheckBox
     Friend WithEvents AbsCheckBox12 As ABSCS.ABSCheckBox
     Friend WithEvents chkDZNCOST As ABSCS.ABSCheckBox
+    Friend WithEvents chkExcel As ABSCS.ABSCheckBox
+    Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
 End Class

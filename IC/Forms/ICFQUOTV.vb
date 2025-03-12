@@ -3173,20 +3173,23 @@ Public Class ICFQUOTV
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
         Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
 
+
+        Dim QTYAVAILFILTER As String = "QTY_AVA <> 0"
+
         Dim curRow As Int64 = 5
-        For Each rowSB As DataRow In dst.Tables.Item("ICTSTYC1").Select("", "STYLE_CODE, COLOR_CODE")
+        For Each rowSB As DataRow In dst.Tables.Item("ICTSTYC1").Select(QTYAVAILFILTER, "STYLE_CODE, COLOR_CODE")
             Dim STYLE_CODE As String = rowSB.Item("STYLE_CODE").ToString & String.Empty
             Dim COLOR_CODE As String = rowSB.Item("COLOR_CODE").ToString & String.Empty
             Dim sql As New System.Text.StringBuilder With {.Length = 0}
-            sql.AppendLine("SELECT")
+            sql.AppendLine("Select")
             sql.AppendLine("ST1.FACTORY_CODE,")
             sql.AppendLine("CN1.COUNTRY_NAME,")
             sql.AppendLine("SD1.SALES_DIVISION_NAME,")
             sql.AppendLine("ST1.STYLE_RETAIL")
             sql.AppendLine("FROM ICTSTYL1 ST1, SOTSDIV1 SD1, TATCNTRY CN1")
             sql.AppendLine("WHERE ST1.SALES_DIVISION_CODE = SD1.SALES_DIVISION_CODE")
-            sql.AppendLine("AND ST1.COUNTRY_CODE = CN1.COUNTRY_CODE (+)")
-            sql.AppendLine(String.Format("AND STYLE_CODE = '{0}'", STYLE_CODE))
+            sql.AppendLine("And ST1.COUNTRY_CODE = CN1.COUNTRY_CODE (+)")
+            sql.AppendLine(String.Format("And STYLE_CODE = '{0}'", STYLE_CODE))
             Dim tblSTYLE As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
             Dim FACTORY_CODE As String = ""
             Dim COUNTRY_NAME As String = ""
@@ -3246,12 +3249,16 @@ Public Class ICFQUOTV
             Dim TOT_AVAIL As Int64 = 0
             Dim DATES As New System.Text.StringBuilder With {.Length = 0}
             Dim FOBDATES As New System.Text.StringBuilder With {.Length = 0}
+
             For w As Int64 = 0 To 4
                 Dim THIS_AVAIL As Int64 = Val(rowSB.Item("QTY_AVA" & w).ToString & String.Empty)
                 If THIS_AVAIL > 0 Then
                     TOT_AVAIL = TOT_AVAIL + THIS_AVAIL
                 End If
-                Dim THIS_DATE As String = rowSB.Item("DTE" & w).ToString & String.Empty
+                Dim THIS_DATE As String = ""
+                If THIS_AVAIL <> 0 Then
+                    THIS_DATE = rowSB.Item("DTE" & w).ToString & String.Empty
+                End If
                 If IsDate(THIS_DATE) Then
                     DATES.AppendLine(Format(CDate(THIS_DATE), "MM/dd/yy"))
                     ' REM GO GET Datefrom ICTSTATD
