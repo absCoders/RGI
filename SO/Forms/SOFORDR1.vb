@@ -6507,6 +6507,13 @@ Public Class SOFORDR1
                 rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = grd.ActiveRow.Cells("INV_TOTAL_AMOUNT").Value
                 rowSOTINVH1.Item("INV_TOTAL_AMT_CURR") = grd.ActiveRow.Cells("INV_TOTAL_AMOUNT").Value
                 rowSOTINVH1.Item("INV_COMMENT") = grd.ActiveRow.Cells("INV_COMMENT").Value
+                If ASCMAIN1.CLIENT = "RGI" And rowSOTINVH1.Item("WHSE_CODE") <> "FE" Then
+                    'I think the code above shouldn't overwrite the values calculated in the report class,
+                    'there is lots of logic specific to proforma invoices, all that work gets overwritten.
+                    'this is here because tariffs are calculated into INV_MISC_CHG, these need to be included on BTB invoices except 'FE'
+                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT") = rowSOTINVH1.Item("INV_SALES") + rowSOTINVH1.Item("INV_MISC_CHG")
+                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = rowSOTINVH1.Item("INV_SALES_CURR") + rowSOTINVH1.Item("INV_MISC_CHG_CURR")
+                End If
 
                 If rowSOTINVH1.Item("SHIP_BOL_NO") & "" = "" Then
                     rowSOTINVH1.Item("SHIP_BOL_NO") = "0000000000"

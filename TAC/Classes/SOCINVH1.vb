@@ -347,6 +347,7 @@
 
                 Dim ORDR_UNIT_PRICE As Decimal = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
                 ' 07/07/2025 - New Tariffs.
+                ' - similar code in POFSHIP1.Update_BTB_Invoices
                 If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommerce AndAlso ORDR_UNIT_PRICE <> 0 AndAlso ORDR_QTY_SHIP <> 0 Then
                     Dim COUNTRY_CODE As String = rowICTSTYL1.Item("COUNTRY_CODE") & String.Empty
                     Dim rowPOTTRFF1 As DataRow = tblPOTTRFF1.Rows.Find(COUNTRY_CODE)
