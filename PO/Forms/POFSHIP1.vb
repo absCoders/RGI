@@ -524,8 +524,8 @@ Public Class POFSHIP1
 
             Else
 
-                ASCMAIN1.sql = "Select Distinct POTORDR2.STYLE_CODE, ICTDUTY1.DUTY_RATE_CODE" & vbCrLf _
-                    & ", NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE" & vbCrLf _
+                ASCMAIN1.sql = "Select Distinct POTORDR2.STYLE_CODE, ICTDUTY1.DUTY_RATE_CODE, ICTSTYL1.COUNTRY_CODE" & vbCrLf _
+                    & ", NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE,NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE_PERC,POTSHIP3.TARIFF_1,POTSHIP3.TARIFF_2" & vbCrLf _
                     & " from ICTDUTY3,ICTSTYL1,POTORDR2,POTSHIP3,ICTDUTY1" & vbCrLf _
                     & " where POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
                     & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
@@ -1299,6 +1299,24 @@ Public Class POFSHIP1
 
             End With
         End If
+
+        If ASCMAIN1.CLIENT = "RGI" And cost_calc = True Then
+            With grdPOTSHIP3.DisplayLayout.Bands(0)
+                .Columns("DUTY_RATE_PERC").Header.Caption = "Duty Rt%"
+                .Columns("TARIFF_1").Header.Caption = "Tariff301"
+                .Columns("TARIFF_2").Header.Caption = "Tariff 2"
+
+            End With
+        Else
+            With grdPOTSHIP3.DisplayLayout.Bands(0)
+                .Columns("DUTY_RATE_PERC").Hidden = True
+                .Columns("TARIFF_1").Hidden = True
+                .Columns("TARIFF_2").Hidden = True
+
+            End With
+
+        End If
+
 
         Create_Summary(grdPOTSHIPX, "PO_SHIPMENT_NO", "Count")
         Create_Summary(grdPOTSHIPX, New String() {"LINES", "LINES_REC"})
@@ -9183,6 +9201,9 @@ Public Class POFSHIP1
                     For Each rowICTSTYLD As DataRow In dst.Tables("ICTSTYLD").Select("")
                         Dim DUTY_RATE_CODE As String = rowICTSTYLD.Item("DUTY_RATE_CODE")
                         Dim DUTY_RATE_ICTSTYLD As Decimal = Val(rowICTSTYLD.Item("DUTY_RATE") & "")
+                        Dim DUTY_RATE_PERC As Decimal = Val(rowICTSTYLD.Item("DUTY_RATE") & "")
+                        Dim TARIFF_1 As Decimal = 0
+                        Dim TARIFF_2 As Decimal = 0
 
                         Dim rowICTDUTY4 As DataRow = dst.Tables("ICTDUTY4").Rows.Find(DUTY_RATE_CODE)
                         If rowICTDUTY4 Is Nothing Then
@@ -9211,9 +9232,39 @@ Public Class POFSHIP1
                         Dim DUTY_RATE As Decimal = Val(rowICTDUTY4.Item("DUTY_RATE") & "")
                         Dim DUTY_RATE_ADD As String = rowICTDUTY4.Item("DUTY_RATE_ADD") & ""
                         If DUTY_RATE_ADD = "1" Then
+                            TARIFF_1 = DUTY_RATE
                             DUTY_RATE += DUTY_RATE_ICTSTYLD
                         End If
+
+                        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                            ' CHECK NEW FILE POTTRFF1 AND ADD TO Duty Rate 
+                            Dim POTTRFF1_DATE As String = ""
+                            ASCMAIN1.sql = "Select * from POTTRFF1" & vbCrLf _
+                                   & " WHERE COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'"
+                            Dim rowPOTTRFF1 As DataRow = ASCDATA1.GetDataRow
+                            If rowPOTTRFF1.Item("TARIFF_ACTIVE") & "" = "1" Then
+                                ' check Dates 
+                                Dim TARIFF_DATE_START_SHP_REC As String = ""
+                                If rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "S" Then
+                                    TARIFF_DATE_START_SHP_REC = rowPOTSHIP1.Item("PO_DATE_SHIPPED") & ""
+                                ElseIf rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "R" Then
+                                    TARIFF_DATE_START_SHP_REC = rowPOTSHIP2.Item("PO_DATE_RECEIVED") & ""
+                                End If
+                                If TARIFF_DATE_START_SHP_REC <> "" And rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <> "" Then
+                                    If rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <= DateValue(TARIFF_DATE_START_SHP_REC) Then
+                                        Dim DUTY_RATE_POTTRFF1 As Decimal = Val(rowPOTTRFF1.Item("TARIFF_PERC") & "")
+                                        DUTY_RATE += DUTY_RATE_POTTRFF1
+                                        TARIFF_2 = DUTY_RATE_POTTRFF1
+                                    End If
+                                End If
+                            End If
+
+                        End If
+
                         rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE
+                        rowICTSTYLD.Item("DUTY_RATE_PERC") = DUTY_RATE_PERC
+                        rowICTSTYLD.Item("TARIFF_1") = TARIFF_1
+                        rowICTSTYLD.Item("TARIFF_2") = TARIFF_2
                     Next
 
                 End If
@@ -9228,6 +9279,10 @@ Public Class POFSHIP1
                 Else
                     rowPOTSHIP3.Item("DUTY_RATE") = Val(rowICTSTYLD.Item("DUTY_RATE") & "")
                     rowPOTSHIP3.Item("DUTY_RATE_CODE") = rowICTSTYLD.Item("DUTY_RATE_CODE") & ""
+                    rowPOTSHIP3.Item("DUTY_RATE_PERC") = Val(rowICTSTYLD.Item("DUTY_RATE_PERC") & "")
+                    rowPOTSHIP3.Item("TARIFF_1") = Val(rowICTSTYLD.Item("TARIFF_1") & "")
+                    rowPOTSHIP3.Item("TARIFF_2") = Val(rowICTSTYLD.Item("TARIFF_2") & "")
+
                 End If
             Next
         Next
