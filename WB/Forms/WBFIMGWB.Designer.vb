@@ -52,6 +52,12 @@ Partial Class WBFIMGWB
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCAL_SIZE")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FTP_SIZE")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_MATCHED")
+        Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_HR")
+        Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_LS")
+        Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_LS2")
+        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_CU")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_CU2")
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_DIM")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -92,6 +98,7 @@ Partial Class WBFIMGWB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.chkHRLS = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -239,6 +246,7 @@ Partial Class WBFIMGWB
         '
         'pnlOptions
         '
+        Me.pnlOptions.Controls.Add(Me.chkHRLS)
         Me.pnlOptions.Controls.Add(Me.btnAddNew)
         Me.pnlOptions.Controls.Add(Me.chkAddBothLocations)
         Me.pnlOptions.Dock = System.Windows.Forms.DockStyle.Fill
@@ -355,19 +363,20 @@ Partial Class WBFIMGWB
         Appearance1.BackColor = System.Drawing.SystemColors.Window
         Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWBTIMGWB.DisplayLayout.Appearance = Appearance1
-        UltraGridColumn11.Header.Caption = "STYLE"
+        UltraGridColumn11.Header.Caption = "Style"
         UltraGridColumn11.Header.VisiblePosition = 0
         UltraGridColumn11.Width = 96
-        UltraGridColumn12.Header.Caption = "COLOR"
+        UltraGridColumn12.Header.Caption = "Color"
         UltraGridColumn12.Header.VisiblePosition = 1
         UltraGridColumn12.Width = 60
-        UltraGridColumn13.Header.Caption = "STYLE STATUS"
+        UltraGridColumn13.Header.Caption = "Style Status"
         UltraGridColumn13.Header.VisiblePosition = 3
-        UltraGridColumn14.Header.Caption = "COLOR STATUS"
+        UltraGridColumn14.Header.Caption = "Color Status"
         UltraGridColumn14.Header.VisiblePosition = 4
-        UltraGridColumn15.Header.Caption = "DESC"
+        UltraGridColumn15.Header.Caption = "Desc"
         UltraGridColumn15.Header.VisiblePosition = 2
         UltraGridColumn15.Width = 246
+        UltraGridColumn16.Header.Caption = "Avail"
         UltraGridColumn16.Header.VisiblePosition = 5
         UltraGridColumn16.Width = 75
         UltraGridColumn1.Header.Caption = "Style - Color"
@@ -390,9 +399,39 @@ Partial Class WBFIMGWB
         UltraGridColumn6.Header.Caption = "FTP Size"
         UltraGridColumn6.Header.VisiblePosition = 11
         UltraGridColumn7.Header.Caption = "Matched"
-        UltraGridColumn7.Header.VisiblePosition = 12
+        UltraGridColumn7.Header.VisiblePosition = 18
         UltraGridColumn7.Width = 104
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn1, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn2, UltraGridColumn6, UltraGridColumn7})
+        UltraGridColumn8.Header.Caption = "HR"
+        UltraGridColumn8.Header.VisiblePosition = 12
+        UltraGridColumn8.Hidden = True
+        UltraGridColumn8.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn8.Width = 34
+        UltraGridColumn9.Header.Caption = "LS"
+        UltraGridColumn9.Header.VisiblePosition = 13
+        UltraGridColumn9.Hidden = True
+        UltraGridColumn9.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn9.Width = 35
+        UltraGridColumn10.Header.Caption = "LS2"
+        UltraGridColumn10.Header.VisiblePosition = 14
+        UltraGridColumn10.Hidden = True
+        UltraGridColumn10.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn10.Width = 42
+        UltraGridColumn17.Header.Caption = "CU"
+        UltraGridColumn17.Header.VisiblePosition = 15
+        UltraGridColumn17.Hidden = True
+        UltraGridColumn17.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn17.Width = 34
+        UltraGridColumn18.Header.Caption = "CU2"
+        UltraGridColumn18.Header.VisiblePosition = 16
+        UltraGridColumn18.Hidden = True
+        UltraGridColumn18.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn18.Width = 42
+        UltraGridColumn19.Header.Caption = "D"
+        UltraGridColumn19.Header.VisiblePosition = 17
+        UltraGridColumn19.Hidden = True
+        UltraGridColumn19.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn19.Width = 41
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn1, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn2, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19})
         Me.grdWBTIMGWB.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBTIMGWB.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -579,6 +618,16 @@ Partial Class WBFIMGWB
         '
         Me.Timer1.Interval = 1000
         '
+        'chkHRLS
+        '
+        Me.chkHRLS.AutoSize = True
+        Me.chkHRLS.Location = New System.Drawing.Point(10, 127)
+        Me.chkHRLS.Name = "chkHRLS"
+        Me.chkHRLS.Size = New System.Drawing.Size(158, 20)
+        Me.chkHRLS.TabIndex = 2
+        Me.chkHRLS.Text = "Check Extra Images"
+        Me.chkHRLS.UseVisualStyleBackColor = True
+        '
         'WBFIMGWB
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -647,4 +696,5 @@ Partial Class WBFIMGWB
     Friend WithEvents lblFILE_EXT As Label
     Friend WithEvents btnAddNew As Button
     Friend WithEvents chkAddBothLocations As CheckBox
+    Friend WithEvents chkHRLS As CheckBox
 End Class
