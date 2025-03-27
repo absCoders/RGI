@@ -445,14 +445,14 @@ Public Class POFCONF1
             Fill_Records("POTCONF1")
         End If
 
-        If EntryMode = "Q" Then
-            For Each row As DataRow In dst.Tables("POTCONF1").Select("WHSE_CODE = 'NC'")
+        If EntryMode = "Q" Then 'this is QVC specific, cust_code 171659
+            For Each row As DataRow In dst.Tables("POTCONF1").Select("CUST_CODE = '171659'")
                 If row("VEND_ETD_DATE") & "" <> "" Then
                     row("ETA_PORT") = DateAdd(DateInterval.Day, MyBase.Absx1.numFor("PORT_ADD_DAYS").Value, row("VEND_ETD_DATE"))
                 End If
             Next
             Dim dvw As DataView = DirectCast(grdPOTCONF1.DataSource, DataTable).DefaultView
-            dvw.RowFilter = "WHSE_CODE = 'NC'"
+            dvw.RowFilter = "CUST_CODE = '171659'"
             grdPOTCONF1.Text = "QVC Domestic Collect"
 
             ASCMAIN1.sql = "select POTCONF1.PO_ORDER_NO, SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
@@ -463,7 +463,7 @@ Public Class POFCONF1
             & " from SOTORDR2 GROUP BY ORDR_NO, STYLE_CODE ) SOTORDR2" & vbCrLf _
             & " Where SOTORDR1.ordr_no = POTCONF1.ORDR_NO" & vbCrLf _
             & " and SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
-            & " and POTCONF1.WHSE_CODE = 'NC'" & vbCrLf _
+            & " and POTCONF1.CUST_CODE = '171659'" & vbCrLf _
             & " group by POTCONF1.PO_ORDER_NO,SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
             & ", SOTORDR1.ORDR_ARRIVAL_DATE, SOTORDR1.ORDR_LAST_ARRIVAL_DATE"
             For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
@@ -512,7 +512,7 @@ Public Class POFCONF1
         ws = wb.Worksheets("Data")
 
         With dst.Tables("POTCONF1")
-            For Each row As DataRow In .Select("WHSE_CODE = 'NC'")
+            For Each row As DataRow In .Select("CUST_CODE = '171659'")
                 Dim rowPIVOT As DataRow = dst.Tables("PIVOT_TABLE").NewRow
                 For n As Integer = 0 To dst.Tables("PIVOT_TABLE").Columns.Count - 1
                     Dim col_name As String = dst.Tables("PIVOT_TABLE").Columns(n).ColumnName
