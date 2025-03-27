@@ -784,6 +784,7 @@ Public Class POFSHIP1
             Create_TDA(.Tables.Add, "SOTPICK1", "*")
             Create_TDA(.Tables.Add, "SOTPICK2", "*")
             Create_TDA(.Tables.Add, "SOTSHIP1", "*")
+            Create_TDA(.Tables.Add, "SOTINVHM", "*")
 
             ASCMAIN1.sql = "Select APTINVH1.*" _
                & " from APTINVH1" _
@@ -3983,7 +3984,7 @@ Public Class POFSHIP1
                 {"POTSHIP1", "POTSHIP2", "POTSHIP3", "POTSHIP4", "POTSHIP5", "POTSHIP7", "POTSHIP8", "POTSHIPR", "POTSHIPQ",
                  "POTORDR2", "POTORDR1_SPLIT", "POTORDR2_SPLIT", "POTSHPXL", "SOTORDP1", "SOTORDP2", "APTINVH1",
                  "SOTINVH1", "SOTINVH2", "ARTOPEN1", "SOTPICK1", "SOTPICK2", "SOTSHIP1", "SOTORDR1", "SOTORDR2",
-                 "POTSHPWB", "POTSHPIE", "POTPACKR", "POTPACKD"}
+                 "POTSHPWB", "POTSHPIE", "POTPACKR", "POTPACKD", "SOTINVHM"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -5108,6 +5109,16 @@ Public Class POFSHIP1
             Dim ORDR_GROUP_NO As String = rowSOTORDR1.Item("ORDR_GROUP_NO")
             If Not ORDR_GROUP_NOs.Contains(ORDR_GROUP_NO) Then ORDR_GROUP_NOs.Add(ORDR_GROUP_NO)
 
+            Dim ORDR_DATE As Date = CDate(rowSOTORDR1.Item("ORDR_DATE") & String.Empty).ToShortDateString
+            Dim INV_DATE As Date = CDate(rowSOTORDP1.Item("INV_DATE") & String.Empty).ToShortDateString
+
+            Dim tblICTSTYL1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTSTYL1 WHERE STYLE_CODE IN (SELECT STYLE_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)", "ICTSTYL1", "V", New Object() {ORDR_NO})
+            Dim tblICTSTYC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTSTYC1 WHERE (STYLE_CODE, COLOR_CODE) IN (SELECT STYLE_CODE, COLOR_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)", "ICTSTYC1", "V", New Object() {ORDR_NO})
+            Dim tblPOTTRFF1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM POTTRFF1", "POTTRFF1")
+            Dim tblSOTMISC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTMISC1", "SOTMISC1")
+
+            Dim INV_MISC_CHG_TARIFF As Decimal = 0
+
             Dim rowSOTINVH1 As DataRow = dst.Tables("SOTINVH1").NewRow
             With rowSOTINVH1
                 .Item("INV_TYPE") = "I"
@@ -5302,6 +5313,55 @@ Public Class POFSHIP1
                 End With
                 dst.Tables("SOTPICK2").Rows.Add(rowSOTPICK2)
 
+                Dim ORDR_UNIT_PRICE As Decimal = Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE") & String.Empty)
+                ' 07/07/2025 - New Tariffs. 
+                ' this logic is copied from TAC.SOCINVH1.CreateInvoices - Also make changes there.
+                If ASCMAIN1.CLIENT = "RGI" AndAlso WHSE_CODE <> "FE" AndAlso ORDR_UNIT_PRICE <> 0 AndAlso ORDR_QTY_SHIP <> 0 Then
+                    Dim COUNTRY_CODE As String = rowICTSTYL1.Item("COUNTRY_CODE") & String.Empty
+                    Dim rowPOTTRFF1 As DataRow = tblPOTTRFF1.Rows.Find(COUNTRY_CODE)
+                    If rowPOTTRFF1 IsNot Nothing Then
+                        Dim SURCHARGE_PERC As Decimal = Val(rowPOTTRFF1.Item("SURCHARGE_PERC") & String.Empty)
+                        If rowPOTTRFF1.Item("SURCHARGE_ACTIVE") & String.Empty = "1" AndAlso SURCHARGE_PERC > 0 Then
+                            If rowPOTTRFF1.Item("ORDER_START_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTRFF1.Item("ORDER_START_DATE") & String.Empty)) >= 0 Then
+                                If rowPOTTRFF1.Item("ORDER_ENDING_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTRFF1.Item("ORDER_ENDING_DATE") & String.Empty)) <= 0 Then
+                                    If rowPOTTRFF1.Item("INVOICE_START_DATE") & String.Empty = String.Empty OrElse INV_DATE.CompareTo(CDate(rowPOTTRFF1.Item("INVOICE_START_DATE") & String.Empty)) >= 0 Then
+                                        If rowPOTTRFF1.Item("INVOICE_ENDING_DATE") & String.Empty = String.Empty OrElse INV_DATE.CompareTo(CDate(rowPOTTRFF1.Item("INVOICE_ENDING_DATE") & String.Empty)) <= 0 Then
+                                            Dim rowSOTINVHM As DataRow = dst.Tables("SOTINVHM").NewRow
+                                            rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
+                                            rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
+                                            rowSOTINVHM.Item("INV_MNO") = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", $"INV_TYPE = '{rowSOTINVHM.Item("INV_TYPE")}' AND INV_NO = {rowSOTINVHM.Item("INV_NO")}") & String.Empty) + 1
+                                            rowSOTINVHM.Item("MISC_CHG_CODE") = rowPOTTRFF1.Item("MISC_CHG_CODE")
+                                            Dim rowSOTMISC1 As DataRow = tblSOTMISC1.Rows.Find(rowPOTTRFF1.Item("MISC_CHG_CODE"))
+                                            If rowSOTMISC1 IsNot Nothing Then
+                                                rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                                            End If
+                                            rowSOTINVHM.Item("MISC_CHG_NOTE") = "Tariff Surcharge"
+
+                                            ' Get this number to be evenly divisible by ORDR_QTY_SHIP
+                                            ' So we do not have rounding issues on the Invoice
+                                            Dim INV_MISC_CHG_TAR As Decimal = Math.Round(ORDR_UNIT_PRICE * (SURCHARGE_PERC / 100), 2) * ORDR_QTY_SHIP
+
+                                            rowSOTINVHM.Item("INV_MISC_CHG") = INV_MISC_CHG_TAR
+                                            'rowSOTINVHM.Item("CTL_NO ") = ""
+                                            'rowSOTINVHM.Item("PO_ORDER_NO") = ""
+                                            rowSOTINVHM.Item("INV_MISC_CHG_CURR") = rowSOTINVHM.Item("INV_MISC_CHG")
+                                            rowSOTINVHM.Item("MISC_CHARGE_TYPE") = "T"
+                                            rowSOTINVHM.Item("COUNTRY_CODE") = COUNTRY_CODE
+                                            rowSOTINVHM.Item("SURCHARGE_PERC") = SURCHARGE_PERC
+                                            rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
+
+                                            dst.Tables("SOTINVHM").Rows.Add(rowSOTINVHM)
+                                            INV_MISC_CHG_TARIFF += rowSOTINVHM.Item("INV_MISC_CHG")
+                                        End If
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+
+
+
                 Dim ORDR_QTY_OPEN As Int64 = Val(rowSOTORDR2.Item("ORDR_QTY_OPEN") & "")
                 ORDR_QTY_OPEN = ORDR_QTY_OPEN - ORDR_QTY_SHIP
                 If ORDR_QTY_OPEN < 0 Then ORDR_QTY_OPEN = 0
@@ -5317,6 +5377,12 @@ Public Class POFSHIP1
             If Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_QTY_OPEN)", "ORDR_NO = '" & ORDR_NO & "'") & "") = 0 Then ORDR_STATUS = "F"
             rowSOTORDR1.Item("ORDR_STATUS") = ORDR_STATUS
 
+            ' Miscellaneous Charges
+
+            rowSOTINVH1.Item("INV_MISC_CHG") += INV_MISC_CHG_TARIFF
+            rowSOTINVH1.Item("INV_MISC_CHG_CURR") += INV_MISC_CHG_TARIFF
+            rowSOTINVH1.Item("INV_TOTAL_AMOUNT") += INV_MISC_CHG_TARIFF
+            rowSOTINVH1.Item("INV_TOTAL_AMT_CURR") += INV_MISC_CHG_TARIFF
 
             Dim rowARTOPEN1 As DataRow = dst.Tables("ARTOPEN1").NewRow
             With rowARTOPEN1
@@ -5329,7 +5395,7 @@ Public Class POFSHIP1
                 .Item("POST_CODE") = rowSOTINVH1.Item("POST_CODE")
                 .Item("TERM_CODE") = rowSOTINVH1.Item("TERM_CODE")
 
-                Dim INV_DATE As Date = rowSOTINVH1.Item("INV_DATE")
+                'Dim INV_DATE As Date = rowSOTINVH1.Item("INV_DATE")
                 Dim INV_DUE_DATE As Date = TAC.TACMAIN1.Calculate_INV_DUE_DATE(Me, rowSOTINVH1.Item("TERM_CODE"), Nothing, INV_DATE)
 
                 .Item("INV_DUE_DATE") = INV_DUE_DATE
@@ -5398,6 +5464,7 @@ Public Class POFSHIP1
         Update_Record_TDA("SOTPICK2")
         Update_Record_TDA("SOTSHIP1")
         Update_Record_TDA("ARTOPEN1")
+        Update_Record_TDA("SOTINVHM")
 
         For Each INV_NO As String In INV_NOs
             ASCMAIN1.sql = "BEGIN SOPSTAT1('I','" & INV_NO & "'); END;"

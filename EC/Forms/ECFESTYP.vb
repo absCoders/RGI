@@ -672,9 +672,10 @@ Public Class ECFESTYP
         ASCMAIN1.Progress("Reading File")
         Me.Cursor = Cursors.WaitCursor
 
-        Dim strConnection As String = "Provider=Microsoft.Jet.OleDb.4.0;" &
-                "data source=" & fileToImport & ";" &
-                "Extended Properties=Excel 8.0;"
+        'Dim strConnection As String = "Provider=Microsoft.Jet.OleDb.4.0;" &
+        '        "data source=" & fileToImport & ";" &
+        '        "Extended Properties=Excel 8.0;"
+        Dim strConnection As String = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & fileToImport & ";Extended Properties=""Excel 8.0;HDR=YES;IMEX=1"";"
 
         Using cn As New System.Data.OleDb.OleDbConnection(strConnection)
             Using cmd As New System.Data.OleDb.OleDbDataAdapter("select * from [Styles On Promotion$]", cn)

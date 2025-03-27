@@ -191,6 +191,7 @@ Public Class ICFRECI1
                 & "  And POTSHIP2.PO_SHIPMENT_LNO = ICTIREC1.PO_SHIPMENT_LNO" & vbCrLf _
                 & "  And REC2.RECEIPT_NO = ICTIREC1.RECEIPT_NO" & vbCrLf _
                 & "  And APTINVH1.VOUCHER_NO (+) = ICTIREC1.VOUCHER_NO" & vbCrLf _
+                & " And ICTIREC1.OPS_YYYYPP = POTSHIP2.OPS_YYYYPP" & vbCrLf _
                 & " And ICTIREC1.OPS_YYYYPP = :PARM1" _
                 & " And ICTIREC1.PO_SHIPMENT_NO not in ('020663','020673','020675')"
 

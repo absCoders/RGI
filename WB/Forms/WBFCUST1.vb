@@ -812,23 +812,28 @@ Public Class WBFCUST1
                 End If
             Case "Send Credit E-Mail"
                 If Not InquiryOnly Then
-                    Dim SREP_CODE As String = grdWBTCUST1.Selected.Rows(0).Cells.Item("SREP_CODE").Text & ""
-                    Dim SendEmail As Boolean = True
-                    If SREP_CODE.Length = 0 Then
-                        Dim iResult As MsgBoxResult
-                        Dim iTitle As String = "Sales Rep"
-                        Dim iMSG As New StringBuilder With {.Length = 0}
-                        iMSG.AppendLine("There Is No Sales Rep Assigned.")
-                        iMSG.AppendLine("Is That OK With You?")
-                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                        If iResult <> MsgBoxResult.Yes Then
-                            SendEmail = False
+                    If grdWBTCUST1.Selected.Rows.Count = 1 Then
+                        Dim SREP_CODE As String = grdWBTCUST1.Selected.Rows(0).Cells.Item("SREP_CODE").Text & ""
+                        Dim SendEmail As Boolean = True
+                        If SREP_CODE.Length = 0 Then
+                            Dim iResult As MsgBoxResult
+                            Dim iTitle As String = "Sales Rep"
+                            Dim iMSG As New StringBuilder With {.Length = 0}
+                            iMSG.AppendLine("There Is No Sales Rep Assigned.")
+                            iMSG.AppendLine("Is That OK With You?")
+                            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                            If iResult <> MsgBoxResult.Yes Then
+                                SendEmail = False
+                            End If
                         End If
+                        If SendEmail Then
+                            CreditEMail(grdWBTCUST1.Selected.Rows(0).ListObject.row)
+                            UpdateAndRefreshData(True)
+                        End If
+                    Else
+                        MsgBox("Please Select A Row", MsgBoxStyle.YesNo, "Selection")
                     End If
-                    If SendEmail Then
-                        CreditEMail(grdWBTCUST1.Selected.Rows(0).ListObject.row)
-                        UpdateAndRefreshData(True)
-                    End If
+
                 End If
             'Case "Mass Update Sales Rep"
             '    Dim SREP_CODE As String = InputBox("Please Enter A Valid Sales Rep Code", "Sales Rep")
@@ -2325,6 +2330,31 @@ Public Class WBFCUST1
     End Function
 
     Private Function MakeHTMLBody(ByRef rowWBTCUST1 As DataRow) As String
+        Dim TEMPLATE As String = "S:\Archive\templates\CREDIT_EMAIL.html"
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            TEMPLATE = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL.html"
+        End If
+        Dim WEB_FIELDS As New Dictionary(Of String, String)
+        WEB_FIELDS.Add("{WEB_EMAIL}", rowWBTCUST1.Item("EMAIL").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_GIVENNAME}", rowWBTCUST1.Item("GIVENNAME").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_FAMILYNAME}", rowWBTCUST1.Item("FAMILYNAME").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_COMPANY}", rowWBTCUST1.Item("COMPANY").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_STREET}", rowWBTCUST1.Item("STREET").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_CITY}", rowWBTCUST1.Item("CITY").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_STATE}", rowWBTCUST1.Item("STATE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_ZIP_CODE}", rowWBTCUST1.Item("ZIP_CODE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_TELEPHONE}", rowWBTCUST1.Item("TELEPHONE").ToString & String.Empty)
+
+        Dim fileContent As String = System.IO.File.ReadAllText(TEMPLATE)
+        fileContent = fileContent.Replace(vbCrLf, "")
+        For Each WEB_FIELD As KeyValuePair(Of String, String) In WEB_FIELDS
+            fileContent = fileContent.Replace(WEB_FIELD.Key, WEB_FIELD.Value)
+        Next
+
+        Return fileContent
+    End Function
+
+    Private Function MakeHTMLBody_orig(ByRef rowWBTCUST1 As DataRow) As String
         Dim HStr As New StringBuilder With {.Length = 0}
         Dim WEB_EMAIL As String = rowWBTCUST1.Item("EMAIL").ToString & String.Empty
         Dim WEB_GIVENNAME As String = rowWBTCUST1.Item("GIVENNAME").ToString & String.Empty
