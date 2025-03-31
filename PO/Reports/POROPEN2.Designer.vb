@@ -92,6 +92,7 @@ Partial Class POROPEN2
         Me.chkDZNCOST = New ABSCS.ABSCheckBox()
         Me.chk1Sheet = New ABSCS.ABSCheckBox()
         Me.chkExcel = New ABSCS.ABSCheckBox()
+        Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -166,6 +167,7 @@ Partial Class POROPEN2
         CType(Me.chkDZNCOST, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkExcel, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -191,6 +193,7 @@ Partial Class POROPEN2
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkExcel)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chk1Sheet)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkDZNCOST)
@@ -797,9 +800,20 @@ Partial Class POROPEN2
         Me.chkExcel.Location = New System.Drawing.Point(20, 349)
         Me.chkExcel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkExcel.Name = "chkExcel"
-        Me.chkExcel.Size = New System.Drawing.Size(164, 22)
+        Me.chkExcel.Size = New System.Drawing.Size(135, 22)
         Me.chkExcel.TabIndex = 283
         Me.chkExcel.Text = "Create Excel"
+        '
+        'chkStyleStats
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
+        Me.chkStyleStats.CausesValidation = False
+        Me.chkStyleStats.Location = New System.Drawing.Point(163, 349)
+        Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkStyleStats.Name = "chkStyleStats"
+        Me.chkStyleStats.Size = New System.Drawing.Size(232, 22)
+        Me.chkStyleStats.TabIndex = 284
+        Me.chkStyleStats.Text = "Include Ord/Res Details"
         '
         'POROPEN2
         '
@@ -887,6 +901,7 @@ Partial Class POROPEN2
         CType(Me.chkDZNCOST, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkExcel, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -925,4 +940,5 @@ Partial Class POROPEN2
     Friend WithEvents chkDZNCOST As ABSCS.ABSCheckBox
     Friend WithEvents chkExcel As ABSCS.ABSCheckBox
     Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
+    Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
 End Class
