@@ -2854,6 +2854,14 @@ Public Class ICFQUOTV
                         SALES_DIVISION_NAME = ""
                     End If
                     SHEET_NAME = "Div-" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
+                    SHEET_NAME = Replace(SHEET_NAME, "/", " ")
+                    SHEET_NAME = Replace(SHEET_NAME, ".", "")
+                    SHEET_NAME = Replace(SHEET_NAME, ",", "")
+                    SHEET_NAME = Replace(SHEET_NAME, "&", "")
+                    If SHEET_NAME.Length > 31 Then
+                        SHEET_NAME = SHEET_NAME.ToString.Substring(0, 30)
+                        ' SHEET_NAME = SUBSTR(SHEET_NAME, 0, 31)
+                    End If
                 Else
                     SHEET_NAME = Mid(SHEET_NAME, 2)
                 End If
@@ -3481,6 +3489,10 @@ Public Class ICFQUOTV
                 End If
                 SHEET_NAME = "Div-" & SHEET_NAME & "-" & SALES_DIVISION_NAME
                 SHEET_NAME = Replace(SHEET_NAME, "/", " ")
+                SHEET_NAME = Replace(SHEET_NAME, ".", "")
+                SHEET_NAME = Replace(SHEET_NAME, ",", "")
+                SHEET_NAME = Replace(SHEET_NAME, "&", "")
+
                 If SHEET_NAME.Length > 31 Then
                     SHEET_NAME = SHEET_NAME.ToString.Substring(0, 30)
                     ' SHEET_NAME = SUBSTR(SHEET_NAME, 0, 31)
