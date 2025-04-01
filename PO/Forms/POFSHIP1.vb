@@ -6881,6 +6881,13 @@ Public Class POFSHIP1
                 End If
 
             Case "Bulk Receive"
+                Dim CONTAINER_NO = grdPOTSHIP2.ActiveRow.Cells("CONTAINER_NO").Value & ""
+                Dim RECEIVED As String = ASCDATA1.GetDataValue("Select count(1) from WHTWREC1 where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and CONTAINER_NO = '" & CONTAINER_NO & "'")
+                If Val(RECEIVED) > 0 Then
+                    MsgBox("Invalid Container, Container has receipts", MsgBoxStyle.OkOnly, "Invalid Container")
+                    Exit Sub
+                End If
+
                 Dim PASSWD As String = ""
                 Using F As New ASFMSGBF
                     PASSWD = F.Get_txt_from_User("Please Enter the Password and then Click OK to Proceed", "Enter the Password for Receiving", True)
