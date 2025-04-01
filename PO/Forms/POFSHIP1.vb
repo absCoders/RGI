@@ -1200,7 +1200,15 @@ Public Class POFSHIP1
                 ASCMAIN1.sql = "Select * from POTSHIP2"
                 Create_TDA(.Tables.Add, "POTSHIP2_R", "**", 0, False)
 
+                'automated receiving RGI
+                Create_TDA(.Tables.Add, "WHTWREC1", "*")
+                Create_TDA(.Tables.Add, "WHTPREC2", "*")
+                Create_TDA(.Tables.Add, "WHTMOVE1", "*")
+                Create_TDA(.Tables.Add, "WHTMOVE2", "*")
+
             End If
+
+
 
         End With
 
@@ -6182,6 +6190,7 @@ Public Class POFSHIP1
         Load_Popup_Menu(grdPOTPACKG, "B", "Split Balance Open to New Line")
         Load_Popup_Menu(grdPOTPACKR, "BBB", "PO Inquiry", "Style Status Inquiry", "Style Master File")
         Load_Popup_Menu(grdPOTSHPIE, "BBBB", "PO Inquiry", "Style Status Inquiry", "Style Master File")
+        Load_Popup_Menu(grdWHTPREC3, "B", "Bulk Receive")
 
     End Sub
 
@@ -6317,6 +6326,11 @@ Public Class POFSHIP1
                     e.Cancel = True
                     Exit Sub
                 End If
+
+            Case "grdWHTPREC3"
+                tlb_btn = DirectCast(tlb.Tools("Bulk Receive"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI" And InquiryMode And "MS,NY".Contains(WHSE_CODE))
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -6842,6 +6856,21 @@ Public Class POFSHIP1
                     Sort_grdColumns(grdPOTSHIP2, "PO_SHIPMENT_LNO")
 
                 End If
+
+            Case "Bulk Receive"
+                Dim PASSWD As String = ""
+                Using F As New ASFMSGBF
+                    PASSWD = F.Get_txt_from_User("Please Enter the Password and then Click OK to Proceed", "Enter the Password for Receiving", True)
+                    If PASSWD.Substring(0, 2) & PASSWD.Substring(PASSWD.Length - 2) <> DATETIME_STAMP.ToString("MMdd") Then
+                        MsgBox("Invalid Password, Receiving not updated", "Invalid Password")
+                        Exit Sub
+                    End If
+                    '-- Receive open balance to locator system 
+                    Receive_Shipment_to_Whs()
+                    LoadWhseReceipts()
+
+                End Using
+
 
 
         End Select
@@ -15287,6 +15316,127 @@ Public Class POFSHIP1
         Next
 
         MsgBox("Tariff added to Duty", MsgBoxStyle.OkOnly, "Verification")
+    End Sub
+
+    Sub Receive_Shipment_to_Whs()
+        Dim FinLoc As String = ASCDATA1.GetDataValue("select WHSE_LOC_FIN from ICTWHSE1 where whse_code = '" & WHSE_CODE & "'")
+        Dim NEW_LOCATION As String = ASCDATA1.GetDataValue("select WHSE_LOC_REC from ICTWHSE1 where whse_code = '" & WHSE_CODE & "'")
+        Dim CONTAINER_NO As String = grdPOTSHIP2.ActiveRow.Cells("CONTAINER_NO").Value & ""
+        Dim PO_SHIPMENT_NO As String = grdPOTSHIP2.ActiveRow.Cells("PO_SHIPMENT_NO").Value & ""
+        Dim PO_SHIPMENT_LNO As Integer = grdPOTSHIP2.ActiveRow.Cells("PO_SHIPMENT_LNO").Value + 0
+
+        Dim ttlRcv As Integer = 0
+        Dim RcvQty As Integer = 0
+        Dim STYLE_CODE As String = ""
+        Dim COLOR_CODE As String = ""
+        Dim UPC_CODE As String = ""
+        Dim GUN_LOC As String = "99-G00-A"
+
+        BeginTrans()
+
+        Dim WH_REC_NO As String = ASCMAIN1.Next_Control_No("WHTWREC1.WH_REC_NO")
+        Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
+        Dim WHSE_TRAN_LNO_ctr As Integer = 1
+
+        'WHTWREC1
+        Dim rowWHTWREC1 As DataRow = dst.Tables("WHTWREC1").NewRow
+        With rowWHTWREC1
+            .Item("WH_REC_NO") = WH_REC_NO
+            .Item("WH_DATE_RECEIVED") = DATETIME_STAMP
+            .Item("WHSE_CODE") = WHSE_CODE
+            .Item("INIT_DATE") = DATETIME_STAMP
+            .Item("LAST_DATE") = DATETIME_STAMP
+            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+            .Item("WH_REC_STATUS") = "O"
+            .Item("OPS_YYYYPP") = ""
+            .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+            .Item("PO_SHIP_VIA") = ""
+            .Item("WH_DATE_DELIVERED") = DATETIME_STAMP
+            .Item("WH_DATE_UNLOADED") = DATETIME_STAMP
+            .Item("UNLOADED_BY_OPER") = ASCMAIN1.USER_ID
+            '.Item("TRAILER_NO") =""
+            '.Item("CONTAINER_SEAL_NO") = ""
+            '.Item("CONTAINER_SEAL_INTACT") = ""
+            '.Item("WH_REC_EMAIL_SENT") = ""
+            .Item("CONTAINER_NO") = CONTAINER_NO
+        End With
+        dst.Tables("WHTWREC1").Rows.Add(rowWHTWREC1)
+        Update_Record_TDA("WHTWREC1")
+
+        Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
+        With rowWHTMOVE1
+            .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+            .Item("WHSE_TRAN_TYPE") = "W"
+            .Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+            .Item("WHSE_CODE") = WHSE_CODE
+            .Item("INIT_OPER") = ASCMAIN1.USER_ID
+            .Item("INIT_DATE") = DATETIME_STAMP
+            .Item("LAST_DATE") = DATETIME_STAMP
+            .Item("LAST_OPER") = ASCMAIN1.USER_ID
+            .Item("STATUS") = "U"
+        End With
+        dst.Tables("WHTMOVE1").Rows.Add(rowWHTMOVE1)
+        Update_Record_TDA("WHTMOVE1")
+
+        For Each rowWHTPREC3 As DataRow In dst.Tables("WHTPREC3").Select($"PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}' and PO_SHIPMENT_LNO = '{PO_SHIPMENT_LNO}' AND VARIANCE > 0")
+            STYLE_CODE = rowWHTPREC3("STYLE_CODE")
+            COLOR_CODE = rowWHTPREC3("COLOR_CODE")
+            UPC_CODE = ASCDATA1.GetDataValue("Select UPC_CODE from ICTSTYC1 Where STYLE_CODE = :PARM1 and COLOR_CODE = :PARM2", "VV", New Object() {STYLE_CODE, COLOR_CODE})
+            RcvQty = rowWHTPREC3("VARIANCE")
+
+            Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+            With rowWHTMOVE2
+                .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO_ctr
+                .Item("LOCATION_CODE_FROM") = FinLoc
+                .Item("LOCATION_CODE_TO") = NEW_LOCATION
+                .Item("BAR_CODE") = "0000000000"
+                .Item("WHSE_TRAN_QTY") = RcvQty
+                .Item("STYLE_CODE") = STYLE_CODE
+                .Item("COLOR_CODE") = COLOR_CODE
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("STATUS") = "U"
+                .Item("LOAD_NO_FROM") = ""
+                .Item("LOAD_NO_TO") = ""
+            End With
+            dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+
+            Dim rowWHTPREC2 As DataRow = dst.Tables("WHTPREC2").NewRow
+            With rowWHTPREC2
+                .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
+                .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
+                .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO_ctr
+                .Item("STYLE_CODE") = STYLE_CODE
+                .Item("COLOR_CODE") = COLOR_CODE
+                .Item("UPC_CODE") = UPC_CODE
+                .Item("REC_KEYIN") = "Bulk Rcv"
+                .Item("PO_QTY_REC") = RcvQty
+                .Item("GUN_ID") = GUN_LOC
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("WH_REC_NO") = WH_REC_NO
+            End With
+            dst.Tables("WHTPREC2").Rows.Add(rowWHTPREC2)
+
+            WHSE_TRAN_LNO_ctr += 1
+            ttlRcv += RcvQty
+            RcvQty = 0
+        Next
+        Update_Record_TDA("WHTMOVE2")
+        Update_Record_TDA("WHTPREC2")
+
+        ASCMAIN1.sql = "Update POTSHIP2 Set WH_REC_NO = :PARM1 where PO_SHIPMENT_NO = :PARM2 and CONTAINER_NO = :PARM3"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVV", New Object() {WH_REC_NO, PO_SHIPMENT_NO, CONTAINER_NO})
+
+        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
+                       New Object() {WHSE_TRAN_NO, 0, 1},
+                       New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
+
+        CommitTrans($"{ttlRcv} Total Units Recived")
+
     End Sub
 
 End Class
