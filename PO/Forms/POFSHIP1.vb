@@ -6885,7 +6885,7 @@ Public Class POFSHIP1
                 Using F As New ASFMSGBF
                     PASSWD = F.Get_txt_from_User("Please Enter the Password and then Click OK to Proceed", "Enter the Password for Receiving", True)
                     If PASSWD.Substring(0, 2) & PASSWD.Substring(PASSWD.Length - 2) <> DATETIME_STAMP.ToString("MMdd") Then
-                        MsgBox("Invalid Password, Receiving not updated", "Invalid Password")
+                        MsgBox("Invalid Password, Receiving not updated", MsgBoxStyle.OkOnly, "Invalid Password")
                         Exit Sub
                     End If
                     '-- Receive open balance to locator system 
