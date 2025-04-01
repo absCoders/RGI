@@ -838,7 +838,7 @@ Partial Class POFSHIP1
         Dim UltraGridColumn398 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("NET_OPEN_DZ")
         Dim UltraGridColumn399 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_AMT_REC")
         Dim UltraGridColumn400 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FIRST_COST_TOTAL")
-        Dim UltraGridColumn401 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FIRST_COST_TOTAL_DZ", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn401 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FIRST_COST_TOTAL_DZ")
         Dim UltraGridColumn402 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMISSION_COST")
         Dim UltraGridColumn403 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMISSION_COST_DZ")
         Dim UltraGridColumn404 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LINE_EXACT")
@@ -846,6 +846,9 @@ Partial Class POFSHIP1
         Dim UltraGridColumn538 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LINE_SHORT")
         Dim UltraGridColumn539 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LINE_ZERO")
         Dim UltraGridColumn540 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CBM")
+        Dim UltraGridColumn839 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DUTY_RATE_PERC", 0)
+        Dim UltraGridColumn840 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TARIFF_1", 1)
+        Dim UltraGridColumn841 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TARIFF_2", 2)
         Dim Appearance307 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance308 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance309 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -5722,34 +5725,34 @@ Partial Class POFSHIP1
         UltraGridColumn33.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn33.Width = 83
         UltraGridColumn34.Header.Caption = "Duty Rate"
-        UltraGridColumn34.Header.VisiblePosition = 47
+        UltraGridColumn34.Header.VisiblePosition = 50
         UltraGridColumn34.Width = 86
         UltraGridColumn35.Header.Caption = "Freight"
-        UltraGridColumn35.Header.VisiblePosition = 48
+        UltraGridColumn35.Header.VisiblePosition = 51
         UltraGridColumn35.Width = 74
         UltraGridColumn36.Header.Caption = "Truck"
-        UltraGridColumn36.Header.VisiblePosition = 51
+        UltraGridColumn36.Header.VisiblePosition = 55
         UltraGridColumn36.Width = 79
         UltraGridColumn37.Header.Caption = "Duty"
-        UltraGridColumn37.Header.VisiblePosition = 49
+        UltraGridColumn37.Header.VisiblePosition = 52
         UltraGridColumn37.Width = 82
         UltraGridColumn38.Header.Caption = "Customs"
-        UltraGridColumn38.Header.VisiblePosition = 50
+        UltraGridColumn38.Header.VisiblePosition = 54
         UltraGridColumn38.Width = 84
         UltraGridColumn39.Header.Caption = "WgtFct"
         UltraGridColumn39.Header.VisiblePosition = 44
         UltraGridColumn39.Width = 61
         UltraGridColumn40.Header.Caption = "Landed"
-        UltraGridColumn40.Header.VisiblePosition = 53
+        UltraGridColumn40.Header.VisiblePosition = 57
         UltraGridColumn40.Width = 87
         UltraGridColumn41.Header.Caption = "VCost"
-        UltraGridColumn41.Header.VisiblePosition = 54
+        UltraGridColumn41.Header.VisiblePosition = 58
         UltraGridColumn41.Hidden = True
         UltraGridColumn42.Header.Caption = "Matls"
-        UltraGridColumn42.Header.VisiblePosition = 55
+        UltraGridColumn42.Header.VisiblePosition = 59
         UltraGridColumn42.Hidden = True
         UltraGridColumn43.Header.Caption = "FOB CMT"
-        UltraGridColumn43.Header.VisiblePosition = 57
+        UltraGridColumn43.Header.VisiblePosition = 60
         UltraGridColumn43.Hidden = True
         UltraGridColumn43.Width = 87
         UltraGridColumn602.Header.Caption = "Vend/UM"
@@ -5774,7 +5777,7 @@ Partial Class POFSHIP1
         UltraGridColumn62.Header.VisiblePosition = 30
         UltraGridColumn62.Width = 82
         UltraGridColumn63.Header.Caption = "Cst Chg"
-        UltraGridColumn63.Header.VisiblePosition = 56
+        UltraGridColumn63.Header.VisiblePosition = 53
         UltraGridColumn63.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn63.Width = 60
         UltraGridColumn64.Header.Caption = "Cost Inc%"
@@ -5793,7 +5796,7 @@ Partial Class POFSHIP1
         UltraGridColumn68.Header.VisiblePosition = 36
         UltraGridColumn68.Width = 97
         UltraGridColumn69.Header.Caption = "Misc"
-        UltraGridColumn69.Header.VisiblePosition = 52
+        UltraGridColumn69.Header.VisiblePosition = 56
         UltraGridColumn69.Width = 79
         UltraGridColumn70.Header.Caption = "Supplier"
         UltraGridColumn70.Header.VisiblePosition = 4
@@ -5808,12 +5811,12 @@ Partial Class POFSHIP1
         UltraGridColumn72.Header.Caption = "Color"
         UltraGridColumn72.Header.VisiblePosition = 9
         UltraGridColumn72.Width = 54
-        UltraGridColumn73.Header.VisiblePosition = 59
+        UltraGridColumn73.Header.VisiblePosition = 62
         UltraGridColumn73.Hidden = True
         UltraGridColumn80.Header.Caption = "UM"
         UltraGridColumn80.Header.VisiblePosition = 17
         UltraGridColumn80.Width = 38
-        UltraGridColumn81.Header.VisiblePosition = 60
+        UltraGridColumn81.Header.VisiblePosition = 63
         UltraGridColumn81.Hidden = True
         UltraGridColumn82.Header.Caption = "Description"
         UltraGridColumn82.Header.VisiblePosition = 8
@@ -5833,12 +5836,12 @@ Partial Class POFSHIP1
         UltraGridColumn88.Header.Caption = "Ship By"
         UltraGridColumn88.Header.VisiblePosition = 6
         UltraGridColumn88.Width = 104
-        UltraGridColumn89.Header.VisiblePosition = 58
+        UltraGridColumn89.Header.VisiblePosition = 61
         UltraGridColumn89.Hidden = True
         UltraGridColumn90.Header.Caption = "Var"
         UltraGridColumn90.Header.VisiblePosition = 13
         UltraGridColumn90.Width = 70
-        UltraGridColumn91.Header.VisiblePosition = 61
+        UltraGridColumn91.Header.VisiblePosition = 64
         UltraGridColumn91.Hidden = True
         UltraGridColumn92.Header.Caption = "Dz Ship"
         UltraGridColumn92.Header.VisiblePosition = 15
@@ -5846,17 +5849,17 @@ Partial Class POFSHIP1
         UltraGridColumn96.Header.Caption = "Dz Recd"
         UltraGridColumn96.Header.VisiblePosition = 16
         UltraGridColumn96.Width = 62
-        UltraGridColumn97.Header.VisiblePosition = 62
+        UltraGridColumn97.Header.VisiblePosition = 65
         UltraGridColumn97.Hidden = True
-        UltraGridColumn164.Header.VisiblePosition = 64
+        UltraGridColumn164.Header.VisiblePosition = 67
         UltraGridColumn164.Hidden = True
-        UltraGridColumn165.Header.VisiblePosition = 65
+        UltraGridColumn165.Header.VisiblePosition = 68
         UltraGridColumn165.Hidden = True
-        UltraGridColumn215.Header.VisiblePosition = 66
+        UltraGridColumn215.Header.VisiblePosition = 69
         UltraGridColumn215.Hidden = True
-        UltraGridColumn217.Header.VisiblePosition = 63
+        UltraGridColumn217.Header.VisiblePosition = 66
         UltraGridColumn217.Hidden = True
-        UltraGridColumn218.Header.VisiblePosition = 68
+        UltraGridColumn218.Header.VisiblePosition = 71
         UltraGridColumn218.Hidden = True
         UltraGridColumn397.Format = "#,##0"
         UltraGridColumn397.Header.Caption = "Open"
@@ -5866,7 +5869,7 @@ Partial Class POFSHIP1
         UltraGridColumn398.Header.Caption = "Dz Open"
         UltraGridColumn398.Header.VisiblePosition = 14
         UltraGridColumn398.Width = 65
-        UltraGridColumn399.Header.VisiblePosition = 67
+        UltraGridColumn399.Header.VisiblePosition = 70
         UltraGridColumn399.Hidden = True
         UltraGridColumn400.Header.Caption = "First/UM"
         UltraGridColumn400.Header.VisiblePosition = 33
@@ -5880,17 +5883,26 @@ Partial Class POFSHIP1
         UltraGridColumn403.Header.Caption = "Comm/Dz"
         UltraGridColumn403.Header.VisiblePosition = 41
         UltraGridColumn403.Width = 76
-        UltraGridColumn404.Header.VisiblePosition = 69
+        UltraGridColumn404.Header.VisiblePosition = 72
         UltraGridColumn404.Hidden = True
-        UltraGridColumn405.Header.VisiblePosition = 70
+        UltraGridColumn405.Header.VisiblePosition = 73
         UltraGridColumn405.Hidden = True
-        UltraGridColumn538.Header.VisiblePosition = 71
+        UltraGridColumn538.Header.VisiblePosition = 74
         UltraGridColumn538.Hidden = True
-        UltraGridColumn539.Header.VisiblePosition = 72
+        UltraGridColumn539.Header.VisiblePosition = 75
         UltraGridColumn539.Hidden = True
         UltraGridColumn540.Header.VisiblePosition = 45
         UltraGridColumn540.Width = 70
-        UltraGridBand34.Columns.AddRange(New Object() {UltraGridColumn599, UltraGridColumn600, UltraGridColumn601, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn602, UltraGridColumn45, UltraGridColumn55, UltraGridColumn56, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn740, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn96, UltraGridColumn97, UltraGridColumn164, UltraGridColumn165, UltraGridColumn215, UltraGridColumn217, UltraGridColumn218, UltraGridColumn397, UltraGridColumn398, UltraGridColumn399, UltraGridColumn400, UltraGridColumn401, UltraGridColumn402, UltraGridColumn403, UltraGridColumn404, UltraGridColumn405, UltraGridColumn538, UltraGridColumn539, UltraGridColumn540})
+        UltraGridColumn839.Header.Caption = "Duty Rt%"
+        UltraGridColumn839.Header.VisiblePosition = 47
+        UltraGridColumn839.Width = 80
+        UltraGridColumn840.Header.Caption = "Tariff 1"
+        UltraGridColumn840.Header.VisiblePosition = 48
+        UltraGridColumn840.Width = 74
+        UltraGridColumn841.Header.Caption = "Tariff 2"
+        UltraGridColumn841.Header.VisiblePosition = 49
+        UltraGridColumn841.Width = 67
+        UltraGridBand34.Columns.AddRange(New Object() {UltraGridColumn599, UltraGridColumn600, UltraGridColumn601, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn602, UltraGridColumn45, UltraGridColumn55, UltraGridColumn56, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn63, UltraGridColumn64, UltraGridColumn65, UltraGridColumn66, UltraGridColumn67, UltraGridColumn68, UltraGridColumn69, UltraGridColumn70, UltraGridColumn740, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn96, UltraGridColumn97, UltraGridColumn164, UltraGridColumn165, UltraGridColumn215, UltraGridColumn217, UltraGridColumn218, UltraGridColumn397, UltraGridColumn398, UltraGridColumn399, UltraGridColumn400, UltraGridColumn401, UltraGridColumn402, UltraGridColumn403, UltraGridColumn404, UltraGridColumn405, UltraGridColumn538, UltraGridColumn539, UltraGridColumn540, UltraGridColumn839, UltraGridColumn840, UltraGridColumn841})
         Me.grdPOTSHIP3.DisplayLayout.BandsSerializer.Add(UltraGridBand34)
         Me.grdPOTSHIP3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance307.TextHAlignAsString = "Left"
@@ -7654,7 +7666,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1013, 411)
         '
@@ -7715,7 +7727,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1013, 411)
         '

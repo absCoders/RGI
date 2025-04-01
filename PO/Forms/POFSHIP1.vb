@@ -524,8 +524,8 @@ Public Class POFSHIP1
 
             Else
 
-                ASCMAIN1.sql = "Select Distinct POTORDR2.STYLE_CODE, ICTDUTY1.DUTY_RATE_CODE" & vbCrLf _
-                    & ", NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE" & vbCrLf _
+                ASCMAIN1.sql = "Select Distinct POTORDR2.STYLE_CODE, ICTDUTY1.DUTY_RATE_CODE, ICTSTYL1.COUNTRY_CODE" & vbCrLf _
+                    & ", NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE,NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE_PERC,POTSHIP3.TARIFF_1,POTSHIP3.TARIFF_2" & vbCrLf _
                     & " from ICTDUTY3,ICTSTYL1,POTORDR2,POTSHIP3,ICTDUTY1" & vbCrLf _
                     & " where POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
                     & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
@@ -1308,6 +1308,24 @@ Public Class POFSHIP1
 
             End With
         End If
+
+        If ASCMAIN1.CLIENT = "RGI" And cost_calc = True Then
+            With grdPOTSHIP3.DisplayLayout.Bands(0)
+                .Columns("DUTY_RATE_PERC").Header.Caption = "Duty Rt%"
+                .Columns("TARIFF_1").Header.Caption = "Tariff301"
+                .Columns("TARIFF_2").Header.Caption = "Tariff 2"
+
+            End With
+        Else
+            With grdPOTSHIP3.DisplayLayout.Bands(0)
+                .Columns("DUTY_RATE_PERC").Hidden = True
+                .Columns("TARIFF_1").Hidden = True
+                .Columns("TARIFF_2").Hidden = True
+
+            End With
+
+        End If
+
 
         Create_Summary(grdPOTSHIPX, "PO_SHIPMENT_NO", "Count")
         Create_Summary(grdPOTSHIPX, New String() {"LINES", "LINES_REC"})
@@ -3629,20 +3647,25 @@ Public Class POFSHIP1
                 End If
 
 
-                ASCMAIN1.sql = "Select X.*" & vbCrLf _
-                    & ", POTORDR1.PO_STATUS, POTORDR1.PO_DATE_ETA, POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE" & vbCrLf _
-                    & " from POTORDR1, (" & vbCrLf _
-                    & "Select PO_ORDER_NO, PO_STATUS, COUNT (*) NEGLINES, SUM (PO_QTY_SHP) SHP" & vbCrLf _
-                    & " from POTORDR2 WHERE PO_QTY_SHP < 0" & vbCrLf _
-                    & " group by PO_ORDER_NO, PO_STATUS" & vbCrLf _
-                    & ") X where POTORDR1.PO_ORDER_NO = X.PO_ORDER_NO"
+                If automated_cost_complete Then
+                Else
 
-                Dim tbl As DataTable = ASCDATA1.GetDataTable
-                If tbl.Rows.Count <> 0 Then
-                    Using frm As New ASFMSGBF
-                        frm.Show_grd(tbl, Me, "There are POs With Negative Qtys Shipped - Please Take Screenshot And email To ABS")
-                    End Using
+                    ASCMAIN1.sql = "Select X.*" & vbCrLf _
+                        & ", POTORDR1.PO_STATUS, POTORDR1.PO_DATE_ETA, POTORDR1.VEND_CODE, POTORDR1.PO_REFERENCE" & vbCrLf _
+                        & " from POTORDR1, (" & vbCrLf _
+                        & "Select PO_ORDER_NO, PO_STATUS, COUNT (*) NEGLINES, SUM (PO_QTY_SHP) SHP" & vbCrLf _
+                        & " from POTORDR2 WHERE PO_QTY_SHP < 0" & vbCrLf _
+                        & " group by PO_ORDER_NO, PO_STATUS" & vbCrLf _
+                        & ") X where POTORDR1.PO_ORDER_NO = X.PO_ORDER_NO"
+
+                    Dim tbl As DataTable = ASCDATA1.GetDataTable
+                    If tbl.Rows.Count <> 0 Then
+                        Using frm As New ASFMSGBF
+                            frm.Show_grd(tbl, Me, "There are POs With Negative Qtys Shipped - Please Take Screenshot And email To ABS")
+                        End Using
+                    End If
                 End If
+
 
 
             Case "Cancel", "Done"
@@ -9279,6 +9302,9 @@ Public Class POFSHIP1
                     For Each rowICTSTYLD As DataRow In dst.Tables("ICTSTYLD").Select("")
                         Dim DUTY_RATE_CODE As String = rowICTSTYLD.Item("DUTY_RATE_CODE")
                         Dim DUTY_RATE_ICTSTYLD As Decimal = Val(rowICTSTYLD.Item("DUTY_RATE") & "")
+                        Dim DUTY_RATE_PERC As Decimal = Val(rowICTSTYLD.Item("DUTY_RATE") & "")
+                        Dim TARIFF_1 As Decimal = 0
+                        Dim TARIFF_2 As Decimal = 0
 
                         Dim rowICTDUTY4 As DataRow = dst.Tables("ICTDUTY4").Rows.Find(DUTY_RATE_CODE)
                         If rowICTDUTY4 Is Nothing Then
@@ -9307,9 +9333,44 @@ Public Class POFSHIP1
                         Dim DUTY_RATE As Decimal = Val(rowICTDUTY4.Item("DUTY_RATE") & "")
                         Dim DUTY_RATE_ADD As String = rowICTDUTY4.Item("DUTY_RATE_ADD") & ""
                         If DUTY_RATE_ADD = "1" Then
+                            TARIFF_1 = DUTY_RATE
                             DUTY_RATE += DUTY_RATE_ICTSTYLD
                         End If
+
+                        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+                            ' CHECK NEW FILE POTTRFF1 AND ADD TO Duty Rate 
+                            Dim POTTRFF1_DATE As String = ""
+                            ASCMAIN1.sql = "Select * from POTTRFF1" & vbCrLf _
+                                   & " WHERE COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'"
+                            Dim rowPOTTRFF1 As DataRow = ASCDATA1.GetDataRow
+
+                            If rowPOTTRFF1 Is Nothing Then
+                                '  Stop
+                            Else
+                                If rowPOTTRFF1.Item("TARIFF_ACTIVE") & "" = "1" Then
+                                    ' check Dates 
+                                    Dim TARIFF_DATE_START_SHP_REC As String = ""
+                                    If rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "S" Then
+                                        TARIFF_DATE_START_SHP_REC = rowPOTSHIP1.Item("PO_DATE_SHIPPED") & ""
+                                    ElseIf rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "R" Then
+                                        TARIFF_DATE_START_SHP_REC = rowPOTSHIP2.Item("PO_DATE_RECEIVED") & ""
+                                    End If
+                                    If TARIFF_DATE_START_SHP_REC <> "" And rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <> "" Then
+                                        If rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <= DateValue(TARIFF_DATE_START_SHP_REC) Then
+                                            Dim DUTY_RATE_POTTRFF1 As Decimal = Val(rowPOTTRFF1.Item("TARIFF_PERC") & "")
+                                            DUTY_RATE += DUTY_RATE_POTTRFF1
+                                            TARIFF_2 = DUTY_RATE_POTTRFF1
+                                        End If
+                                    End If
+                                End If
+
+                            End If
+                        End If
+
                         rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE
+                        rowICTSTYLD.Item("DUTY_RATE_PERC") = DUTY_RATE_PERC
+                        rowICTSTYLD.Item("TARIFF_1") = TARIFF_1
+                        rowICTSTYLD.Item("TARIFF_2") = TARIFF_2
                     Next
 
                 End If
@@ -9324,6 +9385,10 @@ Public Class POFSHIP1
                 Else
                     rowPOTSHIP3.Item("DUTY_RATE") = Val(rowICTSTYLD.Item("DUTY_RATE") & "")
                     rowPOTSHIP3.Item("DUTY_RATE_CODE") = rowICTSTYLD.Item("DUTY_RATE_CODE") & ""
+                    rowPOTSHIP3.Item("DUTY_RATE_PERC") = Val(rowICTSTYLD.Item("DUTY_RATE_PERC") & "")
+                    rowPOTSHIP3.Item("TARIFF_1") = Val(rowICTSTYLD.Item("TARIFF_1") & "")
+                    rowPOTSHIP3.Item("TARIFF_2") = Val(rowICTSTYLD.Item("TARIFF_2") & "")
+
                 End If
             Next
         Next
@@ -12547,9 +12612,15 @@ Public Class POFSHIP1
     Private Sub btnABSonly_Click(sender As System.Object, e As System.EventArgs) Handles btnABSonly.Click
         automated_cost_complete = True
 
+        ''ASCMAIN1.sql = "SELECT PO_SHIPMENT_NO FROM POTSHIP1 WHERE PO_SHIPMENT_NO IN (" & vbCrLf _
+        ''    & "SELECT DISTINCT PO_SHIPMENT_NO FROM POTSHIP2 WHERE OPS_YYYYPP <= '201512')" & vbCrLf _
+        ''    & "AND NVL(COST_COMPLETE,'0') = '0'" '  and PO_SHIPMENT_NO IN ('000422','000668','000372','000150','000177','000178','000421')"
+
         ASCMAIN1.sql = "SELECT PO_SHIPMENT_NO FROM POTSHIP1 WHERE PO_SHIPMENT_NO IN (" & vbCrLf _
-            & "SELECT DISTINCT PO_SHIPMENT_NO FROM POTSHIP2 WHERE OPS_YYYYPP <= '201512')" & vbCrLf _
-            & "AND NVL(COST_COMPLETE,'0') = '0'" '  and PO_SHIPMENT_NO IN ('000422','000668','000372','000150','000177','000178','000421')"
+            & "SELECT DISTINCT PO_SHIPMENT_NO FROM POTSHIP2 WHERE OPS_YYYYPP = '202402')" & vbCrLf _
+            & "AND NVL(COST_COMPLETE,'0') = '0'" '  and PO_SHIPMENT_NO NOT INT ('010733')"
+        ''  Dim CCTEMP As String = ASCMAIN1.Temp_Table()
+
         Dim tbl As DataTable = ASCDATA1.GetDataTable
         For Each row As DataRow In tbl.Select("", "PO_SHIPMENT_NO")
             Dim PO_SHIPMENT_NO As String = row.Item("PO_SHIPMENT_NO")

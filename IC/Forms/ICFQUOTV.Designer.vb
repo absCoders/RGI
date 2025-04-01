@@ -554,6 +554,7 @@ Partial Class ICFQUOTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkBCDIV = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -712,6 +713,7 @@ Partial Class ICFQUOTV
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.chkBCDIV, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -873,7 +875,7 @@ Partial Class ICFQUOTV
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpAvailabilityDates)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 76)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, -35)
         Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(168, 277)
@@ -1470,7 +1472,7 @@ Partial Class ICFQUOTV
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.SplitContainer2)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 577)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 466)
         Me.UltraExplorerBarContainerControl6.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(168, 238)
@@ -2012,13 +2014,14 @@ Partial Class ICFQUOTV
         'UltraGroupBox4
         '
         Me.UltraGroupBox4.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox4.Controls.Add(Me.chkBCDIV)
         Me.UltraGroupBox4.Controls.Add(Me.chkShowMSRP)
         Me.UltraGroupBox4.Controls.Add(Me.chkShowCountry)
         Me.UltraGroupBox4.Controls.Add(Me.chkShowFactoryBC)
-        Me.UltraGroupBox4.Location = New System.Drawing.Point(5, 470)
+        Me.UltraGroupBox4.Location = New System.Drawing.Point(5, 464)
         Me.UltraGroupBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
-        Me.UltraGroupBox4.Size = New System.Drawing.Size(250, 124)
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(250, 130)
         Me.UltraGroupBox4.TabIndex = 227
         Me.UltraGroupBox4.Text = "Buyer Chart"
         '
@@ -4017,6 +4020,17 @@ Partial Class ICFQUOTV
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1211, 627)
         '
+        'chkBCDIV
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkBCDIV, False)
+        Me.chkBCDIV.CausesValidation = False
+        Me.chkBCDIV.Location = New System.Drawing.Point(14, 92)
+        Me.chkBCDIV.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkBCDIV.Name = "chkBCDIV"
+        Me.chkBCDIV.Size = New System.Drawing.Size(164, 22)
+        Me.chkBCDIV.TabIndex = 277
+        Me.chkBCDIV.Text = "1 Sheet/Div"
+        '
         'ICFQUOTV
         '
         Me.Absx1.SetABSTableName(Me, "ICTQUOT1")
@@ -4195,6 +4209,7 @@ Partial Class ICFQUOTV
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.chkBCDIV, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -4359,4 +4374,5 @@ Partial Class ICFQUOTV
     Friend WithEvents chkShowComments As ABSCS.ABSCheckBox
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
     Friend WithEvents chkCostCode As ABSCS.ABSCheckBox
+    Friend WithEvents chkBCDIV As ABSCS.ABSCheckBox
 End Class
