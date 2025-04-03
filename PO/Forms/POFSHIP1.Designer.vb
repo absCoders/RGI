@@ -7666,7 +7666,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1013, 411)
         '
@@ -7727,7 +7727,7 @@ Partial Class POFSHIP1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splMain)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1013, 411)
         '
@@ -8685,9 +8685,9 @@ Partial Class POFSHIP1
         '
         Me.btnABSonly.Location = New System.Drawing.Point(3, 76)
         Me.btnABSonly.Name = "btnABSonly"
-        Me.btnABSonly.Size = New System.Drawing.Size(91, 23)
+        Me.btnABSonly.Size = New System.Drawing.Size(219, 23)
         Me.btnABSonly.TabIndex = 133
-        Me.btnABSonly.Text = "ABS only"
+        Me.btnABSonly.Text = "ABS only Cost Complete RGI"
         '
         'chkNoDuty
         '
