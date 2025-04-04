@@ -4756,7 +4756,8 @@
        ByRef CART_NO_seq As Integer,
        ByRef CART_SEQ As Integer,
        PICK_NO As String,
-       single_carton As Boolean) As Decimal
+       single_carton As Boolean,
+       numPKGBuffer As Decimal) As Decimal
 
         Dim ROWSOTPICK1 As DataRow = F.dst.Tables("SOTPICK1").Rows.Find(New Object() {PICK_NO})
 
@@ -4849,6 +4850,7 @@ DETAIL:
 
             ' ADD CART1 IF NECESSARY
             If PICK_QTY_SATISFY > 0 Then
+                rowSOTCART1.Item("PKG_CODE") = recalculate_carton_size(F, PKG_CODE, PKG_CUBE_PACK_CUM, numPKGBuffer)
                 rowSOTCART1.Item("PKG_CUBE_PACK") = PKG_CUBE_PACK_CUM
                 rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = CART_TOTAL_UNITS_REL
                 rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS_REL
@@ -4883,6 +4885,7 @@ DETAIL:
                 Exit For
             End If
         Next
+        rowSOTCART1.Item("PKG_CODE") = recalculate_carton_size(F, PKG_CODE, PKG_CUBE_PACK_CUM, numPKGBuffer)
         rowSOTCART1.Item("PKG_CUBE_PACK") = PKG_CUBE_PACK_CUM
         rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = CART_TOTAL_UNITS_REL
         rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS_REL
@@ -4891,6 +4894,21 @@ DETAIL:
         'End If
 
         Return PKG_CUBE_PACK_CUM
+
+    End Function
+
+    Shared Function recalculate_carton_size(F As ASFBASE1, PKG_CODE As String, Cube_Packed As Decimal, numPKGBuffer As Decimal) As String
+        Dim NEW_PKG_CODE As String = PKG_CODE
+        For Each rowWHTPKGM1 As DataRow In F.dst.Tables("WHTPKGM1").Select("", "INNER_CUBE")
+            Dim INNER_CUBE As Decimal = Val(rowWHTPKGM1.Item("INNER_CUBE") & "")
+            Dim INNER_CUBE_net As Decimal = INNER_CUBE * (1 - numPKGBuffer)
+            If INNER_CUBE_net >= Cube_Packed Then
+                NEW_PKG_CODE = rowWHTPKGM1.Item("PKG_CODE") & ""
+                Exit For
+            End If
+        Next
+
+        Return NEW_PKG_CODE
 
     End Function
 
@@ -4922,7 +4940,7 @@ DETAIL:
             If CUBE_REQD_remaining >= INNER_CUBE_largest_net Then
                 CART_NO_seq += 1
                 CART_SEQ += 1
-                Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton(F, PKG_CODE_largest, INNER_CUBE_largest_net, CART_NO_seq, CART_SEQ, PICK_NO, single_carton)
+                Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton(F, PKG_CODE_largest, INNER_CUBE_largest_net, CART_NO_seq, CART_SEQ, PICK_NO, single_carton, numPKGBuffer)
                 CUBE_REQD_remaining -= CUBE_ACTUAL
             Else
                 For Each rowWHTPKGM1 As DataRow In F.dst.Tables("WHTPKGM1").Select("", "INNER_CUBE")
@@ -4931,7 +4949,7 @@ DETAIL:
                     If INNER_CUBE_net >= CUBE_REQD_remaining Then
                         CART_NO_seq += 1
                         CART_SEQ += 1
-                        Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton(F, rowWHTPKGM1.Item("PKG_CODE"), INNER_CUBE_net, CART_NO_seq, CART_SEQ, PICK_NO, single_carton)
+                        Dim CUBE_ACTUAL As Decimal = TAC.SOCMAIN1.Create_Carton(F, rowWHTPKGM1.Item("PKG_CODE"), INNER_CUBE_net, CART_NO_seq, CART_SEQ, PICK_NO, single_carton, numPKGBuffer)
                         CUBE_REQD_remaining -= CUBE_ACTUAL
                         Exit For
                     End If
