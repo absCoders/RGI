@@ -302,6 +302,13 @@ Public Class POROPEN2
                 CR_params.Add("DZNCOST", "0")
             End If
             CR_params.Add("SUBT", subtxt)
+            If chkStyleStats.Checked Then
+                CR_params.Add("SIP", "")
+            Else
+                CR_params.Add("SIP", "1")
+            End If
+
+
         End If
         If ASCMAIN1.CLIENT = "RGI" Then
             CR_params.Add("SUBT", txtDescription.Text & SUBT)

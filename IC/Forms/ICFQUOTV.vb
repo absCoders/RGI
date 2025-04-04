@@ -3069,6 +3069,9 @@ Public Class ICFQUOTV
         worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
         worksheet.Cells("S1").EntireColumn.ColumnWidth = 15.83
         worksheet.Cells("T1").EntireColumn.ColumnWidth = 29.83
+        worksheet.Cells("U1").EntireColumn.ColumnWidth = 15.83
+
+        worksheet.Cells("V1: AB1").EntireColumn.ColumnWidth = 12
 
         worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("K1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
@@ -3079,6 +3082,10 @@ Public Class ICFQUOTV
         worksheet.Cells("K1").EntireColumn.WrapText = True
         worksheet.Cells("S1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
         worksheet.Cells("T1").EntireColumn.WrapText = True
+        worksheet.Cells("U1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+
+        worksheet.Cells("V1: AB1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+
         worksheet.Cells("A1").RowHeight = 12
         worksheet.Cells("A2").RowHeight = 48.75
         worksheet.Cells("A3").RowHeight = 12
@@ -3113,6 +3120,20 @@ Public Class ICFQUOTV
         worksheet.Cells("R4").Value = ""
         worksheet.Cells("S4").Value = "FOB date"
         worksheet.Cells("T4").Value = "Factory Name"
+        worksheet.Cells("U4").Value = "Last Rcvd"
+
+        If chkStyleStats.Checked Then
+            worksheet.Cells("V4").Value = "On Hand"
+            worksheet.Cells("W4").Value = "In Pick"
+            worksheet.Cells("X4").Value = "OTS"
+            worksheet.Cells("Y4").Value = "In Transit"
+            worksheet.Cells("Z4").Value = "WIP"
+            worksheet.Cells("AA4").Value = "Open"
+            worksheet.Cells("AB4").Value = "Net Pos"
+        End If
+
+
+
 
         worksheet.Cells("F2").Value = "Buyer Chart"
         With worksheet.Cells("E2:R2")
@@ -3181,6 +3202,27 @@ Public Class ICFQUOTV
             .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
         End With
 
+        With worksheet.Cells("U4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+
+        If chkStyleStats.Checked Then
+            With worksheet.Cells("V4: AB4")
+                .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                .Font.Bold = True
+                .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                .Interior.Color = SpreadsheetGear.Colors.Aquamarine
+                '.EntireColumn.FormatConditions,A
+            End With
+
+        End If
 
 
         Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
@@ -3424,6 +3466,48 @@ Public Class ICFQUOTV
             End With
             worksheet.Cells("T" & curRow.ToString).Value = FACTORY_DESC
 
+            If chkShowLastRcd.Checked Then
+                Dim filterQ2 As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filterQ2).FirstOrDefault
+                If Not IsNothing(rowICTSTYC1) Then
+                    If IsDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty) Then
+                        Dim LAST_SHIPPED As Date = CDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty)
+                        worksheet.Cells("U" & curRow.ToString).Value = Format(LAST_SHIPPED, "MM/dd/yy")
+                    Else
+                        Dim LAST_SHIPPED As String = rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty
+                        worksheet.Cells("U" & curRow.ToString).Value = LAST_SHIPPED
+                    End If
+                End If
+            Else
+                worksheet.Cells("U" & curRow.ToString).Value = ""
+            End If
+
+            If chkStyleStats.Checked Then
+
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                    worksheet.Cells("V" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                    worksheet.Cells("V" & curRow.ToString).NumberFormat = "#,###,##0"
+                    worksheet.Cells("W" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
+                    worksheet.Cells("W" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    Dim OTS As Integer = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "") - Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & "")
+                    worksheet.Cells("X" & curRow.ToString).Value = OTS
+                    worksheet.Cells("X" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Y" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty)
+                    worksheet.Cells("Y" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Z" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty)
+                    worksheet.Cells("Z" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AA" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AA" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AB" & curRow.ToString).Value = OTS + Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty) + Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty) - Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AB" & curRow.ToString).NumberFormat = "#,###,##0"
+                Next
+
+            End If
             curRow += 1
         Next
 
@@ -3543,6 +3627,8 @@ Public Class ICFQUOTV
                 worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
                 worksheet.Cells("S1").EntireColumn.ColumnWidth = 15.83
                 worksheet.Cells("T1").EntireColumn.ColumnWidth = 29.83
+                worksheet.Cells("U1").EntireColumn.ColumnWidth = 15.83
+                worksheet.Cells("V1: AB1").EntireColumn.ColumnWidth = 12
 
                 worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 worksheet.Cells("K1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
@@ -3553,6 +3639,10 @@ Public Class ICFQUOTV
                 worksheet.Cells("K1").EntireColumn.WrapText = True
                 worksheet.Cells("S1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 worksheet.Cells("T1").EntireColumn.WrapText = True
+                worksheet.Cells("U1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+
+                worksheet.Cells("V1: AB1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+
                 worksheet.Cells("A1").RowHeight = 12
                 worksheet.Cells("A2").RowHeight = 48.75
                 worksheet.Cells("A3").RowHeight = 12
@@ -3587,6 +3677,18 @@ Public Class ICFQUOTV
                 worksheet.Cells("R4").Value = ""
                 worksheet.Cells("S4").Value = "FOB date"
                 worksheet.Cells("T4").Value = "Factory Name"
+                worksheet.Cells("U4").Value = "Last Rcvd"
+
+
+                If chkStyleStats.Checked Then
+                    worksheet.Cells("V4").Value = "On Hand"
+                    worksheet.Cells("W4").Value = "In Pick"
+                    worksheet.Cells("X4").Value = "OTS"
+                    worksheet.Cells("Y4").Value = "In Transit"
+                    worksheet.Cells("Z4").Value = "WIP"
+                    worksheet.Cells("AA4").Value = "Open"
+                    worksheet.Cells("AB4").Value = "Net Pos"
+                End If
 
                 worksheet.Cells("F2").Value = "Buyer Chart"
                 With worksheet.Cells("E2:R2")
@@ -3654,6 +3756,30 @@ Public Class ICFQUOTV
                     .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
                     .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
                 End With
+
+                With worksheet.Cells("U4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+                End With
+
+                If chkStyleStats.Checked Then
+                    With worksheet.Cells("V4: AB4")
+                        .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        .Font.Bold = True
+                        .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                        .Interior.Color = SpreadsheetGear.Colors.Aquamarine
+                        '.EntireColumn.FormatConditions,A
+                    End With
+
+                End If
+
+
                 ''Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
                 ''Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
                 curRow = 5
@@ -3885,6 +4011,51 @@ Public Class ICFQUOTV
             End With
             worksheet.Cells("T" & curRow.ToString).Value = FACTORY_DESC
 
+            If chkShowLastRcd.Checked Then
+                Dim filterQ2 As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+                Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filterQ2).FirstOrDefault
+                If Not IsNothing(rowICTSTYC1) Then
+                    If IsDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty) Then
+                        Dim LAST_SHIPPED As Date = CDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty)
+                        worksheet.Cells("U" & curRow.ToString).Value = Format(LAST_SHIPPED, "MM/dd/yy")
+                    Else
+                        Dim LAST_SHIPPED As String = rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty
+                        worksheet.Cells("U" & curRow.ToString).Value = LAST_SHIPPED
+                    End If
+                End If
+            Else
+                worksheet.Cells("U" & curRow.ToString).Value = ""
+            End If
+
+            If chkStyleStats.Checked Then
+
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                    worksheet.Cells("V" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                    worksheet.Cells("V" & curRow.ToString).NumberFormat = "#,###,##0"
+                    worksheet.Cells("W" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
+                    worksheet.Cells("W" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    Dim OTS As Integer = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "") - Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & "")
+                    worksheet.Cells("X" & curRow.ToString).Value = OTS
+                    worksheet.Cells("X" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Y" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty)
+                    worksheet.Cells("Y" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Z" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty)
+                    worksheet.Cells("Z" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AA" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AA" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AB" & curRow.ToString).Value = OTS + Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty) + Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty) - Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AB" & curRow.ToString).NumberFormat = "#,###,##0"
+                Next
+
+            End If
+
+
+
             curRow += 1
         Next
 
@@ -3942,7 +4113,7 @@ Public Class ICFQUOTV
         Dim range As SpreadsheetGear.IRange
 
 
-        worksheet.Cells("A1:Z1").EntireColumn.Font.Size = 16
+        worksheet.Cells("A1:AF1").EntireColumn.Font.Size = 16
 
 
         Dim CX As Integer = 0
@@ -4266,12 +4437,6 @@ Public Class ICFQUOTV
             range = worksheet.Cells(I, COL0 - 1, I, COL)
             interior = range.Interior
             interior.Color = SpreadsheetGear.Colors.Gold
-
-
-
-
-
-
 
 
 
