@@ -56,6 +56,7 @@ Public Class ICFSTAT1
     Dim sqlFUT_AVAIL_by_Style_Color As String
     Dim sqlFUT_AVAIL_by_Style_Color_Whse As String
     Dim sqlECOM As String = ""
+    Dim sqlPOTORDR2x As String
 
 #Region "ABS Standard Routines"
 
@@ -234,7 +235,7 @@ Public Class ICFSTAT1
                     & "   and ICTBODY2.SUB_BODY_CODE (+) = ICTSTYL1.SUB_BODY_CODE" & vbCrLf
             End If
 
-            For Each TABLE_NAME As String In New String() {"ICTSTYL1", "ICTSTYL1_RECENT", "ICTSTYL1_VIEW"}
+            For Each TABLE_NAME As String In New String() {"ICTSTYL1", "ICTSTYL1_RECENT", "ICTSTYL1_VIEW", "ICTSTYL1_XIT"}
                 Create_TDA(.Tables.Add, TABLE_NAME, "**", 0, False, "V", IIf(TABLE_NAME = "ICTSTYL1_RECENT" Or TABLE_NAME = "ICTSTYL1", 1, 0))
 
                 .Tables(TABLE_NAME).Columns.Add("LAST_ORDR_DATE", GetType(System.DateTime))
@@ -433,6 +434,24 @@ Public Class ICFSTAT1
                 '  .Columns("PO_SHIPMENT_NO").AllowDBNull = True
             End With
             ' .Tables("POTORDRX").Columns.Add("", GetType(System.DateTime))
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                sqlPOTORDR2x = "select ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE, POTORDR1.PO_ORDER_NO, POTORDR1.PO_DATE_ETA, POTORDR2.PO_QTY_ORD
+                            from POTORDR1, POTORDR2, ICTSTAT2
+                            where POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO
+                            and POTORDR1.WHSE_CODE = ICTSTAT2.WHSE_CODE
+                            and POTORDR2.STYLE_CODE = ICTSTAT2.STYLE_CODE
+                            and POTORDR2.COLOR_CODE = ICTSTAT2.COLOR_CODE
+                            and POTORDR1.PO_STATUS = 'O'
+                            and POTORDR2.PO_QTY_OPN > 0
+                            and ICTSTAT2.WHSE_QTY_ON_HAND = 0
+                            and ICTSTAT2.WHSE_QTY_OPEN > ICTSTAT2.WHSE_QTY_TRAN"
+                ASCMAIN1.sql = sqlPOTORDR2x
+                Create_TDA(.Tables.Add, "POTORDR2X", "**", 0, False, "", 0)
+
+                Create_Relation("ICTSTYL1_XIT", "POTORDR2X", "WHSE_CODE,STYLE_CODE,COLOR_CODE")
+            End If
+
 
             ASCMAIN1.sql = "Select ICTATOP2.*" & vbCrLf _
                 & ", ICTSTYL1.STYLE_DESC, ICTSTYL1.STYLE_CLASS_CODE" & vbCrLf _
@@ -743,6 +762,7 @@ Public Class ICFSTAT1
         grdICTSTYL3.DataSource = dst.Tables("ICTSTYL3")
 
         grdICTSTYL1_Recent.DataSource = dst.Tables("ICTSTYL1_RECENT")
+        grdICTSTYL1_Xit.DataSource = dst.Tables("ICTSTYL1_XIT")
 
         grdICTQUOT2.DataSource = dst.Tables("ICTQUOT2")
 
@@ -813,6 +833,11 @@ Public Class ICFSTAT1
         If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
             Create_Summary(grdICTSTYL1_Recent, New String() {"OPNQTY", "OPNAMT", "SHPQTY", "SHPAMT"})
         End If
+
+        Show_Filter(grdICTSTYL1_Xit, True)
+        grdICTSTYL1_Xit.DisplayLayout.GroupByBox.Hidden = False
+        Create_Summary(grdICTSTYL1_Xit, "STYLE_CODE", "Count")
+        Create_Summary(grdICTSTYL1_Xit, "STYLE_COST_EXT")
 
         Create_Summary(grdSOTORDRX, "ORDR_GROUP_NO", "Count")
         Create_Summary(grdSOTORDRX, New String() {"ORDERS", "ORDR", "OPEN", "SHIP", "PICK", "CANC", "ALLO", "ORDR_AMT"}) ', "ORDR_AMT_OPEN", "ORDR_AMT_PICK", "ORDR_AMT_SHIP"
@@ -1277,6 +1302,12 @@ Public Class ICFSTAT1
 
             grdICTSTYL1_Recent.DisplayLayout.Bands(0).Columns("QTY_NETA").Header.Caption = "Fut Ava"
 
+            grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns("QTY_NETA").Header.Caption = "Fut Ava"
+            Dim C As Integer = grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns("QTY_NETA").Header.VisiblePosition + 1
+            grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns("STYLE_COST_FIRST").Hidden = False
+            grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns("STYLE_COST_FIRST").Header.Caption = "1st Cost"
+            grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns("STYLE_COST_FIRST").Header.SetVisiblePosition(C, False)
+
             grdICTSTATA.DisplayLayout.Bands(0).Columns("NET_POS").Header.Caption = "Fut Ava"
             grdICTSTATA.DisplayLayout.Bands(0).Columns("THEME_DESC").Header.Caption = "Theme"
             Dim last_pos As Integer = grdICTSTATA.DisplayLayout.Bands(0).Columns("UPC_CODE").Header.VisiblePosition
@@ -1421,6 +1452,7 @@ Public Class ICFSTAT1
             txtSTYLE_GROUP_CODE.Visible = True
             txtSTYLE_GROUP_DESC.Visible = True
             grdICTSTYL1_Recent.DisplayLayout.Bands(0).Columns.Item("STYLE_GROUP_CODE").Header.Caption = "Family"
+            grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns.Item("STYLE_GROUP_CODE").Header.Caption = "Family"
         Else
             optASL.Visible = False
         End If
@@ -1483,6 +1515,7 @@ Public Class ICFSTAT1
 
         tabStyles.Tabs("Overages && Shortages").Visible = (ASCMAIN1.CLIENT = "RGI")
         tabStyles.Tabs("At-Once").Visible = (ASCMAIN1.CLIENT = "RGI")
+        tabStyles.Tabs("Available-Xit").Visible = False '(ASCMAIN1.CLIENT = "RGI")
 
         If (ASCMAIN1.CLIENT = "RGI") Then
         Else
@@ -5242,6 +5275,7 @@ Public Class ICFSTAT1
             txtSupplierOption.Text = ""
         End If
 
+        tabStyles.Tabs("Available-Xit").Visible = (ASCMAIN1.CLIENT = "RGI" And optViewStyles.Value = "S" And optViewBy.Value = "SCW")
         optViewBy.Visible = (optViewStyles.Value <> "V" And optViewStyles.Value <> "A")
 
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
@@ -5406,6 +5440,12 @@ Public Class ICFSTAT1
                 .Columns("LAST_ORDR_CUST_CODE").Hidden = Not chkShowDates.Checked
                 .Columns("LAST_ORDR_CUST_PO").Hidden = Not chkShowDates.Checked
             End With
+            With grdICTSTYL1_Xit.DisplayLayout.Bands(0)
+                .Columns("LAST_ORDR_DATE").Hidden = Not chkShowDates.Checked
+                .Columns("LAST_ORDR_NO").Hidden = Not chkShowDates.Checked
+                .Columns("LAST_ORDR_CUST_CODE").Hidden = Not chkShowDates.Checked
+                .Columns("LAST_ORDR_CUST_PO").Hidden = Not chkShowDates.Checked
+            End With
             If chkShowDates.Checked Then
                 Dim sql As String = "Select STYLE_CODE, MAX (ORDR_NO) ORDR_NO" & vbCrLf _
                                     & " from SOTORDR2 " & vbCrLf _
@@ -5494,6 +5534,35 @@ Public Class ICFSTAT1
                 row.Item("STYLE_COST_FIRST") = GetFirstCost(row.Item("STYLE_CODE").ToString)
             Next
             grdICTSTYL1_Recent.DisplayLayout.Bands(0).Columns("STYLE_COST_FIRST").Hidden = False
+
+            If optViewStyles.Value = "S" And optViewBy.Value = "SCW" Then
+                Dim sqlWX As String = Replace(sqlPOTORDR2x, "POTORDR2, ICTSTAT2", $"POTORDR2, ICTSTAT2, {ICTSTYL1_Recent} ICTSTYL1 ") & "
+                and ICTSTYL1.WHSE_CODE = ICTSTAT2.WHSE_CODE
+                and ICTSTYL1.STYLE_CODE = ICTSTAT2.STYLE_CODE
+                and ICTSTYL1.COLOR_CODE = ICTSTAT2.COLOR_CODE"
+                Dim sqlWXI As String = $"Select ICTSTYL1.* from {ICTSTYL1_Recent} ICTSTYL1, (
+                {Replace(Replace(sqlPOTORDR2x, ", POTORDR1.PO_ORDER_NO, POTORDR1.PO_DATE_ETA, POTORDR2.PO_QTY_ORD", ""), "POTORDR2, ICTSTAT2", $"POTORDR2, ICTSTAT2, {ICTSTYL1_Recent} ICTSTYL1 ")  }
+                and ICTSTYL1.WHSE_CODE = ICTSTAT2.WHSE_CODE
+                and ICTSTYL1.STYLE_CODE = ICTSTAT2.STYLE_CODE
+                and ICTSTYL1.COLOR_CODE = ICTSTAT2.COLOR_CODE
+                group by ICTSTAT2.STYLE_CODE, ICTSTAT2.COLOR_CODE, ICTSTAT2.WHSE_CODE) x
+                Where ICTSTYL1.WHSE_CODE = X.WHSE_CODE
+                and ICTSTYL1.STYLE_CODE = X.STYLE_CODE
+                and ICTSTYL1.COLOR_CODE = X.COLOR_CODE"
+                EnforceConstraints(False)
+
+                Fill_Records("ICTSTYL1_XIT", "", True, sqlWXI)
+                Fill_Records("POTORDR2X", "", True, sqlWX)
+
+                EnforceConstraints(True)
+                For Each row As DataRow In dst.Tables("ICTSTYL1_XIT").Select()
+                    row.Item("STYLE_COST_FIRST") = GetFirstCost(row.Item("STYLE_CODE").ToString)
+                Next
+                grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns("STYLE_COST_FIRST").Hidden = False
+                Sort_grdColumns(grdICTSTYL1_Xit, "STYLE_CODE")
+                Style_grdICTSTYL1_Recent("1")
+                grdICTSTYL1_Xit.Text = "Styles with Open Shipments not in Xit for Whses:" & Replace(WHSE_CODEs, "'", "")
+            End If
         End If
 
         If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
@@ -5510,13 +5579,21 @@ Public Class ICFSTAT1
             If COLUMN_NAME = "STYLE_COST_EXT" And (ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA") Then
             Else
                 grdICTSTYL1_Recent.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Hidden = (optViewStyles.Value = "V")
+                grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Hidden = (optViewStyles.Value = "V")
                 If COLUMN_NAME = "QTY_COMM" Or COLUMN_NAME = "QTY_PROD" Then
                     grdICTSTYL1_Recent.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Hidden = True
+                    grdICTSTYL1_Xit.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Hidden = True
                 End If
             End If
         Next
 
         With grdICTSTYL1_Recent.DisplayLayout.Bands(0)
+            .Columns("COLOR_CODE").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SC" Or optViewBy.Value = "SCW")
+            .Columns("COLOR_DESC").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SC" Or optViewBy.Value = "SCW")
+            .Columns("WHSE_CODE").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SCW")
+            .Columns("WHSE_DESC").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SCW")
+        End With
+        With grdICTSTYL1_Xit.DisplayLayout.Bands(0)
             .Columns("COLOR_CODE").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SC" Or optViewBy.Value = "SCW")
             .Columns("COLOR_DESC").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SC" Or optViewBy.Value = "SCW")
             .Columns("WHSE_CODE").Hidden = (optViewStyles.Value = "V") Or Not (optViewBy.Value = "SCW")
@@ -6105,7 +6182,7 @@ Public Class ICFSTAT1
         If Me.IsClosing And tabStyles.SelectedTab Is Nothing Then
         Else
             UltraExplorerBar1.Groups("Quote Sheet").Visible = (tabStyles.SelectedTab.Key = "Quote Sheet")
-            UltraExplorerBar1.Groups("View Styles").Visible = (tabStyles.SelectedTab.Key = "Styles") And Not ScreenMode '  and Not ScreenMode was added by WJZ 10/30/19 because View Styles group was showing up while modes was true
+            UltraExplorerBar1.Groups("View Styles").Visible = (tabStyles.SelectedTab.Key = "Styles" Or tabStyles.SelectedTab.Key = "Available-Xit") And Not ScreenMode '  and Not ScreenMode was added by WJZ 10/30/19 because View Styles group was showing up while modes was true
             UltraExplorerBar1.Groups("Style Image").Visible = False ' True ' (tabStyles.SelectedTab.Key = "Quote Sheet")
             UltraExplorerBar1.Groups("Screen Control").Visible = Not (tabStyles.SelectedTab.Key = "Quote Sheet")
 
@@ -6955,9 +7032,17 @@ Public Class ICFSTAT1
         ' Fill_Records("ICTSTATA", STYLE_CODE, False)
     End Sub
 
-    Sub Style_grdICTSTYL1_Recent()
+    Sub Style_grdICTSTYL1_Recent(Optional UseAltGrid As String = "0")
 
-        With grdICTSTYL1_Recent.DisplayLayout.Bands(0)
+        Dim grd As UltraGrid
+        If UseAltGrid = "1" Then
+            grd = grdICTSTYL1_Xit
+        Else
+            grd = grdICTSTYL1_Recent
+        End If
+
+
+        With grd.DisplayLayout.Bands(0)
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 If New String() {"QTY_ONHD", "QTY_ONPO", "QTY_TRAN", "QTY_OPEN", "QTY_PICK", "QTY_COMM", "QTY_PROD", "QTY_NETA"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
@@ -6970,7 +7055,7 @@ Public Class ICFSTAT1
                     Else
                         gcol.CellAppearance.ForeColor = Color.Red
                     End If
-                    Create_Summary(grdICTSTYL1_Recent, gcol.Key)
+                    Create_Summary(grd, gcol.Key)
 
                 ElseIf New String() {"STYLE_CODE", "STYLE_STATUS", "STYLE_DESC"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.Orange
@@ -6993,11 +7078,24 @@ Public Class ICFSTAT1
                     Else
                         gcol.Hidden = True
                     End If
+                ElseIf New String() {"SAFETY_STOCK", "EXCLUSIVE_STYLE", "STYLE_ASST_QTY", "STYLE_ASST_DESC", "CUST_STYLE_CODE", "LIST_CALC_CODE", "WHSE_MESSAGE"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                    gcol.Header.Appearance.BackColor = Drawing.Color.White
+                    gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
                 Else
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
                     gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
                 End If
             Next
+
+
+            .Columns("SAFETY_STOCK").Header.Caption = "Safety Stck"
+            .Columns("EXCLUSIVE_STYLE").Header.Caption = "Exclusive Style"
+            .Columns("STYLE_ASST_QTY").Header.Caption = "Asst Qty"
+            .Columns("STYLE_ASST_DESC").Header.Caption = "Asst Desc"
+            .Columns("CUST_STYLE_CODE").Header.Caption = "Cust Style"
+            .Columns("LIST_CALC_CODE").Header.Caption = "List Calc Cde"
+            .Columns("WHSE_MESSAGE").Header.Caption = "Whse Msg"
 
             If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
                 chkOmitPrice.Visible = False
@@ -7020,7 +7118,7 @@ Public Class ICFSTAT1
                     {"STYLE_COST", "STYLE_COST_EXT"}
                     .Columns(COLUMN_NAME).Hidden = True
                 Next
-                Create_Summary(grdICTSTYL1_Recent, {"STYLE_COST_CUM"})
+                Create_Summary(grd, {"STYLE_COST_CUM"})
             Else
                 'For Each COLUMN_NAME As String In New String() _
                 '    {"STYLE_COST_LDP", "STYLE_COST_LDP_CODE", "STYLE_COST_ELC", "STYLE_COST_CUM"}
