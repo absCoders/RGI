@@ -19,6 +19,7 @@ Public Class WBFIMGWB
     'Private Event OnDirListS As nsoftware.IPWorksSSH.Sftp.OnDirListHandler
     ' Dim sqlSOTWORK1 As String
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
+    Dim SQLF As New System.Text.StringBuilder() With {.Length = 0}
     'Dim WithEvents FtpS As New nsoftware.IPWorksSSH.Sftp
 
 
@@ -31,33 +32,35 @@ Public Class WBFIMGWB
 
         With dst
 
-            S.Length = 0
-            S.AppendLine("SELECT")
-            S.AppendLine("RSLT.*,")
-            S.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
-            S.AppendLine("FROM")
-            S.AppendLine("(")
-            S.AppendLine("SELECT")
-            S.AppendLine("S1.STYLE_CODE,")
-            S.AppendLine("C1.COLOR_CODE,")
-            S.AppendLine("S1.STYLE_STATUS,")
-            S.AppendLine("C1.STYLE_COLOR_STATUS,")
-            S.AppendLine("S1.STYLE_DESC,")
-            S.AppendLine("SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))) AS AVAIL")
-            S.AppendLine("FROM ICTSTYL1 S1, ICTSTYC1 C1, ICTSTAT2 S2")
-            S.AppendLine("WHERE S1.STYLE_CODE = C1.STYLE_CODE")
-            S.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
-            S.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
-            S.AppendLine("AND S2.WHSE_CODE = 'MS'")
-            S.AppendLine("GROUP BY")
-            S.AppendLine("S1.STYLE_CODE,")
-            S.AppendLine("C1.COLOR_CODE,")
-            S.AppendLine("S1.STYLE_STATUS,")
-            S.AppendLine("C1.STYLE_COLOR_STATUS,")
-            S.AppendLine("S1.STYLE_DESC")
-            S.AppendLine(") RSLT")
-            S.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
-            ASCMAIN1.sql = S.ToString()
+            SQLF.Length = 0
+            SQLF.AppendLine("SELECT")
+            SQLF.AppendLine("RSLT.*,")
+            SQLF.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
+            SQLF.AppendLine("FROM")
+            SQLF.AppendLine("(")
+            SQLF.AppendLine("SELECT")
+            SQLF.AppendLine("S1.STYLE_CODE,")
+            SQLF.AppendLine("C1.COLOR_CODE,")
+            SQLF.AppendLine("S1.STYLE_STATUS,")
+            SQLF.AppendLine("C1.STYLE_COLOR_STATUS,")
+            SQLF.AppendLine("S1.STYLE_DESC,")
+            SQLF.AppendLine("SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))) AS AVAIL")
+            SQLF.AppendLine("FROM ICTSTYL1 S1, ICTSTYC1 C1, ICTSTAT2 S2")
+            SQLF.AppendLine("WHERE S1.STYLE_CODE = C1.STYLE_CODE")
+            SQLF.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
+            SQLF.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
+            SQLF.AppendLine("AND S2.WHSE_CODE = 'MS'")
+            SQLF.AppendLine("STOCKONLY")
+            SQLF.AppendLine("GROUP BY")
+            SQLF.AppendLine("S1.STYLE_CODE,")
+            SQLF.AppendLine("C1.COLOR_CODE,")
+            SQLF.AppendLine("S1.STYLE_STATUS,")
+            SQLF.AppendLine("C1.STYLE_COLOR_STATUS,")
+            SQLF.AppendLine("S1.STYLE_DESC")
+            SQLF.AppendLine(") RSLT")
+            SQLF.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
+            Dim SQ As String = SQLF.ToString.Replace("STOCKONLY", "")
+            ASCMAIN1.sql = SQ
             Create_TDA(.Tables.Add, "WBTIMGWB", "**", 0, False)
             With .Tables("WBTIMGWB").Columns
                 .Add("IS_WEB", GetType(System.String))
@@ -390,7 +393,13 @@ Public Class WBFIMGWB
         btnAddNew.Visible = False
         chkAddBothLocations.Visible = False
         grdWBTIMGWB.Enabled = False
-        Fill_Records("WBTIMGWB")
+        Dim SQ As String = ""
+        If chkStockOnly.Checked Then
+            SQ = SQLF.ToString.Replace("STOCKONLY", "AND NVL(S1.CUST_CODE,'NULL') = 'NULL'")
+        Else
+            SQ = SQLF.ToString.Replace("STOCKONLY", "")
+        End If
+        Fill_Records("WBTIMGWB",, True, SQ)
 
         FillImageStats()
 

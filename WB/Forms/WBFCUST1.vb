@@ -2246,50 +2246,57 @@ Public Class WBFCUST1
             If EMAIL_ADDRESS.Length = 0 Or EMAIL_NAME.Length = 0 Then
                 MsgBox("Either The Email Address Or The Name Could Not Be Found", MsgBoxStyle.Critical, "E-Mail Not Sent")
             Else
-                Dim HTMLBody As String = MakeHTMLBody(rowWBTCUST1)
-                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
-                Dim ATTACHMENTs As New Dictionary(Of String, String)
-                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-                    EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                Dim BODY_SUBJECT As Dictionary(Of String, String) = MakeHTMLBody(rowWBTCUST1)
+                If Not (BODY_SUBJECT.Keys.Contains("BODY") And BODY_SUBJECT.Keys.Contains("SUBJECT")) Then
+                    MsgBox("Subject Or Body Not Found", MsgBoxStyle.Critical, "E-Mail Not Sent")
                 Else
-                    EMAIL_ADDRESSs.Add(EMAIL_ADDRESS, EMAIL_NAME)
-                    If AddSalesRep Then
-                        EMAIL_ADDRESSs.Add(ccSREPEmail, ccSPREPName)
+                    TO_SUBJECT = BODY_SUBJECT("SUBJECT").ToString & String.Empty
+                    Dim HTMLBody As String = BODY_SUBJECT("BODY").ToString & String.Empty
+
+                    Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                    Dim ATTACHMENTs As New Dictionary(Of String, String)
+                    If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                        EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
+                    Else
+                        EMAIL_ADDRESSs.Add(EMAIL_ADDRESS, EMAIL_NAME)
+                        If AddSalesRep Then
+                            EMAIL_ADDRESSs.Add(ccSREPEmail, ccSPREPName)
+                        End If
+                        EMAIL_ADDRESSs.Add("danielle@regency-rib.com", "Danielle Rouse")
+                        EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
                     End If
-                    EMAIL_ADDRESSs.Add("danielle@regency-rib.com", "Danielle Rouse")
-                    EMAIL_ADDRESSs.Add("mariog@regency-rib.com", "Mario Arenas")
-                End If
-                If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-                Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                    If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+                    Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                        (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                         TO_SUBJECT, TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Shopsite Credit", HTMLBody)
 
-                'Dim mail As New MailMessage()
-                'mail.From = New MailAddress(FROM_ADDRESS, FROM_NAME)
-                'mail.To.Add(New MailAddress(EMAIL_ADDRESS, EMAIL_NAME))
-                'mail.Subject = TO_SUBJECT
-                'mail.IsBodyHtml = True
-                'mail.Body = HTMLBody
-                'mail.Bcc.Add(New MailAddress(BCC_ADDRESS, BCC_NAME))
-                'If AddSalesRep Then
-                '    mail.CC.Add(New MailAddress(ccSREPEmail, ccSPREPName))
-                'End If
-                ''mail.Attachments.Add(New Attachment(ss.Trim))
+                    'Dim mail As New MailMessage()
+                    'mail.From = New MailAddress(FROM_ADDRESS, FROM_NAME)
+                    'mail.To.Add(New MailAddress(EMAIL_ADDRESS, EMAIL_NAME))
+                    'mail.Subject = TO_SUBJECT
+                    'mail.IsBodyHtml = True
+                    'mail.Body = HTMLBody
+                    'mail.Bcc.Add(New MailAddress(BCC_ADDRESS, BCC_NAME))
+                    'If AddSalesRep Then
+                    '    mail.CC.Add(New MailAddress(ccSREPEmail, ccSPREPName))
+                    'End If
+                    ''mail.Attachments.Add(New Attachment(ss.Trim))
 
-                'Dim smtp As New SmtpClient(SERVER_IP, SERVER_PORT)
-                'If smtp IsNot Nothing Then
-                '    smtp.Credentials = New System.Net.NetworkCredential(SERVER_ACCOUNT, SERVER_PASSWORD)
-                'Else
-                '    Dim eMsg As String = "SMTP Client could not be created."
-                '    MsgBox(eMsg, MsgBoxStyle.OkOnly, "Error")
-                '    Return False
-                'End If
+                    'Dim smtp As New SmtpClient(SERVER_IP, SERVER_PORT)
+                    'If smtp IsNot Nothing Then
+                    '    smtp.Credentials = New System.Net.NetworkCredential(SERVER_ACCOUNT, SERVER_PASSWORD)
+                    'Else
+                    '    Dim eMsg As String = "SMTP Client could not be created."
+                    '    MsgBox(eMsg, MsgBoxStyle.OkOnly, "Error")
+                    '    Return False
+                    'End If
 
-                'If ASCMAIN1.Running_in_VS Then
-                '    Stop
-                'Else
-                '    smtp.Send(mail)
-                'End If
+                    'If ASCMAIN1.Running_in_VS Then
+                    '    Stop
+                    'Else
+                    '    smtp.Send(mail)
+                    'End If
+                End If
             End If
 
         Catch ex As Exception
@@ -2329,10 +2336,13 @@ Public Class WBFCUST1
         Return ""
     End Function
 
-    Private Function MakeHTMLBody(ByRef rowWBTCUST1 As DataRow) As String
+    Private Function MakeHTMLBody(ByRef rowWBTCUST1 As DataRow) As Dictionary(Of String, String)
+        Dim RetVal As New Dictionary(Of String, String)
         Dim TEMPLATE As String = "S:\Archive\templates\CREDIT_EMAIL.html"
+        Dim SUBJECT As String = "S:\Archive\templates\CREDIT_EMAIL_SUBJECT.txt"
         If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
             TEMPLATE = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL.html"
+            SUBJECT = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL_SUBJECT.txt"
         End If
         Dim WEB_FIELDS As New Dictionary(Of String, String)
         WEB_FIELDS.Add("{WEB_EMAIL}", rowWBTCUST1.Item("EMAIL").ToString & String.Empty)
@@ -2345,13 +2355,18 @@ Public Class WBFCUST1
         WEB_FIELDS.Add("{WEB_ZIP_CODE}", rowWBTCUST1.Item("ZIP_CODE").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_TELEPHONE}", rowWBTCUST1.Item("TELEPHONE").ToString & String.Empty)
 
-        Dim fileContent As String = System.IO.File.ReadAllText(TEMPLATE)
-        fileContent = fileContent.Replace(vbCrLf, "")
+        Dim BodyContent As String = System.IO.File.ReadAllText(TEMPLATE)
+        BodyContent = BodyContent.Replace(vbCrLf, "")
         For Each WEB_FIELD As KeyValuePair(Of String, String) In WEB_FIELDS
-            fileContent = fileContent.Replace(WEB_FIELD.Key, WEB_FIELD.Value)
+            BodyContent = BodyContent.Replace(WEB_FIELD.Key, WEB_FIELD.Value)
         Next
+        RetVal.Add("BODY", BodyContent)
 
-        Return fileContent
+        Dim SubjectContent As String = System.IO.File.ReadAllText(SUBJECT)
+        SubjectContent = SubjectContent.Replace(vbCrLf, "")
+        RetVal.Add("SUBJECT", SubjectContent)
+
+        Return RetVal
     End Function
 
     Private Function MakeHTMLBody_orig(ByRef rowWBTCUST1 As DataRow) As String
