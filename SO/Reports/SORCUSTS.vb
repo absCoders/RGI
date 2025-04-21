@@ -86,6 +86,20 @@ Public Class SORCUSTS
         S = BUILD_SOTCUSTS(False)
         ASCMAIN1.sql = S.ToString
         Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False)
+        '''With dst.Tables("SOTCUSTS").Columns
+        '''    For iCOL As Integer = 0 To 4
+        '''        .Add("QTY_AVA" & CStr(iCOL), GetType(System.Int64))
+        '''        .Add("DTE" & CStr(iCOL), GetType(System.DateTime))
+        '''    Next
+        '''    .Add("QTY_AVA", GetType(System.Int64), "ISNULL(QTY_AVA0,0)+ISNULL(QTY_AVA1,0)+ISNULL(QTY_AVA2,0)+ISNULL(QTY_AVA3,0)+ISNULL(QTY_AVA4,0)")
+        '''    .Add("OPEN_PICK_RSRV", GetType(System.Int64))
+        '''    '     .Add("COUNT_COLOR", GetType(System.Int32), String.Format(COUNT_COLOR, 0))
+        '''    .Add("SKIP_COLOR")
+        '''    .Add("LAST_RCD_DATE")
+        '''    .Add("EVER_ORDRED", GetType(System.Int64))
+        '''    '.Add("LAST_SHIP_DATE")
+        '''End With
+
 
         Dim TABLE_TEMP As String = ASCMAIN1.Temp_Table
 
@@ -174,6 +188,14 @@ Public Class SORCUSTS
         Dim XLS_FILENAME1 As String = MakeExcelWorkbook()
         Dim XLS_FILENAME2 As String = ""
         Show_Document(XLS_FILENAME1)
+
+        '''If chkBuyerChart.Checked Then
+        '''    If chkBCDIV.Checked Then
+        '''        Create_Excel_BuyerChart_DIV()
+        '''    Else
+        '''        Create_Excel_BuyerChart()
+        '''    End If
+        '''End If
         ASCMAIN1.Progress("", "")
     End Sub
 
@@ -344,6 +366,7 @@ Public Class SORCUSTS
 
         Fill_Records("ICTSTATD", "", True, ICTSTATDSQL)
 
+        '''       Get_Availability()
 
         EnforceConstraints(True)
     End Sub
@@ -982,7 +1005,7 @@ Public Class SORCUSTS
             End If
             If chkStyleStats.Checked Then
                 COL = COL - colsLess
-                For iCOL As Integer = 1 To 7
+                For iCOL As Integer = 5 To 11
                     COL += 1
                     worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
                     RT(iCOL) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
@@ -1230,16 +1253,24 @@ Public Class SORCUSTS
         COL = COL0
 
         'Trying to get away without totals here :)
-        'worksheet.Cells(I - 1, COL - 0).Value = "'" & "Totals"
+        worksheet.Cells(I - 1, COL - 0).Value = "'" & "Totals"
 
         Dim GT = ""
-        For iCOL As Integer = 1 To 6
+        For iCOL As Integer = 1 To 3
             COL += 1
             Select Case iCOL
-                Case 4
-                    'worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                Case 1
+                    worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                     GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
-                    'Case 5
+                Case 3
+                    If chkAveragePrice.Checked Then
+                        worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
+                        GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
+
+                    Else
+                        COL -= 2
+                    End If
+
                     '    If chkShip2.Checked Then
                     '        worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL), 2)
                     '        GT &= "+" & Replace(worksheet.Cells(I - 1, COL).Address, "$", "")
@@ -1256,7 +1287,20 @@ Public Class SORCUSTS
             End Select
         Next
 
-        'worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
+        If chkShipDates.Checked Then
+            COL += 1
+        End If
+
+        If chkStyleStats.Checked Then
+            For iCOL As Integer = 1 To 7
+                COL += 1
+                worksheet.Cells(I - 1, COL).Formula = "=" & Mid(RT(iCOL + 4), 2)
+                GT &= "+" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "")
+            Next
+            COL += 0
+        End If
+
+        worksheet.Cells(I - 1, COL0 - 1, I - 1, COL).Interior.Color = SpreadsheetGear.Colors.LightGray
 
         Excel_Header(worksheet)
 
@@ -2078,4 +2122,1170 @@ Public Class SORCUSTS
         End If
         Return RetVal
     End Function
+
+    Private Function Create_Excel_BuyerChart() As String
+        Dim RetVal As String = ""
+        Me.Cursor = Cursors.WaitCursor
+
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+        Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+        worksheet.Name = "Buyer Spreadsheet"
+        ASCMAIN1.Progress("Now Creating Buyer Workbook", "")
+        'Make Headers
+        worksheet.Cells("A1").EntireColumn.ColumnWidth = 0
+        worksheet.Cells("B1").EntireColumn.ColumnWidth = 0
+        worksheet.Cells("C1").EntireColumn.ColumnWidth = 0
+        worksheet.Cells("D1").EntireColumn.ColumnWidth = 0
+        If chkShowFactoryBC.Checked Then
+            worksheet.Cells("E1").EntireColumn.ColumnWidth = 13.17
+        Else
+            worksheet.Cells("E1").EntireColumn.ColumnWidth = 0
+        End If
+        worksheet.Cells("F1").EntireColumn.ColumnWidth = 20.33
+        worksheet.Cells("G1").EntireColumn.ColumnWidth = 17.83
+        worksheet.Cells("H1").EntireColumn.ColumnWidth = 27.33
+        worksheet.Cells("I1").EntireColumn.ColumnWidth = 17.33
+        worksheet.Cells("J1").EntireColumn.ColumnWidth = 19.83
+        worksheet.Cells("K1").EntireColumn.ColumnWidth = 29.83
+        If chkShowCountry.Checked Then
+            worksheet.Cells("L1").EntireColumn.ColumnWidth = 14.83
+        Else
+            worksheet.Cells("L1").EntireColumn.ColumnWidth = 0
+        End If
+        worksheet.Cells("M1").EntireColumn.ColumnWidth = 15.83
+        worksheet.Cells("N1").EntireColumn.ColumnWidth = 0
+        worksheet.Cells("O1").EntireColumn.ColumnWidth = 12
+        worksheet.Cells("P1").EntireColumn.ColumnWidth = 13
+        If chkShowMSRP.Checked Then
+            worksheet.Cells("Q1").EntireColumn.ColumnWidth = 13
+        Else
+            worksheet.Cells("Q1").EntireColumn.ColumnWidth = 0
+        End If
+        worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
+        worksheet.Cells("S1").EntireColumn.ColumnWidth = 15.83
+        worksheet.Cells("T1").EntireColumn.ColumnWidth = 29.83
+        worksheet.Cells("U1").EntireColumn.ColumnWidth = 15.83
+
+        worksheet.Cells("V1: AB1").EntireColumn.ColumnWidth = 12
+
+        worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+        worksheet.Cells("K1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
+        worksheet.Cells("L1: M1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+        worksheet.Cells("O1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+        worksheet.Cells("P1: Q1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+        worksheet.Cells("J1").EntireColumn.WrapText = True
+        worksheet.Cells("K1").EntireColumn.WrapText = True
+        worksheet.Cells("S1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+        worksheet.Cells("T1").EntireColumn.WrapText = True
+        worksheet.Cells("U1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+
+        worksheet.Cells("V1: AB1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+
+        worksheet.Cells("A1").RowHeight = 12
+        worksheet.Cells("A2").RowHeight = 48.75
+        worksheet.Cells("A3").RowHeight = 12
+        worksheet.Cells("A4").RowHeight = 56.5
+        worksheet.Cells("A4").Value = "Department Number"
+        worksheet.Cells("B4").Value = "Season"
+        worksheet.Cells("C4").Value = "Class"
+        worksheet.Cells("D4").Value = "Category Number"
+        If chkShowFactoryBC.Checked Then
+            worksheet.Cells("E4").Value = "Factory"
+        End If
+        worksheet.Cells("F4").Value = "Brand"
+        worksheet.Cells("G4").Value = "Size Ratio"
+        worksheet.Cells("H4").Value = "Photo"
+        worksheet.Cells("I4").Value = "Style Code"
+        worksheet.Cells("J4").Value = "Product Description"
+        worksheet.Cells("K4").Value = "Color"
+        If chkShowCountry.Checked Then
+            worksheet.Cells("L4").Value = "Country"
+        Else
+            worksheet.Cells("L4").Value = ""
+        End If
+        worksheet.Cells("M4").Value = "Start"
+        worksheet.Cells("N4").Value = "TKM"
+        worksheet.Cells("O4").Value = "Avail"
+        worksheet.Cells("P4").Value = "Vandale Cost"
+        If chkShowMSRP.Checked Then
+            worksheet.Cells("Q4").Value = "MSRP"
+        Else
+            worksheet.Cells("Q4").Value = ""
+        End If
+        worksheet.Cells("R4").Value = ""
+        worksheet.Cells("S4").Value = "FOB date"
+        worksheet.Cells("T4").Value = "Factory Name"
+        worksheet.Cells("U4").Value = "Last Rcvd"
+
+        If chkStyleStats.Checked Then
+            worksheet.Cells("V4").Value = "On Hand"
+            worksheet.Cells("W4").Value = "In Pick"
+            worksheet.Cells("X4").Value = "OTS"
+            worksheet.Cells("Y4").Value = "In Transit"
+            worksheet.Cells("Z4").Value = "WIP"
+            worksheet.Cells("AA4").Value = "Open"
+            worksheet.Cells("AB4").Value = "Net Pos"
+        End If
+
+
+
+
+        worksheet.Cells("F2").Value = "Buyer Chart"
+        With worksheet.Cells("E2:R2")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Left
+            .Font.Bold = True
+            .Font.Size = 18
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Colors.LightCyan
+        End With
+        With worksheet.Cells("A4:D4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeLeft).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Colors.LightGray
+        End With
+        With worksheet.Cells("E4:N4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+        With worksheet.Cells("O4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Colors.Yellow
+        End With
+        With worksheet.Cells("P4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+        With worksheet.Cells("Q4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+        With worksheet.Cells("R4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Colors.Yellow
+        End With
+        With worksheet.Cells("S4:T4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+
+        With worksheet.Cells("U4")
+            .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+            .Font.Bold = True
+            .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+            .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+        End With
+
+        If chkStyleStats.Checked Then
+            With worksheet.Cells("V4: AB4")
+                .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                .Font.Bold = True
+                .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                .Interior.Color = SpreadsheetGear.Colors.Aquamarine
+                '.EntireColumn.FormatConditions,A
+            End With
+
+        End If
+
+
+        Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
+        Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
+
+
+        Dim QTYAVAILFILTER As String = "QTY_AVA <> 0"
+        QTYAVAILFILTER = ""
+        Dim CURR_SALES_DIVISION_CODE As String = ""
+
+        Dim curRow As Int64 = 5
+        For Each rowSB As DataRow In dst.Tables.Item("SOTCUSTS").Select(QTYAVAILFILTER, "SUB_BODY_CODE, FABRIC_CODE, STYLE_CODE, COLOR_CODE")
+            Dim STYLE_CODE As String = rowSB.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowSB.Item("COLOR_CODE").ToString & String.Empty
+            Dim SALES_DIVISION_CODE As String = rowSB.Item("SALES_DIVISION_CODE").ToString & String.Empty
+            If CURR_SALES_DIVISION_CODE <> CURR_SALES_DIVISION_CODE Then
+                ' NEW SHEET
+            End If
+            Dim sql As New System.Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("Select")
+            sql.AppendLine("ST1.FACTORY_CODE,")
+            sql.AppendLine("CN1.COUNTRY_NAME,")
+            sql.AppendLine("SD1.SALES_DIVISION_NAME,")
+            sql.AppendLine("ST1.STYLE_RETAIL")
+            sql.AppendLine("FROM ICTSTYL1 ST1, SOTSDIV1 SD1, TATCNTRY CN1")
+            sql.AppendLine("WHERE ST1.SALES_DIVISION_CODE = SD1.SALES_DIVISION_CODE")
+            sql.AppendLine("And ST1.COUNTRY_CODE = CN1.COUNTRY_CODE (+)")
+            sql.AppendLine(String.Format("And STYLE_CODE = '{0}'", STYLE_CODE))
+            Dim tblSTYLE As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+            Dim FACTORY_CODE As String = ""
+            Dim COUNTRY_NAME As String = ""
+            Dim SALES_DIVISION_NAME As String = ""
+            Dim STYLE_RETAIL As String = ""
+            Dim FACTORY_DESC As String = ""
+            Dim VAN_COST As String = ""
+            ' ---------
+
+            If chkCostCode.Checked Then
+                '''                With worksheet.Cells(i + ci - 1, COL - 2) '  worksheet.Cells(I, CX + 5)
+                Dim COSTTYPE As String = "FC"
+                Dim STYLE_COST As Decimal = 0
+                Dim COST_PERIOD As String = ""
+                ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
+                            & "Select OPS_YYYYPP,STYLE_COST from ICTCOSTA " & vbCrLf _
+                            & "where (STYLE_CODE, COLOR_CODE) in (" & vbCrLf _
+                            & "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+                            & " from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'" _
+                            & " and WHSE_QTY_ON_HAND > 0)" & vbCrLf _
+                            & " order by OPS_YYYYPP DESC) where ROWNUM < 2"
+
+                For Each rowICTCOSTA As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                    STYLE_COST = Val(rowICTCOSTA.Item("STYLE_COST") & "")
+                    COST_PERIOD = rowICTCOSTA.Item("OPS_YYYYPP") & ""
+                Next
+                ' CHECK FOR MULTIPLE Costs that make it up LC(*), ONE COST MAKES ITS UP LC(TI) TARIFF INC, LC(TNA) TARIFF Not Incl
+
+                If STYLE_COST <> 0 And chkCostCode.Checked Then
+                    Dim ICTCOSTL_COSTS As Integer = 0
+                    ASCMAIN1.sql = "Select * From ICTCOSTL Where LOT_QTY_ONHD <> 0 AND OPS_YYYYPP_FIFO = '" & COST_PERIOD & "'AND STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
+                    For Each rowICTCOSTL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                        If ICTCOSTL_COSTS > 0 Then
+                            COSTTYPE = "FLC(*)"
+                            Exit For
+                        End If
+                        If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
+                            COSTTYPE = "FLC"
+                        Else
+                            ' COSTTYPE = "LC(TNA)"
+                            COSTTYPE = "FLC"
+                        End If
+                        ICTCOSTL_COSTS += 1
+                    Next
+                End If
+
+                ' CHANGE PO_COST FIRST TO PO_COST_VCOST FOB A PER GABE 03/05/2025 DGJ
+                If STYLE_COST = 0 Then
+                    ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST_VCOST) STYLE_COST, PO_COST_VCOST,PO_COST_LANDED,PO_SHIPMENT_NO" & vbCrLf _
+                                & " from (" & vbCrLf _
+                                & " Select POTSHIP3.PO_SHIPMENT_NO, POTORDR2.PO_ORDER_NO, " & vbCrLf _
+                                & " POTORDR2.PO_COST_VCOST, POTSHIP3.PO_COST_LANDED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
+                                & " from POTORDR2,POTSHIP3,POTSHIP2,POTSHIP1" & vbCrLf _
+                                & " where POTORDR2.STYLE_CODE = '" & STYLE_CODE & "' and POTORDR2.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
+                                & "   and POTSHIP3.PO_ORDER_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
+                                & "   and POTSHIP3.PO_ORDER_LNO (+) = POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                                & "   and POTSHIP2.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                                & "   and POTSHIP2.PO_SHIPMENT_LNO (+) = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                                & "   and POTSHIP1.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                                & " order by POTSHIP3.PO_SHIPMENT_NO DESC, POTORDR2.PO_ORDER_NO DESC" & vbCrLf _
+                                & ") where ROWNUM <2"
+                    '  STYLE_COST = Val(ASCDATA1.GetDataValue)
+                    For Each rowPOTSHIP3 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                        STYLE_COST = Val(rowPOTSHIP3.Item("STYLE_COST") & "")
+                        If chkCostCode.Checked Then
+                            If STYLE_COST = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "") Then
+                                COSTTYPE = "FOB"
+                            Else
+                                Dim PO_SHIPMENT_NO As String = rowPOTSHIP3.Item("PO_SHIPMENT_NO") & ""
+                                If PO_SHIPMENT_NO <> "" Then
+                                    ASCMAIN1.sql = "Select SUM(LANDING_COST_AMT) From POTSHIP5 Where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' AND COST_CATGY_CODE = 'TARIFF'"
+                                    Dim TARIFF_AMT As Integer = Val(ASCDATA1.GetDataValue)
+                                    If TARIFF_AMT <> 0 Then
+                                        COSTTYPE = "PC(TI)"
+                                    Else
+                                        COSTTYPE = "PC(TNA)"
+                                    End If
+
+                                End If
+                            End If
+                        End If
+                    Next
+
+                End If
+
+                If STYLE_COST = 0 Then
+                    '   STYLE_COST = Val(row.Item("STYLE_COST") & "")
+                    COSTTYPE = "SC"
+                    COSTTYPE = ""
+                End If
+                STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
+
+                If chkCostCode.Checked = True Then
+                    COSTTYPE = " - " & COSTTYPE
+                Else
+                    COSTTYPE = ""
+                End If
+                VAN_COST = STYLE_COST & COSTTYPE
+            End If
+
+
+            If tblSTYLE.Rows.Count = 1 Then
+                FACTORY_CODE = tblSTYLE.Rows(0).Item("FACTORY_CODE").ToString & String.Empty
+                Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
+                If rowICTFACT1 Is Nothing Then
+                    FACTORY_DESC = ""
+                Else
+                    FACTORY_DESC = rowICTFACT1.Item("FACTORY_DESC") & ""
+                End If
+
+                COUNTRY_NAME = tblSTYLE.Rows(0).Item("COUNTRY_NAME").ToString & String.Empty
+                SALES_DIVISION_NAME = tblSTYLE.Rows(0).Item("SALES_DIVISION_NAME").ToString & String.Empty
+                If chkShowMSRP.Checked Then
+                    If IsNumeric(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty) Then
+                        If Val(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty) > 0 Then
+                            STYLE_RETAIL = Format(Val(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty), "###,##0.00")
+                        End If
+                    End If
+                End If
+            End If
+            Dim STYLE_COLOR_DESC As String = rowSB.Item("STYLE_COLOR_DESC").ToString & String.Empty
+            Dim fltrICTQUOT2 As String = String.Format("STYLE_CODE_PLM = '{0}'", STYLE_CODE)
+            Dim rowICTQUOT2 As DataRow = dst.Tables.Item("ICTQUOT2").Select(fltrICTQUOT2).FirstOrDefault
+            Dim STYLE_DESC As String = rowICTQUOT2.Item("STYLE_DESC").ToString & String.Empty
+            Dim SIZE_SCALE As String = rowICTQUOT2.Item("SIZE_SCALE").ToString & String.Empty
+            Dim IMAGE_NAME As String = rowICTQUOT2.Item("IMAGE_NAME") & ""
+            Dim imageFileStyle As String = IMAGE_FOLDER & "\" & IMAGE_NAME
+            Dim HasImage As Boolean = False
+            Dim imageStyle As System.Drawing.Image = Nothing
+            If My.Computer.FileSystem.FileExists(imageFileStyle) Then
+                imageStyle = System.Drawing.Image.FromFile(imageFileStyle)
+                HasImage = True
+            End If
+            worksheet.Cells("A" & curRow.ToString & ":" & "R" & curRow.ToString).Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            worksheet.Cells("A" & curRow.ToString).RowHeight = 100.5
+            worksheet.Cells("E" & curRow.ToString).Value = FACTORY_CODE
+            worksheet.Cells("F" & curRow.ToString).Value = SALES_DIVISION_NAME
+            worksheet.Cells("G" & curRow.ToString).Value = SIZE_SCALE
+            If HasImage Then
+                Dim leftStyle As Integer = windowInfoStyle.ColumnToPoints(7)
+                Dim topStyle As Integer = windowInfoStyle.RowToPoints(curRow - 1) + 0.1
+                Dim WidthStyle As Integer = 100
+                Dim HeightStyle As Integer = 99
+                worksheet.Shapes.AddPicture(imageFileStyle, leftStyle + 20, topStyle + 1, WidthStyle, HeightStyle)
+            End If
+            worksheet.Cells("I" & curRow.ToString).Value = STYLE_CODE
+            worksheet.Cells("J" & curRow.ToString).Value = STYLE_DESC
+            worksheet.Cells("K" & curRow.ToString).Value = COLOR_CODE & " - " & STYLE_COLOR_DESC
+            worksheet.Cells("L" & curRow.ToString).Value = COUNTRY_NAME
+            Dim TOT_AVAIL As Int64 = 0
+            Dim DATES As New System.Text.StringBuilder With {.Length = 0}
+            Dim FOBDATES As New System.Text.StringBuilder With {.Length = 0}
+
+            For w As Int64 = 0 To 4
+                Dim THIS_AVAIL As Int64 = Val(rowSB.Item("QTY_AVA" & w).ToString & String.Empty)
+                If THIS_AVAIL > 0 Then
+                    TOT_AVAIL = TOT_AVAIL + THIS_AVAIL
+                End If
+                Dim THIS_DATE As String = ""
+                If THIS_AVAIL <> 0 Then
+                    THIS_DATE = rowSB.Item("DTE" & w).ToString & String.Empty
+                End If
+                If IsDate(THIS_DATE) Then
+                    DATES.AppendLine(Format(CDate(THIS_DATE), "MM/dd/yy"))
+                    ' REM GO GET Datefrom ICTSTATD
+                    If Format(CDate(THIS_DATE), "MM/dd/yy") <> Format(Now, "MM/dd/yy") Then
+                        For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                            If Format(CDate(THIS_DATE), "MM/dd/yy") = Format(CDate(rowICTSTATD.Item("PO_ARRIVAL_DATE") & ""), "MM/dd/yy") Then
+                                '        FOBDATES.AppendLine(Format(rowICTSTATD.Item("PO_DATE_SHIP_BY") & "", "MM/dd/yy"))
+                                FOBDATES.AppendLine(Format(CDate(rowICTSTATD.Item("PO_DATE_SHIP_BY") & ""), "MM/dd/yy"))
+                            End If
+                        Next
+                    Else
+                    End If
+                End If
+            Next
+            Dim DATES_STRING As String = ""
+            If DATES.ToString.Length > 2 Then
+                DATES_STRING = DATES.ToString.Substring(0, DATES.Length - 2)
+            End If
+            Dim FOBDATES_STRING As String = ""
+            If FOBDATES.ToString.Length > 2 Then
+                FOBDATES_STRING = FOBDATES.ToString.Substring(0, FOBDATES.Length - 2)
+            End If
+
+            With worksheet.Cells("M" & curRow.ToString)
+                .Value = DATES_STRING
+                .Font.Color = SpreadsheetGear.Colors.Red
+            End With
+            With worksheet.Cells("O" & curRow.ToString)
+                .Value = TOT_AVAIL
+                .NumberFormat = "###,##0"
+            End With
+            With worksheet.Cells("P" & curRow.ToString)
+                .Value = VAN_COST 'Get Vandale Cost Here
+                '  .NumberFormat = "$###,##0.00"
+                .Font.Color = SpreadsheetGear.Colors.Red
+
+            End With
+            With worksheet.Cells("Q" & curRow.ToString)
+                .Value = STYLE_RETAIL
+                .NumberFormat = "$###,##0.00"
+            End With
+            With worksheet.Cells("R" & curRow.ToString)
+                ' .Value = 3.3 'Get TKMAX OFFER Here
+                .NumberFormat = "$###,##0.00"
+                .Interior.Color = SpreadsheetGear.Colors.Yellow
+                .Font.Color = SpreadsheetGear.Colors.Red
+                .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            End With
+            With worksheet.Cells("S" & curRow.ToString)
+                .Value = FOBDATES_STRING
+                .Font.Color = SpreadsheetGear.Colors.Red
+            End With
+            worksheet.Cells("T" & curRow.ToString).Value = FACTORY_DESC
+
+            ''If chkShowLastRcd.Checked Then
+            ''    Dim filterQ2 As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+            ''    Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filterQ2).FirstOrDefault
+            ''    If Not IsNothing(rowICTSTYC1) Then
+            ''        If IsDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty) Then
+            ''            Dim LAST_SHIPPED As Date = CDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty)
+            ''            worksheet.Cells("U" & curRow.ToString).Value = Format(LAST_SHIPPED, "MM/dd/yy")
+            ''        Else
+            ''            Dim LAST_SHIPPED As String = rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty
+            ''            worksheet.Cells("U" & curRow.ToString).Value = LAST_SHIPPED
+            ''        End If
+            ''    End If
+            ''Else
+            ''    worksheet.Cells("U" & curRow.ToString).Value = ""
+            ''End If
+
+            If chkStyleStats.Checked Then
+
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                    worksheet.Cells("V" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                    worksheet.Cells("V" & curRow.ToString).NumberFormat = "#,###,##0"
+                    worksheet.Cells("W" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
+                    worksheet.Cells("W" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    Dim OTS As Integer = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "") - Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & "")
+                    worksheet.Cells("X" & curRow.ToString).Value = OTS
+                    worksheet.Cells("X" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Y" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty)
+                    worksheet.Cells("Y" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Z" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty)
+                    worksheet.Cells("Z" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AA" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AA" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AB" & curRow.ToString).Value = OTS + Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty) + Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty) - Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AB" & curRow.ToString).NumberFormat = "#,###,##0"
+                Next
+
+            End If
+            curRow += 1
+        Next
+
+        'Show Workbook
+        Dim XLS_FILENAME As String = "5000"
+        Dim success As Boolean = False
+        Dim RPT_PREFIX As String = Absx1.txtFor("QUOTE_NO").Text
+        Do Until success
+            Try
+                XLS_NO += 1
+                XLS_FILENAME = RPT_PREFIX & "_" & Format(XLS_NO, "000") & exlExt
+                workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                RetVal = XLS_FILENAME
+                success = True
+            Catch ex As Exception
+                If XLS_NO > 5000 Then
+                    success = True
+                End If
+            End Try
+        Loop
+        If XLS_FILENAME = "5000" Then
+            MsgBox("Reports In Temp Folder Exceeded", vbCritical, "Log Out Of ABS And Get Back In")
+        Else
+            Show_Document(ASCMAIN1.Folders("Temp") & XLS_FILENAME)
+        End If
+
+        ASCMAIN1.Progress("")
+        Me.Cursor = Cursors.Default
+
+        Return RetVal
+    End Function
+    Private Function Create_Excel_BuyerChart_DIV() As String
+        Dim RetVal As String = ""
+        Me.Cursor = Cursors.WaitCursor
+
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+        Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+
+        Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
+        Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
+
+
+        Dim QTYAVAILFILTER As String = "QTY_AVA <> 0"
+        Dim CURR_SALES_DIVISION_CODE As String = ""
+
+        Dim curRow As Int64 = 5
+        For Each rowSB As DataRow In dst.Tables.Item("ICTSTYC1").Select(QTYAVAILFILTER, "SALES_DIVISION_CODE, SUB_BODY_CODE, FABRIC_CODE, STYLE_CODE, COLOR_CODE")
+            Dim STYLE_CODE As String = rowSB.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowSB.Item("COLOR_CODE").ToString & String.Empty
+            Dim SALES_DIVISION_CODE As String = rowSB.Item("SALES_DIVISION_CODE").ToString & String.Empty
+            Dim SALES_DIVISION_NAME As String = ""
+            If CURR_SALES_DIVISION_CODE <> SALES_DIVISION_CODE Then
+
+                ' NEW SHEET
+                Dim SHEET_NAME As String = SALES_DIVISION_CODE
+                SALES_DIVISION_CODE = SHEET_NAME
+                ASCMAIN1.sql = "Select SALES_DIVISION_NAME from SOTSDIV1 where SALES_DIVISION_CODE = :PARM1"
+                Dim rowSOTDIV1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", SALES_DIVISION_CODE)
+                If rowSOTDIV1 IsNot Nothing Then
+                    SALES_DIVISION_NAME = rowSOTDIV1.Item("SALES_DIVISION_NAME")
+                Else
+                    SALES_DIVISION_NAME = ""
+                End If
+                SHEET_NAME = "Div-" & SHEET_NAME & "-" & SALES_DIVISION_NAME
+                SHEET_NAME = Replace(SHEET_NAME, "/", " ")
+                SHEET_NAME = Replace(SHEET_NAME, ".", "")
+                SHEET_NAME = Replace(SHEET_NAME, ",", "")
+                SHEET_NAME = Replace(SHEET_NAME, "&", "")
+
+                If SHEET_NAME.Length > 31 Then
+                    SHEET_NAME = SHEET_NAME.ToString.Substring(0, 30)
+                    ' SHEET_NAME = SUBSTR(SHEET_NAME, 0, 31)
+                End If
+                If CURR_SALES_DIVISION_CODE = "" Then
+                Else
+                    worksheet = workbook.Worksheets.Add
+                End If
+                If SHEET_NAME <> "" Then
+                    worksheet.Name = SHEET_NAME
+                Else
+                    worksheet.Name = "Unknown"
+                End If
+                CURR_SALES_DIVISION_CODE = SALES_DIVISION_CODE
+
+
+                ASCMAIN1.Progress("Now Creating Buyer Workbook", "")
+                'Make Headers
+                worksheet.Cells("A1").EntireColumn.ColumnWidth = 0
+                worksheet.Cells("B1").EntireColumn.ColumnWidth = 0
+                worksheet.Cells("C1").EntireColumn.ColumnWidth = 0
+                worksheet.Cells("D1").EntireColumn.ColumnWidth = 0
+                If chkShowFactoryBC.Checked Then
+                    worksheet.Cells("E1").EntireColumn.ColumnWidth = 13.17
+                Else
+                    worksheet.Cells("E1").EntireColumn.ColumnWidth = 0
+                End If
+                worksheet.Cells("F1").EntireColumn.ColumnWidth = 20.33
+                worksheet.Cells("G1").EntireColumn.ColumnWidth = 17.83
+                worksheet.Cells("H1").EntireColumn.ColumnWidth = 27.33
+                worksheet.Cells("I1").EntireColumn.ColumnWidth = 17.33
+                worksheet.Cells("J1").EntireColumn.ColumnWidth = 19.83
+                worksheet.Cells("K1").EntireColumn.ColumnWidth = 29.83
+                If chkShowCountry.Checked Then
+                    worksheet.Cells("L1").EntireColumn.ColumnWidth = 14.83
+                Else
+                    worksheet.Cells("L1").EntireColumn.ColumnWidth = 0
+                End If
+                worksheet.Cells("M1").EntireColumn.ColumnWidth = 15.83
+                worksheet.Cells("N1").EntireColumn.ColumnWidth = 0
+                worksheet.Cells("O1").EntireColumn.ColumnWidth = 12
+                worksheet.Cells("P1").EntireColumn.ColumnWidth = 13
+                If chkShowMSRP.Checked Then
+                    worksheet.Cells("Q1").EntireColumn.ColumnWidth = 13
+                Else
+                    worksheet.Cells("Q1").EntireColumn.ColumnWidth = 0
+                End If
+                worksheet.Cells("R4").EntireColumn.ColumnWidth = 12.83
+                worksheet.Cells("S1").EntireColumn.ColumnWidth = 15.83
+                worksheet.Cells("T1").EntireColumn.ColumnWidth = 29.83
+                worksheet.Cells("U1").EntireColumn.ColumnWidth = 15.83
+                worksheet.Cells("V1: AB1").EntireColumn.ColumnWidth = 12
+
+                worksheet.Cells("E1: J1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                worksheet.Cells("K1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Left
+                worksheet.Cells("L1: M1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                worksheet.Cells("O1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                worksheet.Cells("P1: Q1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                worksheet.Cells("J1").EntireColumn.WrapText = True
+                worksheet.Cells("K1").EntireColumn.WrapText = True
+                worksheet.Cells("S1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                worksheet.Cells("T1").EntireColumn.WrapText = True
+                worksheet.Cells("U1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+
+                worksheet.Cells("V1: AB1").EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+
+                worksheet.Cells("A1").RowHeight = 12
+                worksheet.Cells("A2").RowHeight = 48.75
+                worksheet.Cells("A3").RowHeight = 12
+                worksheet.Cells("A4").RowHeight = 56.5
+                worksheet.Cells("A4").Value = "Department Number"
+                worksheet.Cells("B4").Value = "Season"
+                worksheet.Cells("C4").Value = "Class"
+                worksheet.Cells("D4").Value = "Category Number"
+                If chkShowFactoryBC.Checked Then
+                    worksheet.Cells("E4").Value = "Factory"
+                End If
+                worksheet.Cells("F4").Value = "Brand"
+                worksheet.Cells("G4").Value = "Size Ratio"
+                worksheet.Cells("H4").Value = "Photo"
+                worksheet.Cells("I4").Value = "Style Code"
+                worksheet.Cells("J4").Value = "Product Description"
+                worksheet.Cells("K4").Value = "Color"
+                If chkShowCountry.Checked Then
+                    worksheet.Cells("L4").Value = "Country"
+                Else
+                    worksheet.Cells("L4").Value = ""
+                End If
+                worksheet.Cells("M4").Value = "Start"
+                worksheet.Cells("N4").Value = "TKM"
+                worksheet.Cells("O4").Value = "Avail"
+                worksheet.Cells("P4").Value = "Vandale Cost"
+                If chkShowMSRP.Checked Then
+                    worksheet.Cells("Q4").Value = "MSRP"
+                Else
+                    worksheet.Cells("Q4").Value = ""
+                End If
+                worksheet.Cells("R4").Value = ""
+                worksheet.Cells("S4").Value = "FOB date"
+                worksheet.Cells("T4").Value = "Factory Name"
+                worksheet.Cells("U4").Value = "Last Rcvd"
+
+
+                If chkStyleStats.Checked Then
+                    worksheet.Cells("V4").Value = "On Hand"
+                    worksheet.Cells("W4").Value = "In Pick"
+                    worksheet.Cells("X4").Value = "OTS"
+                    worksheet.Cells("Y4").Value = "In Transit"
+                    worksheet.Cells("Z4").Value = "WIP"
+                    worksheet.Cells("AA4").Value = "Open"
+                    worksheet.Cells("AB4").Value = "Net Pos"
+                End If
+
+                worksheet.Cells("F2").Value = "Buyer Chart"
+                With worksheet.Cells("E2:R2")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Left
+                    .Font.Bold = True
+                    .Font.Size = 18
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Colors.LightCyan
+                End With
+                With worksheet.Cells("A4:D4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeLeft).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Colors.LightGray
+                End With
+                With worksheet.Cells("E4:N4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+                End With
+                With worksheet.Cells("O4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Colors.Yellow
+                End With
+                With worksheet.Cells("P4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+                End With
+                With worksheet.Cells("Q4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+                End With
+                With worksheet.Cells("R4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Colors.Yellow
+                End With
+                With worksheet.Cells("S4:T4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+                End With
+
+                With worksheet.Cells("U4")
+                    .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .Font.Bold = True
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeTop).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeBottom).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Borders(SpreadsheetGear.BordersIndex.EdgeRight).LineStyle = SpreadsheetGear.LineStyle.Continous
+                    .Interior.Color = SpreadsheetGear.Color.FromArgb(252, 213, 179)
+                End With
+
+                If chkStyleStats.Checked Then
+                    With worksheet.Cells("V4: AB4")
+                        .VerticalAlignment = SpreadsheetGear.VAlign.Center
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        .Font.Bold = True
+                        .Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+                        .Interior.Color = SpreadsheetGear.Colors.Aquamarine
+                        '.EntireColumn.FormatConditions,A
+                    End With
+
+                End If
+
+
+                ''Dim IMAGE_FOLDER As String = Replace(ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR"), "G:", "R:")
+                ''Dim windowInfoStyle As SpreadsheetGear.IWorksheetWindowInfo = worksheet.WindowInfo
+                curRow = 5
+            End If
+
+            Dim sql As New System.Text.StringBuilder With {.Length = 0}
+            sql.AppendLine("Select")
+            sql.AppendLine("ST1.FACTORY_CODE,")
+            sql.AppendLine("CN1.COUNTRY_NAME,")
+            sql.AppendLine("SD1.SALES_DIVISION_NAME,")
+            sql.AppendLine("ST1.STYLE_RETAIL")
+            sql.AppendLine("FROM ICTSTYL1 ST1, SOTSDIV1 SD1, TATCNTRY CN1")
+            sql.AppendLine("WHERE ST1.SALES_DIVISION_CODE = SD1.SALES_DIVISION_CODE")
+            sql.AppendLine("And ST1.COUNTRY_CODE = CN1.COUNTRY_CODE (+)")
+            sql.AppendLine(String.Format("And STYLE_CODE = '{0}'", STYLE_CODE))
+            Dim tblSTYLE As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+            Dim FACTORY_CODE As String = ""
+            Dim COUNTRY_NAME As String = ""
+            '  SALES_DIVISION_NAME As String = ""
+            Dim STYLE_RETAIL As String = ""
+            Dim FACTORY_DESC As String = ""
+            Dim VAN_COST As String = ""
+            ' ---------
+
+            If chkCostCode.Checked Then
+                '''                With worksheet.Cells(i + ci - 1, COL - 2) '  worksheet.Cells(I, CX + 5)
+                Dim COSTTYPE As String = "FC"
+                Dim STYLE_COST As Decimal = 0
+                Dim COST_PERIOD As String = ""
+                ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
+                            & "Select OPS_YYYYPP,STYLE_COST from ICTCOSTA " & vbCrLf _
+                            & "where (STYLE_CODE, COLOR_CODE) in (" & vbCrLf _
+                            & "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+                            & " from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'" _
+                            & " and WHSE_QTY_ON_HAND > 0)" & vbCrLf _
+                            & " order by OPS_YYYYPP DESC) where ROWNUM < 2"
+
+                For Each rowICTCOSTA As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                    STYLE_COST = Val(rowICTCOSTA.Item("STYLE_COST") & "")
+                    COST_PERIOD = rowICTCOSTA.Item("OPS_YYYYPP") & ""
+                Next
+                ' CHECK FOR MULTIPLE Costs that make it up LC(*), ONE COST MAKES ITS UP LC(TI) TARIFF INC, LC(TNA) TARIFF Not Incl
+
+                If STYLE_COST <> 0 And chkCostCode.Checked Then
+                    Dim ICTCOSTL_COSTS As Integer = 0
+                    ASCMAIN1.sql = "Select * From ICTCOSTL Where LOT_QTY_ONHD <> 0 AND OPS_YYYYPP_FIFO = '" & COST_PERIOD & "'AND STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
+                    For Each rowICTCOSTL As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                        If ICTCOSTL_COSTS > 0 Then
+                            COSTTYPE = "FLC(*)"
+                            Exit For
+                        End If
+                        If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
+                            COSTTYPE = "FLC"
+                        Else
+                            ' COSTTYPE = "LC(TNA)"
+                            COSTTYPE = "FLC"
+                        End If
+                        ICTCOSTL_COSTS += 1
+                    Next
+                End If
+
+                ' CHANGE PO_COST FIRST TO PO_COST_VCOST FOB A PER GABE 03/05/2025 DGJ
+                If STYLE_COST = 0 Then
+                    ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST_VCOST) STYLE_COST, PO_COST_VCOST,PO_COST_LANDED,PO_SHIPMENT_NO" & vbCrLf _
+                                & " from (" & vbCrLf _
+                                & " Select POTSHIP3.PO_SHIPMENT_NO, POTORDR2.PO_ORDER_NO, " & vbCrLf _
+                                & " POTORDR2.PO_COST_VCOST, POTSHIP3.PO_COST_LANDED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
+                                & " from POTORDR2,POTSHIP3,POTSHIP2,POTSHIP1" & vbCrLf _
+                                & " where POTORDR2.STYLE_CODE = '" & STYLE_CODE & "' and POTORDR2.COLOR_CODE = '" & COLOR_CODE & "'" & vbCrLf _
+                                & "   and POTSHIP3.PO_ORDER_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
+                                & "   and POTSHIP3.PO_ORDER_LNO (+) = POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                                & "   and POTSHIP2.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                                & "   and POTSHIP2.PO_SHIPMENT_LNO (+) = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                                & "   and POTSHIP1.PO_SHIPMENT_NO (+) = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                                & " order by POTSHIP3.PO_SHIPMENT_NO DESC, POTORDR2.PO_ORDER_NO DESC" & vbCrLf _
+                                & ") where ROWNUM <2"
+                    '  STYLE_COST = Val(ASCDATA1.GetDataValue)
+                    For Each rowPOTSHIP3 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
+                        STYLE_COST = Val(rowPOTSHIP3.Item("STYLE_COST") & "")
+                        If chkCostCode.Checked Then
+                            If STYLE_COST = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "") Then
+                                COSTTYPE = "FOB"
+                            Else
+                                Dim PO_SHIPMENT_NO As String = rowPOTSHIP3.Item("PO_SHIPMENT_NO") & ""
+                                If PO_SHIPMENT_NO <> "" Then
+                                    ASCMAIN1.sql = "Select SUM(LANDING_COST_AMT) From POTSHIP5 Where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' AND COST_CATGY_CODE = 'TARIFF'"
+                                    Dim TARIFF_AMT As Integer = Val(ASCDATA1.GetDataValue)
+                                    If TARIFF_AMT <> 0 Then
+                                        COSTTYPE = "PC(TI)"
+                                    Else
+                                        COSTTYPE = "PC(TNA)"
+                                    End If
+
+                                End If
+                            End If
+                        End If
+                    Next
+
+                End If
+
+                If STYLE_COST = 0 Then
+                    '   STYLE_COST = Val(row.Item("STYLE_COST") & "")
+                    COSTTYPE = "SC"
+                    COSTTYPE = ""
+                End If
+                STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
+
+                If chkCostCode.Checked = True Then
+                    COSTTYPE = " - " & COSTTYPE
+                Else
+                    COSTTYPE = ""
+                End If
+                VAN_COST = STYLE_COST & COSTTYPE
+            End If
+
+
+            If tblSTYLE.Rows.Count = 1 Then
+                FACTORY_CODE = tblSTYLE.Rows(0).Item("FACTORY_CODE").ToString & String.Empty
+                Dim rowICTFACT1 As DataRow = clsASCBASE1.LookUp("ICTFACT1", FACTORY_CODE)
+                If rowICTFACT1 Is Nothing Then
+                    FACTORY_DESC = ""
+                Else
+                    FACTORY_DESC = rowICTFACT1.Item("FACTORY_DESC") & ""
+                End If
+
+                COUNTRY_NAME = tblSTYLE.Rows(0).Item("COUNTRY_NAME").ToString & String.Empty
+                SALES_DIVISION_NAME = tblSTYLE.Rows(0).Item("SALES_DIVISION_NAME").ToString & String.Empty
+                If chkShowMSRP.Checked Then
+                    If IsNumeric(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty) Then
+                        If Val(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty) > 0 Then
+                            STYLE_RETAIL = Format(Val(tblSTYLE.Rows(0).Item("STYLE_RETAIL").ToString & String.Empty), "###,##0.00")
+                        End If
+                    End If
+                End If
+            End If
+            Dim STYLE_COLOR_DESC As String = rowSB.Item("STYLE_COLOR_DESC").ToString & String.Empty
+            Dim fltrICTQUOT2 As String = String.Format("STYLE_CODE_PLM = '{0}'", STYLE_CODE)
+            Dim rowICTQUOT2 As DataRow = dst.Tables.Item("ICTQUOT2").Select(fltrICTQUOT2).FirstOrDefault
+            Dim STYLE_DESC As String = rowICTQUOT2.Item("STYLE_DESC").ToString & String.Empty
+            Dim SIZE_SCALE As String = rowICTQUOT2.Item("SIZE_SCALE").ToString & String.Empty
+            Dim IMAGE_NAME As String = rowICTQUOT2.Item("IMAGE_NAME") & ""
+            Dim imageFileStyle As String = IMAGE_FOLDER & "\" & IMAGE_NAME
+            Dim HasImage As Boolean = False
+            Dim imageStyle As System.Drawing.Image = Nothing
+            If My.Computer.FileSystem.FileExists(imageFileStyle) Then
+                imageStyle = System.Drawing.Image.FromFile(imageFileStyle)
+                HasImage = True
+            End If
+            worksheet.Cells("A" & curRow.ToString & ":" & "R" & curRow.ToString).Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            worksheet.Cells("A" & curRow.ToString).RowHeight = 100.5
+            worksheet.Cells("E" & curRow.ToString).Value = FACTORY_CODE
+            worksheet.Cells("F" & curRow.ToString).Value = SALES_DIVISION_NAME
+            worksheet.Cells("G" & curRow.ToString).Value = SIZE_SCALE
+            If HasImage Then
+                Dim leftStyle As Integer = windowInfoStyle.ColumnToPoints(7)
+                Dim topStyle As Integer = windowInfoStyle.RowToPoints(curRow - 1) + 0.1
+                Dim WidthStyle As Integer = 100
+                Dim HeightStyle As Integer = 99
+                worksheet.Shapes.AddPicture(imageFileStyle, leftStyle + 20, topStyle + 1, WidthStyle, HeightStyle)
+            End If
+            worksheet.Cells("I" & curRow.ToString).Value = STYLE_CODE
+            worksheet.Cells("J" & curRow.ToString).Value = STYLE_DESC
+            worksheet.Cells("K" & curRow.ToString).Value = COLOR_CODE & " - " & STYLE_COLOR_DESC
+            worksheet.Cells("L" & curRow.ToString).Value = COUNTRY_NAME
+            Dim TOT_AVAIL As Int64 = 0
+            Dim DATES As New System.Text.StringBuilder With {.Length = 0}
+            Dim FOBDATES As New System.Text.StringBuilder With {.Length = 0}
+
+            For w As Int64 = 0 To 4
+                Dim THIS_AVAIL As Int64 = Val(rowSB.Item("QTY_AVA" & w).ToString & String.Empty)
+                If THIS_AVAIL > 0 Then
+                    TOT_AVAIL = TOT_AVAIL + THIS_AVAIL
+                End If
+                Dim THIS_DATE As String = ""
+                If THIS_AVAIL <> 0 Then
+                    THIS_DATE = rowSB.Item("DTE" & w).ToString & String.Empty
+                End If
+                If IsDate(THIS_DATE) Then
+                    DATES.AppendLine(Format(CDate(THIS_DATE), "MM/dd/yy"))
+                    ' REM GO GET Datefrom ICTSTATD
+                    If Format(CDate(THIS_DATE), "MM/dd/yy") <> Format(Now, "MM/dd/yy") Then
+                        For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                            If Format(CDate(THIS_DATE), "MM/dd/yy") = Format(CDate(rowICTSTATD.Item("PO_ARRIVAL_DATE") & ""), "MM/dd/yy") Then
+                                '        FOBDATES.AppendLine(Format(rowICTSTATD.Item("PO_DATE_SHIP_BY") & "", "MM/dd/yy"))
+                                FOBDATES.AppendLine(Format(CDate(rowICTSTATD.Item("PO_DATE_SHIP_BY") & ""), "MM/dd/yy"))
+                            End If
+                        Next
+                    Else
+                    End If
+                End If
+            Next
+            Dim DATES_STRING As String = ""
+            If DATES.ToString.Length > 2 Then
+                DATES_STRING = DATES.ToString.Substring(0, DATES.Length - 2)
+            End If
+            Dim FOBDATES_STRING As String = ""
+            If FOBDATES.ToString.Length > 2 Then
+                FOBDATES_STRING = FOBDATES.ToString.Substring(0, FOBDATES.Length - 2)
+            End If
+
+            With worksheet.Cells("M" & curRow.ToString)
+                .Value = DATES_STRING
+                .Font.Color = SpreadsheetGear.Colors.Red
+            End With
+            With worksheet.Cells("O" & curRow.ToString)
+                .Value = TOT_AVAIL
+                .NumberFormat = "###,##0"
+            End With
+            With worksheet.Cells("P" & curRow.ToString)
+                .Value = VAN_COST 'Get Vandale Cost Here
+                '  .NumberFormat = "$###,##0.00"
+                .Font.Color = SpreadsheetGear.Colors.Red
+
+            End With
+            With worksheet.Cells("Q" & curRow.ToString)
+                .Value = STYLE_RETAIL
+                .NumberFormat = "$###,##0.00"
+            End With
+            With worksheet.Cells("R" & curRow.ToString)
+                ' .Value = 3.3 'Get TKMAX OFFER Here
+                .NumberFormat = "$###,##0.00"
+                .Interior.Color = SpreadsheetGear.Colors.Yellow
+                .Font.Color = SpreadsheetGear.Colors.Red
+                .VerticalAlignment = SpreadsheetGear.VAlign.Center
+            End With
+            With worksheet.Cells("S" & curRow.ToString)
+                .Value = FOBDATES_STRING
+                .Font.Color = SpreadsheetGear.Colors.Red
+            End With
+            worksheet.Cells("T" & curRow.ToString).Value = FACTORY_DESC
+
+            ''If chkShowLastRcd.Checked Then
+            ''    Dim filterQ2 As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
+            ''    Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filterQ2).FirstOrDefault
+            ''    If Not IsNothing(rowICTSTYC1) Then
+            ''        If IsDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty) Then
+            ''            Dim LAST_SHIPPED As Date = CDate(rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty)
+            ''            worksheet.Cells("U" & curRow.ToString).Value = Format(LAST_SHIPPED, "MM/dd/yy")
+            ''        Else
+            ''            Dim LAST_SHIPPED As String = rowICTSTYC1.Item("LAST_RCD_DATE").ToString & String.Empty
+            ''            worksheet.Cells("U" & curRow.ToString).Value = LAST_SHIPPED
+            ''        End If
+            ''    End If
+            ''Else
+            ''    worksheet.Cells("U" & curRow.ToString).Value = ""
+            ''End If
+
+            If chkStyleStats.Checked Then
+
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                    worksheet.Cells("V" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                    worksheet.Cells("V" & curRow.ToString).NumberFormat = "#,###,##0"
+                    worksheet.Cells("W" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
+                    worksheet.Cells("W" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    Dim OTS As Integer = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & "") - Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & "")
+                    worksheet.Cells("X" & curRow.ToString).Value = OTS
+                    worksheet.Cells("X" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Y" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty)
+                    worksheet.Cells("Y" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("Z" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty)
+                    worksheet.Cells("Z" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AA" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AA" & curRow.ToString).NumberFormat = "#,###,##0"
+
+                    worksheet.Cells("AB" & curRow.ToString).Value = OTS + Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty) + Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty) - Val(rowICTSTAT2.Item("WHSE_QTY_OPEN") & String.Empty)
+                    worksheet.Cells("AB" & curRow.ToString).NumberFormat = "#,###,##0"
+                Next
+
+            End If
+
+
+
+            curRow += 1
+        Next
+
+        'Show Workbook
+        Dim XLS_FILENAME As String = "5000"
+        Dim success As Boolean = False
+        Dim RPT_PREFIX As String = Absx1.txtFor("QUOTE_NO").Text
+        Do Until success
+            Try
+                XLS_NO += 1
+                XLS_FILENAME = RPT_PREFIX & "_" & Format(XLS_NO, "000") & exlExt
+                workbook.SaveAs(ASCMAIN1.Folders("Temp") & XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                RetVal = XLS_FILENAME
+                success = True
+            Catch ex As Exception
+                If XLS_NO > 5000 Then
+                    success = True
+                End If
+            End Try
+        Loop
+        If XLS_FILENAME = "5000" Then
+            MsgBox("Reports In Temp Folder Exceeded", vbCritical, "Log Out Of ABS And Get Back In")
+        Else
+            Show_Document(ASCMAIN1.Folders("Temp") & XLS_FILENAME)
+        End If
+
+        ASCMAIN1.Progress("")
+        Me.Cursor = Cursors.Default
+
+        Return RetVal
+    End Function
+
+    Private Sub grdWEBLINKS_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdWEBLINKS.InitializeLayout
+
+    End Sub
+
+    Sub Get_Availability()
+
+        '''With grdICTQUOT2.DisplayLayout.Bands(1)
+        '''    .Columns("QTY_AVA0").Header.Caption = "At Once" ' Format(dte0.Value, "MM/dd")
+        '''    .Columns("QTY_AVA1").Header.Caption = Format(dte1.Value, "MM/dd")
+        '''    .Columns("QTY_AVA2").Header.Caption = Format(dte2.Value, "MM/dd")
+        '''    .Columns("QTY_AVA3").Header.Caption = Format(dte3.Value, "MM/dd")
+        '''    .Columns("QTY_AVA4").Header.Caption = "Beyond"
+
+        '''    .Columns("DTE0").Header.Caption = "Dates"
+        '''    .Columns("DTE1").Header.Caption = "Dates"
+        '''    .Columns("DTE2").Header.Caption = "Dates"
+        '''    .Columns("DTE3").Header.Caption = "Dates"
+        '''    .Columns("DTE4").Header.Caption = "Dates"
+
+        '''    ' ENABLING THIS CODE MAKES THE ROWHEIGHT OF BAND1 CRAZY
+
+        '''    'grdICTQUOT2.DisplayLayout.Override.RowSizing = UltraWinGrid.RowSizing.Free
+        '''    'grdICTQUOT2.DisplayLayout.ViewStyleBand = UltraWinGrid.ViewStyleBand.OutlookGroupBy
+
+        '''    '.Columns("QTY_AVA0").Hidden = False
+        '''    '.Columns("QTY_AVA1").Hidden = Not dte1.Visible
+        '''    '.Columns("QTY_AVA2").Hidden = Not dte2.Visible
+        '''    '.Columns("QTY_AVA3").Hidden = Not dte3.Visible
+        '''    '.Columns("QTY_AVA4").Hidden = Not chkBeyond.Checked
+
+        '''    'If Not dte1.Visible Then
+        '''    '    .Columns("QTY_AVA1").Width = 1
+        '''    'Else
+        '''    '    .Columns("QTY_AVA1").Width = 80
+        '''    'End If
+
+        '''    'If Not dte2.Visible Then
+        '''    '    .Columns("QTY_AVA2").Width = 1
+        '''    'Else
+        '''    '    .Columns("QTY_AVA2").Width = 80
+        '''    'End If
+
+        '''    'If Not dte3.Visible Then
+        '''    '    .Columns("QTY_AVA3").Width = 1
+        '''    'Else
+        '''    '    .Columns("QTY_AVA3").Width = 80
+        '''    'End If
+
+        '''    'If Not chkBeyond.Checked Then
+        '''    '    .Columns("QTY_AVA4").Width = 1
+        '''    'Else
+        '''    '    .Columns("QTY_AVA4").Width = 80
+        '''    'End If
+        '''    ''grdICTQUOT2.DisplayLayout.ViewStyleBand = UltraWinGrid.ViewStyleBand.Horizontal
+        '''    '.Override.MinRowHeight = 1
+        '''    '.Override.ResetMinRowHeight()
+        '''    '.Override.DefaultRowHeight = 1
+        '''    '.Override.ResetDefaultRowHeight()
+
+        '''    '  .Override.DefaultRowHeight = 4
+
+
+        '''End With
+
+
+        '''dst.Tables("ICTSTYC1").Columns("QTY_AVA").Expression = "0"
+        '''For Each rowICTQUOT2 As DataRow In dst.Tables("ICTQUOT2").Select("")
+        '''    Load_Availability(rowICTQUOT2)
+        '''Next
+
+        '''Dim MinGrpOpt As Int64 = 0
+        '''If chkALLOSTDT.Checked Then
+        '''    MinGrpOpt = cboStartPeriod.SelectedIndex
+        '''End If
+
+        '''Dim ColVisible(4) As Boolean
+        '''If MinGrpOpt < 1 Then
+        '''    ColVisible(0) = True
+        '''End If
+        '''If MinGrpOpt < 2 Then
+        '''    ColVisible(1) = (tkb1.Value <= 2)
+        '''End If
+        '''If MinGrpOpt < 3 Then
+        '''    ColVisible(2) = (tkb1.Value <= 1)
+        '''End If
+        '''If MinGrpOpt < 4 Then
+        '''    ColVisible(3) = (tkb1.Value <= 0)
+        '''End If
+        '''If MinGrpOpt < 5 Then
+        '''    ColVisible(4) = chkBeyond.Checked
+        '''End If
+
+        '''Dim EX As String = ""
+        '''For I As Integer = 0 To 4
+        '''    If ColVisible(I) Then
+        '''        EX &= "+ISNULL(QTY_AVA" & CStr(I) & ",0)"
+        '''    End If
+        '''Next
+        '''dst.Tables("ICTSTYC1").Columns("QTY_AVA").Expression = Mid(EX, 2)
+
+        '''refresh_required = False
+        '''cmdGetAvailability.Appearance.ForeColor = Color.Empty
+
+    End Sub
 End Class
