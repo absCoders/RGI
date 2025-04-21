@@ -74,6 +74,7 @@ Partial Class WBFIMGWB
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.pnlOptions = New System.Windows.Forms.Panel()
+        Me.chkHRLS = New System.Windows.Forms.CheckBox()
         Me.btnAddNew = New System.Windows.Forms.Button()
         Me.chkAddBothLocations = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
@@ -98,7 +99,7 @@ Partial Class WBFIMGWB
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkHRLS = New System.Windows.Forms.CheckBox()
+        Me.chkStockOnly = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -246,6 +247,7 @@ Partial Class WBFIMGWB
         '
         'pnlOptions
         '
+        Me.pnlOptions.Controls.Add(Me.chkStockOnly)
         Me.pnlOptions.Controls.Add(Me.chkHRLS)
         Me.pnlOptions.Controls.Add(Me.btnAddNew)
         Me.pnlOptions.Controls.Add(Me.chkAddBothLocations)
@@ -254,6 +256,16 @@ Partial Class WBFIMGWB
         Me.pnlOptions.Name = "pnlOptions"
         Me.pnlOptions.Size = New System.Drawing.Size(189, 150)
         Me.pnlOptions.TabIndex = 0
+        '
+        'chkHRLS
+        '
+        Me.chkHRLS.AutoSize = True
+        Me.chkHRLS.Location = New System.Drawing.Point(10, 127)
+        Me.chkHRLS.Name = "chkHRLS"
+        Me.chkHRLS.Size = New System.Drawing.Size(158, 20)
+        Me.chkHRLS.TabIndex = 2
+        Me.chkHRLS.Text = "Check Extra Images"
+        Me.chkHRLS.UseVisualStyleBackColor = True
         '
         'btnAddNew
         '
@@ -618,15 +630,17 @@ Partial Class WBFIMGWB
         '
         Me.Timer1.Interval = 1000
         '
-        'chkHRLS
+        'chkStockOnly
         '
-        Me.chkHRLS.AutoSize = True
-        Me.chkHRLS.Location = New System.Drawing.Point(10, 127)
-        Me.chkHRLS.Name = "chkHRLS"
-        Me.chkHRLS.Size = New System.Drawing.Size(158, 20)
-        Me.chkHRLS.TabIndex = 2
-        Me.chkHRLS.Text = "Check Extra Images"
-        Me.chkHRLS.UseVisualStyleBackColor = True
+        Me.chkStockOnly.AutoSize = True
+        Me.chkStockOnly.Checked = True
+        Me.chkStockOnly.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkStockOnly.Location = New System.Drawing.Point(10, 108)
+        Me.chkStockOnly.Name = "chkStockOnly"
+        Me.chkStockOnly.Size = New System.Drawing.Size(99, 20)
+        Me.chkStockOnly.TabIndex = 3
+        Me.chkStockOnly.Text = "Stock Only"
+        Me.chkStockOnly.UseVisualStyleBackColor = True
         '
         'WBFIMGWB
         '
@@ -697,4 +711,5 @@ Partial Class WBFIMGWB
     Friend WithEvents btnAddNew As Button
     Friend WithEvents chkAddBothLocations As CheckBox
     Friend WithEvents chkHRLS As CheckBox
+    Friend WithEvents chkStockOnly As CheckBox
 End Class

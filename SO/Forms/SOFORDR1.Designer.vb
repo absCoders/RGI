@@ -1985,7 +1985,7 @@ Partial Class SOFORDR1
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup9, UltraExplorerBarGroup4, UltraExplorerBarGroup2, UltraExplorerBarGroup5, UltraExplorerBarGroup7, UltraExplorerBarGroup6, UltraExplorerBarGroup8, UltraExplorerBarGroup10})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -1997,7 +1997,7 @@ Partial Class SOFORDR1
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5)
         Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1062, 622)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
@@ -2049,24 +2049,24 @@ Partial Class SOFORDR1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 622)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1275, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 622)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1275, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 622)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1275, 0)
         '
         'tlb
@@ -2686,7 +2686,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl9.Controls.Add(Me.splComments)
         Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
-        Me.UltraTabPageControl9.Size = New System.Drawing.Size(1094, 241)
+        Me.UltraTabPageControl9.Size = New System.Drawing.Size(1050, 230)
         '
         'splComments
         '
@@ -2709,7 +2709,7 @@ Partial Class SOFORDR1
         'splComments.Panel2
         '
         Me.splComments.Panel2.Controls.Add(Me.grdSOTORDR4)
-        Me.splComments.Size = New System.Drawing.Size(1094, 241)
+        Me.splComments.Size = New System.Drawing.Size(1050, 230)
         Me.splComments.SplitterDistance = 93
         Me.splComments.TabIndex = 0
         '
@@ -2869,14 +2869,14 @@ Partial Class SOFORDR1
         Me.grdSOTORDR4.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDR4.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR4.Name = "grdSOTORDR4"
-        Me.grdSOTORDR4.Size = New System.Drawing.Size(1094, 144)
+        Me.grdSOTORDR4.Size = New System.Drawing.Size(1050, 133)
         Me.grdSOTORDR4.TabIndex = 14
         Me.grdSOTORDR4.Text = "Internal Comments"
         '
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.grdTATEVNT1)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(1094, 241)
         '
@@ -2969,7 +2969,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.SplitContainer10)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(1094, 241)
         '
@@ -3233,7 +3233,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.grdSOTORDXR)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(1094, 241)
         '
@@ -3338,7 +3338,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl19
         '
         Me.UltraTabPageControl19.Controls.Add(Me.grdSOTORDC1)
-        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
         Me.UltraTabPageControl19.Size = New System.Drawing.Size(1094, 241)
         '
@@ -3450,7 +3450,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl7.Controls.Add(Me.grpSOTORDRR)
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1094, 198)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(1050, 193)
         '
         'grpSOTORDRR
         '
@@ -3461,7 +3461,7 @@ Partial Class SOFORDR1
         Me.grpSOTORDRR.HeaderAppearance = Appearance161
         Me.grpSOTORDRR.Location = New System.Drawing.Point(0, 0)
         Me.grpSOTORDRR.Name = "grpSOTORDRR"
-        Me.grpSOTORDRR.Size = New System.Drawing.Size(1094, 198)
+        Me.grpSOTORDRR.Size = New System.Drawing.Size(1050, 193)
         Me.grpSOTORDRR.TabIndex = 178
         '
         'splSOTORDRR
@@ -3478,8 +3478,8 @@ Partial Class SOFORDR1
         'splSOTORDRR.Panel2
         '
         Me.splSOTORDRR.Panel2.Controls.Add(Me.frmPPQTY)
-        Me.splSOTORDRR.Size = New System.Drawing.Size(1088, 192)
-        Me.splSOTORDRR.SplitterDistance = 917
+        Me.splSOTORDRR.Size = New System.Drawing.Size(1044, 187)
+        Me.splSOTORDRR.SplitterDistance = 873
         Me.splSOTORDRR.TabIndex = 0
         '
         'grdSOTORDRR
@@ -3670,7 +3670,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDRR.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRR.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRR.Name = "grdSOTORDRR"
-        Me.grdSOTORDRR.Size = New System.Drawing.Size(917, 192)
+        Me.grdSOTORDRR.Size = New System.Drawing.Size(873, 187)
         Me.grdSOTORDRR.TabIndex = 15
         Me.grdSOTORDRR.Text = "Range Style Components"
         '
@@ -3686,7 +3686,7 @@ Partial Class SOFORDR1
         Me.frmPPQTY.HeaderAppearance = Appearance160
         Me.frmPPQTY.Location = New System.Drawing.Point(0, 0)
         Me.frmPPQTY.Name = "frmPPQTY"
-        Me.frmPPQTY.Size = New System.Drawing.Size(167, 192)
+        Me.frmPPQTY.Size = New System.Drawing.Size(167, 187)
         Me.frmPPQTY.TabIndex = 177
         Me.frmPPQTY.Text = "Range Type"
         '
@@ -3732,7 +3732,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grpSOTORDR3)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1094, 198)
         '
@@ -3923,7 +3923,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.grdSOTORDRH)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(1094, 198)
         '
@@ -4090,7 +4090,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl16
         '
         Me.UltraTabPageControl16.Controls.Add(Me.splPA)
-        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl16.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl16.Name = "UltraTabPageControl16"
         Me.UltraTabPageControl16.Size = New System.Drawing.Size(1094, 198)
         '
@@ -4553,7 +4553,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdICTXLSPS)
-        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
         Me.UltraTabPageControl24.Size = New System.Drawing.Size(1094, 198)
         '
@@ -4968,7 +4968,7 @@ Partial Class SOFORDR1
         '
         'UltraTabPageControl23
         '
-        Me.UltraTabPageControl23.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl23.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
         Me.UltraTabPageControl23.Size = New System.Drawing.Size(1054, 494)
         '
@@ -6143,9 +6143,9 @@ Partial Class SOFORDR1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer9)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1098, 505)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1054, 494)
         '
         'SplitContainer9
         '
@@ -6162,7 +6162,7 @@ Partial Class SOFORDR1
         'SplitContainer9.Panel2
         '
         Me.SplitContainer9.Panel2.Controls.Add(Me.tabHeader)
-        Me.SplitContainer9.Size = New System.Drawing.Size(1098, 505)
+        Me.SplitContainer9.Size = New System.Drawing.Size(1054, 494)
         Me.SplitContainer9.SplitterDistance = 232
         Me.SplitContainer9.TabIndex = 177
         '
@@ -6179,8 +6179,8 @@ Partial Class SOFORDR1
         'splHeader.Panel2
         '
         Me.splHeader.Panel2.Controls.Add(Me.frmCodes)
-        Me.splHeader.Size = New System.Drawing.Size(1098, 232)
-        Me.splHeader.SplitterDistance = 497
+        Me.splHeader.Size = New System.Drawing.Size(1054, 232)
+        Me.splHeader.SplitterDistance = 477
         Me.splHeader.TabIndex = 177
         '
         'frmDates
@@ -6224,7 +6224,7 @@ Partial Class SOFORDR1
         Me.frmDates.Dock = System.Windows.Forms.DockStyle.Fill
         Me.frmDates.Location = New System.Drawing.Point(0, 0)
         Me.frmDates.Name = "frmDates"
-        Me.frmDates.Size = New System.Drawing.Size(497, 232)
+        Me.frmDates.Size = New System.Drawing.Size(477, 232)
         Me.frmDates.TabIndex = 177
         '
         'dteORDR_REL_ACTION_DATE
@@ -6587,7 +6587,7 @@ Partial Class SOFORDR1
         Me.frmCodes.Dock = System.Windows.Forms.DockStyle.Fill
         Me.frmCodes.Location = New System.Drawing.Point(0, 0)
         Me.frmCodes.Name = "frmCodes"
-        Me.frmCodes.Size = New System.Drawing.Size(597, 232)
+        Me.frmCodes.Size = New System.Drawing.Size(573, 232)
         Me.frmCodes.TabIndex = 178
         '
         'grpBuyerInfo
@@ -6877,7 +6877,7 @@ Partial Class SOFORDR1
         Me.tabHeader.Location = New System.Drawing.Point(0, 0)
         Me.tabHeader.Name = "tabHeader"
         Me.tabHeader.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.tabHeader.Size = New System.Drawing.Size(1098, 269)
+        Me.tabHeader.Size = New System.Drawing.Size(1054, 258)
         Me.tabHeader.TabIndex = 0
         UltraTab22.TabPage = Me.UltraTabPageControl9
         UltraTab22.Text = "Comments"
@@ -6895,14 +6895,14 @@ Partial Class SOFORDR1
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1094, 241)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(1050, 230)
         '
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splOrderDetails)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1098, 505)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1054, 494)
         '
         'splOrderDetails
         '
@@ -6921,8 +6921,8 @@ Partial Class SOFORDR1
         'splOrderDetails.Panel2
         '
         Me.splOrderDetails.Panel2.Controls.Add(Me.tabDetails)
-        Me.splOrderDetails.Size = New System.Drawing.Size(1098, 505)
-        Me.splOrderDetails.SplitterDistance = 275
+        Me.splOrderDetails.Size = New System.Drawing.Size(1054, 494)
+        Me.splOrderDetails.SplitterDistance = 269
         Me.splOrderDetails.TabIndex = 177
         '
         'btnShowPromo
@@ -6951,7 +6951,7 @@ Partial Class SOFORDR1
         'chkShortView
         '
         Me.chkShortView.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkShortView.Location = New System.Drawing.Point(959, 4)
+        Me.chkShortView.Location = New System.Drawing.Point(915, 4)
         Me.chkShortView.Name = "chkShortView"
         Me.chkShortView.Size = New System.Drawing.Size(132, 19)
         Me.chkShortView.TabIndex = 183
@@ -7297,7 +7297,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDR2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDR2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR2.Name = "grdSOTORDR2"
-        Me.grdSOTORDR2.Size = New System.Drawing.Size(1098, 275)
+        Me.grdSOTORDR2.Size = New System.Drawing.Size(1054, 269)
         Me.grdSOTORDR2.TabIndex = 13
         Me.grdSOTORDR2.Text = "Order Details"
         '
@@ -7313,7 +7313,7 @@ Partial Class SOFORDR1
         Me.tabDetails.Location = New System.Drawing.Point(0, 0)
         Me.tabDetails.Name = "tabDetails"
         Me.tabDetails.SharedControlsPage = Me.UltraTabSharedControlsPage7
-        Me.tabDetails.Size = New System.Drawing.Size(1098, 226)
+        Me.tabDetails.Size = New System.Drawing.Size(1054, 221)
         Me.tabDetails.TabIndex = 174
         UltraTab26.TabPage = Me.UltraTabPageControl7
         UltraTab26.Text = "Range Style Components"
@@ -7329,16 +7329,16 @@ Partial Class SOFORDR1
         '
         'UltraTabSharedControlsPage7
         '
-        Me.UltraTabSharedControlsPage7.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabSharedControlsPage7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage7.Name = "UltraTabSharedControlsPage7"
-        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(1094, 198)
+        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(1050, 193)
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.splSOTORDRS)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1098, 505)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1054, 494)
         '
         'splSOTORDRS
         '
@@ -7355,8 +7355,8 @@ Partial Class SOFORDR1
         'splSOTORDRS.Panel2
         '
         Me.splSOTORDRS.Panel2.Controls.Add(Me.grpMS)
-        Me.splSOTORDRS.Size = New System.Drawing.Size(1098, 505)
-        Me.splSOTORDRS.SplitterDistance = 430
+        Me.splSOTORDRS.Size = New System.Drawing.Size(1054, 494)
+        Me.splSOTORDRS.SplitterDistance = 419
         Me.splSOTORDRS.TabIndex = 15
         '
         'grdSOTORDRS
@@ -7437,7 +7437,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDRS.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDRS.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDRS.Name = "grdSOTORDRS"
-        Me.grdSOTORDRS.Size = New System.Drawing.Size(1098, 430)
+        Me.grdSOTORDRS.Size = New System.Drawing.Size(1054, 419)
         Me.grdSOTORDRS.TabIndex = 14
         Me.grdSOTORDRS.Text = "Order Qtys for Multiple Stores"
         '
@@ -7449,7 +7449,7 @@ Partial Class SOFORDR1
         Me.grpMS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpMS.Location = New System.Drawing.Point(0, 0)
         Me.grpMS.Name = "grpMS"
-        Me.grpMS.Size = New System.Drawing.Size(1098, 71)
+        Me.grpMS.Size = New System.Drawing.Size(1054, 71)
         Me.grpMS.TabIndex = 180
         '
         'txtMSCopyToStore
@@ -7490,9 +7490,9 @@ Partial Class SOFORDR1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer15)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1098, 505)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1054, 494)
         '
         'SplitContainer15
         '
@@ -7508,8 +7508,8 @@ Partial Class SOFORDR1
         'SplitContainer15.Panel2
         '
         Me.SplitContainer15.Panel2.Controls.Add(Me.grdSOTCART1)
-        Me.SplitContainer15.Size = New System.Drawing.Size(1098, 505)
-        Me.SplitContainer15.SplitterDistance = 162
+        Me.SplitContainer15.Size = New System.Drawing.Size(1054, 494)
+        Me.SplitContainer15.SplitterDistance = 158
         Me.SplitContainer15.TabIndex = 0
         '
         'grdSOTPICK1
@@ -7699,7 +7699,7 @@ Partial Class SOFORDR1
         Me.grdSOTPICK1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTPICK1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK1.Name = "grdSOTPICK1"
-        Me.grdSOTPICK1.Size = New System.Drawing.Size(1098, 162)
+        Me.grdSOTPICK1.Size = New System.Drawing.Size(1054, 158)
         Me.grdSOTPICK1.TabIndex = 15
         Me.grdSOTPICK1.Text = "Pick Tickets"
         '
@@ -7842,16 +7842,16 @@ Partial Class SOFORDR1
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(1098, 339)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(1054, 332)
         Me.grdSOTCART1.TabIndex = 17
         Me.grdSOTCART1.Text = "Cartons"
         '
         'UltraTabPageControl17
         '
         Me.UltraTabPageControl17.Controls.Add(Me.splBTB)
-        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
-        Me.UltraTabPageControl17.Size = New System.Drawing.Size(1098, 505)
+        Me.UltraTabPageControl17.Size = New System.Drawing.Size(1054, 494)
         '
         'splBTB
         '
@@ -7868,8 +7868,8 @@ Partial Class SOFORDR1
         'splBTB.Panel2
         '
         Me.splBTB.Panel2.Controls.Add(Me.splProForma)
-        Me.splBTB.Size = New System.Drawing.Size(1098, 505)
-        Me.splBTB.SplitterDistance = 211
+        Me.splBTB.Size = New System.Drawing.Size(1054, 494)
+        Me.splBTB.SplitterDistance = 206
         Me.splBTB.TabIndex = 17
         '
         'chkKeepSupplier
@@ -8164,7 +8164,7 @@ Partial Class SOFORDR1
         Me.grdPOTORDR1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdPOTORDR1.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDR1.Name = "grdPOTORDR1"
-        Me.grdPOTORDR1.Size = New System.Drawing.Size(1098, 211)
+        Me.grdPOTORDR1.Size = New System.Drawing.Size(1054, 206)
         Me.grdPOTORDR1.TabIndex = 16
         Me.grdPOTORDR1.Text = "Back-to-Back POs"
         '
@@ -8181,8 +8181,8 @@ Partial Class SOFORDR1
         'splProForma.Panel2
         '
         Me.splProForma.Panel2.Controls.Add(Me.grdSOTORDP2)
-        Me.splProForma.Size = New System.Drawing.Size(1098, 290)
-        Me.splProForma.SplitterDistance = 467
+        Me.splProForma.Size = New System.Drawing.Size(1054, 284)
+        Me.splProForma.SplitterDistance = 448
         Me.splProForma.TabIndex = 16
         '
         'splSOTORDPX
@@ -8199,8 +8199,8 @@ Partial Class SOFORDR1
         'splSOTORDPX.Panel2
         '
         Me.splSOTORDPX.Panel2.Controls.Add(Me.grdSOTINVH1)
-        Me.splSOTORDPX.Size = New System.Drawing.Size(467, 290)
-        Me.splSOTORDPX.SplitterDistance = 132
+        Me.splSOTORDPX.Size = New System.Drawing.Size(448, 284)
+        Me.splSOTORDPX.SplitterDistance = 129
         Me.splSOTORDPX.TabIndex = 16
         '
         'grdSOTORDP1
@@ -8303,7 +8303,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDP1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDP1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDP1.Name = "grdSOTORDP1"
-        Me.grdSOTORDP1.Size = New System.Drawing.Size(467, 132)
+        Me.grdSOTORDP1.Size = New System.Drawing.Size(448, 129)
         Me.grdSOTORDP1.TabIndex = 15
         Me.grdSOTORDP1.Text = "Pro-Forma Invoices"
         '
@@ -8387,7 +8387,7 @@ Partial Class SOFORDR1
         Me.grdSOTINVH1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTINVH1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTINVH1.Name = "grdSOTINVH1"
-        Me.grdSOTINVH1.Size = New System.Drawing.Size(467, 154)
+        Me.grdSOTINVH1.Size = New System.Drawing.Size(448, 151)
         Me.grdSOTINVH1.TabIndex = 16
         Me.grdSOTINVH1.Text = "Invoices"
         '
@@ -8481,7 +8481,7 @@ Partial Class SOFORDR1
         Me.grdSOTORDP2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDP2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDP2.Name = "grdSOTORDP2"
-        Me.grdSOTORDP2.Size = New System.Drawing.Size(627, 290)
+        Me.grdSOTORDP2.Size = New System.Drawing.Size(602, 284)
         Me.grdSOTORDP2.TabIndex = 16
         Me.grdSOTORDP2.Text = "Pro-Forma Invoice Details"
         '
@@ -8597,7 +8597,7 @@ Partial Class SOFORDR1
         Me.UltraTabPageControl21.Controls.Add(Me.UltraLabel59)
         Me.UltraTabPageControl21.Controls.Add(Me.UltraLabel58)
         Me.UltraTabPageControl21.Controls.Add(Me.grdSOTORDRI)
-        Me.UltraTabPageControl21.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl21.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
         Me.UltraTabPageControl21.Size = New System.Drawing.Size(1054, 321)
         '
@@ -8792,7 +8792,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1058, 522)
         '
@@ -8835,7 +8835,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.SplitContainer14)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(1058, 522)
         '
@@ -9339,7 +9339,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl20
         '
         Me.UltraTabPageControl20.Controls.Add(Me.splPOs)
-        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl20.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl20.Name = "UltraTabPageControl20"
         Me.UltraTabPageControl20.Size = New System.Drawing.Size(1058, 522)
         '
@@ -9672,7 +9672,7 @@ Partial Class SOFORDR1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1275, 622)
-        Me.Margin = New System.Windows.Forms.Padding(5, 5, 5, 5)
+        Me.Margin = New System.Windows.Forms.Padding(5)
         Me.Name = "SOFORDR1"
         Me.Text = "SOFORDR1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit

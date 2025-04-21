@@ -4535,7 +4535,8 @@ Public Class SOFORDRO
         Dim LastRow As Int64 = SCD + RowCount + 2
         With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
             .Merge()
-            .Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+            '.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+            .Value = "Effective Immediately: A temporary 25% surcharge now applies to all warehouse shipments; future adjustments may occur."
             .Font.Bold = True
             .Font.Color = Color.Red
             '.RowHeight = 45
