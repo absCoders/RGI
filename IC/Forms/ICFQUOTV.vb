@@ -978,7 +978,7 @@ Public Class ICFQUOTV
 
         If RetVal.Length = 0 Then
             Try
-                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+                If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
                     Stop
                 End If
 
@@ -1773,7 +1773,7 @@ Public Class ICFQUOTV
                     End If
                 End If
             End If
-            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
                 'Stop
                 FOLDER_NAME = "S:\VAN\images\"
                 'FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
@@ -2435,27 +2435,32 @@ Public Class ICFQUOTV
             Loop
             Fix_Size(STYLE_CODE)
 
+            '     If STYLE_CODE = "AK16761" Then
+            '    Stop
+            'End If
+
+
             Dim rowICTSTYLX As DataRow = dst.Tables("ICTSTYLX").Rows.Find(STYLE_CODE)
-            Dim SQ As String = ""
-            For I As Integer = 1 To 12
-                If rowICTSTYLX.Item("S" & CStr(I)) & "" <> "" Then
-                    SQ &= " " & rowICTSTYLX.Item("S" & CStr(I)) & "/" & CStr(rowICTSTYLX.Item("Q" & CStr(I)))
+                Dim SQ As String = ""
+                For I As Integer = 1 To 12
+                    If rowICTSTYLX.Item("S" & CStr(I)) & "" <> "" Then
+                        SQ &= " " & rowICTSTYLX.Item("S" & CStr(I)) & "/" & CStr(rowICTSTYLX.Item("Q" & CStr(I)))
+                    Else
+                        Exit For
+                    End If
+                Next
+                Dim NEW_CAD_SIZE_SCALE As String = GET_CAD_SIZE_SCALE(STYLE_CODE)
+                If NEW_CAD_SIZE_SCALE.Length = 0 Then
+                    rowICTSTYLX.Item("SQ") = Mid(SQ, 2)
                 Else
-                    Exit For
+                    rowICTSTYLX.Item("SQ") = NEW_CAD_SIZE_SCALE
                 End If
-            Next
-            Dim NEW_CAD_SIZE_SCALE As String = GET_CAD_SIZE_SCALE(STYLE_CODE)
-            If NEW_CAD_SIZE_SCALE.Length = 0 Then
-                rowICTSTYLX.Item("SQ") = Mid(SQ, 2)
-            Else
-                rowICTSTYLX.Item("SQ") = NEW_CAD_SIZE_SCALE
+
+                'rowICTQUOT2.Item("SIZE_SCALE") = rowICTSTYLX.Item("SIZE_SCALE")
+                rowICTQUOT2.Item("SIZE_SCALE") = GET_ONLY_SIZE_SCALE(STYLE_CODE)
             End If
 
-            'rowICTQUOT2.Item("SIZE_SCALE") = rowICTSTYLX.Item("SIZE_SCALE")
-            rowICTQUOT2.Item("SIZE_SCALE") = GET_ONLY_SIZE_SCALE(STYLE_CODE)
-        End If
-
-        ASCDATA1.DeleteRows("ICTSTDQ1", "STYLE_CODE = '" & STYLE_CODE & "'")
+            ASCDATA1.DeleteRows("ICTSTDQ1", "STYLE_CODE = '" & STYLE_CODE & "'")
         Allocate(Silent)
 
         For Each row As DataRow In dst.Tables("ICTSTYC1").Select("STYLE_CODE = '" & STYLE_CODE & "'")
@@ -2494,6 +2499,7 @@ Public Class ICFQUOTV
             ' dgj 9/8/21
 
             For Each rowICTSTDQ1 As DataRow In dst.Tables("ICTSTDQ1").Select(fltrICTSTDQ1, "STATUS_DATE")
+                '    Stop
                 Dim STYLE_CODE_S As String = rowICTSTDQ1.Item("STYLE_CODE").ToString & String.Empty
                 Dim COLOR_CODE_S As String = rowICTSTDQ1.Item("COLOR_CODE").ToString & String.Empty
 
@@ -3262,6 +3268,7 @@ Public Class ICFQUOTV
             If chkShowCost.Checked Then
                 '''                With worksheet.Cells(i + ci - 1, COL - 2) '  worksheet.Cells(I, CX + 5)
                 Dim COSTTYPE As String = "FC"
+                Dim TPERC As String = ""
                 Dim STYLE_COST As Decimal = 0
                 Dim COST_PERIOD As String = ""
                 ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
@@ -3288,9 +3295,12 @@ Public Class ICFQUOTV
                         End If
                         If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
                             COSTTYPE = "FLC"
+                            If Len(rowICTCOSTL.Item("TARIFF_FLAG") & "") = 10 Then
+                                TPERC = "T% " & Mid(rowICTCOSTL.Item("TARIFF_FLAG"), 9, 2)
+                            End If
                         Else
-                            ' COSTTYPE = "LC(TNA)"
-                            COSTTYPE = "FLC"
+                                ' COSTTYPE = "LC(TNA)"
+                                COSTTYPE = "FLC"
                         End If
                         ICTCOSTL_COSTS += 1
                     Next
@@ -3343,7 +3353,7 @@ Public Class ICFQUOTV
                 STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
 
                 If chkCostCode.Checked = True Then
-                    COSTTYPE = " - " & COSTTYPE
+                    COSTTYPE = " - " & COSTTYPE & " " & TPERC
                 Else
                     COSTTYPE = ""
                 End If
@@ -3357,7 +3367,7 @@ Public Class ICFQUOTV
                 If rowICTFACT1 Is Nothing Then
                     FACTORY_DESC = ""
                 Else
-                    FACTORY_DESC = rowICTFACT1.Item("FACTORY_DESC") & ""
+                    FACTORY_DESC = FACTORY_CODE & "-" & rowICTFACT1.Item("FACTORY_DESC") & ""
                 End If
 
                 COUNTRY_NAME = tblSTYLE.Rows(0).Item("COUNTRY_NAME").ToString & String.Empty
@@ -3807,6 +3817,7 @@ Public Class ICFQUOTV
             If chkShowCost.Checked Then
                 '''                With worksheet.Cells(i + ci - 1, COL - 2) '  worksheet.Cells(I, CX + 5)
                 Dim COSTTYPE As String = "FC"
+                Dim TPERC As String = ""
                 Dim STYLE_COST As Decimal = 0
                 Dim COST_PERIOD As String = ""
                 ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
@@ -3833,6 +3844,9 @@ Public Class ICFQUOTV
                         End If
                         If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
                             COSTTYPE = "FLC"
+                            If Len(rowICTCOSTL.Item("TARIFF_FLAG") & "") = 10 Then
+                                TPERC = "T% " & Mid(rowICTCOSTL.Item("TARIFF_FLAG"), 9, 2)
+                            End If
                         Else
                             ' COSTTYPE = "LC(TNA)"
                             COSTTYPE = "FLC"
@@ -3888,7 +3902,7 @@ Public Class ICFQUOTV
                 STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
 
                 If chkCostCode.Checked = True Then
-                    COSTTYPE = " - " & COSTTYPE
+                    COSTTYPE = " - " & COSTTYPE & " " & TPERC
                 Else
                     COSTTYPE = ""
                 End If
@@ -3902,7 +3916,9 @@ Public Class ICFQUOTV
                 If rowICTFACT1 Is Nothing Then
                     FACTORY_DESC = ""
                 Else
-                    FACTORY_DESC = rowICTFACT1.Item("FACTORY_DESC") & ""
+                    '     FACTORY_DESC = rowICTFACT1.Item("FACTORY_DESC") & ""
+                    FACTORY_DESC = FACTORY_CODE & " " & rowICTFACT1.Item("FACTORY_DESC") & ""
+
                 End If
 
                 COUNTRY_NAME = tblSTYLE.Rows(0).Item("COUNTRY_NAME").ToString & String.Empty
@@ -4829,6 +4845,8 @@ Public Class ICFQUOTV
                         Dim COSTTYPE As String = "FC"
                         Dim STYLE_COST As Decimal = 0
                         Dim COST_PERIOD As String = ""
+                        Dim TPERC As String = ""
+
                         ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_COST from (" & vbCrLf _
                             & "Select OPS_YYYYPP,STYLE_COST from ICTCOSTA " & vbCrLf _
                             & "where (STYLE_CODE, COLOR_CODE) in (" & vbCrLf _
@@ -4853,6 +4871,9 @@ Public Class ICFQUOTV
                                 End If
                                 If rowICTCOSTL.Item("TARIFF_FLAG") & "" <> "" Then
                                     COSTTYPE = "FLC"
+                                    If Len(rowICTCOSTL.Item("TARIFF_FLAG") & "") = 10 Then
+                                        TPERC = "T% " & Mid(rowICTCOSTL.Item("TARIFF_FLAG"), 9, 2)
+                                    End If
                                 Else
                                     ' COSTTYPE = "LC(TNA)"
                                     COSTTYPE = "FLC"
@@ -4908,7 +4929,8 @@ Public Class ICFQUOTV
                         STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
 
                         If chkCostCode.Checked = True Then
-                            COSTTYPE = " - " & COSTTYPE
+                            COSTTYPE = " - " & COSTTYPE & " " & TPERC
+
                         Else
                             COSTTYPE = ""
                         End If
@@ -5606,7 +5628,7 @@ Public Class ICFQUOTV
             'End If
             Dim STYLE_CODE_PLM As String = row.Item("STYLE_CODE_PLM")
             'If STYLE_CODE_PLM = "500498AVR" And ASCMAIN1.Running_in_VS Then Stop
-            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
                 'Stop
                 FOLDER_NAME = "S:\VAN\images\"
                 'FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
@@ -5688,7 +5710,12 @@ Public Class ICFQUOTV
                 Else
                     RPT = "ICRQUOTV"
                 End If
+                If chkFullCAD.Checked Then
+                    RPT = "ICRQUOTZ"
+                End If
+
             End If
+
         End If
 
         If eItemKey = "email" Then
@@ -7782,6 +7809,10 @@ Public Class ICFQUOTV
         Else
             chkCostCode.Checked = False
         End If
+    End Sub
+
+    Private Sub AbsCheckBox1_CheckedChanged(sender As Object, e As EventArgs)
+
     End Sub
 End Class
 

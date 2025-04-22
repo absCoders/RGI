@@ -1091,43 +1091,88 @@ Public Class POROPEN2
         Dim H1 As Integer = 16
         Dim HEAD1 As String = ""
         Dim HEAD2 As String = ""
-        ''If optASN.Value = "S" Then
-        ''    HEAD1 = "Stock"
-        ''ElseIf optASN.Value = "N" Then
-        ''    HEAD1 = "NonStock"
-        ''Else
-        ''    HEAD1 = "All Styles"
-        ''End If
+        Dim HEAD3 As String = ""
+        Dim HEAD4 As String = ""
+        Dim HEAD5 As String = ""
+        Dim HEAD6 As String = ""
+        If optShow.Value = "O" Then
+            HEAD1 = "Open"
+        Else
+            HEAD1 = "All"
+        End If
+        If optASN.Value = "S" Then
+            HEAD2 = "Stock"
+        ElseIf optASN.Value = "N" Then
+            HEAD2 = "NonStock"
+        Else
+            HEAD2 = "All Styles"
+        End If
+        If Absx1.chkFor("CHKINCL_O").Checked Then
+            HEAD3 = "Include Open Po's"
+        End If
+        If Absx1.chkFor("CHKINCL_S").Checked Then
+            If HEAD3 = "" Then
+                HEAD3 = "Include Shipped Po's"
+            Else
+                HEAD3 = HEAD3 & " & Shipped Po's"
+            End If
+        End If
+        If optSORT.Value = "P" Then
+            HEAD4 = "Sort Details By PO No, Line"
+        ElseIf optSORT.Value = "S" Then
+            HEAD4 = "Sort Details By Style, Color"
+        ElseIf optSORT.Value = "D" Then
+            HEAD4 = "Sort Details By Ship By Date"
+        ElseIf optSORT.Value = "O" Then
+            HEAD4 = "Sort Details By Date Ordered"
+        End If
+        HEAD5 = "By Factory,Customer,Sub-Body" ' Report Sort
+        Dim G(4) As String
+        Dim pos As Integer
+        For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Rows
 
-        'If chkOpen.Checked Then
-        '    HEAD2 = "Open"
-        'End If
-        'If chkPick.Checked Then
-        '    If HEAD2 = "" Then
-        '        HEAD2 = "Pick"
-        '    Else
-        '        HEAD2 = HEAD2 & "," & "Pick"
-        '    End If
-        'End If
-        'If chkReservations.Checked Then
-        '    If HEAD2 = "" Then
-        '        HEAD2 = "Res"
-        '    Else
-        '        HEAD2 = HEAD2 & "," & "Res"
-        '    End If
-        'End If
+            For i As Integer = 1 To 4
+                If rowASTSRPT1.Item(("G" & CStr(i)) & "") & "" = "x" Then
+                    G(i) = ""
+                Else
+                    G(i) = rowASTSRPT1.Item(("G" & CStr(i)) & "")
+                    pos = G(i).IndexOf(":")
+                    G(i) = Mid(G(i), 1, pos)
+                End If
+            Next
+            HEAD5 = G(1) & " " & G(2) & " " & G(3) & " " & G(4) & " "
+            Exit For
+        Next
 
+        If Absx1.dteFor("PO_DATE_SHIP_BY_F").Value & "" = "" Then
+        Else
+            HEAD6 = "Ship By Dt: " & Absx1.dteFor("PO_DATE_SHIP_BY_F").Value & "" & " - " & Absx1.dteFor("PO_DATE_SHIP_BY_L").Value & "" & "  "
+        End If
+
+        If Absx1.dteFor("PO_DATE_ETA_F").Value & "" = "" Then
+        Else
+            HEAD6 = HEAD6 & "ETA Dt: " & Absx1.dteFor("PO_DATE_ETA_F").Value & "" & " - " & Absx1.dteFor("PO_DATE_ETA_L").Value & "" & "  "
+        End If
+        If Absx1.dteFor("PO_DATE_RECEIVED_F").Value & "" = "" Then
+        Else
+            HEAD6 = HEAD6 & "Rec Dt: " & Absx1.dteFor("PO_DATE_RECEIVED_F").Value & "" & " - " & Absx1.dteFor("PO_DATE_RECEIVED_L").Value & "" & "  "
+        End If
+        If Absx1.dteFor("PO_INIT_DATE_F").Value & "" = "" Then
+        Else
+            HEAD6 = HEAD6 & "Ord Dt: " & Absx1.dteFor("PO_INIT_DATE_F").Value & "" & " - " & Absx1.dteFor("PO_INIT_DATE_L").Value & ""
+        End If
         worksheet.Cells(0, 2).Value = "Open PO Report with Details"
         worksheet.Cells(0, 2).Font.Bold = True
-        ''     worksheet.Cells(1, 2).Value = "Customer: " & txtCUST_CODE.Text & "   Styles: " & HEAD1
+        worksheet.Cells(1, 2).Value = "PO's: " & HEAD1 & "   Styles: " & HEAD2 & "   Status: " & HEAD3
         worksheet.Cells(1, 2).Font.Bold = True
-        ''If optSelectBy.Value = "D" Then
-        ''    worksheet.Cells(2, 2).Value = "Ship Date Range: " & dteShip_Beg.Value & " - " & dteShip_End.Value
-        ''    worksheet.Cells(2, 2).Font.Bold = True
-        ''Else
-        ''    worksheet.Cells(2, 2).Value = "Report By Selected PO's"
-        ''    worksheet.Cells(2, 2).Font.Bold = True
-        ''End If
+        worksheet.Cells(2, 2).Value = "Sort Details: " & HEAD4
+        worksheet.Cells(2, 2).Font.Bold = True
+        worksheet.Cells(3, 2).Value = "Report Sort: " & HEAD5
+        worksheet.Cells(3, 2).Font.Bold = True
+        If HEAD6 <> "" Then
+            worksheet.Cells(4, 2).Value = "Dates: " & HEAD6
+            worksheet.Cells(4, 2).Font.Bold = True
+        End If
 
 
         worksheet.Cells(0, H1).Value = "Note"
