@@ -595,7 +595,7 @@ Public Class WHFLNFA1
             '.Columns("COLOR_CODE").Header.Fixed = True
 
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If "STYLE_CODE,COLOR_CODE,ONH,LOC".Contains(gcol.Key) Then
+                If "STYLE_CODE,COLOR_CODE,ONH,LOC,PICK,DATE_LAST_CYCLE_COUNT".Contains(gcol.Key) Then
                 ElseIf "LOCATIONS".Contains(gcol.Key) Then
                     gcol.Hidden = Not chkShowLocs.Checked
                     gcol.Width = 1000
@@ -916,7 +916,7 @@ Public Class WHFLNFA1
              FROM WHTLOCB1
             WHERE LOCATION_QTY <> 0 and LOCATION_CODE not like '99-%' and LOCATION_CODE not like '00-STG-%'
              group by WHSE_CODE, STYLE_CODE, COLOR_CODE, LOCATION_CODE))
-            SELECT WHSE_CODE, STYLE_CODE, COLOR_CODE, LISTAGG( lpad(LOCATION_CODE,12) || ' (' || LPAD(LOCATION_QTY,5) || ')', ' | ') WITHIN GROUP (ORDER BY LOCATION_CODE) AS LOCATIONS
+            SELECT WHSE_CODE, STYLE_CODE, COLOR_CODE, LISTAGG( lpad(LOCATION_CODE,12) || ' (' || LPAD(LOCATION_QTY,5) || ')', '  ') WITHIN GROUP (ORDER BY LOCATION_CODE) AS LOCATIONS
             FROM  ranked_locations
             WHERE rn <= 25
             GROUP BY WHSE_CODE, STYLE_CODE, COLOR_CODE) WHTLOCS on (WHTLOCB1.WHSE_CODE = WHTLOCS.WHSE_CODE and WHTLOCB1.STYLE_CODE = WHTLOCS.STYLE_CODE and WHTLOCB1.COLOR_CODE = WHTLOCS.COLOR_CODE)
