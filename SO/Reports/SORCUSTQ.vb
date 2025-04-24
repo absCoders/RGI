@@ -667,7 +667,7 @@ Public Class SORCUSTQ
         'Fill Rows
         'worksheet.Cells("D1").EntireColumn.NumberFormat = SpreadsheetGear.NumberFormatType.Text
 
-        Dim fltrrowSB As String = " RSRV_QTY > 0"
+        Dim fltrrowSB As String = " RSRV_QTY_OPEN > 0"
 
         Dim curRow As Int64 = 3
             For Each rowSB As DataRow In dst.Tables.Item("SOTCUSTQ").Select(fltrrowSB, "STYLE_CODE, COLOR_CODE")
@@ -692,7 +692,7 @@ Public Class SORCUSTQ
                 ''Next
 
                 START_SHIP = CDate(rowSB.Item("ORDR_SHIP_DATE").ToString & String.Empty)
-            UNITS += Val(rowSB.Item("RSRV_QTY").ToString & String.Empty)
+            UNITS += Val(rowSB.Item("RSRV_QTY_OPEN").ToString & String.Empty)
             If START_SHIP <> CDate("01/01/1900") Then
                     'Start Ship (F)
                     worksheet.Cells("F" & curRow.ToString).Value = START_SHIP.ToShortDateString
@@ -3308,8 +3308,8 @@ Public Class SORCUSTQ
             Dim DATES_STRING As String = CDate(rowSB.Item("ORDR_SHIP_DATE").ToString & String.Empty)
             If Val(rowSB.Item("ORDR_QTY").ToString & String.Empty) <> 0 Then
                 TOT_AVAIL = Val(rowSB.Item("ORDR_QTY").ToString & String.Empty)
-            ElseIf Val(rowSB.Item("RSRV_QTY").ToString & String.Empty) <> 0 Then
-                TOT_AVAIL = Val(rowSB.Item("RSRV_QTY").ToString & String.Empty)
+            ElseIf Val(rowSB.Item("RSRV_QTY_OPEN").ToString & String.Empty) <> 0 Then
+                TOT_AVAIL = Val(rowSB.Item("RSRV_QTY_OPEN").ToString & String.Empty)
 
             End If
 
@@ -3872,8 +3872,8 @@ Public Class SORCUSTQ
             Dim DATES_STRING As String = CDate(rowSB.Item("ORDR_SHIP_DATE").ToString & String.Empty)
             If Val(rowSB.Item("ORDR_QTY").ToString & String.Empty) <> 0 Then
                 TOT_AVAIL = Val(rowSB.Item("ORDR_QTY").ToString & String.Empty)
-            ElseIf Val(rowSB.Item("RSRV_QTY").ToString & String.Empty) <> 0 Then
-                TOT_AVAIL = Val(rowSB.Item("RSRV_QTY").ToString & String.Empty)
+            ElseIf Val(rowSB.Item("RSRV_QTY_OPEN").ToString & String.Empty) <> 0 Then
+                TOT_AVAIL = Val(rowSB.Item("RSRV_QTY_OPEN").ToString & String.Empty)
 
             End If
 
@@ -4061,6 +4061,10 @@ Public Class SORCUSTQ
         End If
         Return SIZEs_And_QTYs
     End Function
+
+    Private Sub txtDescription_ValueChanged(sender As Object, e As EventArgs) Handles txtDescription.ValueChanged
+
+    End Sub
 
 
 #End Region
