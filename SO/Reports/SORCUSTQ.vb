@@ -1512,6 +1512,11 @@ Public Class SORCUSTQ
                             .HorizontalAlignment = SpreadsheetGear.HAlign.Center
                         End With
                         chkcnt += 1
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "PO Ref"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        End With
+                        chkcnt += 1
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Qty Ord"
                         With worksheet.Cells(I - 1, COL - 1 + chkcnt)
                             .HorizontalAlignment = SpreadsheetGear.HAlign.Right
@@ -1535,7 +1540,7 @@ Public Class SORCUSTQ
                         chkcnt += 1
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Shp Dt Rev"
 
-                        range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
+                        range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 7)
                         interior = range.Interior
                         interior.Color = SpreadsheetGear.Colors.Aquamarine
 
@@ -1574,6 +1579,19 @@ Public Class SORCUSTQ
                     With worksheet.Cells(I - 1, COL - 2 + chkcnt)
                         .HorizontalAlignment = SpreadsheetGear.HAlign.Center
                         .Value = rowICTSTATD.Item("FACTORY_CODE") & String.Empty
+                        If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Blue
+                        End If
+
+                        .Font.Size = 14
+                    End With
+                    chkcnt += 1
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        .Value = rowICTSTATD.Item("PO_REFERENCE") & String.Empty
                         If rowICTSTATD.Item("PO_SHIP_VESSEL") & String.Empty = "OpenPO" Then
                             .Font.Color = SpreadsheetGear.Colors.Green
                         Else
