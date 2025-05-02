@@ -3237,8 +3237,10 @@ Public Class ICFQUOTV
 
         Dim QTYAVAILFILTER As String = "QTY_AVA <> 0"
         Dim CURR_SALES_DIVISION_CODE As String = ""
-        If numMinQty.Value <> 0 Then
-            QTYAVAILFILTER = "QTY_AVA >" & numMinQty.Value
+        If IsNumeric(numMinQty.Value) Then
+            '         If numMinQty.Value <> 0 Then
+            QTYAVAILFILTER = "QTY_AVA >=" & numMinQty.Value
+            '          End If
         End If
 
         Dim curRow As Int64 = 5
@@ -3439,9 +3441,12 @@ Public Class ICFQUOTV
                     End If
                 End If
             Next
-            If numCapQty.Value <> 0 And TOT_AVAIL > numCapQty.Value Then
-                TOT_AVAIL = numCapQty.Value
+            If IsNumeric(numCapQty.Value) Then
+                If Val(numCapQty.Value) > 0 And TOT_AVAIL > numCapQty.Value Then
+                    TOT_AVAIL = numCapQty.Value
+                End If
             End If
+
             Dim DATES_STRING As String = ""
             If DATES.ToString.Length > 2 Then
                 DATES_STRING = DATES.ToString.Substring(0, DATES.Length - 2)
@@ -3568,8 +3573,9 @@ Public Class ICFQUOTV
 
         Dim QTYAVAILFILTER As String = "QTY_AVA <> 0"
         Dim CURR_SALES_DIVISION_CODE As String = ""
-        If numMinQty.Value <> 0 Then
-            QTYAVAILFILTER = "QTY_AVA >" & numMinQty.Value
+
+        If IsNumeric(numMinQty.Value) Then
+            QTYAVAILFILTER = "QTY_AVA >=" & numMinQty.Value
         End If
 
         Dim curRow As Int64 = 5
@@ -3996,8 +4002,10 @@ Public Class ICFQUOTV
                     End If
                 End If
             Next
-            If numCapQty.Value <> 0 And TOT_AVAIL > numCapQty.Value Then
-                TOT_AVAIL = numCapQty.Value
+            If IsNumeric(numCapQty.Value) Then
+                If Val(numCapQty.Value) > 0 And TOT_AVAIL > numCapQty.Value Then
+                    TOT_AVAIL = numCapQty.Value
+                End If
             End If
             Dim DATES_STRING As String = ""
             If DATES.ToString.Length > 2 Then
