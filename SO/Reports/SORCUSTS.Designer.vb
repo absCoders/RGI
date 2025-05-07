@@ -39,6 +39,8 @@ Partial Class SORCUSTS
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance41 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim Appearance42 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance43 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance44 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -108,7 +110,6 @@ Partial Class SORCUSTS
         Me.chkShowMSRP = New ABSCS.ABSCheckBox()
         Me.chkShowCountry = New ABSCS.ABSCheckBox()
         Me.chkShowFactoryBC = New ABSCS.ABSCheckBox()
-        Me.chkBuyerChart = New ABSCS.ABSCheckBox()
         Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.chkShipDates = New ABSCS.ABSCheckBox()
@@ -174,7 +175,6 @@ Partial Class SORCUSTS
         CType(Me.chkShowMSRP, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowCountry, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowFactoryBC, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkBuyerChart, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -324,6 +324,10 @@ Partial Class SORCUSTS
         '
         'UltraExplorerBar1
         '
+        UltraExplorerBarItem1.Text = "Buyer Chart"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1})
+        UltraExplorerBarGroup1.Text = "Special Functions"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
@@ -621,7 +625,6 @@ Partial Class SORCUSTS
         'SplitContainer8.Panel1
         '
         Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox4)
-        Me.SplitContainer8.Panel1.Controls.Add(Me.chkBuyerChart)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer8.Panel1.Controls.Add(Me.Label1)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShipDates)
@@ -706,18 +709,6 @@ Partial Class SORCUSTS
         Me.chkShowFactoryBC.Size = New System.Drawing.Size(210, 22)
         Me.chkShowFactoryBC.TabIndex = 227
         Me.chkShowFactoryBC.Text = "Show Factory"
-        '
-        'chkBuyerChart
-        '
-        Me.Absx1.SetABSBindToTable(Me.chkBuyerChart, False)
-        Me.chkBuyerChart.CausesValidation = False
-        Me.chkBuyerChart.Location = New System.Drawing.Point(762, 102)
-        Me.chkBuyerChart.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.chkBuyerChart.Name = "chkBuyerChart"
-        Me.chkBuyerChart.Size = New System.Drawing.Size(348, 17)
-        Me.chkBuyerChart.TabIndex = 276
-        Me.chkBuyerChart.Text = "Generate Buyer Chart"
-        Me.chkBuyerChart.Visible = False
         '
         'chkStyleStats
         '
@@ -971,7 +962,6 @@ Partial Class SORCUSTS
         CType(Me.chkShowMSRP, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowCountry, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowFactoryBC, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkBuyerChart, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1018,7 +1008,6 @@ Partial Class SORCUSTS
     Friend WithEvents Label1 As Label
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
     Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
-    Friend WithEvents chkBuyerChart As ABSCS.ABSCheckBox
     Friend WithEvents UltraGroupBox4 As Misc.UltraGroupBox
     Friend WithEvents chkBCDIV As ABSCS.ABSCheckBox
     Friend WithEvents chkShowMSRP As ABSCS.ABSCheckBox
