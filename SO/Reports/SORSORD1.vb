@@ -1533,9 +1533,7 @@ Public Class SORSORD1
 
         Next
 
-        If STYLE_CODE = "EX00383A5" Then
-            Stop
-        End If
+
 
 
         CI += 2
