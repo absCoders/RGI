@@ -4785,6 +4785,7 @@
         Dim CART_LNO As Integer = 0
         Dim CART_TOTAL_UNITS_REL As Integer = 0
         Dim iterations As Integer = 0
+        Dim PKG_CUBE_PACKED As Decimal = 0
 
         Dim PICK_QTY_SATISFY As Integer = 0
         Dim PICK_MAX_QTY As Integer = 0
@@ -4828,6 +4829,7 @@ DETAIL:
                 End If
                 CART_TOTAL_UNITS_REL += PICK_QTY
                 CART_LNO += 1
+                PKG_CUBE_PACKED += (PICK_QTY * Val(rowSOTPICK2.Item("STANDARD_CUBE_PER_UNIT")))
                 Dim rowSOTCART2 As DataRow = F.dst.Tables("SOTCART2").NewRow
                 With rowSOTCART2
                     .Item("CART_NO") = rowSOTCART1.Item("CART_NO")
@@ -4850,7 +4852,7 @@ DETAIL:
 
             ' ADD CART1 IF NECESSARY
             If PICK_QTY_SATISFY > 0 Then
-                rowSOTCART1.Item("PKG_CODE") = recalculate_carton_size(F, PKG_CODE, PKG_CUBE_PACK_CUM, numPKGBuffer)
+                rowSOTCART1.Item("PKG_CODE") = recalculate_carton_size(F, PKG_CODE, PKG_CUBE_PACKED, numPKGBuffer)
                 rowSOTCART1.Item("PKG_CUBE_PACK") = PKG_CUBE_PACK_CUM
                 rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = CART_TOTAL_UNITS_REL
                 rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS_REL
@@ -4879,13 +4881,14 @@ DETAIL:
                 F.dst.Tables("SOTCART1").Rows.Add(rowSOTCART1)
                 PKG_CUBE_PACK_CUM = 0
                 CART_TOTAL_UNITS_REL = 0
+                PKG_CUBE_PACKED = 0
                 GoTo DETAIL
             End If
             If PICK_MAX_QTY <> 0 Then
                 Exit For
             End If
         Next
-        rowSOTCART1.Item("PKG_CODE") = recalculate_carton_size(F, PKG_CODE, PKG_CUBE_PACK_CUM, numPKGBuffer)
+        rowSOTCART1.Item("PKG_CODE") = recalculate_carton_size(F, PKG_CODE, PKG_CUBE_PACKED, numPKGBuffer)
         rowSOTCART1.Item("PKG_CUBE_PACK") = PKG_CUBE_PACK_CUM
         rowSOTCART1.Item("CART_TOTAL_UNITS_REL") = CART_TOTAL_UNITS_REL
         rowSOTCART1.Item("CART_TOTAL_UNITS") = CART_TOTAL_UNITS_REL
