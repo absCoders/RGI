@@ -1651,10 +1651,14 @@ get_next:
                                     MsgBox("Missing Range Error, call Rick", vbCritical, "ASN Error")
                                     Stop
                                 End If
-                                .Item("PICK_QTY_CONF") = rowSOTINVH9.Item("RANGE_STYLE_PP_QTY_SHIP")
+                                If rowSOTCART1.Item("CART_TOTAL_UNITS") <> rowSOTINVH9.Item("RANGE_STYLE_QTY_PER_PP") Then
+                                    MsgBox("Range Qty Error on Carton, call Rick", vbCritical, "ASN Error")
+                                    Stop
+                                End If
+                                .Item("PICK_QTY_CONF") = 1 ' rowSOTINVH9.Item("RANGE_STYLE_PP_QTY_SHIP") - we can't ship more than one Range per Box
                                 .Item("EDI_PO4_UOM") = "EA"
-                            Else
-                                .Item("PICK_QTY_CONF") = rowSOTCART2.Item("QTY_PACKED")
+                                Else
+                                    .Item("PICK_QTY_CONF") = rowSOTCART2.Item("QTY_PACKED")
                                 .Item("EDI_PO4_UOM") = "EA"
                             End If
 
