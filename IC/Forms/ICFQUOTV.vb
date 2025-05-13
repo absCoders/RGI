@@ -31,6 +31,8 @@ Public Class ICFQUOTV
     Dim STYLE_GROUP_CODE_copied As String = ""
     Dim ICTSTAT2SQL As String = ""
     Dim ICTSTATDSQL As String = ""
+    Dim SOTORDRXSQL As String = ""
+
 
 
     Dim refresh_required As Boolean = False
@@ -333,6 +335,46 @@ Public Class ICFQUOTV
 
             ICTSTATDSQL = ASCMAIN1.sql
             Create_TDA(dst.Tables.Add, "ICTSTATD", "**", 0, False)
+
+
+            ASCMAIN1.sql = "Select * from (" & vbCrLf _
+                & " Select SOTORDR2.STYLE_CODE,SOTORDR2.COLOR_CODE,'O' ORDR_TYPE, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                & ",  SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
+                & ", MIN(SOTORDR1.SREP_CODE) SREP_CODE, MIN(SOTORDR1.WHSE_CODE) WHSE_CODE, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY) ORDR, SUM (SOTORDR2.ORDR_QTY_OPEN) OPEN" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_PICK) PICK, SUM (SOTORDR2.ORDR_QTY_ALLO) ALLO" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_SHIP) SHIP, SUM (SOTORDR2.ORDR_QTY_CANC) CANC, MAX (SOTORDR2.ORDR_UNIT_PRICE) PRICE" & vbCrLf _
+                & ", COUNT (DISTINCT SOTORDR1.ORDR_NO) ORDERS" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY      * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_OPEN * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_OPEN" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_PICK * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
+                & ", ARTCUST1.CUST_NAME" & vbCrLf _
+                & ", MIN (SOTORDR1.ORDR_DATE_RECD) ORDR_DATE_RECD, MIN (SOTORDR1.INIT_DATE) INIT_DATE" & vbCrLf _
+                & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & " From SOTORDR2, SOTORDR1, SOTORDR0, ARTCUST1, ICTATOP1" & vbCrLf _
+                & " Where (SOTORDR2.ORDR_STATUS = 'O' OR SOTORDR2.ORDR_STATUS = 'P')" & vbCrLf _
+                & " And SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                & " And ICTATOP1.ORDR_TYPE(+) = 'O'" & vbCrLf _
+                & " And ICTATOP1.ORDR_NO (+) = SOTORDR2.ORDR_NO" & vbCrLf _
+                & " And SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
+                & " And ARTCUST1.CUST_CODE = SOTORDR1.CUST_CODE " & vbCrLf _
+                & " And ROWNUM < 1 " & vbCrLf _
+                & " group by SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+                & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & " )"
+
+            SOTORDRXSQL = ASCMAIN1.sql
+            Create_TDA(dst.Tables.Add, "SOTORDRX", "**", 0, False)
+
+            '  Fill_Records("SOTORDRX", "", True, SOTORDRXSQL)
+
+
+
+
+
 
             With .Tables("ICTQUOT2").Columns
                 .Add("QTY_AVA", GetType(System.Int64), "SUM(CHILD(ICTQUOT2_ICTSTYC1).QTY_AVA)")
@@ -2428,6 +2470,70 @@ Public Class ICFQUOTV
             Fill_Records("ICTSTATD", "", False, ASCMAIN1.sql)
 
 
+            ASCMAIN1.sql = "Select * from (" & vbCrLf _
+                & " Select SOTORDR2.STYLE_CODE,SOTORDR2.COLOR_CODE,'O' ORDR_TYPE, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                & ",  SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE" & vbCrLf _
+                & ", MIN(SOTORDR1.SREP_CODE) SREP_CODE, MIN(SOTORDR1.WHSE_CODE) WHSE_CODE, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY) ORDR, SUM (SOTORDR2.ORDR_QTY_OPEN) OPEN" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_PICK) PICK, SUM (SOTORDR2.ORDR_QTY_ALLO) ALLO" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_SHIP) SHIP, SUM (SOTORDR2.ORDR_QTY_CANC) CANC, MAX (SOTORDR2.ORDR_UNIT_PRICE) PRICE" & vbCrLf _
+                & ", COUNT (DISTINCT SOTORDR1.ORDR_NO) ORDERS" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY      * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_OPEN * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_OPEN" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_PICK * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_SHIP * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
+                & ", SUM (SOTORDR2.ORDR_QTY_CANC * SOTORDR2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
+                & ", ARTCUST1.CUST_NAME" & vbCrLf _
+                & ", MIN (SOTORDR1.ORDR_DATE_RECD) ORDR_DATE_RECD, MIN (SOTORDR1.INIT_DATE) INIT_DATE" & vbCrLf _
+                & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & " From SOTORDR2, SOTORDR1, SOTORDR0, ARTCUST1, ICTATOP1" & vbCrLf _
+                & " Where (SOTORDR2.ORDR_STATUS = 'O' OR SOTORDR2.ORDR_STATUS = 'P')" & vbCrLf _
+                & " And SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                & " And ICTATOP1.ORDR_TYPE(+) = 'O'" & vbCrLf _
+                & " And ICTATOP1.ORDR_NO (+) = SOTORDR2.ORDR_NO" & vbCrLf _
+                & " And SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
+                & " And ARTCUST1.CUST_CODE = SOTORDR1.CUST_CODE " & vbCrLf _
+                & " and SOTORDR2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
+                & " group by SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR0.ORDR_GROUP_NO, SOTORDR0.CUST_CODE, SOTORDR0.ORDR_CUST_PO" & vbCrLf _
+                & ", SOTORDR0.ORDR_SHIP_DATE, SOTORDR0.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTORDR0.ORDR_TYPE_CODE" & vbCrLf _
+                & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & " ) union (" & vbCrLf _
+                & " Select SOTRSRV2.STYLE_CODE,SOTRSRV2.COLOR_CODE,'R' ORDR_TYPE, SOTRSRV2.RSRV_NO ORDR_GROUP_NO, SOTRSRV1.CUST_CODE, SOTRSRV1.ORDR_CUST_PO ORDR_CUST_PO" & vbCrLf _
+                & ", SOTRSRV1.ORDR_SHIP_DATE, SOTRSRV1.ORDR_CANCEL_DATE" & vbCrLf _
+                & ", MIN(SOTRSRV1.SREP_CODE) SREP_CODE, MIN(SOTRSRV1.WHSE_CODE) WHSE_CODE, NULL ORDR_TYPE_CODE" & vbCrLf _
+                & ", SUM (SOTRSRV2.RSRV_QTY) ORDR, SUM (SOTRSRV2.RSRV_QTY_OPEN) OPEN" & vbCrLf _
+                & ", SUM (0) PICK, SUM (SOTRSRV2.RSRV_QTY_ALLO) ALLO" & vbCrLf _
+                & ", 0 SHIP, 0 CANC,MAX (SOTRSRV2.ORDR_UNIT_PRICE) PRICE" & vbCrLf _
+                & ", 0 ORDERS" & vbCrLf _
+                & ", SUM (SOTRSRV2.RSRV_QTY      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+                & ", SUM (SOTRSRV2.RSRV_QTY_OPEN * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_OPEN" & vbCrLf _
+                & ", SUM (0                      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_PICK" & vbCrLf _
+                & ", SUM (0                      * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_SHIP" & vbCrLf _
+                & ", SUM (SOTRSRV2.RSRV_QTY_CANC * SOTRSRV2.ORDR_UNIT_PRICE) ORDR_AMT_CANC" & vbCrLf _
+                & ", ARTCUST1.CUST_NAME" & vbCrLf _
+                & ", SOTRSRV1.INIT_DATE AS ORDR_DATE_RECD, SOTRSRV1.INIT_DATE" & vbCrLf _
+                & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & " From SOTRSRV2, SOTRSRV1, ARTCUST1, ICTATOP1" & vbCrLf _
+                & " Where SOTRSRV1.RSRV_STATUS = 'O'" & vbCrLf _
+                & " And SOTRSRV2.RSRV_QTY_OPEN <> 0" & vbCrLf _
+                & " And SOTRSRV1.RSRV_NO = SOTRSRV2.RSRV_NO" & vbCrLf _
+                & " And ICTATOP1.ORDR_TYPE (+) = 'R'" & vbCrLf _
+                & " And ICTATOP1.ORDR_NO (+) = SOTRSRV2.RSRV_NO" & vbCrLf _
+                & " And ARTCUST1.CUST_CODE = SOTRSRV1.CUST_CODE" & vbCrLf _
+                & " and SOTRSRV2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
+                & " group by SOTRSRV2.STYLE_CODE, SOTRSRV2.COLOR_CODE, SOTRSRV2.RSRV_NO, SOTRSRV1.CUST_CODE, SOTRSRV1.ORDR_CUST_PO" & vbCrLf _
+                & ", SOTRSRV1.ORDR_SHIP_DATE, SOTRSRV1.ORDR_CANCEL_DATE, ARTCUST1.CUST_NAME, SOTRSRV1.INIT_DATE" & vbCrLf _
+                & ", ICTATOP1.STYLE_SHIP_WINDOW_DAYS, ICTATOP1.ORDR_SHIP_DATE_PLUS, ICTATOP1.STYLE_AT_ONCE_UNTIL, ICTATOP1.STYLE_AT_ONCE_ACTIVE" & vbCrLf _
+                & ")"
+
+
+            Fill_Records("SOTORDRX", "", False, ASCMAIN1.sql)
+
+
+
+
+
+
 
             'Fix_Colors(STYLE_CODE)
             Do While Fix_Colors(STYLE_CODE)
@@ -4195,24 +4301,25 @@ Public Class ICFQUOTV
             If ColVisible(iCol) Then
                 COL += 1
                 With worksheet.Cells(I - 1, COL)
-                    .ColumnWidth = 9
-                    .EntireColumn.NumberFormat = "#,##0"
-                    .EntireColumn.Font.Color = ColColors(iCol)
-                    .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                    .ColumnWidth = 15
+                    .NumberFormat = "#,##0"
+                    .Font.Color = ColColors(iCol)
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                     .Value = "Avail"
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 End With
                 COL += 1
                 With worksheet.Cells(I - 1, COL)
-                    .ColumnWidth = 8
-                    .EntireColumn.NumberFormat = "MM/dd"
-                    .EntireColumn.Font.Color = ColColors(iCol)
-                    .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                    .ColumnWidth = 15
+                    .NumberFormat = "MM/dd"
+                    '    .EntireColumn.Font.Color = ColColors(iCol)
+                    .Font.Color = ColColors(iCol)
+                    .HorizontalAlignment = SpreadsheetGear.HAlign.Center
                     .Value = "Date"
                     .HorizontalAlignment = SpreadsheetGear.HAlign.Center
                 End With
                 With worksheet.Cells(I, COL)
-                    .Font.Size = 12
+                    .Font.Size = 15
                     Dim nth As String = ""
                     Select Case iCol - BegAlloPeriod
                         Case 0
@@ -4233,9 +4340,9 @@ Public Class ICFQUOTV
 
         COL += 1
         With worksheet.Cells(I - 1, COL)
-            .ColumnWidth = 9
-            .EntireColumn.NumberFormat = "#,##0"
-            .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
+            .ColumnWidth = 15
+            .NumberFormat = "#,##0"
+            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
             .Value = "All"
             .HorizontalAlignment = SpreadsheetGear.HAlign.Center
         End With
@@ -4852,9 +4959,12 @@ Public Class ICFQUOTV
             Dim CI As Integer = 0
             'Dim sqlstatus As String = " and (ISNULL(QTY_AVA0,0) <> 0 or ISNULL(QTY_AVA1,0) <> 0 or ISNULL(QTY_AVA2,0) <> 0 or ISNULL(QTY_AVA3,0) <> 0 or ISNULL(QTY_AVA4,0) <> 0)"
             Dim sqlstatus As String = " and COUNT_COLOR = 1"
+            Dim COLOR_CODEs As New List(Of String)
             For Each row2 As DataRow In dst.Tables("ICTSTYC1").Select("STYLE_CODE = '" & row.Item("STYLE_CODE_PLM") & "'" & sqlstatus, "COLOR_CODE")
                 CI += 1
                 COL = COL0
+                Dim COLOR_CODE As String = row2.Item("COLOR_CODE")
+                COLOR_CODEs.Add(COLOR_CODE)
 
                 worksheet.Cells(I + CI - 1, COL - 1).Value = "'" & row2.Item("COLOR_CODE")
                 worksheet.Cells(I + CI - 1, COL - 0).Value = "'" & row2.Item("STYLE_COLOR_DESC")
@@ -5225,6 +5335,10 @@ Public Class ICFQUOTV
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Rev Ship Dt"
                         chkcnt += 1
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "ETA"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                        End With
+
                         chkcnt += 1
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Vessel"
                         With worksheet.Cells(I - 1, COL - 1 + chkcnt)
@@ -5358,6 +5472,185 @@ Public Class ICFQUOTV
                     chkcnt += 1
 
                 Next
+
+                If chkcnt <> 0 Then
+                    I += 2
+                Else
+                    I = I
+                End If
+
+                COL = COL0
+                chkcnt = 0
+                NEWSTYLE = True
+
+                For Each rowSOTORDRX As DataRow In dst.Tables("SOTORDRX").Select("STYLE_CODE = '" & STYLE_CODE & "'", "COLOR_CODE, ORDR_SHIP_DATE")
+                    If COLOR_CODEs.Contains(Format(Val(rowSOTORDRX.Item("COLOR_CODE") & String.Empty), "000") & "") Then
+                        If NEWSTYLE = True Then
+                            worksheet.Cells(I - 1, COL - 1).Value = "Ord/Res Details"
+                            I += 1
+                            ' Headinds and headingsFOrmat
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Col"
+                            chkcnt += 1
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Ord Typ"
+                            chkcnt += 1
+
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Cust"
+                            chkcnt += 1
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Cust PO"
+                            With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                                .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                            End With
+                            chkcnt += 1
+
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Ord Shp Dt"
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
+                            range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
+                            interior = range.Interior
+                            interior.Color = SpreadsheetGear.Colors.Aquamarine
+                            chkcnt += 1
+
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Ord Can Dt"
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
+                            range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
+                            interior = range.Interior
+                            interior.Color = SpreadsheetGear.Colors.Aquamarine
+                            chkcnt += 1
+
+
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Qty Ord"
+                            With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                            End With
+                            chkcnt += 1
+                            worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Price"
+                            With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                                .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                            End With
+
+                            NEWSTYLE = False
+                        End If
+                        I += 1
+                        chkcnt = 1
+
+                        '  worksheet.Cells(I - 1, COL - 2 + chkcnt).Value = Val(rowSOTORDRXItem(1) & String.Empty)
+
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                            .Value = Format(Val(rowSOTORDRX.Item("COLOR_CODE") & String.Empty), "000")
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                            .Value = rowSOTORDRX.Item("ORDR_TYPE") & String.Empty
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+                        End With
+                        chkcnt += 1
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                            .Value = rowSOTORDRX.Item("CUST_CODE") & String.Empty
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Center
+                            .Value = rowSOTORDRX.Item("ORDR_CUST_PO") & String.Empty
+                            .NumberFormat = ""
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                            .Value = rowSOTORDRX.Item("ORDR_SHIP_DATE") & String.Empty
+                            .NumberFormat = "MM/dd/yy"
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                            .Value = rowSOTORDRX.Item("ORDR_CANCEL_DATE") & String.Empty
+                            .NumberFormat = "MM/dd/yy"
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                            .Value = Val(rowSOTORDRX.Item("ORDR") & String.Empty)
+                            .NumberFormat = "#,##0"
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+                        With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                            .Value = Val(rowSOTORDRX.Item("PRICE") & String.Empty)
+                            .NumberFormat = "#,##0.00"
+                            .Font.Size = 14
+                            If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                                .Font.Color = SpreadsheetGear.Colors.Red
+                            Else
+                                .Font.Color = SpreadsheetGear.Colors.Green
+                            End If
+
+                        End With
+                        chkcnt += 1
+
+                    Else
+
+                    End If
+
+
+                Next
+
+
+
                 'T = ""
                 'COL += 1
 
