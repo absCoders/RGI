@@ -1306,6 +1306,78 @@ Public Class SORCUSTQ
             Else
                 rowSOTCUSTQ.Delete()
             End If
+
+            ' rip through SOTCUSTQ
+            If chkONHAND.Checked And chkINTRANSIT.Checked And chkWIP.Checked Then
+            Else
+                If LINETOTAL <> 0 And chkStyleStats.Checked Then
+                    For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & rowSOTCUSTQ.Item("STYLE_CODE") & String.Empty & "' and COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty & "'")
+                        'Dim rowICTSTAT2 As DataRow = dst.Tables("ICTSTAT2").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                        'If rowICTSTAT2 IsNot Nothing Then
+                        Dim GOOD As Boolean = True
+                        Dim WHSE_QTY_ON_HAND As Int64 = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
+                        Dim WHSE_QTY_TRAN As Int64 = Val(rowICTSTAT2.Item("WHSE_QTY_TRAN") & String.Empty)
+                        Dim WHSE_QTY_ON_ORDER As Int64 = Val(rowICTSTAT2.Item("WHSE_QTY_ON_ORDER") & String.Empty)
+                        ' ON HAND CHECKED
+                        If chkONHAND.Checked Then
+                            If chkINTRANSIT.Checked Then
+                                If WHSE_QTY_ON_HAND = 0 And WHSE_QTY_TRAN = 0 Then
+                                    GOOD = False
+                                End If
+                            ElseIf chkWIP.Checked Then
+                                If WHSE_QTY_ON_HAND = 0 And WHSE_QTY_ON_ORDER = 0 Then
+                                    GOOD = False
+                                End If
+                            Else
+                                If WHSE_QTY_ON_HAND = 0 Then
+                                    GOOD = False
+                                End If
+                            End If
+                        End If
+                        ' IN TRANS CHECKED
+                        If chkINTRANSIT.Checked Then
+                            If chkONHAND.Checked Then
+                                If WHSE_QTY_TRAN = 0 And WHSE_QTY_ON_HAND = 0 Then
+                                    GOOD = False
+                                End If
+                            ElseIf chkWIP.Checked Then
+                                If WHSE_QTY_TRAN = 0 And WHSE_QTY_ON_ORDER = 0 Then
+                                    GOOD = False
+                                End If
+                            Else
+                                If WHSE_QTY_TRAN = 0 Then
+                                    GOOD = False
+                                End If
+                            End If
+                        End If
+                        ' WIP CHECKED
+                        If chkWIP.Checked Then
+                            If chkONHAND.Checked Then
+                                If WHSE_QTY_ON_ORDER = 0 And WHSE_QTY_ON_HAND = 0 Then
+                                    GOOD = False
+                                End If
+                            ElseIf chkINTRANSIT.Checked Then
+                                If WHSE_QTY_ON_ORDER = 0 And WHSE_QTY_TRAN = 0 Then
+                                    GOOD = False
+                                End If
+                            Else
+                                If WHSE_QTY_ON_ORDER = 0 Then
+                                    GOOD = False
+                                End If
+                            End If
+                        End If
+
+                        If GOOD = False Then
+                            rowSOTCUSTQ.Delete()
+                        End If
+                        '  End If
+
+                    Next
+
+                End If
+            End If
+
+
         Next
     End Sub
 
@@ -4087,6 +4159,17 @@ Public Class SORCUSTQ
         End If
         Return SIZEs_And_QTYs
     End Function
+
+    Private Sub chkStyleStats_CheckedChanged(sender As Object, e As EventArgs) Handles chkStyleStats.CheckedChanged
+        If chkStyleStats.Checked Then
+            UltraGroupBox6.Visible = True
+        Else
+            UltraGroupBox6.Visible = False
+            chkONHAND.Checked = True
+            chkINTRANSIT.Checked = True
+            chkWIP.Checked = True
+        End If
+    End Sub
 
 
     ''Sub Print_Style_Sheet(eItemKey As String, Optional STYLE_CODE As String = "")
