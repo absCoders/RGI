@@ -2378,6 +2378,7 @@ Public Class ICCMAIN1
         Dim RTRN_GNO As Integer = 0
         Dim rowSOTRTRN3 As DataRow
         Dim DIST_AMT As Decimal = 0
+        Dim DTL_MISC_CHG_CODE As String = ""
 
         For Each rowSOTRTRN2 As DataRow In frm.dst.Tables("SOTRTRN2").Select("", "", DataViewRowState.CurrentRows) ' ISNULL(RTRN_QTY_REF,0) <> RTRN_QTY
             Dim RTRN_QTY As Int32 = Val(rowSOTRTRN2.Item("RTRN_QTY") & "")
@@ -2443,6 +2444,26 @@ Public Class ICCMAIN1
             rowSOTINVH2.Item("ORDR_YYYYPP_UPDATED") = rowSOTRTRN2.Item("OPS_YYYYPP")
             rowSOTINVH2.Item("ORDR_UNIT_COST") = rowSOTRTRN2.Item("STYLE_COST")
             frm.dst.Tables("SOTINVH2").Rows.Add(rowSOTINVH2)
+
+            If ASCMAIN1.CLIENT = "RGI" And Not IsDBNull(rowSOTRTRN2("MISC_CHG_CODE")) Then
+                DTL_MISC_CHG_CODE = rowSOTRTRN2("MISC_CHG_CODE")
+                Dim rowSOTINVHM As DataRow = frm.dst.Tables("SOTINVHM").NewRow
+                With rowSOTINVHM
+                    .Item("INV_TYPE") = "C"
+                    .Item("INV_NO") = INV_NO
+                    .Item("INV_MNO") = rowSOTRTRN2.Item("RTRN_LNO")
+                    .Item("INV_LNO") = rowSOTRTRN2.Item("RTRN_LNO")
+                    .Item("MISC_CHG_CODE") = DTL_MISC_CHG_CODE
+                    .Item("MISC_CHG_DESC") = DTL_MISC_CHG_CODE
+                    .Item("MISC_CHG_NOTE") = "Returns Handling"
+                    .Item("INV_MISC_CHG") = -1 * rowSOTRTRN2("LINE_TARIFF")
+                    .Item("INV_MISC_CHG_CURR") = -1 * rowSOTRTRN2("LINE_TARIFF")
+                    .Item("SURCHARGE_PERC") = rowSOTRTRN2("SURCHARGE_PERC")
+                    .Item("MISC_CHARGE_TYPE") = "T"
+                    .Item("COUNTRY_CODE") = rowSOTRTRN2("COUNTRY_CODE")
+                End With
+                frm.dst.Tables("SOTINVHM").Rows.Add(rowSOTINVHM)
+            End If
         Next
 
         Dim rowSOTINVH1 As DataRow = frm.dst.Tables("SOTINVH1").NewRow
@@ -2483,25 +2504,27 @@ Public Class ICCMAIN1
 
         frm.dst.Tables("SOTINVH1").Rows.Add(rowSOTINVH1)
 
-        Dim INV_MISC_CHG As Decimal = Val(rowSOTINVH1.Item("INV_MISC_CHG") & "")
-        If INV_MISC_CHG <> 0 Then
-            Dim MISC_CHG_CODE = frm.ROWs("SOTPARM1").Item("SO_PARM_MISC_CHG_RTN")
-            Dim rowSOTMISC1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTMISC1 WHERE MISC_CHG_CODE = '" & MISC_CHG_CODE & "'")
-            Dim rowSOTINVHM As DataRow = frm.dst.Tables("SOTINVHM").NewRow
-            With rowSOTINVHM
-                .Item("INV_TYPE") = "C"
-                .Item("INV_NO") = INV_NO
-                .Item("INV_MNO") = 1
-                .Item("MISC_CHG_CODE") = MISC_CHG_CODE
-                If rowSOTMISC1 IsNot Nothing Then
-                    .Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
-                End If
-                .Item("MISC_CHG_NOTE") = "Returns Handling"
-                .Item("INV_MISC_CHG") = INV_MISC_CHG
-            End With
-            frm.dst.Tables("SOTINVHM").Rows.Add(rowSOTINVHM)
+        ' RGI has tariffs for individual items as MISC charges
+        If ASCMAIN1.CLIENT <> "RGI" Then
+            Dim INV_MISC_CHG As Decimal = Val(rowSOTINVH1.Item("INV_MISC_CHG") & "")
+            If INV_MISC_CHG <> 0 Then
+                Dim MISC_CHG_CODE = frm.ROWs("SOTPARM1").Item("SO_PARM_MISC_CHG_RTN")
+                Dim rowSOTMISC1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTMISC1 WHERE MISC_CHG_CODE = '" & MISC_CHG_CODE & "'")
+                Dim rowSOTINVHM As DataRow = frm.dst.Tables("SOTINVHM").NewRow
+                With rowSOTINVHM
+                    .Item("INV_TYPE") = "C"
+                    .Item("INV_NO") = INV_NO
+                    .Item("INV_MNO") = 1
+                    .Item("MISC_CHG_CODE") = MISC_CHG_CODE
+                    If rowSOTMISC1 IsNot Nothing Then
+                        .Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                    End If
+                    .Item("MISC_CHG_NOTE") = "Returns Handling"
+                    .Item("INV_MISC_CHG") = INV_MISC_CHG
+                End With
+                frm.dst.Tables("SOTINVHM").Rows.Add(rowSOTINVHM)
+            End If
         End If
-      
 
         Dim rowARTOPEN1 As DataRow = frm.dst.Tables("ARTOPEN1").NewRow
         ' "STAX_CODE","INV_STAX",
@@ -2623,7 +2646,7 @@ Public Class ICCMAIN1
         'SHOULD WE DO RSF AS AN ACCOUNT IN SOTPARM1 OR AS A MISC CHG CODE?
         ' CODE BELOW IS USING SOTPARM1, BUT ODG USES SOTMISC1 - ROWSOTMISC1 IS ALREADY SET UP ABOVE TO HANDLE THIS
         ' - LET'S WAIT UNTIL SOMEONE ASKS FOR IT
-        DIST_AMT = -1 * Val(rowSOTINVH1.Item("INV_MISC_CHG") & "") ' Handling
+        DIST_AMT = -1 * Val(rowSOTINVH1.Item("INV_MISC_CHG") & "") ' Handling / RGI - Tariff
         If DIST_AMT <> 0 Then
             rowSOTRTRN3 = frm.dst.Tables("SOTRTRN3").NewRow
             rowSOTRTRN3.Item("RTRN_NO") = rowSOTRTRN1.Item("RTRN_NO")
@@ -2632,6 +2655,9 @@ Public Class ICCMAIN1
             rowSOTRTRN3.Item("RTRN_GNO") = RTRN_GNO
 
             Dim MISC_CHG_CODE = frm.ROWs("SOTPARM1").Item("SO_PARM_MISC_CHG_RTN")
+            If DTL_MISC_CHG_CODE <> "" Then
+                MISC_CHG_CODE = DTL_MISC_CHG_CODE
+            End If
             Dim rowSOTMISC1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTMISC1 WHERE MISC_CHG_CODE = '" & MISC_CHG_CODE & "'")
 
             rowSOTRTRN3.Item("ACCT_CODE") = rowSOTMISC1.Item("ACCT_CODE")
