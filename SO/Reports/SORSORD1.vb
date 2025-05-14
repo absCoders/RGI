@@ -384,7 +384,7 @@ Public Class SORSORD1
             ASCDATA1.ExecuteSQL(sql)
         End If
 
-        dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & SOTSORD1, "SOTSORD1", 4))
+        dst.Tables.Add(ASCDATA1.GetDataTable("Select * from " & SOTSORD1, "SOTSORD1", 0))
 
         ASCMAIN1.Progress("WIP && In Transit", "")
         ASCMAIN1.sql = "Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
@@ -1533,9 +1533,7 @@ Public Class SORSORD1
 
         Next
 
-        If STYLE_CODE = "EX00383A5" Then
-            Stop
-        End If
+
 
 
         CI += 2

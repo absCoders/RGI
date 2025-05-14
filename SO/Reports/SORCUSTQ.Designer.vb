@@ -116,6 +116,10 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.UltraGroupBox6 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkWIP = New ABSCS.ABSCheckBox()
+        Me.chkINTRANSIT = New ABSCS.ABSCheckBox()
+        Me.chkONHAND = New ABSCS.ABSCheckBox()
         Me.chkSortStyle = New ABSCS.ABSCheckBox()
         Me.chkShowLastRcd = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -191,6 +195,11 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox6.SuspendLayout()
+        CType(Me.chkWIP, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkINTRANSIT, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkONHAND, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkSortStyle, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowLastRcd, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -238,7 +247,7 @@ Partial Class SORCUSTQ
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
@@ -462,6 +471,7 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox6)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkSortStyle)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShowLastRcd)
         Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox5)
@@ -486,6 +496,59 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Size = New System.Drawing.Size(1021, 402)
         Me.SplitContainer8.SplitterDistance = 186
         Me.SplitContainer8.TabIndex = 265
+        '
+        'UltraGroupBox6
+        '
+        Me.UltraGroupBox6.Controls.Add(Me.chkWIP)
+        Me.UltraGroupBox6.Controls.Add(Me.chkINTRANSIT)
+        Me.UltraGroupBox6.Controls.Add(Me.chkONHAND)
+        Me.UltraGroupBox6.Location = New System.Drawing.Point(671, 113)
+        Me.UltraGroupBox6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraGroupBox6.Name = "UltraGroupBox6"
+        Me.UltraGroupBox6.Size = New System.Drawing.Size(191, 98)
+        Me.UltraGroupBox6.TabIndex = 287
+        Me.UltraGroupBox6.Text = "Only Units > 0"
+        Me.UltraGroupBox6.Visible = False
+        '
+        'chkWIP
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkWIP, False)
+        Me.chkWIP.ABSChecked = "1"
+        Me.chkWIP.CausesValidation = False
+        Me.chkWIP.Checked = True
+        Me.chkWIP.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkWIP.Location = New System.Drawing.Point(8, 68)
+        Me.chkWIP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkWIP.Name = "chkWIP"
+        Me.chkWIP.Size = New System.Drawing.Size(146, 22)
+        Me.chkWIP.TabIndex = 194
+        Me.chkWIP.Text = "WIP"
+        '
+        'chkINTRANSIT
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkINTRANSIT, False)
+        Me.chkINTRANSIT.ABSChecked = "1"
+        Me.chkINTRANSIT.Checked = True
+        Me.chkINTRANSIT.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkINTRANSIT.Location = New System.Drawing.Point(8, 47)
+        Me.chkINTRANSIT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkINTRANSIT.Name = "chkINTRANSIT"
+        Me.chkINTRANSIT.Size = New System.Drawing.Size(146, 22)
+        Me.chkINTRANSIT.TabIndex = 193
+        Me.chkINTRANSIT.Text = "In-Transit"
+        '
+        'chkONHAND
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkONHAND, False)
+        Me.chkONHAND.ABSChecked = "1"
+        Me.chkONHAND.Checked = True
+        Me.chkONHAND.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkONHAND.Location = New System.Drawing.Point(8, 27)
+        Me.chkONHAND.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkONHAND.Name = "chkONHAND"
+        Me.chkONHAND.Size = New System.Drawing.Size(146, 22)
+        Me.chkONHAND.TabIndex = 192
+        Me.chkONHAND.Text = "On Hand"
         '
         'chkSortStyle
         '
@@ -549,7 +612,7 @@ Partial Class SORCUSTQ
         Me.UltraGroupBox4.Controls.Add(Me.chkShowMSRP)
         Me.UltraGroupBox4.Controls.Add(Me.chkShowCountry)
         Me.UltraGroupBox4.Controls.Add(Me.chkShowFactoryBC)
-        Me.UltraGroupBox4.Location = New System.Drawing.Point(671, 128)
+        Me.UltraGroupBox4.Location = New System.Drawing.Point(750, 172)
         Me.UltraGroupBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox4.Name = "UltraGroupBox4"
         Me.UltraGroupBox4.Size = New System.Drawing.Size(265, 147)
@@ -1216,6 +1279,11 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox6.ResumeLayout(False)
+        CType(Me.chkWIP, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkINTRANSIT, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkONHAND, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkSortStyle, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowLastRcd, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1307,4 +1375,8 @@ Partial Class SORCUSTQ
     Friend WithEvents SDTE0 As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents chkShowLastRcd As ABSCS.ABSCheckBox
     Friend WithEvents chkSortStyle As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox6 As Misc.UltraGroupBox
+    Friend WithEvents chkWIP As ABSCS.ABSCheckBox
+    Friend WithEvents chkINTRANSIT As ABSCS.ABSCheckBox
+    Friend WithEvents chkONHAND As ABSCS.ABSCheckBox
 End Class
