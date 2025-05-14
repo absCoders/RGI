@@ -23,6 +23,8 @@ Public Class POROPEN2
         Absx1.chkFor("CHKCOLLAPSEDETAILS").Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         chkExcel.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         chkStyleStats.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
+        txtPOREF.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
+        lblPOREF.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
 
         chkShowCustomerStyleInfo.Visible = (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
 
@@ -89,14 +91,43 @@ Public Class POROPEN2
                     End If
                 End If
 
+                ' ADD TO sql_filter2
+
+                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                    If txtPOREF.Text <> "" Then
+                        Dim i As Integer
+                        Dim POREF As String = ""
+                        Dim datarec() As String = Split(txtPOREF.Text, vbCrLf)
+                        For i = 0 To UBound(datarec)
+                            If datarec(i).Length <> 0 And POREF = "" Then
+                                POREF = POREF & "("
+                            End If
+                            If datarec(i).Length <> 0 Then
+                                POREF = POREF & "'" & datarec(i) & "',"
+                            End If
+                            '     MessageBox.Show(datarec(i))
+                        Next i
+
+                        If POREF <> "" Then
+                            POREF = POREF.TrimEnd(CChar(","))
+                            POREF = POREF & ")"
+                            sql_filter2 &= "" _
+                              & " and POTORDR1.PO_REFERENCE IN " & POREF & vbCrLf
+                        End If
+                    End If
+                End If
+
+
+
+
                 If OS = "S" Then
                     sql_TABLE_NAMEs &= ",POTSHIP2,POTSHIP3"
                     sql_JOIN &= "" _
-                        & " and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
-                        & " and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
-                        & " and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
-                        & " and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
-                        & " and POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf
+                            & " and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                            & " and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                            & " and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
+                            & " and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
+                            & " and POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf
                     If Not sql_TABLE_NAMEs.Contains("POTSHIP1") Then
                         sql_TABLE_NAMEs &= ",POTSHIP1"
                     End If
@@ -105,51 +136,51 @@ Public Class POROPEN2
                 If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
 
                     ASCMAIN1.sql = "Select " & sql_SELECT_cols & vbCrLf _
-                    & ", POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO" & vbCrLf _
-                    & ", POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
-                    & ", POTORDR2.PO_DATE_SHIP_BY, POTORDR1.PO_DATE_ORDERED" _
-                    & IIf(OS = "O",
-                          ", 'OPENPO' PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf,
-                          ", POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf) _
-                    & IIf(OS = "O",
-                          ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_SHP, POTORDR2.PO_QTY_REC, POTORDR2.PO_QTY_OPN, 0 SHIP_QTY, 0 SHIP_OPN, 0 SHIP_REC" & vbCrLf,
-                          ", 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_REC, 0 PO_QTY_OPN, POTSHIP3.PO_QTY_SHP SHIP_QTY, DECODE (POTSHIP2.PO_SHIP_STATUS,'O',POTSHIP3.PO_QTY_SHP,0) SHIP_OPN, POTSHIP3.PO_QTY_REC SHIP_REC" & vbCrLf) _
-                    & " from POTORDR2" & sql_TABLE_NAMEs & vbCrLf _
-                    & ASCMAIN1.SQL_Add_WHERE(sql_WHERE & sql_JOIN & sql_filter & sql_filter2) & vbCrLf
+                        & ", POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                        & ", POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE" & vbCrLf _
+                        & ", POTORDR2.PO_DATE_SHIP_BY, POTORDR1.PO_DATE_ORDERED" _
+                        & IIf(OS = "O",
+                              ", 'OPENPO' PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf,
+                              ", POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf) _
+                        & IIf(OS = "O",
+                              ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_SHP, POTORDR2.PO_QTY_REC, POTORDR2.PO_QTY_OPN, 0 SHIP_QTY, 0 SHIP_OPN, 0 SHIP_REC" & vbCrLf,
+                              ", 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_REC, 0 PO_QTY_OPN, POTSHIP3.PO_QTY_SHP SHIP_QTY, DECODE (POTSHIP2.PO_SHIP_STATUS,'O',POTSHIP3.PO_QTY_SHP,0) SHIP_OPN, POTSHIP3.PO_QTY_REC SHIP_REC" & vbCrLf) _
+                        & " from POTORDR2" & sql_TABLE_NAMEs & vbCrLf _
+                        & ASCMAIN1.SQL_Add_WHERE(sql_WHERE & sql_JOIN & sql_filter & sql_filter2) & vbCrLf
 
                     ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 _
-                                    & " (" & G1thru9 _
-                                    & ",PO_ORDER_NO,PO_ORDER_LNO,STYLE_CODE,COLOR_CODE,PO_DATE_SHIP_BY,PO_DATE_ORDERED,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" _
-                                    & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC" _
-                                    & ") " _
-                                    & " (" & ASCMAIN1.sql & ")")
+                                        & " (" & G1thru9 _
+                                        & ",PO_ORDER_NO,PO_ORDER_LNO,STYLE_CODE,COLOR_CODE,PO_DATE_SHIP_BY,PO_DATE_ORDERED,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" _
+                                        & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC" _
+                                        & ") " _
+                                        & " (" & ASCMAIN1.sql & ")")
 
 
                 Else
 
 
                     ASCMAIN1.sql = "Select " & sql_SELECT_cols & vbCrLf _
-                    & ", POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO" & vbCrLf _
-                    & IIf(OS = "O",
-                          ", 'OPENPO' PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf,
-                          ", POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf) _
-                    & IIf(OS = "O",
-                          ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_SHP, POTORDR2.PO_QTY_REC, POTORDR2.PO_QTY_OPN, 0 SHIP_QTY, 0 SHIP_OPN, 0 SHIP_REC" & vbCrLf,
-                          ", 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_REC, 0 PO_QTY_OPN, POTSHIP3.PO_QTY_SHP SHIP_QTY, DECODE (POTSHIP2.PO_SHIP_STATUS,'O',POTSHIP3.PO_QTY_SHP,0) SHIP_OPN, POTSHIP3.PO_QTY_REC SHIP_REC" & vbCrLf) _
-                    & " from POTORDR2" & sql_TABLE_NAMEs & vbCrLf _
-                    & ASCMAIN1.SQL_Add_WHERE(sql_WHERE & sql_JOIN & sql_filter & sql_filter2) & vbCrLf
+                        & ", POTORDR2.PO_ORDER_NO, POTORDR2.PO_ORDER_LNO" & vbCrLf _
+                        & IIf(OS = "O",
+                              ", 'OPENPO' PO_SHIPMENT_NO, 0 PO_SHIPMENT_LNO" & vbCrLf,
+                              ", POTSHIP3.PO_SHIPMENT_NO, POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf) _
+                        & IIf(OS = "O",
+                              ", POTORDR2.PO_QTY_ORD, POTORDR2.PO_QTY_SHP, POTORDR2.PO_QTY_REC, POTORDR2.PO_QTY_OPN, 0 SHIP_QTY, 0 SHIP_OPN, 0 SHIP_REC" & vbCrLf,
+                              ", 0 PO_QTY_ORD, 0 PO_QTY_SHP, 0 PO_QTY_REC, 0 PO_QTY_OPN, POTSHIP3.PO_QTY_SHP SHIP_QTY, DECODE (POTSHIP2.PO_SHIP_STATUS,'O',POTSHIP3.PO_QTY_SHP,0) SHIP_OPN, POTSHIP3.PO_QTY_REC SHIP_REC" & vbCrLf) _
+                        & " from POTORDR2" & sql_TABLE_NAMEs & vbCrLf _
+                        & ASCMAIN1.SQL_Add_WHERE(sql_WHERE & sql_JOIN & sql_filter & sql_filter2) & vbCrLf
 
                     ASCDATA1.ExecuteSQL("Insert into " & ASTSRPT1 _
-                                    & " (" & G1thru9 _
-                                    & ",PO_ORDER_NO,PO_ORDER_LNO,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" _
-                                    & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC" _
-                                    & ") " _
-                                    & " (" & ASCMAIN1.sql & ")")
+                                        & " (" & G1thru9 _
+                                        & ",PO_ORDER_NO,PO_ORDER_LNO,PO_SHIPMENT_NO,PO_SHIPMENT_LNO" _
+                                        & ",PO_QTY_ORD,PO_QTY_SHP,PO_QTY_REC,PO_QTY_OPN,SHIP_QTY,SHIP_OPN,SHIP_REC" _
+                                        & ") " _
+                                        & " (" & ASCMAIN1.sql & ")")
 
 
                 End If
 
-   
+
             End If
         Next
 
@@ -326,6 +357,7 @@ Public Class POROPEN2
                 Show_Document(XLS_FILENAME1)
                 ASCMAIN1.Progress("", "")
             End If
+            txtPOREF.Text = ""
 
         End If
     End Sub

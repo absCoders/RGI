@@ -93,6 +93,8 @@ Partial Class POROPEN2
         Me.chk1Sheet = New ABSCS.ABSCheckBox()
         Me.chkExcel = New ABSCS.ABSCheckBox()
         Me.chkStyleStats = New ABSCS.ABSCheckBox()
+        Me.txtPOREF = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblPOREF = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -168,6 +170,7 @@ Partial Class POROPEN2
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkExcel, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPOREF, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -193,6 +196,8 @@ Partial Class POROPEN2
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.lblPOREF)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.txtPOREF)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkExcel)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chk1Sheet)
@@ -815,6 +820,25 @@ Partial Class POROPEN2
         Me.chkStyleStats.TabIndex = 284
         Me.chkStyleStats.Text = "Include Ord/Res Details"
         '
+        'txtPOREF
+        '
+        Me.txtPOREF.Location = New System.Drawing.Point(391, 287)
+        Me.txtPOREF.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtPOREF.Multiline = True
+        Me.txtPOREF.Name = "txtPOREF"
+        Me.txtPOREF.Size = New System.Drawing.Size(630, 263)
+        Me.txtPOREF.TabIndex = 340
+        '
+        'lblPOREF
+        '
+        Me.lblPOREF.AutoSize = True
+        Me.lblPOREF.Location = New System.Drawing.Point(391, 266)
+        Me.lblPOREF.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPOREF.Name = "lblPOREF"
+        Me.lblPOREF.Size = New System.Drawing.Size(232, 22)
+        Me.lblPOREF.TabIndex = 341
+        Me.lblPOREF.Text = "PO Reference#s to Include"
+        '
         'POROPEN2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -830,6 +854,7 @@ Partial Class POROPEN2
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         Me.SplitContainer5.Panel1.ResumeLayout(False)
+        Me.SplitContainer5.Panel1.PerformLayout()
         Me.SplitContainer5.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer5.ResumeLayout(False)
@@ -902,6 +927,7 @@ Partial Class POROPEN2
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkExcel, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPOREF, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -941,4 +967,6 @@ Partial Class POROPEN2
     Friend WithEvents chkExcel As ABSCS.ABSCheckBox
     Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents txtPOREF As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblPOREF As Misc.UltraLabel
 End Class
