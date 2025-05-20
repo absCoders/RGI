@@ -492,7 +492,7 @@
         RX += 3
         oSheet.Range($"A{RX}:N{RX}").Merge()
         'oSheet.Range($"A{RX}:N{RX}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        oSheet.Range($"A{RX}:N{RX}").Value = "Effective Immediately: A temporary 25% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        oSheet.Range($"A{RX}:N{RX}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
         oSheet.Range($"A{RX}:N{RX}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
         oSheet.Range($"A{RX}:N{RX}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
         oSheet.Range($"A{RX}:N{RX}").Font.Bold = True
