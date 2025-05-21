@@ -1062,14 +1062,14 @@ Public Class SORSORD1
 
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Ord Shp Dt"
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
-                        range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
-                        interior = range.Interior
-                        interior.Color = SpreadsheetGear.Colors.Aquamarine
+                        '    range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
+                        ' interior = range.Interior
+                        'interior.Color = SpreadsheetGear.Colors.Aquamarine
                         chkcnt += 1
 
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Ord Can Dt"
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).ColumnWidth = 15
-                        range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 6)
+                        range = worksheet.Cells(I - 1, COL - 1, I - 1, COL + 8)
                         interior = range.Interior
                         interior.Color = SpreadsheetGear.Colors.Aquamarine
                         chkcnt += 1
@@ -1080,10 +1080,24 @@ Public Class SORSORD1
                             .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                         End With
                         chkcnt += 1
+
                         worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Price"
                         With worksheet.Cells(I - 1, COL - 1 + chkcnt)
                             .HorizontalAlignment = SpreadsheetGear.HAlign.Right
                         End With
+                        chkcnt += 1
+
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Open"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        End With
+                        chkcnt += 1
+
+                        worksheet.Cells(I - 1, COL - 1 + chkcnt).Value = "Pick"
+                        With worksheet.Cells(I - 1, COL - 1 + chkcnt)
+                            .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        End With
+                        chkcnt += 1
 
                         NEWSTYLE = False
                     End If
@@ -1209,6 +1223,35 @@ Public Class SORSORD1
 
                     End With
                     chkcnt += 1
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .Value = Val(rowSOTORDRX.Item("OPEN") & String.Empty)
+                        .NumberFormat = "#,##0"
+                        .Font.Size = 14
+                        If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                            .Font.Color = SpreadsheetGear.Colors.Red
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        End If
+
+                    End With
+                    chkcnt += 1
+
+                    With worksheet.Cells(I - 1, COL - 2 + chkcnt)
+                        .HorizontalAlignment = SpreadsheetGear.HAlign.Right
+                        .Value = Val(rowSOTORDRX.Item("PICK") & String.Empty)
+                        .NumberFormat = "#,##0"
+                        .Font.Size = 14
+                        If rowSOTORDRX.Item("ORDR_TYPE") & "" = "R" Then
+                            .Font.Color = SpreadsheetGear.Colors.Red
+                        Else
+                            .Font.Color = SpreadsheetGear.Colors.Green
+                        End If
+
+                    End With
+                    chkcnt += 1
+
 
                 Next
                 COL = COL0
@@ -1467,10 +1510,13 @@ Public Class SORSORD1
                 COL = COL0 + 1
                 'COL = COL0
                 Dim chkcnt As Int64 = 1
+                Dim COLOR_DESC As String = ""
                 If LAST_COLOR <> rowSOTSORDX.Item("COLOR_CODE") & String.Empty Then
                     worksheet.Cells(i + CI - 1, COL - 2).Value = "'" & rowSOTSORDX.Item("COLOR_CODE") & String.Empty
-                    'worksheet.Cells(i + CI - 1, COL - 1).Value = rowSOTCUSTS.Item("COLOR_DESC") & String.Empty
-                    '     worksheet.Cells(i + CI - 1, COL - 1).Value = GetAltColorCode(STYLE_CODE, rowSOTCUSTS.Item("COLOR_CODE") & String.Empty, rowSOTCUSTS.Item("COLOR_DESC") & String.Empty)
+                    ' worksheet.Cells(i + CI - 1, COL - 1).Value = rowSOTSORDX.Item("COLOR_DESC") & String.Empty
+                    worksheet.Cells(i + CI - 1, COL - 1).Value = GetAltColorCode(STYLE_CODE, rowSOTSORDX.Item("COLOR_CODE") & String.Empty, COLOR_DESC)
+                    '     worksheet.Cells(i + CI - 1, COL - 1).Value = COLOR_DESC
+
                     LAST_COLOR = rowSOTSORDX.Item("COLOR_CODE") & String.Empty
                 End If
                 'worksheet.Cells(i + CI - 1, COL + 1).Value = "ORDR_CUST_PO" 'rowSOTCUSTQ.Item("ORDR_CUST_PO") & String.Empty
@@ -1917,6 +1963,55 @@ Public Class SORSORD1
 
 
     End Sub
+    Private Function GetAltColorCode(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, ByVal COLOR_DESC_ORIG As String) As String
+        Dim RetVal As String = COLOR_DESC_ORIG
+        Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+        Dim SIZE_SCALE As String = rowICTSTYL1.Item("SIZE_SCALE") & String.Empty
+        Dim MAX_LENGTH As Integer = 60
+        Dim I As Integer = InStr(SIZE_SCALE, COLOR_CODE)
+        If I <> 0 Then
+            Dim S As String = Trim(Mid(SIZE_SCALE, I + 3))
+            Dim J As Integer = InStr(Mid(S & "  ", 1, MAX_LENGTH), "  ")
+            Dim K As Integer = InStr(Mid(S & vbCrLf, 1, MAX_LENGTH), vbCrLf)
+            If J = 0 And K = 0 Then
+                J = InStr(Mid(S & " ", 1, MAX_LENGTH), " ")
+            End If
+            If J = 0 Or J > K Then J = K
+            Dim SC As String = ""
+            If J <> 0 Then
+                SC = Mid(S, 1, J)
+                SIZE_SCALE = Mid(SIZE_SCALE, 1, I - 1) & Mid(S, J)
+                For C As Integer = 1 To SC.Length - 1
+                    If C = 1 Or (C > 1 AndAlso Mid(SC, C + 1, 1) <> " " AndAlso (Mid(SC, C - 1, 1) = " " Or Mid(SC, C - 1, 1) = "/")) Then
+                        Mid(SC, C, 1) = Mid(SC, C, 1).ToUpper
+                    End If
+                Next
+                If Trim(SC) <> "" Then
+                    If SC.Length > 35 Then
+                        RetVal = SC.Substring(0, 34)
+                    Else
+                        RetVal = SC
+                    End If
 
+                End If
+            End If
+        End If
+        If RetVal = COLOR_DESC_ORIG Then
+            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+            SQLS.AppendLine("SELECT NVL(STYLE_COLOR_DESC,'') STYLE_COLOR_DESC")
+            SQLS.AppendLine("FROM ICTSTYC1")
+            SQLS.AppendLine(String.Format("WHERE STYLE_CODE = '{0}'", STYLE_CODE))
+            SQLS.AppendLine(String.Format("AND COLOR_CODE = '{0}'", COLOR_CODE))
+            ASCMAIN1.sql = SQLS.ToString()
+            Dim COLOR_DESC_MF As String = ASCDATA1.GetDataValue
+            If COLOR_DESC_MF.Length > 35 Then
+                COLOR_DESC_MF = COLOR_DESC_MF.Substring(0, 35)
+            End If
+            If COLOR_DESC_MF.Length > 0 Then
+                RetVal = COLOR_DESC_MF
+            End If
+        End If
+        Return RetVal
+    End Function
 
 End Class

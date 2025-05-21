@@ -8038,10 +8038,12 @@ Public Class ICFQUOTV
             grpBADates.Visible = True
             chkBABefore.Checked = False
             chkBAAfter.Checked = False
+
         Else
             grpBADates.Visible = False
             chkBABefore.Checked = False
             chkBAAfter.Checked = False
+
         End If
     End Sub
 
@@ -8057,6 +8059,7 @@ Public Class ICFQUOTV
     Private Sub chkBAAfter_CheckedChanged(sender As Object, e As EventArgs) Handles chkBAAfter.CheckedChanged
         If chkBAAfter.Checked Then
             dteBAAfter.Visible = True
+            chkLOADWIP.Checked = True
         Else
             dteBAAfter.Visible = False
         End If
