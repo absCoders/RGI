@@ -3323,11 +3323,12 @@ Public Class SORCUSTS
         If chk1Sheet.Checked Then
             sqlWB = ",SALES_DIVISION_CODE," & SORTSOTCUSTS
         Else
-            sqlWB = "," & SORTSOTCUSTS
-
+            sqlWB = ","
         End If
 
-        For Each row As DataRow In dst.Tables("SOTCUSTS").Select("", Mid(sqlWB, 2))
+        SORTSOTCUSTS = Mid(sqlWB, 2)
+
+        For Each row As DataRow In dst.Tables("SOTCUSTS").Select("", SORTSOTCUSTS)
             If OLDSTYLE = "" Or OLDSTYLE <> row.Item("STYLE_CODE") Then
                 SEQ += 10
                 row.Item("SEQ") = SEQ
