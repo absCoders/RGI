@@ -872,13 +872,11 @@ Public Class SORCUSTQ
 
 
         If eItemKey = "Print Full CADs" Then
-            If ASCMAIN1.USER_ID = "dgj" Then
-                Print_Full_CAD_Print(eItemKey)
-                'With UltraExplorerBar1.Groups("Special Functions")
-                '    .Visible = False
-                'End With
-                Exit Sub
-            End If
+            Print_Full_CAD_Print(eItemKey)
+            'With UltraExplorerBar1.Groups("Special Functions")
+            '    .Visible = False
+            'End With
+            Exit Sub
         End If
 
         If EMsg.Length = 0 Then
