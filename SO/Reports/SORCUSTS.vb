@@ -95,13 +95,13 @@ Public Class SORCUSTS
         S = BUILD_SOTCUSTS(False)
         ASCMAIN1.sql = S.ToString
         Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False)
-        With dst.Tables("SOTCUSTS")
-            .Columns.Add("SEQ").DataType = GetType(System.Int32)
-            .Columns.Add("STYLE_CODE_PLM")
-            .Columns.Add("IMAGE", GetType(System.Byte()))
-            .Columns.Add("SELECTED")
-            .Columns("SELECTED").DefaultValue = "0"
-        End With
+        ''With dst.Tables("SOTCUSTS")
+        ''    .Columns.Add("SEQ").DataType = GetType(System.Int32)
+        ''    .Columns.Add("STYLE_CODE_PLM")
+        ''    .Columns.Add("IMAGE", GetType(System.Byte()))
+        ''    .Columns.Add("SELECTED")
+        ''    .Columns("SELECTED").DefaultValue = "0"
+        ''End With
 
         '''With dst.Tables("SOTCUSTS").Columns
         '''    For iCOL As Integer = 0 To 4
@@ -178,6 +178,18 @@ Public Class SORCUSTS
 
         ICTSTATDSQL = ASCMAIN1.sql
         Create_TDA(dst.Tables.Add, "ICTSTATD", "**", 0, False)
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With dst.Tables.Add("SOTCADSZ")
+                .Columns.Add("SEQ").DataType = GetType(System.Int32)
+                .Columns.Add("STYLE_CODE")
+                .Columns.Add("IMAGE", GetType(System.Byte()))
+                .Columns.Add("IMAGE_NAME")
+                .Columns.Add("SELECTED")
+                .Columns("SELECTED").DefaultValue = "0"
+            End With
+        End If
 
 
         'Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False, "VDDVDDVDD")
@@ -3314,6 +3326,7 @@ Public Class SORCUSTS
         Dim OLDSTYLE As String = ""
 
 
+        dst.Tables.Item("SOTCADSZ").Rows.Clear()
         Dim SORTSOTCUSTS As String = "SUB_BODY_CODE,FABRIC_CODE,STYLE_CODE,COLOR_CODE"
         ''If chkSortStyle.Checked Then
         ''    SORTSOTCUSTQ = "STYLE_CODE,COLOR_CODE"
@@ -3331,10 +3344,19 @@ Public Class SORCUSTS
         For Each row As DataRow In dst.Tables("SOTCUSTS").Select("", SORTSOTCUSTS)
             If OLDSTYLE = "" Or OLDSTYLE <> row.Item("STYLE_CODE") Then
                 SEQ += 10
-                row.Item("SEQ") = SEQ
-                row.Item("STYLE_CODE_PLM") = row.Item("STYLE_CODE")
-                row.Item("SELECTED") = "1"
+                ''row.Item("SEQ") = SEQ
+                ''row.Item("STYLE_CODE_PLM") = row.Item("STYLE_CODE")
+                ''row.Item("SELECTED") = "1"
                 OLDSTYLE = row.Item("STYLE_CODE")
+
+                Dim rowSOTCADSZ As DataRow = dst.Tables("SOTCADSZ").NewRow
+                rowSOTCADSZ.Item("SEQ") = SEQ
+                rowSOTCADSZ.Item("STYLE_CODE") = row.Item("STYLE_CODE") & ""
+                rowSOTCADSZ.Item("IMAGE_NAME") = row.Item("IMAGE_NAME") & ""
+                rowSOTCADSZ.Item("SELECTED") = "1"
+                dst.Tables("SOTCADSZ").Rows.Add(rowSOTCADSZ)
+
+
             End If
         Next
     End Sub
@@ -3352,7 +3374,7 @@ Public Class SORCUSTS
         If Not FOLDER_NAME.EndsWith("\") Then FOLDER_NAME &= "\"
         FOLDER_NAME = Replace(FOLDER_NAME, "G:", "R:")
 
-        For Each row As DataRow In dst.Tables("SOTCUSTS").Select("SELECTED='1'")
+        For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='1'")
 
             Dim STYLE_CODE_PLM As String = row.Item("STYLE_CODE")
             'If STYLE_CODE_PLM = "500498AVR" And ASCMAIN1.Running_in_VS Then Stop
@@ -3375,7 +3397,7 @@ Public Class SORCUSTS
         ''End If
 
         Dim ColVisible(4) As Boolean
-        RPT = "SORFCADY"
+        RPT = "SORFCADX"
 
         If eItemKey = "email" Then
             ''Dim tempFileName As String = rowICTQUOT1.Item("QUOTE_NO")
@@ -3386,7 +3408,7 @@ Public Class SORCUSTS
             ''email_Quote(tempFileName)
         Else
 
-            For Each row As DataRow In dst.Tables("SOTCUSTS").Select("SELECTED='1'")
+            For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='1'")
                 row.Item("SELECTED") = "2"
             Next
 
@@ -3405,7 +3427,7 @@ Public Class SORCUSTS
             Dim SESSION_NO As String = ASCMAIN1.Next_Control_No("SOTCUSTS.SESSION_NO")
             Dim FILE_NO As Integer = 0
 
-            Do While dst.Tables("SOTCUSTS").Select("SELECTED='2'").Length <> 0
+            Do While dst.Tables("SOTCADSZ").Select("SELECTED='2'").Length <> 0
 
                 Print_Report_Begin()
 
@@ -3426,11 +3448,11 @@ Public Class SORCUSTS
                 ''        row.Item("SELECTED") = "1"
                 ''        SetRowImage(row)
                 ''    Next
-                For Each row As DataRow In dst.Tables("SOTCUSTS").Select()
+                For Each row As DataRow In dst.Tables("SOTCADSZ").Select()
                     row.Item("IMAGE") = Null
                 Next
                 Dim STYLE_count As Integer = 0
-                For Each row As DataRow In dst.Tables("SOTCUSTS").Select("SELECTED='2'", "SEQ")
+                For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='2'", "SEQ")
                     STYLE_count += 1
                     row.Item("SELECTED") = "1"
                     SetRowImage(row)
@@ -3448,7 +3470,7 @@ Public Class SORCUSTS
                     tempFileName = "SORCUSTS" & "-" & Format(REPORT_INDEX, "000")
                 Loop While My.Computer.FileSystem.FileExists(ASCMAIN1.Folders("Temp") & tempFileName & ".PDF")
 
-                Dim REPORT_NO As String = Generate_Report(RPT, "Open Order", "", "", "PDF", tempFileName, False)
+                Dim REPORT_NO As String = Generate_Report(RPT, "Shipment Report", "", "", "PDF", tempFileName, False)
 
                 Dim tempNotMade As Boolean = Not System.IO.File.Exists(ASCMAIN1.Folders("Temp") & tempFileName & ".PDF")
 
@@ -3458,7 +3480,7 @@ Public Class SORCUSTS
                     Print_Report_End(, True)
                 End If
 
-                For Each row As DataRow In dst.Tables("SOTCUSTS").Select("SELECTED='1'")
+                For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='1'")
                     row.Item("SELECTED") = "3"
                     row.Item("IMAGE") = DBNull.Value
                 Next
@@ -3466,7 +3488,7 @@ Public Class SORCUSTS
 
         End If
 
-        For Each row As DataRow In dst.Tables("SOTCUSTS").Select("")
+        For Each row As DataRow In dst.Tables("SOTCADSZ").Select("")
             row.Item("IMAGE") = Nothing
         Next
 
