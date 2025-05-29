@@ -695,7 +695,8 @@ Public Class SOFATTR2
         r += 3
         oSheet.Range($"A{r}:N{r}").Merge()
         'oSheet.Range($"A{r}:N{r}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        oSheet.Range($"A{r}:N{r}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        'oSheet.Range($"A{r}:N{r}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        oSheet.Range($"A{r}:N{r}").Value = "Tariffs are in effect for all imported items.  Orders shipped in 2025 will have an 18% surcharge added to the invoice. The Spring 2026 order surcharge is TBD."
         oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
         oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
         oSheet.Range($"A{r}:N{r}").Font.Bold = True
@@ -3008,7 +3009,8 @@ Public Class SOFATTR2
         rng = XWS.Range($"A{R}:N{R}")
         rng.Merge()
         'rng.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        rng.Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        'rng.Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        rng.Value = "Tariffs are in effect for all imported items.  Orders shipped in 2025 will have an 18% surcharge added to the invoice. The Spring 2026 order surcharge is TBD."
         rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
         rng.Font.Bold = True
         rng.Font.Color = Color.Red

@@ -2396,7 +2396,7 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
 
-        VersionNo = "25.05.20.01"
+        VersionNo = "25.05.29.01"
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
