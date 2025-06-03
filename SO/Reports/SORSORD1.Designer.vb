@@ -39,6 +39,9 @@ Partial Class SORSORD1
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -143,21 +146,24 @@ Partial Class SORSORD1
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
         'UltraTabControl1
         '
+        Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
         '
         'SplitContainer5
         '
+        Me.SplitContainer5.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         '
         'SplitContainer5.Panel1
         '
@@ -267,18 +273,26 @@ Partial Class SORSORD1
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdASTEXPT1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
         '
         'tabDataExports
         '
+        Me.tabDataExports.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
         Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
+        UltraExplorerBarItem1.Text = "Net Position"
+        UltraExplorerBarItem2.Text = "Print Full CADs"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2})
+        UltraExplorerBarGroup1.Text = "Special Functions"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0

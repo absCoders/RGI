@@ -2391,6 +2391,16 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* API Calls Moved To Use New API Server.")
 
+        VersionNo = "25.04.17.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
+
+        VersionNo = "25.05.29.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

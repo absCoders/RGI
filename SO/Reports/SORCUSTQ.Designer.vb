@@ -41,6 +41,8 @@ Partial Class SORCUSTQ
         Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -115,6 +117,21 @@ Partial Class SORCUSTQ
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.UltraGroupBox6 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkWIP = New ABSCS.ABSCheckBox()
+        Me.chkINTRANSIT = New ABSCS.ABSCheckBox()
+        Me.chkONHAND = New ABSCS.ABSCheckBox()
+        Me.chkSortStyle = New ABSCS.ABSCheckBox()
+        Me.chkShowLastRcd = New ABSCS.ABSCheckBox()
+        Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.SDTE1 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.SDTE0 = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.AbsCheckBox1 = New ABSCS.ABSCheckBox()
+        Me.chkBCDIV = New ABSCS.ABSCheckBox()
+        Me.chkShowMSRP = New ABSCS.ABSCheckBox()
+        Me.chkShowCountry = New ABSCS.ABSCheckBox()
+        Me.chkShowFactoryBC = New ABSCS.ABSCheckBox()
         Me.chkCostCode = New ABSCS.ABSCheckBox()
         Me.chkShowCost = New ABSCS.ABSCheckBox()
         Me.chk1Sheet = New ABSCS.ABSCheckBox()
@@ -179,6 +196,24 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox6.SuspendLayout()
+        CType(Me.chkWIP, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkINTRANSIT, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkONHAND, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkSortStyle, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowLastRcd, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox5.SuspendLayout()
+        CType(Me.SDTE1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.SDTE0, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox4.SuspendLayout()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkBCDIV, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowMSRP, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowCountry, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowFactoryBC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowCost, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -213,7 +248,7 @@ Partial Class SORCUSTQ
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
@@ -342,7 +377,9 @@ Partial Class SORCUSTQ
         'UltraExplorerBar1
         '
         UltraExplorerBarItem1.Text = "Buyer Sheet"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1})
+        UltraExplorerBarItem2.Text = "Buyer Chart"
+        UltraExplorerBarItem3.Text = "Print Full CADs"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3})
         UltraExplorerBarGroup1.Text = "Special Functions"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
@@ -436,6 +473,11 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox6)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkSortStyle)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkShowLastRcd)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox5)
+        Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox4)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkCostCode)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShowCost)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chk1Sheet)
@@ -457,13 +499,189 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.SplitterDistance = 186
         Me.SplitContainer8.TabIndex = 265
         '
+        'UltraGroupBox6
+        '
+        Me.UltraGroupBox6.Controls.Add(Me.chkWIP)
+        Me.UltraGroupBox6.Controls.Add(Me.chkINTRANSIT)
+        Me.UltraGroupBox6.Controls.Add(Me.chkONHAND)
+        Me.UltraGroupBox6.Location = New System.Drawing.Point(671, 113)
+        Me.UltraGroupBox6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraGroupBox6.Name = "UltraGroupBox6"
+        Me.UltraGroupBox6.Size = New System.Drawing.Size(191, 98)
+        Me.UltraGroupBox6.TabIndex = 287
+        Me.UltraGroupBox6.Text = "Only Units > 0"
+        Me.UltraGroupBox6.Visible = False
+        '
+        'chkWIP
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkWIP, False)
+        Me.chkWIP.ABSChecked = "1"
+        Me.chkWIP.CausesValidation = False
+        Me.chkWIP.Checked = True
+        Me.chkWIP.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkWIP.Location = New System.Drawing.Point(8, 68)
+        Me.chkWIP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkWIP.Name = "chkWIP"
+        Me.chkWIP.Size = New System.Drawing.Size(146, 22)
+        Me.chkWIP.TabIndex = 194
+        Me.chkWIP.Text = "WIP"
+        '
+        'chkINTRANSIT
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkINTRANSIT, False)
+        Me.chkINTRANSIT.ABSChecked = "1"
+        Me.chkINTRANSIT.Checked = True
+        Me.chkINTRANSIT.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkINTRANSIT.Location = New System.Drawing.Point(8, 47)
+        Me.chkINTRANSIT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkINTRANSIT.Name = "chkINTRANSIT"
+        Me.chkINTRANSIT.Size = New System.Drawing.Size(146, 22)
+        Me.chkINTRANSIT.TabIndex = 193
+        Me.chkINTRANSIT.Text = "In-Transit"
+        '
+        'chkONHAND
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkONHAND, False)
+        Me.chkONHAND.ABSChecked = "1"
+        Me.chkONHAND.Checked = True
+        Me.chkONHAND.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkONHAND.Location = New System.Drawing.Point(8, 27)
+        Me.chkONHAND.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkONHAND.Name = "chkONHAND"
+        Me.chkONHAND.Size = New System.Drawing.Size(146, 22)
+        Me.chkONHAND.TabIndex = 192
+        Me.chkONHAND.Text = "On Hand"
+        '
+        'chkSortStyle
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkSortStyle, False)
+        Me.chkSortStyle.CausesValidation = False
+        Me.chkSortStyle.Location = New System.Drawing.Point(548, 120)
+        Me.chkSortStyle.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkSortStyle.Name = "chkSortStyle"
+        Me.chkSortStyle.Size = New System.Drawing.Size(123, 22)
+        Me.chkSortStyle.TabIndex = 286
+        Me.chkSortStyle.Text = "Sort Style"
+        '
+        'chkShowLastRcd
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowLastRcd, False)
+        Me.chkShowLastRcd.Location = New System.Drawing.Point(416, 171)
+        Me.chkShowLastRcd.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowLastRcd.Name = "chkShowLastRcd"
+        Me.chkShowLastRcd.Size = New System.Drawing.Size(213, 22)
+        Me.chkShowLastRcd.TabIndex = 285
+        Me.chkShowLastRcd.Text = "Show Last Rcv'd"
+        '
+        'UltraGroupBox5
+        '
+        Me.UltraGroupBox5.Controls.Add(Me.SDTE1)
+        Me.UltraGroupBox5.Controls.Add(Me.SDTE0)
+        Me.UltraGroupBox5.Location = New System.Drawing.Point(216, 105)
+        Me.UltraGroupBox5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraGroupBox5.Name = "UltraGroupBox5"
+        Me.UltraGroupBox5.Size = New System.Drawing.Size(191, 115)
+        Me.UltraGroupBox5.TabIndex = 284
+        Me.UltraGroupBox5.Text = "Ship Date Range"
+        '
+        'SDTE1
+        '
+        Me.Absx1.SetABSColumnName(Me.SDTE1, "SDTE1")
+        Me.SDTE1.DateTime = New Date(2015, 3, 11, 0, 0, 0, 0)
+        Me.SDTE1.Location = New System.Drawing.Point(8, 61)
+        Me.SDTE1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.SDTE1.Name = "SDTE1"
+        Me.SDTE1.Size = New System.Drawing.Size(156, 29)
+        Me.SDTE1.TabIndex = 1
+        Me.SDTE1.Value = New Date(2015, 3, 11, 0, 0, 0, 0)
+        '
+        'SDTE0
+        '
+        Me.Absx1.SetABSColumnName(Me.SDTE0, "SDTE0")
+        Me.SDTE0.DateTime = New Date(2015, 3, 11, 0, 0, 0, 0)
+        Me.SDTE0.Location = New System.Drawing.Point(8, 26)
+        Me.SDTE0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.SDTE0.Name = "SDTE0"
+        Me.SDTE0.Size = New System.Drawing.Size(156, 29)
+        Me.SDTE0.TabIndex = 0
+        Me.SDTE0.Value = New Date(2015, 3, 11, 0, 0, 0, 0)
+        '
+        'UltraGroupBox4
+        '
+        Me.UltraGroupBox4.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox4.Controls.Add(Me.AbsCheckBox1)
+        Me.UltraGroupBox4.Controls.Add(Me.chkBCDIV)
+        Me.UltraGroupBox4.Controls.Add(Me.chkShowMSRP)
+        Me.UltraGroupBox4.Controls.Add(Me.chkShowCountry)
+        Me.UltraGroupBox4.Controls.Add(Me.chkShowFactoryBC)
+        Me.UltraGroupBox4.Location = New System.Drawing.Point(750, 172)
+        Me.UltraGroupBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraGroupBox4.Name = "UltraGroupBox4"
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(265, 147)
+        Me.UltraGroupBox4.TabIndex = 282
+        Me.UltraGroupBox4.Text = "Buyer Chart"
+        Me.UltraGroupBox4.Visible = False
+        '
+        'AbsCheckBox1
+        '
+        Me.Absx1.SetABSBindToTable(Me.AbsCheckBox1, False)
+        Me.AbsCheckBox1.CausesValidation = False
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(14, 92)
+        Me.AbsCheckBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.AbsCheckBox1.Name = "AbsCheckBox1"
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(195, 22)
+        Me.AbsCheckBox1.TabIndex = 278
+        Me.AbsCheckBox1.Text = "Show Cost & Code"
+        '
+        'chkBCDIV
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkBCDIV, False)
+        Me.chkBCDIV.CausesValidation = False
+        Me.chkBCDIV.Location = New System.Drawing.Point(14, 115)
+        Me.chkBCDIV.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkBCDIV.Name = "chkBCDIV"
+        Me.chkBCDIV.Size = New System.Drawing.Size(164, 22)
+        Me.chkBCDIV.TabIndex = 277
+        Me.chkBCDIV.Text = "1 Sheet/Div"
+        '
+        'chkShowMSRP
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowMSRP, False)
+        Me.chkShowMSRP.Location = New System.Drawing.Point(14, 70)
+        Me.chkShowMSRP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowMSRP.Name = "chkShowMSRP"
+        Me.chkShowMSRP.Size = New System.Drawing.Size(210, 22)
+        Me.chkShowMSRP.TabIndex = 229
+        Me.chkShowMSRP.Text = "Show MSRP"
+        '
+        'chkShowCountry
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowCountry, False)
+        Me.chkShowCountry.Location = New System.Drawing.Point(14, 49)
+        Me.chkShowCountry.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowCountry.Name = "chkShowCountry"
+        Me.chkShowCountry.Size = New System.Drawing.Size(210, 22)
+        Me.chkShowCountry.TabIndex = 228
+        Me.chkShowCountry.Text = "Show Country"
+        '
+        'chkShowFactoryBC
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowFactoryBC, False)
+        Me.Absx1.SetABSColumnName(Me.chkShowFactoryBC, "QUOTE_SHOW_FACTORY_BC")
+        Me.chkShowFactoryBC.Location = New System.Drawing.Point(14, 27)
+        Me.chkShowFactoryBC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowFactoryBC.Name = "chkShowFactoryBC"
+        Me.chkShowFactoryBC.Size = New System.Drawing.Size(210, 22)
+        Me.chkShowFactoryBC.TabIndex = 227
+        Me.chkShowFactoryBC.Text = "Show Factory"
+        '
         'chkCostCode
         '
         Me.Absx1.SetABSBindToTable(Me.chkCostCode, False)
-        Me.chkCostCode.Location = New System.Drawing.Point(373, 145)
+        Me.chkCostCode.Location = New System.Drawing.Point(548, 145)
         Me.chkCostCode.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkCostCode.Name = "chkCostCode"
-        Me.chkCostCode.Size = New System.Drawing.Size(112, 22)
+        Me.chkCostCode.Size = New System.Drawing.Size(115, 22)
         Me.chkCostCode.TabIndex = 281
         Me.chkCostCode.Text = "Cost Cd"
         '
@@ -471,10 +689,10 @@ Partial Class SORCUSTQ
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowCost, False)
         Me.Absx1.SetABSColumnName(Me.chkShowCost, "QUOTE_SHOW_COST")
-        Me.chkShowCost.Location = New System.Drawing.Point(236, 145)
+        Me.chkShowCost.Location = New System.Drawing.Point(416, 145)
         Me.chkShowCost.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowCost.Name = "chkShowCost"
-        Me.chkShowCost.Size = New System.Drawing.Size(132, 22)
+        Me.chkShowCost.Size = New System.Drawing.Size(124, 22)
         Me.chkShowCost.TabIndex = 280
         Me.chkShowCost.Text = "Show Cost"
         '
@@ -482,10 +700,10 @@ Partial Class SORCUSTQ
         '
         Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
         Me.chk1Sheet.CausesValidation = False
-        Me.chk1Sheet.Location = New System.Drawing.Point(236, 119)
+        Me.chk1Sheet.Location = New System.Drawing.Point(416, 119)
         Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chk1Sheet.Name = "chk1Sheet"
-        Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
+        Me.chk1Sheet.Size = New System.Drawing.Size(137, 22)
         Me.chk1Sheet.TabIndex = 277
         Me.chk1Sheet.Text = "1 Sheet/Div"
         '
@@ -493,10 +711,10 @@ Partial Class SORCUSTQ
         '
         Me.grpDATE_RANGE.Controls.Add(Me.DTE1)
         Me.grpDATE_RANGE.Controls.Add(Me.DTE0)
-        Me.grpDATE_RANGE.Location = New System.Drawing.Point(13, 113)
+        Me.grpDATE_RANGE.Location = New System.Drawing.Point(13, 105)
         Me.grpDATE_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpDATE_RANGE.Name = "grpDATE_RANGE"
-        Me.grpDATE_RANGE.Size = New System.Drawing.Size(207, 101)
+        Me.grpDATE_RANGE.Size = New System.Drawing.Size(195, 115)
         Me.grpDATE_RANGE.TabIndex = 275
         Me.grpDATE_RANGE.Text = "Order Date Range"
         '
@@ -504,10 +722,10 @@ Partial Class SORCUSTQ
         '
         Me.Absx1.SetABSColumnName(Me.DTE1, "DTE1")
         Me.DTE1.DateTime = New Date(2015, 3, 11, 0, 0, 0, 0)
-        Me.DTE1.Location = New System.Drawing.Point(8, 61)
+        Me.DTE1.Location = New System.Drawing.Point(8, 62)
         Me.DTE1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.DTE1.Name = "DTE1"
-        Me.DTE1.Size = New System.Drawing.Size(188, 29)
+        Me.DTE1.Size = New System.Drawing.Size(156, 29)
         Me.DTE1.TabIndex = 1
         Me.DTE1.Value = New Date(2015, 3, 11, 0, 0, 0, 0)
         '
@@ -518,7 +736,7 @@ Partial Class SORCUSTQ
         Me.DTE0.Location = New System.Drawing.Point(8, 26)
         Me.DTE0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.DTE0.Name = "DTE0"
-        Me.DTE0.Size = New System.Drawing.Size(188, 29)
+        Me.DTE0.Size = New System.Drawing.Size(156, 29)
         Me.DTE0.TabIndex = 0
         Me.DTE0.Value = New Date(2015, 3, 11, 0, 0, 0, 0)
         '
@@ -625,10 +843,10 @@ Partial Class SORCUSTQ
         Me.UltraGroupBox1.Controls.Add(Me.chkPick)
         Me.UltraGroupBox1.Controls.Add(Me.chkOpen)
         Me.UltraGroupBox1.Controls.Add(Me.chkReservations)
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(228, 8)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(216, 8)
         Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(208, 105)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(191, 105)
         Me.UltraGroupBox1.TabIndex = 266
         Me.UltraGroupBox1.Text = "Columns To Show"
         '
@@ -678,7 +896,7 @@ Partial Class SORCUSTQ
         Me.UltraGroupBox2.Location = New System.Drawing.Point(12, 8)
         Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(208, 105)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(196, 105)
         Me.UltraGroupBox2.TabIndex = 265
         Me.UltraGroupBox2.Text = "Style Option"
         '
@@ -1063,6 +1281,25 @@ Partial Class SORCUSTQ
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.UltraGroupBox6, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox6.ResumeLayout(False)
+        CType(Me.chkWIP, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkINTRANSIT, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkONHAND, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkSortStyle, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowLastRcd, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox5.ResumeLayout(False)
+        Me.UltraGroupBox5.PerformLayout()
+        CType(Me.SDTE1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.SDTE0, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox4.ResumeLayout(False)
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkBCDIV, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowMSRP, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowCountry, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowFactoryBC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowCost, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chk1Sheet, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1129,4 +1366,19 @@ Partial Class SORCUSTQ
     Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
     Friend WithEvents chkCostCode As ABSCS.ABSCheckBox
     Friend WithEvents chkShowCost As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox4 As Misc.UltraGroupBox
+    Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
+    Friend WithEvents chkBCDIV As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowMSRP As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowCountry As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowFactoryBC As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox5 As Misc.UltraGroupBox
+    Friend WithEvents SDTE1 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents SDTE0 As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents chkShowLastRcd As ABSCS.ABSCheckBox
+    Friend WithEvents chkSortStyle As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox6 As Misc.UltraGroupBox
+    Friend WithEvents chkWIP As ABSCS.ABSCheckBox
+    Friend WithEvents chkINTRANSIT As ABSCS.ABSCheckBox
+    Friend WithEvents chkONHAND As ABSCS.ABSCheckBox
 End Class

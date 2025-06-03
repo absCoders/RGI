@@ -129,6 +129,10 @@ Public Class SOFRTRN1
             .Tables("SOTRTRN2").Columns.Add("LINE_COSTS", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(STYLE_COST,0)")
             .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0)")
             .Tables("SOTRTRN2").Columns.Add("IMPORTED", GetType(System.String))
+            .Tables("SOTRTRN2").Columns.Add("SURCHARGE_PERC", GetType(System.Decimal))
+            .Tables("SOTRTRN2").Columns.Add("LINE_TARIFF", GetType(System.Decimal)) ', "Round(ISNULL(RTRN_PRICE,0) * (ISNULL(SURCHARGE_PERC,0) / 100), 2) * ISNULL(RTRN_QTY,0)")
+            .Tables("SOTRTRN2").Columns.Add("MISC_CHG_CODE", GetType(System.String))
+            .Tables("SOTRTRN2").Columns.Add("COUNTRY_CODE", GetType(System.String))
 
             Create_TDA(.Tables.Add("SOTRTRN2P"), "SOTRTRN2", "**", 1)
             .Tables("SOTRTRN2P").Columns.Add("RECORD_INDEX", GetType(System.Int32))
@@ -185,6 +189,12 @@ Public Class SOFRTRN1
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")
 
             Create_TDA(.Tables.Add, "SOTRMAFR", "*", 1)
+
+            ASCMAIN1.sql = "Select SOTINVHM.*, SOTINVH2.STYLE_CODE from SOTINVHM, SOTINVH2
+                             where SOTINVHM.INV_TYPE = 'I' and SOTINVHM.INV_NO = :PARM1 and SOTINVHM.MISC_CHARGE_TYPE = 'T'
+                             and SOTINVH2.INV_TYPE = SOTINVHM.INV_TYPE and SOTINVH2.INV_NO = SOTINVHM.INV_NO 
+                             and SOTINVH2.INV_LNO = SOTINVHM.INV_LNO"
+            Create_TDA(.Tables.Add, "SOTINVHMR", "**", 0, False, "V", 3)
 
             ASCMAIN1.sql = "select RA_UPC_CODE ,STYLE_CODE ,COLOR_CODE ,
                             max(RA_RTN_QTY) RA_RTN_QTY ,
@@ -316,7 +326,7 @@ Public Class SOFRTRN1
         Create_Summary(grdSOTRTRNG, "DIST_AMT")
 
         Create_Summary(grdSOTRTRN2, "RTRN_LNO", "Count")
-        Create_Summary(grdSOTRTRN2, New String() {"RTRN_QTY", "RTRN_QTY_1", "RTRN_QTY_2", "RTRN_QTY_3", "LINE_SALES", "LINE_SALES_CURR", "LINE_COSTS"})
+        Create_Summary(grdSOTRTRN2, New String() {"RTRN_QTY", "RTRN_QTY_1", "RTRN_QTY_2", "RTRN_QTY_3", "LINE_SALES", "LINE_SALES_CURR", "LINE_COSTS", "LINE_TARIFF"})
 
         Create_Summary(grdSOTRTRN3, "RTRN_GNO", "Count")
         Create_Summary(grdSOTRTRN3, "DIST_AMT")
@@ -404,13 +414,16 @@ Public Class SOFRTRN1
                         gcol.Width = 70
                     End If
 
-                    If New String() {"RTRN_PRICE", "STYLE_COST", "LINE_SALES", "LINE_COSTS"}.Contains(gcol.Key) Then
+                    If New String() {"RTRN_PRICE", "STYLE_COST", "LINE_SALES", "LINE_COSTS", "LINE_TARIFF"}.Contains(gcol.Key) Then
                         gcol.Header.Appearance.BackColor2 = Color.LightGreen
                         If gcol.Key.StartsWith("LINE") Then
                             gcol.CellAppearance.BackColor = Color.LightGreen
                             gcol.Width = 90
                         Else
                             gcol.Width = 70
+                        End If
+                        If ASCMAIN1.CLIENT <> "RGI" And gcol.Key.Contains("LINE_TARIFF") Then
+                            gcol.Hidden = True
                         End If
                     End If
 
@@ -807,7 +820,7 @@ Public Class SOFRTRN1
                 End If
 
                 Dim INV_MISC_CHG As Decimal = Val(Absx1.numFor("RTRN_HANDLING").Value & String.Empty)
-                If INV_MISC_CHG > 0 AndAlso EMsg.Length > 0 Then
+                If INV_MISC_CHG > 0 AndAlso EMsg.Length > 0 AndAlso ASCMAIN1.CLIENT <> "RGI" Then
                     Dim MISC_CHG_CODE As String = ROWs("SOTPARM1").Item("SO_PARM_MISC_CHG_RTN") & String.Empty
                     If MISC_CHG_CODE.Length = 0 Then
                         EMsg &= vbCr & "Handling Charge requires a Misc Charge Return Code in the SO Parameters"
@@ -1011,6 +1024,8 @@ Public Class SOFRTRN1
                     .Items("Cancel").Visible = False
                 End With
             End If
+
+            If ASCMAIN1.CLIENT = "RGI" Then lblMisc.Text = "Tariff"
 
             tabDetails.Tabs("Sales History").Visible = (EntryMode = "N")
             If Not REFRESH_FLAG Then tabDetails.SelectedTab = tabDetails.Tabs("Sales History")
@@ -1450,6 +1465,15 @@ Public Class SOFRTRN1
             Fill_Record("SOTRTRN2", Absx1.txtFor("RTRN_NO").Text)
             dst.AcceptChanges()
 
+            ASCMAIN1.sql = $"Select * from SOTINVHM where INV_TYPE = 'C' and INV_NO = '{rowSOTRTRN1.Item("INV_NO")}' and MISC_CHARGE_TYPE = 'T'"
+            For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Rows
+                Dim rowSOTRTRN2 As DataRow = dst.Tables("SOTRTRN2").Select($"RTRN_LNO = '{row("INV_LNO")}'").First
+                rowSOTRTRN2("SURCHARGE_PERC") = row("SURCHARGE_PERC")
+                rowSOTRTRN2("LINE_TARIFF") = Abs(row("INV_MISC_CHG"))
+                rowSOTRTRN2("MISC_CHG_CODE") = row("MISC_CHG_CODE")
+                rowSOTRTRN2("COUNTRY_CODE") = row("COUNTRY_CODE")
+            Next
+
             dst.Tables("SOTRTRN0").Rows.Add(New String() {"Entered", Format(rowSOTRTRN1.Item("INIT_DATE"), "MM/dd/yy hh:mm tt")})
             dst.Tables("SOTRTRN0").Rows.Add(New String() {"By", rowSOTRTRN1.Item("INIT_OPER")})
             dst.Tables("SOTRTRN0").Rows.Add(New String() {"Source", rowSOTRTRN1.Item("RTRN_SOURCE")})
@@ -1540,6 +1564,21 @@ Public Class SOFRTRN1
             Absx1.txtFor("CUST_CLAIM_NO").Text = rowSOTINVH1.Item("ORDR_CUST_PO") & ""
             Absx1.txtFor("CUST_STORE_NO").Text = rowSOTINVH1.Item("CUST_STORE_NO") & ""
             Absx1.numFor("RTRN_FREIGHT").Value = Val(rowSOTINVH1.Item("INV_FREIGHT") & "")
+        End If
+        If rowSOTRTRN1.Item("INV_NO_RETURNED") <> "" Then
+            Fill_Records("SOTINVHMR", New String() {rowSOTRTRN1.Item("INV_NO_RETURNED")})
+            If preloadInvoiceDetails Then
+                For Each row As DataRow In dst.Tables("SOTINVHMR").Rows
+                    For Each row2 As DataRow In dst.Tables("SOTRTRN2").Select($"STYLE_CODE = '{row("STYLE_CODE")}'")
+                        If IsDBNull(row2("SURCHARGE_PERC")) Then
+                            row2("SURCHARGE_PERC") = row("SURCHARGE_PERC")
+                            row2("LINE_TARIFF") = Round(row2("RTRN_PRICE") * (row("SURCHARGE_PERC") / 100), 2) * row2("RTRN_QTY")
+                            row2("MISC_CHG_CODE") = row("MISC_CHG_CODE")
+                            row2("COUNTRY_CODE") = row("COUNTRY_CODE")
+                        End If
+                    Next
+                Next
+            End If
         End If
 
         rowARTCUST1 = LookUp("ARTCUST1", HFs("CUST_CODE"))
@@ -2514,6 +2553,12 @@ Public Class SOFRTRN1
 
                     If ScreenMode And Not IsLoading Then
                         Load_SOTINVHX(STYLE_CODE)
+                        Dim row As DataRow = dst.Tables("SOTINVHMR").Select($"STYLE_CODE = '{STYLE_CODE}'").FirstOrDefault
+                        If row IsNot Nothing Then
+                            e.Cell.Row.Cells("SURCHARGE_PERC").Value = row("SURCHARGE_PERC")
+                            e.Cell.Row.Cells("MISC_CHG_CODE").Value = row("MISC_CHG_CODE")
+                            e.Cell.Row.Cells("COUNTRY_CODE").Value = row("COUNTRY_CODE")
+                        End If
                     End If
                 Else
                     grdSOTRTRN2.PerformAction(UltraWinGrid.UltraGridAction.PrevCellByTab)
@@ -2553,6 +2598,9 @@ Public Class SOFRTRN1
                     End If
 
                     e.Cell.Row.Cells("RTRN_PRICE").Value = ORDR_UNIT_PRICE_CALC
+                    If Not IsDBNull(e.Cell.Row.Cells("SURCHARGE_PERC").Value) Then
+                        e.Cell.Row.Cells("LINE_TARIFF").Value = Round(e.Cell.Row.Cells("RTRN_PRICE").Value * (e.Cell.Row.Cells("SURCHARGE_PERC").Value / 100), 2) * e.Cell.Row.Cells("RTRN_QTY").Value
+                    End If
                 End If
 
         End Select
@@ -2583,6 +2631,12 @@ Public Class SOFRTRN1
 
         If EntryMode = "N" And Not grdSOTRTRN2.ActiveRow.IsAddRow Then
             Load_SOTINVHX(grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE").Value)
+            Dim row As DataRow = dst.Tables("SOTINVHMR").Select($"STYLE_CODE = '{grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE").Value}'").FirstOrDefault
+            If row IsNot Nothing Then
+                grdSOTRTRN2.ActiveRow.Cells("SURCHARGE_PERC").Value = row("SURCHARGE_PERC")
+                grdSOTRTRN2.ActiveRow.Cells("MISC_CHG_CODE").Value = row("MISC_CHG_CODE")
+                grdSOTRTRN2.ActiveRow.Cells("COUNTRY_CODE").Value = row("COUNTRY_CODE")
+            End If
         End If
 
         If EntryMode = "V" Then
@@ -3413,7 +3467,6 @@ Public Class SOFRTRN1
     Sub DisplayTotals()
 
         Dim RTRN_SALES As Decimal = 0
-
         Select Case dst.Tables("SOTRTRN1").Rows(0).Item("CURR_CODE") & String.Empty
             Case "", GL_PARM_CURR_CODE
                 RTRN_SALES = Val(dst.Tables("SOTRTRN2").Compute("SUM(LINE_SALES)", "") & "")
@@ -3421,6 +3474,12 @@ Public Class SOFRTRN1
                 RTRN_SALES = Val(dst.Tables("SOTRTRN2").Compute("SUM(LINE_SALES_CURR)", "") & "")
         End Select
         Absx1.numFor("RTRN_SALES").Value = RTRN_SALES
+
+        Dim RTRN_HANDLING As Decimal = 0
+        If ASCMAIN1.CLIENT = "RGI" Then
+            RTRN_HANDLING = Val(dst.Tables("SOTRTRN2").Compute("SUM(LINE_TARIFF)", "") & "")
+            Absx1.numFor("RTRN_HANDLING").Value = RTRN_HANDLING
+        End If
 
         Dim RTRN_COSTS As Decimal = Val(dst.Tables("SOTRTRN2").Compute("SUM(LINE_COSTS)", "") & "")
         Absx1.numFor("RTRN_COSTS").Value = RTRN_COSTS

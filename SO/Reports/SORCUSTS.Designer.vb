@@ -39,6 +39,9 @@ Partial Class SORCUSTS
         Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance41 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraExplorerBarGroup1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim Appearance42 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance43 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance44 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -52,7 +55,7 @@ Partial Class SORCUSTS
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SEL")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
-        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_GROUP_NO")
+        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_GROUP_NO", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_DATE")
         Dim UltraGridColumn112 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_CUST_PO")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_TOTAL_AMOUNT")
@@ -75,7 +78,7 @@ Partial Class SORCUSTS
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
         Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_PRIVATE")
-        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DATE_ADDED")
+        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DATE_ADDED", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FORM_NAME")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -102,6 +105,12 @@ Partial Class SORCUSTS
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
+        Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkCostCode = New ABSCS.ABSCheckBox()
+        Me.chkBCDIV = New ABSCS.ABSCheckBox()
+        Me.chkShowMSRP = New ABSCS.ABSCheckBox()
+        Me.chkShowCountry = New ABSCS.ABSCheckBox()
+        Me.chkShowFactoryBC = New ABSCS.ABSCheckBox()
         Me.chkStyleStats = New ABSCS.ABSCheckBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.chkShipDates = New ABSCS.ABSCheckBox()
@@ -160,6 +169,13 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel1.SuspendLayout()
         Me.SplitContainer8.Panel2.SuspendLayout()
         Me.SplitContainer8.SuspendLayout()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox4.SuspendLayout()
+        CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkBCDIV, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowMSRP, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowCountry, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkShowFactoryBC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -181,7 +197,7 @@ Partial Class SORCUSTS
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
@@ -309,6 +325,11 @@ Partial Class SORCUSTS
         '
         'UltraExplorerBar1
         '
+        UltraExplorerBarItem1.Text = "Buyer Chart"
+        UltraExplorerBarItem2.Text = "Print Full CADs"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2})
+        UltraExplorerBarGroup1.Text = "Special Functions"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
@@ -386,7 +407,7 @@ Partial Class SORCUSTS
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1017, 249)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1017, 188)
         '
         'UltraPanel1
         '
@@ -398,7 +419,7 @@ Partial Class SORCUSTS
         Me.UltraPanel1.Location = New System.Drawing.Point(0, 0)
         Me.UltraPanel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraPanel1.Name = "UltraPanel1"
-        Me.UltraPanel1.Size = New System.Drawing.Size(1017, 249)
+        Me.UltraPanel1.Size = New System.Drawing.Size(1017, 188)
         Me.UltraPanel1.TabIndex = 2
         '
         'grdSOTINVHX
@@ -484,7 +505,7 @@ Partial Class SORCUSTS
         Me.grdSOTINVHX.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTINVHX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTINVHX.Name = "grdSOTINVHX"
-        Me.grdSOTINVHX.Size = New System.Drawing.Size(1017, 249)
+        Me.grdSOTINVHX.Size = New System.Drawing.Size(1017, 188)
         Me.grdSOTINVHX.TabIndex = 15
         '
         'UltraTabPageControl12
@@ -493,7 +514,7 @@ Partial Class SORCUSTS
         Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1017, 249)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1017, 188)
         '
         'grdWEBLINKS
         '
@@ -582,7 +603,7 @@ Partial Class SORCUSTS
         Me.grdWEBLINKS.Location = New System.Drawing.Point(0, 0)
         Me.grdWEBLINKS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWEBLINKS.Name = "grdWEBLINKS"
-        Me.grdWEBLINKS.Size = New System.Drawing.Size(1017, 249)
+        Me.grdWEBLINKS.Size = New System.Drawing.Size(1017, 188)
         Me.grdWEBLINKS.TabIndex = 16
         '
         'Panel3
@@ -605,6 +626,7 @@ Partial Class SORCUSTS
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox4)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer8.Panel1.Controls.Add(Me.Label1)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShipDates)
@@ -618,8 +640,77 @@ Partial Class SORCUSTS
         '
         Me.SplitContainer8.Panel2.Controls.Add(Me.UltraTabControl2)
         Me.SplitContainer8.Size = New System.Drawing.Size(1021, 402)
-        Me.SplitContainer8.SplitterDistance = 117
+        Me.SplitContainer8.SplitterDistance = 178
         Me.SplitContainer8.TabIndex = 265
+        '
+        'UltraGroupBox4
+        '
+        Me.UltraGroupBox4.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox4.Controls.Add(Me.chkCostCode)
+        Me.UltraGroupBox4.Controls.Add(Me.chkBCDIV)
+        Me.UltraGroupBox4.Controls.Add(Me.chkShowMSRP)
+        Me.UltraGroupBox4.Controls.Add(Me.chkShowCountry)
+        Me.UltraGroupBox4.Controls.Add(Me.chkShowFactoryBC)
+        Me.UltraGroupBox4.Location = New System.Drawing.Point(758, 123)
+        Me.UltraGroupBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraGroupBox4.Name = "UltraGroupBox4"
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(265, 130)
+        Me.UltraGroupBox4.TabIndex = 277
+        Me.UltraGroupBox4.Text = "Buyer Chart"
+        Me.UltraGroupBox4.Visible = False
+        '
+        'chkCostCode
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkCostCode, False)
+        Me.chkCostCode.CausesValidation = False
+        Me.chkCostCode.Location = New System.Drawing.Point(14, 92)
+        Me.chkCostCode.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkCostCode.Name = "chkCostCode"
+        Me.chkCostCode.Size = New System.Drawing.Size(195, 22)
+        Me.chkCostCode.TabIndex = 278
+        Me.chkCostCode.Text = "Show Cost & Code"
+        '
+        'chkBCDIV
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkBCDIV, False)
+        Me.chkBCDIV.CausesValidation = False
+        Me.chkBCDIV.Location = New System.Drawing.Point(14, 115)
+        Me.chkBCDIV.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkBCDIV.Name = "chkBCDIV"
+        Me.chkBCDIV.Size = New System.Drawing.Size(164, 22)
+        Me.chkBCDIV.TabIndex = 277
+        Me.chkBCDIV.Text = "1 Sheet/Div"
+        '
+        'chkShowMSRP
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowMSRP, False)
+        Me.chkShowMSRP.Location = New System.Drawing.Point(14, 70)
+        Me.chkShowMSRP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowMSRP.Name = "chkShowMSRP"
+        Me.chkShowMSRP.Size = New System.Drawing.Size(210, 22)
+        Me.chkShowMSRP.TabIndex = 229
+        Me.chkShowMSRP.Text = "Show MSRP"
+        '
+        'chkShowCountry
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowCountry, False)
+        Me.chkShowCountry.Location = New System.Drawing.Point(14, 49)
+        Me.chkShowCountry.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowCountry.Name = "chkShowCountry"
+        Me.chkShowCountry.Size = New System.Drawing.Size(210, 22)
+        Me.chkShowCountry.TabIndex = 228
+        Me.chkShowCountry.Text = "Show Country"
+        '
+        'chkShowFactoryBC
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkShowFactoryBC, False)
+        Me.Absx1.SetABSColumnName(Me.chkShowFactoryBC, "QUOTE_SHOW_FACTORY_BC")
+        Me.chkShowFactoryBC.Location = New System.Drawing.Point(14, 27)
+        Me.chkShowFactoryBC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkShowFactoryBC.Name = "chkShowFactoryBC"
+        Me.chkShowFactoryBC.Size = New System.Drawing.Size(210, 22)
+        Me.chkShowFactoryBC.TabIndex = 227
+        Me.chkShowFactoryBC.Text = "Show Factory"
         '
         'chkStyleStats
         '
@@ -635,7 +726,7 @@ Partial Class SORCUSTS
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(762, 100)
+        Me.Label1.Location = New System.Drawing.Point(636, 105)
         Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(86, 20)
@@ -744,7 +835,7 @@ Partial Class SORCUSTS
         '
         Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
         Me.chk1Sheet.CausesValidation = False
-        Me.chk1Sheet.Location = New System.Drawing.Point(7, 77)
+        Me.chk1Sheet.Location = New System.Drawing.Point(7, 60)
         Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chk1Sheet.Name = "chk1Sheet"
         Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
@@ -800,7 +891,7 @@ Partial Class SORCUSTS
         Me.UltraTabControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabControl2.Name = "UltraTabControl2"
         Me.UltraTabControl2.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.UltraTabControl2.Size = New System.Drawing.Size(1021, 281)
+        Me.UltraTabControl2.Size = New System.Drawing.Size(1021, 220)
         Me.UltraTabControl2.TabIndex = 1
         UltraTab1.TabPage = Me.UltraTabPageControl6
         UltraTab1.Text = "Shipped PO's"
@@ -813,7 +904,7 @@ Partial Class SORCUSTS
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1017, 249)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1017, 188)
         '
         'SORCUSTS
         '
@@ -866,6 +957,13 @@ Partial Class SORCUSTS
         Me.SplitContainer8.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer8.ResumeLayout(False)
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox4.ResumeLayout(False)
+        CType(Me.chkCostCode, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkBCDIV, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowMSRP, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowCountry, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkShowFactoryBC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShipDates, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkAveragePrice, System.ComponentModel.ISupportInitialize).EndInit()
@@ -912,4 +1010,10 @@ Partial Class SORCUSTS
     Friend WithEvents Label1 As Label
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
     Friend WithEvents chk1Sheet As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox4 As Misc.UltraGroupBox
+    Friend WithEvents chkBCDIV As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowMSRP As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowCountry As ABSCS.ABSCheckBox
+    Friend WithEvents chkShowFactoryBC As ABSCS.ABSCheckBox
+    Friend WithEvents chkCostCode As ABSCS.ABSCheckBox
 End Class

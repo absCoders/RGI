@@ -393,7 +393,7 @@ Partial Class SOFRTRN1
         Dim UltraGridColumn107 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RTRN_NOTE")
         Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RTRN_SOURCE")
         Dim UltraGridColumn57 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_OPER")
-        Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE")
+        Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INIT_DATE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn59 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_OPER")
         Dim UltraGridColumn63 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_DATE")
         Dim UltraGridColumn64 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("REGISTER_IND")
@@ -543,6 +543,8 @@ Partial Class SOFRTRN1
         Dim Appearance104 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LINE_SALES_CURR")
         Dim Appearance105 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridColumn218 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SURCHARGE_PERC")
+        Dim UltraGridColumn219 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LINE_TARIFF")
         Dim Appearance106 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance107 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance108 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -572,7 +574,7 @@ Partial Class SOFRTRN1
         Me.UltraNumericEditor4 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel12 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraNumericEditor3 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblMisc = New Infragistics.Win.Misc.UltraLabel()
         Me.numRTRN_FREIGHT = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraNumericEditor2 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -900,7 +902,7 @@ Partial Class SOFRTRN1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.optGL)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 346)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 167)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 63)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -958,7 +960,7 @@ Partial Class SOFRTRN1
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpTotals)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 478)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 299)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 230)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -971,7 +973,7 @@ Partial Class SOFRTRN1
         Me.grpTotals.Controls.Add(Me.UltraNumericEditor4)
         Me.grpTotals.Controls.Add(Me.UltraLabel12)
         Me.grpTotals.Controls.Add(Me.UltraNumericEditor3)
-        Me.grpTotals.Controls.Add(Me.UltraLabel11)
+        Me.grpTotals.Controls.Add(Me.lblMisc)
         Me.grpTotals.Controls.Add(Me.numRTRN_FREIGHT)
         Me.grpTotals.Controls.Add(Me.UltraLabel8)
         Me.grpTotals.Controls.Add(Me.UltraNumericEditor2)
@@ -1044,14 +1046,14 @@ Partial Class SOFRTRN1
         Me.UltraNumericEditor3.Size = New System.Drawing.Size(87, 25)
         Me.UltraNumericEditor3.TabIndex = 83
         '
-        'UltraLabel11
+        'lblMisc
         '
-        Me.UltraLabel11.AutoSize = True
-        Me.UltraLabel11.Location = New System.Drawing.Point(6, 60)
-        Me.UltraLabel11.Name = "UltraLabel11"
-        Me.UltraLabel11.Size = New System.Drawing.Size(64, 18)
-        Me.UltraLabel11.TabIndex = 84
-        Me.UltraLabel11.Text = "Handling"
+        Me.lblMisc.AutoSize = True
+        Me.lblMisc.Location = New System.Drawing.Point(6, 60)
+        Me.lblMisc.Name = "lblMisc"
+        Me.lblMisc.Size = New System.Drawing.Size(64, 18)
+        Me.lblMisc.TabIndex = 84
+        Me.lblMisc.Text = "Handling"
         '
         'numRTRN_FREIGHT
         '
@@ -1131,11 +1133,10 @@ Partial Class SOFRTRN1
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.grdSOTRTRN0)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 573)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'grdSOTRTRN0
         '
@@ -2306,7 +2307,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdSOTINVHX)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(949, 134)
         '
@@ -2746,7 +2747,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.splSCANS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(949, 134)
         '
@@ -3331,7 +3332,7 @@ Partial Class SOFRTRN1
         UltraGridColumn130.Hidden = True
         UltraGridColumn9.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.OnCellActivate
         UltraGridColumn9.Header.Caption = "RTV Reason"
-        UltraGridColumn9.Header.VisiblePosition = 20
+        UltraGridColumn9.Header.VisiblePosition = 21
         UltraGridColumn9.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn9.Width = 98
         UltraGridColumn96.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
@@ -3348,19 +3349,19 @@ Partial Class SOFRTRN1
         UltraGridColumn98.Width = 105
         UltraGridColumn99.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn99.Header.Caption = "Cost Amt"
-        UltraGridColumn99.Header.VisiblePosition = 22
+        UltraGridColumn99.Header.VisiblePosition = 23
         UltraGridColumn99.Width = 94
-        UltraGridColumn100.Header.VisiblePosition = 23
+        UltraGridColumn100.Header.VisiblePosition = 24
         UltraGridColumn100.Hidden = True
         UltraGridColumn40.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
-        UltraGridColumn40.Header.VisiblePosition = 24
+        UltraGridColumn40.Header.VisiblePosition = 25
         UltraGridColumn40.Hidden = True
         UltraGridColumn133.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
-        UltraGridColumn133.Header.VisiblePosition = 25
+        UltraGridColumn133.Header.VisiblePosition = 26
         UltraGridColumn133.Hidden = True
         UltraGridColumn138.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn138.Header.Caption = "RTV Reason Desc"
-        UltraGridColumn138.Header.VisiblePosition = 21
+        UltraGridColumn138.Header.VisiblePosition = 22
         UltraGridColumn138.Width = 209
         Appearance104.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn49.CellAppearance = Appearance104
@@ -3372,7 +3373,12 @@ Partial Class SOFRTRN1
         UltraGridColumn51.Header.Caption = "Credit Amt"
         UltraGridColumn51.Header.VisiblePosition = 19
         UltraGridColumn51.Width = 86
-        UltraGridBand10.Columns.AddRange(New Object() {UltraGridColumn45, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn130, UltraGridColumn9, UltraGridColumn96, UltraGridColumn97, UltraGridColumn129, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn40, UltraGridColumn133, UltraGridColumn138, UltraGridColumn49, UltraGridColumn51})
+        UltraGridColumn218.Header.VisiblePosition = 27
+        UltraGridColumn218.Hidden = True
+        UltraGridColumn219.Header.Caption = "Credit Tariff"
+        UltraGridColumn219.Header.VisiblePosition = 20
+        UltraGridColumn219.Width = 98
+        UltraGridBand10.Columns.AddRange(New Object() {UltraGridColumn45, UltraGridColumn60, UltraGridColumn61, UltraGridColumn62, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn130, UltraGridColumn9, UltraGridColumn96, UltraGridColumn97, UltraGridColumn129, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn40, UltraGridColumn133, UltraGridColumn138, UltraGridColumn49, UltraGridColumn51, UltraGridColumn218, UltraGridColumn219})
         Me.grdSOTRTRN2.DisplayLayout.BandsSerializer.Add(UltraGridBand10)
         Me.grdSOTRTRN2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance106.TextHAlignAsString = "Left"
@@ -3837,7 +3843,7 @@ Partial Class SOFRTRN1
     Friend WithEvents UltraNumericEditor4 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel12 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraNumericEditor3 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
-    Friend WithEvents UltraLabel11 As Infragistics.Win.Misc.UltraLabel
+    Friend WithEvents lblMisc As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents numRTRN_FREIGHT As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel8 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor7 As Infragistics.Win.UltraWinEditors.UltraTextEditor
