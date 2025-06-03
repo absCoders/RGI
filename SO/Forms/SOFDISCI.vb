@@ -149,7 +149,7 @@ Public Class SOFDISCI
         AttachmentFolder = ASCMAIN1.Folders("Attach")
 
         If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "edz" Then
-            AttachmentFolder = "\\192.168.110.221\Shared\RGI\Attach\RGI"
+            AttachmentFolder = "\\DC2022\Shared\RGI\Attach\RGI"
         End If
 
         If AttachmentFolder.Length > 0 Then
