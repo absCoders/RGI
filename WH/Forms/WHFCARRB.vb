@@ -186,6 +186,7 @@ Public Class WHFCARRB
                 Select Case Absx1.txtFor("CARRIER_CODE").Text
                     Case "UPS", "FEDEX"
                         ' Valid Carrier
+                        MessageBox.Show("Make sure the first sheet in the Excel (.xls) Workbook is named Sheet1.", "Import", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Case Else
                         EMsg &= vbCr & "The selected carrier is not supported on this screen."
                         Exit Select

@@ -1,5 +1,8 @@
 Imports System.Text
 Imports SpreadsheetGear
+Imports System.Drawing.Drawing2D
+Imports System.Drawing.Imaging
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class SORCUSTS
     Dim S As New StringBuilder With {.Length = 0}
@@ -13,6 +16,7 @@ Public Class SORCUSTS
     Dim GRP_IN As String = ""
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
     Dim STYLE_CODE As String
+    Dim IMG_Error_Reported As Boolean = False
 
 #Region "Report Standards"
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -91,6 +95,14 @@ Public Class SORCUSTS
         S = BUILD_SOTCUSTS(False)
         ASCMAIN1.sql = S.ToString
         Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False)
+        ''With dst.Tables("SOTCUSTS")
+        ''    .Columns.Add("SEQ").DataType = GetType(System.Int32)
+        ''    .Columns.Add("STYLE_CODE_PLM")
+        ''    .Columns.Add("IMAGE", GetType(System.Byte()))
+        ''    .Columns.Add("SELECTED")
+        ''    .Columns("SELECTED").DefaultValue = "0"
+        ''End With
+
         '''With dst.Tables("SOTCUSTS").Columns
         '''    For iCOL As Integer = 0 To 4
         '''        .Add("QTY_AVA" & CStr(iCOL), GetType(System.Int64))
@@ -166,6 +178,18 @@ Public Class SORCUSTS
 
         ICTSTATDSQL = ASCMAIN1.sql
         Create_TDA(dst.Tables.Add, "ICTSTATD", "**", 0, False)
+
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With dst.Tables.Add("SOTCADSZ")
+                .Columns.Add("SEQ").DataType = GetType(System.Int32)
+                .Columns.Add("STYLE_CODE")
+                .Columns.Add("IMAGE", GetType(System.Byte()))
+                .Columns.Add("IMAGE_NAME")
+                .Columns.Add("SELECTED")
+                .Columns("SELECTED").DefaultValue = "0"
+            End With
+        End If
 
 
         'Create_TDA(dst.Tables.Add, "SOTCUSTS", "**", 0, False, "VDDVDDVDD")
@@ -344,9 +368,14 @@ Public Class SORCUSTS
             Exit Sub
         End If
 
+        If eItemKey = "Print Full CADs" Then
+            Print_Full_CAD_Print(eItemKey)
+            'With UltraExplorerBar1.Groups("Special Functions")
+            '    .Visible = False
+            'End With
 
-
-
+            '     UltraExplorerBar1.Groups("Special Functions").Items(eItemKey).Visible = False
+        End If
     End Sub
 
     Public Overrides Function Prepare_dst(
@@ -3291,5 +3320,314 @@ Public Class SORCUSTS
         End If
         Return SIZEs_And_QTYs
     End Function
+    Sub RESEQ()
+
+        Dim SEQ As Integer = 0
+        Dim OLDSTYLE As String = ""
+
+
+        dst.Tables.Item("SOTCADSZ").Rows.Clear()
+        Dim SORTSOTCUSTS As String = "SUB_BODY_CODE,FABRIC_CODE,STYLE_CODE,COLOR_CODE"
+        ''If chkSortStyle.Checked Then
+        ''    SORTSOTCUSTQ = "STYLE_CODE,COLOR_CODE"
+        ''End If
+
+        Dim sqlWB As String = ""
+        If chk1Sheet.Checked Then
+            sqlWB = ",SALES_DIVISION_CODE," & SORTSOTCUSTS
+        Else
+            sqlWB = ","
+        End If
+
+        SORTSOTCUSTS = Mid(sqlWB, 2)
+
+        For Each row As DataRow In dst.Tables("SOTCUSTS").Select("", SORTSOTCUSTS)
+            If OLDSTYLE = "" Or OLDSTYLE <> row.Item("STYLE_CODE") Then
+                SEQ += 10
+                ''row.Item("SEQ") = SEQ
+                ''row.Item("STYLE_CODE_PLM") = row.Item("STYLE_CODE")
+                ''row.Item("SELECTED") = "1"
+                OLDSTYLE = row.Item("STYLE_CODE")
+
+                Dim rowSOTCADSZ As DataRow = dst.Tables("SOTCADSZ").NewRow
+                rowSOTCADSZ.Item("SEQ") = SEQ
+                rowSOTCADSZ.Item("STYLE_CODE") = row.Item("STYLE_CODE") & ""
+                rowSOTCADSZ.Item("IMAGE_NAME") = row.Item("IMAGE_NAME") & ""
+                rowSOTCADSZ.Item("SELECTED") = "1"
+                dst.Tables("SOTCADSZ").Rows.Add(rowSOTCADSZ)
+
+
+            End If
+        Next
+    End Sub
+
+    Sub Print_Full_CAD_Print(eItemKey As String, Optional STYLE_CODE As String = "")
+        Dim ListPDFSheets As New List(Of String)
+        Dim MISSING_IMAGES As New List(Of String)
+
+
+        RESEQ()
+
+        Dim EXCUDE_FUTURE As String = ""
+
+        Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+        If Not FOLDER_NAME.EndsWith("\") Then FOLDER_NAME &= "\"
+        FOLDER_NAME = Replace(FOLDER_NAME, "G:", "R:")
+
+        For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='1'")
+
+            Dim STYLE_CODE_PLM As String = row.Item("STYLE_CODE")
+            'If STYLE_CODE_PLM = "500498AVR" And ASCMAIN1.Running_in_VS Then Stop
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
+                'Stop
+                FOLDER_NAME = "S:\VAN\images\"
+                'FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
+            End If
+
+            If Not My.Computer.FileSystem.FileExists(FOLDER_NAME & row.Item("IMAGE_NAME")) Then
+                row.Item("SELECTED") = "0"
+                MISSING_IMAGES.Add(STYLE_CODE_PLM)
+            End If
+
+        Next
+
+        Dim RPT As String = ""
+        ''If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+        ''    RPT = "ICRQUOT2"
+        ''End If
+
+        Dim ColVisible(4) As Boolean
+        RPT = "SORFCADX"
+
+        If eItemKey = "email" Then
+            ''Dim tempFileName As String = rowICTQUOT1.Item("QUOTE_NO")
+
+            ''Dim REPORT_NO As String = Generate_Report(RPT, "Quote Sheet", "", "", "PDF", tempFileName, False)
+            ''' Dim FILENAME As String = REPORT_FILENAMES(REPORT_NO)
+            ''Print_Report_End(, True)
+            ''email_Quote(tempFileName)
+        Else
+
+            For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='1'")
+                row.Item("SELECTED") = "2"
+            Next
+
+            Dim REPORT_INDEX As Integer = 0
+            Dim PDF_FN As String = ""
+            Dim PDF_LINKS As String = ""
+            Dim SUB_BODY_DESC As String = ""
+            Dim SALES_DIVISION_NAME As String = ""
+            Dim FABRIC_DESC As String = ""
+            Dim DESCHASH As String = ""
+
+            Dim LINEPFX As String = "http://showroom.vandale.com/api/showroom/"
+            'Dim LINEPFX_NEW As String = "https://docs.vandalequotes.com/"
+            Dim LINEPFX_NEW As String = "https://vandaledocs.azurewebsites.net/Documents/"
+
+            Dim SESSION_NO As String = ASCMAIN1.Next_Control_No("SOTCUSTS.SESSION_NO")
+            Dim FILE_NO As Integer = 0
+
+            Do While dst.Tables("SOTCADSZ").Select("SELECTED='2'").Length <> 0
+
+                Print_Report_Begin()
+
+                ''    Dim STYLE_count As Integer = 0
+                ''    Dim SRT As String = "SEQ"
+                ''    Select Case opt1Sheet.Value
+                ''        Case "S"
+                ''            SRT = "SUB_BODY_CODE, STYLE_CODE_PLM"
+                ''        Case "FS"
+                ''            SRT = "FABRIC_CODE, SUB_BODY_CODE, STYLE_CODE_PLM"
+                ''        Case "G"
+                ''            SRT = "STYLE_GROUP_CODE, STYLE_CODE_PLM"
+                ''        Case "D"
+                ''            SRT = "SALES_DIVISION_CODE"
+                ''    End Select
+                ''    For Each row As DataRow In dst.Tables("ICTQUOT2").Select(sqlw, SRT)
+                ''        STYLE_count += 1
+                ''        row.Item("SELECTED") = "1"
+                ''        SetRowImage(row)
+                ''    Next
+                For Each row As DataRow In dst.Tables("SOTCADSZ").Select()
+                    row.Item("IMAGE") = Null
+                Next
+                Dim STYLE_count As Integer = 0
+                For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='2'", "SEQ")
+                    STYLE_count += 1
+                    row.Item("SELECTED") = "1"
+                    SetRowImage(row)
+                    If STYLE_count >= 50 Then Exit For
+                Next
+                Application.DoEvents()
+
+                CR_params.Add("IMAGES_FOLDER", FOLDER_NAME)
+
+                CR_params.Add("TXTSTYLE_CODE", "")
+
+                Dim tempFileName As String = ""
+                Do
+                    REPORT_INDEX += 1
+                    tempFileName = "SORCUSTS" & "-" & Format(REPORT_INDEX, "000")
+                Loop While My.Computer.FileSystem.FileExists(ASCMAIN1.Folders("Temp") & tempFileName & ".PDF")
+
+                Dim REPORT_NO As String = Generate_Report(RPT, "Shipment Report", "", "", "PDF", tempFileName, False)
+
+                Dim tempNotMade As Boolean = Not System.IO.File.Exists(ASCMAIN1.Folders("Temp") & tempFileName & ".PDF")
+
+                If Not tempNotMade Then
+                    'Show_Document(ASCMAIN1.Folders("Temp") & tempFileName & ".PDF")
+                    ListPDFSheets.Add(ASCMAIN1.Folders("Temp") & tempFileName & ".PDF")
+                    Print_Report_End(, True)
+                End If
+
+                For Each row As DataRow In dst.Tables("SOTCADSZ").Select("SELECTED='1'")
+                    row.Item("SELECTED") = "3"
+                    row.Item("IMAGE") = DBNull.Value
+                Next
+            Loop
+
+        End If
+
+        For Each row As DataRow In dst.Tables("SOTCADSZ").Select("")
+            row.Item("IMAGE") = Nothing
+        Next
+
+        For Each PDF As String In ListPDFSheets
+            Show_Document(PDF)
+        Next
+
+        If MISSING_IMAGES.Count > 0 Then
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Missing Images"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine("The Following Styles Did Not Have")
+            iMSG.AppendLine("Set-up In The Style Masterfile:")
+            For Each MI As String In MISSING_IMAGES
+                iMSG.AppendLine("-> " & MI)
+            Next
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+        End If
+    End Sub
+
+    Private Sub SetRowImage(row As DataRow)
+        Dim STYLE_CODE As String
+        If row.Table.TableName = "SOTCUSTS" Then
+            STYLE_CODE = row.Item("STYLE_CODE_PLM") & ""
+        Else
+            STYLE_CODE = row.Item("STYLE_CODE") & ""
+        End If
+
+        Dim IMAGE_NAME As String = row.Item("IMAGE_NAME") & ""
+
+        If IMAGE_NAME = "" Then IMAGE_NAME = STYLE_CODE
+
+        ''If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+        ''    IMAGE_NAME = STYLE_CODE & "-" & COLOR_CODE
+        ''End If
+
+        'Dim imgba() As Byte = Nothing
+        Dim imgb As System.Drawing.Bitmap = Nothing
+        If IMAGE_NAME <> "" Then
+            Dim ex_err As Exception = Nothing
+            Dim IMAGE_FILE_USED As String = ""
+            Dim FOLDER_NAME As String = ROWs("ICTPARM1").Item("IC_PARM_STYLE_IMG_DIR") & ""
+
+            If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+                FOLDER_NAME = Replace(FOLDER_NAME, "G:", "R:")
+                ''If chkLowRes.Checked Then
+                ''Dim FILE_NAME_LOW_RES As String = String.Format("{0}{1}{2}", FOLDER_NAME, "_lowres\", IMAGE_NAME)
+                ''If System.IO.File.Exists(FILE_NAME_LOW_RES) Then
+                ''    FOLDER_NAME = FOLDER_NAME & "_lowres"
+                ''    IMAGE_FILE_USED = FILE_NAME_LOW_RES
+                ''Else
+                ''    IMAGE_FILE_USED = String.Format("{0}{1}{2}", FOLDER_NAME, "\", IMAGE_NAME)
+                ''End If
+                ''End If
+            End If
+            If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne" Or ASCMAIN1.USER_ID = "dgj")) Then
+                'Stop
+                FOLDER_NAME = "S:\VAN\images\"
+                'FOLDER_NAME = "\\192.168.180.32\g\VAN\images\"
+            End If
+
+
+            Dim img As System.Drawing.Bitmap = Nothing
+
+            Dim image_file_found As Boolean = True
+
+            If IMAGE_NAME = "\.jpg" Then
+                image_file_found = False
+                Exit Sub
+            End If
+
+            If Not FOLDER_NAME.EndsWith("\") Then FOLDER_NAME &= "\"
+            Dim IMAGE_FILENAME As String = FOLDER_NAME & IMAGE_NAME
+            Try
+                If My.Computer.FileSystem.FileExists(IMAGE_FILENAME) Then
+
+                ElseIf My.Computer.FileSystem.FileExists(IMAGE_FILENAME & ".PNG") Then
+                    IMAGE_FILE_USED &= ".PNG"
+                ElseIf My.Computer.FileSystem.FileExists(IMAGE_FILENAME & ".JPG") Then
+                    IMAGE_FILE_USED &= ".JPG"
+                Else
+                    image_file_found = False
+                    img = Nothing
+                End If
+            Catch ex As Exception
+                image_file_found = False
+                img = Nothing
+                If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+                    ex_err = ex
+                End If
+            End Try
+
+            Dim fs As System.IO.FileStream = New System.IO.FileStream(IMAGE_FILENAME, System.IO.FileMode.Open)
+            Dim newBMP As System.Drawing.Bitmap = New System.Drawing.Bitmap(System.Drawing.Image.FromStream(fs))
+            Dim scaleFactor As Double = 1  ' 1 (trkScaleImage.Value / 100)
+            Dim newBMP2 As System.Drawing.Bitmap = New System.Drawing.Bitmap(newBMP, newBMP.Width * scaleFactor, newBMP.Height * scaleFactor)
+            Application.DoEvents()
+            Try
+                'newBMP.MakeTransparent(System.Drawing.Color.White)
+                Dim converter As New System.Drawing.ImageConverter
+                'row.Item("IMAGE") = converter.ConvertTo(newBMP, GetType(Byte()))
+                row.Item("IMAGE") = converter.ConvertTo(newBMP2, GetType(Byte()))
+                newBMP.Dispose()
+                newBMP2.Dispose()
+            Catch ex As Exception
+                If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
+                    ex_err = ex
+                End If
+            End Try
+            fs.Close()
+            Application.DoEvents()
+            If Not IsNothing(ex_err) Then
+                If Not IMG_Error_Reported Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "Error Getting Image"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("The Following Error Occured While Attempting To ")
+                    iMSG.AppendLine("Get An Image:")
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Style: " & STYLE_CODE)
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Image: " & IMAGE_NAME)
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Error: " & ex_err.Message)
+                    iMSG.AppendLine("")
+                    iMSG.AppendLine("Please Relay This Information To Wayne At ABS.")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+                    IMG_Error_Reported = True
+                End If
+            End If
+            'Dim converter As New ImageConverter
+            'row.Item("IMAGE") = converter.ConvertTo(imgb, GetType(Byte()))
+            'row.Item("IMAGE") = imgb
+            'UltraExplorerBar1.Groups("Style Image").Text = "Style " & STYLE_CODE & "-" & COLOR_CODE
+        Else
+            'row.Item("IMAGE") = DBNull.Value
+            'UltraExplorerBar1.Groups("Style Image").Text = "Style Image"
+        End If
+
+    End Sub
 
 End Class
