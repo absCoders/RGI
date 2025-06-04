@@ -134,6 +134,7 @@ Public Class WHFLB128
 
             Create_TDA(.Tables.Add, "SOTLABL1", "*", 1, False, "", 2)
             Create_TDA(.Tables.Add, "WHTPALT1", "*", 1, False)
+            Create_TDA(.Tables.Add, "WHTPKGM1", "*", 0, False)
 
             Create_TDA(.Tables.Add, "SOTPICK0", "*", 1, False)
             Create_TDA(.Tables.Add, "ARTCUST1", "*", 1, False)
@@ -179,6 +180,7 @@ Public Class WHFLB128
             ' .Tables("SOTPICK1").Columns.Add("PICK_NO_BC", GetType(System.String))
             .Tables("SOTPICK1").Columns.Add("CART_SERIAL_NO", GetType(System.Int32))
             .Tables("SOTPICK1").Columns.Add("PICK_TOTAL_QTY", GetType(System.Int32))
+            .Tables("SOTPICK1").Columns.Add("CUBE_PICK", GetType(System.Decimal))
 
             ASCMAIN1.sql = "Select SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR2.STYLE_DESC, nvl(SOTORDR2.CUST_SIZE_CODE,'AST') CUST_SIZE_CODE, ICTSTYL1.CARTON_PACK_QTY, SOTPICK1.SHIP_BOL_NO," & vbCrLf _
                 & "  ICTSTYC1.STYLE_BIN, ICTSTYC1.STYLE_BIN as LOCATION_CODE, ICTSTYL1.CASE_CUBE, ICTSTYC1.UPC_CODE, ICTSTYL1.CASE_WEIGHT_GRS, nvl(ICTSTYL1.CARTONS_PER_UNIT, 0) CARTONS_PER_UNIT, SOTORDR2.CUST_SKU" & vbCrLf _
@@ -423,6 +425,7 @@ Public Class WHFLB128
                 Create_TDA(.Tables.Add, "WHTSCSEQ", "**", 0, False, , 3)
                 Fill_Records("WHTSCSEQ")
 
+                Fill_Records("WHTPKGM1")
             End If
 
 
@@ -489,7 +492,7 @@ Public Class WHFLB128
                                  "OPT_MANIFEST"}.Contains(GCOL.Key) Then
                     GCOL.Hidden = True
                 End If
-                If New String() {"ORDR_CNT_CART", "ORDR_CNT_MTPO"}.Contains(GCOL.Key) Then
+                If New String() {"ORDR_CNT_CART", "ORDR_CNT_MTPO", "CUBE_PO"}.Contains(GCOL.Key) Then
                     GCOL.CellAppearance.BackColor = Color.LightBlue
                 End If
                 'End If
@@ -541,6 +544,7 @@ Public Class WHFLB128
         Create_Summary(grdSOTPICKX, "ORDR_GROUP_NO", "Count")
         Create_Summary(grdSOTPICKX, New String() {"SELECTED", "ORDR_CNT_PICK", "ORDR_QTY_PICK", "ORDR_AMT_PICK", "ORDR_CNT_CART"})
         Create_Summary(grdSOTPICK1, "PICK_NO", "Count")
+        Create_Summary(grdSOTPICK1, New String() {"PICK_CNT_CARTONS", "PICK_TOTAL_WGT", "CUBE_PICK"})
 
         Create_Summary(grdSOTPICKL, "PICK_LNO", "Count")
         Create_Summary(grdSOTPICKL, New String() {"PICK_QTY", "LABEL_QTY"})
@@ -1563,7 +1567,7 @@ Public Class WHFLB128
             End If
 
             If SOTPICKX <> "" Then
-                ASCMAIN1.sql &= ", 0 ORDR_QTY_PICK, 0 ORDR_AMT_PICK, 0 ORDR_CNT_PICK, 0 ORDR_CNT_CART, 0 ORDR_CNT_MTPO, NULL ORDR_HIGH_PRIORITY, NULL ORDR_HIGH_PRIORITY_NOTE, '0' CCPA_NO_STATUS, '' PICK_NO_CONS, '' PICK_RELEASED"
+                ASCMAIN1.sql &= ", 0 ORDR_QTY_PICK, 0 ORDR_AMT_PICK, 0 ORDR_CNT_PICK, 0 ORDR_CNT_CART, 0 ORDR_CNT_MTPO, NULL ORDR_HIGH_PRIORITY, NULL ORDR_HIGH_PRIORITY_NOTE, '0' CCPA_NO_STATUS, '' PICK_NO_CONS, '' PICK_RELEASED, 0 CUBE_PO"
             End If
 
             ASCMAIN1.sql &= " from SOTSHIP1,SOTORDR0,ARTCUST1" & vbCrLf _
@@ -1610,6 +1614,7 @@ Public Class WHFLB128
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add CCPA_NO_STATUS VARCHAR2(1)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add PICK_NO_CONS VARCHAR2(10)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add PICK_RELEASED DATE")
+                ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add CUBE_PO NUMBER (13,2)")
                 Exit Sub
             End If
 
@@ -1661,6 +1666,13 @@ Public Class WHFLB128
                 Update " & SOTPICKX & " Set ORDR_CNT_MTPO = '', ORDR_CNT_CART = 
                 (Select Count (*) from SOTCART1,SOTPICK1 where SOTPICK1.PICK_NO = SOTCART1.PICK_NO and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO and SOTPICK1.PICK_STATUS = 'P')
                 where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                Update " & SOTPICKX & " Set CUBE_PO =  
+                (select SUM(nvl(WHTPKGM1.INNER_CUBE,0)) from SOTCART1,SOTPICK1, WHTPKGM1 
+                    where SOTPICK1.PICK_NO = SOTCART1.PICK_NO 
+                    And WHTPKGM1.PKG_CODE (+) = SOTCART1.PKG_CODE
+                    and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO
+                    and SOTPICK1.PICK_STATUS = 'P')
+                where SHIP_BOL_NO = R1.SHIP_BOL_NO;
                 else
                 Update " & SOTPICKX & " set ORDR_CNT_CART = 
                 (Select Count (*) from SOTCARM1,SOTPICK1, SOTSHIP1 
@@ -1674,6 +1686,15 @@ Public Class WHFLB128
                 (Select Count (distinct SOTCARM1.CART_NO) from SOTCARM1,SOTPICK1, SOTSHIP1 
                     where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO 
                     and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    and SOTSHIP1.SHIP_BOL_NO_REV is null
+                    and SOTSHIP1.SHIP_BOL_NO_CONS = R1.SHIP_BOL_NO_CONS
+                    )
+                    where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                Update " & SOTPICKX & " set CUBE_PO = 
+                (Select SUM(nvl(WHTPKGM1.INNER_CUBE,0)) from SOTCARM1,SOTPICK1, SOTSHIP1, WHTPKGM1 
+                    where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO 
+                    and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    and WHTPKGM1.PKG_CODE (+) = SOTCARM1.PKG_CODE
                     and SOTSHIP1.SHIP_BOL_NO_REV is null
                     and SOTSHIP1.SHIP_BOL_NO_CONS = R1.SHIP_BOL_NO_CONS
                     )
@@ -1973,6 +1994,9 @@ Public Class WHFLB128
 
         If load_cartons Then
             Load_SOTCART1(SHIP_BOL_NO, "")
+            For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("")
+                rowSOTPICK1("CUBE_PICK") = dst.Tables("SOTCART1").Compute("sum(CASE_CUBE_FT)", $"PICK_NO = '{rowSOTPICK1("PICK_NO")}'")
+            Next
         End If
 
     End Sub
@@ -2490,6 +2514,13 @@ Public Class WHFLB128
             rowSOTCART1.Item("NUM_CARTONS") = NUM_CARTONS
             rowSOTCART1.Item("TOTAL_WEIGHT") = TOTAL_WEIGHT
             rowSOTCART1.Item("CASE_CUBE_FT") = CASE_CUBE_FT / 1728
+            'Overwrite cube calculated with assigned cube from pkg code
+            If rowSOTCART1("PKG_CODE") & "" <> "" Then
+                For Each rowWHTPKGM1 As DataRow In dst.Tables("WHTPKGM1").Select($"PKG_CODE = '{rowSOTCART1("PKG_CODE")}'")
+                    rowSOTCART1.Item("CASE_CUBE_FT") = rowWHTPKGM1("INNER_CUBE")
+                Next
+            End If
+
         Next
 
     End Sub
