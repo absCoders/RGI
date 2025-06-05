@@ -701,7 +701,7 @@ Public Class SOFATTR2
         oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
         oSheet.Range($"A{r}:N{r}").Font.Bold = True
         oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
-
+        'oSheet.Range($"A{r}:N{r}").Font.Size = 8
 
         oSheet.Range(0, 0).Select()
         oSheet.WindowInfo.FreezePanes = True

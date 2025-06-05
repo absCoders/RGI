@@ -4540,6 +4540,7 @@ Public Class SOFORDRO
             .Value = "Tariffs are in effect for all imported items.  Orders shipped in 2025 will have an 18% surcharge added to the invoice. The Spring 2026 order surcharge is TBD."
             .Font.Bold = True
             .Font.Color = Color.Red
+            .Font.Size = 9
             '.RowHeight = 45
             .WrapText = True
             .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
