@@ -1565,7 +1565,7 @@ Public Class SOFRTRN1
             Absx1.txtFor("CUST_STORE_NO").Text = rowSOTINVH1.Item("CUST_STORE_NO") & ""
             Absx1.numFor("RTRN_FREIGHT").Value = Val(rowSOTINVH1.Item("INV_FREIGHT") & "")
         End If
-        If rowSOTRTRN1.Item("INV_NO_RETURNED") <> "" Then
+        If rowSOTRTRN1.Item("INV_NO_RETURNED") & "" <> "" Then
             Fill_Records("SOTINVHMR", New String() {rowSOTRTRN1.Item("INV_NO_RETURNED")})
             If preloadInvoiceDetails Then
                 For Each row As DataRow In dst.Tables("SOTINVHMR").Rows
