@@ -1111,7 +1111,7 @@ Partial Class WBFCUST1
         UltraGridColumn51.Header.VisiblePosition = 5
         UltraGridColumn51.Width = 126
         UltraGridColumn52.Header.Caption = "Date Registered"
-        UltraGridColumn52.Header.VisiblePosition = 20
+        UltraGridColumn52.Header.VisiblePosition = 21
         UltraGridColumn53.Header.Caption = "Date Notified"
         UltraGridColumn53.Header.VisiblePosition = 29
         UltraGridColumn53.Hidden = True
@@ -1141,14 +1141,13 @@ Partial Class WBFCUST1
         UltraGridColumn76.Header.VisiblePosition = 27
         UltraGridColumn76.Hidden = True
         UltraGridColumn77.Header.Caption = "Telephone"
-        UltraGridColumn77.Header.VisiblePosition = 21
-        UltraGridColumn77.Hidden = True
+        UltraGridColumn77.Header.VisiblePosition = 18
         UltraGridColumn78.Header.Caption = "Tax ID"
-        UltraGridColumn78.Header.VisiblePosition = 19
+        UltraGridColumn78.Header.VisiblePosition = 20
         UltraGridColumn78.Hidden = True
         UltraGridColumn78.Width = 184
         UltraGridColumn100.Header.Caption = "Tax Doc"
-        UltraGridColumn100.Header.VisiblePosition = 18
+        UltraGridColumn100.Header.VisiblePosition = 19
         UltraGridColumn100.Width = 293
         UltraGridColumn79.Header.VisiblePosition = 31
         UltraGridColumn79.Hidden = True

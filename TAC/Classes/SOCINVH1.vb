@@ -31,6 +31,11 @@
 
     Private tblARTSTAX1 As DataTable = Nothing
 
+    ' 06/03/2025 - Rich request for Discontinued Items
+    Private rowSOTPARM1 As DataRow = Nothing
+    Private excludeTariffsOnDiscontinuedItems As Boolean = False
+    Private minDiscTariffRecDate As String = String.Empty
+
     ''' <summary>
     ''' takes dataset and maps the necessary tables
     ''' </summary>
@@ -143,6 +148,13 @@
         tblSOTORDR1 = Nothing
         tblSOTORDR2 = Nothing
         tblSOTCART1 = Nothing
+
+        ' 06/03/2025 - Rich request for Discontinued Items
+        rowSOTPARM1 = ASCDATA1.GetDataRow("SELECT * FROM SOTPARM1 WHERE SO_PARM_KEY = 'Z'")
+        excludeTariffsOnDiscontinuedItems = IsDate(rowSOTPARM1.Item("MIN_DISC_TARIFF_REC_DATE") & String.Empty)
+        If excludeTariffsOnDiscontinuedItems Then
+            minDiscTariffRecDate = CDate(rowSOTPARM1.Item("MIN_DISC_TARIFF_REC_DATE") & String.Empty).ToString("yyyyMMdd")
+        End If
     End Sub
 
     Public Function CreateInvoices(ByVal SHIP_BOL_NO As String) As Int16
@@ -265,6 +277,27 @@
             Dim tblPOTTRFF1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM POTTRFF1", "POTTRFF1")
             Dim tblSOTMISC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTMISC1", "SOTMISC1")
 
+            ' 06/03/2025 - Rich request for Discontinued Items
+            ' Only load the table if excludeTariffsOnDiscontinuedItems = True. One less trip to Oracle
+            Dim tblICTIREC2 As DataTable = Nothing
+
+            If excludeTariffsOnDiscontinuedItems Then
+                ' 06/03/2025 - Rich request for Discontinued Items
+                tblICTIREC2 = ASCDATA1.GetDataTable("SELECT ICTIREC2.STYLE_CODE, ICTIREC2.COLOR_CODE, MAX(ICTIREC1.RECEIPT_DATE) RECEIPT_DATE
+                                                                    FROM ICTIREC1, ICTIREC2
+                                                                    WHERE ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO 
+                                                                    AND (ICTIREC2.STYLE_CODE, ICTIREC2.COLOR_CODE) IN
+                                                                    (SELECT STYLE_CODE, COLOR_CODE FROM SOTORDR2 WHERE ORDR_NO = :PARM1)
+                                                                    GROUP BY ICTIREC2.STYLE_CODE, ICTIREC2.COLOR_CODE", "", "V", {ORDR_NO})
+            Else
+                tblICTIREC2 = New DataTable
+                tblICTIREC2.Columns.Add("STYLE_CODE", GetType(System.String))
+                tblICTIREC2.Columns.Add("COLOR_CODE", GetType(System.String))
+                tblICTIREC2.Columns.Add("RECEIPT_DATE", GetType(System.DateTime))
+            End If
+            tblICTIREC2.PrimaryKey = {tblICTIREC2.Columns("STYLE_CODE"), tblICTIREC2.Columns("COLOR_CODE")}
+
+
             Dim SALES_DIVISION_CODE As String = rowSOTPICK1.Item("SALES_DIVISION_CODE") & String.Empty
             INV_NO = rowSOTPICK1.Item("INV_NO") & String.Empty
 
@@ -358,32 +391,52 @@
                                 If rowPOTTRFF1.Item("ORDER_ENDING_DATE") & String.Empty = String.Empty OrElse ORDR_DATE.CompareTo(CDate(rowPOTTRFF1.Item("ORDER_ENDING_DATE") & String.Empty)) <= 0 Then
                                     If rowPOTTRFF1.Item("INVOICE_START_DATE") & String.Empty = String.Empty OrElse INV_DATE.CompareTo(CDate(rowPOTTRFF1.Item("INVOICE_START_DATE") & String.Empty)) >= 0 Then
                                         If rowPOTTRFF1.Item("INVOICE_ENDING_DATE") & String.Empty = String.Empty OrElse INV_DATE.CompareTo(CDate(rowPOTTRFF1.Item("INVOICE_ENDING_DATE") & String.Empty)) <= 0 Then
-                                            Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
-                                            rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
-                                            rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
-                                            rowSOTINVHM.Item("INV_MNO") = Val(tblSOTINVHM.Compute("MAX(INV_MNO)", $"INV_TYPE = '{rowSOTINVHM.Item("INV_TYPE")}' AND INV_NO = {rowSOTINVHM.Item("INV_NO")}") & String.Empty) + 1
-                                            rowSOTINVHM.Item("MISC_CHG_CODE") = rowPOTTRFF1.Item("MISC_CHG_CODE")
-                                            Dim rowSOTMISC1 As DataRow = tblSOTMISC1.Rows.Find(rowPOTTRFF1.Item("MISC_CHG_CODE"))
-                                            If rowSOTMISC1 IsNot Nothing Then
-                                                rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                                            ' 06/03/2025 - Rich request for Discontinued Items
+                                            Dim processTariff As Boolean = True
+                                            If excludeTariffsOnDiscontinuedItems Then
+                                                If rowICTSTYL1.Item("STYLE_STATUS") & String.Empty = "D" Then
+                                                    Dim rowICTIREC2 As DataRow = tblICTIREC2.Rows.Find({STYLE_CODE, COLOR_CODE})
+                                                    If rowICTIREC2 Is Nothing OrElse rowICTIREC2.Item("RECEIPT_DATE") & String.Empty = String.Empty Then
+                                                        ' If we do not have a Receipt for this item then no Tariff
+                                                        processTariff = False
+                                                    Else
+                                                        Dim RECEIPT_DATE As String = CDate(rowICTIREC2.Item("RECEIPT_DATE") & String.Empty).ToString("yyyyMMdd")
+                                                        ' If the last Receipt Date is less/equal the date in SOTPARM1 then no Tariff
+                                                        If Val(RECEIPT_DATE) <= Val(minDiscTariffRecDate) Then
+                                                            processTariff = False
+                                                        End If
+                                                    End If
+                                                End If
                                             End If
-                                            rowSOTINVHM.Item("MISC_CHG_NOTE") = "Tariff Surcharge"
 
-                                            ' Get this number to be evenly divisible by ORDR_QTY_SHIP
-                                            ' So we do not have rounding issues on the Invoice
-                                            Dim INV_MISC_CHG_TAR As Decimal = Math.Round(ORDR_UNIT_PRICE * (SURCHARGE_PERC / 100), 2) * ORDR_QTY_SHIP
+                                            If processTariff Then
+                                                Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
+                                                rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
+                                                rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
+                                                rowSOTINVHM.Item("INV_MNO") = Val(tblSOTINVHM.Compute("MAX(INV_MNO)", $"INV_TYPE = '{rowSOTINVHM.Item("INV_TYPE")}' AND INV_NO = {rowSOTINVHM.Item("INV_NO")}") & String.Empty) + 1
+                                                rowSOTINVHM.Item("MISC_CHG_CODE") = rowPOTTRFF1.Item("MISC_CHG_CODE")
+                                                Dim rowSOTMISC1 As DataRow = tblSOTMISC1.Rows.Find(rowPOTTRFF1.Item("MISC_CHG_CODE"))
+                                                If rowSOTMISC1 IsNot Nothing Then
+                                                    rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                                                End If
+                                                rowSOTINVHM.Item("MISC_CHG_NOTE") = "Tariff Surcharge"
 
-                                            rowSOTINVHM.Item("INV_MISC_CHG") = INV_MISC_CHG_TAR
-                                            'rowSOTINVHM.Item("CTL_NO ") = ""
-                                            'rowSOTINVHM.Item("PO_ORDER_NO") = ""
-                                            rowSOTINVHM.Item("INV_MISC_CHG_CURR") = rowSOTINVHM.Item("INV_MISC_CHG")
-                                            rowSOTINVHM.Item("MISC_CHARGE_TYPE") = "T"
-                                            rowSOTINVHM.Item("COUNTRY_CODE") = COUNTRY_CODE
-                                            rowSOTINVHM.Item("SURCHARGE_PERC") = SURCHARGE_PERC
-                                            rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
+                                                ' Get this number to be evenly divisible by ORDR_QTY_SHIP
+                                                ' So we do not have rounding issues on the Invoice
+                                                Dim INV_MISC_CHG_TAR As Decimal = Math.Round(ORDR_UNIT_PRICE * (SURCHARGE_PERC / 100), 2) * ORDR_QTY_SHIP
 
-                                            tblSOTINVHM.Rows.Add(rowSOTINVHM)
-                                            INV_MISC_CHG_TARIFF += rowSOTINVHM.Item("INV_MISC_CHG")
+                                                rowSOTINVHM.Item("INV_MISC_CHG") = INV_MISC_CHG_TAR
+                                                'rowSOTINVHM.Item("CTL_NO ") = ""
+                                                'rowSOTINVHM.Item("PO_ORDER_NO") = ""
+                                                rowSOTINVHM.Item("INV_MISC_CHG_CURR") = rowSOTINVHM.Item("INV_MISC_CHG")
+                                                rowSOTINVHM.Item("MISC_CHARGE_TYPE") = "T"
+                                                rowSOTINVHM.Item("COUNTRY_CODE") = COUNTRY_CODE
+                                                rowSOTINVHM.Item("SURCHARGE_PERC") = SURCHARGE_PERC
+                                                rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
+
+                                                tblSOTINVHM.Rows.Add(rowSOTINVHM)
+                                                INV_MISC_CHG_TARIFF += rowSOTINVHM.Item("INV_MISC_CHG")
+                                            End If
                                         End If
                                     End If
                                 End If
