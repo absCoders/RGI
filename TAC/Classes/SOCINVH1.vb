@@ -391,6 +391,11 @@
 
                     Dim lineItemExcludedFromTariff As Boolean = False
                     If rowICTSTYL1.Item("EXCLUDE_FROM_TARIFFS") & String.Empty = "1" Then
+
+                        If rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty = String.Empty AndAlso rowICTSTYL1.Item("INVOICE_START_DATE") & String.Empty = String.Empty Then
+                            lineItemExcludedFromTariff = True
+                        End If
+
                         'Order Date less than Or equal to
                         If rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty <> String.Empty AndAlso ORDR_DATE.CompareTo(CDate(rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty)) <= 0 Then
                             lineItemExcludedFromTariff = True
