@@ -24,6 +24,13 @@ Public Class ICTCLAS1
         grpStyleCodeGeneration.Visible = (ASCMAIN1.CLIENT = "NYA")
 
         chkSTYLE_CLASS_RELEASE_ATONCE.Visible = (ASCMAIN1.CLIENT = "RGI")
+
+        dteINVOICE_START_DATE.MinDate = CDate("01/01/2024")
+        dteORDER_START_DATE.MinDate = CDate("01/01/2024")
+
+        dteINVOICE_START_DATE.MaxDate = DateAdd(DateInterval.Year, 2, DateTime.Now)
+        dteORDER_START_DATE.MaxDate = DateAdd(DateInterval.Year, 2, DateTime.Now)
+
     End Sub
 
 #Region "Popup Menus"
@@ -72,10 +79,26 @@ Public Class ICTCLAS1
         Select Case eItemKey
 
             Case "New"
+
             Case "Edit"
 
             Case "Update"
-
+                ' Validate Sales Order options only when checked
+                If Absx1.chkFor("EXCLUDE_FROM_TARIFFS").Checked Then
+                    If IsDate(dteORDER_START_DATE.Value) Then
+                        If IsDate(dteINVOICE_START_DATE.Value) Then
+                            Select Case DateTime.Compare(dteORDER_START_DATE.Value, dteINVOICE_START_DATE.Value)
+                                Case 0
+                                ' Dates are equal
+                                Case -1
+                                ' End date is after Start date
+                                Case 1
+                                    ' End date is before Start Date
+                                    EMsg &= vbCr & "Order Start Date must be before Invoice Start Date"
+                            End Select
+                        End If
+                    End If
+                End If
         End Select
     End Sub
 
