@@ -28,6 +28,7 @@ Public Class WHFLNFA1
 
             ASCMAIN1.sql = "Select * from " & WHTLOCBX
             Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "", 2)
+            .Tables("WHTLOCBX").Columns.Add("BAL", GetType(Integer), "ISNULL(ONH, 0) - ( ISNULL(PICK, 0) + ISNULL(OPEN, 0))")
 
             '                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
 
@@ -117,7 +118,7 @@ Public Class WHFLNFA1
         Create_Summary(grdWHTLOCLX, New String() {"LOCATION_QTY"})
 
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTLOCBX, New String() {"ONH", "PICK", "OPEN", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
+        Create_Summary(grdWHTLOCBX, New String() {"ONH", "PICK", "OPEN", "BAL", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
 
         Create_Summary(grdWHTLOCBY, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCBY, New String() {"LOCATION_QTY", "LOCATION_QTY_WAVE"})
@@ -595,7 +596,7 @@ Public Class WHFLNFA1
             '.Columns("COLOR_CODE").Header.Fixed = True
 
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
-                If "STYLE_CODE,COLOR_CODE,ONH,LOC,PICK,OPEN,DATE_LAST_CYCLE_COUNT".Contains(gcol.Key) Then
+                If "STYLE_CODE,COLOR_CODE,ONH,LOC,PICK,OPEN,BAL,DATE_LAST_CYCLE_COUNT".Contains(gcol.Key) Then
                 ElseIf "LOCATIONS".Contains(gcol.Key) Then
                     gcol.Hidden = Not chkShowLocs.Checked
                     gcol.Width = 1000
