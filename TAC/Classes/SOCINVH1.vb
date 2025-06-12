@@ -397,7 +397,7 @@
                         End If
 
                         'Order Date less than Or equal to
-                        If rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty <> String.Empty AndAlso ORDR_DATE.CompareTo(CDate(rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty)) <= 0 Then
+                        If rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty <> String.Empty AndAlso ORDR_DATE.CompareTo(CDate(rowICTSTYL1.Item("ORDER_START_DATE") & String.Empty)) >= 0 Then
                             lineItemExcludedFromTariff = True
                         End If
 
