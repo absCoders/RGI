@@ -26,6 +26,7 @@ Public Class POROPEN2
         chkExcel.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         chkStyleStatsO.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         chkStyleStats.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
+        chk1Sheet.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         txtPOREF.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         lblPOREF.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
 
@@ -343,7 +344,7 @@ Public Class POROPEN2
         '    & "   and POTORDR1.PO_ORDER_NO = POTORDR2.PO_ORDER_NO" & vbCrLf _
         '    & "   and POTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE" & vbCrLf _
         '    & "   and ICTCOLR1.COLOR_CODE = POTORDR2.COLOR_CODE"
-        ASCMAIN1.sql = "Select POTORDR2.*,ICTSTYL1.CASE_CUBE, ICTCOLR1.COLOR_DESC" & vbCrLf _
+        ASCMAIN1.sql = "Select POTORDR2.*,ICTSTYL1.CASE_CUBE, ICTSTYL1.SALES_DIVISION_CODE, ICTCOLR1.COLOR_DESC" & vbCrLf _
             & ", POTORDR1.VEND_CODE, POTORDR1.FACTORY_CODE, POTORDR1.PO_REFERENCE, POTORDR1.WHSE_CODE" & vbCrLf _
             & ", POTORDR1.PO_SPEC_ORDR_NO, POTORDR1.PO_DATE_ORDERED, POTORDR1.PO_DATE_CANCEL,POTORDR1.PORT_CODE_ORIG,POTORDR1.PO_SHIP_VIA"
         Select Case optSORT.Value
@@ -616,6 +617,22 @@ Public Class POROPEN2
         Dim RetVal As String = ""
 
 
+        Dim SORTEX As String = ""
+        SORTEX = "STYLE_CODE,COLOR_CODE"
+
+        Select Case optSORT.Value
+            Case Is = "D" 'Ship By Date
+                SORTEX = "PO_DATE_SHIP_BY,STYLE_CODE,COLOR_CODE"
+            Case Is = "S" 'Style / Color
+                SORTEX = "STYLE_CODE,COLOR_CODE"
+            Case Is = "P" 'PO / Line
+                SORTEX = "PO_ORDER_NO,PO_ORDER_LNO"
+            Case Is = "O" 'Date Entered
+                SORTEX = "PO_DATE_ORDERED,STYLE_CODE,COLOR_CODE"
+                ''    ASCMAIN1.sql += ", TO_CHAR(POTORDR1.PO_DATE_ORDERED,'YYYYMMDD') SORT1, POTORDR2.PO_ORDER_NO SORT2"
+        End Select
+
+
 
         ''  RESEQ()
 
@@ -708,6 +725,15 @@ Public Class POROPEN2
                         SALES_DIVISION_NAME = ""
                     End If
                     SHEET_NAME = "Div-" & Mid(SHEET_NAME, 2) & "-" & SALES_DIVISION_NAME
+                    SHEET_NAME = Replace(SHEET_NAME, "/", " ")
+                    SHEET_NAME = Replace(SHEET_NAME, ".", "")
+                    SHEET_NAME = Replace(SHEET_NAME, ",", "")
+                    SHEET_NAME = Replace(SHEET_NAME, "&", "")
+                    If SHEET_NAME.Length > 31 Then
+                        SHEET_NAME = SHEET_NAME.ToString.Substring(0, 30)
+                        ' SHEET_NAME = SUBSTR(SHEET_NAME, 0, 31)
+                    End If
+
                 Else
                     SHEET_NAME = Mid(SHEET_NAME, 2)
                 End If
@@ -731,7 +757,7 @@ Public Class POROPEN2
 
                     '        For Each rowICTSTATD As DataRow In dst.Tables("ICTSTATD").Select("STYLE_CODE = '" & STYLE_CODE & "'", "COLOR_CODE, PO_DATE_SHIP_BY")
 
-                    For Each rowPOTORDRQ As DataRow In dst.Tables("POTORDRX").Select("SALES_DIVISION_CODE = '" & SALES_DIVISION_CODE & "'", "FABRIC_CODE,SUB_BODY_CODE")
+                    For Each rowPOTORDRQ As DataRow In dst.Tables("POTORDRX").Select("SALES_DIVISION_CODE = '" & SALES_DIVISION_CODE & "'", SORTEX)
                         Dim STYLE_CODE As String = rowPOTORDRQ.Item("STYLE_CODE").ToString & String.Empty
                         If Not StyleList.Contains(STYLE_CODE) Then
                             StyleList.Add(STYLE_CODE)
@@ -811,7 +837,7 @@ Public Class POROPEN2
 
         Dim I0 As Integer = 0
         Dim IA As Integer = 0
-        Dim RT(16) As String
+        Dim RT(23) As String
         Dim ROW0 As Integer = I
         Dim style_count As Integer = 0
         Dim pages As Integer = 0
@@ -882,7 +908,7 @@ Public Class POROPEN2
                 For iCOL As Integer = 1 To 7
                     COL += 1
                     worksheet.Cells(I + CI - 1, COL).Formula = "=sum(" & Replace(worksheet.Cells(I + 1 - 1, COL).Address, "$", "") & ":" & Replace(worksheet.Cells(I + CI - 1 - 1, COL).Address, "$", "") & ")"
-                    RT(iCOL) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
+                    RT(iCOL + 16) &= "+" & Replace(worksheet.Cells(I + CI - 1, COL).Address, "$", "")
                 Next
                 COL += 0
             End If

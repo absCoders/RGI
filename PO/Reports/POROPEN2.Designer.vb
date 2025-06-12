@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class POROPEN2
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFSRPTM
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class POROPEN2
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -691,7 +691,7 @@ Partial Class POROPEN2
         'chkShowCustomerStyleInfo
         '
         Me.Absx1.SetABSColumnName(Me.chkShowCustomerStyleInfo, "CHKCUSTSTYLEINFO")
-        Me.chkShowCustomerStyleInfo.Location = New System.Drawing.Point(20, 267)
+        Me.chkShowCustomerStyleInfo.Location = New System.Drawing.Point(20, 260)
         Me.chkShowCustomerStyleInfo.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowCustomerStyleInfo.Name = "chkShowCustomerStyleInfo"
         Me.chkShowCustomerStyleInfo.Size = New System.Drawing.Size(259, 22)
@@ -759,7 +759,7 @@ Partial Class POROPEN2
         'AbsCheckBox11
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox11, "CHKUSEFIFOCOST")
-        Me.AbsCheckBox11.Location = New System.Drawing.Point(20, 287)
+        Me.AbsCheckBox11.Location = New System.Drawing.Point(20, 280)
         Me.AbsCheckBox11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox11.Name = "AbsCheckBox11"
         Me.AbsCheckBox11.Size = New System.Drawing.Size(259, 22)
@@ -770,7 +770,7 @@ Partial Class POROPEN2
         'AbsCheckBox12
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox12, "CHKCOLLAPSEDETAILS")
-        Me.AbsCheckBox12.Location = New System.Drawing.Point(20, 328)
+        Me.AbsCheckBox12.Location = New System.Drawing.Point(20, 321)
         Me.AbsCheckBox12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox12.Name = "AbsCheckBox12"
         Me.AbsCheckBox12.Size = New System.Drawing.Size(259, 22)
@@ -782,7 +782,7 @@ Partial Class POROPEN2
         '
         Me.Absx1.SetABSBindToTable(Me.chkDZNCOST, False)
         Me.Absx1.SetABSColumnName(Me.chkDZNCOST, "CHKDZNCOST")
-        Me.chkDZNCOST.Location = New System.Drawing.Point(20, 308)
+        Me.chkDZNCOST.Location = New System.Drawing.Point(20, 301)
         Me.chkDZNCOST.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkDZNCOST.Name = "chkDZNCOST"
         Me.chkDZNCOST.Size = New System.Drawing.Size(259, 22)
@@ -793,19 +793,18 @@ Partial Class POROPEN2
         '
         Me.Absx1.SetABSBindToTable(Me.chk1Sheet, False)
         Me.chk1Sheet.CausesValidation = False
-        Me.chk1Sheet.Location = New System.Drawing.Point(363, 308)
+        Me.chk1Sheet.Location = New System.Drawing.Point(20, 382)
         Me.chk1Sheet.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chk1Sheet.Name = "chk1Sheet"
         Me.chk1Sheet.Size = New System.Drawing.Size(164, 22)
         Me.chk1Sheet.TabIndex = 282
         Me.chk1Sheet.Text = "1 Sheet/Div"
-        Me.chk1Sheet.Visible = False
         '
         'chkExcel
         '
         Me.Absx1.SetABSBindToTable(Me.chkExcel, False)
         Me.chkExcel.CausesValidation = False
-        Me.chkExcel.Location = New System.Drawing.Point(20, 349)
+        Me.chkExcel.Location = New System.Drawing.Point(20, 342)
         Me.chkExcel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkExcel.Name = "chkExcel"
         Me.chkExcel.Size = New System.Drawing.Size(135, 22)
@@ -816,7 +815,7 @@ Partial Class POROPEN2
         '
         Me.Absx1.SetABSBindToTable(Me.chkStyleStatsO, False)
         Me.chkStyleStatsO.CausesValidation = False
-        Me.chkStyleStatsO.Location = New System.Drawing.Point(163, 349)
+        Me.chkStyleStatsO.Location = New System.Drawing.Point(163, 342)
         Me.chkStyleStatsO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkStyleStatsO.Name = "chkStyleStatsO"
         Me.chkStyleStatsO.Size = New System.Drawing.Size(232, 22)
@@ -846,7 +845,7 @@ Partial Class POROPEN2
         '
         Me.Absx1.SetABSBindToTable(Me.chkStyleStats, False)
         Me.chkStyleStats.CausesValidation = False
-        Me.chkStyleStats.Location = New System.Drawing.Point(20, 370)
+        Me.chkStyleStats.Location = New System.Drawing.Point(20, 363)
         Me.chkStyleStats.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkStyleStats.Name = "chkStyleStats"
         Me.chkStyleStats.Size = New System.Drawing.Size(308, 22)

@@ -101,6 +101,13 @@ Partial Class ICTCLAS1
         Me.UltraLabel16 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel15 = New Infragistics.Win.Misc.UltraLabel()
         Me.chkSTYLE_CLASS_RELEASE_ATONCE = New ABSCS.ABSCheckBox()
+        Me.AbsCheckBox1 = New ABSCS.ABSCheckBox()
+        Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.dteINVOICE_START_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraLabel18 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraGroupBox4 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraLabel20 = New Infragistics.Win.Misc.UltraLabel()
+        Me.dteORDER_START_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -135,10 +142,20 @@ Partial Class ICTCLAS1
         CType(Me.grpStyleCodeGeneration, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpStyleCodeGeneration.SuspendLayout()
         CType(Me.chkSTYLE_CLASS_RELEASE_ATONCE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox5.SuspendLayout()
+        CType(Me.dteINVOICE_START_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraGroupBox4.SuspendLayout()
+        CType(Me.dteORDER_START_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.UltraGroupBox5)
+        Me.Panel1.Controls.Add(Me.UltraGroupBox4)
+        Me.Panel1.Controls.Add(Me.AbsCheckBox1)
         Me.Panel1.Controls.Add(Me.chkSTYLE_CLASS_RELEASE_ATONCE)
         Me.Panel1.Controls.Add(Me.UltraTextEditor1)
         Me.Panel1.Controls.Add(Me.grpStyleCodeGeneration)
@@ -173,21 +190,22 @@ Partial Class ICTCLAS1
         Me.Panel1.Controls.Add(Me.UltraLabel2)
         Me.Panel1.Controls.Add(Me.UltraLabel1)
         Me.Panel1.Controls.Add(Me.UltraTextEditor2)
-        Me.Panel1.Size = New System.Drawing.Size(772, 507)
+        Me.Panel1.Size = New System.Drawing.Size(772, 720)
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 767)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 787)
         '
         'grdASFBASEX
         '
@@ -236,12 +254,12 @@ Partial Class ICTCLAS1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 787)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 787)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
@@ -249,7 +267,7 @@ Partial Class ICTCLAS1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 787)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
         '
         'tlb
@@ -288,7 +306,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.Size = New System.Drawing.Size(372, 25)
-        Me.UltraTextEditor2.TabIndex = 25
+        Me.UltraTextEditor2.TabIndex = 1
         '
         'UltraTextEditor1
         '
@@ -298,7 +316,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
         Me.UltraTextEditor1.Size = New System.Drawing.Size(96, 25)
-        Me.UltraTextEditor1.TabIndex = 24
+        Me.UltraTextEditor1.TabIndex = 0
         '
         'grdICTCLAS2
         '
@@ -375,8 +393,8 @@ Partial Class ICTCLAS1
         Me.grdICTCLAS2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTCLAS2.Location = New System.Drawing.Point(527, 45)
         Me.grdICTCLAS2.Name = "grdICTCLAS2"
-        Me.grdICTCLAS2.Size = New System.Drawing.Size(221, 152)
-        Me.grdICTCLAS2.TabIndex = 105
+        Me.grdICTCLAS2.Size = New System.Drawing.Size(221, 365)
+        Me.grdICTCLAS2.TabIndex = 22
         Me.grdICTCLAS2.Text = "Default % PO Qty Increase"
         '
         'UltraLabel14
@@ -398,7 +416,7 @@ Partial Class ICTCLAS1
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor1.Size = New System.Drawing.Size(96, 25)
-        Me.UltraNumericEditor1.TabIndex = 191
+        Me.UltraNumericEditor1.TabIndex = 21
         '
         'UltraLabel3
         '
@@ -416,7 +434,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.Size = New System.Drawing.Size(96, 25)
-        Me.UltraTextEditor3.TabIndex = 195
+        Me.UltraTextEditor3.TabIndex = 20
         '
         'UltraTextEditor5
         '
@@ -427,7 +445,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.ReadOnly = True
         Me.UltraTextEditor5.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor5.TabIndex = 198
+        Me.UltraTextEditor5.TabIndex = 3
+        Me.UltraTextEditor5.TabStop = False
         '
         'UltraTextEditor4
         '
@@ -438,7 +457,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
         Me.UltraTextEditor4.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor4.TabIndex = 196
+        Me.UltraTextEditor4.TabIndex = 2
         '
         'UltraLabel4
         '
@@ -461,7 +480,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
         Me.UltraTextEditor6.ReadOnly = True
         Me.UltraTextEditor6.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor6.TabIndex = 201
+        Me.UltraTextEditor6.TabIndex = 5
+        Me.UltraTextEditor6.TabStop = False
         '
         'UltraTextEditor7
         '
@@ -472,7 +492,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
         Me.UltraTextEditor7.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor7.TabIndex = 199
+        Me.UltraTextEditor7.TabIndex = 4
         '
         'UltraLabel5
         '
@@ -495,7 +515,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
         Me.UltraTextEditor8.ReadOnly = True
         Me.UltraTextEditor8.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor8.TabIndex = 207
+        Me.UltraTextEditor8.TabIndex = 11
+        Me.UltraTextEditor8.TabStop = False
         '
         'UltraTextEditor9
         '
@@ -506,7 +527,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
         Me.UltraTextEditor9.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor9.TabIndex = 205
+        Me.UltraTextEditor9.TabIndex = 10
         '
         'UltraLabel6
         '
@@ -529,7 +550,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.ReadOnly = True
         Me.UltraTextEditor10.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor10.TabIndex = 204
+        Me.UltraTextEditor10.TabIndex = 9
+        Me.UltraTextEditor10.TabStop = False
         '
         'UltraTextEditor11
         '
@@ -540,7 +562,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor11.Name = "UltraTextEditor11"
         Me.UltraTextEditor11.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor11.TabIndex = 202
+        Me.UltraTextEditor11.TabIndex = 8
         '
         'UltraLabel7
         '
@@ -563,7 +585,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
         Me.UltraTextEditor12.ReadOnly = True
         Me.UltraTextEditor12.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor12.TabIndex = 210
+        Me.UltraTextEditor12.TabIndex = 7
+        Me.UltraTextEditor12.TabStop = False
         '
         'UltraTextEditor13
         '
@@ -574,7 +597,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor13.Name = "UltraTextEditor13"
         Me.UltraTextEditor13.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor13.TabIndex = 208
+        Me.UltraTextEditor13.TabIndex = 6
         '
         'UltraLabel8
         '
@@ -633,7 +656,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor14.Name = "UltraTextEditor14"
         Me.UltraTextEditor14.ReadOnly = True
         Me.UltraTextEditor14.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor14.TabIndex = 218
+        Me.UltraTextEditor14.TabIndex = 15
+        Me.UltraTextEditor14.TabStop = False
         '
         'UltraTextEditor15
         '
@@ -644,7 +668,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
         Me.UltraTextEditor15.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor15.TabIndex = 216
+        Me.UltraTextEditor15.TabIndex = 14
         '
         'UltraLabel12
         '
@@ -667,7 +691,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
         Me.UltraTextEditor16.ReadOnly = True
         Me.UltraTextEditor16.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor16.TabIndex = 215
+        Me.UltraTextEditor16.TabIndex = 13
+        Me.UltraTextEditor16.TabStop = False
         '
         'UltraTextEditor17
         '
@@ -678,7 +703,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor17.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor17.Name = "UltraTextEditor17"
         Me.UltraTextEditor17.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor17.TabIndex = 213
+        Me.UltraTextEditor17.TabIndex = 12
         '
         'UltraLabel13
         '
@@ -696,29 +721,30 @@ Partial Class ICTCLAS1
         '
         Me.Absx1.SetABSColumnName(Me.txtDISC_DESC, "DISC_DESC")
         Me.Absx1.SetABSParentColumnName(Me.txtDISC_DESC, "DISC_CODE")
-        Me.txtDISC_DESC.Location = New System.Drawing.Point(244, 372)
+        Me.txtDISC_DESC.Location = New System.Drawing.Point(244, 343)
         Me.txtDISC_DESC.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.txtDISC_DESC.Name = "txtDISC_DESC"
         Me.txtDISC_DESC.ReadOnly = True
         Me.txtDISC_DESC.Size = New System.Drawing.Size(277, 25)
-        Me.txtDISC_DESC.TabIndex = 222
+        Me.txtDISC_DESC.TabIndex = 17
+        Me.txtDISC_DESC.TabStop = False
         '
         'txtDISC_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtDISC_CODE, "DISC_CODE")
         Me.Absx1.SetABSHasButton(Me.txtDISC_CODE, True)
-        Me.txtDISC_CODE.Location = New System.Drawing.Point(130, 372)
+        Me.txtDISC_CODE.Location = New System.Drawing.Point(130, 343)
         Me.txtDISC_CODE.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.txtDISC_CODE.Name = "txtDISC_CODE"
         Me.txtDISC_CODE.Size = New System.Drawing.Size(108, 25)
-        Me.txtDISC_CODE.TabIndex = 220
+        Me.txtDISC_CODE.TabIndex = 16
         '
         'lblDISC_CODE
         '
         Appearance1.BackColor = System.Drawing.Color.Transparent
         Me.lblDISC_CODE.Appearance = Appearance1
         Me.lblDISC_CODE.AutoSize = True
-        Me.lblDISC_CODE.Location = New System.Drawing.Point(16, 376)
+        Me.lblDISC_CODE.Location = New System.Drawing.Point(16, 347)
         Me.lblDISC_CODE.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.lblDISC_CODE.Name = "lblDISC_CODE"
         Me.lblDISC_CODE.Size = New System.Drawing.Size(102, 18)
@@ -735,7 +761,7 @@ Partial Class ICTCLAS1
         Me.grpStyleCodeGeneration.Controls.Add(Me.UltraNumericEditor1)
         Me.grpStyleCodeGeneration.Controls.Add(Me.UltraLabel3)
         Me.grpStyleCodeGeneration.Controls.Add(Me.UltraTextEditor3)
-        Me.grpStyleCodeGeneration.Location = New System.Drawing.Point(16, 413)
+        Me.grpStyleCodeGeneration.Location = New System.Drawing.Point(16, 510)
         Me.grpStyleCodeGeneration.Name = "grpStyleCodeGeneration"
         Me.grpStyleCodeGeneration.Size = New System.Drawing.Size(578, 75)
         Me.grpStyleCodeGeneration.TabIndex = 223
@@ -771,17 +797,86 @@ Partial Class ICTCLAS1
         'chkSTYLE_CLASS_RELEASE_ATONCE
         '
         Me.Absx1.SetABSColumnName(Me.chkSTYLE_CLASS_RELEASE_ATONCE, "STYLE_CLASS_RELEASE_ATONCE")
-        Me.chkSTYLE_CLASS_RELEASE_ATONCE.Location = New System.Drawing.Point(16, 349)
+        Me.chkSTYLE_CLASS_RELEASE_ATONCE.Location = New System.Drawing.Point(130, 375)
         Me.chkSTYLE_CLASS_RELEASE_ATONCE.Name = "chkSTYLE_CLASS_RELEASE_ATONCE"
         Me.chkSTYLE_CLASS_RELEASE_ATONCE.Size = New System.Drawing.Size(221, 20)
-        Me.chkSTYLE_CLASS_RELEASE_ATONCE.TabIndex = 257
+        Me.chkSTYLE_CLASS_RELEASE_ATONCE.TabIndex = 18
         Me.chkSTYLE_CLASS_RELEASE_ATONCE.Text = "Release At-Once if Available"
+        '
+        'AbsCheckBox1
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "EXCLUDE_FROM_TARIFFS")
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(130, 401)
+        Me.AbsCheckBox1.Name = "AbsCheckBox1"
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(167, 20)
+        Me.AbsCheckBox1.TabIndex = 19
+        Me.AbsCheckBox1.Text = "Exclude from tariffs"
+        '
+        'UltraGroupBox5
+        '
+        Me.UltraGroupBox5.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox5.Controls.Add(Me.dteINVOICE_START_DATE)
+        Me.UltraGroupBox5.Controls.Add(Me.UltraLabel18)
+        Me.UltraGroupBox5.Location = New System.Drawing.Point(405, 427)
+        Me.UltraGroupBox5.Name = "UltraGroupBox5"
+        Me.UltraGroupBox5.Size = New System.Drawing.Size(256, 59)
+        Me.UltraGroupBox5.TabIndex = 336
+        Me.UltraGroupBox5.Text = "Invoice Date"
+        '
+        'dteINVOICE_START_DATE
+        '
+        Me.Absx1.SetABSColumnName(Me.dteINVOICE_START_DATE, "INVOICE_START_DATE")
+        Me.dteINVOICE_START_DATE.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
+        Me.dteINVOICE_START_DATE.Location = New System.Drawing.Point(116, 23)
+        Me.dteINVOICE_START_DATE.Name = "dteINVOICE_START_DATE"
+        Me.dteINVOICE_START_DATE.Size = New System.Drawing.Size(121, 25)
+        Me.dteINVOICE_START_DATE.TabIndex = 10
+        Me.dteINVOICE_START_DATE.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
+        '
+        'UltraLabel18
+        '
+        Me.UltraLabel18.AutoSize = True
+        Me.UltraLabel18.Location = New System.Drawing.Point(29, 28)
+        Me.UltraLabel18.Name = "UltraLabel18"
+        Me.UltraLabel18.Size = New System.Drawing.Size(38, 18)
+        Me.UltraLabel18.TabIndex = 329
+        Me.UltraLabel18.Text = "Start"
+        '
+        'UltraGroupBox4
+        '
+        Me.UltraGroupBox4.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox4.Controls.Add(Me.UltraLabel20)
+        Me.UltraGroupBox4.Controls.Add(Me.dteORDER_START_DATE)
+        Me.UltraGroupBox4.Location = New System.Drawing.Point(143, 427)
+        Me.UltraGroupBox4.Name = "UltraGroupBox4"
+        Me.UltraGroupBox4.Size = New System.Drawing.Size(256, 59)
+        Me.UltraGroupBox4.TabIndex = 335
+        Me.UltraGroupBox4.Text = "Sales Order Date"
+        '
+        'UltraLabel20
+        '
+        Me.UltraLabel20.AutoSize = True
+        Me.UltraLabel20.Location = New System.Drawing.Point(29, 28)
+        Me.UltraLabel20.Name = "UltraLabel20"
+        Me.UltraLabel20.Size = New System.Drawing.Size(38, 18)
+        Me.UltraLabel20.TabIndex = 326
+        Me.UltraLabel20.Text = "Start"
+        '
+        'dteORDER_START_DATE
+        '
+        Me.Absx1.SetABSColumnName(Me.dteORDER_START_DATE, "ORDER_START_DATE")
+        Me.dteORDER_START_DATE.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
+        Me.dteORDER_START_DATE.Location = New System.Drawing.Point(116, 23)
+        Me.dteORDER_START_DATE.Name = "dteORDER_START_DATE"
+        Me.dteORDER_START_DATE.Size = New System.Drawing.Size(121, 25)
+        Me.dteORDER_START_DATE.TabIndex = 8
+        Me.dteORDER_START_DATE.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
         '
         'ICTCLAS1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(989, 574)
+        Me.ClientSize = New System.Drawing.Size(989, 787)
         Me.Name = "ICTCLAS1"
         Me.Text = "ICTCLAS1"
         Me.Panel1.ResumeLayout(False)
@@ -820,6 +915,15 @@ Partial Class ICTCLAS1
         Me.grpStyleCodeGeneration.ResumeLayout(False)
         Me.grpStyleCodeGeneration.PerformLayout()
         CType(Me.chkSTYLE_CLASS_RELEASE_ATONCE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox5, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox5.ResumeLayout(False)
+        Me.UltraGroupBox5.PerformLayout()
+        CType(Me.dteINVOICE_START_DATE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraGroupBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraGroupBox4.ResumeLayout(False)
+        Me.UltraGroupBox4.PerformLayout()
+        CType(Me.dteORDER_START_DATE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -864,4 +968,11 @@ Partial Class ICTCLAS1
     Friend WithEvents UltraLabel17 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel16 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents chkSTYLE_CLASS_RELEASE_ATONCE As ABSCS.ABSCheckBox
+    Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
+    Friend WithEvents UltraGroupBox5 As Misc.UltraGroupBox
+    Friend WithEvents dteINVOICE_START_DATE As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraLabel18 As Misc.UltraLabel
+    Friend WithEvents UltraGroupBox4 As Misc.UltraGroupBox
+    Friend WithEvents UltraLabel20 As Misc.UltraLabel
+    Friend WithEvents dteORDER_START_DATE As UltraWinEditors.UltraDateTimeEditor
 End Class
