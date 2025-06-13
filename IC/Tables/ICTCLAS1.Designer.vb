@@ -22,7 +22,6 @@ Partial Class ICTCLAS1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -31,14 +30,14 @@ Partial Class ICTCLAS1
         Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance33 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance34 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTCLAS2", -1)
         Dim UltraGridColumn9 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CLASS_CODE")
         Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_COUNT", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PCT_INCREASE")
-        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -49,16 +48,18 @@ Partial Class ICTCLAS1
         Dim Appearance21 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
@@ -101,6 +102,9 @@ Partial Class ICTCLAS1
         Me.UltraLabel16 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel15 = New Infragistics.Win.Misc.UltraLabel()
         Me.chkSTYLE_CLASS_RELEASE_ATONCE = New ABSCS.ABSCheckBox()
+        Me.AbsCheckBox1 = New ABSCS.ABSCheckBox()
+        Me.dteORDER_START_DATE = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraLabel18 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -135,10 +139,15 @@ Partial Class ICTCLAS1
         CType(Me.grpStyleCodeGeneration, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpStyleCodeGeneration.SuspendLayout()
         CType(Me.chkSTYLE_CLASS_RELEASE_ATONCE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dteORDER_START_DATE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.UltraLabel18)
+        Me.Panel1.Controls.Add(Me.dteORDER_START_DATE)
+        Me.Panel1.Controls.Add(Me.AbsCheckBox1)
         Me.Panel1.Controls.Add(Me.chkSTYLE_CLASS_RELEASE_ATONCE)
         Me.Panel1.Controls.Add(Me.UltraTextEditor1)
         Me.Panel1.Controls.Add(Me.grpStyleCodeGeneration)
@@ -173,75 +182,76 @@ Partial Class ICTCLAS1
         Me.Panel1.Controls.Add(Me.UltraLabel2)
         Me.Panel1.Controls.Add(Me.UltraLabel1)
         Me.Panel1.Controls.Add(Me.UltraTextEditor2)
-        Me.Panel1.Size = New System.Drawing.Size(772, 507)
+        Me.Panel1.Size = New System.Drawing.Size(772, 607)
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 654)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 674)
         '
         'grdASFBASEX
         '
-        Appearance26.BackColor = System.Drawing.SystemColors.Window
-        Appearance26.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance26
+        Appearance27.BackColor = System.Drawing.SystemColors.Window
+        Appearance27.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance27
         Me.grdASFBASEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdASFBASEX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.MaxColScrollRegions = 1
         Me.grdASFBASEX.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance27.BackColor = System.Drawing.SystemColors.Window
-        Appearance27.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance27
-        Appearance28.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance28.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance28
+        Appearance28.BackColor = System.Drawing.SystemColors.Window
+        Appearance28.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance28
+        Appearance29.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance29.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance29
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance29.BackColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance29
-        Appearance30.BorderColor = System.Drawing.Color.Silver
-        Appearance30.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance30
+        Appearance30.BackColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance30
+        Appearance31.BorderColor = System.Drawing.Color.Silver
+        Appearance31.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance31
         Me.grdASFBASEX.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdASFBASEX.DisplayLayout.Override.CellPadding = 0
-        Appearance31.BackColor = System.Drawing.SystemColors.Control
-        Appearance31.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance31.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance31.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance31.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance31
-        Appearance32.TextHAlignAsString = "Left"
-        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance32
+        Appearance32.BackColor = System.Drawing.SystemColors.Control
+        Appearance32.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance32.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance32.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance32.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance32
+        Appearance33.TextHAlignAsString = "Left"
+        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance33
         Me.grdASFBASEX.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdASFBASEX.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance33.BackColor = System.Drawing.SystemColors.Window
-        Appearance33.BorderColor = System.Drawing.Color.Silver
-        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance33
+        Appearance34.BackColor = System.Drawing.SystemColors.Window
+        Appearance34.BorderColor = System.Drawing.Color.Silver
+        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance34
         Me.grdASFBASEX.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance34.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance34
+        Appearance35.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance35
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 674)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 674)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
@@ -249,7 +259,7 @@ Partial Class ICTCLAS1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 674)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
         '
         'tlb
@@ -259,8 +269,8 @@ Partial Class ICTCLAS1
         '
         'UltraLabel2
         '
-        Appearance24.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance24
+        Appearance25.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance25
         Me.UltraLabel2.AutoSize = True
         Me.UltraLabel2.Location = New System.Drawing.Point(16, 49)
         Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -271,8 +281,8 @@ Partial Class ICTCLAS1
         '
         'UltraLabel1
         '
-        Appearance25.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel1.Appearance = Appearance25
+        Appearance26.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel1.Appearance = Appearance26
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(16, 23)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -288,7 +298,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.Size = New System.Drawing.Size(372, 25)
-        Me.UltraTextEditor2.TabIndex = 25
+        Me.UltraTextEditor2.TabIndex = 1
         '
         'UltraTextEditor1
         '
@@ -298,15 +308,15 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
         Me.UltraTextEditor1.Size = New System.Drawing.Size(96, 25)
-        Me.UltraTextEditor1.TabIndex = 24
+        Me.UltraTextEditor1.TabIndex = 0
         '
         'grdICTCLAS2
         '
         Me.grdICTCLAS2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Appearance12.BackColor = System.Drawing.SystemColors.Window
-        Appearance12.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdICTCLAS2.DisplayLayout.Appearance = Appearance12
+        Appearance13.BackColor = System.Drawing.SystemColors.Window
+        Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdICTCLAS2.DisplayLayout.Appearance = Appearance13
         UltraGridColumn9.Header.VisiblePosition = 0
         UltraGridColumn9.Hidden = True
         UltraGridColumn10.Header.Caption = "#Cust"
@@ -318,65 +328,65 @@ Partial Class ICTCLAS1
         UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn9, UltraGridColumn10, UltraGridColumn11})
         Me.grdICTCLAS2.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTCLAS2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance13.TextHAlignAsString = "Left"
-        Me.grdICTCLAS2.DisplayLayout.CaptionAppearance = Appearance13
-        Appearance14.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance14.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance14.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance14.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdICTCLAS2.DisplayLayout.GroupByBox.Appearance = Appearance14
-        Appearance15.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdICTCLAS2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance15
+        Appearance14.TextHAlignAsString = "Left"
+        Me.grdICTCLAS2.DisplayLayout.CaptionAppearance = Appearance14
+        Appearance15.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance15.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance15.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance15.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTCLAS2.DisplayLayout.GroupByBox.Appearance = Appearance15
+        Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTCLAS2.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance16
         Me.grdICTCLAS2.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdICTCLAS2.DisplayLayout.GroupByBox.Hidden = True
-        Appearance16.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance16.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance16.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance16.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdICTCLAS2.DisplayLayout.GroupByBox.PromptAppearance = Appearance16
+        Appearance17.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance17.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance17.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance17.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdICTCLAS2.DisplayLayout.GroupByBox.PromptAppearance = Appearance17
         Me.grdICTCLAS2.DisplayLayout.MaxColScrollRegions = 1
         Me.grdICTCLAS2.DisplayLayout.MaxRowScrollRegions = 1
         Me.grdICTCLAS2.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
         Me.grdICTCLAS2.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
-        Appearance17.BackColor = System.Drawing.SystemColors.Window
-        Appearance17.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdICTCLAS2.DisplayLayout.Override.ActiveCellAppearance = Appearance17
+        Appearance18.BackColor = System.Drawing.SystemColors.Window
+        Appearance18.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdICTCLAS2.DisplayLayout.Override.ActiveCellAppearance = Appearance18
         Me.grdICTCLAS2.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         Me.grdICTCLAS2.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdICTCLAS2.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdICTCLAS2.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdICTCLAS2.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance18.BackColor = System.Drawing.SystemColors.Window
-        Me.grdICTCLAS2.DisplayLayout.Override.CardAreaAppearance = Appearance18
-        Appearance19.BorderColor = System.Drawing.Color.Silver
-        Appearance19.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdICTCLAS2.DisplayLayout.Override.CellAppearance = Appearance19
+        Appearance19.BackColor = System.Drawing.SystemColors.Window
+        Me.grdICTCLAS2.DisplayLayout.Override.CardAreaAppearance = Appearance19
+        Appearance20.BorderColor = System.Drawing.Color.Silver
+        Appearance20.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdICTCLAS2.DisplayLayout.Override.CellAppearance = Appearance20
         Me.grdICTCLAS2.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdICTCLAS2.DisplayLayout.Override.CellPadding = 0
-        Appearance20.BackColor = System.Drawing.SystemColors.Control
-        Appearance20.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance20.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance20.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance20.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdICTCLAS2.DisplayLayout.Override.GroupByRowAppearance = Appearance20
-        Appearance21.TextHAlignAsString = "Left"
-        Me.grdICTCLAS2.DisplayLayout.Override.HeaderAppearance = Appearance21
+        Appearance21.BackColor = System.Drawing.SystemColors.Control
+        Appearance21.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance21.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance21.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance21.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdICTCLAS2.DisplayLayout.Override.GroupByRowAppearance = Appearance21
+        Appearance22.TextHAlignAsString = "Left"
+        Me.grdICTCLAS2.DisplayLayout.Override.HeaderAppearance = Appearance22
         Me.grdICTCLAS2.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdICTCLAS2.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance22.BackColor = System.Drawing.SystemColors.Window
-        Appearance22.BorderColor = System.Drawing.Color.Silver
-        Me.grdICTCLAS2.DisplayLayout.Override.RowAppearance = Appearance22
+        Appearance23.BackColor = System.Drawing.SystemColors.Window
+        Appearance23.BorderColor = System.Drawing.Color.Silver
+        Me.grdICTCLAS2.DisplayLayout.Override.RowAppearance = Appearance23
         Me.grdICTCLAS2.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
         Me.grdICTCLAS2.DisplayLayout.Override.RowSizing = Infragistics.Win.UltraWinGrid.RowSizing.AutoFree
-        Appearance23.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdICTCLAS2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance23
+        Appearance24.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdICTCLAS2.DisplayLayout.Override.TemplateAddRowAppearance = Appearance24
         Me.grdICTCLAS2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTCLAS2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdICTCLAS2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTCLAS2.Location = New System.Drawing.Point(527, 45)
         Me.grdICTCLAS2.Name = "grdICTCLAS2"
-        Me.grdICTCLAS2.Size = New System.Drawing.Size(221, 152)
-        Me.grdICTCLAS2.TabIndex = 105
+        Me.grdICTCLAS2.Size = New System.Drawing.Size(221, 252)
+        Me.grdICTCLAS2.TabIndex = 22
         Me.grdICTCLAS2.Text = "Default % PO Qty Increase"
         '
         'UltraLabel14
@@ -398,7 +408,7 @@ Partial Class ICTCLAS1
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor1.Size = New System.Drawing.Size(96, 25)
-        Me.UltraNumericEditor1.TabIndex = 191
+        Me.UltraNumericEditor1.TabIndex = 21
         '
         'UltraLabel3
         '
@@ -416,7 +426,7 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.Size = New System.Drawing.Size(96, 25)
-        Me.UltraTextEditor3.TabIndex = 195
+        Me.UltraTextEditor3.TabIndex = 20
         '
         'UltraTextEditor5
         '
@@ -427,7 +437,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.ReadOnly = True
         Me.UltraTextEditor5.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor5.TabIndex = 198
+        Me.UltraTextEditor5.TabIndex = 3
+        Me.UltraTextEditor5.TabStop = False
         '
         'UltraTextEditor4
         '
@@ -438,12 +449,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
         Me.UltraTextEditor4.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor4.TabIndex = 196
+        Me.UltraTextEditor4.TabIndex = 2
         '
         'UltraLabel4
         '
-        Appearance11.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel4.Appearance = Appearance11
+        Appearance12.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel4.Appearance = Appearance12
         Me.UltraLabel4.AutoSize = True
         Me.UltraLabel4.Location = New System.Drawing.Point(26, 99)
         Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -461,7 +472,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
         Me.UltraTextEditor6.ReadOnly = True
         Me.UltraTextEditor6.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor6.TabIndex = 201
+        Me.UltraTextEditor6.TabIndex = 5
+        Me.UltraTextEditor6.TabStop = False
         '
         'UltraTextEditor7
         '
@@ -472,12 +484,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
         Me.UltraTextEditor7.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor7.TabIndex = 199
+        Me.UltraTextEditor7.TabIndex = 4
         '
         'UltraLabel5
         '
-        Appearance10.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel5.Appearance = Appearance10
+        Appearance11.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel5.Appearance = Appearance11
         Me.UltraLabel5.AutoSize = True
         Me.UltraLabel5.Location = New System.Drawing.Point(26, 123)
         Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -495,7 +507,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
         Me.UltraTextEditor8.ReadOnly = True
         Me.UltraTextEditor8.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor8.TabIndex = 207
+        Me.UltraTextEditor8.TabIndex = 11
+        Me.UltraTextEditor8.TabStop = False
         '
         'UltraTextEditor9
         '
@@ -506,12 +519,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
         Me.UltraTextEditor9.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor9.TabIndex = 205
+        Me.UltraTextEditor9.TabIndex = 10
         '
         'UltraLabel6
         '
-        Appearance8.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel6.Appearance = Appearance8
+        Appearance9.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel6.Appearance = Appearance9
         Me.UltraLabel6.AutoSize = True
         Me.UltraLabel6.Location = New System.Drawing.Point(26, 229)
         Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -529,7 +542,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.ReadOnly = True
         Me.UltraTextEditor10.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor10.TabIndex = 204
+        Me.UltraTextEditor10.TabIndex = 9
+        Me.UltraTextEditor10.TabStop = False
         '
         'UltraTextEditor11
         '
@@ -540,12 +554,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor11.Name = "UltraTextEditor11"
         Me.UltraTextEditor11.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor11.TabIndex = 202
+        Me.UltraTextEditor11.TabIndex = 8
         '
         'UltraLabel7
         '
-        Appearance9.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel7.Appearance = Appearance9
+        Appearance10.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel7.Appearance = Appearance10
         Me.UltraLabel7.AutoSize = True
         Me.UltraLabel7.Location = New System.Drawing.Point(26, 205)
         Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -563,7 +577,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
         Me.UltraTextEditor12.ReadOnly = True
         Me.UltraTextEditor12.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor12.TabIndex = 210
+        Me.UltraTextEditor12.TabIndex = 7
+        Me.UltraTextEditor12.TabStop = False
         '
         'UltraTextEditor13
         '
@@ -574,12 +589,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor13.Name = "UltraTextEditor13"
         Me.UltraTextEditor13.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor13.TabIndex = 208
+        Me.UltraTextEditor13.TabIndex = 6
         '
         'UltraLabel8
         '
-        Appearance7.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel8.Appearance = Appearance7
+        Appearance8.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel8.Appearance = Appearance8
         Me.UltraLabel8.AutoSize = True
         Me.UltraLabel8.Location = New System.Drawing.Point(26, 147)
         Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -590,8 +605,8 @@ Partial Class ICTCLAS1
         '
         'UltraLabel9
         '
-        Appearance6.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel9.Appearance = Appearance6
+        Appearance7.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel9.Appearance = Appearance7
         Me.UltraLabel9.AutoSize = True
         Me.UltraLabel9.Location = New System.Drawing.Point(16, 75)
         Me.UltraLabel9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -602,8 +617,8 @@ Partial Class ICTCLAS1
         '
         'UltraLabel10
         '
-        Appearance5.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel10.Appearance = Appearance5
+        Appearance6.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel10.Appearance = Appearance6
         Me.UltraLabel10.AutoSize = True
         Me.UltraLabel10.Location = New System.Drawing.Point(16, 181)
         Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -614,8 +629,8 @@ Partial Class ICTCLAS1
         '
         'UltraLabel11
         '
-        Appearance2.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel11.Appearance = Appearance2
+        Appearance3.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel11.Appearance = Appearance3
         Me.UltraLabel11.AutoSize = True
         Me.UltraLabel11.Location = New System.Drawing.Point(16, 266)
         Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -633,7 +648,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor14.Name = "UltraTextEditor14"
         Me.UltraTextEditor14.ReadOnly = True
         Me.UltraTextEditor14.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor14.TabIndex = 218
+        Me.UltraTextEditor14.TabIndex = 15
+        Me.UltraTextEditor14.TabStop = False
         '
         'UltraTextEditor15
         '
@@ -644,12 +660,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
         Me.UltraTextEditor15.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor15.TabIndex = 216
+        Me.UltraTextEditor15.TabIndex = 14
         '
         'UltraLabel12
         '
-        Appearance3.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel12.Appearance = Appearance3
+        Appearance4.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel12.Appearance = Appearance4
         Me.UltraLabel12.AutoSize = True
         Me.UltraLabel12.Location = New System.Drawing.Point(26, 314)
         Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -667,7 +683,8 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
         Me.UltraTextEditor16.ReadOnly = True
         Me.UltraTextEditor16.Size = New System.Drawing.Size(277, 25)
-        Me.UltraTextEditor16.TabIndex = 215
+        Me.UltraTextEditor16.TabIndex = 13
+        Me.UltraTextEditor16.TabStop = False
         '
         'UltraTextEditor17
         '
@@ -678,12 +695,12 @@ Partial Class ICTCLAS1
         Me.UltraTextEditor17.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor17.Name = "UltraTextEditor17"
         Me.UltraTextEditor17.Size = New System.Drawing.Size(108, 25)
-        Me.UltraTextEditor17.TabIndex = 213
+        Me.UltraTextEditor17.TabIndex = 12
         '
         'UltraLabel13
         '
-        Appearance4.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel13.Appearance = Appearance4
+        Appearance5.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel13.Appearance = Appearance5
         Me.UltraLabel13.AutoSize = True
         Me.UltraLabel13.Location = New System.Drawing.Point(26, 290)
         Me.UltraLabel13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -696,29 +713,30 @@ Partial Class ICTCLAS1
         '
         Me.Absx1.SetABSColumnName(Me.txtDISC_DESC, "DISC_DESC")
         Me.Absx1.SetABSParentColumnName(Me.txtDISC_DESC, "DISC_CODE")
-        Me.txtDISC_DESC.Location = New System.Drawing.Point(244, 372)
+        Me.txtDISC_DESC.Location = New System.Drawing.Point(244, 343)
         Me.txtDISC_DESC.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.txtDISC_DESC.Name = "txtDISC_DESC"
         Me.txtDISC_DESC.ReadOnly = True
         Me.txtDISC_DESC.Size = New System.Drawing.Size(277, 25)
-        Me.txtDISC_DESC.TabIndex = 222
+        Me.txtDISC_DESC.TabIndex = 17
+        Me.txtDISC_DESC.TabStop = False
         '
         'txtDISC_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtDISC_CODE, "DISC_CODE")
         Me.Absx1.SetABSHasButton(Me.txtDISC_CODE, True)
-        Me.txtDISC_CODE.Location = New System.Drawing.Point(130, 372)
+        Me.txtDISC_CODE.Location = New System.Drawing.Point(130, 343)
         Me.txtDISC_CODE.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.txtDISC_CODE.Name = "txtDISC_CODE"
         Me.txtDISC_CODE.Size = New System.Drawing.Size(108, 25)
-        Me.txtDISC_CODE.TabIndex = 220
+        Me.txtDISC_CODE.TabIndex = 16
         '
         'lblDISC_CODE
         '
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Me.lblDISC_CODE.Appearance = Appearance1
+        Appearance2.BackColor = System.Drawing.Color.Transparent
+        Me.lblDISC_CODE.Appearance = Appearance2
         Me.lblDISC_CODE.AutoSize = True
-        Me.lblDISC_CODE.Location = New System.Drawing.Point(16, 376)
+        Me.lblDISC_CODE.Location = New System.Drawing.Point(16, 347)
         Me.lblDISC_CODE.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.lblDISC_CODE.Name = "lblDISC_CODE"
         Me.lblDISC_CODE.Size = New System.Drawing.Size(102, 18)
@@ -735,9 +753,9 @@ Partial Class ICTCLAS1
         Me.grpStyleCodeGeneration.Controls.Add(Me.UltraNumericEditor1)
         Me.grpStyleCodeGeneration.Controls.Add(Me.UltraLabel3)
         Me.grpStyleCodeGeneration.Controls.Add(Me.UltraTextEditor3)
-        Me.grpStyleCodeGeneration.Location = New System.Drawing.Point(16, 413)
+        Me.grpStyleCodeGeneration.Location = New System.Drawing.Point(16, 495)
         Me.grpStyleCodeGeneration.Name = "grpStyleCodeGeneration"
-        Me.grpStyleCodeGeneration.Size = New System.Drawing.Size(578, 75)
+        Me.grpStyleCodeGeneration.Size = New System.Drawing.Size(578, 90)
         Me.grpStyleCodeGeneration.TabIndex = 223
         Me.grpStyleCodeGeneration.Text = "Style Code Generation"
         '
@@ -771,17 +789,47 @@ Partial Class ICTCLAS1
         'chkSTYLE_CLASS_RELEASE_ATONCE
         '
         Me.Absx1.SetABSColumnName(Me.chkSTYLE_CLASS_RELEASE_ATONCE, "STYLE_CLASS_RELEASE_ATONCE")
-        Me.chkSTYLE_CLASS_RELEASE_ATONCE.Location = New System.Drawing.Point(16, 349)
+        Me.chkSTYLE_CLASS_RELEASE_ATONCE.Location = New System.Drawing.Point(130, 375)
         Me.chkSTYLE_CLASS_RELEASE_ATONCE.Name = "chkSTYLE_CLASS_RELEASE_ATONCE"
         Me.chkSTYLE_CLASS_RELEASE_ATONCE.Size = New System.Drawing.Size(221, 20)
-        Me.chkSTYLE_CLASS_RELEASE_ATONCE.TabIndex = 257
+        Me.chkSTYLE_CLASS_RELEASE_ATONCE.TabIndex = 18
         Me.chkSTYLE_CLASS_RELEASE_ATONCE.Text = "Release At-Once if Available"
+        '
+        'AbsCheckBox1
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "EXCLUDE_FROM_TARIFFS")
+        Me.AbsCheckBox1.Location = New System.Drawing.Point(130, 401)
+        Me.AbsCheckBox1.Name = "AbsCheckBox1"
+        Me.AbsCheckBox1.Size = New System.Drawing.Size(167, 20)
+        Me.AbsCheckBox1.TabIndex = 19
+        Me.AbsCheckBox1.Text = "Exclude from tariffs"
+        '
+        'dteORDER_START_DATE
+        '
+        Me.Absx1.SetABSColumnName(Me.dteORDER_START_DATE, "ORDER_START_DATE")
+        Me.dteORDER_START_DATE.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
+        Me.dteORDER_START_DATE.Location = New System.Drawing.Point(147, 463)
+        Me.dteORDER_START_DATE.Name = "dteORDER_START_DATE"
+        Me.dteORDER_START_DATE.Size = New System.Drawing.Size(121, 25)
+        Me.dteORDER_START_DATE.TabIndex = 8
+        Me.dteORDER_START_DATE.Value = New Date(2007, 12, 18, 0, 0, 0, 0)
+        '
+        'UltraLabel18
+        '
+        Appearance1.ForeColor = System.Drawing.Color.Red
+        Me.UltraLabel18.Appearance = Appearance1
+        Me.UltraLabel18.Location = New System.Drawing.Point(147, 427)
+        Me.UltraLabel18.Name = "UltraLabel18"
+        Me.UltraLabel18.Size = New System.Drawing.Size(374, 35)
+        Me.UltraLabel18.TabIndex = 336
+        Me.UltraLabel18.Text = "Optional. Only Order Dates >= this date will not receive Tariffs. Exclude from ta" &
+    "riffs must be checked"
         '
         'ICTCLAS1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(989, 574)
+        Me.ClientSize = New System.Drawing.Size(989, 674)
         Me.Name = "ICTCLAS1"
         Me.Text = "ICTCLAS1"
         Me.Panel1.ResumeLayout(False)
@@ -820,6 +868,8 @@ Partial Class ICTCLAS1
         Me.grpStyleCodeGeneration.ResumeLayout(False)
         Me.grpStyleCodeGeneration.PerformLayout()
         CType(Me.chkSTYLE_CLASS_RELEASE_ATONCE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dteORDER_START_DATE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -864,4 +914,7 @@ Partial Class ICTCLAS1
     Friend WithEvents UltraLabel17 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel16 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents chkSTYLE_CLASS_RELEASE_ATONCE As ABSCS.ABSCheckBox
+    Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
+    Friend WithEvents dteORDER_START_DATE As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraLabel18 As Misc.UltraLabel
 End Class

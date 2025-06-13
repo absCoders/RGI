@@ -24,6 +24,10 @@ Public Class ICTCLAS1
         grpStyleCodeGeneration.Visible = (ASCMAIN1.CLIENT = "NYA")
 
         chkSTYLE_CLASS_RELEASE_ATONCE.Visible = (ASCMAIN1.CLIENT = "RGI")
+
+        dteORDER_START_DATE.MinDate = CDate("01/01/2024")
+        dteORDER_START_DATE.MaxDate = DateAdd(DateInterval.Year, 2, DateTime.Now)
+
     End Sub
 
 #Region "Popup Menus"
@@ -72,6 +76,7 @@ Public Class ICTCLAS1
         Select Case eItemKey
 
             Case "New"
+
             Case "Edit"
 
             Case "Update"
