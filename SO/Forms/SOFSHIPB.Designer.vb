@@ -2758,7 +2758,7 @@ Partial Class SOFSHIPB
         'splSOTCART1
         '
         Me.splSOTCART1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.splSOTCART1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.splSOTCART1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
         Me.splSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.splSOTCART1.Name = "splSOTCART1"
         '
@@ -2770,7 +2770,7 @@ Partial Class SOFSHIPB
         '
         Me.splSOTCART1.Panel2.Controls.Add(Me.grdSOTCART2)
         Me.splSOTCART1.Size = New System.Drawing.Size(1001, 215)
-        Me.splSOTCART1.SplitterDistance = 536
+        Me.splSOTCART1.SplitterDistance = 839
         Me.splSOTCART1.TabIndex = 0
         '
         'grdSOTCART1
@@ -2926,7 +2926,7 @@ Partial Class SOFSHIPB
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(536, 215)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(839, 215)
         Me.grdSOTCART1.TabIndex = 16
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -3034,7 +3034,7 @@ Partial Class SOFSHIPB
         Me.grdSOTCART2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART2.Name = "grdSOTCART2"
-        Me.grdSOTCART2.Size = New System.Drawing.Size(461, 215)
+        Me.grdSOTCART2.Size = New System.Drawing.Size(158, 215)
         Me.grdSOTCART2.TabIndex = 15
         Me.grdSOTCART2.Text = "Carton Details"
         '
@@ -7710,7 +7710,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1009, 542)
         '
@@ -8456,7 +8456,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdSOTSHIP1)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1009, 542)
         '
