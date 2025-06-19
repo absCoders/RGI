@@ -41,6 +41,8 @@ Partial Class ICFLJOB1
         Dim Appearance60 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand3 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTRSRV2", -1)
         Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RSRV_NO")
@@ -126,10 +128,11 @@ Partial Class ICFLJOB1
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTLJOB2", -1)
@@ -169,10 +172,10 @@ Partial Class ICFLJOB1
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
+        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
         Me.cmdPO_refresh = New System.Windows.Forms.Button()
         Me.UltraLabel16 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtPO_IMPORT = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -243,8 +246,6 @@ Partial Class ICFLJOB1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
-        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -256,6 +257,7 @@ Partial Class ICFLJOB1
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPO_IMPORT, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl18.SuspendLayout()
         CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -319,7 +321,6 @@ Partial Class ICFLJOB1
         Me.spl.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -448,6 +449,32 @@ Partial Class ICFLJOB1
         Me.GroupBox1.Size = New System.Drawing.Size(189, 141)
         Me.GroupBox1.TabIndex = 1
         Me.GroupBox1.TabStop = False
+        '
+        'AbsCheckBox2
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "USE_SIZE_SCALE")
+        Appearance1.BackColor = System.Drawing.Color.Transparent
+        Appearance1.BackColor2 = System.Drawing.Color.Transparent
+        Me.AbsCheckBox2.Appearance = Appearance1
+        Me.AbsCheckBox2.BackColor = System.Drawing.Color.Transparent
+        Me.AbsCheckBox2.BackColorInternal = System.Drawing.Color.Transparent
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(18, 121)
+        Me.AbsCheckBox2.Name = "AbsCheckBox2"
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(150, 20)
+        Me.AbsCheckBox2.TabIndex = 208
+        Me.AbsCheckBox2.Text = "Use Size Scale"
+        '
+        'UltraLabel17
+        '
+        Appearance2.ForeColor = System.Drawing.Color.Blue
+        Me.UltraLabel17.Appearance = Appearance2
+        Me.UltraLabel17.AutoSize = True
+        Me.UltraLabel17.Font = New System.Drawing.Font("Verdana", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.UltraLabel17.Location = New System.Drawing.Point(22, 61)
+        Me.UltraLabel17.Name = "UltraLabel17"
+        Me.UltraLabel17.Size = New System.Drawing.Size(126, 15)
+        Me.UltraLabel17.TabIndex = 129
+        Me.UltraLabel17.Text = "Use '%' for Wild Card"
         '
         'cmdPO_refresh
         '
@@ -1049,7 +1076,7 @@ Partial Class ICFLJOB1
         'UltraLabel15
         '
         Me.UltraLabel15.AutoSize = True
-        Me.UltraLabel15.Location = New System.Drawing.Point(7, 65)
+        Me.UltraLabel15.Location = New System.Drawing.Point(7, 76)
         Me.UltraLabel15.Name = "UltraLabel15"
         Me.UltraLabel15.Size = New System.Drawing.Size(40, 18)
         Me.UltraLabel15.TabIndex = 206
@@ -1059,7 +1086,7 @@ Partial Class ICFLJOB1
         '
         Me.Absx1.SetABSColumnName(Me.numExtra, "LABEL_QTY_EXTRA")
         Me.numExtra.AlwaysInEditMode = True
-        Me.numExtra.Location = New System.Drawing.Point(53, 61)
+        Me.numExtra.Location = New System.Drawing.Point(53, 72)
         Me.numExtra.MaxValue = 100.0R
         Me.numExtra.MinValue = 0
         Me.numExtra.Name = "numExtra"
@@ -1072,21 +1099,23 @@ Partial Class ICFLJOB1
         Me.Absx1.SetABSColumnName(Me.optLABEL_QTY_CALC, "LABEL_QTY_CALC")
         Me.optLABEL_QTY_CALC.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         Me.optLABEL_QTY_CALC.CheckedIndex = 0
-        ValueListItem1.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem7.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem7.DataValue = "P"
+        ValueListItem7.DisplayText = "Pick Qty"
         ValueListItem1.DataValue = "S"
         ValueListItem1.DisplayText = "Fill Sheet"
-        ValueListItem2.DataValue = "R"
-        ValueListItem2.DisplayText = "Fill Row"
-        ValueListItem6.DataValue = "O"
-        ValueListItem6.DisplayText = "Order Qty"
         ValueListItem3.DataValue = "X"
         ValueListItem3.DisplayText = "Extra Only"
-        Me.optLABEL_QTY_CALC.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2, ValueListItem6, ValueListItem3})
+        ValueListItem6.DataValue = "O"
+        ValueListItem6.DisplayText = "Order Qty"
+        ValueListItem2.DataValue = "R"
+        ValueListItem2.DisplayText = "Fill Row"
+        Me.optLABEL_QTY_CALC.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem7, ValueListItem1, ValueListItem3, ValueListItem6, ValueListItem2})
         Me.optLABEL_QTY_CALC.Location = New System.Drawing.Point(7, 11)
         Me.optLABEL_QTY_CALC.Name = "optLABEL_QTY_CALC"
-        Me.optLABEL_QTY_CALC.Size = New System.Drawing.Size(183, 44)
+        Me.optLABEL_QTY_CALC.Size = New System.Drawing.Size(183, 55)
         Me.optLABEL_QTY_CALC.TabIndex = 186
-        Me.optLABEL_QTY_CALC.Text = "Fill Sheet"
+        Me.optLABEL_QTY_CALC.Text = "Pick Qty"
         '
         'grpPO
         '
@@ -1663,32 +1692,6 @@ Partial Class ICFLJOB1
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1070, 594)
         '
-        'UltraLabel17
-        '
-        Appearance2.ForeColor = System.Drawing.Color.Blue
-        Me.UltraLabel17.Appearance = Appearance2
-        Me.UltraLabel17.AutoSize = True
-        Me.UltraLabel17.Font = New System.Drawing.Font("Verdana", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.UltraLabel17.Location = New System.Drawing.Point(22, 61)
-        Me.UltraLabel17.Name = "UltraLabel17"
-        Me.UltraLabel17.Size = New System.Drawing.Size(126, 15)
-        Me.UltraLabel17.TabIndex = 129
-        Me.UltraLabel17.Text = "Use '%' for Wild Card"
-        '
-        'AbsCheckBox2
-        '
-        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "USE_SIZE_SCALE")
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Appearance1.BackColor2 = System.Drawing.Color.Transparent
-        Me.AbsCheckBox2.Appearance = Appearance1
-        Me.AbsCheckBox2.BackColor = System.Drawing.Color.Transparent
-        Me.AbsCheckBox2.BackColorInternal = System.Drawing.Color.Transparent
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(18, 121)
-        Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(150, 20)
-        Me.AbsCheckBox2.TabIndex = 208
-        Me.AbsCheckBox2.Text = "Use Size Scale"
-        '
         'ICFLJOB1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1708,6 +1711,7 @@ Partial Class ICFLJOB1
         Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
+        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPO_IMPORT, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl18.ResumeLayout(False)
         CType(Me.UltraGrid1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1776,7 +1780,6 @@ Partial Class ICFLJOB1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
