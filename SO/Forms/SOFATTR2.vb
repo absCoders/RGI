@@ -694,12 +694,14 @@ Public Class SOFATTR2
         '2025 Tariff Notice
         r += 3
         oSheet.Range($"A{r}:N{r}").Merge()
-        oSheet.Range($"A{r}:N{r}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        'oSheet.Range($"A{r}:N{r}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        'oSheet.Range($"A{r}:N{r}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        oSheet.Range($"A{r}:N{r}").Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
         oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
         oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
         oSheet.Range($"A{r}:N{r}").Font.Bold = True
         oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
-
+        'oSheet.Range($"A{r}:N{r}").Font.Size = 8
 
         oSheet.Range(0, 0).Select()
         oSheet.WindowInfo.FreezePanes = True
@@ -3006,7 +3008,9 @@ Public Class SOFATTR2
         R += 1
         rng = XWS.Range($"A{R}:N{R}")
         rng.Merge()
-        rng.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        'rng.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
+        'rng.Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
+        rng.Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
         rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
         rng.Font.Bold = True
         rng.Font.Color = Color.Red

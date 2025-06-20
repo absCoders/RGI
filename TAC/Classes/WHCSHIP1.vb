@@ -4099,6 +4099,7 @@ Public Class WHCSHIP1
             objFedexRates.FedExAccount.Password = cPassword
             objFedexRates.FedExAccount.MeterNumber = cFedexMeterNumber
             objFedexRates.RequestedService = cRequestedServiceType
+            objFedexRates.RateType = 3 ' 1=List, 2=Account, 3=List & Account
 
             objFedexRates.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
@@ -4252,10 +4253,7 @@ Public Class WHCSHIP1
 
                     .RecipientAddress.ZipCode = "10007" ' "07081"
                     .RecipientAddress.CountryCode = "US"
-
-                    '.RecipientAddress.AddressFlags = 2
                     .RequestedService = ServiceTypes.stUnspecified
-                    '.PickupType = FedexratesPickupTypes.fptUseScheduledPickup
 
                     Dim PackageDetail As New PackageDetail
                     With PackageDetail
@@ -4346,7 +4344,10 @@ Public Class WHCSHIP1
                 objFedexRates.ShipmentSpecialServices = ShipmentSpecialServices
             End If
 
-            objFedexRates.RateType = &H2 Or &H1 ' FedexratesRateTypes.rtList
+            'objFedexRates.RateType = &H2 Or &H1 ' FedexratesRateTypes.rtList
+            objFedexRates.RateType = 3 ' 1=List, 2=Account, 3=List & Account
+            objFedexRates.PickupType = FedexratesPickupTypes.fptRegularStop
+            objFedexRates.PickupType = FedexratesPickupTypes.fptUseScheduledPickup
 
             ' Geting a resouce error, try it twice. May be the test environment
             Dim success As Boolean = True
@@ -4367,16 +4368,52 @@ Public Class WHCSHIP1
                     With requestedRateList(iLoop)
                         .ServiceType = objFedexRates.Services(iLoop).ServiceType
                         .ServiceTypeDescription = StrConv(objFedexRates.Services(iLoop).ServiceTypeDescription.Replace("_", " "), VbStrConv.ProperCase)
-                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty)
+                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty) ' + Val(objFedexRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
                         .DeliveryTime = objFedexRates.Services(iLoop).DeliveryTime
+                        .DeliveryDate = objFedexRates.Services(iLoop).DeliveryDate
                         .ListNetCharge = Val(objFedexRates.Services(iLoop).ListNetCharge & String.Empty)
                         .TransitTime = objFedexRates.Services(iLoop).TransitTime & String.Empty
 
-                        If inTestMode Then
-                            If .AccountNetCharge = 0 Then
-                                .AccountNetCharge = .ListNetCharge
-                            End If
+                        ' See if we have a negotiated rate, if not then use List Net Charge
+                        If .AccountNetCharge = 0 Then
+                            .AccountNetCharge = .ListNetCharge
                         End If
+
+                        'If inTestMode Then
+                        '    If .AccountNetCharge = 0 Then
+                        '        .AccountNetCharge = .ListNetCharge
+                        '    End If
+                        'End If
+
+                        .Disclaimer = String.Empty
+
+                        Try
+                            Dim aggregate As String = (objFedexRates.Services(iLoop).Aggregate & String.Empty).ToString.Replace("v9:", "").Replace("v12:", "") ' "<?xml version=""1.0""?>" & vbCrLf & 
+
+                            If aggregate.Length > 0 Then
+                                Dim dst As New DataSet
+
+                                ' Convert Json to XML then convert XML to Dataset
+                                Dim doc As XmlDocument = JsonConvert.DeserializeXmlNode("{ 'root': " & aggregate & "}")
+                                Dim result As String = "<?xml version=""1.0"" encoding=""UTF-8""?><ImportedOrders>" & doc.ChildNodes(0).InnerXml & "</ImportedOrders>"
+                                result = result.Replace("><", $">{Environment.NewLine}<")
+
+                                doc.LoadXml(result)
+                                Dim sr As StringReader = New StringReader(doc.InnerXml)
+                                Dim xtr As XmlTextReader = New XmlTextReader(sr)
+                                dst.ReadXml(xtr)
+
+                                If dst IsNot Nothing AndAlso dst.Tables.Contains("customermessages") Then
+                                    For Each row As DataRow In dst.Tables("customermessages").Select("")
+                                        .Disclaimer &= "  " & row.Item("Code") & " " & row.Item("Message")
+                                    Next
+                                End If
+
+                                .Disclaimer = .Disclaimer.Trim
+                            End If
+
+                        Catch ex As Exception
+                        End Try
 
                         If Val(.TransitTime) <= 0 Then
                             Select Case objFedexRates.Services(iLoop).TransitTime
@@ -5214,7 +5251,7 @@ Public Class WHCSHIP1
                     If isGroundFreight AndAlso .ServiceType = "43" Then
                         .ServiceTypeDescription = "UPS Ground Freight"
                     End If
-                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty)
+                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty) ' + Val(objUpsRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
                     .DeliveryTime = objUpsRates.Services(iLoop).DeliveryTime
                     .ListNetCharge = Val(objUpsRates.Services(iLoop).ListNetCharge & String.Empty)
                     .TransitTime = objUpsRates.Services(iLoop).TransitTime
@@ -5235,17 +5272,25 @@ Public Class WHCSHIP1
                         Dim aggregate As String = (objUpsRates.Services(iLoop).Aggregate & String.Empty).ToString.Replace("v9:", "").Replace("v12:", "") ' "<?xml version=""1.0""?>" & vbCrLf & 
 
                         If aggregate.Length > 0 Then
-                            Dim upsPackageAgg As New System.Xml.XmlDocument
-                            upsPackageAgg.LoadXml(aggregate)
+                            Dim dst As New DataSet
 
-                            Using XmlReader = New XmlNodeReader(upsPackageAgg)
-                                While XmlReader.Read
-                                    Select Case XmlReader.Name.ToString()
-                                        Case "RatedShipmentWarning"
-                                            .Disclaimer &= XmlReader.ReadInnerXml
-                                    End Select
-                                End While
-                            End Using
+                            ' Convert Json to XML then convert XML to Dataset
+                            Dim doc As XmlDocument = JsonConvert.DeserializeXmlNode("{ 'root': " & aggregate & "}")
+                            Dim result As String = "<?xml version=""1.0"" encoding=""UTF-8""?><ImportedOrders>" & doc.ChildNodes(0).InnerXml & "</ImportedOrders>"
+                            result = result.Replace("><", $">{Environment.NewLine}<")
+
+                            doc.LoadXml(result)
+                            Dim sr As StringReader = New StringReader(doc.InnerXml)
+                            Dim xtr As XmlTextReader = New XmlTextReader(sr)
+                            dst.ReadXml(xtr)
+
+                            If dst IsNot Nothing AndAlso dst.Tables.Contains("RatedShipmentAlert") Then
+                                For Each row As DataRow In dst.Tables("RatedShipmentAlert").Select("")
+                                    .Disclaimer &= "  " & row.Item("Code") & " " & row.Item("Description")
+                                Next
+                            End If
+
+                            .Disclaimer = .Disclaimer.Trim
                         End If
 
                     Catch ex As Exception

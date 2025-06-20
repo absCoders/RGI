@@ -1456,7 +1456,7 @@ Public Class POFORDR1
 
 
                 If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-                    ASCMAIN1.sql = "Select * from POTPACK1 where PO_ORDER_NO = '" & PO_ORDER_NO & "' OR PO_ORDER_NO2 = '" & PO_ORDER_NO & "' or PO_ORDER_NO3 = '" & PO_ORDER_NO & "' "
+                    ASCMAIN1.sql = "Select * from POTPACK1 where PO_ORDER_NO = '" & PO_ORDER_NO & "' OR PO_ORDER_NO2 = '" & PO_ORDER_NO & "' or PO_ORDER_NO3 = '" & PO_ORDER_NO & "' or PO_ORDER_NO4 = '" & PO_ORDER_NO & "'"
                     Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
                     If tblPOTPACK1.Rows.Count > 0 Then
                         EMsg &= vbCr & "You May Not Delete an Order which has Pack Lists Assigned to it"

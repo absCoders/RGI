@@ -161,6 +161,17 @@ Public Class SOROREL1
 
         End If
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            With dst.Tables.Add("ERROR_TBL")
+                .Columns.Add("STYLE_CODE", GetType(System.String))
+                .Columns.Add("SUB_BODY_CODE", GetType(System.String))
+                .Columns.Add("CARTON_PACK_QTY", GetType(System.String))
+                .Columns.Add("CASE_CUBE", GetType(System.String))
+                .Columns.Add("CUST_CODE", GetType(System.String))
+                .Columns.Add("STYLE_DESC", GetType(System.String))
+            End With
+        End If
+
         If (ASCMAIN1.CLIENT = "RGI") Then
             tabOptions.Tabs("Exceptions").Visible = True
             Absx1.chkFor("CHKNO_SPECIAL_COMMENTS").Checked = True
@@ -3552,6 +3563,38 @@ Public Class SOROREL1
                         EMsg &= vbCr & $"Missing Order Group No {row.Item("ORDR_GROUP_NO")} For DC {row.Item("CUST_DC_NO")} When Releasing Multi-PO"
                     Next
 
+
+                    If OG_CUSTs.Contains("WALMART") Then
+                        dst.Tables("ERROR_TBL").Rows.Clear()
+
+                        ASCMAIN1.sql = "Select STYLE_CODE,STYLE_DESC,SUB_BODY_CODE,CARTON_PACK_QTY,CASE_CUBE,CUST_CODE FROM ICTSTYL1 WHERE (CASE_CUBE Is NULL or case_cube = 0 OR CARTON_PACK_qty = 0 OR CARTON_PACK_qty IS NULL)  And STYLE_CODE In (" _
+                        & " Select  DISTINCT STYLE_CODE FROM SOTORDR2 WHERE ORDR_NO In (" _
+                        & " Select  ORDR_NO  FROM SOTORDR1 WHERE ORDR_GROUP_NO in (" & sqlOG & ")))"
+
+                        ''Dim OG_CUSTs As New List(Of String)
+                        For Each row In ASCDATA1.GetDataTable.Select("")
+                            ''    OG_CUSTs.Add(row.Item("CUST_CODE"))
+                            Dim rowERROR_TBL As DataRow = Nothing
+                            rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                            With rowERROR_TBL
+                                .Item("STYLE_CODE") = row.Item("STYLE_CODE")
+                                .Item("SUB_BODY_CODE") = row.Item("SUB_BODY_CODE")
+                                .Item("CARTON_PACK_QTY") = row.Item("CARTON_PACK_QTY")
+                                .Item("CUST_CODE") = row.Item("CUST_CODE")
+                                .Item("CASE_CUBE") = row.Item("CASE_CUBE")
+                                .Item("STYLE_DESC") = row.Item("STYLE_DESC")
+                            End With
+                            dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+
+                        Next
+
+                        If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                            Using F As New ASFMSGBF
+                                F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Styles have been identified as missing case cube values", "")
+                            End Using
+                            EMsg &= vbCr & "You must correct the Style Case Cube and Carton Pack Qty in the Styles Listed previously before releasing"
+                        End If
+                    End If
 
 
                 End If

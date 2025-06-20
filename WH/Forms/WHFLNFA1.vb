@@ -28,6 +28,7 @@ Public Class WHFLNFA1
 
             ASCMAIN1.sql = "Select * from " & WHTLOCBX
             Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "", 2)
+            .Tables("WHTLOCBX").Columns.Add("BAL", GetType(Integer), "ISNULL(ONH, 0) - ( ISNULL(PICK, 0) + ISNULL(OPEN, 0))")
 
             '                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
 
@@ -117,7 +118,7 @@ Public Class WHFLNFA1
         Create_Summary(grdWHTLOCLX, New String() {"LOCATION_QTY"})
 
         Create_Summary(grdWHTLOCBX, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTLOCBX, New String() {"ONH", "PICK", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
+        Create_Summary(grdWHTLOCBX, New String() {"ONH", "PICK", "OPEN", "BAL", "WAV", "RECA", "RECB", "GUN", "LNF", "SHP", "RTN", "FIN", "ADJ", "LOC"})
 
         Create_Summary(grdWHTLOCBY, "LOCATION_CODE", "Count")
         Create_Summary(grdWHTLOCBY, New String() {"LOCATION_QTY", "LOCATION_QTY_WAVE"})
@@ -257,6 +258,9 @@ Public Class WHFLNFA1
         chkPastDueCountsOnly.Visible = ScreenMode
         Set_Read_Only_for_ctl(chkPastDueCountsOnly, False)
 
+        chkShowLocs.Visible = ScreenMode
+        Set_Read_Only_for_ctl(chkShowLocs, False)
+
         optLNF.Visible = ScreenMode
         Set_Read_Only_for_ctl(optLNF, False)
 
@@ -308,6 +312,7 @@ Public Class WHFLNFA1
 
         Set_ICTIADJX()
 
+        ChangeGridColumView()
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -581,6 +586,27 @@ Public Class WHFLNFA1
         Set_WHTLOCBX()
     End Sub
 
+    Private Sub chkShowLocs_CheckedValueChanged(sender As Object, e As EventArgs) Handles chkShowLocs.CheckedValueChanged
+        ChangeGridColumView()
+    End Sub
+
+    Private Sub ChangeGridColumView()
+        With grdWHTLOCBX.DisplayLayout.Bands("WHTLOCBX")
+            '.Columns("STYLE_CODE").Header.Fixed = True
+            '.Columns("COLOR_CODE").Header.Fixed = True
+
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                If "STYLE_CODE,COLOR_CODE,ONH,LOC,PICK,OPEN,BAL,DATE_LAST_CYCLE_COUNT".Contains(gcol.Key) Then
+                ElseIf "LOCATIONS".Contains(gcol.Key) Then
+                    gcol.Hidden = Not chkShowLocs.Checked
+                    gcol.Width = 1000
+                Else
+                    gcol.Hidden = chkShowLocs.Checked
+                End If
+            Next
+        End With
+
+    End Sub
     Private Sub optLOC_ValueChanged(sender As Object, e As EventArgs) Handles optLOC.ValueChanged
         If Me.SELECTION_NO = 0 Then Exit Sub
         Set_WHTLOCLX()
@@ -871,29 +897,40 @@ Public Class WHFLNFA1
 
         Dim locations_to_avoid As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
 
-        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, ' ' STYLE_DESC, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (" & vbCrLf _
-             & "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
-             & ", SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-B',WHTLOCB1.LOCATION_QTY,0)) RECB" & vbCrLf _
-             & ", SUM (DECODE(NVL(WHTLOCM1.LOCATION_USE,'?'),'G',WHTLOCB1.LOCATION_QTY,0)) GUN" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-LNF-A',WHTLOCB1.LOCATION_QTY,0)) LNF" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-SHP-A',WHTLOCB1.LOCATION_QTY,0)) SHP" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-RTN-A',WHTLOCB1.LOCATION_QTY,0)) RTN" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-FIN-A',WHTLOCB1.LOCATION_QTY,0)) FIN" & vbCrLf _
-             & ", SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-ADJ-A',WHTLOCB1.LOCATION_QTY,0)) ADJ" & vbCrLf _
-             & $", SUM (CASE WHEN NVL(WHTLOCM1.LOCATION_USE,'?')<>'G' AND WHTLOCB1.LOCATION_CODE NOT IN ({locations_to_avoid}) THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LOC" & vbCrLf _
-             & " from WHTLOCB1,WHTLOCM1" & vbCrLf _
-             & $" where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
-             & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
-             & "   and WHTLOCM1.WHSE_CODE = WHTLOCB1.WHSE_CODE and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE" & vbCrLf _
-             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
-             & ") X WHERE WHTLOCBC.STYLE_CODE(+) = X.STYLE_CODE AND WHTLOCBC.COLOR_CODE(+) = X.COLOR_CODE"
+        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, 0 OPEN, ' ' STYLE_DESC, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (
+             Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE
+             , SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-B',WHTLOCB1.LOCATION_QTY,0)) RECB
+             , SUM (DECODE(NVL(WHTLOCM1.LOCATION_USE,'?'),'G',WHTLOCB1.LOCATION_QTY,0)) GUN
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-LNF-A',WHTLOCB1.LOCATION_QTY,0)) LNF
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-SHP-A',WHTLOCB1.LOCATION_QTY,0)) SHP
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-RTN-A',WHTLOCB1.LOCATION_QTY,0)) RTN
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-FIN-A',WHTLOCB1.LOCATION_QTY,0)) FIN
+             , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-ADJ-A',WHTLOCB1.LOCATION_QTY,0)) ADJ
+             , SUM (CASE WHEN NVL(WHTLOCM1.LOCATION_USE,'?')<>'G' AND WHTLOCB1.LOCATION_CODE NOT IN ({locations_to_avoid}) THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LOC
+             , MIN ( LOCATIONS) LOCATIONS
+            from WHTLOCB1
+            join WHTLOCM1 on (WHTLOCM1.WHSE_CODE = WHTLOCB1.WHSE_CODE and WHTLOCM1.LOCATION_CODE = WHTLOCB1.LOCATION_CODE)
+            left outer join (WITH ranked_locations AS ( SELECT  WHSE_CODE, STYLE_CODE, COLOR_CODE, LOCATION_CODE, LOCATION_QTY, ROW_NUMBER() OVER ( PARTITION BY WHSE_CODE, STYLE_CODE, COLOR_CODE ORDER BY LOCATION_CODE) AS rn
+            from (  SELECT  WHSE_CODE, STYLE_CODE, COLOR_CODE, LOCATION_CODE, sum(LOCATION_QTY) LOCATION_QTY 
+             FROM WHTLOCB1
+            WHERE LOCATION_QTY <> 0 and LOCATION_CODE not like '99-%' and LOCATION_CODE not like '00-STG-%'
+             group by WHSE_CODE, STYLE_CODE, COLOR_CODE, LOCATION_CODE))
+            SELECT WHSE_CODE, STYLE_CODE, COLOR_CODE, LISTAGG( lpad(LOCATION_CODE,12) || ' (' || LPAD(LOCATION_QTY,5) || ')', '  ') WITHIN GROUP (ORDER BY LOCATION_CODE) AS LOCATIONS
+            FROM  ranked_locations
+            WHERE rn <= 25
+            GROUP BY WHSE_CODE, STYLE_CODE, COLOR_CODE) WHTLOCS on (WHTLOCB1.WHSE_CODE = WHTLOCS.WHSE_CODE and WHTLOCB1.STYLE_CODE = WHTLOCS.STYLE_CODE and WHTLOCB1.COLOR_CODE = WHTLOCS.COLOR_CODE)
+                where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'
+                and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)
+              group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE
+             ) X WHERE WHTLOCBC.STYLE_CODE(+) = X.STYLE_CODE AND WHTLOCBC.COLOR_CODE(+) = X.COLOR_CODE"
 
         If Initialize Then
             ASCMAIN1.sql = sqlWHTLOCBX
             WHTLOCBX = ASCMAIN1.Temp_Table
             ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY PICK NUMBER(8)")
+            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY OPEN NUMBER(8)")
             ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY STYLE_DESC VARCHAR2(256)")
         Else
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
@@ -903,9 +940,10 @@ Public Class WHFLNFA1
             & " where exists (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
-        ASCMAIN1.sql = $"Update {WHTLOCBX} x set PICK = (" & vbCrLf _
-            & $" Select WHSE_QTY_PICK from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}')" & vbCrLf _
-            & $" where exists (Select STYLE_DESC from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}')"
+        ASCMAIN1.sql = $"Update {WHTLOCBX} x set PICK = (
+            Select WHSE_QTY_PICK from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}'),
+             OPEN = (Select WHSE_QTY_OPEN from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}')
+            where exists (Select STYLE_DESC from ICTSTAT2 where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE and WHSE_CODE = '{WHSE_CODE}')"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         Dim sqlWHTLOCBL As String = "Select WHTLOCB1.LOCATION_CODE" & vbCrLf _
@@ -1036,4 +1074,6 @@ Public Class WHFLNFA1
         Sort_grdColumns(grdICTIADJX, "ADJ_NO")
         grdICTIADJX.Text = $"{WHSE_CODE} Locator Adjustment History from {DT_FROM} TO {DT_TO}"
     End Sub
+
+
 End Class

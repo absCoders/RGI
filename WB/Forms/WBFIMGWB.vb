@@ -11,12 +11,15 @@ Public Class WBFIMGWB
     Dim FileList As New Dictionary(Of String, String)
     Dim ImageGetProgress As Boolean = True
     Dim ImageListFTP As New Dictionary(Of String, Int64)
+    Dim ImageListFTPHi As New Dictionary(Of String, Int64)
     Dim ImageListLocal As New Dictionary(Of String, Int64)
+    Dim fetchHirez As Boolean = False
 
     Private Event OnDirList As nsoftware.IPWorks.Ftp.OnDirListHandler
     'Private Event OnDirListS As nsoftware.IPWorksSSH.Sftp.OnDirListHandler
     ' Dim sqlSOTWORK1 As String
     Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
+    Dim SQLF As New System.Text.StringBuilder() With {.Length = 0}
     'Dim WithEvents FtpS As New nsoftware.IPWorksSSH.Sftp
 
 
@@ -29,33 +32,35 @@ Public Class WBFIMGWB
 
         With dst
 
-            S.Length = 0
-            S.AppendLine("SELECT")
-            S.AppendLine("RSLT.*,")
-            S.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
-            S.AppendLine("FROM")
-            S.AppendLine("(")
-            S.AppendLine("SELECT")
-            S.AppendLine("S1.STYLE_CODE,")
-            S.AppendLine("C1.COLOR_CODE,")
-            S.AppendLine("S1.STYLE_STATUS,")
-            S.AppendLine("C1.STYLE_COLOR_STATUS,")
-            S.AppendLine("S1.STYLE_DESC,")
-            S.AppendLine("SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))) AS AVAIL")
-            S.AppendLine("FROM ICTSTYL1 S1, ICTSTYC1 C1, ICTSTAT2 S2")
-            S.AppendLine("WHERE S1.STYLE_CODE = C1.STYLE_CODE")
-            S.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
-            S.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
-            S.AppendLine("AND S2.WHSE_CODE = 'MS'")
-            S.AppendLine("GROUP BY")
-            S.AppendLine("S1.STYLE_CODE,")
-            S.AppendLine("C1.COLOR_CODE,")
-            S.AppendLine("S1.STYLE_STATUS,")
-            S.AppendLine("C1.STYLE_COLOR_STATUS,")
-            S.AppendLine("S1.STYLE_DESC")
-            S.AppendLine(") RSLT")
-            S.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
-            ASCMAIN1.sql = S.ToString()
+            SQLF.Length = 0
+            SQLF.AppendLine("SELECT")
+            SQLF.AppendLine("RSLT.*,")
+            SQLF.AppendLine("(STYLE_CODE || '-' || COLOR_CODE || '.JPG') AS SC")
+            SQLF.AppendLine("FROM")
+            SQLF.AppendLine("(")
+            SQLF.AppendLine("SELECT")
+            SQLF.AppendLine("S1.STYLE_CODE,")
+            SQLF.AppendLine("C1.COLOR_CODE,")
+            SQLF.AppendLine("S1.STYLE_STATUS,")
+            SQLF.AppendLine("C1.STYLE_COLOR_STATUS,")
+            SQLF.AppendLine("S1.STYLE_DESC,")
+            SQLF.AppendLine("SUM((NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))) AS AVAIL")
+            SQLF.AppendLine("FROM ICTSTYL1 S1, ICTSTYC1 C1, ICTSTAT2 S2")
+            SQLF.AppendLine("WHERE S1.STYLE_CODE = C1.STYLE_CODE")
+            SQLF.AppendLine("AND C1.STYLE_CODE = S2.STYLE_CODE (+)")
+            SQLF.AppendLine("AND C1.COLOR_CODE = S2.COLOR_CODE (+)")
+            SQLF.AppendLine("AND S2.WHSE_CODE = 'MS'")
+            SQLF.AppendLine("STOCKONLY")
+            SQLF.AppendLine("GROUP BY")
+            SQLF.AppendLine("S1.STYLE_CODE,")
+            SQLF.AppendLine("C1.COLOR_CODE,")
+            SQLF.AppendLine("S1.STYLE_STATUS,")
+            SQLF.AppendLine("C1.STYLE_COLOR_STATUS,")
+            SQLF.AppendLine("S1.STYLE_DESC")
+            SQLF.AppendLine(") RSLT")
+            SQLF.AppendLine("WHERE (STYLE_COLOR_STATUS = 'A' OR AVAIL > 0)")
+            Dim SQ As String = SQLF.ToString.Replace("STOCKONLY", "")
+            ASCMAIN1.sql = SQ
             Create_TDA(.Tables.Add, "WBTIMGWB", "**", 0, False)
             With .Tables("WBTIMGWB").Columns
                 .Add("IS_WEB", GetType(System.String))
@@ -64,6 +69,12 @@ Public Class WBFIMGWB
                 .Add("LOCAL_SIZE", GetType(System.Int64))
                 .Add("FTP_SIZE", GetType(System.Int64))
                 .Add("IS_MATCHED", GetType(System.String), "LOCAL_SIZE = FTP_SIZE")
+                .Add("IS_HR", GetType(System.String))
+                .Add("IS_LS", GetType(System.String))
+                .Add("IS_LS2", GetType(System.String))
+                .Add("IS_CU", GetType(System.String))
+                .Add("IS_CU2", GetType(System.String))
+                .Add("IS_DIM", GetType(System.String))
             End With
 
             S.Length = 0
@@ -224,7 +235,7 @@ Public Class WBFIMGWB
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdWBTIMGWB, "SSB", "Show Filter", "Show GroupBox", "View Local Image", "View FTP Image")
+        Load_Popup_Menu(grdWBTIMGWB, "SSB", "Show Filter", "Show GroupBox", "View Local Image", "View FTP Image", "Download From FTP")
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -293,6 +304,63 @@ Public Class WBFIMGWB
                     With frmIMAGE
                         .ShowDialog(Me)
                     End With
+                Case "Download From FTP"
+                    If Not IsNothing(grdWBTIMGWB.ActiveRow) Then
+                        Using folderDialog As New FolderBrowserDialog()
+                            folderDialog.Description = "Select a folder"
+                            folderDialog.ShowNewFolderButton = True
+
+                            If folderDialog.ShowDialog() = DialogResult.OK Then
+                                Dim STYLES As New Dictionary(Of String, String)
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_FTP").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}.jpg", $"{txtREMOTE_FOLDER.Text}")
+                                End If
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_HR").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}-HR.jpg", $"{txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/")}")
+                                End If
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_LS").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}-LS.jpg", $"{txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/")}")
+                                End If
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_LS2").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}-LS2.jpg", $"{txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/")}")
+                                End If
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_CU").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}-CU.jpg", $"{txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/")}")
+                                End If
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_CU2").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}-CU2.jpg", $"{txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/")}")
+                                End If
+                                If grdWBTIMGWB.ActiveRow.Cells("IS_DIM").Value & String.Empty = "1" Then
+                                    STYLES.Add($"{STYLE_CODE}-{COLOR_CODE}-D.jpg", $"{txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/")}")
+                                End If
+
+                                Dim path As String = folderDialog.SelectedPath
+                                If Not path.EndsWith("\") Then
+                                    path = path + "\"
+                                End If
+                                Ftp1.User = "regency-rib"
+                                Ftp1.Password = "joydHUJ3"
+                                Ftp1.RemoteHost = "regency-rib.com"
+                                Ftp1.Logon()
+                                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                                Ftp1.Overwrite = True
+
+                                For Each STYLE As KeyValuePair(Of String, String) In STYLES
+                                    If STYLE.Key.EndsWith("-HR.jpg") Then
+                                        Ftp1.LocalFile = $"{path}{STYLE.Key}"
+                                        Ftp1.RemoteFile = $"{STYLE.Value}{STYLE.Key.Replace("-HR.jpg", ".jpg")}"
+                                        Ftp1.Download()
+                                    Else
+                                        Ftp1.LocalFile = $"{path}{STYLE.Key}"
+                                        Ftp1.RemoteFile = $"{STYLE.Value}{STYLE.Key}"
+                                        Ftp1.Download()
+                                    End If
+                                Next
+                                Ftp1.Logoff()
+                                MsgBox("Download Complete", vbOKOnly, "Done")
+                            End If
+                        End Using
+                    End If
             End Select
         End If
         Update_Record()
@@ -325,7 +393,13 @@ Public Class WBFIMGWB
         btnAddNew.Visible = False
         chkAddBothLocations.Visible = False
         grdWBTIMGWB.Enabled = False
-        Fill_Records("WBTIMGWB")
+        Dim SQ As String = ""
+        If chkStockOnly.Checked Then
+            SQ = SQLF.ToString.Replace("STOCKONLY", "AND NVL(S1.CUST_CODE,'NULL') = 'NULL'")
+        Else
+            SQ = SQLF.ToString.Replace("STOCKONLY", "")
+        End If
+        Fill_Records("WBTIMGWB",, True, SQ)
 
         FillImageStats()
 
@@ -387,11 +461,21 @@ Public Class WBFIMGWB
                 End If
                 Dim FileSize As String = e.FileSize
                 If IsNumeric(FileSize) Then
-                    If Not ImageListFTP.ContainsKey(e.FileName.Replace(txtREMOTE_FOLDER.Text, "").ToUpper) Then
-                        ImageListFTP.Add(e.FileName.Replace(txtREMOTE_FOLDER.Text, "").ToUpper, FileSize)
+                    If fetchHirez Then
+                        If Not ImageListFTPHi.ContainsKey(e.FileName.Replace(txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/"), "").ToUpper) Then
+                            ImageListFTPHi.Add(e.FileName.Replace(txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/"), "").ToUpper, FileSize)
+                        End If
+                    Else
+                        If Not ImageListFTP.ContainsKey(e.FileName.Replace(txtREMOTE_FOLDER.Text, "").ToUpper) Then
+                            ImageListFTP.Add(e.FileName.Replace(txtREMOTE_FOLDER.Text, "").ToUpper, FileSize)
+                        End If
                     End If
                 Else
-                    ImageListFTP.Add(e.FileName, 0)
+                    If fetchHirez Then
+                        ImageListFTPHi.Add(e.FileName, 0)
+                    Else
+                        ImageListFTP.Add(e.FileName, 0)
+                    End If
                 End If
 
 
@@ -433,6 +517,7 @@ Public Class WBFIMGWB
         ImageListDownload.Clear()
         ImageListLocal.Clear()
         ImageListFTP.Clear()
+        ImageListFTPHi.Clear()
 
         If System.IO.Directory.Exists(txtLOCAL_FOLDER.Text) Then
 
@@ -455,6 +540,13 @@ Public Class WBFIMGWB
             Ftp1.Overwrite = True
             FileList.Clear()
             Ftp1.ListDirectoryLong()
+            If chkHRLS.Checked Then
+                fetchHirez = True
+                Ftp1.RemoteFile = txtREMOTE_FOLDER.Text.Replace("/product/", "/hirez/") & "*"
+                Ftp1.ListDirectoryLong()
+                fetchHirez = False
+            End If
+
             Ftp1.Logoff()
 
             'Dim ImageListFTPtmp As New Dictionary(Of String, Date)
@@ -475,6 +567,46 @@ Public Class WBFIMGWB
                 If ImageListFTP.ContainsKey(IMG_NAME) Then
                     rowWBTIMGWB.Item("IS_FTP") = "1"
                     rowWBTIMGWB.Item("FTP_SIZE") = Val(ImageListFTP.Item(IMG_NAME).ToString)
+                End If
+                If chkHRLS.Checked Then
+
+
+
+                    Dim COLS As String() = {"HR", "LS", "LS2", "CU", "CU2", "DIM"}
+                    For Each COL As String In COLS
+                        Select Case COL
+                            Case "HR"
+                                Dim IMG_NAME_HR As String = $"{STYLE_CODE}-{COLOR_CODE}.JPG"
+                                If ImageListFTPHi.ContainsKey(IMG_NAME_HR) Then
+                                    rowWBTIMGWB.Item($"IS_HR") = "1"
+                                End If
+                            Case "LS"
+                                Dim IMG_NAME_HR As String = $"{STYLE_CODE}-{COLOR_CODE}-LS.JPG"
+                                If ImageListFTPHi.ContainsKey(IMG_NAME_HR) Then
+                                    rowWBTIMGWB.Item($"IS_LS") = "1"
+                                End If
+                            Case "LS2"
+                                Dim IMG_NAME_HR As String = $"{STYLE_CODE}-{COLOR_CODE}-LS2.JPG"
+                                If ImageListFTPHi.ContainsKey(IMG_NAME_HR) Then
+                                    rowWBTIMGWB.Item($"IS_LS2") = "1"
+                                End If
+                            Case "CU"
+                                Dim IMG_NAME_HR As String = $"{STYLE_CODE}-{COLOR_CODE}-CU.JPG"
+                                If ImageListFTPHi.ContainsKey(IMG_NAME_HR) Then
+                                    rowWBTIMGWB.Item($"IS_CU") = "1"
+                                End If
+                            Case "CU2"
+                                Dim IMG_NAME_HR As String = $"{STYLE_CODE}-{COLOR_CODE}-CU2.JPG"
+                                If ImageListFTPHi.ContainsKey(IMG_NAME_HR) Then
+                                    rowWBTIMGWB.Item($"IS_CU2") = "1"
+                                End If
+                            Case "DIM"
+                                Dim IMG_NAME_HR As String = $"{STYLE_CODE}-{COLOR_CODE}-D.JPG"
+                                If ImageListFTPHi.ContainsKey(IMG_NAME_HR) Then
+                                    rowWBTIMGWB.Item($"IS_DIM") = "1"
+                                End If
+                        End Select
+                    Next
                 End If
                 If Not IsNothing(dst.Tables.Item("WBTSTYLD").Select(FLTR).FirstOrDefault) Then
                     rowWBTIMGWB.Item("IS_WEB") = "1"
@@ -553,6 +685,28 @@ Public Class WBFIMGWB
             End If
         Else
             MsgBox("No files selected.", vbCritical, "What?")
+        End If
+    End Sub
+
+    Private Sub chkHRLS_CheckedChanged(sender As Object, e As EventArgs) Handles chkHRLS.CheckedChanged
+        If chkHRLS.Checked Then
+            With grdWBTIMGWB.DisplayLayout.Bands(0)
+                .Columns("IS_HR").Hidden = False
+                .Columns("IS_LS").Hidden = False
+                .Columns("IS_LS2").Hidden = False
+                .Columns("IS_CU").Hidden = False
+                .Columns("IS_CU2").Hidden = False
+                .Columns("IS_DIM").Hidden = False
+            End With
+        Else
+            With grdWBTIMGWB.DisplayLayout.Bands(0)
+                .Columns("IS_HR").Hidden = True
+                .Columns("IS_LS").Hidden = True
+                .Columns("IS_LS2").Hidden = True
+                .Columns("IS_CU").Hidden = True
+                .Columns("IS_CU2").Hidden = True
+                .Columns("IS_DIM").Hidden = True
+            End With
         End If
     End Sub
 #End Region

@@ -2350,10 +2350,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, -14)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 185)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'UltraGroupBox3
         '
@@ -2501,10 +2502,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl7
         '
         Me.UltraExplorerBarContainerControl7.Controls.Add(Me.UltraGroupBox5)
-        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(13, 240)
+        Me.UltraExplorerBarContainerControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl7.Name = "UltraExplorerBarContainerControl7"
         Me.UltraExplorerBarContainerControl7.Size = New System.Drawing.Size(172, 149)
         Me.UltraExplorerBarContainerControl7.TabIndex = 8
+        Me.UltraExplorerBarContainerControl7.Visible = False
         '
         'UltraGroupBox5
         '
@@ -2592,10 +2594,11 @@ Partial Class SOFSHIPB
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 433)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 207)
         Me.UltraExplorerBarContainerControl5.TabIndex = 5
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'grpDevices
         '
@@ -2755,7 +2758,7 @@ Partial Class SOFSHIPB
         'splSOTCART1
         '
         Me.splSOTCART1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.splSOTCART1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.splSOTCART1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
         Me.splSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.splSOTCART1.Name = "splSOTCART1"
         '
@@ -2767,7 +2770,7 @@ Partial Class SOFSHIPB
         '
         Me.splSOTCART1.Panel2.Controls.Add(Me.grdSOTCART2)
         Me.splSOTCART1.Size = New System.Drawing.Size(1001, 215)
-        Me.splSOTCART1.SplitterDistance = 536
+        Me.splSOTCART1.SplitterDistance = 839
         Me.splSOTCART1.TabIndex = 0
         '
         'grdSOTCART1
@@ -2923,7 +2926,7 @@ Partial Class SOFSHIPB
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(536, 215)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(839, 215)
         Me.grdSOTCART1.TabIndex = 16
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -3031,7 +3034,7 @@ Partial Class SOFSHIPB
         Me.grdSOTCART2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART2.Name = "grdSOTCART2"
-        Me.grdSOTCART2.Size = New System.Drawing.Size(461, 215)
+        Me.grdSOTCART2.Size = New System.Drawing.Size(158, 215)
         Me.grdSOTCART2.TabIndex = 15
         Me.grdSOTCART2.Text = "Carton Details"
         '
@@ -5689,7 +5692,7 @@ Partial Class SOFSHIPB
         '
         Me.splBOL.Panel2.Controls.Add(Me.grpBOLHead2)
         Me.splBOL.Size = New System.Drawing.Size(1005, 243)
-        Me.splBOL.SplitterDistance = 540
+        Me.splBOL.SplitterDistance = 594
         Me.splBOL.TabIndex = 178
         '
         'grpBOLHead1
@@ -5721,7 +5724,7 @@ Partial Class SOFSHIPB
         Me.grpBOLHead1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpBOLHead1.Location = New System.Drawing.Point(0, 0)
         Me.grpBOLHead1.Name = "grpBOLHead1"
-        Me.grpBOLHead1.Size = New System.Drawing.Size(540, 243)
+        Me.grpBOLHead1.Size = New System.Drawing.Size(594, 243)
         Me.grpBOLHead1.TabIndex = 177
         '
         'lblCurrencyCode
@@ -5962,7 +5965,7 @@ Partial Class SOFSHIPB
         Me.grpBOLHead2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpBOLHead2.Location = New System.Drawing.Point(0, 0)
         Me.grpBOLHead2.Name = "grpBOLHead2"
-        Me.grpBOLHead2.Size = New System.Drawing.Size(461, 243)
+        Me.grpBOLHead2.Size = New System.Drawing.Size(407, 243)
         Me.grpBOLHead2.TabIndex = 178
         '
         'grdSOTSHIPX_BOL
@@ -6193,7 +6196,7 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIPX_BOL.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTSHIPX_BOL.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTSHIPX_BOL.Name = "grdSOTSHIPX_BOL"
-        Me.grdSOTSHIPX_BOL.Size = New System.Drawing.Size(461, 243)
+        Me.grdSOTSHIPX_BOL.Size = New System.Drawing.Size(407, 243)
         Me.grdSOTSHIPX_BOL.TabIndex = 14
         Me.grdSOTSHIPX_BOL.Text = "Available Shipments"
         '
@@ -8873,6 +8876,7 @@ Partial Class SOFSHIPB
         Me.grdSOTSHIP1.DisplayLayout.GroupByBox.PromptAppearance = Appearance340
         Me.grdSOTSHIP1.DisplayLayout.MaxColScrollRegions = 1
         Me.grdSOTSHIP1.DisplayLayout.MaxRowScrollRegions = 1
+        Me.grdSOTSHIP1.DisplayLayout.NewBandLoadStyle = Infragistics.Win.UltraWinGrid.NewBandLoadStyle.Hide
         Me.grdSOTSHIP1.DisplayLayout.NewColumnLoadStyle = Infragistics.Win.UltraWinGrid.NewColumnLoadStyle.Hide
         Appearance341.BackColor = System.Drawing.SystemColors.Window
         Appearance341.ForeColor = System.Drawing.SystemColors.ControlText
@@ -8920,7 +8924,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1013, 570)
         '
@@ -8953,7 +8957,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1013, 570)
         '

@@ -51,7 +51,7 @@
         End If
     End Sub
 
-     
+
     Protected Overrides Sub Build_Workfile()
 
         RWU = "R"
@@ -255,8 +255,8 @@
         ASCDATA1.ExecuteSQL(sql)
     End Sub
 
-    Overrides Function Prepare_dst( _
-    ByVal perform_fill As Boolean, _
+    Overrides Function Prepare_dst(
+    ByVal perform_fill As Boolean,
     ByVal ParamArray parms() As Object) As ASCBASE1
 
         If Not Me.Visible Then Clear_dst()
@@ -304,6 +304,8 @@
                 .Add("ST")
                 .Add("CART_TRACKING_NO")
                 .Add("TOTAL_CUBE", GetType(System.Decimal))
+                .Add("MISC_CHARGES")
+                .Add("TARIFFS")
             End With
 
             ASCMAIN1.sql = "Select SOTINVH1.INV_TYPE, SOTINVH1.INV_NO, MIN (SOTCART1.CART_TRACKING_NO) CART_TRACKING_NO" & vbCrLf _
@@ -312,7 +314,7 @@
               & " group by SOTINVH1.INV_TYPE, SOTINVH1.INV_NO"
             Create_TDA(.Tables.Add, "SOTINVH1_CART_TRACKING_NO", "**", 0, False, "", 2)
 
-            ASCMAIN1.sql = "Select SOTINVH2.*, ICTSTYC1.UPC_CODE" & vbCrLf _
+            ASCMAIN1.sql = "Select SOTINVH2.*, ICTSTYC1.UPC_CODE, '0' TARIFFS" & vbCrLf _
                 & " from " & SOTINVH2 & " SOTINVH2, ICTSTYC1" & vbCrLf _
                 & " where ICTSTYC1.STYLE_CODE (+) = SOTINVH2.STYLE_CODE" & vbCrLf _
                 & "   and ICTSTYC1.COLOR_CODE (+) = SOTINVH2.COLOR_CODE"
@@ -330,11 +332,11 @@
 
             'If ASCMAIN1.CLIENT = "VAN" Then
             With .Tables("SOTINVH1").Columns
-                    .Add("PF_SHIP_NOTES", GetType(System.String))
-                    .Add("PF_OVERSEAS_DOMESTIC", GetType(System.String))
-                    .Add("PF_VIA", GetType(System.String))
-                    .Add("PO_SHIPMENT_NO", GetType(System.String))
-                End With
+                .Add("PF_SHIP_NOTES", GetType(System.String))
+                .Add("PF_OVERSEAS_DOMESTIC", GetType(System.String))
+                .Add("PF_VIA", GetType(System.String))
+                .Add("PO_SHIPMENT_NO", GetType(System.String))
+            End With
             'End If
 
             ' dgj
@@ -359,9 +361,9 @@
 
             'If ASCMAIN1.CLIENT = "VAN" Then
             With .Tables("SOTPICK1").Columns
-                    .Add("PF_WEIGHT_UOM", GetType(System.String))
-                    .Add("PO_SHIPMENT_NO", GetType(System.String))
-                End With
+                .Add("PF_WEIGHT_UOM", GetType(System.String))
+                .Add("PO_SHIPMENT_NO", GetType(System.String))
+            End With
             ' End If
 
 
@@ -444,16 +446,56 @@
             SQLs.Add("SOTINVH9", ASCMAIN1.sql)
             Create_TDA(.Tables.Add, "SOTINVH9", "**", 0, False, "", 3)
 
-
-            ASCMAIN1.sql = "Select SOTINVHM.*" _
-                & " from SOTINVHM SOTINVHM, " & SOTINVP1 & " SOTINVP1" _
-                & " where SOTINVHM.INV_NO = SOTINVP1.INV_NO"
+            ' Non Tariff Misc Charges
+            ASCMAIN1.sql = $"Select SOTINVHM.*
+                                from SOTINVHM, {SOTINVP1} SOTINVP1
+                                where SOTINVHM.INV_NO = SOTINVP1.INV_NO 
+                                AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') <> 'T'"
             If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
                 ASCMAIN1.sql &= " and INV_MISC_CHG <> 0"
             End If
             SQLs.Add("SOTINVHM", ASCMAIN1.sql)
             Create_TDA(.Tables.Add, "SOTINVHM", "**", 0, False, "", 3)
 
+            'Tariff Misc Charges
+            ASCMAIN1.sql = $"Select SOTINVHM.*, NVL(INITCAP(TATCNTRY.COUNTRY_NAME), SOTINVHM.COUNTRY_CODE) COUNTRY_NAME, 
+                                ROUND(SOTINVHM.INV_MISC_CHG / SOTINVH2.ORDR_QTY_SHIP, 3) INV_MISC_CHG_UNIT
+                                From SOTINVHM, {SOTINVP1} SOTINVP1, TATCNTRY, SOTINVH2
+                                Where SOTINVHM.INV_NO = SOTINVP1.INV_NO 
+                                AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T'
+                                AND SOTINVHM.COUNTRY_CODE = TATCNTRY.COUNTRY_CODE (+)
+                                AND SOTINVHM.INV_TYPE = SOTINVH2.INV_TYPE
+                                AND SOTINVHM.INV_NO = SOTINVH2.INV_NO
+                                AND SOTINVHM.INV_LNO = SOTINVH2.INV_LNO"
+            SQLs.Add("SOTINVHT", ASCMAIN1.sql)
+            Create_TDA(.Tables.Add, "SOTINVHT", "**", 0, False, "", 4)
+
+            ASCMAIN1.sql = $"SELECT SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.COUNTRY_CODE, SOTINVHM.SURCHARGE_PERC,
+                                NVL(INITCAP(TATCNTRY.COUNTRY_NAME), SOTINVHM.COUNTRY_CODE) COUNTRY_NAME,
+                                SUM(SOTINVHM.INV_MISC_CHG) TOTAL_TARIFF
+                                FROM SOTINVHM, TATCNTRY, {SOTINVP1} SOTINVP1, SOTINVH2
+                                WHERE SOTINVHM.INV_NO = SOTINVP1.INV_NO 
+                                AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T'
+                                AND SOTINVH2.INV_TYPE = SOTINVHM.INV_TYPE 
+                                AND SOTINVH2.INV_NO = SOTINVHM.INV_NO
+                                AND SOTINVH2.INV_LNO = SOTINVHM.INV_LNO 
+                                AND SOTINVHM.COUNTRY_CODE = TATCNTRY.COUNTRY_CODE (+)
+                                GROUP BY SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.COUNTRY_CODE, SOTINVHM.SURCHARGE_PERC,
+                                NVL(INITCAP(TATCNTRY.COUNTRY_NAME), SOTINVHM.COUNTRY_CODE)"
+            SQLs.Add("SOTINVHT_SUM", ASCMAIN1.sql)
+            Create_TDA(.Tables.Add, "SOTINVHT_SUM", ASCMAIN1.sql, 0, False, "", 3)
+
+            ASCMAIN1.sql = $"Select SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.INV_LNO, SUM(SOTINVHM.INV_MISC_CHG) INV_MISC_CHG_SUM,
+                                Round(SUM(SOTINVHM.INV_MISC_CHG / SOTINVH2.ORDR_QTY_SHIP), 4) INV_MISC_CHG_UNIT_SUM
+                                From SOTINVHM, {SOTINVP1} SOTINVP1, SOTINVH2
+                                Where SOTINVHM.INV_NO = SOTINVP1.INV_NO 
+                                AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T'
+                                AND SOTINVHM.INV_TYPE = SOTINVH2.INV_TYPE
+                                AND SOTINVHM.INV_NO = SOTINVH2.INV_NO
+                                AND SOTINVHM.INV_LNO = SOTINVH2.INV_LNO
+                                GROUP BY SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.INV_LNO"
+            SQLs.Add("SOTINVHT_TS", ASCMAIN1.sql)
+            Create_TDA(.Tables.Add, "SOTINVHT_TS", ASCMAIN1.sql, 0, False, "", 3)
 
             ASCMAIN1.sql = "Select Distinct ARTCUST1.CUST_CODE, ARTCUST1.CUST_NAME" & vbCrLf _
                 & ", ARTCUST1.CUST_ADDR1, ARTCUST1.CUST_ADDR2, ARTCUST1.CUST_ADDR3" & vbCrLf _
@@ -496,7 +538,7 @@
                 .Columns.Add("AR_PARM_DUNS_NO")
                 .Columns.Add("ADDRESS_LINE")
                 .Columns.Add("LOGO", GetType(System.Byte()))
-                .PrimaryKey = New DataColumn() {.Columns("AR_PARM_KEY")}
+                .PrimaryKey = New DataColumn() { .Columns("AR_PARM_KEY")}
             End With
 
             'With .Tables("SOTSDIV1")
@@ -638,7 +680,7 @@
                     '                          & ", Fax " & ASCMAIN1.FormatTel(.Item("COMP_FAX") & ""), "")
 
                 End With
-               
+
                 'For Each C As String In New String() {"COMP_NAME", "COMP_ADDR1", "COMP_ADDR2", "COMP_ADDR3", _
                 '                                        "COMP_CITY", "COMP_STATE", "COMP_ZIP_CODE", "COMP_COUNTRY", _
                 '                                        "COMP_PHONE", "COMP_FAX", "COMP_EMAIL", "COMP_TAX_ID"}
@@ -665,6 +707,7 @@
     Public Overrides Sub Fill_Records_RPT(ByVal ParamArray parms() As Object)
 
         Dim sqlw As String = ""
+        Dim pro_forma As Boolean = False
 
         If parms.Length > 0 Then
             'Dim INV_NOs As String = parms(0)
@@ -674,7 +717,6 @@
             '    sqlw = " and " & sqlw
             'End If
 
-            Dim pro_forma As Boolean = False
             Dim INV_TYPE_requested As String = ""
             Dim pfComment As String = ""
             Dim ORDR_QTY_field As String = "DECODE(SOTORDR1.ORDR_STATUS,'O',SOTORDR2.ORDR_QTY,DECODE(SOTORDR1.ORDR_STATUS,'P',SOTORDR2.ORDR_QTY_PICK,SOTORDR2.ORDR_QTY_SHIP))"
@@ -857,6 +899,11 @@
                     ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_TOTAL_AMOUNT = NVL(INV_SALES,0) + NVL(INV_FREIGHT,0) + NVL(INV_STAX,0)")
                     ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_SALES_CURR = INV_SALES, INV_FREIGHT_CURR = INV_FREIGHT, INV_MISC_CHG_CURR = INV_MISC_CHG, INV_TOTAL_AMT_CURR = INV_TOTAL_AMOUNT, INV_TOTAL_AMOUNT_CURR = INV_TOTAL_AMOUNT, INV_STAX_CURR = INV_STAX, GST_TAX_CURR = GST_TAX where NVL(CURR_CODE,'USD') = 'USD'")
 
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        ASCDATA1.ExecuteSQL($"Update " & SOTINVH1 & " Set INV_MISC_CHG = (select sum(SOTINVHM.INV_MISC_CHG) from SOTINVHM, SOTINVH1 where SOTINVH1.INV_NO = SOTINVHM.INV_NO and NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T' " & Replace(sqlw, "SOTORDR1.", "SOTINVH1.") & ")")
+                        ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_TOTAL_AMOUNT = NVL(INV_SALES,0) + NVL(INV_FREIGHT,0) + NVL(INV_STAX,0) + NVL(INV_MISC_CHG,0)")
+                        ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_SALES_CURR = INV_SALES, INV_FREIGHT_CURR = INV_FREIGHT, INV_MISC_CHG_CURR = INV_MISC_CHG, INV_TOTAL_AMT_CURR = INV_TOTAL_AMOUNT, INV_TOTAL_AMOUNT_CURR = INV_TOTAL_AMOUNT, INV_STAX_CURR = INV_STAX, GST_TAX_CURR = GST_TAX where NVL(CURR_CODE,'USD') = 'USD'")
+                    End If
 
                 End If
             Else
@@ -896,6 +943,81 @@
         Fill_Records("SOTINVH2")
         Fill_Records("SOTINVH9")
         Fill_Records("SOTINVHM")
+        Fill_Records("SOTINVHT")
+        Fill_Records("SOTINVHT_SUM")
+        Fill_Records("SOTINVHT_TS")
+
+        If pro_forma Then
+            sql = $"Select SOTINVHM.*, NVL(INITCAP(TATCNTRY.COUNTRY_NAME), SOTINVHM.COUNTRY_CODE) COUNTRY_NAME, 
+                        ROUND(SOTINVHM.INV_MISC_CHG / SOTINVH2.ORDR_QTY_SHIP, 3) INV_MISC_CHG_UNIT
+                        From SOTINVHM, {SOTINVP1} SOTINVP1, TATCNTRY, SOTINVH2, SOTINVH1
+                        Where SOTINVH1.ORDR_NO = SOTINVP1.ORDR_NO
+                        and SOTINVHM.INV_NO = SOTINVH1.INV_NO 
+                        AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T'
+                        AND SOTINVHM.COUNTRY_CODE = TATCNTRY.COUNTRY_CODE (+)
+                        AND SOTINVHM.INV_TYPE = SOTINVH2.INV_TYPE
+                        AND SOTINVHM.INV_NO = SOTINVH2.INV_NO
+                        AND SOTINVHM.INV_LNO = SOTINVH2.INV_LNO"
+            Fill_Records("SOTINVHT",, True, sql)
+            sql = $"SELECT SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.COUNTRY_CODE, SOTINVHM.SURCHARGE_PERC,
+                    NVL(INITCAP(TATCNTRY.COUNTRY_NAME), SOTINVHM.COUNTRY_CODE) COUNTRY_NAME,
+                    SUM(SOTINVHM.INV_MISC_CHG) TOTAL_TARIFF
+                    FROM SOTINVHM, TATCNTRY, {SOTINVP1} SOTINVP1, SOTINVH2, SOTINVH1
+                    Where SOTINVH1.ORDR_NO = SOTINVP1.ORDR_NO
+                    and SOTINVHM.INV_NO = SOTINVH1.INV_NO 
+                    AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T'
+                    AND SOTINVH2.INV_TYPE = SOTINVHM.INV_TYPE 
+                    AND SOTINVH2.INV_NO = SOTINVHM.INV_NO
+                    AND SOTINVH2.INV_LNO = SOTINVHM.INV_LNO 
+                    AND SOTINVHM.COUNTRY_CODE = TATCNTRY.COUNTRY_CODE (+)
+                    GROUP BY SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.COUNTRY_CODE, SOTINVHM.SURCHARGE_PERC,
+                    NVL(INITCAP(TATCNTRY.COUNTRY_NAME), SOTINVHM.COUNTRY_CODE)"
+            Fill_Records("SOTINVHT_SUM",, True, sql)
+            sql = $"Select SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.INV_LNO, SUM(SOTINVHM.INV_MISC_CHG) INV_MISC_CHG_SUM,
+                    Round(SUM(SOTINVHM.INV_MISC_CHG / SOTINVH2.ORDR_QTY_SHIP), 4) INV_MISC_CHG_UNIT_SUM
+                    From SOTINVHM, {SOTINVP1} SOTINVP1, SOTINVH2, SOTINVH1
+                    Where SOTINVH1.ORDR_NO = SOTINVP1.ORDR_NO
+                    and SOTINVHM.INV_NO = SOTINVH1.INV_NO 
+                    AND NVL(SOTINVHM.MISC_CHARGE_TYPE, '?') = 'T'
+                    AND SOTINVHM.INV_TYPE = SOTINVH2.INV_TYPE
+                    AND SOTINVHM.INV_NO = SOTINVH2.INV_NO
+                    AND SOTINVHM.INV_LNO = SOTINVH2.INV_LNO
+                    GROUP BY SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.INV_LNO"
+            Fill_Records("SOTINVHT_TS",, True, sql)
+        End If
+
+
+        For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Select("")
+            Dim INV_NO As String = rowSOTINVH1.Item("INV_NO")
+            If pro_forma Then
+                INV_NO = ASCDATA1.GetDataValue($"Select INV_NO from SOTINVH1 where ORDR_NO = '{INV_NO}'")
+            End If
+            If dst.Tables("SOTINVHM").Select($"INV_NO = '{INV_NO}' AND ISNULL(MISC_CHARGE_TYPE, '') = '' ").Length > 0 Then
+                rowSOTINVH1.Item("MISC_CHARGES") = "1"
+            Else
+                rowSOTINVH1.Item("MISC_CHARGES") = "0"
+            End If
+
+            If dst.Tables("SOTINVHT_SUM").Select($"INV_NO = '{INV_NO}'").Length > 0 Then
+                rowSOTINVH1.Item("TARIFFS") = "1"
+            Else
+                rowSOTINVH1.Item("TARIFFS") = "0"
+            End If
+        Next
+
+        For Each rowSOTINVH2 As DataRow In dst.Tables("SOTINVH2").Select("")
+            Dim INV_NO As String = rowSOTINVH2.Item("INV_NO")
+            Dim INV_LNO As Int16 = rowSOTINVH2.Item("INV_LNO")
+            If pro_forma Then
+                INV_NO = ASCDATA1.GetDataValue($"Select INV_NO from SOTINVH1 where ORDR_NO = '{INV_NO}'")
+            End If
+
+            If dst.Tables("SOTINVHT").Select($"INV_NO = '{INV_NO}' and INV_LNO = {INV_LNO}").Length > 0 Then
+                rowSOTINVH2.Item("TARIFFS") = "1"
+            Else
+                rowSOTINVH2.Item("TARIFFS") = "0"
+            End If
+        Next
 
         ' ALTER TABLE SOTINVHM ADD INV_MISC_CHG_CURR  NUMBER(13,2);
         ' UPDATE SOTINVHM SET INV_MISC_CHG_CURR = INV_MISC_CHG WHERE INV_MISC_CHG_CURR IS NULL;
@@ -1034,7 +1156,7 @@
         '        End If
         '    End If
         'Next
- 
+
 
         ' Load SOTINVH1 - Based on Run-Time Options
 

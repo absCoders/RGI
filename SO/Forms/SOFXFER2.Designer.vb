@@ -125,6 +125,7 @@ Partial Class SOFXFER2
         Me.lblQuoteNumber = New System.Windows.Forms.Label()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.chkNoDiscInvPics = New System.Windows.Forms.CheckBox()
         Me.txtDeleteImages = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.btnGetImages = New System.Windows.Forms.Button()
@@ -136,7 +137,6 @@ Partial Class SOFXFER2
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.btnPWD = New System.Windows.Forms.Button()
-        Me.chkSECUREFTP = New System.Windows.Forms.CheckBox()
         Me.lblVersionNo = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -147,7 +147,6 @@ Partial Class SOFXFER2
         Me.grdTATCTLN0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdARTCUST1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTORDR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.chkNoDiscInvPics = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -378,6 +377,18 @@ Partial Class SOFXFER2
         Me.Panel2.Size = New System.Drawing.Size(172, 180)
         Me.Panel2.TabIndex = 0
         '
+        'chkNoDiscInvPics
+        '
+        Me.chkNoDiscInvPics.AutoSize = True
+        Me.chkNoDiscInvPics.Checked = True
+        Me.chkNoDiscInvPics.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkNoDiscInvPics.Location = New System.Drawing.Point(6, 141)
+        Me.chkNoDiscInvPics.Name = "chkNoDiscInvPics"
+        Me.chkNoDiscInvPics.Size = New System.Drawing.Size(136, 20)
+        Me.chkNoDiscInvPics.TabIndex = 93
+        Me.chkNoDiscInvPics.Text = "No Disc w/o Inv."
+        Me.chkNoDiscInvPics.UseVisualStyleBackColor = True
+        '
         'txtDeleteImages
         '
         Me.Absx1.SetABSBindToTable(Me.txtDeleteImages, False)
@@ -471,7 +482,6 @@ Partial Class SOFXFER2
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.btnPWD)
-        Me.Panel1.Controls.Add(Me.chkSECUREFTP)
         Me.Panel1.Controls.Add(Me.lblVersionNo)
         Me.Panel1.Controls.Add(Me.Label1)
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
@@ -488,19 +498,6 @@ Partial Class SOFXFER2
         Me.btnPWD.TabIndex = 3
         Me.btnPWD.Text = "?"
         Me.btnPWD.UseVisualStyleBackColor = True
-        '
-        'chkSECUREFTP
-        '
-        Me.chkSECUREFTP.AutoSize = True
-        Me.chkSECUREFTP.Checked = True
-        Me.chkSECUREFTP.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkSECUREFTP.Location = New System.Drawing.Point(6, 75)
-        Me.chkSECUREFTP.Name = "chkSECUREFTP"
-        Me.chkSECUREFTP.Size = New System.Drawing.Size(132, 20)
-        Me.chkSECUREFTP.TabIndex = 2
-        Me.chkSECUREFTP.Text = "Use Secure FTP"
-        Me.chkSECUREFTP.UseVisualStyleBackColor = True
-        Me.chkSECUREFTP.Visible = False
         '
         'lblVersionNo
         '
@@ -888,18 +885,6 @@ Partial Class SOFXFER2
         Me.grdSOTORDR1.TabIndex = 3
         Me.grdSOTORDR1.Text = "Sales Orders Pending Transmission"
         '
-        'chkNoDiscInvPics
-        '
-        Me.chkNoDiscInvPics.AutoSize = True
-        Me.chkNoDiscInvPics.Checked = True
-        Me.chkNoDiscInvPics.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkNoDiscInvPics.Location = New System.Drawing.Point(6, 141)
-        Me.chkNoDiscInvPics.Name = "chkNoDiscInvPics"
-        Me.chkNoDiscInvPics.Size = New System.Drawing.Size(136, 20)
-        Me.chkNoDiscInvPics.TabIndex = 93
-        Me.chkNoDiscInvPics.Text = "No Disc w/o Inv."
-        Me.chkNoDiscInvPics.UseVisualStyleBackColor = True
-        '
         'SOFXFER2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -974,7 +959,6 @@ Partial Class SOFXFER2
     Friend WithEvents btnGetQuote As Button
     Friend WithEvents txtQuoteNumber As TextBox
     Friend WithEvents lblQuoteNumber As Label
-    Friend WithEvents chkSECUREFTP As CheckBox
     Friend WithEvents btnPWD As Button
     Friend WithEvents Panel1 As Panel
     Friend WithEvents Panel2 As Panel

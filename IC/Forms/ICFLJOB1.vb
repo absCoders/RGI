@@ -419,6 +419,7 @@ Public Class ICFLJOB1
             btnRefresh.Visible = (EntryMode = "E")
             grpPO.Visible = (optLABELS_BY.Value = "P")
             grpSO.Visible = (optLABELS_BY.Value = "S")
+            optLABEL_QTY_CALC.CheckedIndex = 0
         Else
             Clear_Record()
         End If
@@ -1112,6 +1113,8 @@ Public Class ICFLJOB1
             Dim LABELS_PER_SHEET As Integer = LABELS_ACROSS * LABELS_DOWN
             If LABELS_PER_SHEET = 0 Then LABELS_PER_SHEET = 24
 
+            Dim USE_PICK As Boolean = optLABEL_QTY_CALC.Value = "P"
+
             If AbsCheckBox2.Checked = True Then
 
                 ASCMAIN1.sql = "(select ICTSTYL1.STYLE_CODE, ICTSTYL1.SIZE_CODE, 0 SIZE_QTY from ICTSTYL1, ICTSTYLS" & vbCrLf _
@@ -1137,16 +1140,20 @@ Public Class ICFLJOB1
             ASCMAIN1.sql = "SELECT STYLE_CODE, COLOR_CODE, SIZE_CODE, " & IIf(AbsCheckBox2.Checked, " trunc(ORDR_QTY * (SIZE_QTY / PPK_CNT) + .5) ORDR_QTY", " ORDR_QTY") & vbCrLf _
                 & ", LABEL_STYLE, LABEL_PRICE, LABEL_DGC, LABEL_SIZE, LABEL_UPC, LABEL_COLOR, LABEL_DESC, SIZE_QTY, PPK_CNT from " & vbCrLf _
                 & "(Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.SIZE_CODE" & vbCrLf _
-                & ", SUM (SOTORDR2.ORDR_QTY) ORDR_QTY" & vbCrLf _
+                & ", " & IIf(USE_PICK, "SUM (SOTPICK2.PICK_QTY)", "SUM(SOTORDR2.ORDR_QTY)") & " ORDR_QTY" & vbCrLf _
                 & ", EDT850T2.EDI_SKU LABEL_STYLE, EDT850T2.RETAIL_PRICE LABEL_PRICE, EDT850T2.BUYER_CATALOG_NO LABEL_DGC" & vbCrLf _
                 & ", nvl(EDT850T2.EDI_SIZE_DESC, ICTSTYL1.SIZE_CODE) LABEL_SIZE, EDT850T2.EDI_UPC LABEL_UPC" & vbCrLf _
                 & ", EDT850T2.EDI_COLOR_NAME LABEL_COLOR, EDT850T2.EDI_STYLE_NAME LABEL_DESC, SIZE_QTY, sum(SIZE_QTY) over (PARTITION by EDT850T2.EDI_UPC) PPK_CNT" & vbCrLf _
-                & " from SOTORDR2,SOTORDR1,EDT850T2, " & ASCMAIN1.sql & " ICTSTYL1" & vbCrLf _
+                & " from SOTORDR2,SOTORDR1,EDT850T2, " & IIf(USE_PICK, " SOTPICK1, SOTPICK2, ", "") & ASCMAIN1.sql & " ICTSTYL1" & vbCrLf _
                 & " where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
                 & "   and (SOTORDR1.ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" & IIf(txtPO_IMPORT.Text <> "", " or  ORDR_CUST_PO like '" & txtPO_IMPORT.Text & "' )", ")") & vbCrLf _
                 & "   and EDT850T2.EDI_DOC_SEQ_NO (+) = SOTORDR2.EDI_DOC_SEQ_NO" & vbCrLf _
                 & "   and EDT850T2.EDI_DTL_SEQ (+) = SOTORDR2.EDI_DTL_SEQ" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
+                & "" & IIf(USE_PICK, "   and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                & "   and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
+                & "   and SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                & "   and SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO" & vbCrLf, "") _
                 & " group by SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYL1.SIZE_CODE" & vbCrLf _
                 & ", EDT850T2.EDI_SKU, EDT850T2.RETAIL_PRICE, EDT850T2.BUYER_CATALOG_NO" & vbCrLf _
                 & ", EDT850T2.EDI_SIZE_DESC, EDT850T2.EDI_UPC" & vbCrLf _
@@ -1280,7 +1287,7 @@ Public Class ICFLJOB1
             If ORDR_QTY > 0 Then
                 Dim LABEL_QTY As Integer = 0
 
-                If optLABEL_QTY_CALC.Value = "S" Then
+                If optLABEL_QTY_CALC.Value = "S" Or optLABEL_QTY_CALC.Value = "P" Then
                     LABEL_QTY = ORDR_QTY + LABEL_QTY_EXTRA
                     Dim LABEL_CALC As Integer = LABELS_ACROSS * LABELS_DOWN
                     If LABEL_QTY Mod LABEL_CALC <> 0 Then

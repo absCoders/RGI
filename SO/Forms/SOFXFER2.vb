@@ -4,6 +4,7 @@ Imports System.Net.Http.Formatting
 'Imports Newtonsoft.Json
 Imports System.Reflection
 Imports nsoftware.IPWorksSSH
+Imports Newtonsoft.Json
 
 Public Class SOFXFER2
     Private Event OnDirList As nsoftware.IPWorks.Ftp.OnDirListHandler
@@ -24,20 +25,20 @@ Public Class SOFXFER2
     Dim ImageListDelete As New List(Of String)
     Dim BackupComplete As Boolean = False
     Private VersionInfo As New Text.StringBuilder With {.Length = 0}
+    Dim ServerLive As String = "https://api2.regency-rib.com:8086/"
+    Dim ServerTest As String = "http://localhost:1977/"
+    'Dim ServerLive As String = "http://api.regency-rib.com:8181/"
+    'Dim ServerTest As String = "http://kreativekode.ngrok.io/"
+    'Dim API_CONTROLLER_ORDERS As String = "api/SalesOrder/CreateSalesOrder"
+    'Dim API_CONTROLLER_CUSTOMERS As String = "api/Customer/CreateCustomer"
+    'Dim API_CONTROLLER_SHIPTO As String = "api/Customer/UpdateShipTo"
+    'Dim API_CONTROLLER_TATCTLN1 As String = "api/ABS/GetTATCTLN1"
 
-    Dim ServerLive As String = "http://api.regency-rib.com:8181/"
-    'Dim ServerLive As String = "http://api2.regency-rib.com:8086/" ' this is the new home for the APIs below
-    Dim ServerTest As String = "http://kreativekode.ngrok.io/"
-    'Dim ServerTest As String = "https://absapi.absolution1.com/" ' use our sever as a test if you would like; it updates PDBRGI (at the moment)
-    Dim API_CONTROLLER_ORDERS As String = "api/SalesOrder/CreateSalesOrder"
-    Dim API_CONTROLLER_CUSTOMERS As String = "api/Customer/CreateCustomer"
-    Dim API_CONTROLLER_SHIPTO As String = "api/Customer/UpdateShipTo"
-    Dim API_CONTROLLER_TATCTLN1 As String = "api/ABS/GetTATCTLN1"
-    'Dim ctlPfx As String = "api/RGI/LT/"
-    'Dim API_CONTROLLER_ORDERS As String = $"{ctlPfx}/CreateSalesOrder"
-    'Dim API_CONTROLLER_CUSTOMERS As String = $"{ctlPfx}/CreateCustomer"
-    'Dim API_CONTROLLER_SHIPTO As String = $"{ctlPfx}/UpdateShipTo" 'api/RGI/LT/UpdateShipTo
-    'Dim API_CONTROLLER_TATCTLN1 As String = $"{ctlPfx}/GetTATCTLN1"
+    Dim ctlPfx As String = "api/RGI/LT"
+    Dim API_CONTROLLER_ORDERS As String = $"{ctlPfx}/CreateSalesOrder"
+    Dim API_CONTROLLER_CUSTOMERS As String = $"{ctlPfx}/CreateCustomer"
+    Dim API_CONTROLLER_SHIPTO As String = $"{ctlPfx}/UpdateShipTo" 'api/RGI/LT/UpdateShipTo
+    Dim API_CONTROLLER_TATCTLN1 As String = $"{ctlPfx}/GetTATCTLN1"
 
     Dim SB As New System.Text.StringBuilder With {.Length = 0}
     Dim ImageGetProgress As Boolean = True
@@ -341,11 +342,11 @@ Public Class SOFXFER2
                     If ASCMAIN1.USER_ID = "mariog" Or ASCMAIN1.USER_ID = "wayne" Then
                         .Items("Clear Orders Pending").Visible = True
                         '.Items("Update Software").Visible = True
-                        chkSECUREFTP.Visible = True
+                        'chkNEWAPI.Visible = True
                     Else
                         .Items("Clear Orders Pending").Visible = False
                         '.Items("Update Software").Visible = False
-                        chkSECUREFTP.Visible = False
+                        'chkNEWAPI.Visible = False
                     End If
                 End With
                 .Groups("Import Quotes").Expanded = False
@@ -354,7 +355,7 @@ Public Class SOFXFER2
             End With
         End If
 
-        chkSECUREFTP.Checked = True
+        'chkNEWAPI.Checked = True
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
@@ -603,9 +604,9 @@ Public Class SOFXFER2
         Dim CTL_NO_GET_LARGER As Int64 = CTL_NO_GET
         Select Case CTL_NO_TYPE
             Case "SOTORDR1.ORDR_NO"
-                CTL_NO_GET_LARGER = 1000
-            Case "ARTCUST1.CUST_CODE"
                 CTL_NO_GET_LARGER = 500
+            Case "ARTCUST1.CUST_CODE"
+                CTL_NO_GET_LARGER = 200
         End Select
 
 
@@ -614,7 +615,7 @@ Public Class SOFXFER2
             Dim iTitle As String = "You Are Special"
             Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
             iMSG.AppendLine("Because You Are Mario, You Are Special")
-            iMSG.AppendLine("And Can Rquest the Larger Option Of")
+            iMSG.AppendLine("And Can Request the Larger Option Of")
             iMSG.AppendLine(CTL_NO_GET_LARGER & " Control Numbers.")
             iMSG.AppendLine("Is That What You Want?")
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
@@ -641,7 +642,15 @@ Public Class SOFXFER2
                                    & "&TABLE_NAME=" & TABLE_NAME _
                                    & "&COLUMN_NAME=" & COLUMN_NAME _
                                    & "&HOW_MANY=" & CTL_NO_GET
-            Dim CTL_NO_START As String = Generate_ORDR_NO(ORDR_NO_QS)
+
+            If (ASCMAIN1.Running_in_VS) Then Stop
+            Dim errMsg As String = ""
+            Dim CTL_NO_START As String = Generate_ORDR_NO(ORDR_NO_QS, errMsg)
+            If errMsg.Length > 0 Then
+                MsgBox(errMsg, vbCritical, "Error Fetching Numbers")
+                Rollback()
+                Exit Sub
+            End If
             For I As Integer = 0 To CTL_NO_GET - 1
                 Dim CTL_NO_X As String = Format(CTL_NO_START + I, "".PadLeft(Len(CTL_NO_START), "0"))
                 Dim rowTATCTLN3 As DataRow = dst.Tables("TATCTLN3").NewRow
@@ -693,6 +702,8 @@ Public Class SOFXFER2
     End Sub
 
     Sub Transmit_Orders()
+        If (ASCMAIN1.Running_in_VS) Then Stop
+
         Dim NoDetails As Boolean = False
         For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("SEL='1'")
             Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO").ToString & String.Empty
@@ -701,11 +712,9 @@ Public Class SOFXFER2
             If rowCtn = 0 Then
                 MsgBox(String.Format("Order {0} Has No Details!!", ORDR_NO), vbExclamation, "No Transmission Will Occur")
                 NoDetails = True
+                Exit Sub
             End If
         Next
-        If NoDetails Then
-            Exit Sub
-        End If
         If Not PrintSelected Then
             Dim Msg As String = "You Have Not Printed A Transmission Report" & vbCrLf & "Do You Still Want To Transfer?"
             Dim iresult As MsgBoxResult = MsgBox(Msg, vbYesNo, "No Report Yet!")
@@ -720,20 +729,20 @@ Public Class SOFXFER2
             dst.AcceptChanges()
             dst.WriteXml(FILENAME)
 
-            ''System.Diagnostics.Process.Start("ftp", " -s:" & ASCMAIN1.Folders("Temp") & "osg.scr")
-            'ftp_File(ASCMAIN1.USER_ID & "_" & XSD & ".xsd", FILENAME)
-
             BeginTrans()
 
             For Each rowARTCUST1 As DataRow In dst.Tables("ARTCUST1").Select("")
                 Dim CUST_CODE As String = rowARTCUST1.Item("CUST_CODE")
+                If (ASCMAIN1.Running_in_VS) Then Stop
                 Dim UPLOAD_ERR As String = CUST_UPLOAD(CUST_CODE)
                 If UPLOAD_ERR.Length = 0 Then
                     For Each TABLE_NAME As String In New String() {"ARTCUST1", "ARTCUST2", "ARTCUSTD"}
                         ASCDATA1.ExecuteSQL(String.Format("Delete from {0}_L where CUST_CODE = '{1}'", TABLE_NAME, CUST_CODE))
                     Next
                 Else
-                    MsgBox(UPLOAD_ERR)
+                    MsgBox(UPLOAD_ERR, vbCritical, "Error Uploading Customers")
+                    Rollback()
+                    Exit Sub
                 End If
             Next
 
@@ -748,6 +757,7 @@ Public Class SOFXFER2
                 If ORDRs.Contains(rowARTCUSTQ_L.Item("LAST_ORDR_NO").ToString & String.Empty) Then
                     Dim CUST_CODE As String = rowARTCUSTQ_L.Item("CUST_CODE")
                     Dim CUST_ADDR_CODE As String = rowARTCUSTQ_L.Item("CUST_ADDR_CODE")
+                    If (ASCMAIN1.Running_in_VS) Then Stop
                     Dim UPLOAD_ERR As String = SHIPTO_UPLOAD(CUST_CODE, CUST_ADDR_CODE)
                     If UPLOAD_ERR.Length = 0 Then
                         SB.Length = 0
@@ -756,7 +766,9 @@ Public Class SOFXFER2
                         SB.AppendLine(String.Format("AND CUST_ADDR_CODE = '{0}'", CUST_ADDR_CODE))
                         ASCDATA1.ExecuteSQL(SB.ToString)
                     Else
-                        MsgBox(UPLOAD_ERR)
+                        MsgBox(UPLOAD_ERR, vbCritical, "Error Uploading Ship Tos")
+                        Rollback()
+                        Exit Sub
                     End If
                 End If
             Next
@@ -769,7 +781,8 @@ Public Class SOFXFER2
                     rowSOTORDR1.Item("ORDR_BATCH_NO") = ASCMAIN1.Next_Control_No("ORDR_BATCH_NO")
                     ASCDATA1.ExecuteSQL(String.Format("UPDATE SOTORDR1 SET ORDR_BATCH_NO = '{0}' WHERE ORDR_NO = '{1}'", rowSOTORDR1.Item("ORDR_BATCH_NO").ToString(), ORDR_NO))
                 End If
-                MsgBox("Order Upload")
+
+                If (ASCMAIN1.Running_in_VS) Then Stop
                 Dim UPLOAD_ERR As String = ORDR_UPLOAD(ORDR_NO)
                 If UPLOAD_ERR.Length = 0 Then
                     For Each TABLE_NAME As String In New String() {"SOTORDR1", "SOTORDR2", "SOTORDR5"}
@@ -783,13 +796,13 @@ Public Class SOFXFER2
                     Next
                     For Each TABLE_NAME As String In {"SOTORDR1", "SOTORDR2", "SOTORDR5"}
                         Dim TABLE_NAME_H As String = String.Format("{0}_H", TABLE_NAME)
-                        ''ASCMAIN1.sql = String.Format("Delete from {0} where ORDR_NO = '{1}'", TABLE_NAME_L, ORDR_NO)
-                        ''ASCDATA1.ExecuteSQL()
                         ASCMAIN1.sql = String.Format("Insert into {0} Select * from {1} where ordr_no = '{2}'", TABLE_NAME_H, TABLE_NAME, ORDR_NO)
                         ASCDATA1.ExecuteSQL()
                     Next
                 Else
-                    MsgBox(UPLOAD_ERR)
+                    MsgBox(UPLOAD_ERR, vbCritical, "Error Uploading Orders")
+                    Rollback()
+                    Exit Sub
                 End If
             Next
 
@@ -1014,13 +1027,13 @@ Public Class SOFXFER2
     End Sub
 
     Private Function ORDR_UPLOAD(ByVal ORDR_NO As String) As String
-        Dim RetVal As String
+        Dim RetVal As String = ""
 
         Dim url As New System.Uri(ServerLive)
         Dim API_BASE As String = ServerLive
-        If ASCMAIN1.USER_ID = "wayne" Then
+        If (ASCMAIN1.Running_in_VS) Then
             Dim iResult As MsgBoxResult
-            Dim iTitle As String = "Wayne Testing?!?!"
+            Dim iTitle As String = "Testing?"
             Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
             iMSG.AppendLine(String.Format("Test With: {0}", ServerTest))
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
@@ -1036,20 +1049,20 @@ Public Class SOFXFER2
             API_BASE = ServerLive
         End If
 
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create($"{url}api/rgi/lt/serverstatus")
         Dim resptest As System.Net.WebResponse
         Try
             resptest = req.GetResponse()
             resptest.Close()
             req = Nothing
         Catch ex As Exception
+            If (ASCMAIN1.Running_in_VS) Then Stop
             req = Nothing
-            API_BASE = ServerLive
+            'API_BASE = ServerLive
+            RetVal = vbCrLf & "Server Request Not Responding."
         End Try
 
-        If (ASCMAIN1.Running_in_VS) Then
-            Stop 'Check your URL shit and make dam sure you are not looking at live!
-        End If
+        If (ASCMAIN1.Running_in_VS) Then Stop 'Check your URL shit and make dam sure you are not looking at live!
 
         Dim order As New SOTORDR1_L
         For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select(String.Format("ORDR_NO = '{0}'", ORDR_NO))
@@ -1123,36 +1136,43 @@ Public Class SOFXFER2
         client.BaseAddress = New Uri(API_BASE)
 
         client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
-
-        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
-
+        'client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
         client.Timeout = New TimeSpan(0, 5, 0)
 
-        'Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
         Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
 
-        Dim content As HttpContent = New ObjectContent(Of SOTORDR1_L)(order, frmtr)
+        'Dim content As HttpContent = New ObjectContent(Of SOTORDR1_L)(order, frmtr)
+        Dim content As String = JsonConvert.SerializeObject(order)
+        Dim Buffer = System.Text.Encoding.UTF8.GetBytes(content)
+        Dim byteContent = New ByteArrayContent(Buffer)
+        byteContent.Headers.ContentType = New MediaTypeHeaderValue("application/json")
 
-        Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_ORDERS, content).Result
+        'Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_ORDERS, content).Result
+
+        If (ASCMAIN1.Running_in_VS) Then Stop
+        Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_ORDERS, byteContent).Result()
 
         Dim apiResponseString As String = Newtonsoft.Json.JsonConvert.SerializeObject(resp)
 
-        Dim fullErrorMsg As String = ""
+        'Dim fullErrorMsg As String = ""
         If Not resp.IsSuccessStatusCode Then
-            fullErrorMsg &= vbCrLf & vbCrLf & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
+            RetVal = vbCrLf & RetVal & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
+            RetVal = vbCrLf & RetVal & $"Tried Post: {API_CONTROLLER_ORDERS}"
+            RetVal = vbCrLf & RetVal & $"Base: {API_BASE}"
+            '
         End If
-        RetVal = fullErrorMsg
+
         Return RetVal
     End Function
 
     Private Function CUST_UPLOAD(ByVal CUST_CODE As String) As String
-        Dim RetVal As String
+        Dim RetVal As String = ""
 
         Dim url As New System.Uri(ServerLive)
         Dim API_BASE As String = ServerLive
-        If ASCMAIN1.USER_ID = "wayne" Then
+        If (ASCMAIN1.Running_in_VS) Then
             Dim iResult As MsgBoxResult
-            Dim iTitle As String = "Wayne Testing?!?!"
+            Dim iTitle As String = "Testing?"
             Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
             iMSG.AppendLine(String.Format("Test With: {0}", ServerTest))
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
@@ -1168,15 +1188,17 @@ Public Class SOFXFER2
             API_BASE = ServerLive
         End If
 
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create($"{url}api/rgi/lt/serverstatus")
         Dim resptest As System.Net.WebResponse
         Try
             resptest = req.GetResponse()
             resptest.Close()
             req = Nothing
         Catch ex As Exception
+            If (ASCMAIN1.Running_in_VS) Then Stop
             req = Nothing
-            API_BASE = ServerLive
+            'API_BASE = ServerLive
+            RetVal = vbCrLf & "Server Request Not Responding."
         End Try
 
         Dim newARTCUST1_L As New ARTCUST1_L
@@ -1246,34 +1268,43 @@ Public Class SOFXFER2
         client.BaseAddress = New Uri(API_BASE)
 
         client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
-        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
+        'client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
 
         Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
 
-        Dim content As HttpContent = New ObjectContent(Of ARTCUST1_L)(newARTCUST1_L, frmtr)
+        'Dim content As HttpContent = New ObjectContent(Of ARTCUST1_L)(newARTCUST1_L, frmtr)
+        Dim content As String = JsonConvert.SerializeObject(newARTCUST1_L)
+        Dim Buffer = System.Text.Encoding.UTF8.GetBytes(content)
+        Dim byteContent = New ByteArrayContent(Buffer)
+        byteContent.Headers.ContentType = New MediaTypeHeaderValue("application/json")
 
-        Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_CUSTOMERS, content).Result
+        If (ASCMAIN1.Running_in_VS) Then Stop
+        'Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_CUSTOMERS, content).Result
+        Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_CUSTOMERS, byteContent).Result()
 
+        If (ASCMAIN1.Running_in_VS) Then Stop
         Dim apiResponseString As String = Newtonsoft.Json.JsonConvert.SerializeObject(resp)
 
-        Dim fullErrorMsg As String = ""
+        'Dim fullErrorMsg As String = ""
         If Not resp.IsSuccessStatusCode Then
-            fullErrorMsg &= vbCrLf & vbCrLf & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
+            RetVal = vbCrLf & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
+            'fullErrorMsg &= vbCrLf & vbCrLf & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
         End If
 
-        RetVal = fullErrorMsg
+        'RetVal = vbCrLf & fullErrorMsg
         Return RetVal
     End Function
 
     Private Function SHIPTO_UPLOAD(ByVal CUST_CODE As String, ByVal CUST_ADDR_CODE As String) As String
-        Dim RetVal As String
-        Dim fullErrorMsg As String = ""
+        Dim RetVal As String = ""
+        'Dim fullErrorMsg As String = ""
+        If (ASCMAIN1.Running_in_VS) Then Stop
 
         Dim url As New System.Uri(ServerLive)
         Dim API_BASE As String = ServerLive
-        If ASCMAIN1.USER_ID = "wayne" Then
+        If (ASCMAIN1.Running_in_VS) Then
             Dim iResult As MsgBoxResult
-            Dim iTitle As String = "Wayne Testing?!?!"
+            Dim iTitle As String = "Testing?"
             Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
             iMSG.AppendLine(String.Format("Test With: {0}", ServerTest))
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
@@ -1289,15 +1320,17 @@ Public Class SOFXFER2
             API_BASE = ServerLive
         End If
 
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create($"{url}api/rgi/lt/serverstatus")
         Dim resptest As System.Net.WebResponse
         Try
             resptest = req.GetResponse()
             resptest.Close()
             req = Nothing
         Catch ex As Exception
+            If (ASCMAIN1.Running_in_VS) Then Stop
             req = Nothing
-            API_BASE = ServerLive
+            'API_BASE = ServerLive
+            RetVal = vbCrLf & "Server Request Not Responding."
         End Try
 
         Dim newARTCUSTQ_L As New ARTCUSTQ_L
@@ -1323,35 +1356,43 @@ Public Class SOFXFER2
             client.BaseAddress = New Uri(API_BASE)
 
             client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
-            client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
+            'client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"))
 
             Dim frmtr As MediaTypeFormatter = New JsonMediaTypeFormatter()
 
-            Dim content As HttpContent = New ObjectContent(Of ARTCUSTQ_L)(newARTCUSTQ_L, frmtr)
+            'Dim content As HttpContent = New ObjectContent(Of ARTCUSTQ_L)(newARTCUSTQ_L, frmtr)
+            Dim content As String = JsonConvert.SerializeObject(newARTCUSTQ_L)
 
-            Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_SHIPTO, content).Result
+            Dim Buffer = System.Text.Encoding.UTF8.GetBytes(content)
+            Dim byteContent = New ByteArrayContent(Buffer)
+            byteContent.Headers.ContentType = New MediaTypeHeaderValue("application/json")
+
+            Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_SHIPTO, byteContent).Result()
+
+            'Dim resp As HttpResponseMessage = client.PostAsync(API_CONTROLLER_SHIPTO, content).Result
 
             Dim apiResponseString As String = Newtonsoft.Json.JsonConvert.SerializeObject(resp)
+            'Dim content As HttpContent = New ObjectContent(Of uploadStylesRequest)(US_REQ, frmtr)
 
             If Not resp.IsSuccessStatusCode Then
-                fullErrorMsg &= vbCrLf & vbCrLf & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
+                RetVal = vbCrLf & String.Format("{0} ({1})", CInt(resp.StatusCode), resp.ReasonPhrase)
             End If
         Else
-            fullErrorMsg &= vbCrLf & vbCrLf & "No ShipTo Record Found!"
+            RetVal = vbCrLf & "No ShipTo Record Found!"
         End If
 
-        RetVal = fullErrorMsg
+        'RetVal = fullErrorMsg
         Return RetVal
     End Function
 
-    Function Generate_ORDR_NO(qs As String) As String
+    Function Generate_ORDR_NO(qs As String, ByRef errMsg As String) As String
         Dim ctl_no As String = ""
 
         Dim url As New System.Uri(ServerLive)
         Dim API_BASE As String = ServerLive
-        If ASCMAIN1.USER_ID = "wayne" Then
+        If (ASCMAIN1.Running_in_VS) Then
             Dim iResult As MsgBoxResult
-            Dim iTitle As String = "Wayne Testing?!?!"
+            Dim iTitle As String = "Testing?"
             Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
             iMSG.AppendLine(String.Format("Test With: {0}", ServerTest))
             iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
@@ -1367,43 +1408,50 @@ Public Class SOFXFER2
             API_BASE = ServerLive
         End If
 
-        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create(url)
+        Dim req As System.Net.WebRequest = System.Net.WebRequest.Create($"{url}api/rgi/lt/serverstatus")
         Dim resptest As System.Net.WebResponse
         Try
             resptest = req.GetResponse()
             resptest.Close()
             req = Nothing
-            API_BASE = ServerLive
         Catch ex As Exception
+            If (ASCMAIN1.Running_in_VS) Then Stop
             req = Nothing
-            API_BASE = ServerLive
+            'API_BASE = ServerLive
+            errMsg = vbCrLf & "Server Request Not Responding."
         End Try
 
-        Dim API_QUERY_STRING As String = qs
+        If errMsg.Length = 0 Then
+            Dim API_QUERY_STRING As String = qs
 
-        Dim client As New HttpClient()
-        client.BaseAddress = New Uri(API_BASE)
+            Dim client As New HttpClient()
+            client.BaseAddress = New Uri(API_BASE)
 
-        client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+            client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
 
-        Dim response As HttpResponseMessage = client.GetAsync(API_CONTROLLER_TATCTLN1 & API_QUERY_STRING).Result
+            If (ASCMAIN1.Running_in_VS) Then Stop
+            Dim response As HttpResponseMessage = client.GetAsync(API_CONTROLLER_TATCTLN1 & API_QUERY_STRING).Result
 
-        If response.IsSuccessStatusCode Then
-            Try
-                Dim TATCTLN1_RESPONSE As New TATCTLN1
-                Dim apiResponseString As String = ""
-                Dim responseObject As Object = response.Content.ReadAsAsync(Of IEnumerable(Of TATCTLN1))().Result
+            If (ASCMAIN1.Running_in_VS) Then Stop
+            If response.IsSuccessStatusCode Then
+                Try
+                    Dim TATCTLN1_RESPONSE As New TATCTLN1
+                    Dim apiResponseString As String = ""
+                    Dim responseObject As Object = response.Content.ReadAsAsync(Of IEnumerable(Of TATCTLN1))().Result
 
-                TATCTLN1_RESPONSE = responseObject(0)
-                ctl_no = TATCTLN1_RESPONSE.CTL_NO_LAST.ToString.PadLeft(Val(TATCTLN1_RESPONSE.CTL_NO_LENGTH & ""), "0")
-            Catch ex As Exception
-                'Dim fullErrorMsg As String = "Could not Generate Ordr No fetch Next Order Numbers"
-                'fullErrorMsg &= vbCrLf & vbCrLf & ex.Message
-            End Try
+                    TATCTLN1_RESPONSE = responseObject(0)
+                    ctl_no = TATCTLN1_RESPONSE.CTL_NO_LAST.ToString.PadLeft(Val(TATCTLN1_RESPONSE.CTL_NO_LENGTH & ""), "0")
+                Catch ex As Exception
+                    errMsg = vbCrLf & ex.Message
+                    'Dim fullErrorMsg As String = "Could not Generate Ordr No fetch Next Order Numbers"
+                    'fullErrorMsg &= vbCrLf & vbCrLf & ex.Message
+                End Try
 
-        Else
-            'Dim fullErrorMsg As String = ""
-            'fullErrorMsg &= vbCrLf & vbCrLf & String.Format("{0} ({1})", CInt(response.StatusCode), response.ReasonPhrase)
+            Else
+                errMsg = vbCrLf & String.Format("{0} ({1})", CInt(response.StatusCode), response.ReasonPhrase)
+                'Dim fullErrorMsg As String = ""
+                'fullErrorMsg &= vbCrLf & vbCrLf & String.Format("{0} ({1})", CInt(response.StatusCode), response.ReasonPhrase)
+            End If
         End If
 
         Return ctl_no
@@ -1427,15 +1475,18 @@ Public Class SOFXFER2
         Dim STime As DateTime = Now()
         Dim ETime As DateTime
         Dim FTPFILES As String() = New String() {"DBUPDATES.BAT", "RGO_DB.ZIP", "RGO_DB.SQL", "ARTCUST.SQL", "SOTORDR.SQL", "RGO_DB2.SQL"}
-        If chkSECUREFTP.Checked Then
-            For Each FTPFILE As String In FTPFILES
-                ftpS_File(FTPFILE, "/DB/", FTPFILE, "C:\Shared\RGO\")
-            Next
-        Else
-            For Each FTPFILE As String In FTPFILES
-                ftp_File(String.Format("\DB\{0}", FTPFILE), String.Format("C:\Shared\RGO\{0}", FTPFILE), "D")
-            Next
-        End If
+        For Each FTPFILE As String In FTPFILES
+            ftpS_File(FTPFILE, "/DB/", FTPFILE, "C:\Shared\RGO\")
+        Next
+        'If chkNEWAPI.Checked Then
+        '    For Each FTPFILE As String In FTPFILES
+        '        ftpS_File(FTPFILE, "/DB/", FTPFILE, "C:\Shared\RGO\")
+        '    Next
+        'Else
+        '    For Each FTPFILE As String In FTPFILES
+        '        ftp_File(String.Format("\DB\{0}", FTPFILE), String.Format("C:\Shared\RGO\{0}", FTPFILE), "D")
+        '    Next
+        'End If
 
         Dim Zip1 As New nsoftware.IPWorksZip.Zip
         Dim p As New System.Diagnostics.ProcessStartInfo()
@@ -1535,11 +1586,12 @@ Public Class SOFXFER2
             'FolderList.Add("Images\16", "Images\16")
             'FolderList.Add("Images\32", "Images\32")
             For i As Integer = 0 To FolderList.Count - 1
-                If chkSECUREFTP.Checked Then
-                    ftpS_File("*", String.Format("\{0}{1}\", RemoteRoot, FolderList.Keys(i)), "*", String.Format("{0}{1}\", LocalRoot, FolderList.Keys(i)))
-                Else
-                    ftp_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
-                End If
+                ftpS_File("*", String.Format("\{0}{1}\", RemoteRoot, FolderList.Keys(i)), "*", String.Format("{0}{1}\", LocalRoot, FolderList.Keys(i)))
+                'If chkNEWAPI.Checked Then
+                '    ftpS_File("*", String.Format("\{0}{1}\", RemoteRoot, FolderList.Keys(i)), "*", String.Format("{0}{1}\", LocalRoot, FolderList.Keys(i)))
+                'Else
+                '    ftp_File(String.Format("{0}{1}\*", RemoteRoot, FolderList.Keys(i)), String.Format("{0}{1}\*", LocalRoot, FolderList.Values(i)), "D", True)
+                'End If
             Next
             iMSG.Length = 0
             iMSG.AppendLine("Software Update Is Complete.")
@@ -2333,6 +2385,21 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Option To Show / Hide Discontinued Colors In Order Entry.")
+
+        VersionNo = "25.01.22.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* API Calls Moved To Use New API Server.")
+
+        VersionNo = "25.04.17.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
+
+        VersionNo = "25.06.11.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
 
         lblVersionNo.Text = VersionNo
     End Sub

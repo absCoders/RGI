@@ -1191,7 +1191,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.grdECTSTYLX)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(784, 439)
         '
@@ -1651,7 +1651,7 @@ Partial Class ECFSTYL1
         '
         Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer7)
         Me.UltraTabPageControl13.Enabled = False
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(784, 439)
         '
@@ -2156,7 +2156,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(784, 439)
         '
@@ -3644,7 +3644,7 @@ Partial Class ECFSTYL1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(784, 439)
         '

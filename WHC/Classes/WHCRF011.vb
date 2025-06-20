@@ -46,20 +46,33 @@
             ' .Add("SCANNED")
             ' End With
             ' .Tables("WHTSCANS").PrimaryKey = New DataColumn() {.Tables("WHTSCANS").Columns("BAR_CODE")}
-            ASCMAIN1.sql = "Select  WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE,WHTLOCB1.LOCATION_CODE, LOCATION_ROUTE_SEQ " & vbCrLf _
-                & " from WHTLOCB1, WHTLOCM1 " & vbCrLf _
-                & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
-                & " And WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
-                & " and (WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE) in ( " & vbCrLf _
-                & " select distinct  WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, " & vbCrLf _
-                & " first_value(WHTLOCB1.LOCATION_CODE) over(partition by STYLE_CODE, COLOR_CODE order by WHTLOCB1.last_date desc,WHTLOCM1.LOCATION_ROUTE_SEQ) LOCATION_CODE" & vbCrLf _
-                & " from WHTLOCB1, WHTLOCM1 " & vbCrLf _
-                & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
-                & " And WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
-                & " and WHTLOCM1.LOCATION_USE = :PARM1 " & vbCrLf _
-                & " and (WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE) in " & vbCrLf _
-                & " ( select WHSE_CODE, STYLE_CODE, COLOR_CODE from WHTLOCB1 " & vbCrLf _
-                & " where whse_code = :PARM2 and location_code = :PARM3 AND LOCATION_QTY <> 0))"
+
+            'ASCMAIN1.sql = "Select  WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE,WHTLOCB1.LOCATION_CODE, LOCATION_ROUTE_SEQ " & vbCrLf _
+            '    & " from WHTLOCB1, WHTLOCM1 " & vbCrLf _
+            '    & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
+            '    & " And WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
+            '    & " and (WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, WHTLOCB1.LOCATION_CODE) in ( " & vbCrLf _
+            '    & " select distinct  WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE, " & vbCrLf _
+            '    & " first_value(WHTLOCB1.LOCATION_CODE) over(partition by STYLE_CODE, COLOR_CODE order by WHTLOCB1.last_date desc,WHTLOCM1.LOCATION_ROUTE_SEQ) LOCATION_CODE" & vbCrLf _
+            '    & " from WHTLOCB1, WHTLOCM1 " & vbCrLf _
+            '    & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
+            '    & " And WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
+            '    & " and WHTLOCM1.LOCATION_USE = :PARM1 " & vbCrLf _
+            '    & " and (WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE) in " & vbCrLf _
+            '    & " ( select WHSE_CODE, STYLE_CODE, COLOR_CODE from WHTLOCB1 " & vbCrLf _
+            '    & " where whse_code = :PARM2 and location_code = :PARM3 AND LOCATION_QTY <> 0))"
+            ASCMAIN1.sql = "select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE,
+                              max(WHTLOCB1.LOCATION_CODE) keep (dense_rank first order by WHTLOCB1.last_date desc,WHTLOCM1.LOCATION_ROUTE_SEQ) LOCATION_CODE,
+                              max(WHTLOCM1.LOCATION_ROUTE_SEQ) keep (dense_rank first order by WHTLOCB1.last_date desc,WHTLOCM1.LOCATION_ROUTE_SEQ) LOCATION_ROUTE_SEQ
+                              from WHTLOCB1, WHTLOCM1 
+                              where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE 
+                              And WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE 
+                              and WHTLOCB1.LOCATION_QTY <> 0
+                              and WHTLOCM1.LOCATION_USE = :PARM1 
+                              and (WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE) in 
+                              ( select WHSE_CODE, STYLE_CODE, COLOR_CODE from WHTLOCB1 
+                              where whse_code = :PARM2 and location_code = :PARM3 AND LOCATION_QTY <> 0)
+                              group by WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "VVV", 3)
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
@@ -99,7 +112,7 @@
 
                 Case "SCAN_LOC"
                     If SCANTEXT.ToUpper = "DEP WH" Or SCANTEXT.ToUpper = "DEPECOM" Then
-                        CreateResponse("", "YELLOW", FindNextUPC(SCANTEXT.ToUpper))
+                        CreateResponse("SCAN_LOC", "YELLOW", FindNextUPC(SCANTEXT.ToUpper))
                         Exit Select
                     ElseIf SCANTEXT = "M2G" Then
                         AppStates("SCAN_LOC") = "Scan Move From Location|MFG2L|Shw Loc|EXIT|"
@@ -149,7 +162,7 @@
                             CreateResponse("", "BLUE", Show_Locations())
                             Exit Select
                         End If
-                        
+
                     End If
                     CreateResponse("SCAN_LOC", "YELLOW", "Show Cancelled, Scan  location")
 
@@ -314,7 +327,7 @@
         ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE FROM WHTLOCB1 where LOCATION_QTY > 0 AND WHSE_CODE = '" & G.WHSE_CODE & "' and LOCATION_CODE = '" & G.GUN_LOC & "'"
         Dim rowStyleColor As DataRow = ASCDATA1.GetDataRow
         If Not IsNothing(rowStyleColor) Then
-            Fill_Records("WHTLOCBX", New String() {LocType, G.WHSE_CODE, G.GUN_LOC}, True)
+            Fill_Records("WHTLOCBX", {LocType, G.WHSE_CODE, G.GUN_LOC}, True)
             For Each row As DataRow In dst.Tables("WHTLOCBX").Select("", "LOCATION_ROUTE_SEQ")
                 If msg = "" Then
                     msg = "Open PutAways: " & vbCrLf

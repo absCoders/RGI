@@ -529,10 +529,15 @@ Public Class ICFXLSWR
                         Dim XLS_NO As String = ASCMAIN1.Next_Control_No("ICTXLSW1.XLS_NO")
                         Dim XLS_IMP_NO As String = ASCMAIN1.Next_Control_No("ICTXLSW2.XLS_IMP_NO")
 
+                        Dim SEASON_CODE As String = "2025F"
+
                         vendorEmails.Add(VEND_CODE, XLS_NO)
 
-                        ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
-                        Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
+                        'ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
+                        'Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
+
+                        ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and SEASON_CODE = :PARM2"
+                        Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {VEND_CODE, SEASON_CODE})) + 1
 
                         With rowICTXLSW1
                             .Item("XLS_NO") = XLS_NO
@@ -542,7 +547,7 @@ Public Class ICFXLSWR
                             .Item("XLS_STATUS") = IIf(calcCodeMaintenanceMode, "C", "G") ' G = GENERATED, R = REPLIED, D = DELETED
                             .Item("XLS_DESC") = Mid(STYLE_CLASS_CODEs, 2)
                             .Item("REPLY_BY_DATE") = dteREPLY_BY_DATE.Value
-                            .Item("SEASON_CODE") = "2025F"
+                            .Item("SEASON_CODE") = SEASON_CODE
                             .Item("XLS_TYPE") = "R"
                             .Item("XLS_IMP_NO") = XLS_IMP_NO
                             .Item("XLS_SEQ_NO") = XLS_SEQ_NO
@@ -1135,20 +1140,22 @@ Public Class ICFXLSWR
 
                 If missingStyles.Count > 0 Then
                     Dim XLS_NO_new As String = Repair_XLS_NO(missingStyles, XLS_NO, VEND_CODE)
-                    Dim repairMsg As String = $"This request required repair.{vbCrLf} {missingStyles.Count} styles were missing from the Original sheet.
-                    {vbCrLf}Absolution has taken the following actions:{vbCrLf}{vbCrLf}
-                    1) Created a new request for the missing styles: {XLS_NO_new}{vbCrLf}
-                    2) Resequenced the original request.{vbCrLf}
-                    3) Generated a new workbook for the missing styles. Please check your Draft folder.{vbCrLf}{vbCrLf}
-                    Please re-import the current vendor response. "
-                    MsgBox($"{repairMsg}", vbOKOnly, "Cannot Proceed")
-                    importFailed = True
-                    Exit Sub
+                    'Dim repairMsg As String = $"This request required repair.{vbCrLf} {missingStyles.Count} styles were missing from the Original sheet.
+                    '{vbCrLf}Absolution has taken the following actions:{vbCrLf}{vbCrLf}
+                    '1) Resequenced the original request.{vbCrLf}
+                    '3) Generated a new workbook for the missing styles. Please check your Draft folder.{vbCrLf}{vbCrLf}
+                    'Please re-import the current vendor response. "
+                    'MsgBox($"{repairMsg}", vbOKOnly, "Cannot Proceed")
+                    'importFailed = True
+                    'Exit Sub
                 End If
+
+
 
                 ASCMAIN1.Progress("Importing Style Dimension Data")
                 dst.Tables("ICTXLSWD_V").Rows.Clear()
                 ws = oWB.Worksheets(1) 'dimensions & weight
+                If ws.ProtectContents Then ws.Unprotect("")
                 For r As Int64 = 2 To ws.UsedRange.RowCount + 2
                     Dim STYLE_CODE As String = ws.Cells(r, 0).Text
                     If STYLE_CODE = "" Then Exit For
@@ -1194,12 +1201,26 @@ Public Class ICFXLSWR
                     rowICTXLSWD_V.Item("ITM_HEIGHT") = Val(ws.Cells(r, 13).Text & "")
                     rowICTXLSWD_V.Item("ITM_WEIGHT") = Val(ws.Cells(r, 14).Text & "")
 
+                    'fix % Diff calculation
+
+                    ws.Cells(r, 15).Value = "='Style Data'!" & ws.Cells(r, 10).Address
+
+
                     dst.Tables("ICTXLSWD_V").Rows.Add(rowICTXLSWD_V)
 
                 Next
+
+                ws.Protect("ABS")
+
                 For Each rowICTXLSWD_V As DataRow In dst.Tables("ICTXLSWD_V").Select()
                     rowICTXLSWD_V.Item("CASE_CUBE_DIFF") = Calculate_Case_Cube_Diff(rowICTXLSWD_V)
                 Next
+
+                Dim XLS_FILENAME As String = vendorWB.Replace(".", "_fixed.")
+                oWB.Worksheets(1).Select()
+                oWB.SaveAs(XLS_FILENAME, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                Show_Document(XLS_FILENAME)
+
             Catch ex As Exception
                 MsgBox(ex.Message, vbOKOnly, "Error Occurred")
             End Try
@@ -1219,41 +1240,42 @@ Public Class ICFXLSWR
 
         ASCMAIN1.Progress("Repair Required!", XLS_NO_orig)
 
-        Dim vendorEmails As New Dictionary(Of String, String)
+        '   Dim vendorEmails As New Dictionary(Of String, String)
         Dim XLS_NO_fix As String = ""
         Try
             EnforceConstraints(False)
 
-            dst.Tables("ICTXLSW1").Clear()
+            ' dst.Tables("ICTXLSW1").Clear()
             dst.Tables("ICTXLSW3").Clear()
 
             ASCMAIN1.sql = "Select * from ICTXLSW1 where XLS_NO = :PARM1"
             Dim rowICTXLSW1_orig As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, True, "V", New Object() {XLS_NO_orig})
             Dim XLS_DESC As String = rowICTXLSW1_orig.Item("XLS_DESC")
+            Dim SEASON_CODE As String = rowICTXLSW1_orig.Item("SEASON_CODE") & ""
             Dim XLS_IMP_NO_orig As String = rowICTXLSW1_orig.Item("XLS_IMP_NO")
 
-            Dim rowICTXLSW1 As DataRow = dst.Tables("ICTXLSW1").NewRow
-            XLS_NO_fix = ASCMAIN1.Next_Control_No("ICTXLSW1.XLS_NO")
-            Dim XLS_IMP_NO_fix As String = ASCMAIN1.Next_Control_No("ICTXLSW2.XLS_IMP_NO")
+            'Dim rowICTXLSW1 As DataRow = dst.Tables("ICTXLSW1").NewRow
+            'XLS_NO_fix = ASCMAIN1.Next_Control_No("ICTXLSW1.XLS_NO")
+            'Dim XLS_IMP_NO_fix As String = ASCMAIN1.Next_Control_No("ICTXLSW2.XLS_IMP_NO")
 
-            ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and XLS_TYPE = 'R'"
-            Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", New Object() {VEND_CODE})) + 1
+            'ASCMAIN1.sql = "Select Max (XLS_SEQ_NO) from ICTXLSW1 where VEND_CODE = :PARM1 and SEASON_CODE = :PARM2 and XLS_TYPE = 'R'"
+            'Dim XLS_SEQ_NO As Integer = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {VEND_CODE, SEASON_CODE})) + 1
 
-            With rowICTXLSW1
-                .Item("XLS_NO") = XLS_NO_fix
-                .Item("INIT_DATE") = DATETIME_STAMP
-                .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                .Item("VEND_CODE") = VEND_CODE
-                .Item("XLS_STATUS") = "G"
-                .Item("XLS_DESC") = XLS_DESC
-                .Item("REPLY_BY_DATE") = rowICTXLSW1_orig.Item("REPLY_BY_DATE")
-                .Item("XLS_TYPE") = "G"
-                .Item("XLS_IMP_NO") = XLS_IMP_NO_fix
-                .Item("XLS_SEQ_NO") = XLS_SEQ_NO
-            End With
-            dst.Tables("ICTXLSW1").Rows.Add(rowICTXLSW1)
+            'With rowICTXLSW1
+            '    .Item("XLS_NO") = XLS_NO_fix
+            '    .Item("INIT_DATE") = DATETIME_STAMP
+            '    .Item("INIT_OPER") = ASCMAIN1.USER_ID
+            '    .Item("VEND_CODE") = VEND_CODE
+            '    .Item("XLS_STATUS") = "G"
+            '    .Item("XLS_DESC") = XLS_DESC
+            '    .Item("REPLY_BY_DATE") = rowICTXLSW1_orig.Item("REPLY_BY_DATE")
+            '    .Item("XLS_TYPE") = "G"
+            '    .Item("XLS_IMP_NO") = XLS_IMP_NO_fix
+            '    .Item("XLS_SEQ_NO") = XLS_SEQ_NO
+            'End With
+            'dst.Tables("ICTXLSW1").Rows.Add(rowICTXLSW1)
 
-            vendorEmails.Add(VEND_CODE, XLS_NO_fix)
+            'vendorEmails.Add(VEND_CODE, XLS_NO_fix)
 
             Dim linesToMove As String = "("
             For Each kvp As KeyValuePair(Of String, String) In missingStyles
@@ -1278,21 +1300,21 @@ Public Class ICFXLSWR
 
             BeginTrans()
 
-            ASCMAIN1.sql = $"Update ICTXLSW3 Set XLS_IMP_NO = :PARM1, XLS_IMP_LNO = rownum where XLS_IMP_NO = :PARM2 and XLS_IMP_LNO IN {linesToMove}"
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {XLS_IMP_NO_fix, XLS_IMP_NO_orig})
+            'ASCMAIN1.sql = $"Update ICTXLSW3 Set XLS_IMP_NO = :PARM1, XLS_IMP_LNO = rownum where XLS_IMP_NO = :PARM2 and XLS_IMP_LNO IN {linesToMove}"
+            'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {XLS_IMP_NO_fix, XLS_IMP_NO_orig})
 
-            Update_Record_TDA("ICTXLSW1")
+            'Update_Record_TDA("ICTXLSW1")
             Update_Record_TDA("ICTXLSW3", $"XLS_IMP_NO = '{XLS_IMP_NO_orig}'")
 
             EnforceConstraints(True)
 
             CommitTrans()
 
-            For Each kvp As KeyValuePair(Of String, String) In vendorEmails
-                Generate_Vendor_Email(kvp.Value, kvp.Key)
-                ASCMAIN1.Progress("Waiting for API to process reguest...", XLS_NO_fix)
-                System.Threading.Thread.Sleep(5000)
-            Next
+            'For Each kvp As KeyValuePair(Of String, String) In vendorEmails
+            '    Generate_Vendor_Email(kvp.Value, kvp.Key)
+            '    ASCMAIN1.Progress("Waiting for API to process reguest...", XLS_NO_fix)
+            '    System.Threading.Thread.Sleep(5000)
+            'Next
         Catch ex As Exception
             MsgBox(ex.Message, vbOKOnly, "Error")
         End Try

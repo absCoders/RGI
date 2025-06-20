@@ -141,7 +141,9 @@ Partial Class WHFLNFA1
         Dim UltraGridColumn2 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ONH")
+        Dim UltraGridColumn86 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OPEN")
         Dim UltraGridColumn82 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK")
+        Dim UltraGridColumn87 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BAL")
         Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAV")
         Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RECA")
         Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RECB")
@@ -154,6 +156,7 @@ Partial Class WHFLNFA1
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOC")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DATE_LAST_CYCLE_COUNT")
         Dim UltraGridColumn81 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
+        Dim UltraGridColumn85 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATIONS")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -295,6 +298,7 @@ Partial Class WHFLNFA1
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkShowLocs = New ABSCS.ABSCheckBox()
         Me.optLOC = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkPastDueCountsOnly = New ABSCS.ABSCheckBox()
         Me.chkEnableAdjustment = New ABSCS.ABSCheckBox()
@@ -364,6 +368,7 @@ Partial Class WHFLNFA1
         Me.UltraTabControl2.SuspendLayout()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.chkShowLocs, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optLOC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkPastDueCountsOnly, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkEnableAdjustment, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1102,7 +1107,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.splWHTLOCBX)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1263, 481)
         '
@@ -1126,6 +1131,7 @@ Partial Class WHFLNFA1
         '
         'grdWHTLOCBX
         '
+        Me.grdWHTLOCBX.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCBX.DisplayLayout.Appearance = Appearance13
@@ -1137,55 +1143,64 @@ Partial Class WHFLNFA1
         UltraGridColumn22.Header.Caption = "On Hand"
         UltraGridColumn22.Header.VisiblePosition = 2
         UltraGridColumn22.Width = 90
+        UltraGridColumn86.Header.Caption = "Open"
+        UltraGridColumn86.Header.VisiblePosition = 4
+        UltraGridColumn86.Width = 82
         UltraGridColumn82.Header.Caption = "In Pick"
         UltraGridColumn82.Header.VisiblePosition = 3
         UltraGridColumn82.Width = 66
+        UltraGridColumn87.Header.Caption = "Balance"
+        UltraGridColumn87.Header.VisiblePosition = 5
+        UltraGridColumn87.Width = 74
         UltraGridColumn23.Format = "#,##0"
         UltraGridColumn23.Header.Caption = "Waved"
-        UltraGridColumn23.Header.VisiblePosition = 4
+        UltraGridColumn23.Header.VisiblePosition = 6
         UltraGridColumn23.Width = 90
         UltraGridColumn25.Format = "#,##0"
         UltraGridColumn25.Header.Caption = "Rec A"
-        UltraGridColumn25.Header.VisiblePosition = 5
+        UltraGridColumn25.Header.VisiblePosition = 7
         UltraGridColumn25.Width = 90
         UltraGridColumn26.Format = "#,##0"
         UltraGridColumn26.Header.Caption = "Rec B"
-        UltraGridColumn26.Header.VisiblePosition = 6
+        UltraGridColumn26.Header.VisiblePosition = 8
         UltraGridColumn26.Width = 90
         UltraGridColumn47.Format = "#,##0"
         UltraGridColumn47.Header.Caption = "Guns"
-        UltraGridColumn47.Header.VisiblePosition = 7
+        UltraGridColumn47.Header.VisiblePosition = 9
         UltraGridColumn47.Width = 90
         UltraGridColumn48.Format = "#,##0"
         UltraGridColumn48.Header.Caption = "Lost+Found"
-        UltraGridColumn48.Header.VisiblePosition = 8
+        UltraGridColumn48.Header.VisiblePosition = 10
         UltraGridColumn48.Width = 90
         UltraGridColumn49.Format = "#,##0"
         UltraGridColumn49.Header.Caption = "Shipping"
-        UltraGridColumn49.Header.VisiblePosition = 9
+        UltraGridColumn49.Header.VisiblePosition = 11
         UltraGridColumn49.Width = 90
         UltraGridColumn1.Format = "#,##0"
         UltraGridColumn1.Header.Caption = "Returns"
-        UltraGridColumn1.Header.VisiblePosition = 10
+        UltraGridColumn1.Header.VisiblePosition = 12
         UltraGridColumn50.Format = "#,##0"
         UltraGridColumn50.Header.Caption = "Finance"
-        UltraGridColumn50.Header.VisiblePosition = 11
+        UltraGridColumn50.Header.VisiblePosition = 13
         UltraGridColumn50.Width = 90
         UltraGridColumn51.Format = "#,##0"
         UltraGridColumn51.Header.Caption = "Adjust"
-        UltraGridColumn51.Header.VisiblePosition = 12
+        UltraGridColumn51.Header.VisiblePosition = 14
         UltraGridColumn51.Width = 90
         UltraGridColumn52.Format = "#,##0"
         UltraGridColumn52.Header.Caption = "Locations"
-        UltraGridColumn52.Header.VisiblePosition = 13
+        UltraGridColumn52.Header.VisiblePosition = 15
         UltraGridColumn52.Width = 90
         UltraGridColumn7.Header.Caption = "Last Count"
-        UltraGridColumn7.Header.VisiblePosition = 14
+        UltraGridColumn7.Header.VisiblePosition = 16
         UltraGridColumn7.Width = 92
         UltraGridColumn81.Header.Caption = "Desc"
-        UltraGridColumn81.Header.VisiblePosition = 15
+        UltraGridColumn81.Header.VisiblePosition = 17
         UltraGridColumn81.Width = 219
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn22, UltraGridColumn82, UltraGridColumn23, UltraGridColumn25, UltraGridColumn26, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn1, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn7, UltraGridColumn81})
+        UltraGridColumn85.Header.Caption = "Locations-Qty"
+        UltraGridColumn85.Header.VisiblePosition = 18
+        UltraGridColumn85.Width = 713
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn22, UltraGridColumn86, UltraGridColumn82, UltraGridColumn87, UltraGridColumn23, UltraGridColumn25, UltraGridColumn26, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn1, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn7, UltraGridColumn81, UltraGridColumn85})
         Me.grdWHTLOCBX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWHTLOCBX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
@@ -1275,7 +1290,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl8.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl8.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl8.Name = "UltraTabPageControl8"
         Me.UltraTabPageControl8.Size = New System.Drawing.Size(1263, 481)
         '
@@ -1299,7 +1314,6 @@ Partial Class WHFLNFA1
         '
         'grdWHTLOCLX
         '
-        Me.grdWHTLOCLX.DataMember = Nothing
         Appearance61.BackColor = System.Drawing.SystemColors.Window
         Appearance61.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCLX.DisplayLayout.Appearance = Appearance61
@@ -1651,6 +1665,7 @@ Partial Class WHFLNFA1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.chkShowLocs)
         Me.UltraGroupBox1.Controls.Add(Me.optLOC)
         Me.UltraGroupBox1.Controls.Add(Me.chkPastDueCountsOnly)
         Me.UltraGroupBox1.Controls.Add(Me.chkEnableAdjustment)
@@ -1663,6 +1678,14 @@ Partial Class WHFLNFA1
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1271, 75)
         Me.UltraGroupBox1.TabIndex = 2
+        '
+        'chkShowLocs
+        '
+        Me.chkShowLocs.Location = New System.Drawing.Point(900, 22)
+        Me.chkShowLocs.Name = "chkShowLocs"
+        Me.chkShowLocs.Size = New System.Drawing.Size(173, 20)
+        Me.chkShowLocs.TabIndex = 225
+        Me.chkShowLocs.Text = "Show Locs In Lline"
         '
         'optLOC
         '
@@ -1918,6 +1941,7 @@ Partial Class WHFLNFA1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.chkShowLocs, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optLOC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkPastDueCountsOnly, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkEnableAdjustment, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1986,4 +2010,5 @@ Partial Class WHFLNFA1
     Friend WithEvents UltraLabel3 As Misc.UltraLabel
     Friend WithEvents cmdRefreshAdj As Misc.UltraButton
     Friend WithEvents optLOC As UltraWinEditors.UltraOptionSet
+    Friend WithEvents chkShowLocs As ABSCS.ABSCheckBox
 End Class

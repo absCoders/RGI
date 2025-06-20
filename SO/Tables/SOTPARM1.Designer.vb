@@ -72,6 +72,8 @@ Partial Class SOTPARM1
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.dtetariff = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraLabel26 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraGroupBox7 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -158,6 +160,7 @@ Partial Class SOTPARM1
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
+        CType(Me.dtetariff, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox7, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox7.SuspendLayout()
         CType(Me.UltraTextEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -213,7 +216,7 @@ Partial Class SOTPARM1
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.SplitContainer1)
-        Me.Panel1.Size = New System.Drawing.Size(772, 507)
+        Me.Panel1.Size = New System.Drawing.Size(772, 552)
         '
         'UltraExplorerBar1
         '
@@ -224,11 +227,11 @@ Partial Class SOTPARM1
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 554)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 599)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 619)
         '
         'grdASFBASEX
         '
@@ -277,12 +280,12 @@ Partial Class SOTPARM1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 619)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 619)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
@@ -290,7 +293,7 @@ Partial Class SOTPARM1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 619)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
         '
         'tlb
@@ -301,12 +304,14 @@ Partial Class SOTPARM1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(768, 417)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(768, 458)
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.dtetariff)
+        Me.UltraGroupBox2.Controls.Add(Me.UltraLabel26)
         Me.UltraGroupBox2.Controls.Add(Me.UltraLabel3)
         Me.UltraGroupBox2.Controls.Add(Me.UltraGroupBox7)
         Me.UltraGroupBox2.Controls.Add(Me.UltraTextEditor19)
@@ -348,8 +353,27 @@ Partial Class SOTPARM1
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(768, 417)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(768, 458)
         Me.UltraGroupBox2.TabIndex = 0
+        '
+        'dtetariff
+        '
+        Me.Absx1.SetABSColumnName(Me.dtetariff, "MIN_DISC_TARIFF_REC_DATE")
+        Me.dtetariff.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
+        Me.dtetariff.Location = New System.Drawing.Point(409, 416)
+        Me.dtetariff.Name = "dtetariff"
+        Me.dtetariff.Size = New System.Drawing.Size(114, 25)
+        Me.dtetariff.TabIndex = 21
+        Me.dtetariff.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
+        '
+        'UltraLabel26
+        '
+        Me.UltraLabel26.AutoSize = True
+        Me.UltraLabel26.Location = New System.Drawing.Point(10, 423)
+        Me.UltraLabel26.Name = "UltraLabel26"
+        Me.UltraLabel26.Size = New System.Drawing.Size(399, 18)
+        Me.UltraLabel26.TabIndex = 303
+        Me.UltraLabel26.Text = "Discontinued Item Minimum Tariff Surcharge Receipt Date "
         '
         'UltraLabel3
         '
@@ -454,7 +478,7 @@ Partial Class SOTPARM1
         Me.UltraNumericEditor3.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor3.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor3.Size = New System.Drawing.Size(52, 25)
-        Me.UltraNumericEditor3.TabIndex = 22
+        Me.UltraNumericEditor3.TabIndex = 23
         '
         'UltraLabel22
         '
@@ -498,7 +522,7 @@ Partial Class SOTPARM1
         Me.UltraNumericEditor19.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
         Me.UltraNumericEditor19.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor19.Size = New System.Drawing.Size(52, 25)
-        Me.UltraNumericEditor19.TabIndex = 21
+        Me.UltraNumericEditor19.TabIndex = 22
         '
         'UltraTextEditor6
         '
@@ -816,9 +840,9 @@ Partial Class SOTPARM1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(768, 417)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(768, 457)
         '
         'UltraGroupBox3
         '
@@ -844,7 +868,7 @@ Partial Class SOTPARM1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(768, 417)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(768, 457)
         Me.UltraGroupBox3.TabIndex = 0
         '
         'grpReleaseAtOnce
@@ -1228,7 +1252,7 @@ Partial Class SOTPARM1
         Me.UltraTabControl1.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl1.Name = "UltraTabControl1"
         Me.UltraTabControl1.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.UltraTabControl1.Size = New System.Drawing.Size(772, 445)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(772, 486)
         Me.UltraTabControl1.TabIndex = 302
         UltraTab1.TabPage = Me.UltraTabPageControl1
         UltraTab1.Text = "Defaults"
@@ -1240,7 +1264,7 @@ Partial Class SOTPARM1
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(768, 417)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(768, 458)
         '
         'SplitContainer1
         '
@@ -1258,15 +1282,15 @@ Partial Class SOTPARM1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.UltraTabControl1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(772, 507)
-        Me.SplitContainer1.SplitterDistance = 58
+        Me.SplitContainer1.Size = New System.Drawing.Size(772, 552)
+        Me.SplitContainer1.SplitterDistance = 62
         Me.SplitContainer1.TabIndex = 303
         '
         'SOTPARM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(989, 574)
+        Me.ClientSize = New System.Drawing.Size(989, 619)
         Me.Name = "SOTPARM1"
         Me.Text = "SOTPARM1"
         Me.Panel1.ResumeLayout(False)
@@ -1283,6 +1307,7 @@ Partial Class SOTPARM1
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         Me.UltraGroupBox2.PerformLayout()
+        CType(Me.dtetariff, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox7.ResumeLayout(False)
         Me.UltraGroupBox7.PerformLayout()
@@ -1415,4 +1440,6 @@ Partial Class SOTPARM1
     Friend WithEvents UltraLabel23 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents grpReleaseAtOnce As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents AbsCheckBox2 As ABSCS.ABSCheckBox
+    Friend WithEvents UltraLabel26 As Misc.UltraLabel
+    Friend WithEvents dtetariff As UltraWinEditors.UltraDateTimeEditor
 End Class

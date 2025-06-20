@@ -928,11 +928,17 @@ Public Class ICFPHYC1
 
         ASCMAIN1.sql = "Update ICTPHYC1 set VERIFIED_OPER = '' where LOCATION_CODE = :PARM1"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", Location)
+
+        ASCMAIN1.sql = "Update WHTLOCM1 " & vbCrLf _
+                & " set LOCATION_LOCKED = '' " & vbCrLf _
+                & " where WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
+                & " and LOCATION_CODE = '" & Location & "'"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
         CommitTrans()
 
         Using ipp As New nsoftware.IPWorks.Ipport
             ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
-            ipp.Connect("192.168.110.223", "4444")
+            ipp.Connect("192.168.110.239", "4444")
             Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
             Try
                 data = cbxLabelPrinter.SelectedItem 'Printer
@@ -1773,7 +1779,7 @@ Public Class ICFPHYC1
 
         For Each rowEmpty As DataRow In tblEmpty.Select("", "LOCATION_CODE")
             If Not IsDBNull(rowEmpty("TICKET_NO")) Then
-                If rowEmpty("TICKET_STATUS") <> "E" Then
+                If rowEmpty("TICKET_STATUS") & "" <> "E" Then
                     MsgBox("Cannot Flag locations as Empty, counts found", vbCritical, "Update Failed")
                     Exit Sub
                 End If

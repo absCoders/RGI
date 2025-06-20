@@ -795,17 +795,17 @@ Public Class SOFSHIPB
                 & " WHERE ROWNUM < 0" & vbCrLf
             Create_TDA(.Tables.Add, "ICTCOST1", "**", 0, False)
 
+            Create_Relation("SOTPICK1", "SOTCART1", "PICK_NO")
+            dst.Tables("SOTPICK1").Columns.Add("PICK_TOTAL_WGT_CALC", GetType(System.Decimal))
+            dst.Tables("SOTPICK1").Columns.Add("PICK_CNT_CARTONS_CALC", GetType(System.Int64))
+            dst.Tables("SOTPICK1").Columns.Add("PICK_TOTAL_UNITS_CALC", GetType(System.Int64))
+
             Create_Relation("SOTCART1", "SOTCART2", "CART_NO")
             Create_Relation("SOTCARTX", "SOTPICK2", "PICK_NO,ORDR_NO,ORDR_LNO")
             Create_Relation("SOTCARTX", "SOTCART2", "PICK_NO,ORDR_NO,ORDR_LNO")
 
             dst.Tables("SOTCART1").Columns.Add("CART_TOTAL_UNITS_CALC", GetType(System.Int64))
             dst.Tables("SOTCART1").Columns.Add("CART_TOTAL_UNITS_ORIG", GetType(System.Int64), "SUM(CHILD(SOTCART1_SOTCART2).QTY_PACKED_ORIG)")
-
-            Create_Relation("SOTPICK1", "SOTCART1", "PICK_NO")
-            dst.Tables("SOTPICK1").Columns.Add("PICK_TOTAL_WGT_CALC", GetType(System.Decimal))
-            dst.Tables("SOTPICK1").Columns.Add("PICK_CNT_CARTONS_CALC", GetType(System.Int64))
-            dst.Tables("SOTPICK1").Columns.Add("PICK_TOTAL_UNITS_CALC", GetType(System.Int64))
 
             With .Tables.Add("SOTCONFT")
                 .Columns.Add("KEY", GetType(System.Int32))
@@ -889,7 +889,7 @@ Public Class SOFSHIPB
         End With
 
         Create_Relation("SOTPICK1", "SOTCARTX", "PICK_NO")
-        Create_Relation("SOTPICK1", "SOTORDR1", "ORDR_NO")
+        'Create_Relation("SOTPICK1", "SOTORDR1", "ORDR_NO")
         Create_Relation("SOTORDR1", "SOTORDR2", "ORDR_NO")
         Create_Relation("SOTORDR1", "SOTORDR9", "ORDR_NO")
 
@@ -5579,6 +5579,7 @@ Public Class SOFSHIPB
                 If INV_NO.Length = 0 Then Continue For
 
                 For Each rowSOTINVHM As DataRow In dst.Tables("SOTINVHM").Select($"INV_NO = '{PICK_NO}'")
+                    rowSOTINVHM.Item("INV_MNO") = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", $"INV_NO = '{INV_NO}'") & String.Empty) + 1
                     rowSOTINVHM.Item("INV_NO") = INV_NO
                 Next
             Next
@@ -7104,7 +7105,7 @@ Public Class SOFSHIPB
         Load_Popup_Menu(grdSOTSHIPS, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add BOL to Master", "Remove BOL from Master", "Refresh Avaliable BOLs")
 
         ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
-        Load_Popup_Menu(grdSOTCART1, "SBBBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons", "Cancel Carton Contents", "Consolidate Cartons")
+        Load_Popup_Menu(grdSOTCART1, "SBBBBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons", "Cancel Carton Contents", "Consolidate Cartons", "Create Carton")
 
         Load_Popup_Menu(grdMasterBols, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdNonMasterBols, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add to Master")
@@ -7169,21 +7170,13 @@ Public Class SOFSHIPB
                     tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = False
 
                     For Each grdRow As Infragistics.Win.UltraWinGrid.UltraGridRow In grd.Selected.Rows
-                        Dim tmpSHIPBOL As String = grdRow.Cells("SHIP_BOL_NO").Value
-                        Dim tmpOrdGrp As String = grdRow.Cells("ORDR_GROUP_NO").Value
-                        Dim row As DataRow = dst.Tables("SOTSHIPX_BOL").Select($"ORDR_GROUP_NO = '{tmpOrdGrp}' and SHIP_BOL_NO <> '{tmpSHIPBOL}'").FirstOrDefault
-                        If Not IsNothing(row) And ASCMAIN1.CLIENT = "RGI" Then
-                            tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = False
-                            tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = False
-                        Else
-                            shipBolNoList.Add(grdRow.Cells("SHIP_BOL_NO").Value)
-                            If grd.ActiveRow.Cells("SELECTED").Value & String.Empty <> "1" Then
-                                tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = True
-                            End If
+                        shipBolNoList.Add(grdRow.Cells("SHIP_BOL_NO").Value)
+                        If grd.ActiveRow.Cells("SELECTED").Value & String.Empty <> "1" Then
+                            tlb_pop.Tools("Add Shipment to BOL").SharedProps.Enabled = True
+                        End If
 
-                            If grd.ActiveRow.Cells("SELECTED").Value & String.Empty = "1" Then
-                                tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = True
-                            End If
+                        If grd.ActiveRow.Cells("SELECTED").Value & String.Empty = "1" Then
+                            tlb_pop.Tools("Remove Shipment from BOL").SharedProps.Enabled = True
                         End If
                     Next
                 End If
@@ -7358,6 +7351,63 @@ Public Class SOFSHIPB
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
+            Case "Create Carton"
+
+                If grdSOTCART1.ActiveRow Is Nothing Then
+                    Exit Sub
+                End If
+
+                If Not grdSOTCART1.ActiveRow.IsDataRow Then
+                    Exit Sub
+                End If
+
+                Dim PKG_W As Decimal = Val(grdSOTCART1.ActiveRow.Cells("PKG_W").Value & String.Empty)
+                Dim PKG_L As Decimal = Val(grdSOTCART1.ActiveRow.Cells("PKG_L").Value & String.Empty)
+                Dim PKG_H As Decimal = Val(grdSOTCART1.ActiveRow.Cells("PKG_H").Value & String.Empty)
+
+                If PKG_H <= 0 OrElse PKG_L <= 0 OrElse PKG_H <= 0 Then
+                    MessageBox.Show("Height, Length and Width must all be greter than 0", "Create Carton", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                ASCMAIN1.sql = "SELECT * FROM WHTPKGM1 WHERE PKG_W = :PARM1 AND PKG_L = :PARM2 AND PKG_H = :PARM3"
+                Dim rowWHTPKGM1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "NNN", {PKG_W, PKG_L, PKG_H})
+
+                If rowWHTPKGM1 IsNot Nothing Then
+                    MessageBox.Show($"These package Dimensions already exist on Carton {rowWHTPKGM1.Item("PKG_CODE")}.", "Create Carton", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                Dim PKG_CODE As String = PKG_L.ToString("00") & PKG_W.ToString("00") & PKG_H.ToString("00")
+                Dim PKG_DESC As String = PKG_L.ToString("00") & " x " & PKG_W.ToString("00") & " x " & PKG_H.ToString("00")
+
+                If PKG_CODE.Length > 6 Then
+                    PKG_CODE = PKG_CODE.Substring(0, 6)
+                End If
+
+                Try
+                    BeginTrans()
+                    ASCMAIN1.sql = $"Insert Into WHTPKGM1
+                                        (PKG_CODE, PKG_DESC, PKG_L, PKG_W, PKG_H, PKG_SEQ)
+                                    VALUES
+                                        ('{PKG_CODE}', '{PKG_DESC}', {PKG_L.ToString("00")}, {PKG_W.ToString("00")}, {PKG_H.ToString("00")}, 99)"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                    CommitTrans("Package Created")
+
+                    Try
+                        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
+                        ultraComboPackage.ValueMember = "PKG_CODE"
+                        ultraComboPackage.DisplayMember = "PKG_DESC"
+                        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
+                        grdSOTCART1_SHIP.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
+                    Catch ex As Exception
+                    End Try
+
+                Catch ex As Exception
+                    Rollback(ex.Message)
+                End Try
+
+
             Case "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty", "Back Order Qty"
 
                 Dim STYLE_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("STYLE_CODE").Value & String.Empty
@@ -7884,8 +7934,6 @@ Public Class SOFSHIPB
                     MessageBox.Show("Ecommerce Shipments cannot be combined.", "Add Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Exit Sub
                 End If
-
-
 
                 AddShipmentToBol()
                 Display_Totals()
@@ -18284,7 +18332,7 @@ Public Class SOFSHIPB
 
     Private Sub CleanUptables(ByVal SHIP_BOL_NO As String)
 
-        ' Modofied on 12/03/2021
+        ' Modified on 12/03/2021
 
         EnforceConstraints(False)
 
@@ -18293,49 +18341,52 @@ Public Class SOFSHIPB
         Next
 
         ' remove rows from all the tables
-        CascadeRelationDeleteRule()
-        For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
-            rowSOTSHIP1.Delete()
-        Next
-
-        '' remove rows from all the tables
+        'CascadeRelationDeleteRule()
         'For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
-
-        '    For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
-        '        Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
-        '        Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
-
-        '        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("PICK_NO = '" & PICK_NO & "'")
-        '            rowSOTPICK2.Delete()
-        '        Next
-
-        '        For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
-        '            For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'")
-        '                rowSOTCART2.Delete()
-        '            Next
-        '            rowSOTCART1.Delete()
-        '        Next
-
-        '        For Each rowSOTCARTX As DataRow In dst.Tables("SOTCARTX").Select("PICK_NO = '" & PICK_NO & "'")
-        '            rowSOTCARTX.Delete()
-        '        Next
-
-        '        For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("ORDR_NO = '" & ORDR_NO & "'")
-        '            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("ORDR_NO = '" & ORDR_NO & "'")
-        '                rowSOTORDR2.Delete()
-        '            Next
-
-        '            For Each rowSOTORDR9 As DataRow In dst.Tables("SOTORDR9").Select("ORDR_NO = '" & ORDR_NO & "'")
-        '                rowSOTORDR9.Delete()
-        '            Next
-
-        '            rowSOTORDR1.Delete()
-        '        Next
-
-        '        rowSOTPICK1.Delete()
-        '    Next
         '    rowSOTSHIP1.Delete()
         'Next
+
+        '' remove rows from all the tables
+        For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
+
+            For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO & "'")
+                Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
+                Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
+
+                For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("PICK_NO = '" & PICK_NO & "'")
+                    rowSOTPICK2.Delete()
+                Next
+
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
+                    For Each rowSOTCART2 As DataRow In dst.Tables("SOTCART2").Select("CART_NO = '" & rowSOTCART1.Item("CART_NO") & "'")
+                        rowSOTCART2.Delete()
+                    Next
+                    rowSOTCART1.Delete()
+                Next
+
+                For Each rowSOTCARTX As DataRow In dst.Tables("SOTCARTX").Select("PICK_NO = '" & PICK_NO & "'")
+                    rowSOTCARTX.Delete()
+                Next
+
+                ' It may be the case there is more than one Pick Ticket in memory that points to the same sales order
+                If dst.Tables("SOTPICK1").Select($"ORDR_NO = '{ORDR_NO}' AND PICK_NO <> '{PICK_NO}'").Length = 0 Then
+                    For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("ORDR_NO = '" & ORDR_NO & "'")
+                        For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("ORDR_NO = '" & ORDR_NO & "'")
+                            rowSOTORDR2.Delete()
+                        Next
+
+                        For Each rowSOTORDR9 As DataRow In dst.Tables("SOTORDR9").Select("ORDR_NO = '" & ORDR_NO & "'")
+                            rowSOTORDR9.Delete()
+                        Next
+
+                        rowSOTORDR1.Delete()
+                    Next
+                End If
+
+                rowSOTPICK1.Delete()
+            Next
+            rowSOTSHIP1.Delete()
+        Next
 
         Dim ORDR_CUST_PO As String = String.Empty
         For Each rowSOTSHIP2 As DataRow In dst.Tables("SOTSHIP2").Select("")

@@ -390,17 +390,24 @@ Public Class EDROUTB2
         Create_TDA(dst.Tables.Add, "SOTSHIP1", "**", 0, False, "", 1)
         Fill_Records("SOTSHIP1")
 
-        ASCMAIN1.sql = "Select SOTSHIP1.BILL_OF_LADING_NO" & vbCrLf _
-            & ", Sum(SOTPICK1.PICK_TOTAL_WGT) TOT_WGT, Sum(SOTPICK1.PICK_CNT_CARTONS) TOT_CTNS " & vbCrLf _
-            & ", sum( TOT_CTNS_CONS) TOT_CTNS_CONS" & vbCrLf _
-            & " from SOTSHIP1, SOTORDR0, SOTPICK1, " & SOTSHIPX & " SOTSHIPX, (select PICK_NO, count(CART_NO) TOT_CTNS_CONS from SOTCARM1 group by PICK_NO) SOTCARM1" & vbCrLf _
-            & " where SOTSHIP1.BILL_OF_LADING_NO = :PARM1" & vbCrLf _
-            & "   and SOTORDR0.CUST_CODE = :PARM2" & vbCrLf _
-            & "   and SOTSHIP1.SHIP_BOL_NO = SOTSHIPX.SHIP_BOL_NO " & vbCrLf _
-            & "   and SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
-            & "   and SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" & vbCrLf _
-            & "   and SOTCARM1.PICK_NO(+) = SOTPICK1.PICK_NO" & vbCrLf _
-            & " group by SOTSHIP1.BILL_OF_LADING_NO"
+        ASCMAIN1.sql = "Select SOTSHIP1.BILL_OF_LADING_NO
+                , Sum(SOTPICK1.PICK_TOTAL_WGT) TOT_WGT, Sum(SOTPICK1.PICK_CNT_CARTONS) TOT_CTNS 
+                , sum( TOT_CTNS_CONS) TOT_CTNS_CONS
+                from SOTSHIP1, SOTORDR0, SOTPICK1, " & SOTSHIPX & " SOTSHIPX, 
+                (select SOTPICK1.PICK_NO, count(distinct SOTCARM1.cart_no) TOT_CTNS_CONS 
+                    from SOTPICK1, SOTCARM1, SOTCARM2
+                    where SOTCARM1.PICK_NO = SOTPICK1.PICK_NO
+                    and SOTCARM1.cart_no = SOTCARM2.cart_no
+                    and SOTPICK1.ORDR_NO = SOTCARM2.ORDR_NO
+                    and SOTCARM2.QTY_PACKED > 0
+                    group by SOTPICK1.PICK_NO) SOTCARM1
+                  where SOTSHIP1.BILL_OF_LADING_NO = :PARM1
+                and SOTORDR0.CUST_CODE = :PARM2
+                and SOTSHIP1.SHIP_BOL_NO = SOTSHIPX.SHIP_BOL_NO 
+                and SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO
+                and SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO
+                and SOTCARM1.PICK_NO(+) = SOTPICK1.PICK_NO
+                group by SOTSHIP1.BILL_OF_LADING_NO"
         Create_TDA(dst.Tables.Add, "SOTSHIPT", "**", 0, False, "VV", 1)
 
         ASCMAIN1.sql = "Select INV_NO_CONS, SUM(PICK_CNT_CARTONS) PICK_CNT_CARTONS, SUM(PICK_TOTAL_WGT) PICK_TOTAL_WGT, SUM(INV_SALES) INV_SALES," & vbCrLf _
@@ -641,13 +648,26 @@ Public Class EDROUTB2
         '    Next
         'End If
 
+        If Absx1.chkFor("CHK856").Checked Then
+            'verify carton count
+            Dim CNT_FRM_HDR As Integer = dst.Tables("EDT856O1").Select($"EDI_OUTBOUND_DOC_NO = '{EDI_OUTBOUND_DOC_NO}'")(0)("EDI_SHIP_CNT_CARTONS")
+            Dim CNT_FRM_DTL As Integer = dst.Tables("EDT856O3").DefaultView.ToTable(True, "CART_NO").Rows.Count
+            Dim response As MsgBoxResult = MsgBoxResult.Retry
+            Do While CNT_FRM_DTL <> CNT_FRM_HDR And response <> MsgBoxResult.Cancel
+                response = MsgBox("Carton Count Error, please contact ABS", MsgBoxStyle.Critical + MsgBoxStyle.RetryCancel, "EDI Error")
+                'what's the right count? sometimes a cancellation in multi-po shipments will have a carton refference
+                'to an existing carton that has no merchandise for a PO, in that case  fix the hdr cnt
+                'new logic is in place but better safe than sorry
+            Loop
+        End If
+
         ' Update Oracle
 
         For Each TABLE_NAME As String In EDI_TABLES
-            Update_Record_TDA(TABLE_NAME)
-        Next
+                Update_Record_TDA(TABLE_NAME)
+            Next
 
-        CommitTrans()
+            CommitTrans()
     End Sub
 
     Sub Setup_SHIP_BOL_NO()
@@ -1651,7 +1671,11 @@ get_next:
                                     MsgBox("Missing Range Error, call Rick", vbCritical, "ASN Error")
                                     Stop
                                 End If
-                                .Item("PICK_QTY_CONF") = rowSOTINVH9.Item("RANGE_STYLE_PP_QTY_SHIP")
+                                If rowSOTCART1.Item("CART_TOTAL_UNITS") <> rowSOTINVH9.Item("RANGE_STYLE_QTY_PER_PP") Then
+                                    MsgBox("Range Qty Error on Carton, call Rick", vbCritical, "ASN Error")
+                                    Stop
+                                End If
+                                .Item("PICK_QTY_CONF") = 1 ' rowSOTINVH9.Item("RANGE_STYLE_PP_QTY_SHIP") - we can't ship more than one Range per Box
                                 .Item("EDI_PO4_UOM") = "EA"
                             Else
                                 .Item("PICK_QTY_CONF") = rowSOTCART2.Item("QTY_PACKED")
