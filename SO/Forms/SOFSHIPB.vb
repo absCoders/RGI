@@ -7105,7 +7105,7 @@ Public Class SOFSHIPB
         Load_Popup_Menu(grdSOTSHIPS, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add BOL to Master", "Remove BOL from Master", "Refresh Avaliable BOLs")
 
         ' 05/27/2021 permit changing Pick Ticket or Carton Quantity
-        Load_Popup_Menu(grdSOTCART1, "SBBBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons", "Cancel Carton Contents", "Consolidate Cartons")
+        Load_Popup_Menu(grdSOTCART1, "SBBBBBB", "Show Filter", "Copy to Pick Ticket Cartons", "Copy to Shipment Cartons", "Copy to Selected Cartons", "Cancel Carton Contents", "Consolidate Cartons", "Create Carton")
 
         Load_Popup_Menu(grdMasterBols, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdNonMasterBols, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Add to Master")
@@ -7351,6 +7351,63 @@ Public Class SOFSHIPB
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
+            Case "Create Carton"
+
+                If grdSOTCART1.ActiveRow Is Nothing Then
+                    Exit Sub
+                End If
+
+                If Not grdSOTCART1.ActiveRow.IsDataRow Then
+                    Exit Sub
+                End If
+
+                Dim PKG_W As Decimal = Val(grdSOTCART1.ActiveRow.Cells("PKG_W").Value & String.Empty)
+                Dim PKG_L As Decimal = Val(grdSOTCART1.ActiveRow.Cells("PKG_L").Value & String.Empty)
+                Dim PKG_H As Decimal = Val(grdSOTCART1.ActiveRow.Cells("PKG_H").Value & String.Empty)
+
+                If PKG_H <= 0 OrElse PKG_L <= 0 OrElse PKG_H <= 0 Then
+                    MessageBox.Show("Height, Length and Width must all be greter than 0", "Create Carton", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                ASCMAIN1.sql = "SELECT * FROM WHTPKGM1 WHERE PKG_W = :PARM1 AND PKG_L = :PARM2 AND PKG_H = :PARM3"
+                Dim rowWHTPKGM1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "NNN", {PKG_W, PKG_L, PKG_H})
+
+                If rowWHTPKGM1 IsNot Nothing Then
+                    MessageBox.Show($"These package Dimensions already exist on Carton {rowWHTPKGM1.Item("PKG_CODE")}.", "Create Carton", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                Dim PKG_CODE As String = PKG_L.ToString("00") & PKG_W.ToString("00") & PKG_H.ToString("00")
+                Dim PKG_DESC As String = PKG_L.ToString("00") & " x " & PKG_W.ToString("00") & " x " & PKG_H.ToString("00")
+
+                If PKG_CODE.Length > 6 Then
+                    PKG_CODE = PKG_CODE.Substring(0, 6)
+                End If
+
+                Try
+                    BeginTrans()
+                    ASCMAIN1.sql = $"Insert Into WHTPKGM1
+                                        (PKG_CODE, PKG_DESC, PKG_L, PKG_W, PKG_H, PKG_SEQ)
+                                    VALUES
+                                        ('{PKG_CODE}', '{PKG_DESC}', {PKG_L.ToString("00")}, {PKG_W.ToString("00")}, {PKG_H.ToString("00")}, 99)"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                    CommitTrans("Package Created")
+
+                    Try
+                        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
+                        ultraComboPackage.ValueMember = "PKG_CODE"
+                        ultraComboPackage.DisplayMember = "PKG_DESC"
+                        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
+                        grdSOTCART1_SHIP.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
+                    Catch ex As Exception
+                    End Try
+
+                Catch ex As Exception
+                    Rollback(ex.Message)
+                End Try
+
+
             Case "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty", "Back Order Qty"
 
                 Dim STYLE_CODE As String = grdSOTPICK2_SC.ActiveRow.Cells("STYLE_CODE").Value & String.Empty
