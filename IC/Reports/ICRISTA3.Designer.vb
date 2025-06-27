@@ -99,6 +99,7 @@ Partial Class ICRISTA3
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.CHKUNITSONLY = New ABSCS.ABSCheckBox()
         Me.chkUNITS = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.dteLimitOP_C = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
@@ -191,6 +192,7 @@ Partial Class ICRISTA3
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl12.SuspendLayout()
         Me.Panel3.SuspendLayout()
+        CType(Me.CHKUNITSONLY, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkUNITS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
@@ -479,6 +481,7 @@ Partial Class ICRISTA3
         '
         'Panel3
         '
+        Me.Panel3.Controls.Add(Me.CHKUNITSONLY)
         Me.Panel3.Controls.Add(Me.chkUNITS)
         Me.Panel3.Controls.Add(Me.UltraGroupBox1)
         Me.Panel3.Controls.Add(Me.AbsCheckBox12)
@@ -491,6 +494,16 @@ Partial Class ICRISTA3
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(1017, 424)
         Me.Panel3.TabIndex = 0
+        '
+        'CHKUNITSONLY
+        '
+        Me.Absx1.SetABSBindToTable(Me.CHKUNITSONLY, False)
+        Me.CHKUNITSONLY.Location = New System.Drawing.Point(16, 281)
+        Me.CHKUNITSONLY.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.CHKUNITSONLY.Name = "CHKUNITSONLY"
+        Me.CHKUNITSONLY.Size = New System.Drawing.Size(266, 22)
+        Me.CHKUNITSONLY.TabIndex = 302
+        Me.CHKUNITSONLY.Text = "Units ONLY Aging Report"
         '
         'chkUNITS
         '
@@ -1430,6 +1443,7 @@ Partial Class ICRISTA3
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
+        CType(Me.CHKUNITSONLY, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkUNITS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
@@ -1560,4 +1574,5 @@ Partial Class ICRISTA3
     Friend WithEvents chkLimitOP_O As ABSCS.ABSCheckBox
     Friend WithEvents dteLimitOP_C As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents chkUNITS As ABSCS.ABSCheckBox
+    Friend WithEvents CHKUNITSONLY As ABSCS.ABSCheckBox
 End Class
