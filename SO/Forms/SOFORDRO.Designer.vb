@@ -548,6 +548,7 @@ Partial Class SOFORDRO
         Me.grpORDRQ = New System.Windows.Forms.GroupBox()
         Me.grdICTSTYC1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grpSTYL1 = New System.Windows.Forms.GroupBox()
+        Me.chkShowDiscColors = New System.Windows.Forms.CheckBox()
         Me.UltraTextEditor7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtPort = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel9 = New Infragistics.Win.Misc.UltraLabel()
@@ -610,7 +611,6 @@ Partial Class SOFORDRO
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkShowDiscColors = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -990,7 +990,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
-        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'Panel5
         '
@@ -1234,7 +1233,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpFindCustomer
         '
@@ -1262,7 +1260,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
-        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel3
         '
@@ -1291,7 +1288,6 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
-        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'Panel4
         '
@@ -1711,7 +1707,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(952, 510)
         '
@@ -2202,7 +2198,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraPanel1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(952, 510)
         '
@@ -2927,6 +2923,16 @@ Partial Class SOFORDRO
         Me.grpSTYL1.TabStop = False
         Me.grpSTYL1.Text = "Stock Information"
         '
+        'chkShowDiscColors
+        '
+        Me.chkShowDiscColors.AutoSize = True
+        Me.chkShowDiscColors.Location = New System.Drawing.Point(9, 481)
+        Me.chkShowDiscColors.Name = "chkShowDiscColors"
+        Me.chkShowDiscColors.Size = New System.Drawing.Size(197, 20)
+        Me.chkShowDiscColors.TabIndex = 102
+        Me.chkShowDiscColors.Text = "Show Discontinued Colors"
+        Me.chkShowDiscColors.UseVisualStyleBackColor = True
+        '
         'UltraTextEditor7
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "STYLE_PO_QTY_MIN")
@@ -3340,7 +3346,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOTORDRX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(956, 538)
         '
@@ -3562,7 +3568,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabORDERS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(956, 538)
         '
@@ -3755,16 +3761,6 @@ Partial Class SOFORDRO
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(956, 538)
-        '
-        'chkShowDiscColors
-        '
-        Me.chkShowDiscColors.AutoSize = True
-        Me.chkShowDiscColors.Location = New System.Drawing.Point(9, 481)
-        Me.chkShowDiscColors.Name = "chkShowDiscColors"
-        Me.chkShowDiscColors.Size = New System.Drawing.Size(197, 20)
-        Me.chkShowDiscColors.TabIndex = 102
-        Me.chkShowDiscColors.Text = "Show Discontinued Colors"
-        Me.chkShowDiscColors.UseVisualStyleBackColor = True
         '
         'SOFORDRO
         '
