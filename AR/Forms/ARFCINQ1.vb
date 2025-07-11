@@ -2532,7 +2532,12 @@ Public Class ARFCINQ1
                 If e.Tool.OwningMenu.Key = "grdARTSTMT1" Then
                     Dim RYP As String = grd.ActiveRow.Cells("OPS_YYYYPP").Value
                     Dim STMT_NO As String = grd.ActiveRow.Cells("STMT_NO").Value & ""
-                    FILENAME = "S:\OSG\" & RYP & "\PDF\" & STMT_NO & ".PDF"
+                    If ASCMAIN1.useUNCPath Then
+                        FILENAME = $"{ASCMAIN1.Folders("SharedRoot")}\OSG\" & RYP & "\PDF\" & STMT_NO & ".PDF"
+                    Else
+                        FILENAME = "S:\OSG\" & RYP & "\PDF\" & STMT_NO & ".PDF"
+                    End If
+
                     ATTACHMENT = ASCMAIN1.Folders("Temp") & STMT_NO & "." & "PDF"
                     SUBJECT = "Statement for " & Mid(RYP, 5, 2) & "/" & Mid(RYP, 1, 4) &
                             " (Acct# " & grd.ActiveRow.Cells("CUST_CODE").Value & " " & rowARTCUST1.Item("CUST_NAME") & ")"
@@ -2616,7 +2621,11 @@ Public Class ARFCINQ1
                     Try
                         Dim RYP As String = grdARTSTMT1.ActiveRow.Cells("OPS_YYYYPP").Value
                         Dim STMT_NO As String = grdARTSTMT1.ActiveRow.Cells("STMT_NO").Value & ""
-                        FILENAME = "S:\OSG\" & RYP & "\PDF\" & STMT_NO & ".PDF"
+                        If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                            FILENAME = $"{ASCMAIN1.Folders("SharedRoot")}\OSG\" & RYP & "\PDF\" & STMT_NO & ".PDF"
+                        Else
+                            FILENAME = "S:\OSG\" & RYP & "\PDF\" & STMT_NO & ".PDF"
+                        End If
                     Catch ex As Exception
 
                     End Try
