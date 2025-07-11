@@ -194,7 +194,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\WBCITEMA.vb" />
-    <Compile Include="Classes\WBCITEM2.vb" />
     <Compile Include="Classes\WBCCHKB1.vb" />
     <Compile Include="Classes\WBCMAIN1.vb" />
     <Compile Include="Classes\WBCSHIPT.vb" />
