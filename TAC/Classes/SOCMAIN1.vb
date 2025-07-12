@@ -57,12 +57,12 @@
 
     End Function
 
-    Public Shared Function Credit_Check( _
-    ByVal rowSOTORDR1 As DataRow, _
-    ByVal rowARTCREDC As DataRow, _
-    ByVal ORDR_AMT_OPEN As Decimal, _
-    ByVal rowSOTPARM1 As DataRow, _
-    Optional ByVal ARTCREDC As String = "", _
+    Public Shared Function Credit_Check(
+    ByVal rowSOTORDR1 As DataRow,
+    ByVal rowARTCREDC As DataRow,
+    ByVal ORDR_AMT_OPEN As Decimal,
+    ByVal rowSOTPARM1 As DataRow,
+    Optional ByVal ARTCREDC As String = "",
     Optional ByVal sqlARTCREDC As String = "") As String
 
         ' REVIEW THESE CHANGES WITH ED
@@ -257,10 +257,10 @@
         Next
     End Sub
 
-    Public Shared Sub Update_ARTCUST6( _
-    ByVal frmASFBASE0 As ASFBASE0, _
-    ByVal CUST_CODE As String, _
-    ByVal rowSOTORDR1 As DataRow, _
+    Public Shared Sub Update_ARTCUST6(
+    ByVal frmASFBASE0 As ASFBASE0,
+    ByVal CUST_CODE As String,
+    ByVal rowSOTORDR1 As DataRow,
     ByVal S As Integer)
 
         Dim rowARTCUST6 As DataRow = frmASFBASE0.Fill_Record("ARTCUST6", CUST_CODE)
@@ -318,10 +318,10 @@
         Return c
     End Function
 
-    Public Shared Function Prepare_Sales_Invoices( _
-        F As ASFBASE1, _
-        sqlw As String, _
-        ByRef SOTINVH1 As String, _
+    Public Shared Function Prepare_Sales_Invoices(
+        F As ASFBASE1,
+        sqlw As String,
+        ByRef SOTINVH1 As String,
         ByRef SOTINVH2 As String) As String
 
         ASCMAIN1.Progress("Building Work File")
@@ -425,7 +425,7 @@
         F.dst.Tables.Add(ASCDATA1.GetDataTable("", "SOTFPCT1", 1))
 
 
-        If F.MENU_ITEM_OBJECT = "SORUPDT1" Then 
+        If F.MENU_ITEM_OBJECT = "SORUPDT1" Then
             ASCMAIN1.Progress("-", "Pick Tickets")
             ASCMAIN1.sql = "Select SOTPICK1.* from SOTPICK1" & vbCrLf _
                 & " where SOTPICK1.PICK_NO in (Select PICK_NO from " & SOTINVH1 & ")"
@@ -534,8 +534,8 @@
                     & "  where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" _
                     & " and SOTORDR2.STYLE_CODE = SOTINVHD.STYLE_CODE and SOTORDR2.COLOR_CODE = SOTINVHD.COLOR_CODE" _
                     & "    and SOTORDR2.ORDR_QTY_CANC <> 0" _
-                    & IIf(GROUP = "G", _
-                            "    and SOTORDR1.ORDR_GROUP_NO = SOTINVHD.ORDR_GROUP_NO", _
+                    & IIf(GROUP = "G",
+                            "    and SOTORDR1.ORDR_GROUP_NO = SOTINVHD.ORDR_GROUP_NO",
                             "    and SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO and SOTPICK1.SHIP_BOL_NO = SUBSTR(SOTINVHD.SHIP_BOL_NO_X,3)") _
                     & "    and SHIP_BOL_NO_X like '" & GROUP & "%'" _
                     & "  group by SOTINVHD.SHIP_BOL_NO_X, SOTINVHD.ORDR_GROUP_NO, SOTINVHD.SALES_DIVISION_CODE" _
@@ -548,8 +548,8 @@
                     & "      ORDR_QTY_CANC = R1.ORDR_QTY_CANC" _
                     & "     ,ORDR_AMT_CANC = R1.ORDR_AMT_CANC" _
                     & "     where SALES_DIVISION_CODE = R1.SALES_DIVISION_CODE" _
-                    & IIf(GROUP = "G", _
-                            " and ORDR_GROUP_NO = R1.ORDR_GROUP_NO;", _
+                    & IIf(GROUP = "G",
+                            " and ORDR_GROUP_NO = R1.ORDR_GROUP_NO;",
                             " and SHIP_BOL_NO_X = R1.SHIP_BOL_NO_X;") _
                     & "   End;" _
                     & "  End Loop;" _
@@ -690,8 +690,8 @@
                     If TABLE_NAME <> "SOWINVHG2" Then .Columns.Add("ID", GetType(System.DateTime))
                     .Columns.Add("QC", GetType(System.Int64))
                     .Columns.Add("AC", GetType(System.Decimal))
-                    If TABLE_NAME = "SOTINVHG" Then .PrimaryKey = New DataColumn() {.Columns("SD"), .Columns("CC"), .Columns("ID")}
-                    If TABLE_NAME = "SOTINVHG2" Then .PrimaryKey = New DataColumn() {.Columns("SD"), .Columns("CC")}
+                    If TABLE_NAME = "SOTINVHG" Then .PrimaryKey = New DataColumn() { .Columns("SD"), .Columns("CC"), .Columns("ID")}
+                    If TABLE_NAME = "SOTINVHG2" Then .PrimaryKey = New DataColumn() { .Columns("SD"), .Columns("CC")}
                 End With
             Next
 
@@ -731,14 +731,14 @@
         Return ""
     End Function
 
-    Public Shared Function Allocation_Initialization(frmASFBASE0 As ASFBASE0, _
-                                       WHSE_CODE As String, _
-                                       force_pick As Boolean, _
-                                       allocation_only As Boolean, _
-                                       fill_data As Boolean, _
-                                       ORDR_GROUP_NO_sql As String, _
-                                       SHIP_BY_DATE As Date, _
-                                       Optional sql_where As String = "", _
+    Public Shared Function Allocation_Initialization(frmASFBASE0 As ASFBASE0,
+                                       WHSE_CODE As String,
+                                       force_pick As Boolean,
+                                       allocation_only As Boolean,
+                                       fill_data As Boolean,
+                                       ORDR_GROUP_NO_sql As String,
+                                       SHIP_BY_DATE As Date,
+                                       Optional sql_where As String = "",
                                        Optional manual_release As Boolean = False) As Dictionary(Of String, String)
 
         ' Creates Temporary Table used to drive Allocation
@@ -786,8 +786,8 @@
             & " where SOTORDR1.ORDR_STATUS = 'O'" & vbCrLf _
             & "   and ARTCUST1.CUST_CODE = SOTORDR1.CUST_CODE" & vbCrLf _
             & "   and SOTORDRG.ORDR_GROUP_NO (+) = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
-            & IIf(WHSE_CODE = "", _
-                  "", _
+            & IIf(WHSE_CODE = "",
+                  "",
                   "   and SOTORDR1.WHSE_CODE = '" & WHSE_CODE & "'")
 
         Dim sqlSOTORDR1_Allocation_Scope As String = ASCMAIN1.sql ' used below to include other orders, out of scope, calling for style/colors on orders that are in scope, to ensure a full allocation
@@ -844,8 +844,8 @@
                 ASCMAIN1.sql = "Select Distinct SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR1.WHSE_CODE" & vbCrLf _
                     & " from SOTORDR2, " & SOTORDR1 & " SOTORDR1" & vbCrLf _
                     & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO and SOTORDR2.ORDR_STATUS = 'O'" & vbCrLf _
-                    & IIf(WHSE_CODE = "", _
-                      "", _
+                    & IIf(WHSE_CODE = "",
+                      "",
                       "   and SOTORDR1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf)
 
                 Dim SOTORDRL As String = ASCMAIN1.Temp_Table ' all Style/Colors to consider for Allocation
@@ -857,8 +857,8 @@
                     & "   and SOTORDR2.ORDR_STATUS = 'O'" & vbCrLf _
                     & "   and (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) in " & vbCrLf _
                     & " (Select Distinct STYLE_CODE, COLOR_CODE from " & SOTORDRL & ")" & vbCrLf _
-                    & IIf(WHSE_CODE = "", _
-                      "", _
+                    & IIf(WHSE_CODE = "",
+                      "",
                       "   and SOTORDR1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf) _
                     & " minus Select ORDR_NO from " & SOTORDR1
                 ASCMAIN1.sql = "Insert into " & SOTORDR1 & " " & Replace(sqlSOTORDR1_Allocation_Scope, "'0' ALLOCATION_ONLY_SCOPE", "'1' ALLOCATION_ONLY_SCOPE") & " and SOTORDR1.ORDR_NO in (" & ASCMAIN1.sql & ")"
@@ -968,7 +968,7 @@
         '    & " and ICTSTYL1.STYLE_CODE (+) = SOTORDR2.STYLE_CODE and ICTBODY2.SUB_BODY_CODE (+) = ICTSTYL1.SUB_BODY_CODE"
         Dim SOTORDR2 As String = ASCMAIN1.Temp_Table
         TABLE_NAMEs.Add("SOTORDR2", SOTORDR2)
-        If Not fill_data Then TABLE_NAMEs.Add("sqlSOTORDR2", _
+        If Not fill_data Then TABLE_NAMEs.Add("sqlSOTORDR2",
             "Insert into " & SOTORDR2 & " " _
             & Replace(ASCMAIN1.sql, " from", ", 0 ORDR_LAST_UNIT, 0 ORDR_QTY_ALLO_CUR, 0 ORDR_QTY_ALLO_FUT, 0 ORDR_QTY_ALLO_CXL, Null ORDR_BACKORDER, Null ORDR_RELEASE_SHIP, Null WIP_IND from"))
         ASCDATA1.ExecuteSQL("Alter Table " & SOTORDR2 & " Add Primary Key (ORDR_NO,ORDR_LNO)")
@@ -1000,7 +1000,7 @@
             ASCMAIN1.sql = "Select * from " & SOTORDR2
         End If
 
-        frmASFBASE0.Create_TDA(frmASFBASE0.dst.Tables.Add("SOTORDR2"), SOTORDR2, "**", 0, , , , _
+        frmASFBASE0.Create_TDA(frmASFBASE0.dst.Tables.Add("SOTORDR2"), SOTORDR2, "**", 0, , , ,
                    "ORDR_STATUS,ORDR_QTY_OPEN,ORDR_QTY_ALLO,ORDR_QTY_PICK,ORDR_QTY_CANC," _
                    & "ORDR_RELEASE,ORDR_RELEASE_AVAIL,ORDR_QTY_ALLO_CUR,ORDR_QTY_ALLO_FUT,ORDR_QTY_ALLO_CXL," _
                    & "ORDR_RELEASE_SHIP,ORDR_LAST_UNIT,ORDR_BACKORDER,WIP_IND")
@@ -1011,8 +1011,8 @@
         ' SOTRSRV1
 
         ASCMAIN1.sql = "Select SOTRSRV1.* from SOTRSRV1 where RSRV_STATUS = 'O'" _
-            & IIf(WHSE_CODE = "", _
-                  "", _
+            & IIf(WHSE_CODE = "",
+                  "",
                   "   and WHSE_CODE = '" & WHSE_CODE & "'")
         If Not fill_data Then ASCMAIN1.sql &= " and ROWNUM < 1"
         Dim SOTRSRV1 As String = ASCMAIN1.Temp_Table
@@ -1045,7 +1045,7 @@
         ASCMAIN1.sql = "Select SOTRSRV2.* from " & SOTRSRV2 & " SOTRSRV2" & " where ROWNUM < 1"
 
         If Not frmASFBASE0.dst.Tables.Contains("SOTRSRV2") Then ' SSI already has an ADO.Net DataTable
-            frmASFBASE0.Create_TDA(frmASFBASE0.dst.Tables.Add("SOTRSRV2"), SOTRSRV2, "**", 0, , , , _
+            frmASFBASE0.Create_TDA(frmASFBASE0.dst.Tables.Add("SOTRSRV2"), SOTRSRV2, "**", 0, , , ,
            "ORDR_RELEASE_AVAIL,ORDR_QTY_ALLO_CUR,ORDR_QTY_ALLO_FUT,ORDR_QTY_ALLO_CXL")
         End If
 
@@ -1109,7 +1109,7 @@
             .Columns.Add("SUPPLY_DATE_ORIG")
             .Columns.Add("SHIP_DATE")
             .Columns.Add("WIP_IND")
-            .PrimaryKey = New DataColumn() {.Columns("INDEX")}
+            .PrimaryKey = New DataColumn() { .Columns("INDEX")}
         End With
 
         If Not frmASFBASE0.dst.Tables.Contains("SOTORDR7") Then ' SSI already has an ADO.Net DataTable
@@ -1193,6 +1193,28 @@
 
         Dim sqlORDR_GROUP_NO_STYLE_CODEs As String = "(Select STYLE_CODE from SOTORDR2,SOTORDR1 where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO and SOTORDR1.ORDR_GROUP_NO in (" & ORDR_GROUP_NOs & "))"
         Dim sqlORDR_GROUP_NO_WHSE_CODEs As String = "(Select WHSE_CODE from SOTORDR1 where SOTORDR1.ORDR_GROUP_NO in (" & ORDR_GROUP_NOs & "))"
+
+        Dim ICTSTAT2_STATUS As String = "ICTSTAT2"
+        Dim combine_MS_US As Boolean = False
+        If ASCMAIN1.CLIENT = "RGI" Then
+            combine_MS_US = True ' False ' TRUE
+            If combine_MS_US Then
+                ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, 'MS' WHSE_CODE" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_ON_HAND,0)) WHSE_QTY_ON_HAND" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_ON_ORDER,0)) WHSE_QTY_ON_ORDER" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_TRAN,0)) WHSE_QTY_TRAN" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_OPEN,0)) WHSE_QTY_OPEN" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_PICK,0)) WHSE_QTY_PICK" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_ALLO,0)) WHSE_QTY_ALLO" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_COMM,0)) WHSE_QTY_COMM" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_PROD,0)) WHSE_QTY_PROD" & vbCrLf _
+                & " from ICTSTAT2" & vbCrLf _
+                & " where WHSE_CODE IN ('MS','US')" & vbCrLf _
+                & " group by STYLE_CODE, COLOR_CODE"
+                ICTSTAT2_STATUS = ASCMAIN1.Temp_Table
+                ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_STATUS} Add Primary Key (WHSE_CODE, STYLE_CODE, COLOR_CODE)")
+            End If
+        End If
 
         If Not force_pick And Not manual_release Then
             ASCMAIN1.sql = "" _
@@ -1278,6 +1300,12 @@
 
             ' PROBABLY SHOULD FILTER TO JUST THOSE STYLES IN SOTORDRL, BUT PROBABLY NOT WORTH THE EFFORT/CLAUSE
 
+            If combine_MS_US Then
+                ASCMAIN1.sql = Replace(ASCMAIN1.sql, "WHSE_CODE in ('MS')", "WHSE_CODE in ('MS','US')")
+                ASCMAIN1.sql = Replace(ASCMAIN1.sql, "WHSE_CODE = 'MS'", "WHSE_CODE in ('MS','US')")
+                ASCMAIN1.sql = Replace(ASCMAIN1.sql, ") group by " & vbCrLf & "WHSE_CODE,", ") group by " & vbCrLf & "")
+                ASCMAIN1.sql = Replace(ASCMAIN1.sql, "Select WHSE_CODE", "Select 'MS' WHSE_CODE")
+            End If
             ASCDATA1.ExecuteSQL($"Insert into {SOTSUPP1} Select X.*, NULL STYLE_ARRIVAL_BUFFER_DAYS from ({ASCMAIN1.sql}) X")
 
             ASCMAIN1.sql = $"Update {SOTSUPP1} X" & vbCrLf _
@@ -1338,7 +1366,7 @@
                 & ", Null PO_DATE_ETA" & vbCrLf _
                 & ", 0 DAYS" & vbCrLf _
                 & ", NULL STYLE_ARRIVAL_BUFFER_DAYS" & vbCrLf _
-                & " from ICTSTAT2" & vbCrLf _
+                & $" from {ICTSTAT2_STATUS} ICTSTAT2" & vbCrLf _
                 & " where (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) - NVL(WHSE_QTY_COMM,0)) <> 0" & vbCrLf _
                 & IIf(ORDR_GROUP_NOs <> "",
                       "   And ICTSTAT2.STYLE_CODE in " & sqlORDR_GROUP_NO_STYLE_CODEs,
@@ -1792,7 +1820,7 @@
         Else
 
             Dim TBL As DataTable = ASCDATA1.GetDataTable()
-
+            If ASCMAIN1.CLIENT = "RGI" Then TBL.PrimaryKey = New DataColumn() {TBL.Columns("WHSE_CODE"), TBL.Columns("STYLE_CODE"), TBL.Columns("COLOR_CODE"), TBL.Columns("ORDR_GROUP_NO")}
             If ASCMAIN1.CLIENT = "RGI" Then
                 If SO_PARM_RELEASE_AT_ONCE = "1" Then
 
@@ -1801,7 +1829,7 @@
                     ASCMAIN1.sql = "Select X.*" & vbCrLf _
                         & ", NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) + NVL(ICTSTAT2.WHSE_QTY_ON_ORDER,0) + NVL(ICTSTAT2.WHSE_QTY_TRAN,0) - NVL(ICTSTAT2.WHSE_QTY_OPEN,0) - NVL(ICTSTAT2.WHSE_QTY_PICK,0) QTY_AVA" & vbCrLf _
                         & ", NVL(ICTSTAT2.WHSE_QTY_ON_HAND,0) + NVL(ICTSTAT2.WHSE_QTY_ON_ORDER,0) + NVL(ICTSTAT2.WHSE_QTY_TRAN,0) - NVL(ICTSTAT2.WHSE_QTY_PICK,0) QTY_SUP" & vbCrLf _
-                        & " from ICTSTAT2, (" & ASCMAIN1.sql & ") X" & vbCrLf _
+                        & $" from {ICTSTAT2_STATUS} ICTSTAT2, (" & ASCMAIN1.sql & ") X" & vbCrLf _
                         & " where ICTSTAT2.WHSE_CODE (+) = X.WHSE_CODE" & vbCrLf _
                         & "   and ICTSTAT2.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
                         & "   and ICTSTAT2.COLOR_CODE (+) = X.COLOR_CODE"
@@ -1902,7 +1930,17 @@
                     End If
                 End If
 
-                '  If ASCMAIN1.Running_in_VS AndAlso ORDR_GROUP_NO = "0000781958" Then Stop
+                If ASCMAIN1.Running_in_VS Then
+                    'If ORDR_GROUP_NO = "0000865927" And STYLE_CODE = "MTX75288" Then
+                    '    Stop
+                    'End If
+                    'If ORDR_GROUP_NO = "0000584009" And STYLE_CODE = "MTX54425" Then
+                    '    Stop
+                    'End If
+                    If ORDR_GROUP_NO = "0000865565" And STYLE_CODE = "MTH13408" Then
+                        Stop
+                    End If
+                End If
 
                 If DEMAND_TYPE = "O" Then
                     Dim rowSOTORDR7 As DataRow = frmASFBASE0.dst.Tables("SOTORDR7").Rows.Find _
@@ -2102,6 +2140,18 @@
                                     End If
                                     'ORDR_LAST_UNIT = SQ(0, i) + SQ(1, i)
                                 End If
+
+
+                                'If ASCMAIN1.CLIENT = "RGI" Then
+                                '    If MARK_FOR_3PL = "1" Then
+                                '        ORDR_ALLO_CUR = BALANCE
+                                '        SQ(1, i) = SQ(1, i) - BALANCE
+                                '        rowICTSTDQ3.Item("QTY_" & CStr(IQ3)) = Val(rowICTSTDQ3.Item("QTY_" & CStr(IQ3)) & "") + BALANCE
+                                '        BALANCE = 0
+                                '        Exit For
+                                '    End If
+                                'End If
+
                                 If SQ(1, i) >= BALANCE Then
                                     If i = 1 Then ORDR_ALLO_CUR = BALANCE
                                     SQ(1, i) = SQ(1, i) - BALANCE
@@ -2315,10 +2365,10 @@
                                             & ", ORDR_QTY_ALLO_CXL = 0" & vbCrLf
                                     Else
                                         ASCMAIN1.sql &= "" & vbCrLf _
-                                            & " Set ORDR_QTY_ALLO = ORDR_QTY_OPEN" & vbCrLf _
-                                            & ", ORDR_QTY_ALLO_CUR = " & IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", "ORDR_QTY_OPEN", "0") & vbCrLf _
-                                            & ", ORDR_QTY_ALLO_FUT = " & IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", "0", "ORDR_QTY_OPEN") & vbCrLf _
-                                            & ", ORDR_QTY_ALLO_CXL = 0" & vbCrLf
+                                              & " Set ORDR_QTY_ALLO = ORDR_QTY_OPEN" & vbCrLf _
+                                                & ", ORDR_QTY_ALLO_CUR = " & IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", "ORDR_QTY_OPEN", "0") & vbCrLf _
+                                                & ", ORDR_QTY_ALLO_FUT = " & IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001", "0", "ORDR_QTY_OPEN") & vbCrLf _
+                                                & ", ORDR_QTY_ALLO_CXL = 0" & vbCrLf
                                     End If
                                 Else
 
@@ -2353,8 +2403,8 @@
                             End If
 
                             ASCMAIN1.sql &= IIf(ORDR_RELEASE = "",
-                                                ",    ORDR_RELEASE = Null",
-                                                ",    ORDR_RELEASE = '" & ORDR_RELEASE & "'") & vbCrLf
+                                            ",    ORDR_RELEASE = Null",
+                                            ",    ORDR_RELEASE = '" & ORDR_RELEASE & "'") & vbCrLf
                             ASCMAIN1.sql &= IIf(Format(ORDR_RELEASE_AVAIL, "MM/dd/yyyy") = "01/01/0001",
                                                ",    ORDR_RELEASE_AVAIL = Null, ORDR_RELEASE_SHIP = Null, WIP_IND = NULL",
                                                ",    ORDR_RELEASE_AVAIL = '" & Format(ORDR_RELEASE_AVAIL, "dd-MMM-yyyy") & "', ORDR_RELEASE_SHIP = '" & Format(ORDR_RELEASE_SHIP, "dd-MMM-yyyy") & "', WIP_IND = '" & WIP_IND & "'") & vbCrLf
@@ -2686,13 +2736,13 @@
             & IIf(COLOR_CODE_to_Allocate = "", "", "    and SOTORDR2.COLOR_CODE = '" & COLOR_CODE_to_Allocate & "'" & vbCrLf) _
             & "  group by SOTORDR1.WHSE_CODE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE;" & vbCrLf _
             & " Begin" & vbCrLf _
-            & "  Update ICTSTAT2 Set WHSE_QTY_ALLO = 0" & vbCrLf _
+            & $"  Update {ICTSTAT2_STATUS} ICTSTAT2 Set WHSE_QTY_ALLO = 0" & vbCrLf _
             & "   where WHSE_QTY_ALLO <> 0" & vbCrLf _
             & IIf(STYLE_CODE_to_Allocate = "", "", "    and STYLE_CODE = '" & STYLE_CODE_to_Allocate & "'" & vbCrLf) _
             & IIf(COLOR_CODE_to_Allocate = "", "", "    and COLOR_CODE = '" & COLOR_CODE_to_Allocate & "'" & vbCrLf) _
             & ";" _
             & "  For R1 in C1 Loop" & vbCrLf _
-            & "   Update ICTSTAT2 Set WHSE_QTY_ALLO = R1.ORDR_QTY_ALLO" & vbCrLf _
+            & $"   Update {ICTSTAT2_STATUS} ICTSTAT2 Set WHSE_QTY_ALLO = R1.ORDR_QTY_ALLO" & vbCrLf _
             & "    where WHSE_CODE = R1.WHSE_CODE and STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
             & "  End Loop;" & vbCrLf _
             & " End;" & vbCrLf _
@@ -3018,9 +3068,9 @@
         Next
     End Sub
 
-    Public Shared Function Price_Line(frm As ASFBASE0, _
-                   CUST_CODE As String, rowARTCUST1 As DataRow, _
-                   STYLE_CODE As String, COLOR_CODE As String, _
+    Public Shared Function Price_Line(frm As ASFBASE0,
+                   CUST_CODE As String, rowARTCUST1 As DataRow,
+                   STYLE_CODE As String, COLOR_CODE As String,
                    ORDR_QTY As Int32, ByRef ORDR_PRICE_SOURCE As String) As Decimal
 
         If Not frm.dst.Tables.Contains("ICTCLAS1") Then
@@ -3126,11 +3176,11 @@
         Return ORDR_UNIT_PRICE_CALC
     End Function
 
-    Public Shared Function Get_CTL_NOs( _
-        USER_ID As String, _
-        COMPUTER_NAME As String, _
-        TABLE_NAME As String, _
-        COLUMN_NAME As String, _
+    Public Shared Function Get_CTL_NOs(
+        USER_ID As String,
+        COMPUTER_NAME As String,
+        TABLE_NAME As String,
+        COLUMN_NAME As String,
         How_Many As Integer) As String
 
         Dim CTL_NO As String = ""
@@ -3141,8 +3191,8 @@
             ' to be determined with Dana tomorrow
         Else
             'CTL_NO = ASCMAIN1.Next_Control_No(TABLE_NAME & "." & COLUMN_NAME, How_Many)
-            CTL_NO = ASCDATA1.ExecuteSF("TAPCTLN1", _
-                                        New String() {"CTL_NO_TYPE_IN", "HOW_MANY_IN"}, _
+            CTL_NO = ASCDATA1.ExecuteSF("TAPCTLN1",
+                                        New String() {"CTL_NO_TYPE_IN", "HOW_MANY_IN"},
                                         New Object() {TABLE_NAME & "." & COLUMN_NAME, How_Many})
             ASCMAIN1.sql = "Insert into TATCTLN2 " _
                 & " (CTL_NO_TYPE,CTL_NO_LAST,CTL_NO_KEY,HOW_MANY,INIT_DATE,INIT_OPER)" _
@@ -3215,8 +3265,8 @@
     'End Function
 
 
-    Public Shared Function Get_EDI_row(EDI_DOC_SEQ_NO As String, _
-                                       Optional EDI_DOC_NO As String = "850", _
+    Public Shared Function Get_EDI_row(EDI_DOC_SEQ_NO As String,
+                                       Optional EDI_DOC_NO As String = "850",
                                        Optional DocumentName As String = "") As DataRow
         Dim TABLE_NAME As String = "EDT850T1"
         If EDI_DOC_NO = "852" Then TABLE_NAME = "EDT852T1"
@@ -3281,9 +3331,9 @@
         Return ASCDATA1.GetDataRow
     End Function
 
-    Public Shared Function Get_Raw_EDI(EDI_DOC_SEQ_NO As String, _
-                                       Optional ED_PARM_RAW_ARCHIVE As String = "", _
-                                       Optional EDI_DOC_NO As String = "850", _
+    Public Shared Function Get_Raw_EDI(EDI_DOC_SEQ_NO As String,
+                                       Optional ED_PARM_RAW_ARCHIVE As String = "",
+                                       Optional EDI_DOC_NO As String = "850",
                                        Optional DocumentName As String = "") As String
 
         Dim row As DataRow = Get_EDI_row(EDI_DOC_SEQ_NO, EDI_DOC_NO, DocumentName)
@@ -3310,14 +3360,14 @@
         Return RAW_DATA
     End Function
 
-    Public Shared Sub Log_Changes( _
-                                frmASFBASE0 As ASFBASE0, _
-                                ORDR_NO As String, _
-                                row As DataRow, _
-                                TABLE_NAME As String, _
-                                ByRef Check_Changed_Fields As Boolean, _
+    Public Shared Sub Log_Changes(
+                                frmASFBASE0 As ASFBASE0,
+                                ORDR_NO As String,
+                                row As DataRow,
+                                TABLE_NAME As String,
+                                ByRef Check_Changed_Fields As Boolean,
                                 REV_NO As Integer,
-                                ByRef REV_LNO As Integer, _
+                                ByRef REV_LNO As Integer,
                                 LAST_DATE As Date)
 
         For i As Integer = 0 To row.Table.Columns.Count - 1
@@ -3435,15 +3485,15 @@
         Dim EDI_APPLICATION_ID As String = "PR"
         Dim EDI_PROCESS_IND As String = "1"
         '  EDI_PROCESS_IND = "T"
-        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVVVV", _
-                New Object() {ASCMAIN1.DBS_COMPANY, EDI_OUTBOUND_DOC_NO, EDI_APPLICATION_ID, EDI_PROCESS_IND, _
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVVVV",
+                New Object() {ASCMAIN1.DBS_COMPANY, EDI_OUTBOUND_DOC_NO, EDI_APPLICATION_ID, EDI_PROCESS_IND,
                               rowEDTTRPM1.Item("EDI_OUR_ID"), EDI_TP_ID})
 
         Dim EVENT_DESC As String = String.Format("Request for Credit for {0} {1}", Format(ORDR_AMT, "#,##0.00"), CURR_CODE)
         ASCDATA1.ExecuteSQL("Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY) " & vbCrLf _
                        & " Select 'SOTORDR1' TABLE_NAME, ORDR_NO TABLE_KEY, SYSDATE INIT_DATE, :PARM1 INIT_OPER, 'CR-REQ' EVENT_TYPE" & vbCrLf _
                        & ", :PARM2 EVENT_DESC, :PARM3 EVENT_KEY" & vbCrLf _
-                       & "  from SOTORDR1 where ORDR_GROUP_NO = :PARM4", "VVVV", _
+                       & "  from SOTORDR1 where ORDR_GROUP_NO = :PARM4", "VVVV",
                        New Object() {ASCMAIN1.USER_ID, EVENT_DESC, EDI_OUTBOUND_DOC_NO, ORDR_GROUP_NO})
 
         Return EDI_OUTBOUND_DOC_NO
@@ -3452,7 +3502,7 @@
     Public Shared Function Validate_Invoice_Date(DT As Date, MOS_BACK As Integer, MOS_FWD As Integer, ByRef EMsg As String) As Date()
         ASCMAIN1.sql = String.Format("SELECT DTE1, DTE2 FROM " _
             & "(SELECT PRD_END_DATE+1 DTE1 FROM GLTPARM2 WHERE OPS_YYYYPP = {0})," _
-            & "(SELECT PRD_END_DATE DTE2 FROM GLTPARM2 WHERE OPS_YYYYPP = {1})", _
+            & "(SELECT PRD_END_DATE DTE2 FROM GLTPARM2 WHERE OPS_YYYYPP = {1})",
             ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1 - MOS_BACK), ASCMAIN1.Period_Calc(ASCMAIN1.CYP, MOS_FWD))
 
         Dim row As DataRow = ASCDATA1.GetDataRow
@@ -4558,7 +4608,7 @@
                 .Columns.Add("LINE_ABBR")
                 .Columns.Add("AMT00", GetType(System.Decimal))
                 .Columns.Add("AMT13", GetType(System.Decimal))
-                .PrimaryKey = New DataColumn() {.Columns("CUST_CODE"), .Columns("LINE")}
+                .PrimaryKey = New DataColumn() { .Columns("CUST_CODE"), .Columns("LINE")}
             End With
 
             ASCMAIN1.sql = "Select CUST_CODE, LINE, CODE_VALUE, DESC_VALUE"
