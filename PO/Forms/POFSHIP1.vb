@@ -2520,7 +2520,7 @@ Public Class POFSHIP1
                                 End If
                             Else
                                 If Select_from_Whse_Receipt Then
-                                    If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "US" Then
+                                    If ASCMAIN1.CLIENT = "RGI" And rowPOTSHIP1.Item("WHSE_CODE") = "US" Then
                                         'USL is 3PL but then don't send EDI so we use warehouse receiving
                                     ElseIf rowICTWHSE1.Item("WHSE_LOCATOR") & "" <> "1" Then
                                         MsgBox("The Warehouse listed on Receipt" _
