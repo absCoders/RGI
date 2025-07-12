@@ -627,6 +627,12 @@
     <Compile Include="Forms\SOFORELO.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\SOFXFER1.Designer.vb">
+      <DependentUpon>SOFXFER1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFXFER1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFXFER2.Designer.vb">
       <DependentUpon>SOFXFER2.vb</DependentUpon>
     </Compile>
@@ -1289,6 +1295,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFORELO.resx">
       <DependentUpon>SOFORELO.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SOFXFER1.resx">
+      <DependentUpon>SOFXFER1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFXFER2.resx">
       <DependentUpon>SOFXFER2.vb</DependentUpon>
