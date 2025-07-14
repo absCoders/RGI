@@ -1120,6 +1120,7 @@ Public Class SOFCORD1
     Sub Clear_Record()
 
         Absx1.txtFor("CUST_CODE").Text = ""
+        Dim CUST_CODE_prev As String = CUST_CODE
         CUST_CODE = ""
 
         EnforceConstraints(False)
@@ -1137,7 +1138,13 @@ Public Class SOFCORD1
         tabMonth.Tabs("Details").Visible = False
 
         grdSOTORDR0.Tag = ""
-        Load_SOTORDR0("")
+
+        If Not Me.IsClosing Then
+            'If CUST_CODE_prev = "" Then
+            Load_SOTORDR0("")
+            'End If
+        End If
+
     End Sub
 
     Sub Load_Record()
@@ -1230,9 +1237,9 @@ Public Class SOFCORD1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
+        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
                         "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel",
-                        "Sales Order Entry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
+                        "Sales Order Entry", "Sales Order Inquiry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
                         "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary", "Customer Order Inquiry")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
@@ -1396,7 +1403,13 @@ Public Class SOFCORD1
 
         Select Case e.Tool.Key
             Case "Sales Order Inquiry"
-                Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Value
+
+                Dim ORDR_NO As String = ""
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    ORDR_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value
+                Else
+                    ORDR_NO = grd.ActiveRow.Cells("ORDR_NO").Value
+                End If
                 Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", ORDR_NO)
                 If rowSOTORDR1 IsNot Nothing Then
                     Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")

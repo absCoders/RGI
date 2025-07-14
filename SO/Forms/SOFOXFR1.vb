@@ -45,9 +45,10 @@ Public Class SOFOXFR1
                 & ", SOTORDR0.WHSE_CODE" & vbCrLf _
                 & ", SOTORDR0.ORDR_TYPE_CODE, SOTORDR0.ORDR_SOURCE" & vbCrLf _
                 & ", SOTORDR0.ORDR_QTY, SOTORDR0.ORDR_QTY_OPEN, SOTORDR0.ORDR_QTY_PICK, SOTORDR0.ORDR_QTY_SHIP, SOTORDR0.ORDR_QTY_CANC" & vbCrLf _
-                & ", SOTORDR0.ORDR_DATE_RECD" & vbCrLf _
-                & " from SOTORDR0,SOTORDR1" & vbCrLf _
+                & ", SOTORDR1.INIT_DATE, SOTORDR1.INIT_OPER, SOTORDR2_TOTALS.CTNS, SOTORDR2_TOTALS.UNITS, SOTORDR2_TOTALS.CUBE" & vbCrLf _
+                & " from SOTORDR0,SOTORDR1, (Select SOTORDR2.ORDR_NO, SUM (SOTORDR2.ORDR_QTY) UNITS, SUM (SOTORDR2.ORDR_QTY / SOTORDR2.CARTON_PACK_QTY) CTNS, SUM ((SOTORDR2.ORDR_QTY / SOTORDR2.CARTON_PACK_QTY) * ICTSTYL1.CASE_CUBE) CUBE from SOTORDR2,ICTSTYL1 where ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE group by SOTORDR2.ORDR_NO) SOTORDR2_TOTALS" & vbCrLf _
                 & " where SOTORDR0.ORDR_GROUP_NO = SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
+                & "   and SOTORDR2_TOTALS.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
                 & "   and SOTORDR1.ORDR_STATUS between 'O' and 'P' and SOTORDR1.ORDR_SOURCE = 'X' and SOTORDR1.ORDR_TYPE_CODE = 'XFR'"
             Create_TDA(.Tables.Add, "SOTORDR0", "**", 0, False, "", 2)
         End With
@@ -117,6 +118,7 @@ Public Class SOFOXFR1
         Next
 
         Create_Summary(grdSOTORDR0, "ORDR_GROUP_NO", "Count")
+        Create_Summary(grdSOTORDR0, New String() {"CTNS", "UNITS", "CUBE"})
 
         Show_Filter(grdSOTORDR0, True)
 
@@ -199,7 +201,7 @@ Public Class SOFOXFR1
             grdSOTOXFRX.Parent = SplitContainer1.Panel1
         Else
             Clear_Record()
-            grdSOTOXFRX.Parent = SplitContainer2.Panel2
+            grdSOTOXFRX.Parent = SplitContainer2.Panel1
         End If
 
     End Sub
@@ -222,13 +224,16 @@ Public Class SOFOXFR1
     End Sub
 
     Sub Load_Record()
+        Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Loading Data ...")
+
         Save_Header_Fields(UltraGroupBox1)
 
         Create_WorkTables(False)
         Fill_Records("SOTOXFRX")
         Sort_grdColumns(grdSOTOXFRX, "STYLE_CODE, COLOR_CODE")
 
+        Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
 
@@ -296,7 +301,8 @@ Public Class SOFOXFR1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTOXFRX, "SSBBBBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
-        Load_Popup_Menu(grdSOTORDRX, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry")
+        Load_Popup_Menu(grdSOTORDRX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
+        Load_Popup_Menu(grdSOTORDR0, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
 
     End Sub
 
@@ -350,7 +356,13 @@ Public Class SOFOXFR1
 
             Case "Sales Order Inquiry", "Sales Order Entry"
 
-                Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Value & ""
+                Dim ORDR_NO As String = ""
+
+                If grd.Name = "grdSOTORDR0" Then
+                    ORDR_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value & ""
+                Else
+                    ORDR_NO = grd.ActiveRow.Cells("ORDR_NO").Value & ""
+                End If
 
                 If e.Tool.Key = "Sales Order Entry" Then
                     Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDR1")
@@ -402,12 +414,19 @@ Public Class SOFOXFR1
 #End Region
 
     Sub Refresh_Documents()
+
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Now Building Order from Records Selected in Transfer Queue", "")
+
         Fill_Records("SOTORDR0")
         Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
 
         Create_WorkTables(False)
         Fill_Records("SOTOXFRX")
         Sort_grdColumns(grdSOTOXFRX, "STYLE_CODE, COLOR_CODE")
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("", "")
     End Sub
 
     Private Sub grdSOTOXFRX_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTOXFRX.AfterRowActivate
@@ -522,7 +541,7 @@ Public Class SOFOXFR1
             CUST_BILL_TO_CUST = CUST_CODE
         End If
 
-        Dim CUST_STORE_NO As String = "000000"
+        Dim CUST_STORE_NO As String = "000027"
         Dim rowARTCUST2 As DataRow = LookUp("ARTCUST2", New String() {CUST_CODE, "MK", CUST_STORE_NO})
         Dim CUST_STORE_NAME As String = rowARTCUST2.Item("CUST_NAME")
 
@@ -559,7 +578,7 @@ Public Class SOFOXFR1
                 .Item("ORDR_QTY_OPEN") = ORDR_QTY_OPEN
                 .Item("ORDR_QTY_ORIG") = ORDR_QTY_OPEN
                 .Item("ORDR_QTY_ALLO") = 0
-                .Item("INNER_PACK_QTY") = 0
+                .Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY")
                 .Item("ORDR_EXTD_COST") = 0
                 .Item("STYLE_UOM") = "EA"
                 .Item("ORDR_QTY_PICK") = 0
@@ -568,7 +587,7 @@ Public Class SOFOXFR1
                 .Item("ORDR_STATUS") = "O"
                 .Item("ORDR_QTY_PRE_ALLO") = 0
                 .Item("QTY_PER_PP") = 0
-                .Item("CARTON_PACK_QTY") = 0
+                .Item("CARTON_PACK_QTY") = rowICTSTYL1.Item("CARTON_PACK_QTY")
                 .Item("STYLE_PRICE") = 0
                 .Item("ORDR_UNIT_PRICE_CALC") = 0
                 .Item("ORDR_UNIT_PRICE_MANUAL") = ""

@@ -1856,6 +1856,7 @@ Partial Class SOFCORD1
         UltraGridColumn283.Header.VisiblePosition = 17
         UltraGridColumn283.Width = 110
         UltraGridColumn289.Header.VisiblePosition = 20
+        UltraGridColumn289.Hidden = True
         UltraGridColumn284.Header.Caption = "Price"
         UltraGridColumn284.Header.VisiblePosition = 10
         UltraGridColumn284.Width = 70
@@ -1867,15 +1868,15 @@ Partial Class SOFCORD1
         UltraGridColumn286.Hidden = True
         UltraGridColumn264.Format = "#,###"
         UltraGridColumn264.Header.Caption = "OnH 3PL"
-        UltraGridColumn264.Header.VisiblePosition = 26
+        UltraGridColumn264.Header.VisiblePosition = 25
         UltraGridColumn264.Width = 65
         UltraGridColumn427.Format = "#,###"
         UltraGridColumn427.Header.Caption = "Pck 3PL"
-        UltraGridColumn427.Header.VisiblePosition = 27
+        UltraGridColumn427.Header.VisiblePosition = 26
         UltraGridColumn427.Width = 65
         UltraGridColumn290.Format = "#,###"
         UltraGridColumn290.Header.Caption = "Opn 3PL"
-        UltraGridColumn290.Header.VisiblePosition = 25
+        UltraGridColumn290.Header.VisiblePosition = 27
         UltraGridColumn290.Width = 65
         UltraGridColumn265.Format = "#,###"
         UltraGridColumn265.Header.Caption = "Ava 3PL"
@@ -2635,7 +2636,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdSOTORDR1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(993, 197)
         '
@@ -2988,7 +2989,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(993, 197)
         '
@@ -5162,7 +5163,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grpSOTORDR0)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1001, 594)
         '
@@ -5201,7 +5202,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1001, 594)
         '
