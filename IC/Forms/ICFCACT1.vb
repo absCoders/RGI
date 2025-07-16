@@ -220,14 +220,13 @@ Public Class ICFCACT1
         'dst.Tables("ICTCACTX").Columns("BALANCE").Expression = balexpr.Substring(2)
 
         ASCMAIN1.sql = $"select * from (
-                        select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
+                        select MIN(ICTIREC1.OPS_YYYYPP) PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, MIN(ICTIREC1.OPS_YYYYPP) ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
                         from POTORDR1, ICTIREC1, ICTIREC2
                         where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                         and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
                         and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
-                        group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE, ICTIREC1.OPS_YYYYPP
+                        group by POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE
                         ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
-
 
         Fill_Records("ICTCACTB", "", True, ASCMAIN1.sql)
         Dim lastpoRef As String = String.Empty 'use this to add the forcedrow to the last poref
