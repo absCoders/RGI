@@ -15561,32 +15561,51 @@ Public Class POFSHIP1
             Dim PO_SHIPMENT_NO As String = rowPOTSHIP1.Item("PO_SHIPMENT_NO")
             Dim NoUSLVends As String = "'ORBIT','DEAR','ALLPOSH','SPEC','JINYI','ZONGFA'"
             Dim msgtext As String = ""
+            Dim RecCnt As Int32 = 0
 
             If ChangesMade Then
                 MsgBox($"Changes to the Warehouse and Shipment Details are not allowed at the same time.{Environment.NewLine}Change the Warehouse after other updates have been completed.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
                 Return False
             End If
 
-            ASCMAIN1.sql = $"Select distinct PO_SHIPMENT_NO from POTSHIP4
+            If 1 = 2 Then ' skip these checks need to check for multi-carton units
+                ASCMAIN1.sql = $"Select distinct PO_SHIPMENT_NO from POTSHIP4
                         where PO_SHIPMENT_NO <> '{PO_SHIPMENT_NO}'
                         and CONTAINER_NO in (
                         select CONTAINER_NO from POTSHIP4
                         where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}')"
-            Dim tblErr As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
-            If tblErr.Rows.Count > 0 Then
-                For Each row As DataRow In tblErr.Select()
-                    msgtext &= "," & row("PO_SHIPMENT_NO")
-                Next
-                MsgBox($"This Shipment:'{PO_SHIPMENT_NO}' is tied to additional shipment records:{msgtext.Substring(1) & Environment.NewLine} not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
-                Return False
-            End If
+                Dim tblErr As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                If tblErr.Rows.Count > 0 Then
+                    For Each row As DataRow In tblErr.Select()
+                        msgtext &= "," & row("PO_SHIPMENT_NO")
+                    Next
+                    MsgBox($"This Shipment:'{PO_SHIPMENT_NO}' is tied to additional shipment records:{msgtext.Substring(1) & Environment.NewLine} not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
+                    Return False
+                End If
 
-            ASCMAIN1.sql = $"Select count(1) From POTSHIP2
+                ASCMAIN1.sql = $"Select count(1) From POTSHIP2
                          Where POTSHIP2.ORDR_NO is not null 
                          and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
-            Dim RecCnt As Int32 = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
+                RecCnt = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
+                If RecCnt > 1 Then
+                    MsgBox($"This Shipment '{PO_SHIPMENT_NO}' is tied a Back-2-Back Order, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
+                    Return False
+                End If
+            End If
+
+            ASCMAIN1.sql = $"select ICTSTYL1.* from ICTSTYL1, POTSHIP3, POTORDR2
+                        where nvl(CARTONS_PER_UNIT,0) <> 0
+                        and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE
+                        and POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+                        and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO
+                        and POTSHIP3.PO_SHIPMENT_NO in (
+                        Select distinct PO_SHIPMENT_NO from POTSHIP4
+                        where  CONTAINER_NO in (
+                        select CONTAINER_NO from POTSHIP4
+                        where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'))"
+            RecCnt = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
             If RecCnt > 1 Then
-                MsgBox($"This Shipment '{PO_SHIPMENT_NO}' is tied a Back-2-Back Order, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
+                MsgBox($"This Shipment '{PO_SHIPMENT_NO}' has Merchandise with Multi Cartons per Unit, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
                 Return False
             End If
 
@@ -15597,14 +15616,14 @@ Public Class POFSHIP1
                         and POTSHIP3.PO_ORDER_NO = POTORDR1.PO_ORDER_NO
                         and POTORDR1.VEND_CODE in (SELECT VEND_CODE FROM POTVEND1 WHERE DO_NOT_DIRECT_TO_3PL = '1')
                         and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
-            RecCnt = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
-            If RecCnt > 1 Then
-                MsgBox($"This Shipment '{PO_SHIPMENT_NO}' has Merchandise from restricted Vendor, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
-                Return False
-            End If
+                RecCnt = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
+                If RecCnt > 1 Then
+                    MsgBox($"This Shipment '{PO_SHIPMENT_NO}' has Merchandise from restricted Vendor, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
+                    Return False
+                End If
 
-        End If
-        Return True
+            End If
+            Return True
     End Function
     Private Sub UpdateFor3PL()
         If WHSE_CODE <> WHSE_CODE_ORIG AndAlso (WHSE_CODE = "US" Or WHSE_CODE_ORIG = "US") Then
@@ -15630,12 +15649,13 @@ Public Class POFSHIP1
             ASCMAIN1.sql = $"Select distinct POTSHIP2.CONTAINER_NO from POTSHIP2
                             where POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
             For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select()
-                ASCMAIN1.sql = $"select POTSHIP2.CONTAINER_NO Container#, POTSHIP3.PO_ORDER_NO PO#
+                ASCMAIN1.sql = $"select POTSHIP2.CONTAINER_NO Container#, POTSHIP2.PO_SHIPMENT_NO, POTSHIP3.PO_ORDER_NO PO#
                         , POTSHIP3.PO_ORDER_LNO Line#, POTORDR2.STYLE_CODE || '-' || POTORDR2.COLOR_CODE Product 
-                        , ICTSTYL1.STYLE_DESC || ' - ' || ICTCOLR1.COLOR_DESC Product_Desc
-                        , '' Product_Desc_2, ICTSTYC1.UPC_CODE UPC, POTSHIP3.PO_QTY_SHP QTY
+                        , ICTSTYL1.STYLE_DESC || ' - ' || ICTCOLR1.COLOR_DESC Product_Desc, '' Product_Desc_2
+                        , substr(case when POTSHIP2.ORDR_NO is null then '' else POTSHIP3.PO_ORDER_NO || ' ' || SOTORDR1.ORDR_CUST_PO end, 1, 20) LOT#
+                        , ICTSTYC1.UPC_CODE UPC, POTSHIP3.PO_QTY_SHP QTY
                         , ICTSTYL1.STYLE_UOM UOM, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY
-                        from POTSHIP2, POTSHIP3, POTORDR2, ICTSTYC1, ICTSTYL1, ICTCOLR1
+                        from POTSHIP2, POTSHIP3, POTORDR2, ICTSTYC1, ICTSTYL1, ICTCOLR1, SOTORDR1
                         where POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
                         and POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO
                         and POTSHIP3.PO_ORDER_NO = POTORDR2.PO_ORDER_NO
@@ -15644,6 +15664,7 @@ Public Class POFSHIP1
                         and POTORDR2.COLOR_CODE = ICTSTYC1.COLOR_CODE
                         and POTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE
                         and POTORDR2.COLOR_CODE = ICTCOLR1.COLOR_CODE
+                        and SOTORDR1.ORDR_NO(+) = POTSHIP2.ORDR_NO
                         and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'
                         and POTSHIP2.CONTAINER_NO = '{row("CONTAINER_NO")}'"
                 Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
@@ -15664,7 +15685,7 @@ Public Class POFSHIP1
             workbook = Nothing
 
                 'Copy to sftp EDI machine for transmitting
-                'My.Computer.FileSystem.CopyFile(WorkDir & csvFileName, ED_PARM_3PL_FTP_DIR & csvFileName, True)
+                My.Computer.FileSystem.CopyFile(WorkDir & csvFileName, ED_PARM_3PL_FTP_DIR & csvFileName, True)
 
             Next
             ASCMAIN1.sql = $"Insert into TATEVNT1 (TABLE_NAME, TABLE_KEY, INIT_DATE, INIT_OPER, EVENT_TYPE, EVENT_DESC, EVENT_KEY)
@@ -15723,6 +15744,48 @@ Public Class POFSHIP1
         End Try
 
     End Sub
+
+    Private Sub ImportPoRcv(filePath As String, ByRef dataTable As DataTable)
+        dataTable = New DataTable()
+
+        Using reader As New IO.StreamReader(filePath)
+            Dim isFirstLine As Boolean = True
+
+            While Not reader.EndOfStream
+                Dim line As String = reader.ReadLine()
+                Dim fields As String() = line.Split(ControlChars.Tab)
+
+                If isFirstLine Then
+                    ' Initialize DataTable columns using field names from first row
+                    For Each field As String In fields
+                        dataTable.Columns.Add(field.Trim())
+                    Next
+                    isFirstLine = False
+                Else
+                    ' Add data rows
+                    Dim dataRow As DataRow = dataTable.NewRow()
+                    For i As Integer = 0 To fields.Length - 1
+                        dataRow(i) = fields(i).Trim()
+                    Next
+                    dataTable.Rows.Add(dataRow)
+                End If
+            End While
+        End Using
+
+        'Create Receipts from file
+        'one WHTWREC1 per container  
+        'insert into WHTWREC1 (WH_REC_NO, WH_DATE_RECEIVED, WHSE_CODE, INIT_DATE, LAST_DATE, INIT_OPER, LAST_OPER, WH_REC_STATUS, PO_SHIPMENT_NO, UNLOADED_BY_OPER, CONTAINER_NO)
+        'values('009901','20250708 03.33.44 PM','US','20250708 03.33.44 PM','20250708 03.33.44 PM','rick','rick','C','013045','rick','BEAU5445300');
+
+        'Key is PO_SHIPMENT_NO, PO_SHIPMENT_LNO, WHSE_TRAN_NO, WHSE_TRAN_LNO (Use WH_REC_NO for WHSE_TRAN_NO, rownum for WHSE_TRAN_LNO)
+        'insert into WHTPREC2 (WH_REC_NO, PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE,PO_QTY_REC,WHSE_TRAN_NO, WHSE_TRAN_LNO)
+
+        'update POTSHIP2
+        'set WH_REC_NO = ''
+        'where POTSHIP2.PO_SHIPMENT_NO = '013045';
+
+    End Sub
+
 
 End Class
 
