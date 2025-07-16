@@ -144,6 +144,7 @@ Public Class ICFCACT1
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         ' Refresh_Entries()
+        txtBalanceTot.Text = ""
 
         EnforceConstraints(True)
     End Sub
@@ -158,6 +159,7 @@ Public Class ICFCACT1
             Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
             Dim Emsg As String = String.Empty
 
+            txtBalanceTot.Text = ""
 
             EnforceConstraints(True)
 
@@ -220,18 +222,18 @@ Public Class ICFCACT1
         'dst.Tables("ICTCACTX").Columns("BALANCE").Expression = balexpr.Substring(2)
 
         ASCMAIN1.sql = $"select * from (
-                        select ICTIREC1.OPS_YYYYPP PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
+                        select MIN(ICTIREC1.OPS_YYYYPP) PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, MIN(ICTIREC1.OPS_YYYYPP) ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
                         from POTORDR1, ICTIREC1, ICTIREC2
                         where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                         and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
                         and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
-                        group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE, ICTIREC1.OPS_YYYYPP
+                        group by POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE
                         ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
-
 
         Fill_Records("ICTCACTB", "", True, ASCMAIN1.sql)
         Dim lastpoRef As String = String.Empty 'use this to add the forcedrow to the last poref
         'add a row after every shipment record
+        Dim OpenBalanceAll As Int32 = 0
         For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted' or ACTIVITY = 'Received'", "PERIOD,ACTIVITY,PO_REFERENCE")
             Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
             Dim forcerow As Boolean = False
@@ -241,9 +243,18 @@ Public Class ICFCACT1
             If Not String.IsNullOrEmpty(currentPORef) And row("ACTIVITY") = "Received" Then
                 lastpoRef = currentPORef
             End If
+
+            For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
+                If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
+                    OpenBalanceAll += Val(rowdist(col.ColumnName) & "")
+                End If
+            Next
+
+            'If rowdist("PO_REFERENCE") = "WM24101" Then Stop
+
 forcerow_here:
             If rowdist("ACTIVITY") = "Adjusted" Then
-                OrderBy = "ORIG_PERIOD desc"
+                'OrderBy = "ORIG_PERIOD desc"
             End If
             For Each balrow As DataRow In dst.Tables("ICTCACTB").Select($"PERIOD is null or PERIOD <= '{rowdist("PERIOD")}'", OrderBy)
                 Dim updaterow As Boolean = False
@@ -255,6 +266,8 @@ forcerow_here:
                 If forcerow And lastpoRef <> balrow("PO_REFERENCE") Then
                     Continue For
                 End If
+                'If balrow("PO_REFERENCE") = "WM24101" Then Stop
+
                 For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
                     If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
                         distbal += (Val(rowdist(col.ColumnName) & "") <> 0)
@@ -283,7 +296,7 @@ forcerow_here:
                         End If
                     End If
                 Next
-                If updaterow Then
+                If updaterow Or balbal <> 0 Then
                     Dim updated As Boolean = False
                     For Each balupdate As DataRow In dst.Tables("ICTCACTX").Select($"PO_REFERENCE = '{balrow("PO_REFERENCE")}' and ACTIVITY = '{balrow("ACTIVITY")}' and PERIOD = '{balrow("PERIOD")}'")
                         updated = True
@@ -321,6 +334,9 @@ forcerow_here:
 
         Sort_grdColumns(grdICTCACTX, "PERIOD, ACTIVITY, PO_REFERENCE")
         grdICTCACTX.Visible = True
+
+        txtBalanceTot.Text = OpenBalanceAll
+
 
     End Sub
     Overrides Sub Prepare_for_View_Lookup_Special(
