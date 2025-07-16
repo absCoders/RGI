@@ -57,11 +57,12 @@ Partial Class ICFCACT1
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.SelectedStyles = New System.Windows.Forms.TextBox()
         Me.grdICTCACTX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
-        Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.txtBalanceTot = New System.Windows.Forms.TextBox()
         Me.cmdMulti = New Infragistics.Win.Misc.UltraButton()
         Me.UltraTextEditor5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -70,6 +71,7 @@ Partial Class ICFCACT1
         Me.Tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabbedMdiManager1 = New Infragistics.Win.UltraWinTabbedMdi.UltraTabbedMdiManager(Me.components)
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -120,7 +122,7 @@ Partial Class ICFCACT1
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(751, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(970, 574)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         '
@@ -175,17 +177,17 @@ Partial Class ICFCACT1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(964, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1183, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(964, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1183, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(964, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1183, 0)
         '
         'tlb
         '
@@ -197,7 +199,7 @@ Partial Class ICFCACT1
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer2)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(747, 473)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(966, 473)
         '
         'SplitContainer2
         '
@@ -215,9 +217,19 @@ Partial Class ICFCACT1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdICTCACTX)
-        Me.SplitContainer2.Size = New System.Drawing.Size(747, 473)
+        Me.SplitContainer2.Size = New System.Drawing.Size(966, 473)
         Me.SplitContainer2.SplitterDistance = 118
         Me.SplitContainer2.TabIndex = 15
+        '
+        'UltraLabel2
+        '
+        Me.UltraLabel2.AutoSize = True
+        Me.UltraLabel2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.UltraLabel2.Location = New System.Drawing.Point(-1, 3)
+        Me.UltraLabel2.Name = "UltraLabel2"
+        Me.UltraLabel2.Size = New System.Drawing.Size(125, 18)
+        Me.UltraLabel2.TabIndex = 1
+        Me.UltraLabel2.Text = "Selected Styles:"
         '
         'SelectedStyles
         '
@@ -298,7 +310,7 @@ Partial Class ICFCACT1
         Me.grdICTCACTX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTCACTX.Location = New System.Drawing.Point(0, 0)
         Me.grdICTCACTX.Name = "grdICTCACTX"
-        Me.grdICTCACTX.Size = New System.Drawing.Size(747, 351)
+        Me.grdICTCACTX.Size = New System.Drawing.Size(966, 351)
         Me.grdICTCACTX.TabIndex = 165
         Me.grdICTCACTX.Text = "Volume Control"
         '
@@ -306,20 +318,12 @@ Partial Class ICFCACT1
         '
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(747, 473)
-        '
-        'UltraLabel2
-        '
-        Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.UltraLabel2.Location = New System.Drawing.Point(-1, 3)
-        Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(125, 18)
-        Me.UltraLabel2.TabIndex = 1
-        Me.UltraLabel2.Text = "Selected Styles:"
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(966, 473)
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.UltraLabel3)
+        Me.UltraGroupBox1.Controls.Add(Me.txtBalanceTot)
         Me.UltraGroupBox1.Controls.Add(Me.cmdMulti)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor5)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor2)
@@ -327,8 +331,15 @@ Partial Class ICFCACT1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(751, 69)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(970, 69)
         Me.UltraGroupBox1.TabIndex = 0
+        '
+        'txtBalanceTot
+        '
+        Me.txtBalanceTot.Location = New System.Drawing.Point(827, 38)
+        Me.txtBalanceTot.Name = "txtBalanceTot"
+        Me.txtBalanceTot.Size = New System.Drawing.Size(100, 23)
+        Me.txtBalanceTot.TabIndex = 237
         '
         'cmdMulti
         '
@@ -382,7 +393,7 @@ Partial Class ICFCACT1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.Tab)
-        Me.spl.Size = New System.Drawing.Size(751, 574)
+        Me.spl.Size = New System.Drawing.Size(970, 574)
         Me.spl.SplitterDistance = 69
         Me.spl.TabIndex = 15
         '
@@ -395,7 +406,7 @@ Partial Class ICFCACT1
         Me.Tab.Location = New System.Drawing.Point(0, 0)
         Me.Tab.Name = "Tab"
         Me.Tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.Tab.Size = New System.Drawing.Size(751, 501)
+        Me.Tab.Size = New System.Drawing.Size(970, 501)
         Me.Tab.TabIndex = 16
         UltraTab1.TabPage = Me.UltraTabPageControl1
         UltraTab1.Text = "0"
@@ -407,17 +418,26 @@ Partial Class ICFCACT1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(747, 473)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(966, 473)
         '
         'UltraTabbedMdiManager1
         '
         Me.UltraTabbedMdiManager1.MdiParent = Me
         '
+        'UltraLabel3
+        '
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(827, 12)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(97, 18)
+        Me.UltraLabel3.TabIndex = 238
+        Me.UltraLabel3.Text = "Open Balance"
+        '
         'ICFCACT1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(964, 574)
+        Me.ClientSize = New System.Drawing.Size(1183, 574)
         Me.Name = "ICFCACT1"
         Me.Text = "ICFCACT1"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -466,4 +486,6 @@ Partial Class ICFCACT1
     Friend WithEvents cmdMulti As Misc.UltraButton
     Friend WithEvents grdICTCACTX As UltraWinGrid.UltraGrid
     Friend WithEvents UltraLabel2 As Misc.UltraLabel
+    Friend WithEvents txtBalanceTot As TextBox
+    Friend WithEvents UltraLabel3 As Misc.UltraLabel
 End Class
