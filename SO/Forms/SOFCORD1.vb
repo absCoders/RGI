@@ -51,6 +51,8 @@ Public Class SOFCORD1
     Dim SOTORDRS_BASE As String
     Dim sqlSOTORDRS_BASE As String
 
+    Dim SOFCORD1_LAYOUT_ORIG As String = "SOFCORD1_LAYOUT_ORIG.xml"
+    Dim SOFCORD1_LAYOUT_SHORT As String = ""
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -1002,6 +1004,11 @@ Public Class SOFCORD1
 
         MakeTransparent(chkShortView)
         MakeTransparent(chkSynchronize)
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            SOFCORD1_LAYOUT_SHORT = ASCMAIN1.rowASTPARM1.Item("AS_PARM_SHARED_ROOT_FOLDER") & "\Templates\" & "SOFCORD1_LAYOUT_SHORT.xml"
+            grdSOTORDR0.DisplayLayout.SaveAsXml(SOFCORD1_LAYOUT_ORIG, UltraWinGrid.PropertyCategories.All)
+        End If
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -1115,6 +1122,8 @@ Public Class SOFCORD1
         Else
             tabStyles.Tabs("Status").Visible = False
         End If
+
+        btnSaveShort.Visible = ASCMAIN1.Running_in_VS And (ASCMAIN1.CLIENT = "RGI")
     End Sub
 
     Sub Clear_Record()
@@ -2632,18 +2641,28 @@ Public Class SOFCORD1
     End Sub
 
     Sub Toggle_OrderGridView()
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(tlb.Tools("Short View"), UltraWinToolbars.StateButtonTool)
 
-        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(tlb.Tools("Short View"), UltraWinToolbars.StateButtonTool)
+            grdSOTORDR0.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
+            'grdSOTORDR0.DisplayLayout.SaveAsXml("nl.xml", UltraWinGrid.PropertyCategories.All)
+            'With grdSOTORDR0.DisplayLayout.Bands(0)
+            '    For Each C As String In New String() _
+            '        {"CUST_COUNTRY", "ORDR_DEPT", "EDI_MERCH_TYPE", "CUST_DC_NO", "ORDR_DATE", "ORDR_TYPE_CODE",
+            '         "ORDR_SOURCE", "ORDR_AMT_CANC", "ORDR_CNT", "ORDR_CNT_OPEN", "ORDR_CNT_PICK", "ORDR_QTY_CANC",
+            '         "ORDR_DATE_RECD", "ORDR_PRIORITY", "LAST_DATE", "LAST_OPER"}
+            '        .Columns(C).Hidden = tlb_sbt.Checked
+            '    Next
+            'End With
+            'grdSOTORDR0.DisplayLayout.SaveAsXml("nl_short.xml", UltraWinGrid.PropertyCategories.All)
 
-        With grdSOTORDR0.DisplayLayout.Bands(0)
-            For Each C As String In New String() _
-                {"CUST_COUNTRY", "ORDR_DEPT", "EDI_MERCH_TYPE", "CUST_DC_NO", "ORDR_DATE", "ORDR_TYPE_CODE",
-                 "ORDR_SOURCE", "ORDR_AMT_CANC", "ORDR_CNT", "ORDR_CNT_OPEN", "ORDR_CNT_PICK", "ORDR_QTY_CANC",
-                 "ORDR_DATE_RECD", "ORDR_PRIORITY", "LAST_DATE", "LAST_OPER"}
-                .Columns(C).Hidden = tlb_sbt.Checked
-            Next
-        End With
 
+            If tlb_sbt.Checked Then
+                grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_SHORT)
+            Else
+                grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_ORIG)
+            End If
+        End If
     End Sub
 
     Sub Toggle_ShowShipCancel()
@@ -4590,6 +4609,10 @@ Public Class SOFCORD1
 
     Private Sub chkSynchronize_CheckedChanged(sender As Object, e As EventArgs) Handles chkSynchronize.CheckedChanged
         Setup_Synch
+    End Sub
+
+    Private Sub btnSaveShort_Click(sender As Object, e As EventArgs) Handles btnSaveShort.Click
+        grdSOTORDR0.DisplayLayout.SaveAsXml(SOFCORD1_LAYOUT_SHORT, UltraWinGrid.PropertyCategories.All)
     End Sub
 End Class
 
