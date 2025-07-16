@@ -3814,7 +3814,7 @@ Public Class POFSHIP1
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
                 .Groups("Packing Slips").Visible = False
 
-                .Groups("Special Functions").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie")) And ship_entry
+                .Groups("Special Functions").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie" Or ASCMAIN1.USER_ID = "erodriguez")) And ship_entry
 
 
 
