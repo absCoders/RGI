@@ -449,6 +449,7 @@ Public Class ICFXFRM2
 
             Dim AVG_WEEK_SALES As Decimal = Val(row("AVG_WEEK_SALES") & "")
             Dim ATS_MS As Integer = Val(row("ATS_MS") & "")
+            If ATS_MS < 0 Then ATS_MS = 0
 
             If AVG_WEEK_SALES <= 0 Then
                 row("SUG_XFR") = 0
@@ -1171,7 +1172,7 @@ Public Class ICFXFRM2
             PICK_NO_seq += 1
 
             With rowSOTPICK1
-                .Item("PICK_NO") = "E-" & PICK_NO
+                .Item("PICK_NO") = PICK_NO
                 .Item("ORDR_NO") = ORDR_NO
                 .Item("ORDR_PICK_SEQ") = PICK_SEQ_NO
                 .Item("PICK_STATUS") = "P"
@@ -1474,6 +1475,10 @@ Public Class ICFXFRM2
         End If
 
 
+
+    End Sub
+
+    Private Sub ICFXFRM2_LocationChanged(sender As Object, e As EventArgs) Handles Me.LocationChanged
 
     End Sub
 End Class
