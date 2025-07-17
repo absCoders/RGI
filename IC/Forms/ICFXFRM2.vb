@@ -1405,7 +1405,7 @@ Public Class ICFXFRM2
     End Sub
     Sub Load_From_Saved()
         Dim INIT_OPER As String = ASCMAIN1.USER_ID
-        Dim TBL As String = "ICTXFRSAVE1"
+        Dim TBL As String = "ICTXFRM2"
 
         ASCMAIN1.sql = $"SELECT STYLE_CODE, COLOR_CODE, TRANSFER_QTY, CHECKED FROM {TBL} WHERE INIT_OPER = '{INIT_OPER}'"
         Dim dtSaved As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
