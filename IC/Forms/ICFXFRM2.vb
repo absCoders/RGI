@@ -309,7 +309,7 @@ Public Class ICFXFRM2
             Case "Save Progress"
                 Save_Progress()
 
-            Case "Load From Save"
+            Case "Load from Save"
                 Load_From_Saved()
         End Select
 
@@ -734,8 +734,6 @@ Public Class ICFXFRM2
             & "   and SALES.COLOR_CODE(+)=X.COLOR_CODE" & vbCrLf _
             & "   and M.STYLE_CODE(+)=L1.STYLE_CODE" & vbCrLf _
             & "   and X.STYLE_CODE in (Select Distinct STYLE_CODE from ECTESTY1)"
-
-
 
             sqlICTSTYLX = ASCMAIN1.sql
             ASCMAIN1.sql = $"{sqlICTSTYLX} and ROWNUM < 1"
@@ -1384,26 +1382,43 @@ Public Class ICFXFRM2
         Return CART_NO
     End Function
     Sub Save_Progress()
+        ASCMAIN1.Progress("Now Saving Data")
+        Cursor.Current = Cursors.WaitCursor
+
+        Dim rowsToSave = dst.Tables("ICTSTYLX").Select("QTY2XFR > 0 OR HIDE_STYLE = 1")
+        If rowsToSave.Length = 0 Then
+            MsgBox("Nothing to save — no transfer quantities or hidden styles selected.", MsgBoxStyle.Information)
+            Cursor.Current = Cursors.Default
+            ASCMAIN1.Progress("")
+            Exit Sub
+        End If
+
+        BeginTrans()
         Dim INIT_OPER As String = ASCMAIN1.USER_ID
         Dim INIT_DATE As Date = DATETIME_STAMP
 
         ASCMAIN1.sql = $"DELETE FROM ICTXFRM2 WHERE INIT_OPER = :PARM1"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New String() {INIT_OPER})
 
-        For Each row As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR > 0 OR HIDE_STYLE = 1")
+        ASCMAIN1.sql = $"INSERT INTO ICTXFRM2 (STYLE_CODE, COLOR_CODE, CHECKED, INIT_DATE, INIT_OPER, TRANSFER_QTY)
+                         VALUES (:PARM1, :PARM2, :PARM3, :PARM4, :PARM5, :PARM6)"
+
+        For Each row As DataRow In rowsToSave
             Dim STYLE As String = row("STYLE_CODE") & ""
             Dim COLOR As String = row("COLOR_CODE") & ""
             Dim QTY As Integer = Val(row("QTY2XFR") & "")
             Dim CHK As String = If(row("HIDE_STYLE") & "" = "1", "1", "0")
 
-            ASCMAIN1.sql = $"INSERT INTO ICTXFRM2 (STYLE_CODE, COLOR_CODE, CHECKED, INIT_DATE, INIT_OPER, TRANSFER_QTY)
-                         VALUES (:PARM1, :PARM2, :PARM3, :PARM4, :PARM5, :PARM6)"
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVVDV", New Object() {STYLE, COLOR, CHK, INIT_DATE, INIT_OPER, QTY})
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVDVV", New Object() {STYLE, COLOR, CHK, INIT_DATE, INIT_OPER, QTY})
         Next
+        Cursor.Current = Cursors.Default
+        ASCMAIN1.Progress("")
+        CommitTrans("Progress saved.")
 
-        MsgBox("Progress saved.", MsgBoxStyle.Information)
     End Sub
     Sub Load_From_Saved()
+        ASCMAIN1.Progress("Now Loading Saved Data")
+        Cursor.Current = Cursors.WaitCursor
         Dim INIT_OPER As String = ASCMAIN1.USER_ID
         Dim TBL As String = "ICTXFRM2"
 
@@ -1426,12 +1441,15 @@ Public Class ICFXFRM2
                 Dim row As DataRow = foundRows(0)
 
                 row("QTY2XFR") = savedRow("TRANSFER_QTY")
-                row("HIDE_STYLE") = (savedRow("CHECKED") & "") = "1"
+                Dim isChecked As String = savedRow("CHECKED") & ""
+                row("HIDE_STYLE") = If(isChecked = "1", "1", "0")
                 updated += 1
             End If
         Next
 
+        Cursor.Current = Cursors.Default
         MsgBox($"{updated} style-color rows loaded from saved progress.", MsgBoxStyle.Information)
+        ASCMAIN1.Progress("")
     End Sub
 
     Private Sub chkHideStyles_CheckedChanged(sender As Object, e As EventArgs) Handles chkHideStyles.CheckedChanged
