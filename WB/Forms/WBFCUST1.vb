@@ -40,7 +40,7 @@ Public Class WBFCUST1
     Dim Password As String = "joydHUJ3"
     Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
     Dim RemotePath As String = "www/customers"
-    Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+    Dim ServerFilePath As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\RGI\Archive\Shopsite\"
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
         isLoading = True
@@ -2338,8 +2338,8 @@ Public Class WBFCUST1
 
     Private Function MakeHTMLBody(ByRef rowWBTCUST1 As DataRow) As Dictionary(Of String, String)
         Dim RetVal As New Dictionary(Of String, String)
-        Dim TEMPLATE As String = "S:\Archive\templates\CREDIT_EMAIL.html"
-        Dim SUBJECT As String = "S:\Archive\templates\CREDIT_EMAIL_SUBJECT.txt"
+        Dim TEMPLATE As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\Archive\templates\CREDIT_EMAIL.html"
+        Dim SUBJECT As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\Archive\templates\CREDIT_EMAIL_SUBJECT.txt"
         If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
             TEMPLATE = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL.html"
             SUBJECT = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL_SUBJECT.txt"

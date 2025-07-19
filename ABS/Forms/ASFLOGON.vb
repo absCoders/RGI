@@ -439,6 +439,10 @@ Public Class ASFLOGON
 
             ASCMAIN1.CLIENT = ASCMAIN1.SOLUTION
             ASCMAIN1.CLIENT = ASCMAIN1.rowASTPARM1.Item("AS_PARM_SCHEMA_PWD")
+            ASCMAIN1.useUNCPath = (ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.DBS_SERVER = "RGIUAT")
+            If ASCMAIN1.useUNCPath Then
+                MsgBox($"useUNCpath is set to {ASCMAIN1.useUNCPath.ToString}", vbOKOnly, "UNC Path")
+            End If
 
             If Not ASCMAIN1.Running_in_VS Then
                 If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then ' necessary because V1 uses G: drive in ASTPARM1

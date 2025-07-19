@@ -214,7 +214,9 @@ Public Class TARPEND0
         Dim FOLDER As String = "S:\" & ASCMAIN1.DBS_COMPANY & "\MONTHLY\"
         If ASCMAIN1.CLIENT = "VAN" Then FOLDER = "R:\" & ASCMAIN1.DBS_COMPANY & "\MONTHLY\"
         ' FOLDER SHOULD USE ROOT
-
+        If ASCMAIN1.useUNCPath Then
+            FOLDER = $"{ASCMAIN1.Folders("SharedRoot")}\" & ASCMAIN1.DBS_COMPANY & "\MONTHLY\"
+        End If
         If ASCMAIN1.Running_in_VS Then
             FOLDER = ASCMAIN1.Folders("Temp") & ASCMAIN1.DBS_COMPANY & "\MONTHLY\"
             Stop
