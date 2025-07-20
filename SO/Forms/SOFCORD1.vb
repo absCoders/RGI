@@ -1009,6 +1009,8 @@ Public Class SOFCORD1
             SOFCORD1_LAYOUT_SHORT = ASCMAIN1.Folders("SharedRoot") & "Templates\" & "SOFCORD1_LAYOUT_SHORT.xml"
             grdSOTORDR0.DisplayLayout.SaveAsXml(SOFCORD1_LAYOUT_ORIG, UltraWinGrid.PropertyCategories.All)
         End If
+
+        tabDetails.Tabs("Comments").Visible = (ASCMAIN1.CLIENT = "RGI")
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -1104,9 +1106,13 @@ Public Class SOFCORD1
             grdSOTORDR0.Parent = splSOTORDR0.Panel1
             Setup_tabMain()
             Setup_Summary()
+
+            splComments.Parent = tabDetails.Tabs("Comments").TabPage
+
         Else
             Clear_Record()
             grdSOTORDR0.Parent = splSOTORDR0s.Panel1 ' grpSOTORDR0
+            splComments.Parent = UltraTabControl1.Tabs("Comments").TabPage
 
             toggle_Show_Details()
 
@@ -2723,6 +2729,11 @@ Public Class SOFCORD1
     Private Sub grdSOTORDR0_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTORDR0.AfterRowActivate
         If ScreenMode Then
             Setup_SOTORDR0()
+            If ASCMAIN1.CLIENT = "RGI" Then
+                Dim ORDR_NO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_NO_MIN").Value
+                Fill_Records("SOTORDR4", ORDR_NO)
+                grdSOTORDR4.Text = $"Internal Comments for Order {ORDR_NO}"
+            End If
         Else
             If ASCMAIN1.CLIENT = "RGI" Then
                 Setup_grdSOTORDRT()
@@ -2746,6 +2757,7 @@ Public Class SOFCORD1
 
             Fill_Records("SOTORDR1", ORDR_GROUP_NO)
             Fill_Records("SOTORDR4", ORDR_NO)
+            grdSOTORDR4.Text = $"Internal Comments for Order {ORDR_NO}"
         End If
     End Sub
 
@@ -3278,8 +3290,18 @@ Public Class SOFCORD1
                 sql = "Select X.*, SOTORDRS.WIP_IND from (" & sql & ") X, SOTORDRS where SOTORDRS.ORDR_GROUP_NO (+) = '" & ORDR_GROUP_NO & "' and SOTORDRS.STYLE_CODE (+) = X.STYLE_CODE and SOTORDRS.COLOR_CODE (+) = X.COLOR_CODE"
                 grdSOTORDRS.Text = "Style Summary for Order Group " & ORDR_GROUP_NO & ", Customer PO " & ORDR_CUST_PO
             Else
-                Dim ORDR_NO As String = grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value
-                Dim CUST_STORE_NO As String = grdSOTORDRX.ActiveRow.Cells("CUST_STORE_NO").Value
+                Dim ORDR_NO As String = ""
+                Dim CUST_STORE_NO As String = ""
+
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    ORDR_NO = ORDR_GROUP_NO ' grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value
+                    Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", ORDR_NO)
+                    CUST_STORE_NO = rowSOTORDR1.Item("CUST_STORE_NO")
+                Else
+                    ORDR_NO = grdSOTORDRX.ActiveRow.Cells("ORDR_NO").Value
+                    CUST_STORE_NO = grdSOTORDRX.ActiveRow.Cells("CUST_STORE_NO").Value
+                End If
+
                 sql = Replace(sqlSOTORDRS, " group by ", " and SOTORDR1.ORDR_NO = '" & ORDR_NO & "' group by ")
                 sql = "Select X.*, SOTORDRS.WIP_IND from (" & sql & ") X, SOTORDRS where SOTORDRS.ORDR_GROUP_NO (+) = '" & ORDR_GROUP_NO & "' and SOTORDRS.STYLE_CODE (+) = X.STYLE_CODE and SOTORDRS.COLOR_CODE (+) = X.COLOR_CODE"
                 grdSOTORDRS.Text = "Style Details for Order No " & ORDR_NO & ", Customer PO " & ORDR_CUST_PO & ", Store No " & CUST_STORE_NO
