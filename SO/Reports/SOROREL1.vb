@@ -369,7 +369,7 @@ Public Class SOROREL1
         Dim ICTSTAT2_MSUS_BEFORE As String = ""
         Dim ICTSTAT2_MSUS_AFTER As String = ""
 
-        If ASCMAIN1.CLIENT = "RGI" Then
+        If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "MS" Then
             ASCMAIN1.sql = "Select US.STYLE_CODE, US.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" & vbCrLf _
             & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) - NVL(US_OPEN,0) US_AVA" & vbCrLf _
             & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
@@ -919,7 +919,7 @@ Public Class SOROREL1
         Else
             Update_Release() ' Update Pick Ticket, Shipment Control & Carton Tables
 
-            If ASCMAIN1.CLIENT = "RGI" Then
+            If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "MS" Then
 
                 'ASCMAIN1.sql = "Select US.*, SOTORDR2.ALLO, LEAST(NVL(US.MS_AVA,0) - NVL(SOTORDR2.ALLO,0),0) SHORT, '0' RELEASE" & vbCrLf _
                 '    & $"from {ICTSTAT2_MSUS_BEFORE} US" & vbCrLf _
