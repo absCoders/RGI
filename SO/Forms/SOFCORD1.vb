@@ -1006,7 +1006,7 @@ Public Class SOFCORD1
         MakeTransparent(chkSynchronize)
 
         If ASCMAIN1.CLIENT = "RGI" Then
-            SOFCORD1_LAYOUT_SHORT = ASCMAIN1.rowASTPARM1.Item("AS_PARM_SHARED_ROOT_FOLDER") & "\Templates\" & "SOFCORD1_LAYOUT_SHORT.xml"
+            SOFCORD1_LAYOUT_SHORT = ASCMAIN1.Folders("SharedRoot") & "Templates\" & "SOFCORD1_LAYOUT_SHORT.xml"
             grdSOTORDR0.DisplayLayout.SaveAsXml(SOFCORD1_LAYOUT_ORIG, UltraWinGrid.PropertyCategories.All)
         End If
     End Sub
