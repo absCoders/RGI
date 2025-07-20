@@ -1074,6 +1074,18 @@
     <Compile Include="Tables\SOTTCLS1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Tables\SOTTOTE0.Designer.vb">
+      <DependentUpon>SOTTOTE0.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\SOTTOTE0.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tables\SOTTRCK1.Designer.vb">
+      <DependentUpon>SOTTRCK1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\SOTTRCK1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Tables\SOTTYPE1.Designer.vb">
       <DependentUpon>SOTTYPE1.vb</DependentUpon>
     </Compile>
@@ -1541,6 +1553,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\SOTTCLS1.resx">
       <DependentUpon>SOTTCLS1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\SOTTOTE0.resx">
+      <DependentUpon>SOTTOTE0.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\SOTTRCK1.resx">
+      <DependentUpon>SOTTRCK1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tables\SOTTYPE1.resx">
       <DependentUpon>SOTTYPE1.vb</DependentUpon>
