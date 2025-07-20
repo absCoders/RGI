@@ -42,6 +42,23 @@ Public Class ASFMAIN1
     Public loadSplash As ASFFLOAD
     Dim MODULE_IDs As String = ""
 
+
+    Public invoicePrinterIP As String = String.Empty
+    ' Public laserPrinterIP As String = String.Empty
+    Public useLaserPrinterIP As Boolean = False
+    'Public labelPrinterName As String = String.Empty
+    Public WithEvents scannerSerialPort As System.IO.Ports.SerialPort
+    'Public labelPrinterSerialPort As System.IO.Ports.SerialPort
+    ' AEG IP Port label printing
+    Public labelPrinterIPAddress As String = String.Empty
+    Public miniLabelPrinterIPAddress As String = String.Empty
+
+    'Public scannedDelegate As ScannerDelegate = Nothing
+    ' DFCT0010475 - Job Labels
+    Public dymoLabelPrinter As String = String.Empty
+    ' AEG
+    Public UPCFramePrinterIPAddress As String = String.Empty
+
     Public FormToShow As ASFBASE1
 
     Private Sub StartSplash()
