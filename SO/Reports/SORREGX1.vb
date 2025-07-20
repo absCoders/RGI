@@ -1,3 +1,5 @@
+Imports Microsoft.Office.Interop.Outlook
+
 Public Class SORREGX1
     Dim SOTPICK1 As String
 
@@ -39,7 +41,7 @@ Public Class SORREGX1
     Public Overrides Sub Print_Report()
 
         Generate_Report("SORREGX1", "Pick Tickets Printed")
-       
+
         ' Generate_Report(RPT)
     End Sub
 
@@ -59,6 +61,9 @@ Public Class SORREGX1
         Dim REGMINUTE As Int32 = DATETIME_STAMP.Minute
         Dim TSTAMP As String = regHOUR & REGMINUTE
         Dim REGFILE As String = "S:\WAREHOUSE\FILEAMIGOUPLOAD\" & "REG" & REGDATE & TSTAMP & ".txt"
+        If ASCMAIN1.useUNCPath Then
+            REGFILE = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\FILEAMIGOUPLOAD\" & "REG" & REGDATE & TSTAMP & ".txt"
+        End If
         'Dim REGFILE As String = "C:\VS\VDI\WAREHOUSE\" & "REG" & REGDATE & ".txt"
         'Dim REGFILE As String = "S:\WAREHOUSE\TEST\" & "REG" & REGDATE & ".txt"
 
@@ -68,7 +73,7 @@ Public Class SORREGX1
         Dim TASK As String = "ORDER"
         Dim D_DATE As Date = Now
 
-        Using swh As System.IO.StreamWriter = _
+        Using swh As System.IO.StreamWriter =
         New System.IO.StreamWriter(REGFILE)
 
             For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select

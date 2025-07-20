@@ -219,6 +219,12 @@
     <Compile Include="Forms\SOFORDCC.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\SOFOXFR1.Designer.vb">
+      <DependentUpon>SOFOXFR1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFOXFR1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFPVTL1.Designer.vb">
       <DependentUpon>SOFPVTL1.vb</DependentUpon>
     </Compile>
@@ -1084,6 +1090,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\SOFORDCC.resx">
       <DependentUpon>SOFORDCC.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SOFOXFR1.resx">
+      <DependentUpon>SOFOXFR1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFPVTL1.resx">
       <DependentUpon>SOFPVTL1.vb</DependentUpon>

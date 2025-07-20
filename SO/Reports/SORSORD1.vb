@@ -195,7 +195,7 @@ Public Class SORSORD1
             & ", SUM (ORDR_QTY) ORDR_QTY, SUM (ORDR_QTY * ORDR_UNIT_PRICE) ORDR_AMT" _
             & " from SOTORDR1,SOTORDR2" _
             & " where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" _
-            & " and (CUST_CODE NOT IN ('BEALLS','ROSS') OR SOTORDR2.ORDR_QTY <> SOTORDR2.ORDR_QTY_CANC)" _
+            & " and (CUST_CODE NOT IN ('BEALLS','ROSS','BEALLSDS') OR SOTORDR2.ORDR_QTY <> SOTORDR2.ORDR_QTY_CANC)" _
             & " and SOTORDR1.ORDR_GROUP_NO in (Select Distinct ORDR_GROUP_NO from " & SOTORDR0 & " where ORDR_GROUP_TYPE = 'O')" _
             & " GROUP BY SOTORDR1.ORDR_GROUP_NO, NVL(SOTORDR1.CUST_DC_NO,'XXXXXX');"
         Else
@@ -381,12 +381,12 @@ Public Class SORSORD1
         Dim SOTSORD1 As String = ASCMAIN1.Temp_Table
 
         If ASCMAIN1.CLIENT = "VAN" Then
-            sql = "Delete From " & SOTSORD1 & " WHERE CUST_CODE IN ('BEALLS','ROSS') AND ORDR_QTY_X = ORDR_QTY_CANC_X"
+            sql = "Delete From " & SOTSORD1 & " WHERE CUST_CODE IN ('BEALLS','ROSS','BEALLSDS') AND ORDR_QTY_X = ORDR_QTY_CANC_X"
             ASCDATA1.ExecuteSQL(sql)
         End If
 
         If ASCMAIN1.CLIENT = "VAN" Then
-            sql = "Update " & SOTSORD1 & " Set ORDR_QTY_X = ORDR_QTY_OPEN_X  + ORDR_QTY_PICK_X, ORDR_AMT_X = ORDR_AMT_X - ORDR_AMT_CANC_X  WHERE CUST_CODE IN ('BEALLS','ROSS') AND ORDR_QTY_X <> ORDR_QTY_CANC_X and ORDR_QTY_CANC_X <> 0 and (ORDR_QTY_OPEN_X <> 0 OR ORDR_QTY_PICK_X <> 0)"
+            sql = "Update " & SOTSORD1 & " Set ORDR_QTY_X = ORDR_QTY_OPEN_X  + ORDR_QTY_PICK_X, ORDR_AMT_X = ORDR_AMT_X - ORDR_AMT_CANC_X  WHERE CUST_CODE IN ('BEALLS','ROSS','BEALLSDS') AND ORDR_QTY_X <> ORDR_QTY_CANC_X and ORDR_QTY_CANC_X <> 0 and (ORDR_QTY_OPEN_X <> 0 OR ORDR_QTY_PICK_X <> 0)"
             ASCDATA1.ExecuteSQL(sql)
         End If
 

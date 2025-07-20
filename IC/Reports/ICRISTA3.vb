@@ -398,6 +398,14 @@ Public Class ICRISTA3
         dst.Tables("ICTISTA3").Columns.Add("GROUP_CODE2")
         dst.Tables("ICTISTA3").Columns.Add("GROUP_DESC2")
         dst.Tables("ICTISTA3").Columns.Add("GROUP_CAPTION2")
+        dst.Tables("ICTISTA3").Columns.Add("QTY_01", GetType(System.Int64))
+        dst.Tables("ICTISTA3").Columns.Add("QTY_02", GetType(System.Int64))
+        dst.Tables("ICTISTA3").Columns.Add("QTY_03", GetType(System.Int64))
+        dst.Tables("ICTISTA3").Columns.Add("QTYOP_01", GetType(System.Int64))
+        dst.Tables("ICTISTA3").Columns.Add("QTYOP_02", GetType(System.Int64))
+        dst.Tables("ICTISTA3").Columns.Add("QTYOP_03", GetType(System.Int64))
+
+
 
         SQLDELRECS.Clear()
         For Each rowICTISTA4 As DataRow In tblICTISTA4.Select("SELECTED = '1'")
@@ -614,6 +622,13 @@ Public Class ICRISTA3
         dst.Tables("ASTSRPT1").Columns.Add("AGE_02", GetType(System.Double))
         dst.Tables("ASTSRPT1").Columns.Add("AGE_03", GetType(System.Double))
         dst.Tables("ASTSRPT1").Columns.Add("EXT_COST", GetType(System.Double))
+        dst.Tables("ASTSRPT1").Columns.Add("QTY_01", GetType(System.Int64))
+        dst.Tables("ASTSRPT1").Columns.Add("QTY_02", GetType(System.Int64))
+        dst.Tables("ASTSRPT1").Columns.Add("QTY_03", GetType(System.Int64))
+        dst.Tables("ASTSRPT1").Columns.Add("QTYOP_01", GetType(System.Int64))
+        dst.Tables("ASTSRPT1").Columns.Add("QTYOP_02", GetType(System.Int64))
+        dst.Tables("ASTSRPT1").Columns.Add("QTYOP_03", GetType(System.Int64))
+
 
         CalcExtCost()
         If GROUP_CODE_MULT.Count = 0 Then
@@ -772,7 +787,18 @@ Public Class ICRISTA3
             OPT_SUB = OPT_SUB & " Cancel < " & CDate(dteLimitOP_C.DateTime.ToShortDateString)
         End If
         If GROUP_CODE_MULT.Count = 0 Then
-            Generate_Report("ICRISTA4", "", OPT_SUB)
+            If chkUNITS.Checked Then
+                CR_params.Add("UNITS", "1")
+            Else
+                CR_params.Add("UNITS", "0")
+            End If
+            If CHKUNITSONLY.Checked Then
+                OPT_SUB = OPT_SUB & " - UNITS ONLY"
+                Generate_Report("ICRISTA6", "", OPT_SUB)
+            Else
+                Generate_Report("ICRISTA4", "", OPT_SUB)
+            End If
+
             RWU = "R"
         Else
             Generate_Report("ICRISTA5", "", OPT_SUB)
@@ -822,6 +848,12 @@ Public Class ICRISTA3
             Dim AGE_01 As Double = 0
             Dim AGE_02 As Double = 0
             Dim AGE_03 As Double = 0
+            Dim QTY_01 As Double = 0
+            Dim QTY_02 As Double = 0
+            Dim QTY_03 As Double = 0
+            Dim QTYOP_01 As Double = 0
+            Dim QTYOP_02 As Double = 0
+            Dim QTYOP_03 As Double = 0
 
             Dim filter As String = String.Format("G1 = '{0}'", GROUP_DESC)
             For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select(filter)
@@ -830,6 +862,14 @@ Public Class ICRISTA3
                 AGE_01 = AGE_01 + Val(rowASTSRPT1.Item("AGE_01").ToString & String.Empty)
                 AGE_02 = AGE_02 + Val(rowASTSRPT1.Item("AGE_02").ToString & String.Empty)
                 AGE_03 = AGE_03 + Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty)
+                QTY_01 = QTY_01 + Val(rowASTSRPT1.Item("QTY_01").ToString & String.Empty)
+                QTY_02 = QTY_02 + Val(rowASTSRPT1.Item("QTY_02").ToString & String.Empty)
+                QTY_03 = QTY_03 + Val(rowASTSRPT1.Item("QTY_03").ToString & String.Empty)
+                QTYOP_01 = QTYOP_01 + Val(rowASTSRPT1.Item("QTYOP_01").ToString & String.Empty)
+                QTYOP_02 = QTYOP_02 + Val(rowASTSRPT1.Item("QTYOP_02").ToString & String.Empty)
+                QTYOP_03 = QTYOP_03 + Val(rowASTSRPT1.Item("QTYOP_03").ToString & String.Empty)
+
+
                 If Val(rowASTSRPT1.Item("AGE_02").ToString & String.Empty) <> 0 Or Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty) <> 0 Then
                     OP_02 = OP_02 + Val(rowASTSRPT1.Item("OP_COST").ToString & String.Empty)
                 End If
@@ -850,6 +890,13 @@ Public Class ICRISTA3
                 rowICTISTA3.Item("AGE_01") = AGE_01
                 rowICTISTA3.Item("AGE_02") = AGE_02
                 rowICTISTA3.Item("AGE_03") = AGE_03
+                rowICTISTA3.Item("QTY_01") = QTY_01
+                rowICTISTA3.Item("QTY_02") = QTY_02
+                rowICTISTA3.Item("QTY_03") = QTY_03
+                rowICTISTA3.Item("QTYOP_01") = QTYOP_01
+                rowICTISTA3.Item("QTYOP_02") = QTYOP_02
+                rowICTISTA3.Item("QTYOP_03") = QTYOP_03
+
             Else
                 Dim GROUP_CAPTION As String = ""
                 Dim rowASTDSQLA As DataRow = tblASTDSQLA.Select("SEQUENCE = 1").FirstOrDefault
@@ -872,6 +919,13 @@ Public Class ICRISTA3
                 newICTISTA3.Item("AGE_01") = AGE_01
                 newICTISTA3.Item("AGE_02") = AGE_02
                 newICTISTA3.Item("AGE_03") = AGE_03
+                newICTISTA3.Item("QTY_01") = QTY_01
+                newICTISTA3.Item("QTY_02") = QTY_02
+                newICTISTA3.Item("QTY_03") = QTY_03
+                newICTISTA3.Item("QTYOP_01") = QTYOP_01
+                newICTISTA3.Item("QTYOP_02") = QTYOP_02
+                newICTISTA3.Item("QTYOP_03") = QTYOP_03
+
                 dst.Tables("ICTISTA3").Rows.Add(newICTISTA3)
             End If
 
@@ -904,6 +958,13 @@ Public Class ICRISTA3
             Dim AGE_01 As Double = 0
             Dim AGE_02 As Double = 0
             Dim AGE_03 As Double = 0
+            Dim QTY_01 As Double = 0
+            Dim QTY_02 As Double = 0
+            Dim QTY_03 As Double = 0
+            Dim QTYOP_01 As Double = 0
+            Dim QTYOP_02 As Double = 0
+            Dim QTYOP_03 As Double = 0
+
 
             Dim filter As String = $"G1 = '{GROUP_DESC.Key}' AND G2 = '{GROUP_DESC.Value}'"
             For Each rowASTSRPT1 As DataRow In dst.Tables("ASTSRPT1").Select(filter)
@@ -912,6 +973,14 @@ Public Class ICRISTA3
                 AGE_01 = AGE_01 + Val(rowASTSRPT1.Item("AGE_01").ToString & String.Empty)
                 AGE_02 = AGE_02 + Val(rowASTSRPT1.Item("AGE_02").ToString & String.Empty)
                 AGE_03 = AGE_03 + Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty)
+                QTY_01 = QTY_01 + Val(rowASTSRPT1.Item("QTY_01").ToString & String.Empty)
+                QTY_02 = QTY_02 + Val(rowASTSRPT1.Item("QTY_02").ToString & String.Empty)
+                QTY_03 = QTY_03 + Val(rowASTSRPT1.Item("QTY_03").ToString & String.Empty)
+                QTYOP_01 = QTYOP_01 + Val(rowASTSRPT1.Item("QTYOP_01").ToString & String.Empty)
+                QTYOP_02 = QTYOP_02 + Val(rowASTSRPT1.Item("QTYOP_02").ToString & String.Empty)
+                QTYOP_03 = QTYOP_03 + Val(rowASTSRPT1.Item("QTYOP_03").ToString & String.Empty)
+
+
                 If Val(rowASTSRPT1.Item("AGE_02").ToString & String.Empty) <> 0 Or Val(rowASTSRPT1.Item("AGE_03").ToString & String.Empty) <> 0 Then
                     OP_02 = OP_02 + Val(rowASTSRPT1.Item("OP_COST").ToString & String.Empty)
                 End If
@@ -932,6 +1001,12 @@ Public Class ICRISTA3
                 rowICTISTA3.Item("AGE_01") = AGE_01
                 rowICTISTA3.Item("AGE_02") = AGE_02
                 rowICTISTA3.Item("AGE_03") = AGE_03
+                rowICTISTA3.Item("QTY_01") = QTY_01
+                rowICTISTA3.Item("QTY_02") = QTY_02
+                rowICTISTA3.Item("QTY_03") = QTY_03
+                rowICTISTA3.Item("QTYOP_01") = QTYOP_01
+                rowICTISTA3.Item("QTYOP_02") = QTYOP_02
+                rowICTISTA3.Item("QTYOP_03") = QTYOP_03
             Else
                 Dim GROUP_CAPTION As String = ""
                 Dim GROUP_CAPTION2 As String = ""
@@ -962,6 +1037,14 @@ Public Class ICRISTA3
                 newICTISTA3.Item("AGE_01") = AGE_01
                 newICTISTA3.Item("AGE_02") = AGE_02
                 newICTISTA3.Item("AGE_03") = AGE_03
+                newICTISTA3.Item("QTY_01") = QTY_01
+                newICTISTA3.Item("QTY_02") = QTY_02
+                newICTISTA3.Item("QTY_03") = QTY_03
+                newICTISTA3.Item("QTYOP_01") = QTYOP_01
+                newICTISTA3.Item("QTYOP_02") = QTYOP_02
+                newICTISTA3.Item("QTYOP_03") = QTYOP_03
+
+
                 dst.Tables("ICTISTA3").Rows.Add(newICTISTA3)
             End If
             'End If
@@ -1254,12 +1337,20 @@ Public Class ICRISTA3
             Dim rowICTCOSTX As DataRow = dst.Tables.Item("ICTCOSTX").Select(Filter).FirstOrDefault()
             Dim EXT_COST As Double = 0
             Dim OP_COST As Double = 0
+            Dim QTYOH As Double = 0
+            Dim QTYOP As Double = 0
             Dim AGE_01 As Double = 0
             Dim AGE_02 As Double = 0
             Dim AGE_03 As Double = 0
+            Dim QTY_01 As Double = 0
+            Dim QTY_02 As Double = 0
+            Dim QTY_03 As Double = 0
+            Dim QTYOP_01 As Double = 0
+            Dim QTYOP_02 As Double = 0
+            Dim QTYOP_03 As Double = 0
             If Not IsNothing(rowICTCOSTX) Then
                 EXT_COST = Val(rowASTSRPT1.Item("WHSE_ON_HAND").ToString() & "") * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
-
+                QTYOH = Val(rowASTSRPT1.Item("WHSE_ON_HAND").ToString() & "")
                 Dim WHSE_OPEN As Int64 = 0
                 Dim WHSE_PICK As Int64 = 0
                 Dim WHSE_RESV As Int64 = 0
@@ -1295,6 +1386,7 @@ Public Class ICRISTA3
                     WHSE_RESV = 0
                 End If
 
+                QTYOP = WHSE_OPEN + WHSE_RESV + WHSE_PICK
                 OP_COST = (WHSE_OPEN + WHSE_RESV + WHSE_PICK) * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
                 'OP_COST = (Val(rowASTSRPT1.Item("WHSE_OPEN").ToString() & "") + Val(rowASTSRPT1.Item("WHSE_PICK").ToString() & "")) * Val(rowICTCOSTX.Item("STYLE_COST").ToString & "")
 
@@ -1319,12 +1411,18 @@ Public Class ICRISTA3
 
                     If DaysCnt <= numDAYS1.Value Then
                         AGE_01 = EXT_COST
+                        QTY_01 = QTYOH
+                        QTYOP_01 = QTYOP
                     End If
                     If DaysCnt > numDAYS1.Value And DaysCnt <= numDAYS2.Value Then
                         AGE_02 = EXT_COST
+                        QTY_02 = QTYOH
+                        QTYOP_02 = QTYOP
                     End If
                     If DaysCnt > numDAYS2.Value Then
                         AGE_03 = EXT_COST
+                        QTY_03 = QTYOH
+                        QTYOP_03 = QTYOP
                     End If
                 End If
             End If
@@ -1333,6 +1431,12 @@ Public Class ICRISTA3
             rowASTSRPT1.Item("AGE_01") = AGE_01
             rowASTSRPT1.Item("AGE_02") = AGE_02
             rowASTSRPT1.Item("AGE_03") = AGE_03
+            rowASTSRPT1.Item("QTY_01") = QTY_01
+            rowASTSRPT1.Item("QTY_02") = QTY_02
+            rowASTSRPT1.Item("QTY_03") = QTY_03
+            rowASTSRPT1.Item("QTYOP_01") = QTYOP_01
+            rowASTSRPT1.Item("QTYOP_02") = QTYOP_02
+            rowASTSRPT1.Item("QTYOP_03") = QTYOP_03
         Next
     End Sub
 
@@ -1415,5 +1519,9 @@ Public Class ICRISTA3
         Else
             dteLimitOP_C.Value = Null
         End If
+    End Sub
+
+    Private Sub AbsCheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CHKUNITSONLY.CheckedChanged
+
     End Sub
 End Class

@@ -4021,7 +4021,7 @@ Public Class WBFSTYLW
         Dim Password As String = "joydHUJ3"
         Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
         Dim RemotePath As String = "www/customers"
-        Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+        Dim ServerFilePath As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\RGI\Archive\Shopsite\"
 
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite
@@ -4127,7 +4127,7 @@ Public Class WBFSTYLW
         Dim Password As String = "joydHUJ3"
         Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
         Dim RemotePath As String = "www/customers"
-        Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+        Dim ServerFilePath As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\RGI\Archive\Shopsite\"
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite
             Try

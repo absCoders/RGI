@@ -1167,7 +1167,7 @@ Public Class WBCITEM2
             AVAILABLE = 0
         End If
 
-        If AVAILABLE < MinimumQuantity Then
+        If AVAILABLE > 0 And AVAILABLE < MinimumQuantity Then
             MinimumQuantity = AVAILABLE
         End If
 

@@ -88,7 +88,9 @@ Public Class TAFIMGV1
         _REMOTE_FOLDER = "https://www.regency-rib.com/media/product/"
         _LOCAL_FOLDER = "S:\Images\"
         _FILE_EXT = "*.jpg"
-
+        If ASCMAIN1.useUNCPath Then
+            _LOCAL_FOLDER = $"{ASCMAIN1.Folders("SharedRoot")}\Images\"
+        End If
         If Not (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
             Dim rowSOTPARM3 As DataRow = LookUp("SOTPARM3", "Z")
             If Not IsNothing(rowSOTPARM3) Then

@@ -237,7 +237,7 @@ Public Class POFORDR1
                 & ", POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
                 & ", POTSHIP1.PO_DATE_SHIPPED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
                 & ", POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
-                & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO" & vbCrLf _
+                & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO, POTSHIP1.WHSE_CODE" & vbCrLf _
                 & ", POTSHIP2.TRAN_NO, POTSHIP2.PO_SOURCE_DOC" & vbCrLf _
                 & ", POTSHIP2.PO_DATE_RECEIVED" & vbCrLf _
                 & ", POTSHIP3.PO_QTY_SHP, POTSHIP3.PO_QTY_REC" & vbCrLf _
@@ -852,6 +852,9 @@ Public Class POFORDR1
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
             .AllowDelete = DefaultableBoolean.False
             .AllowUpdate = DefaultableBoolean.False
+        End With
+        With grdPOTSHIPX.DisplayLayout.Bands(0)
+            .Columns("WHSE_CODE").Hidden = ASCMAIN1.CLIENT <> "RGI"
         End With
 
         With grdPOTORDRT.DisplayLayout.Bands(0)

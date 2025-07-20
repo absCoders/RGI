@@ -648,18 +648,18 @@ Public Class EDROUTB2
         '    Next
         'End If
 
-        If Absx1.chkFor("CHK856").Checked Then
-            'verify carton count
-            Dim CNT_FRM_HDR As Integer = dst.Tables("EDT856O1").Select($"EDI_OUTBOUND_DOC_NO = '{EDI_OUTBOUND_DOC_NO}'")(0)("EDI_SHIP_CNT_CARTONS")
-            Dim CNT_FRM_DTL As Integer = dst.Tables("EDT856O3").DefaultView.ToTable(True, "CART_NO").Rows.Count
-            Dim response As MsgBoxResult = MsgBoxResult.Retry
-            Do While CNT_FRM_DTL <> CNT_FRM_HDR And response <> MsgBoxResult.Cancel
-                response = MsgBox("Carton Count Error, please contact ABS", MsgBoxStyle.Critical + MsgBoxStyle.RetryCancel, "EDI Error")
-                'what's the right count? sometimes a cancellation in multi-po shipments will have a carton refference
-                'to an existing carton that has no merchandise for a PO, in that case  fix the hdr cnt
-                'new logic is in place but better safe than sorry
-            Loop
-        End If
+        'If Absx1.chkFor("CHK856").Checked Then
+        '    'verify carton count
+        '    Dim CNT_FRM_HDR As Integer = dst.Tables("EDT856O1").Select($"EDI_OUTBOUND_DOC_NO = '{EDI_OUTBOUND_DOC_NO}'")(0)("EDI_SHIP_CNT_CARTONS")
+        '    Dim CNT_FRM_DTL As Integer = dst.Tables("EDT856O3").DefaultView.ToTable(True, "CART_NO").Rows.Count
+        '    Dim response As MsgBoxResult = MsgBoxResult.Retry
+        '    Do While CNT_FRM_DTL <> CNT_FRM_HDR And response <> MsgBoxResult.Cancel
+        '        response = MsgBox("Carton Count Error, please contact ABS", MsgBoxStyle.Critical + MsgBoxStyle.RetryCancel, "EDI Error")
+        '        'what's the right count? sometimes a cancellation in multi-po shipments will have a carton refference
+        '        'to an existing carton that has no merchandise for a PO, in that case  fix the hdr cnt
+        '        'new logic is in place but better safe than sorry
+        '    Loop
+        'End If
 
         ' Update Oracle
 

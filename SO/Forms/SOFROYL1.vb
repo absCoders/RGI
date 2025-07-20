@@ -74,8 +74,8 @@ Public Class SOFROYL1
         Next
         cboSALES_DIVISION_CODE.DataSource = salesCodes
 
-        Set_cmbYP("RYP0", ASCMAIN1.CYP, -24, 0, 0)
-        Set_cmbYP("RYP1", ASCMAIN1.CYP, -24, 0, 0)
+        Set_cmbYP("RYP0", ASCMAIN1.CYP, -72, 0, 0)
+        Set_cmbYP("RYP1", ASCMAIN1.CYP, -72, 0, 0)
 
         Sort_grdColumns(grdSOTROYL1, "INV_DATE", False)
 

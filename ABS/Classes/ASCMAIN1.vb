@@ -69,6 +69,8 @@ Public Class ASCMAIN1
     Public Shared USER_JWT_EXPIRES As DateTime
     Public Shared API_ENDPOINT As String
 
+    Public Shared useUNCPath As Boolean = False
+
     Public Enum DBS_TYPE_types
         Oracle
         SQLServer

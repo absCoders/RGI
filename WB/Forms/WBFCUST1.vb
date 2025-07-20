@@ -40,7 +40,7 @@ Public Class WBFCUST1
     Dim Password As String = "joydHUJ3"
     Dim RemoteHost As String = "regency-rib.com" '69.39.227.201
     Dim RemotePath As String = "www/customers"
-    Dim ServerFilePath As String = "S:\RGI\Archive\Shopsite\"
+    Dim ServerFilePath As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\RGI\Archive\Shopsite\"
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
         isLoading = True
@@ -2338,8 +2338,8 @@ Public Class WBFCUST1
 
     Private Function MakeHTMLBody(ByRef rowWBTCUST1 As DataRow) As Dictionary(Of String, String)
         Dim RetVal As New Dictionary(Of String, String)
-        Dim TEMPLATE As String = "S:\Archive\templates\CREDIT_EMAIL.html"
-        Dim SUBJECT As String = "S:\Archive\templates\CREDIT_EMAIL_SUBJECT.txt"
+        Dim TEMPLATE As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\Archive\templates\CREDIT_EMAIL.html"
+        Dim SUBJECT As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\Archive\templates\CREDIT_EMAIL_SUBJECT.txt"
         If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
             TEMPLATE = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL.html"
             SUBJECT = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\CREDIT_EMAIL_SUBJECT.txt"
@@ -2350,10 +2350,20 @@ Public Class WBFCUST1
         WEB_FIELDS.Add("{WEB_FAMILYNAME}", rowWBTCUST1.Item("FAMILYNAME").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_COMPANY}", rowWBTCUST1.Item("COMPANY").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_STREET}", rowWBTCUST1.Item("STREET").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_STREET2}", rowWBTCUST1.Item("STREET2").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_CITY}", rowWBTCUST1.Item("CITY").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_STATE}", rowWBTCUST1.Item("STATE").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_ZIP_CODE}", rowWBTCUST1.Item("ZIP_CODE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_COUNTRY}", rowWBTCUST1.Item("COUNTRY").ToString & String.Empty)
         WEB_FIELDS.Add("{WEB_TELEPHONE}", rowWBTCUST1.Item("TELEPHONE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_SHP_ADDR_1}", rowWBTCUST1.Item("SHP_ADDR_1").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_SHP_ADDR_2}", rowWBTCUST1.Item("SHP_ADDR_2").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_SHP_CITY}", rowWBTCUST1.Item("SHP_CITY").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_SHP_STATE}", rowWBTCUST1.Item("SHP_STATE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_SHP_CNTRY}", rowWBTCUST1.Item("SHP_CNTRY").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_SHP_ZIP_CODE}", rowWBTCUST1.Item("SHP_ZIP_CODE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_GROUPNOTE}", rowWBTCUST1.Item("GROUPNOTE").ToString & String.Empty)
+        WEB_FIELDS.Add("{WEB_BROKER_NOTE}", rowWBTCUST1.Item("BROKER_NOTE").ToString & String.Empty)
 
         Dim BodyContent As String = System.IO.File.ReadAllText(TEMPLATE)
         BodyContent = BodyContent.Replace(vbCrLf, "")

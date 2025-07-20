@@ -492,7 +492,7 @@ Public Class WHFLB128
                                  "OPT_MANIFEST"}.Contains(GCOL.Key) Then
                     GCOL.Hidden = True
                 End If
-                If New String() {"ORDR_CNT_CART", "ORDR_CNT_MTPO", "CUBE_PO"}.Contains(GCOL.Key) Then
+                If New String() {"ORDR_CNT_CART", "ORDR_CNT_MTPO", "CUBE_PO", "WEIGHT_PO"}.Contains(GCOL.Key) Then
                     GCOL.CellAppearance.BackColor = Color.LightBlue
                 End If
                 'End If
@@ -1567,7 +1567,7 @@ Public Class WHFLB128
             End If
 
             If SOTPICKX <> "" Then
-                ASCMAIN1.sql &= ", 0 ORDR_QTY_PICK, 0 ORDR_AMT_PICK, 0 ORDR_CNT_PICK, 0 ORDR_CNT_CART, 0 ORDR_CNT_MTPO, NULL ORDR_HIGH_PRIORITY, NULL ORDR_HIGH_PRIORITY_NOTE, '0' CCPA_NO_STATUS, '' PICK_NO_CONS, '' PICK_RELEASED, 0 CUBE_PO"
+                ASCMAIN1.sql &= ", 0 ORDR_QTY_PICK, 0 ORDR_AMT_PICK, 0 ORDR_CNT_PICK, 0 ORDR_CNT_CART, 0 ORDR_CNT_MTPO, NULL ORDR_HIGH_PRIORITY, NULL ORDR_HIGH_PRIORITY_NOTE, '0' CCPA_NO_STATUS, '' PICK_NO_CONS, '' PICK_RELEASED, 0 CUBE_PO, 0 WEIGHT_PO"
             End If
 
             ASCMAIN1.sql &= " from SOTSHIP1,SOTORDR0,ARTCUST1" & vbCrLf _
@@ -1615,6 +1615,7 @@ Public Class WHFLB128
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add PICK_NO_CONS VARCHAR2(10)")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add PICK_RELEASED DATE")
                 ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add CUBE_PO NUMBER (13,2)")
+                ASCDATA1.ExecuteSQL("Alter Table " & SOTPICKX & " Add WEIGHT_PO NUMBER (13,2)")
                 Exit Sub
             End If
 
@@ -1673,6 +1674,12 @@ Public Class WHFLB128
                     and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO
                     and SOTPICK1.PICK_STATUS = 'P')
                 where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                Update " & SOTPICKX & " Set WEIGHT_PO =  
+                (select SUM(nvl(SOTCART1.CART_TOTAL_WGT_CALC,0)) from SOTCART1,SOTPICK1
+                    where SOTPICK1.PICK_NO = SOTCART1.PICK_NO 
+                    and SOTPICK1.SHIP_BOL_NO = R1.SHIP_BOL_NO
+                    and SOTPICK1.PICK_STATUS = 'P')
+                where SHIP_BOL_NO = R1.SHIP_BOL_NO;
                 else
                 Update " & SOTPICKX & " set ORDR_CNT_CART = 
                 (Select Count (*) from SOTCARM1,SOTPICK1, SOTSHIP1 
@@ -1699,6 +1706,13 @@ Public Class WHFLB128
                     and SOTSHIP1.SHIP_BOL_NO_CONS = R1.SHIP_BOL_NO_CONS
                     )
                     where SHIP_BOL_NO = R1.SHIP_BOL_NO;
+                Update " & SOTPICKX & " Set WEIGHT_PO =  
+                (select SUM(nvl(SOTCARM1.CART_TOTAL_WGT_CALC,0)) from SOTCARM1,SOTPICK1, SOTSHIP1 
+                    where SOTPICK1.PICK_NO_CONS = SOTCARM1.PICK_NO 
+                    and SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO
+                    and SOTSHIP1.SHIP_BOL_NO_REV is null
+                    and SOTSHIP1.SHIP_BOL_NO_CONS = R1.SHIP_BOL_NO_CONS)
+                where SHIP_BOL_NO = R1.SHIP_BOL_NO;
                 end if;" & vbCrLf _
             & "  End Loop;" & vbCrLf _
             & " End;" & vbCrLf _
@@ -2530,6 +2544,9 @@ Public Class WHFLB128
         'Dim filename As String = "C:\dmp\ITEMSLOCS.txt"
         ' NEED TO ARCHIVE THE LOCATIONS FILE & MOVE IT OUT OF THE WAY
         Dim filename As String = "S:\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        If ASCMAIN1.useUNCPath Then
+            filename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        End If
         Dim data As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
@@ -2562,6 +2579,9 @@ Public Class WHFLB128
         'Dim filename As String = "C:\dmp\ITEMSLOCS.txt"
         ' NEED TO ARCHIVE THE LOCATIONS FILE & MOVE IT OUT OF THE WAY
         Dim filename As String = "S:\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        If ASCMAIN1.useUNCPath Then
+            filename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        End If
         Dim data As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
@@ -2571,7 +2591,9 @@ Public Class WHFLB128
         Dim drCDATE As String = Now
 
         Dim HISTfilename As String = "S:\WAREHOUSE\LOCATIONS\HIST\ITEMSLOCS"
-
+        If ASCMAIN1.useUNCPath Then
+            HISTfilename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\HIST\ITEMSLOCS"
+        End If
         '  Get_PARM("ICTPARMR")
 
         If My.Computer.FileSystem.FileExists(filename) Then

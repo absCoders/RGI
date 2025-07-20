@@ -6,7 +6,9 @@ Public Class ICTROYL1
     Dim LABEL_LOCATION As String = "S:\Archive\royalty\labels\"
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         isRGI = ASCMAIN1.CLIENT = "RGI"
-
+        If ASCMAIN1.useUNCPath Then
+            LABEL_LOCATION = $"{ASCMAIN1.Folders("SharedRoot")}\Archive\royalty\labels\"
+        End If
         Get_PARM("ICTPARM1")
 
         If isRGI Then

@@ -424,6 +424,18 @@ Partial Class POFPACK1
         Me.grdPOTORDSD = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdPOTORDSS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.lblPO8 = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtSTYLE_CODE_PFX8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtPO_REFERENCE8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtSTYLE_CODE_PFX7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtSTYLE_CODE_PFX6 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtPO_REFERENCE7 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtPO_REFERENCE6 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtSTYLE_CODE_PFX5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtPO_REFERENCE5 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblPO7 = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblPO6 = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblPO5 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSTYLE_CODE_PFX4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtPO_REFERENCE4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblPO4 = New Infragistics.Win.Misc.UltraLabel()
@@ -534,6 +546,14 @@ Partial Class POFPACK1
         CType(Me.grdPOTORDSS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.txtSTYLE_CODE_PFX8, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPO_REFERENCE8, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtSTYLE_CODE_PFX7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtSTYLE_CODE_PFX6, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPO_REFERENCE7, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPO_REFERENCE6, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtSTYLE_CODE_PFX5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPO_REFERENCE5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_CODE_PFX4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPO_REFERENCE4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_CODE_PFX3, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1064,7 +1084,7 @@ Partial Class POFPACK1
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1311, 593)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1311, 596)
         '
         'SplitContainer2
         '
@@ -1081,7 +1101,7 @@ Partial Class POFPACK1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdPOTPACK3)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1311, 593)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1311, 596)
         Me.SplitContainer2.SplitterDistance = 207
         Me.SplitContainer2.TabIndex = 0
         '
@@ -1357,7 +1377,7 @@ Partial Class POFPACK1
         Me.grdPOTPACK3.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTPACK3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTPACK3.Name = "grdPOTPACK3"
-        Me.grdPOTPACK3.Size = New System.Drawing.Size(1311, 382)
+        Me.grdPOTPACK3.Size = New System.Drawing.Size(1311, 385)
         Me.grdPOTPACK3.TabIndex = 21
         Me.grdPOTPACK3.Text = "Packing List Sheet Contents"
         '
@@ -1367,7 +1387,7 @@ Partial Class POFPACK1
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1311, 593)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(1311, 596)
         '
         'WorkbookView1
         '
@@ -1376,7 +1396,7 @@ Partial Class POFPACK1
         Me.WorkbookView1.Location = New System.Drawing.Point(0, 0)
         Me.WorkbookView1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.WorkbookView1.Name = "WorkbookView1"
-        Me.WorkbookView1.Size = New System.Drawing.Size(1311, 593)
+        Me.WorkbookView1.Size = New System.Drawing.Size(1311, 596)
         Me.WorkbookView1.TabIndex = 0
         Me.WorkbookView1.WorkbookSetState = resources.GetString("WorkbookView1.WorkbookSetState")
         '
@@ -1386,7 +1406,7 @@ Partial Class POFPACK1
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1315, 667)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1315, 670)
         '
         'splPOTPACKX
         '
@@ -1404,8 +1424,8 @@ Partial Class POFPACK1
         'splPOTPACKX.Panel2
         '
         Me.splPOTPACKX.Panel2.Controls.Add(Me.SplitContainer4)
-        Me.splPOTPACKX.Size = New System.Drawing.Size(1315, 667)
-        Me.splPOTPACKX.SplitterDistance = 262
+        Me.splPOTPACKX.Size = New System.Drawing.Size(1315, 670)
+        Me.splPOTPACKX.SplitterDistance = 265
         Me.splPOTPACKX.TabIndex = 165
         '
         'grdPOTPACKX
@@ -1543,7 +1563,7 @@ Partial Class POFPACK1
         Me.grdPOTPACKX.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTPACKX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTPACKX.Name = "grdPOTPACKX"
-        Me.grdPOTPACKX.Size = New System.Drawing.Size(1315, 262)
+        Me.grdPOTPACKX.Size = New System.Drawing.Size(1315, 265)
         Me.grdPOTPACKX.TabIndex = 164
         Me.grdPOTPACKX.Text = "Packing Lists"
         '
@@ -1747,7 +1767,7 @@ Partial Class POFPACK1
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1315, 667)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1315, 670)
         '
         'SplitContainer1
         '
@@ -1765,7 +1785,7 @@ Partial Class POFPACK1
         'SplitContainer1.Panel2
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.tab1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1315, 667)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1315, 670)
         Me.SplitContainer1.SplitterDistance = 38
         Me.SplitContainer1.TabIndex = 67
         '
@@ -1892,7 +1912,7 @@ Partial Class POFPACK1
         Me.tab1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab1.Name = "tab1"
         Me.tab1.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.tab1.Size = New System.Drawing.Size(1315, 625)
+        Me.tab1.Size = New System.Drawing.Size(1315, 628)
         Me.tab1.TabIndex = 165
         Me.tab1.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab3.TabPage = Me.UltraTabPageControl3
@@ -1906,7 +1926,7 @@ Partial Class POFPACK1
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1311, 593)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(1311, 596)
         '
         'UltraTabPageControl4
         '
@@ -1914,7 +1934,7 @@ Partial Class POFPACK1
         Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1315, 667)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1315, 670)
         '
         'SplitContainer3
         '
@@ -1938,7 +1958,7 @@ Partial Class POFPACK1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdPOTLPNL1)
-        Me.SplitContainer3.Size = New System.Drawing.Size(1315, 667)
+        Me.SplitContainer3.Size = New System.Drawing.Size(1315, 670)
         Me.SplitContainer3.SplitterDistance = 277
         Me.SplitContainer3.TabIndex = 0
         '
@@ -2184,7 +2204,7 @@ Partial Class POFPACK1
         Me.grdPOTLPNL1.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTLPNL1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTLPNL1.Name = "grdPOTLPNL1"
-        Me.grdPOTLPNL1.Size = New System.Drawing.Size(1034, 667)
+        Me.grdPOTLPNL1.Size = New System.Drawing.Size(1034, 670)
         Me.grdPOTLPNL1.TabIndex = 23
         Me.grdPOTLPNL1.Text = "LPNs"
         '
@@ -2194,7 +2214,7 @@ Partial Class POFPACK1
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1315, 667)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1315, 670)
         '
         'SplitContainer6
         '
@@ -2211,8 +2231,8 @@ Partial Class POFPACK1
         'SplitContainer6.Panel2
         '
         Me.SplitContainer6.Panel2.Controls.Add(Me.SplitContainer7)
-        Me.SplitContainer6.Size = New System.Drawing.Size(1315, 667)
-        Me.SplitContainer6.SplitterDistance = 281
+        Me.SplitContainer6.Size = New System.Drawing.Size(1315, 670)
+        Me.SplitContainer6.SplitterDistance = 280
         Me.SplitContainer6.TabIndex = 0
         '
         'grdPOTORDSH
@@ -2294,7 +2314,7 @@ Partial Class POFPACK1
         Me.grdPOTORDSH.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDSH.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDSH.Name = "grdPOTORDSH"
-        Me.grdPOTORDSH.Size = New System.Drawing.Size(1315, 281)
+        Me.grdPOTORDSH.Size = New System.Drawing.Size(1315, 280)
         Me.grdPOTORDSH.TabIndex = 166
         Me.grdPOTORDSH.Text = "Open PO Status Header"
         '
@@ -2313,8 +2333,8 @@ Partial Class POFPACK1
         'SplitContainer7.Panel2
         '
         Me.SplitContainer7.Panel2.Controls.Add(Me.grdPOTORDSS)
-        Me.SplitContainer7.Size = New System.Drawing.Size(1315, 382)
-        Me.SplitContainer7.SplitterDistance = 285
+        Me.SplitContainer7.Size = New System.Drawing.Size(1315, 386)
+        Me.SplitContainer7.SplitterDistance = 287
         Me.SplitContainer7.TabIndex = 168
         '
         'grdPOTORDSD
@@ -2469,7 +2489,7 @@ Partial Class POFPACK1
         Me.grdPOTORDSD.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDSD.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDSD.Name = "grdPOTORDSD"
-        Me.grdPOTORDSD.Size = New System.Drawing.Size(1315, 285)
+        Me.grdPOTORDSD.Size = New System.Drawing.Size(1315, 287)
         Me.grdPOTORDSD.TabIndex = 168
         Me.grdPOTORDSD.Text = "Open PO Status Detail"
         '
@@ -2595,12 +2615,24 @@ Partial Class POFPACK1
         Me.grdPOTORDSS.Location = New System.Drawing.Point(0, 0)
         Me.grdPOTORDSS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdPOTORDSS.Name = "grdPOTORDSS"
-        Me.grdPOTORDSS.Size = New System.Drawing.Size(1315, 93)
+        Me.grdPOTORDSS.Size = New System.Drawing.Size(1315, 95)
         Me.grdPOTORDSS.TabIndex = 169
         Me.grdPOTORDSS.Text = "Open PO Status Sub Detail"
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.lblPO8)
+        Me.UltraGroupBox1.Controls.Add(Me.txtSTYLE_CODE_PFX8)
+        Me.UltraGroupBox1.Controls.Add(Me.txtPO_REFERENCE8)
+        Me.UltraGroupBox1.Controls.Add(Me.txtSTYLE_CODE_PFX7)
+        Me.UltraGroupBox1.Controls.Add(Me.txtSTYLE_CODE_PFX6)
+        Me.UltraGroupBox1.Controls.Add(Me.txtPO_REFERENCE7)
+        Me.UltraGroupBox1.Controls.Add(Me.txtPO_REFERENCE6)
+        Me.UltraGroupBox1.Controls.Add(Me.txtSTYLE_CODE_PFX5)
+        Me.UltraGroupBox1.Controls.Add(Me.txtPO_REFERENCE5)
+        Me.UltraGroupBox1.Controls.Add(Me.lblPO7)
+        Me.UltraGroupBox1.Controls.Add(Me.lblPO6)
+        Me.UltraGroupBox1.Controls.Add(Me.lblPO5)
         Me.UltraGroupBox1.Controls.Add(Me.txtSTYLE_CODE_PFX4)
         Me.UltraGroupBox1.Controls.Add(Me.txtPO_REFERENCE4)
         Me.UltraGroupBox1.Controls.Add(Me.lblPO4)
@@ -2627,13 +2659,125 @@ Partial Class POFPACK1
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(1319, 134)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1319, 131)
         Me.UltraGroupBox1.TabIndex = 2
+        '
+        'lblPO8
+        '
+        Me.lblPO8.AutoSize = True
+        Me.lblPO8.Location = New System.Drawing.Point(1150, 73)
+        Me.lblPO8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPO8.Name = "lblPO8"
+        Me.lblPO8.Size = New System.Drawing.Size(123, 22)
+        Me.lblPO8.TabIndex = 248
+        Me.lblPO8.Text = "8TH PO Ref->"
+        '
+        'txtSTYLE_CODE_PFX8
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX8, "STYLE_CODE_PFX8")
+        Me.txtSTYLE_CODE_PFX8.Location = New System.Drawing.Point(1432, 71)
+        Me.txtSTYLE_CODE_PFX8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_PFX8.Name = "txtSTYLE_CODE_PFX8"
+        Me.txtSTYLE_CODE_PFX8.Size = New System.Drawing.Size(130, 29)
+        Me.txtSTYLE_CODE_PFX8.TabIndex = 247
+        '
+        'txtPO_REFERENCE8
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPO_REFERENCE8, "PO_REFERENCE8")
+        Me.txtPO_REFERENCE8.Location = New System.Drawing.Point(1281, 70)
+        Me.txtPO_REFERENCE8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtPO_REFERENCE8.Name = "txtPO_REFERENCE8"
+        Me.txtPO_REFERENCE8.Size = New System.Drawing.Size(129, 29)
+        Me.txtPO_REFERENCE8.TabIndex = 246
+        '
+        'txtSTYLE_CODE_PFX7
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX7, "STYLE_CODE_PFX7")
+        Me.txtSTYLE_CODE_PFX7.Location = New System.Drawing.Point(1013, 124)
+        Me.txtSTYLE_CODE_PFX7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_PFX7.Name = "txtSTYLE_CODE_PFX7"
+        Me.txtSTYLE_CODE_PFX7.Size = New System.Drawing.Size(130, 29)
+        Me.txtSTYLE_CODE_PFX7.TabIndex = 243
+        '
+        'txtSTYLE_CODE_PFX6
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX6, "STYLE_CODE_PFX6")
+        Me.txtSTYLE_CODE_PFX6.Location = New System.Drawing.Point(1013, 97)
+        Me.txtSTYLE_CODE_PFX6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_PFX6.Name = "txtSTYLE_CODE_PFX6"
+        Me.txtSTYLE_CODE_PFX6.Size = New System.Drawing.Size(130, 29)
+        Me.txtSTYLE_CODE_PFX6.TabIndex = 242
+        '
+        'txtPO_REFERENCE7
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPO_REFERENCE7, "PO_REFERENCE7")
+        Me.txtPO_REFERENCE7.Location = New System.Drawing.Point(875, 126)
+        Me.txtPO_REFERENCE7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtPO_REFERENCE7.Name = "txtPO_REFERENCE7"
+        Me.txtPO_REFERENCE7.Size = New System.Drawing.Size(134, 29)
+        Me.txtPO_REFERENCE7.TabIndex = 241
+        '
+        'txtPO_REFERENCE6
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPO_REFERENCE6, "PO_REFERENCE6")
+        Me.txtPO_REFERENCE6.Location = New System.Drawing.Point(875, 98)
+        Me.txtPO_REFERENCE6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtPO_REFERENCE6.Name = "txtPO_REFERENCE6"
+        Me.txtPO_REFERENCE6.Size = New System.Drawing.Size(134, 29)
+        Me.txtPO_REFERENCE6.TabIndex = 240
+        '
+        'txtSTYLE_CODE_PFX5
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX5, "STYLE_CODE_PFX5")
+        Me.txtSTYLE_CODE_PFX5.Location = New System.Drawing.Point(1013, 70)
+        Me.txtSTYLE_CODE_PFX5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtSTYLE_CODE_PFX5.Name = "txtSTYLE_CODE_PFX5"
+        Me.txtSTYLE_CODE_PFX5.Size = New System.Drawing.Size(130, 29)
+        Me.txtSTYLE_CODE_PFX5.TabIndex = 239
+        '
+        'txtPO_REFERENCE5
+        '
+        Me.Absx1.SetABSColumnName(Me.txtPO_REFERENCE5, "PO_REFERENCE5")
+        Me.txtPO_REFERENCE5.Location = New System.Drawing.Point(875, 70)
+        Me.txtPO_REFERENCE5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.txtPO_REFERENCE5.Name = "txtPO_REFERENCE5"
+        Me.txtPO_REFERENCE5.Size = New System.Drawing.Size(134, 29)
+        Me.txtPO_REFERENCE5.TabIndex = 238
+        '
+        'lblPO7
+        '
+        Me.lblPO7.AutoSize = True
+        Me.lblPO7.Location = New System.Drawing.Point(670, 126)
+        Me.lblPO7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPO7.Name = "lblPO7"
+        Me.lblPO7.Size = New System.Drawing.Size(207, 22)
+        Me.lblPO7.TabIndex = 237
+        Me.lblPO7.Text = "Initial PO 7th PO Ref ->"
+        '
+        'lblPO6
+        '
+        Me.lblPO6.AutoSize = True
+        Me.lblPO6.Location = New System.Drawing.Point(670, 100)
+        Me.lblPO6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPO6.Name = "lblPO6"
+        Me.lblPO6.Size = New System.Drawing.Size(207, 22)
+        Me.lblPO6.TabIndex = 236
+        Me.lblPO6.Text = "Initial PO 6th PO Ref ->"
+        '
+        'lblPO5
+        '
+        Me.lblPO5.AutoSize = True
+        Me.lblPO5.Location = New System.Drawing.Point(670, 73)
+        Me.lblPO5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPO5.Name = "lblPO5"
+        Me.lblPO5.Size = New System.Drawing.Size(207, 22)
+        Me.lblPO5.TabIndex = 235
+        Me.lblPO5.Text = "Initial PO 5th PO Ref ->"
         '
         'txtSTYLE_CODE_PFX4
         '
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX4, "STYLE_CODE_PFX4")
-        Me.txtSTYLE_CODE_PFX4.Location = New System.Drawing.Point(572, 126)
+        Me.txtSTYLE_CODE_PFX4.Location = New System.Drawing.Point(541, 125)
         Me.txtSTYLE_CODE_PFX4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtSTYLE_CODE_PFX4.Name = "txtSTYLE_CODE_PFX4"
         Me.txtSTYLE_CODE_PFX4.Size = New System.Drawing.Size(130, 29)
@@ -2645,7 +2789,7 @@ Partial Class POFPACK1
         Me.txtPO_REFERENCE4.Location = New System.Drawing.Point(408, 126)
         Me.txtPO_REFERENCE4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtPO_REFERENCE4.Name = "txtPO_REFERENCE4"
-        Me.txtPO_REFERENCE4.Size = New System.Drawing.Size(158, 29)
+        Me.txtPO_REFERENCE4.Size = New System.Drawing.Size(129, 29)
         Me.txtPO_REFERENCE4.TabIndex = 233
         '
         'lblPO4
@@ -2661,7 +2805,7 @@ Partial Class POFPACK1
         'txtSTYLE_CODE_PFX3
         '
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX3, "STYLE_CODE_PFX3")
-        Me.txtSTYLE_CODE_PFX3.Location = New System.Drawing.Point(572, 98)
+        Me.txtSTYLE_CODE_PFX3.Location = New System.Drawing.Point(541, 98)
         Me.txtSTYLE_CODE_PFX3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtSTYLE_CODE_PFX3.Name = "txtSTYLE_CODE_PFX3"
         Me.txtSTYLE_CODE_PFX3.Size = New System.Drawing.Size(130, 29)
@@ -2673,7 +2817,7 @@ Partial Class POFPACK1
         Me.txtPO_REFERENCE3.Location = New System.Drawing.Point(408, 98)
         Me.txtPO_REFERENCE3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtPO_REFERENCE3.Name = "txtPO_REFERENCE3"
-        Me.txtPO_REFERENCE3.Size = New System.Drawing.Size(158, 29)
+        Me.txtPO_REFERENCE3.Size = New System.Drawing.Size(129, 29)
         Me.txtPO_REFERENCE3.TabIndex = 230
         '
         'lblPO3
@@ -2689,7 +2833,7 @@ Partial Class POFPACK1
         'txtCUST_CODE
         '
         Me.Absx1.SetABSColumnName(Me.txtCUST_CODE, "CUST_CODE")
-        Me.txtCUST_CODE.Location = New System.Drawing.Point(710, 42)
+        Me.txtCUST_CODE.Location = New System.Drawing.Point(678, 42)
         Me.txtCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtCUST_CODE.Name = "txtCUST_CODE"
         Me.txtCUST_CODE.Size = New System.Drawing.Size(130, 29)
@@ -2698,7 +2842,7 @@ Partial Class POFPACK1
         'lblCUST_CODE
         '
         Me.lblCUST_CODE.AutoSize = True
-        Me.lblCUST_CODE.Location = New System.Drawing.Point(710, 14)
+        Me.lblCUST_CODE.Location = New System.Drawing.Point(678, 14)
         Me.lblCUST_CODE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblCUST_CODE.Name = "lblCUST_CODE"
         Me.lblCUST_CODE.Size = New System.Drawing.Size(87, 22)
@@ -2718,7 +2862,7 @@ Partial Class POFPACK1
         'txtSTYLE_CODE_PFX2
         '
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX2, "STYLE_CODE_PFX2")
-        Me.txtSTYLE_CODE_PFX2.Location = New System.Drawing.Point(572, 70)
+        Me.txtSTYLE_CODE_PFX2.Location = New System.Drawing.Point(541, 70)
         Me.txtSTYLE_CODE_PFX2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtSTYLE_CODE_PFX2.Name = "txtSTYLE_CODE_PFX2"
         Me.txtSTYLE_CODE_PFX2.Size = New System.Drawing.Size(130, 29)
@@ -2730,13 +2874,13 @@ Partial Class POFPACK1
         Me.txtPO_REFERENCE2.Location = New System.Drawing.Point(408, 70)
         Me.txtPO_REFERENCE2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtPO_REFERENCE2.Name = "txtPO_REFERENCE2"
-        Me.txtPO_REFERENCE2.Size = New System.Drawing.Size(158, 29)
+        Me.txtPO_REFERENCE2.Size = New System.Drawing.Size(129, 29)
         Me.txtPO_REFERENCE2.TabIndex = 225
         '
         'txtSTYLE_CODE_PFX
         '
         Me.Absx1.SetABSColumnName(Me.txtSTYLE_CODE_PFX, "STYLE_CODE_PFX")
-        Me.txtSTYLE_CODE_PFX.Location = New System.Drawing.Point(572, 42)
+        Me.txtSTYLE_CODE_PFX.Location = New System.Drawing.Point(541, 42)
         Me.txtSTYLE_CODE_PFX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtSTYLE_CODE_PFX.Name = "txtSTYLE_CODE_PFX"
         Me.txtSTYLE_CODE_PFX.Size = New System.Drawing.Size(130, 29)
@@ -2748,7 +2892,7 @@ Partial Class POFPACK1
         Me.UltraTextEditor2.Location = New System.Drawing.Point(408, 42)
         Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
-        Me.UltraTextEditor2.Size = New System.Drawing.Size(158, 29)
+        Me.UltraTextEditor2.Size = New System.Drawing.Size(129, 29)
         Me.UltraTextEditor2.TabIndex = 222
         '
         'UltraLabel3
@@ -2764,7 +2908,7 @@ Partial Class POFPACK1
         'UltraLabel10
         '
         Me.UltraLabel10.AutoSize = True
-        Me.UltraLabel10.Location = New System.Drawing.Point(1001, 14)
+        Me.UltraLabel10.Location = New System.Drawing.Point(972, 14)
         Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel10.Name = "UltraLabel10"
         Me.UltraLabel10.Size = New System.Drawing.Size(108, 22)
@@ -2774,7 +2918,7 @@ Partial Class POFPACK1
         'lblSTYLE_CODE_PFX
         '
         Me.lblSTYLE_CODE_PFX.AutoSize = True
-        Me.lblSTYLE_CODE_PFX.Location = New System.Drawing.Point(572, 14)
+        Me.lblSTYLE_CODE_PFX.Location = New System.Drawing.Point(541, 14)
         Me.lblSTYLE_CODE_PFX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblSTYLE_CODE_PFX.Name = "lblSTYLE_CODE_PFX"
         Me.lblSTYLE_CODE_PFX.Size = New System.Drawing.Size(102, 22)
@@ -2785,7 +2929,7 @@ Partial Class POFPACK1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "PACK_LIST_NO")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor5, True)
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(1001, 42)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(972, 42)
         Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.Size = New System.Drawing.Size(122, 29)
@@ -2807,7 +2951,7 @@ Partial Class POFPACK1
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor12, "PACK_LIST_DATE")
         Me.UltraDateTimeEditor12.DateTime = New Date(2007, 12, 18, 0, 0, 0, 0)
-        Me.UltraDateTimeEditor12.Location = New System.Drawing.Point(848, 42)
+        Me.UltraDateTimeEditor12.Location = New System.Drawing.Point(819, 42)
         Me.UltraDateTimeEditor12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor12.Name = "UltraDateTimeEditor12"
         Me.UltraDateTimeEditor12.Size = New System.Drawing.Size(135, 29)
@@ -2817,7 +2961,7 @@ Partial Class POFPACK1
         'UltraLabel41
         '
         Me.UltraLabel41.AutoSize = True
-        Me.UltraLabel41.Location = New System.Drawing.Point(848, 14)
+        Me.UltraLabel41.Location = New System.Drawing.Point(819, 14)
         Me.UltraLabel41.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel41.Name = "UltraLabel41"
         Me.UltraLabel41.Size = New System.Drawing.Size(110, 22)
@@ -2856,7 +3000,7 @@ Partial Class POFPACK1
         Me.tab.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tab.Size = New System.Drawing.Size(1319, 699)
+        Me.tab.Size = New System.Drawing.Size(1319, 702)
         Me.tab.TabIndex = 165
         UltraTab1.TabPage = Me.UltraTabPageControl1
         UltraTab1.Text = "0"
@@ -2873,7 +3017,7 @@ Partial Class POFPACK1
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1315, 667)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1315, 670)
         '
         'spl
         '
@@ -2892,7 +3036,7 @@ Partial Class POFPACK1
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
         Me.spl.Size = New System.Drawing.Size(1319, 837)
-        Me.spl.SplitterDistance = 134
+        Me.spl.SplitterDistance = 131
         Me.spl.TabIndex = 166
         '
         'POFPACK1
@@ -2992,6 +3136,14 @@ Partial Class POFPACK1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.txtSTYLE_CODE_PFX8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPO_REFERENCE8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtSTYLE_CODE_PFX7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtSTYLE_CODE_PFX6, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPO_REFERENCE7, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPO_REFERENCE6, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtSTYLE_CODE_PFX5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPO_REFERENCE5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSTYLE_CODE_PFX4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPO_REFERENCE4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSTYLE_CODE_PFX3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3101,4 +3253,16 @@ Partial Class POFPACK1
     Friend WithEvents txtSTYLE_CODE_PFX4 As UltraWinEditors.UltraTextEditor
     Friend WithEvents txtPO_REFERENCE4 As UltraWinEditors.UltraTextEditor
     Friend WithEvents lblPO4 As Misc.UltraLabel
+    Friend WithEvents txtSTYLE_CODE_PFX5 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtPO_REFERENCE5 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblPO7 As Misc.UltraLabel
+    Friend WithEvents lblPO6 As Misc.UltraLabel
+    Friend WithEvents lblPO5 As Misc.UltraLabel
+    Friend WithEvents txtPO_REFERENCE7 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtPO_REFERENCE6 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtSTYLE_CODE_PFX7 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtSTYLE_CODE_PFX6 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtSTYLE_CODE_PFX8 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtPO_REFERENCE8 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblPO8 As Misc.UltraLabel
 End Class

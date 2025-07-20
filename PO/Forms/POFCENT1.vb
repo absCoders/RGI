@@ -133,6 +133,9 @@ Public Class POFCENT1
                 Dim folder As String = "\\192.168.110.100\century\histABS"
                 If ASCMAIN1.Running_in_VS Then folder = "C:\VS\VDI\Work\century"
                 folder = "S:\RGI\Work\century"
+                If ASCMAIN1.useUNCPath Then
+                    folder = $"{ASCMAIN1.Folders("SharedRoot")}\RGI\Work\century"
+                End If
                 For Each FILENAME As String In My.Computer.FileSystem.GetFiles(folder)
                     ' Dim FI As System.IO.FileInfo = My.Computer.FileSystem.GetFileInfo(FILENAME)
                     ASCMAIN1.Progress("-", FILENAME)

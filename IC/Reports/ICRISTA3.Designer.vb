@@ -99,6 +99,8 @@ Partial Class ICRISTA3
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.CHKUNITSONLY = New ABSCS.ABSCheckBox()
+        Me.chkUNITS = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.dteLimitOP_C = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.chkLimitOP_C = New ABSCS.ABSCheckBox()
@@ -190,6 +192,8 @@ Partial Class ICRISTA3
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl12.SuspendLayout()
         Me.Panel3.SuspendLayout()
+        CType(Me.CHKUNITSONLY, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkUNITS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
         CType(Me.dteLimitOP_C, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -253,21 +257,21 @@ Partial Class ICRISTA3
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 406)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 456)
         '
         'UltraTabControl1
         '
         Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
-        Me.UltraTabControl1.Size = New System.Drawing.Size(777, 431)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 485)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
-        Me.SplitContainer1.Size = New System.Drawing.Size(777, 641)
-        Me.SplitContainer1.SplitterDistance = 466
+        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 721)
+        Me.SplitContainer1.SplitterDistance = 524
         '
         'SplitContainer5
         '
@@ -276,7 +280,11 @@ Partial Class ICRISTA3
         'SplitContainer5.Panel1
         '
         Me.SplitContainer5.Panel1.Controls.Add(Me.tabOptions)
-        Me.SplitContainer5.Size = New System.Drawing.Size(773, 406)
+        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 456)
+        '
+        'txtDescription
+        '
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         'grdASTRECAP
         '
@@ -369,26 +377,31 @@ Partial Class ICRISTA3
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
-        Me.grdASTEXPT1.Size = New System.Drawing.Size(769, 378)
+        Me.grdASTEXPT1.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 424)
         '
         'tabDataExports
         '
-        Me.tabDataExports.Size = New System.Drawing.Size(773, 406)
+        Me.tabDataExports.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.tabDataExports.Size = New System.Drawing.Size(1021, 456)
         Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 621)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 697)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(777, 641)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1025, 721)
         '
         'grdASFBASEX
         '
@@ -437,25 +450,21 @@ Partial Class ICRISTA3
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 641)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 721)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 641)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 721)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 641)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 721)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
         '
         'tlb
         '
@@ -465,12 +474,15 @@ Partial Class ICRISTA3
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.Panel3)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(769, 378)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(1017, 424)
         '
         'Panel3
         '
+        Me.Panel3.Controls.Add(Me.CHKUNITSONLY)
+        Me.Panel3.Controls.Add(Me.chkUNITS)
         Me.Panel3.Controls.Add(Me.UltraGroupBox1)
         Me.Panel3.Controls.Add(Me.AbsCheckBox12)
         Me.Panel3.Controls.Add(Me.UltraGroupBox2)
@@ -478,9 +490,30 @@ Partial Class ICRISTA3
         Me.Panel3.Controls.Add(Me.grpPERIOD_RANGE)
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
+        Me.Panel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(769, 378)
+        Me.Panel3.Size = New System.Drawing.Size(1017, 424)
         Me.Panel3.TabIndex = 0
+        '
+        'CHKUNITSONLY
+        '
+        Me.Absx1.SetABSBindToTable(Me.CHKUNITSONLY, False)
+        Me.CHKUNITSONLY.Location = New System.Drawing.Point(16, 281)
+        Me.CHKUNITSONLY.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.CHKUNITSONLY.Name = "CHKUNITSONLY"
+        Me.CHKUNITSONLY.Size = New System.Drawing.Size(266, 22)
+        Me.CHKUNITSONLY.TabIndex = 302
+        Me.CHKUNITSONLY.Text = "Units ONLY Aging Report"
+        '
+        'chkUNITS
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkUNITS, False)
+        Me.chkUNITS.Location = New System.Drawing.Point(16, 253)
+        Me.chkUNITS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkUNITS.Name = "chkUNITS"
+        Me.chkUNITS.Size = New System.Drawing.Size(232, 22)
+        Me.chkUNITS.TabIndex = 301
+        Me.chkUNITS.Text = "Include Units on Aging"
         '
         'UltraGroupBox1
         '
@@ -489,26 +522,29 @@ Partial Class ICRISTA3
         Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_R)
         Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_P)
         Me.UltraGroupBox1.Controls.Add(Me.chkLimitOP_O)
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(353, 14)
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(441, 16)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(192, 180)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(240, 202)
         Me.UltraGroupBox1.TabIndex = 300
         Me.UltraGroupBox1.Text = "O/P Options"
         '
         'dteLimitOP_C
         '
         Me.Absx1.SetABSBindToTable(Me.dteLimitOP_C, False)
-        Me.dteLimitOP_C.Location = New System.Drawing.Point(26, 109)
+        Me.dteLimitOP_C.Location = New System.Drawing.Point(32, 123)
+        Me.dteLimitOP_C.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.dteLimitOP_C.Name = "dteLimitOP_C"
-        Me.dteLimitOP_C.Size = New System.Drawing.Size(130, 25)
+        Me.dteLimitOP_C.Size = New System.Drawing.Size(162, 29)
         Me.dteLimitOP_C.TabIndex = 271
         '
         'chkLimitOP_C
         '
         Me.Absx1.SetABSBindToTable(Me.chkLimitOP_C, False)
-        Me.chkLimitOP_C.Location = New System.Drawing.Point(6, 88)
+        Me.chkLimitOP_C.Location = New System.Drawing.Point(8, 99)
+        Me.chkLimitOP_C.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkLimitOP_C.Name = "chkLimitOP_C"
-        Me.chkLimitOP_C.Size = New System.Drawing.Size(184, 20)
+        Me.chkLimitOP_C.Size = New System.Drawing.Size(230, 22)
         Me.chkLimitOP_C.TabIndex = 270
         Me.chkLimitOP_C.Text = "Cancel Dates Less Than"
         '
@@ -518,9 +554,10 @@ Partial Class ICRISTA3
         Me.chkLimitOP_R.ABSChecked = "1"
         Me.chkLimitOP_R.Checked = True
         Me.chkLimitOP_R.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkLimitOP_R.Location = New System.Drawing.Point(6, 66)
+        Me.chkLimitOP_R.Location = New System.Drawing.Point(8, 74)
+        Me.chkLimitOP_R.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkLimitOP_R.Name = "chkLimitOP_R"
-        Me.chkLimitOP_R.Size = New System.Drawing.Size(150, 20)
+        Me.chkLimitOP_R.Size = New System.Drawing.Size(188, 22)
         Me.chkLimitOP_R.TabIndex = 269
         Me.chkLimitOP_R.Text = "Reservations"
         '
@@ -530,9 +567,10 @@ Partial Class ICRISTA3
         Me.chkLimitOP_P.ABSChecked = "1"
         Me.chkLimitOP_P.Checked = True
         Me.chkLimitOP_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkLimitOP_P.Location = New System.Drawing.Point(6, 44)
+        Me.chkLimitOP_P.Location = New System.Drawing.Point(8, 50)
+        Me.chkLimitOP_P.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkLimitOP_P.Name = "chkLimitOP_P"
-        Me.chkLimitOP_P.Size = New System.Drawing.Size(150, 20)
+        Me.chkLimitOP_P.Size = New System.Drawing.Size(188, 22)
         Me.chkLimitOP_P.TabIndex = 268
         Me.chkLimitOP_P.Text = "Pick"
         '
@@ -542,9 +580,10 @@ Partial Class ICRISTA3
         Me.chkLimitOP_O.ABSChecked = "1"
         Me.chkLimitOP_O.Checked = True
         Me.chkLimitOP_O.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkLimitOP_O.Location = New System.Drawing.Point(6, 22)
+        Me.chkLimitOP_O.Location = New System.Drawing.Point(8, 25)
+        Me.chkLimitOP_O.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkLimitOP_O.Name = "chkLimitOP_O"
-        Me.chkLimitOP_O.Size = New System.Drawing.Size(150, 20)
+        Me.chkLimitOP_O.Size = New System.Drawing.Size(188, 22)
         Me.chkLimitOP_O.TabIndex = 267
         Me.chkLimitOP_O.Text = "Open"
         '
@@ -554,18 +593,20 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox12, "CHKTOTALSONLY")
         Me.AbsCheckBox12.Checked = True
         Me.AbsCheckBox12.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox12.Location = New System.Drawing.Point(13, 200)
+        Me.AbsCheckBox12.Location = New System.Drawing.Point(16, 225)
+        Me.AbsCheckBox12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox12.Name = "AbsCheckBox12"
-        Me.AbsCheckBox12.Size = New System.Drawing.Size(249, 20)
+        Me.AbsCheckBox12.Size = New System.Drawing.Size(311, 22)
         Me.AbsCheckBox12.TabIndex = 299
         Me.AbsCheckBox12.Text = "Show Totals Only"
         '
         'UltraGroupBox2
         '
         Me.UltraGroupBox2.Controls.Add(Me.optASN)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(181, 14)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(226, 16)
+        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(166, 113)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(208, 127)
         Me.UltraGroupBox2.TabIndex = 298
         Me.UltraGroupBox2.Text = "Style Option"
         '
@@ -581,9 +622,10 @@ Partial Class ICRISTA3
         ValueListItem8.DataValue = "N"
         ValueListItem8.DisplayText = "Non-Stock Only"
         Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem5, ValueListItem6, ValueListItem8})
-        Me.optASN.Location = New System.Drawing.Point(7, 24)
+        Me.optASN.Location = New System.Drawing.Point(9, 27)
+        Me.optASN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optASN.Name = "optASN"
-        Me.optASN.Size = New System.Drawing.Size(137, 55)
+        Me.optASN.Size = New System.Drawing.Size(171, 62)
         Me.optASN.TabIndex = 0
         Me.optASN.Text = "All Styles"
         '
@@ -593,9 +635,10 @@ Partial Class ICRISTA3
         Me.grpOther.Controls.Add(Me.AbsCheckBox5)
         Me.grpOther.Controls.Add(Me.AbsCheckBox4)
         Me.grpOther.Controls.Add(Me.AbsCheckBox3)
-        Me.grpOther.Location = New System.Drawing.Point(13, 81)
+        Me.grpOther.Location = New System.Drawing.Point(16, 91)
+        Me.grpOther.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpOther.Name = "grpOther"
-        Me.grpOther.Size = New System.Drawing.Size(162, 113)
+        Me.grpOther.Size = New System.Drawing.Size(202, 127)
         Me.grpOther.TabIndex = 297
         Me.grpOther.Text = "Sub-Total"
         '
@@ -605,9 +648,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox6, "CHK4")
         Me.AbsCheckBox6.Checked = True
         Me.AbsCheckBox6.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox6.Location = New System.Drawing.Point(6, 88)
+        Me.AbsCheckBox6.Location = New System.Drawing.Point(8, 99)
+        Me.AbsCheckBox6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox6.Name = "AbsCheckBox6"
-        Me.AbsCheckBox6.Size = New System.Drawing.Size(150, 20)
+        Me.AbsCheckBox6.Size = New System.Drawing.Size(188, 22)
         Me.AbsCheckBox6.TabIndex = 270
         Me.AbsCheckBox6.Text = "4"
         '
@@ -617,9 +661,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox5, "CHK3")
         Me.AbsCheckBox5.Checked = True
         Me.AbsCheckBox5.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox5.Location = New System.Drawing.Point(6, 66)
+        Me.AbsCheckBox5.Location = New System.Drawing.Point(8, 74)
+        Me.AbsCheckBox5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox5.Name = "AbsCheckBox5"
-        Me.AbsCheckBox5.Size = New System.Drawing.Size(150, 20)
+        Me.AbsCheckBox5.Size = New System.Drawing.Size(188, 22)
         Me.AbsCheckBox5.TabIndex = 269
         Me.AbsCheckBox5.Text = "3"
         '
@@ -629,9 +674,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox4, "CHK2")
         Me.AbsCheckBox4.Checked = True
         Me.AbsCheckBox4.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox4.Location = New System.Drawing.Point(6, 44)
+        Me.AbsCheckBox4.Location = New System.Drawing.Point(8, 50)
+        Me.AbsCheckBox4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox4.Name = "AbsCheckBox4"
-        Me.AbsCheckBox4.Size = New System.Drawing.Size(150, 20)
+        Me.AbsCheckBox4.Size = New System.Drawing.Size(188, 22)
         Me.AbsCheckBox4.TabIndex = 268
         Me.AbsCheckBox4.Text = "2"
         '
@@ -641,18 +687,20 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox3, "CHK1")
         Me.AbsCheckBox3.Checked = True
         Me.AbsCheckBox3.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox3.Location = New System.Drawing.Point(6, 22)
+        Me.AbsCheckBox3.Location = New System.Drawing.Point(8, 25)
+        Me.AbsCheckBox3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox3.Name = "AbsCheckBox3"
-        Me.AbsCheckBox3.Size = New System.Drawing.Size(150, 20)
+        Me.AbsCheckBox3.Size = New System.Drawing.Size(188, 22)
         Me.AbsCheckBox3.TabIndex = 267
         Me.AbsCheckBox3.Text = "1"
         '
         'grpPERIOD_RANGE
         '
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo1)
-        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(13, 14)
+        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(16, 16)
+        Me.grpPERIOD_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPERIOD_RANGE.Name = "grpPERIOD_RANGE"
-        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(162, 60)
+        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(202, 68)
         Me.grpPERIOD_RANGE.TabIndex = 296
         Me.grpPERIOD_RANGE.Text = "Period"
         '
@@ -716,17 +764,19 @@ Partial Class ICRISTA3
         Me.UltraCombo1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo1.DisplayMember = "LEGEND"
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo1.Location = New System.Drawing.Point(6, 23)
+        Me.UltraCombo1.Location = New System.Drawing.Point(8, 26)
+        Me.UltraCombo1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo1.TabIndex = 0
         '
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdICTISTA4)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(769, 378)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(1017, 424)
         '
         'grdICTISTA4
         '
@@ -816,7 +866,7 @@ Partial Class ICRISTA3
         Me.grdICTISTA4.Location = New System.Drawing.Point(0, 0)
         Me.grdICTISTA4.Margin = New System.Windows.Forms.Padding(2)
         Me.grdICTISTA4.Name = "grdICTISTA4"
-        Me.grdICTISTA4.Size = New System.Drawing.Size(769, 378)
+        Me.grdICTISTA4.Size = New System.Drawing.Size(1017, 424)
         Me.grdICTISTA4.TabIndex = 295
         Me.grdICTISTA4.Text = "Historical Comparison Data Available"
         '
@@ -824,8 +874,9 @@ Partial Class ICRISTA3
         '
         Me.UltraTabPageControl13.Controls.Add(Me.Panel4)
         Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(769, 378)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(1017, 424)
         '
         'Panel4
         '
@@ -850,8 +901,9 @@ Partial Class ICRISTA3
         Me.Panel4.Controls.Add(Me.grpOTS_Min_Max)
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel4.Location = New System.Drawing.Point(0, 0)
+        Me.Panel4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(769, 378)
+        Me.Panel4.Size = New System.Drawing.Size(1017, 424)
         Me.Panel4.TabIndex = 0
         '
         'chkOPEN_PICK_DOLLARS
@@ -860,9 +912,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.chkOPEN_PICK_DOLLARS, "CHKOPEN_PICK_DOLLARS")
         Me.chkOPEN_PICK_DOLLARS.Checked = True
         Me.chkOPEN_PICK_DOLLARS.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkOPEN_PICK_DOLLARS.Location = New System.Drawing.Point(184, 89)
+        Me.chkOPEN_PICK_DOLLARS.Location = New System.Drawing.Point(230, 100)
+        Me.chkOPEN_PICK_DOLLARS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkOPEN_PICK_DOLLARS.Name = "chkOPEN_PICK_DOLLARS"
-        Me.chkOPEN_PICK_DOLLARS.Size = New System.Drawing.Size(94, 20)
+        Me.chkOPEN_PICK_DOLLARS.Size = New System.Drawing.Size(118, 22)
         Me.chkOPEN_PICK_DOLLARS.TabIndex = 332
         Me.chkOPEN_PICK_DOLLARS.Text = "In Dollars"
         Me.chkOPEN_PICK_DOLLARS.Visible = False
@@ -871,9 +924,10 @@ Partial Class ICRISTA3
         '
         Me.lblSHOWOD.AutoSize = True
         Me.lblSHOWOD.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblSHOWOD.Location = New System.Drawing.Point(9, 185)
+        Me.lblSHOWOD.Location = New System.Drawing.Point(11, 208)
+        Me.lblSHOWOD.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblSHOWOD.Name = "lblSHOWOD"
-        Me.lblSHOWOD.Size = New System.Drawing.Size(375, 13)
+        Me.lblSHOWOD.Size = New System.Drawing.Size(471, 17)
         Me.lblSHOWOD.TabIndex = 331
         Me.lblSHOWOD.Text = "* Note: When Using Ordered Dates You Must Select A Customer."
         Me.lblSHOWOD.Visible = False
@@ -881,9 +935,10 @@ Partial Class ICRISTA3
         'chkSHOWOD
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWOD, "CHKSHOWOD")
-        Me.chkSHOWOD.Location = New System.Drawing.Point(9, 162)
+        Me.chkSHOWOD.Location = New System.Drawing.Point(11, 182)
+        Me.chkSHOWOD.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkSHOWOD.Name = "chkSHOWOD"
-        Me.chkSHOWOD.Size = New System.Drawing.Size(255, 20)
+        Me.chkSHOWOD.Size = New System.Drawing.Size(319, 22)
         Me.chkSHOWOD.TabIndex = 330
         Me.chkSHOWOD.Text = "Show First / Last Ordered Dates"
         Me.chkSHOWOD.Visible = False
@@ -891,9 +946,10 @@ Partial Class ICRISTA3
         'btnWIP
         '
         Me.btnWIP.Font = New System.Drawing.Font("Verdana", 8.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnWIP.Location = New System.Drawing.Point(234, 110)
+        Me.btnWIP.Location = New System.Drawing.Point(292, 124)
+        Me.btnWIP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnWIP.Name = "btnWIP"
-        Me.btnWIP.Size = New System.Drawing.Size(75, 23)
+        Me.btnWIP.Size = New System.Drawing.Size(94, 26)
         Me.btnWIP.TabIndex = 329
         Me.btnWIP.Text = "Neg OH"
         Me.btnWIP.UseVisualStyleBackColor = True
@@ -902,9 +958,10 @@ Partial Class ICRISTA3
         'chkSHOWRS
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWRS, "CHKSHOWRS")
-        Me.chkSHOWRS.Location = New System.Drawing.Point(9, 136)
+        Me.chkSHOWRS.Location = New System.Drawing.Point(11, 153)
+        Me.chkSHOWRS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkSHOWRS.Name = "chkSHOWRS"
-        Me.chkSHOWRS.Size = New System.Drawing.Size(219, 20)
+        Me.chkSHOWRS.Size = New System.Drawing.Size(274, 22)
         Me.chkSHOWRS.TabIndex = 328
         Me.chkSHOWRS.Text = "Show Last Recd / Ship Dates"
         Me.chkSHOWRS.Visible = False
@@ -912,9 +969,10 @@ Partial Class ICRISTA3
         'chkSHOWFL
         '
         Me.Absx1.SetABSColumnName(Me.chkSHOWFL, "CHKSHOWFL")
-        Me.chkSHOWFL.Location = New System.Drawing.Point(9, 112)
+        Me.chkSHOWFL.Location = New System.Drawing.Point(11, 126)
+        Me.chkSHOWFL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkSHOWFL.Name = "chkSHOWFL"
-        Me.chkSHOWFL.Size = New System.Drawing.Size(219, 20)
+        Me.chkSHOWFL.Size = New System.Drawing.Size(274, 22)
         Me.chkSHOWFL.TabIndex = 327
         Me.chkSHOWFL.Text = "Show First / Last Ship Dates"
         Me.chkSHOWFL.Visible = False
@@ -922,9 +980,10 @@ Partial Class ICRISTA3
         'chkCOMBINEOPEN_PICK
         '
         Me.Absx1.SetABSColumnName(Me.chkCOMBINEOPEN_PICK, "CHKCOMBINEOPEN_PICK")
-        Me.chkCOMBINEOPEN_PICK.Location = New System.Drawing.Point(9, 89)
+        Me.chkCOMBINEOPEN_PICK.Location = New System.Drawing.Point(11, 100)
+        Me.chkCOMBINEOPEN_PICK.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkCOMBINEOPEN_PICK.Name = "chkCOMBINEOPEN_PICK"
-        Me.chkCOMBINEOPEN_PICK.Size = New System.Drawing.Size(233, 20)
+        Me.chkCOMBINEOPEN_PICK.Size = New System.Drawing.Size(291, 22)
         Me.chkCOMBINEOPEN_PICK.TabIndex = 326
         Me.chkCOMBINEOPEN_PICK.Text = "Combine Open+Pick"
         Me.chkCOMBINEOPEN_PICK.Visible = False
@@ -932,9 +991,10 @@ Partial Class ICRISTA3
         'chkHIDEFIFOCOST
         '
         Me.Absx1.SetABSColumnName(Me.chkHIDEFIFOCOST, "CHKHIDEFIFOCOST")
-        Me.chkHIDEFIFOCOST.Location = New System.Drawing.Point(9, 72)
+        Me.chkHIDEFIFOCOST.Location = New System.Drawing.Point(11, 81)
+        Me.chkHIDEFIFOCOST.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkHIDEFIFOCOST.Name = "chkHIDEFIFOCOST"
-        Me.chkHIDEFIFOCOST.Size = New System.Drawing.Size(288, 20)
+        Me.chkHIDEFIFOCOST.Size = New System.Drawing.Size(360, 22)
         Me.chkHIDEFIFOCOST.TabIndex = 325
         Me.chkHIDEFIFOCOST.Text = "Hide FIFO cost and show in units"
         Me.chkHIDEFIFOCOST.Visible = False
@@ -942,9 +1002,10 @@ Partial Class ICRISTA3
         'chkOPEN_PICK_UNITS
         '
         Me.Absx1.SetABSColumnName(Me.chkOPEN_PICK_UNITS, "CHKOPEN_PICK_UNITS")
-        Me.chkOPEN_PICK_UNITS.Location = New System.Drawing.Point(145, 32)
+        Me.chkOPEN_PICK_UNITS.Location = New System.Drawing.Point(181, 36)
+        Me.chkOPEN_PICK_UNITS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkOPEN_PICK_UNITS.Name = "chkOPEN_PICK_UNITS"
-        Me.chkOPEN_PICK_UNITS.Size = New System.Drawing.Size(94, 20)
+        Me.chkOPEN_PICK_UNITS.Size = New System.Drawing.Size(118, 22)
         Me.chkOPEN_PICK_UNITS.TabIndex = 324
         Me.chkOPEN_PICK_UNITS.Text = "In Units"
         Me.chkOPEN_PICK_UNITS.Visible = False
@@ -955,9 +1016,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.chkOPEN_PICK, "CHKOPEN_PICK")
         Me.chkOPEN_PICK.Checked = True
         Me.chkOPEN_PICK.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkOPEN_PICK.Location = New System.Drawing.Point(9, 32)
+        Me.chkOPEN_PICK.Location = New System.Drawing.Point(11, 36)
+        Me.chkOPEN_PICK.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkOPEN_PICK.Name = "chkOPEN_PICK"
-        Me.chkOPEN_PICK.Size = New System.Drawing.Size(150, 20)
+        Me.chkOPEN_PICK.Size = New System.Drawing.Size(188, 22)
         Me.chkOPEN_PICK.TabIndex = 323
         Me.chkOPEN_PICK.Text = "Show Open+Pick"
         Me.chkOPEN_PICK.Visible = False
@@ -968,9 +1030,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox7, "CHKZERO")
         Me.AbsCheckBox7.Checked = True
         Me.AbsCheckBox7.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox7.Location = New System.Drawing.Point(9, 52)
+        Me.AbsCheckBox7.Location = New System.Drawing.Point(11, 58)
+        Me.AbsCheckBox7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox7.Name = "AbsCheckBox7"
-        Me.AbsCheckBox7.Size = New System.Drawing.Size(249, 20)
+        Me.AbsCheckBox7.Size = New System.Drawing.Size(311, 22)
         Me.AbsCheckBox7.TabIndex = 322
         Me.AbsCheckBox7.Text = "Suppress Style/Colors w/All 0's"
         Me.AbsCheckBox7.Visible = False
@@ -978,9 +1041,10 @@ Partial Class ICRISTA3
         'chkNEG
         '
         Me.Absx1.SetABSColumnName(Me.chkNEG, "CHKNEG")
-        Me.chkNEG.Location = New System.Drawing.Point(9, 203)
+        Me.chkNEG.Location = New System.Drawing.Point(11, 228)
+        Me.chkNEG.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkNEG.Name = "chkNEG"
-        Me.chkNEG.Size = New System.Drawing.Size(288, 20)
+        Me.chkNEG.Size = New System.Drawing.Size(360, 22)
         Me.chkNEG.TabIndex = 321
         Me.chkNEG.Text = "Show Style/Colors w/ Neg WIP Only"
         Me.chkNEG.Visible = False
@@ -995,9 +1059,10 @@ Partial Class ICRISTA3
         ValueListItem11.DataValue = "Y"
         ValueListItem11.DisplayText = "YTD"
         Me.UltraOptionSet1.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem11})
-        Me.UltraOptionSet1.Location = New System.Drawing.Point(686, 14)
+        Me.UltraOptionSet1.Location = New System.Drawing.Point(858, 16)
+        Me.UltraOptionSet1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraOptionSet1.Name = "UltraOptionSet1"
-        Me.UltraOptionSet1.Size = New System.Drawing.Size(53, 44)
+        Me.UltraOptionSet1.Size = New System.Drawing.Size(66, 50)
         Me.UltraOptionSet1.TabIndex = 320
         Me.UltraOptionSet1.Text = "MTD"
         Me.UltraOptionSet1.Visible = False
@@ -1008,9 +1073,10 @@ Partial Class ICRISTA3
         Me.grpDATE_LAST_REC.Controls.Add(Me.AbsCheckBox9)
         Me.grpDATE_LAST_REC.Controls.Add(Me.UltraDateTimeEditor3)
         Me.grpDATE_LAST_REC.Controls.Add(Me.UltraDateTimeEditor4)
-        Me.grpDATE_LAST_REC.Location = New System.Drawing.Point(591, 98)
+        Me.grpDATE_LAST_REC.Location = New System.Drawing.Point(739, 110)
+        Me.grpDATE_LAST_REC.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpDATE_LAST_REC.Name = "grpDATE_LAST_REC"
-        Me.grpDATE_LAST_REC.Size = New System.Drawing.Size(162, 125)
+        Me.grpDATE_LAST_REC.Size = New System.Drawing.Size(202, 141)
         Me.grpDATE_LAST_REC.TabIndex = 319
         Me.grpDATE_LAST_REC.Text = "Last Date Recd"
         Me.grpDATE_LAST_REC.Visible = False
@@ -1021,9 +1087,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "CHKDATE_LAST_REC_F")
         Me.AbsCheckBox2.Checked = True
         Me.AbsCheckBox2.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(6, 20)
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(8, 22)
+        Me.AbsCheckBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox2.TabIndex = 32
         Me.AbsCheckBox2.Text = "First on File"
         '
@@ -1033,9 +1100,10 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox9, "CHKDATE_LAST_REC_L")
         Me.AbsCheckBox9.Checked = True
         Me.AbsCheckBox9.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox9.Location = New System.Drawing.Point(6, 70)
+        Me.AbsCheckBox9.Location = New System.Drawing.Point(8, 79)
+        Me.AbsCheckBox9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox9.Name = "AbsCheckBox9"
-        Me.AbsCheckBox9.Size = New System.Drawing.Size(149, 20)
+        Me.AbsCheckBox9.Size = New System.Drawing.Size(186, 22)
         Me.AbsCheckBox9.TabIndex = 32
         Me.AbsCheckBox9.Text = "Last on File"
         '
@@ -1043,9 +1111,10 @@ Partial Class ICRISTA3
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor3, "DATE_LAST_REC_L")
         Me.UltraDateTimeEditor3.DateTime = New Date(2012, 10, 24, 0, 0, 0, 0)
-        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(6, 90)
+        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(8, 101)
+        Me.UltraDateTimeEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor3.Name = "UltraDateTimeEditor3"
-        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor3.TabIndex = 1
         Me.UltraDateTimeEditor3.Value = New Date(2012, 10, 24, 0, 0, 0, 0)
         '
@@ -1053,9 +1122,10 @@ Partial Class ICRISTA3
         '
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor4, "DATE_LAST_REC_F")
         Me.UltraDateTimeEditor4.DateTime = New Date(2012, 10, 24, 0, 0, 0, 0)
-        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(6, 40)
+        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(8, 45)
+        Me.UltraDateTimeEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor4.Name = "UltraDateTimeEditor4"
-        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor4.TabIndex = 0
         Me.UltraDateTimeEditor4.Value = New Date(2012, 10, 24, 0, 0, 0, 0)
         '
@@ -1072,9 +1142,10 @@ Partial Class ICRISTA3
         ValueListItem3.DataValue = "D"
         ValueListItem3.DisplayText = "Show Dates & Qtys"
         Me.optFORMAT.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem4, ValueListItem1, ValueListItem3})
-        Me.optFORMAT.Location = New System.Drawing.Point(270, 284)
+        Me.optFORMAT.Location = New System.Drawing.Point(338, 320)
+        Me.optFORMAT.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optFORMAT.Name = "optFORMAT"
-        Me.optFORMAT.Size = New System.Drawing.Size(182, 58)
+        Me.optFORMAT.Size = New System.Drawing.Size(228, 65)
         Me.optFORMAT.TabIndex = 318
         Me.optFORMAT.Text = "Show FIFO Age & Value"
         Me.optFORMAT.Visible = False
@@ -1089,9 +1160,10 @@ Partial Class ICRISTA3
         ValueListItem57.DataValue = "D"
         ValueListItem57.DisplayText = "Dozens"
         Me.optShow.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem56, ValueListItem57})
-        Me.optShow.Location = New System.Drawing.Point(686, 59)
+        Me.optShow.Location = New System.Drawing.Point(858, 66)
+        Me.optShow.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optShow.Name = "optShow"
-        Me.optShow.Size = New System.Drawing.Size(80, 38)
+        Me.optShow.Size = New System.Drawing.Size(100, 43)
         Me.optShow.TabIndex = 317
         Me.optShow.Text = "Units"
         Me.optShow.Visible = False
@@ -1100,9 +1172,10 @@ Partial Class ICRISTA3
         '
         Me.grpShowOnly.Controls.Add(Me.UltraOptionSet2)
         Me.grpShowOnly.Controls.Add(Me.grpNUMDAYS)
-        Me.grpShowOnly.Location = New System.Drawing.Point(391, 13)
+        Me.grpShowOnly.Location = New System.Drawing.Point(489, 15)
+        Me.grpShowOnly.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpShowOnly.Name = "grpShowOnly"
-        Me.grpShowOnly.Size = New System.Drawing.Size(174, 241)
+        Me.grpShowOnly.Size = New System.Drawing.Size(218, 271)
         Me.grpShowOnly.TabIndex = 281
         Me.grpShowOnly.Text = "Show Only if at least"
         Me.grpShowOnly.Visible = False
@@ -1119,9 +1192,10 @@ Partial Class ICRISTA3
         ValueListItem58.DataValue = "3"
         ValueListItem58.DisplayText = ""
         Me.UltraOptionSet2.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem7, ValueListItem18, ValueListItem58})
-        Me.UltraOptionSet2.Location = New System.Drawing.Point(6, 23)
+        Me.UltraOptionSet2.Location = New System.Drawing.Point(8, 26)
+        Me.UltraOptionSet2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraOptionSet2.Name = "UltraOptionSet2"
-        Me.UltraOptionSet2.Size = New System.Drawing.Size(136, 68)
+        Me.UltraOptionSet2.Size = New System.Drawing.Size(170, 76)
         Me.UltraOptionSet2.TabIndex = 280
         Me.UltraOptionSet2.Text = "1"
         '
@@ -1132,9 +1206,10 @@ Partial Class ICRISTA3
         Me.grpNUMDAYS.Controls.Add(Me.lblNUMDAYS1)
         Me.grpNUMDAYS.Controls.Add(Me.numDAYS1)
         Me.grpNUMDAYS.Controls.Add(Me.numDAYS2)
-        Me.grpNUMDAYS.Location = New System.Drawing.Point(6, 94)
+        Me.grpNUMDAYS.Location = New System.Drawing.Point(8, 106)
+        Me.grpNUMDAYS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpNUMDAYS.Name = "grpNUMDAYS"
-        Me.grpNUMDAYS.Size = New System.Drawing.Size(117, 125)
+        Me.grpNUMDAYS.Size = New System.Drawing.Size(146, 141)
         Me.grpNUMDAYS.TabIndex = 277
         Me.grpNUMDAYS.Text = "Inventory Age"
         Me.grpNUMDAYS.Visible = False
@@ -1142,27 +1217,30 @@ Partial Class ICRISTA3
         'lblNUMDAYS3
         '
         Me.lblNUMDAYS3.AutoSize = True
-        Me.lblNUMDAYS3.Location = New System.Drawing.Point(9, 78)
+        Me.lblNUMDAYS3.Location = New System.Drawing.Point(11, 88)
+        Me.lblNUMDAYS3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblNUMDAYS3.Name = "lblNUMDAYS3"
-        Me.lblNUMDAYS3.Size = New System.Drawing.Size(46, 18)
+        Me.lblNUMDAYS3.Size = New System.Drawing.Size(57, 22)
         Me.lblNUMDAYS3.TabIndex = 279
         Me.lblNUMDAYS3.Text = "> 360"
         '
         'lblNUMDAYS2
         '
         Me.lblNUMDAYS2.AutoSize = True
-        Me.lblNUMDAYS2.Location = New System.Drawing.Point(53, 52)
+        Me.lblNUMDAYS2.Location = New System.Drawing.Point(66, 58)
+        Me.lblNUMDAYS2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblNUMDAYS2.Name = "lblNUMDAYS2"
-        Me.lblNUMDAYS2.Size = New System.Drawing.Size(38, 18)
+        Me.lblNUMDAYS2.Size = New System.Drawing.Size(47, 22)
         Me.lblNUMDAYS2.TabIndex = 278
         Me.lblNUMDAYS2.Text = "Days"
         '
         'lblNUMDAYS1
         '
         Me.lblNUMDAYS1.AutoSize = True
-        Me.lblNUMDAYS1.Location = New System.Drawing.Point(53, 28)
+        Me.lblNUMDAYS1.Location = New System.Drawing.Point(66, 32)
+        Me.lblNUMDAYS1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblNUMDAYS1.Name = "lblNUMDAYS1"
-        Me.lblNUMDAYS1.Size = New System.Drawing.Size(38, 18)
+        Me.lblNUMDAYS1.Size = New System.Drawing.Size(47, 22)
         Me.lblNUMDAYS1.TabIndex = 277
         Me.lblNUMDAYS1.Text = "Days"
         '
@@ -1170,13 +1248,14 @@ Partial Class ICRISTA3
         '
         Me.Absx1.SetABSColumnName(Me.numDAYS1, "NUMDAYS1")
         Me.numDAYS1.FormatString = ""
-        Me.numDAYS1.Location = New System.Drawing.Point(6, 23)
+        Me.numDAYS1.Location = New System.Drawing.Point(8, 26)
+        Me.numDAYS1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.numDAYS1.MaskInput = "nnnn"
         Me.numDAYS1.MaxValue = 9999
         Me.numDAYS1.MinValue = 0
         Me.numDAYS1.Name = "numDAYS1"
         Me.numDAYS1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numDAYS1.Size = New System.Drawing.Size(41, 25)
+        Me.numDAYS1.Size = New System.Drawing.Size(51, 29)
         Me.numDAYS1.TabIndex = 270
         Me.numDAYS1.Value = 180
         '
@@ -1184,22 +1263,24 @@ Partial Class ICRISTA3
         '
         Me.Absx1.SetABSColumnName(Me.numDAYS2, "NUMDAYS2")
         Me.numDAYS2.FormatString = ""
-        Me.numDAYS2.Location = New System.Drawing.Point(6, 47)
+        Me.numDAYS2.Location = New System.Drawing.Point(8, 53)
+        Me.numDAYS2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.numDAYS2.MaskInput = "nnnn"
         Me.numDAYS2.MaxValue = 9999
         Me.numDAYS2.MinValue = 0
         Me.numDAYS2.Name = "numDAYS2"
         Me.numDAYS2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numDAYS2.Size = New System.Drawing.Size(41, 25)
+        Me.numDAYS2.Size = New System.Drawing.Size(51, 29)
         Me.numDAYS2.TabIndex = 269
         Me.numDAYS2.Value = 360
         '
         'AbsCheckBox8
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox8, "CHKCOST")
-        Me.AbsCheckBox8.Location = New System.Drawing.Point(9, 13)
+        Me.AbsCheckBox8.Location = New System.Drawing.Point(11, 15)
+        Me.AbsCheckBox8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox8.Name = "AbsCheckBox8"
-        Me.AbsCheckBox8.Size = New System.Drawing.Size(194, 20)
+        Me.AbsCheckBox8.Size = New System.Drawing.Size(242, 22)
         Me.AbsCheckBox8.TabIndex = 306
         Me.AbsCheckBox8.Text = "Show Costs"
         Me.AbsCheckBox8.Visible = False
@@ -1212,9 +1293,10 @@ Partial Class ICRISTA3
         Me.grpOTS_Min_Max.Controls.Add(Me.AbsCheckBox11)
         Me.grpOTS_Min_Max.Controls.Add(Me.UltraNumericEditor2)
         Me.grpOTS_Min_Max.Controls.Add(Me.AbsCheckBox10)
-        Me.grpOTS_Min_Max.Location = New System.Drawing.Point(9, 229)
+        Me.grpOTS_Min_Max.Location = New System.Drawing.Point(11, 258)
+        Me.grpOTS_Min_Max.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpOTS_Min_Max.Name = "grpOTS_Min_Max"
-        Me.grpOTS_Min_Max.Size = New System.Drawing.Size(242, 113)
+        Me.grpOTS_Min_Max.Size = New System.Drawing.Size(302, 127)
         Me.grpOTS_Min_Max.TabIndex = 276
         Me.grpOTS_Min_Max.Text = "Show Styles with OTS+WIP Qty"
         Me.grpOTS_Min_Max.Visible = False
@@ -1222,18 +1304,20 @@ Partial Class ICRISTA3
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(150, 69)
+        Me.UltraLabel1.Location = New System.Drawing.Point(188, 78)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(81, 22)
         Me.UltraLabel1.TabIndex = 276
         Me.UltraLabel1.Text = "Max OTS"
         '
         'UltraLabel10
         '
         Me.UltraLabel10.AutoSize = True
-        Me.UltraLabel10.Location = New System.Drawing.Point(150, 45)
+        Me.UltraLabel10.Location = New System.Drawing.Point(188, 51)
+        Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel10.Name = "UltraLabel10"
-        Me.UltraLabel10.Size = New System.Drawing.Size(61, 18)
+        Me.UltraLabel10.Size = New System.Drawing.Size(76, 22)
         Me.UltraLabel10.TabIndex = 275
         Me.UltraLabel10.Text = "Min OTS"
         '
@@ -1242,22 +1326,24 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "NUMOTSMIN")
         Me.UltraNumericEditor1.AlwaysInEditMode = True
         Me.UltraNumericEditor1.FormatString = ""
-        Me.UltraNumericEditor1.Location = New System.Drawing.Point(70, 40)
+        Me.UltraNumericEditor1.Location = New System.Drawing.Point(88, 45)
+        Me.UltraNumericEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraNumericEditor1.MaskInput = "nnnnnn"
         Me.UltraNumericEditor1.MaxValue = 999999
         Me.UltraNumericEditor1.MinValue = 0
         Me.UltraNumericEditor1.Name = "UltraNumericEditor1"
         Me.UltraNumericEditor1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor1.Size = New System.Drawing.Size(74, 25)
+        Me.UltraNumericEditor1.Size = New System.Drawing.Size(92, 29)
         Me.UltraNumericEditor1.TabIndex = 268
         Me.UltraNumericEditor1.Value = 4
         '
         'AbsCheckBox11
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox11, "CHKOTSMAX")
-        Me.AbsCheckBox11.Location = New System.Drawing.Point(14, 68)
+        Me.AbsCheckBox11.Location = New System.Drawing.Point(18, 76)
+        Me.AbsCheckBox11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox11.Name = "AbsCheckBox11"
-        Me.AbsCheckBox11.Size = New System.Drawing.Size(55, 20)
+        Me.AbsCheckBox11.Size = New System.Drawing.Size(69, 22)
         Me.AbsCheckBox11.TabIndex = 274
         Me.AbsCheckBox11.Text = "<="
         '
@@ -1266,22 +1352,24 @@ Partial Class ICRISTA3
         Me.Absx1.SetABSColumnName(Me.UltraNumericEditor2, "NUMOTSMAX")
         Me.UltraNumericEditor2.AlwaysInEditMode = True
         Me.UltraNumericEditor2.FormatString = ""
-        Me.UltraNumericEditor2.Location = New System.Drawing.Point(70, 64)
+        Me.UltraNumericEditor2.Location = New System.Drawing.Point(88, 72)
+        Me.UltraNumericEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraNumericEditor2.MaskInput = "nnnnnn"
         Me.UltraNumericEditor2.MaxValue = 999999
         Me.UltraNumericEditor2.MinValue = 0
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
         Me.UltraNumericEditor2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor2.Size = New System.Drawing.Size(74, 25)
+        Me.UltraNumericEditor2.Size = New System.Drawing.Size(92, 29)
         Me.UltraNumericEditor2.TabIndex = 29
         Me.UltraNumericEditor2.Value = 4
         '
         'AbsCheckBox10
         '
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox10, "CHKOTSMIN")
-        Me.AbsCheckBox10.Location = New System.Drawing.Point(14, 44)
+        Me.AbsCheckBox10.Location = New System.Drawing.Point(18, 50)
+        Me.AbsCheckBox10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox10.Name = "AbsCheckBox10"
-        Me.AbsCheckBox10.Size = New System.Drawing.Size(55, 20)
+        Me.AbsCheckBox10.Size = New System.Drawing.Size(69, 22)
         Me.AbsCheckBox10.TabIndex = 273
         Me.AbsCheckBox10.Text = ">="
         '
@@ -1293,9 +1381,10 @@ Partial Class ICRISTA3
         Me.tabOptions.Controls.Add(Me.UltraTabPageControl13)
         Me.tabOptions.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabOptions.Location = New System.Drawing.Point(0, 0)
+        Me.tabOptions.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tabOptions.Name = "tabOptions"
         Me.tabOptions.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tabOptions.Size = New System.Drawing.Size(773, 406)
+        Me.tabOptions.Size = New System.Drawing.Size(1021, 456)
         Me.tabOptions.TabIndex = 294
         UltraTab2.TabPage = Me.UltraTabPageControl12
         UltraTab2.Text = "Other Options"
@@ -1309,15 +1398,16 @@ Partial Class ICRISTA3
         'UltraTabSharedControlsPage4
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(769, 378)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1017, 424)
         '
         'ICRISTA3
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 641)
-        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ClientSize = New System.Drawing.Size(1238, 721)
+        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.Name = "ICRISTA3"
         Me.Text = "ICRISTA1"
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -1353,6 +1443,8 @@ Partial Class ICRISTA3
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
+        CType(Me.CHKUNITSONLY, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkUNITS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
@@ -1481,4 +1573,6 @@ Partial Class ICRISTA3
     Friend WithEvents chkLimitOP_P As ABSCS.ABSCheckBox
     Friend WithEvents chkLimitOP_O As ABSCS.ABSCheckBox
     Friend WithEvents dteLimitOP_C As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents chkUNITS As ABSCS.ABSCheckBox
+    Friend WithEvents CHKUNITSONLY As ABSCS.ABSCheckBox
 End Class

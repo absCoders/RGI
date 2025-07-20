@@ -126,14 +126,11 @@ Public Class ICFIMPI2
 
             Case "Import Styles"
 
-
-                ' If ASCMAIN1.Running_in_VS And ASCMAIN1.DBS_COMPANY = "RGI" Then
-                'FOLDERNAME = "c:\VS\VDI\NEWITEMS\"
-                'Else
-                FOLDERNAME = "S:\NEWITEMS\"
-                ' End If
-
-
+                If ASCMAIN1.useUNCPath Then
+                    FOLDERNAME = $"{ASCMAIN1.Folders("SharedRoot")}\NEWITEMS\"
+                Else
+                    FOLDERNAME = "S:\NEWITEMS\"
+                End If
 
                 If My.Computer.FileSystem.GetFiles(FOLDERNAME).Count = 0 Then
                     EMsg &= vbCr & "No Files to be processed"
@@ -826,14 +823,11 @@ Public Class ICFIMPI2
         End Using
 
         Dim HISTFILE As String = ""
-        ' If ASCMAIN1.Running_in_VS And ASCMAIN1.DBS_COMPANY = "RGI" Then
-        'HISTFILE = "c:\VS\VDI\NEWITEMSHIST"
-        ' Else
-        HISTFILE = "s:\NEWITEMSHIST" & Mid(FILENAME, Len(FOLDERNAME))
-        ' HISTFILE = "c:\VS\VDI\NEWITEMSHIST" & Mid(FILENAME, Len(FOLDERNAME))
-        'End If
-
-        'Dim HISTFILE As String = "s:\NEWITEMSHIST" & Mid(FILENAME, Len(FOLDERNAME))
+        If ASCMAIN1.useUNCPath Then
+            HISTFILE = $"{ASCMAIN1.Folders("SharedRoot")}\NEWITEMSHIST" & Mid(FILENAME, Len(FOLDERNAME))
+        Else
+            HISTFILE = "s:\NEWITEMSHIST" & Mid(FILENAME, Len(FOLDERNAME))
+        End If
 
 
         My.Computer.FileSystem.MoveFile(FILENAME, HISTFILE, True)
