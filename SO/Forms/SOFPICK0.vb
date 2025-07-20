@@ -308,7 +308,7 @@ Public Class SOFPICK0
                 .Columns.Add("SHIP_BOL_NO")
                 .Columns.Add("CART_SERIAL_NO", GetType(Int64))
                 .Columns.Add("CART_TOTAL", GetType(Int64))
-                .PrimaryKey = New DataColumn() {.Columns("SHIP_BOL_NO"), .Columns("CART_SERIAL_NO")}
+                .PrimaryKey = New DataColumn() { .Columns("SHIP_BOL_NO"), .Columns("CART_SERIAL_NO")}
             End With
 
             With .Tables.Add("SOTCART4")
@@ -325,7 +325,7 @@ Public Class SOFPICK0
                 .Columns.Add("CASE_CBM")
                 .Columns.Add("ORIGIN_COUNTRY")
                 .Columns.Add("CART_1_OF_9", GetType(System.String))
-                .PrimaryKey = New DataColumn() {.Columns("CART_NO")}
+                .PrimaryKey = New DataColumn() { .Columns("CART_NO")}
             End With
 
             With dst.Tables.Add("SOTRANG1")
@@ -1737,7 +1737,7 @@ Public Class SOFPICK0
             If ASCMAIN1.CLIENT = "VAN" Then
                 ' ONLY MULTIPO WALMART FOR NOW
                 ' and KOHLS
-                ASCMAIN1.sql = ASCMAIN1.sql.Replace(" from SOTSHIP1,SOTORDR0,ARTCUST1", _
+                ASCMAIN1.sql = ASCMAIN1.sql.Replace(" from SOTSHIP1,SOTORDR0,ARTCUST1",
                                                     " from SOTSHIP1,SOTORDR0,ARTCUST1,EDT850T1")
                 'ASCMAIN1.sql = ASCMAIN1.sql.Replace(" where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO",
                 '                                    " where SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO and ((SOTORDR0.CUST_CODE = 'KOHLS' and EDT850T1.EDI_DEPT_DESC = 'PACK BY STORE') or (SOTORDR0.CUST_CODE = 'WALMART' ) or (SOTORDR0.CUST_CODE in ('WALCOSTAR','WALELSAV','WALGUAT','WALHOND','WALNICAR'))) and EDT850T1.EDI_DOC_SEQ_NO(+) = SOTORDR0.EDI_DOC_SEQ_NO ")
@@ -2270,7 +2270,7 @@ Public Class SOFPICK0
                 PICK_NO = rowSOTPICK1.Item("PICK_NO") & String.Empty
 
                 For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'")
-            CART_NO = rowSOTCART1.Item("CART_NO")
+                    CART_NO = rowSOTCART1.Item("CART_NO")
                     Dim cartonLabel As New TAC.CartonLabel(CART_NO, "CONTENT")
                     cartonLabel.PrintLabel()
                 Next
@@ -2991,6 +2991,9 @@ Public Class SOFPICK0
         'Dim filename As String = "C:\dmp\ITEMSLOCS.txt"
         ' NEED TO ARCHIVE THE LOCATIONS FILE & MOVE IT OUT OF THE WAY
         Dim filename As String = "S:\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        If ASCMAIN1.useUNCPath Then
+            filename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        End If
         Dim data As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
@@ -3023,6 +3026,9 @@ Public Class SOFPICK0
         'Dim filename As String = "C:\dmp\ITEMSLOCS.txt"
         ' NEED TO ARCHIVE THE LOCATIONS FILE & MOVE IT OUT OF THE WAY
         Dim filename As String = "S:\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        If ASCMAIN1.useUNCPath Then
+            filename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        End If
         Dim data As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
@@ -3032,7 +3038,9 @@ Public Class SOFPICK0
         Dim drCDATE As String = Now
 
         Dim HISTfilename As String = "S:\WAREHOUSE\LOCATIONS\HIST\ITEMSLOCS"
-
+        If ASCMAIN1.useUNCPath Then
+            HISTfilename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS"
+        End If
         '  Get_PARM("ICTPARMR")
 
         If My.Computer.FileSystem.FileExists(filename) Then

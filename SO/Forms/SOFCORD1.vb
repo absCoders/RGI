@@ -1,11 +1,4 @@
 Imports Infragistics.UltraChart.Resources
-Imports Infragistics.UltraChart.Resources.Appearance
-Imports Infragistics.UltraChart.Core
-Imports Infragistics.UltraChart.Core.ColorModel
-Imports Infragistics.UltraChart.Data
-Imports Infragistics.UltraChart.Core.Layers
-Imports Infragistics.UltraChart.Core.Primitives
-Imports Infragistics.UltraChart.Shared.Styles
 
 Imports Infragistics.Win
 
@@ -53,6 +46,13 @@ Public Class SOFCORD1
     Dim COLUMN_NAMEs_All As New List(Of String)
     Dim COLUMN_NAMEs_Short As New List(Of String)
 
+    Dim cols3PL() As String
+
+    Dim SOTORDRS_BASE As String
+    Dim sqlSOTORDRS_BASE As String
+
+    Dim SOFCORD1_LAYOUT_ORIG As String = "SOFCORD1_LAYOUT_ORIG.xml"
+    Dim SOFCORD1_LAYOUT_SHORT As String = ""
 #End Region
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -130,6 +130,7 @@ Public Class SOFCORD1
 
             sqlSOTORDRS = "Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
                 & ", SOTORDR2.STYLE_DESC, ICTCOLR1.COLOR_DESC, SOTORDR2.RANGE_STYLE_CODE" & vbCrLf _
+                & ", ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" & vbCrLf _
                 & ", SOTORDR2.CUST_STYLE_CODE, SOTORDR2.CUST_COLOR_CODE, SOTORDR2.CUST_SIZE_CODE, SOTORDR2.CUST_UPC, SOTORDR2.CUST_SKU" & vbCrLf _
                 & ", SUM (SOTORDR2.ORDR_QTY) ORDR_QTY" & vbCrLf _
                 & ", SUM (SOTORDR2.ORDR_QTY * ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
@@ -140,18 +141,65 @@ Public Class SOFCORD1
                 & ", SUM (SOTORDR2.ORDR_QTY_CANC) ORDR_QTY_CANC" & vbCrLf _
                 & ", SUM (SOTORDR2.ORDR_EXTD_COST) ORDR_CGS" & vbCrLf _
                 & ", MAX (SOTORDR2.ORDR_RELEASE_AVAIL) ORDR_RELEASE_AVAIL" & vbCrLf _
-                & " from SOTORDR2,ICTCOLR1,SOTORDR1" & vbCrLf _
-                & " where ICTCOLR1.COLOR_CODE (+) = SOTORDR2.COLOR_CODE" & vbCrLf _
+                & " from SOTORDR2,ICTCOLR1,SOTORDR1,ICTSTYL1" & vbCrLf _
+                & " where ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
+                & "   and ICTCOLR1.COLOR_CODE = SOTORDR2.COLOR_CODE" & vbCrLf _
                 & "   and SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
                 & " group by SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
                 & ", SOTORDR2.STYLE_DESC, ICTCOLR1.COLOR_DESC, SOTORDR2.RANGE_STYLE_CODE" & vbCrLf _
+                & ", ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" & vbCrLf _
                 & ", SOTORDR2.CUST_STYLE_CODE, SOTORDR2.CUST_COLOR_CODE, SOTORDR2.CUST_SIZE_CODE, SOTORDR2.CUST_UPC, SOTORDR2.CUST_SKU"
             ASCMAIN1.sql = Replace(sqlSOTORDRS, " group by ", " and ROWNUM < 1 group by ")
             Create_TDA(.Tables.Add, "SOTORDRS", "**", 0, False, "V", 0)
-            .Tables("SOTORDRS").Columns.Add("WIP_IND")
-            .Tables("SOTORDRS").Columns.Add("ORDR_UNIT_PRICE", GetType(System.Decimal), "IIF(ISNULL(ORDR_QTY,0)=0,0,ISNULL(ORDR_AMT,0) / ISNULL(ORDR_QTY,0))")
-            .Tables("SOTORDRS").Columns.Add("ORDR_GP", GetType(System.Decimal), "ISNULL(ORDR_AMT,0)-ISNULL(ORDR_CGS,0)")
-            .Tables("SOTORDRS").Columns.Add("ORDR_GP_PCT", GetType(System.Decimal), "IIF(ISNULL(ORDR_AMT,0)=0,0,100*ORDR_GP/ISNULL(ORDR_AMT,0))")
+            With .Tables("SOTORDRS").Columns
+                .Add("WIP_IND")
+                .Add("ORDR_UNIT_PRICE", GetType(System.Decimal), "IIF(ISNULL(ORDR_QTY,0)=0,0,ISNULL(ORDR_AMT,0) / ISNULL(ORDR_QTY,0))")
+                .Add("ORDR_GP", GetType(System.Decimal), "ISNULL(ORDR_AMT,0)-ISNULL(ORDR_CGS,0)")
+                .Add("ORDR_GP_PCT", GetType(System.Decimal), "IIF(ISNULL(ORDR_AMT,0)=0,0,100*ORDR_GP/ISNULL(ORDR_AMT,0))")
+                '.Add("QTY_XFR_3PL", GetType(System.Int32))
+                '.Add("QTY_XIT_3PL", GetType(System.Int32))
+                '.Add("QTY_XIT_3PL_ETA", GetType(System.DateTime))
+                .Add("QTY_ONH_3PL", GetType(System.Int32))
+                .Add("QTY_PCK_3PL", GetType(System.Int32))
+                .Add("QTY_OPN_3PL", GetType(System.Int32))
+                .Add("QTY_AVA_3PL", GetType(System.Int32))
+            End With
+
+
+            ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & ", WHSE_QTY_ON_HAND QTY_ONH_3PL" & vbCrLf _
+                & ", WHSE_QTY_PICK QTY_PCK_3PL" & vbCrLf _
+                & ", WHSE_QTY_OPEN QTY_OPN_3PL" & vbCrLf _
+                & " from ICTSTAT2" & vbCrLf _
+                & " where WHSE_CODE = 'US' and (STYLE_CODE, COLOR_CODE) in (Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & " from SOTORDR2,SOTORDR1 where SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO and SOTORDR1.ORDR_GROUP_NO = :PARM1)"
+            Create_TDA(.Tables.Add, "SOTORDRS_3PL", "**", 0, False, "V", 2)
+            With .Tables("SOTORDRS_3PL").Columns
+                .Add("QTY_AVA_3PL", GetType(System.Int32), "ISNULL(QTY_ONH_3PL,0) - ISNULL(QTY_PCK_3PL,0)- ISNULL(QTY_OPN_3PL,0)")
+            End With
+
+
+            ASCMAIN1.sql = Get_SQL_SOTORDRS_BASE(True)
+            SOTORDRS_BASE = ASCMAIN1.Temp_Table
+
+            ASCMAIN1.sql = Get_SQL_SOTORDRS_ORDERS()
+            Create_TDA(.Tables.Add, "SOTORDRS_ORDERS", "**", 0, False, "", 1)
+            With .Tables("SOTORDRS_ORDERS").Columns
+                Dim XXQTY As String = "(ISNULL(CUR_QTY_ONHD,0)+ISNULL(FUT_QTY_ONPO,0)+ISNULL(FUT_QTY_ONPO,0)+ISNULL(UNAV_QTY,0))"
+                Dim XXAMT As String = Replace(XXQTY, "QTY", "AMT")
+                .Add("UNAV_QTY_PCT", GetType(System.Decimal), $"IIF({XXQTY}=0,0,100*ISNULL(UNAV_QTY,0)/{XXQTY})")
+                .Add("UNAV_AMT_PCT", GetType(System.Decimal), $"IIF({XXAMT}=0,0,100*ISNULL(UNAV_QTY,0)/{XXAMT})")
+            End With
+
+            ASCMAIN1.sql = Get_SQL_SOTORDRS_SC()
+            Create_TDA(.Tables.Add, "SOTORDRS_SC", "**", 0, False, "", 2)
+            With .Tables("SOTORDRS_SC").Columns
+                Dim XXQTY As String = "(ISNULL(CUR_QTY_ONHD,0)+ISNULL(FUT_QTY_ONPO,0)+ISNULL(FUT_QTY_ONPO,0)+ISNULL(UNAV_QTY,0))"
+                Dim XXAMT As String = Replace(XXQTY, "QTY", "AMT")
+                .Add("UNAV_QTY_PCT", GetType(System.Decimal), $"IIF({XXQTY}=0,0,100*ISNULL(UNAV_QTY,0)/{XXQTY})")
+                .Add("UNAV_AMT_PCT", GetType(System.Decimal), $"IIF({XXAMT}=0,0,100*ISNULL(UNAV_QTY,0)/{XXAMT})")
+                .Add("SEL", GetType(System.String))
+            End With
 
             sqlSOTRSRVS = "Select SOTRSRV2.STYLE_CODE, SOTRSRV2.COLOR_CODE" & vbCrLf _
                  & ", ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, NULL RANGE_STYLE_CODE" & vbCrLf _
@@ -441,6 +489,7 @@ Public Class SOFCORD1
 
             sqlSOTORDRT = "Select SOTORDRS.*" & vbCrLf _
            & ", ICTCOLR1.COLOR_DESC" & vbCrLf _
+           & ", ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" & vbCrLf _
            & " from SOTORDR0,SOTORDRS,ICTSTYL1,ICTCOLR1" & vbCrLf _
            & " where SOTORDRS.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
            & "   and ICTSTYL1.STYLE_CODE = SOTORDRS.STYLE_CODE" & vbCrLf _
@@ -524,6 +573,8 @@ Public Class SOFCORD1
         grdSOTPICK1.DataSource = dst.Tables("SOTPICK1")
         grdSOTSHIP1.DataSource = dst.Tables("SOTSHIP1")
         grdSOTORDRS.DataSource = dst.Tables("SOTORDRS")
+        grdSOTORDRS_ORDERS.DataSource = dst.Tables("SOTORDRS_ORDERS")
+        grdSOTORDRS_SC.DataSource = dst.Tables("SOTORDRS_SC")
         grdSOTCORDX.DataSource = dst.Tables("SOTCORDX")
         grdSOTCORDD.DataSource = dst.Tables("SOTCORDD")
         grdSOTCORDY.DataSource = dst.Tables("SOTCORDY")
@@ -572,6 +623,13 @@ Public Class SOFCORD1
             Next
         End With
 
+        Create_Summary(grdSOTORDRS_ORDERS, "CUST_CODE", "Count")
+        Create_Summary(grdSOTORDRS_ORDERS, New String() {"CUR_QTY_ONHD", "FUT_QTY_ONPO", "FUT_QTY_TRAN", "UNAV_QTY"})
+        Create_Summary(grdSOTORDRS_ORDERS, New String() {"CUR_AMT_ONHD", "FUT_AMT_ONPO", "FUT_AMT_TRAN", "UNAV_AMT"})
+        Create_Summary(grdSOTORDRS_SC, "STYLE_CODE", "Count")
+        Create_Summary(grdSOTORDRS_SC, New String() {"CUR_QTY_ONHD", "FUT_QTY_ONPO", "FUT_QTY_TRAN", "UNAV_QTY"})
+        Create_Summary(grdSOTORDRS_SC, New String() {"CUR_AMT_ONHD", "FUT_AMT_ONPO", "FUT_AMT_TRAN", "UNAV_AMT"})
+
         Create_Summary(grdSOTORDRT, "STYLE_CODE", "Count")
         Create_Summary(grdSOTORDRT, New String() {"ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_ALLO", "ORDR_QTY_ALLO_CUR", "ORDR_QTY_ALLO_FUT", "ORDR_QTY_ALLO_CXL", "ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO_CUR", "ORDR_AMT_ALLO_FUT", "ORDR_AMT_ALLO_CXL"})
         Create_Summary(grdSOTORDRT, New String() {"ORDR_QTY_ALLO_NOW", "ORDR_QTY_BACK_NOW", "ORDR_QTY_CANC_NOW"})
@@ -614,23 +672,85 @@ Public Class SOFCORD1
 
         End With
 
-        'grdSOTORDR0.DisplayLayout.UseFixedHeaders = True
-        With grdSOTORDR0.DisplayLayout.Bands(0)
-            For Each COLUMN_NAME As String In New String() {"CUST_CODE", "CUST_NAME", "ORDR_GROUP_NO", "ORDR_CUST_PO"}
-                .Columns(COLUMN_NAME).Header.Fixed = True
-            Next
-        End With
+        'cols3PL = {"QTY_XFR_3PL", "QTY_XIT_3PL", "QTY_XIT_3PL_ETA", "QTY_ONH_3PL", "QTY_PCK_3PL", "QTY_OPN_3PL", "QTY_AVA_3PL"}
+        cols3PL = {"QTY_ONH_3PL", "QTY_PCK_3PL", "QTY_OPN_3PL", "QTY_AVA_3PL"}
+
         With grdSOTORDRS.DisplayLayout.Bands(0)
+            .Override.AllowUpdate = DefaultableBoolean.True
+            For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+
+                Dim COLUMN_NAME = gcol.Key
+                If cols3PL.Contains(COLUMN_NAME) Or COLUMN_NAME = "CARTON_PACK_QTY" Or COLUMN_NAME = "INNER_PACK_QTY" Then
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        .Columns(COLUMN_NAME).Hidden = False
+                        If cols3PL.Contains(COLUMN_NAME) Then
+                            .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+                        End If
+                    Else
+                        .Columns(COLUMN_NAME).Hidden = True
+                    End If
+                End If
+            Next
+
             For Each COLUMN_NAME As String In New String() {"STYLE_CODE", "STYLE_DESC", "COLOR_CODE"}
                 If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
                     If COLUMN_NAME = "STYLE_CODE" Then .Columns(COLUMN_NAME).Header.Fixed = True
                 Else
                     .Columns(COLUMN_NAME).Header.Fixed = True
                 End If
+
+
             Next
+            .Override.CellClickAction = UltraWinGrid.CellClickAction.CellSelect
         End With
 
+
+        For Each grd As UltraWinGrid.UltraGrid In {grdSOTORDRS_ORDERS, grdSOTORDRS_SC}
+            With grd.DisplayLayout.Bands(0)
+                ' .Override.AllowUpdate = DefaultableBoolean.True
+                For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
+                    gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                    gcol.Header.Appearance.BackColor = Drawing.Color.White
+                    gcol.Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+
+                    If {"STYLE_CODE", "STYLE_DESC", "COLOR_CODE", "COLOR_DESC", "ORDR_NO", "ORDR_CUST_PO", "CUST_CODE", "CUST_NAME", "ORDR_DATE", "ORDR_SHIP_DATE", "ORDR_CANCEL_DATE"}.Contains(gcol.Key) Then
+                        gcol.Header.Fixed = True
+                    Else
+                        If gcol.Key = "ONHD_3PL" Or gcol.Key = "TRAN_3PL" Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.Orange
+                        ElseIf gcol.Key.Contains("AMT") Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+                        ElseIf gcol.Key.Contains("QTY") Then
+                            gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+                        End If
+                    End If
+
+                Next
+
+                For Each COLUMN_NAME As String In New String() {"STYLE_CODE", "STYLE_DESC", "COLOR_CODE", "COLOR_DESC"}
+
+
+                    If cols3PL.Contains(COLUMN_NAME) Or COLUMN_NAME = "CARTON_PACK_QTY" Or COLUMN_NAME = "INNER_PACK_QTY" Then
+                        If ASCMAIN1.CLIENT = "RGI" Then
+                            .Columns(COLUMN_NAME).Hidden = False
+                        Else
+                            .Columns(COLUMN_NAME).Hidden = True
+                        End If
+                    End If
+                Next
+                .Override.CellClickAction = UltraWinGrid.CellClickAction.CellSelect
+            End With
+        Next
+
+
+        'grdSOTORDR0.DisplayLayout.UseFixedHeaders = True
         With grdSOTORDR0.DisplayLayout.Bands(0)
+            For Each COLUMN_NAME As String In New String() {"CUST_CODE", "CUST_NAME", "ORDR_GROUP_NO", "ORDR_CUST_PO"}
+                .Columns(COLUMN_NAME).Header.Fixed = True
+            Next
+            .Override.CellClickAction = UltraWinGrid.CellClickAction.CellSelect
+
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 'If gcol.Key = "PO_QTY" Then
                 '    gcol.CellAppearance.BackColor = Drawing.Color.LightYellow
@@ -879,8 +999,16 @@ Public Class SOFCORD1
         dteIfReceivedSince.DateTime = Now.Date.AddDays(-3)
 
         chkShortView.Visible = (ASCMAIN1.CLIENT = "RGI")
-        MakeTransparent(chkShortView)
 
+        SplitContainer1.Panel2Collapsed = (ASCMAIN1.CLIENT = "RGI")
+
+        MakeTransparent(chkShortView)
+        MakeTransparent(chkSynchronize)
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            SOFCORD1_LAYOUT_SHORT = ASCMAIN1.rowASTPARM1.Item("AS_PARM_SHARED_ROOT_FOLDER") & "\Templates\" & "SOFCORD1_LAYOUT_SHORT.xml"
+            grdSOTORDR0.DisplayLayout.SaveAsXml(SOFCORD1_LAYOUT_ORIG, UltraWinGrid.PropertyCategories.All)
+        End If
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -956,7 +1084,9 @@ Public Class SOFCORD1
         End With
 
         grpSOTORDR0.Visible = Not ScreenMode
-        splSOTORDR0s.Visible = Not ScreenMode
+        ' splSOTORDR0s.Visible = Not ScreenMode
+        tab0.Visible = Not ScreenMode
+
         chkDetails.Visible = Not ScreenMode And (ASCMAIN1.CLIENT = "RGI")
 
         tabMain.Visible = ScreenMode
@@ -992,11 +1122,14 @@ Public Class SOFCORD1
         Else
             tabStyles.Tabs("Status").Visible = False
         End If
+
+        btnSaveShort.Visible = ASCMAIN1.Running_in_VS And (ASCMAIN1.CLIENT = "RGI")
     End Sub
 
     Sub Clear_Record()
 
         Absx1.txtFor("CUST_CODE").Text = ""
+        Dim CUST_CODE_prev As String = CUST_CODE
         CUST_CODE = ""
 
         EnforceConstraints(False)
@@ -1014,7 +1147,13 @@ Public Class SOFCORD1
         tabMonth.Tabs("Details").Visible = False
 
         grdSOTORDR0.Tag = ""
-        Load_SOTORDR0("")
+
+        If Not Me.IsClosing Then
+            'If CUST_CODE_prev = "" Then
+            Load_SOTORDR0("")
+            'End If
+        End If
+
     End Sub
 
     Sub Load_Record()
@@ -1107,10 +1246,10 @@ Public Class SOFCORD1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
+        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
                         "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel",
-                        "Sales Order Entry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
-                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary")
+                        "Sales Order Entry", "Sales Order Inquiry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
+                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary", "Customer Order Inquiry")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTPICK1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data", "Show EDI Invoice")
@@ -1119,6 +1258,10 @@ Public Class SOFCORD1
         Load_Popup_Menu(grdSOTORDRX, "BB", "Sales Order Inquiry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTCART1, "SS", "Show Filter", "Show Details")
         Load_Popup_Menu(grdSOTCARTP, "SSSB", "Show Filter", "Show GroupBox", "Show Cart Stats", "Export With Stats")
+
+        Load_Popup_Menu(grdSOTORDRS_ORDERS, "SSB", "Show Filter", "Show GroupBox", "Sales Order Inquiry")
+        Load_Popup_Menu(grdSOTORDRS_SC, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
+
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1269,7 +1412,13 @@ Public Class SOFCORD1
 
         Select Case e.Tool.Key
             Case "Sales Order Inquiry"
-                Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Value
+
+                Dim ORDR_NO As String = ""
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    ORDR_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value
+                Else
+                    ORDR_NO = grd.ActiveRow.Cells("ORDR_NO").Value
+                End If
                 Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", ORDR_NO)
                 If rowSOTORDR1 IsNot Nothing Then
                     Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
@@ -1797,6 +1946,14 @@ Public Class SOFCORD1
                 End Using
 
                ' grdSOTORDR0.Selected.Rows.Clear()
+
+
+            Case "Customer Order Inquiry"
+                Dim CUST_CODE As String = grd.ActiveRow.Cells("CUST_CODE").Value
+                Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+                If rowARTCUST1 IsNot Nothing Then
+                    Context_Launch("Select", CUST_CODE, e.Tool.Key, "SOFCORD1")
+                End If
 
 
             Case "Summary by DC"
@@ -2484,18 +2641,28 @@ Public Class SOFCORD1
     End Sub
 
     Sub Toggle_OrderGridView()
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(tlb.Tools("Short View"), UltraWinToolbars.StateButtonTool)
 
-        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = DirectCast(tlb.Tools("Short View"), UltraWinToolbars.StateButtonTool)
+            grdSOTORDR0.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
+            'grdSOTORDR0.DisplayLayout.SaveAsXml("nl.xml", UltraWinGrid.PropertyCategories.All)
+            'With grdSOTORDR0.DisplayLayout.Bands(0)
+            '    For Each C As String In New String() _
+            '        {"CUST_COUNTRY", "ORDR_DEPT", "EDI_MERCH_TYPE", "CUST_DC_NO", "ORDR_DATE", "ORDR_TYPE_CODE",
+            '         "ORDR_SOURCE", "ORDR_AMT_CANC", "ORDR_CNT", "ORDR_CNT_OPEN", "ORDR_CNT_PICK", "ORDR_QTY_CANC",
+            '         "ORDR_DATE_RECD", "ORDR_PRIORITY", "LAST_DATE", "LAST_OPER"}
+            '        .Columns(C).Hidden = tlb_sbt.Checked
+            '    Next
+            'End With
+            'grdSOTORDR0.DisplayLayout.SaveAsXml("nl_short.xml", UltraWinGrid.PropertyCategories.All)
 
-        With grdSOTORDR0.DisplayLayout.Bands(0)
-            For Each C As String In New String() _
-                {"CUST_COUNTRY", "ORDR_DEPT", "EDI_MERCH_TYPE", "CUST_DC_NO", "ORDR_DATE", "ORDR_TYPE_CODE",
-                 "ORDR_SOURCE", "ORDR_AMT_CANC", "ORDR_CNT", "ORDR_CNT_OPEN", "ORDR_CNT_PICK", "ORDR_QTY_CANC",
-                 "ORDR_DATE_RECD", "ORDR_PRIORITY", "LAST_DATE", "LAST_OPER"}
-                .Columns(C).Hidden = tlb_sbt.Checked
-            Next
-        End With
 
+            If tlb_sbt.Checked Then
+                grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_SHORT)
+            Else
+                grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_ORIG)
+            End If
+        End If
     End Sub
 
     Sub Toggle_ShowShipCancel()
@@ -3158,6 +3325,21 @@ Public Class SOFCORD1
         Fill_Records("SOTORDRS", "", True, sql)
         Sort_grdColumns(grdSOTORDRS, "STYLE_CODE, COLOR_CODE, RANGE_STYLE_CODE, CUST_STYLE_CODE, CUST_COLOR_CODE, CUST_SKU")
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Fill_Records("SOTORDRS_3PL", ORDR_GROUP_NO)
+            For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("")
+                Dim STYLE_CODE As String = rowSOTORDRS.Item("STYLE_CODE")
+                Dim COLOR_CODE As String = rowSOTORDRS.Item("COLOR_CODE")
+                Dim rowSOTORDRS_3PL As DataRow = dst.Tables("SOTORDRS_3PL").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                If rowSOTORDRS_3PL IsNot Nothing Then
+                    rowSOTORDRS.Item("QTY_ONH_3PL") = rowSOTORDRS_3PL.Item("QTY_ONH_3PL")
+                    rowSOTORDRS.Item("QTY_PCK_3PL") = rowSOTORDRS_3PL.Item("QTY_PCK_3PL")
+                    rowSOTORDRS.Item("QTY_OPN_3PL") = rowSOTORDRS_3PL.Item("QTY_OPN_3PL")
+                    rowSOTORDRS.Item("QTY_AVA_3PL") = rowSOTORDRS_3PL.Item("QTY_AVA_3PL")
+                End If
+            Next
+        End If
+
         If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
             Dim extra_decimals As Boolean = False
             For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("", "")
@@ -3235,8 +3417,8 @@ Public Class SOFCORD1
 
                 Setup_SOTORDR0()
 
-                ElseIf tabDetails.SelectedTab.Key = "All Orders" Then
-                    .Parent = tabDetails.SelectedTab.TabPage
+            ElseIf tabDetails.SelectedTab.Key = "All Orders" Then
+                .Parent = tabDetails.SelectedTab.TabPage
                 .DataSource = dst.Tables("SOTORDR1_ALL")
                 Dim selected_only As Boolean = False
                 If grdSOTORDR0.Selected.Rows.Count < 2 Then
@@ -3421,26 +3603,26 @@ Public Class SOFCORD1
                 Next
             End If
             ASCMAIN1.sql = "Select * FROM WHTPALT1, SOTSHIP1 where SOTSHIP1.SHIP_BOL_NO = WHTPALT1.SHIP_BOL_NO And SOTSHIP1.ORDR_GROUP_NO = :PARM1"
-                For Each rowPALLET As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {ORDR_GROUP_NO}).Select("")
-                    For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
-                        rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
-                        rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
-                        rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
+            For Each rowPALLET As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", New Object() {ORDR_GROUP_NO}).Select("")
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
+                    rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
+                    rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
+                    rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
 
-                    Next
-                    For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
-                        rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
-                        rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
-                        rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
-
-                    Next
                 Next
-                UpdateCartStats()
-                dst.Tables("SOTCART1").AcceptChanges()
-                dst.Tables("SOTCART2").AcceptChanges()
-                dst.Tables("SOTCARTP").AcceptChanges()
-            End If
-            grdSOTCARTP.Text = grdSOTCART1.Text
+                For Each rowSOTCART1 As DataRow In dst.Tables("SOTCARTP").Select($"PALLET_NO = '{rowPALLET.Item("PALLET_NO")}'")
+                    rowSOTCART1.Item("SHIP_TRAILER_NO") = rowPALLET.Item("SHIP_TRAILER_NO")
+                    rowSOTCART1.Item("PALLET_INIT_DATE") = rowPALLET.Item("INIT_DATE")
+                    rowSOTCART1.Item("PALLET_INIT_OPER") = rowPALLET.Item("INIT_OPER")
+
+                Next
+            Next
+            UpdateCartStats()
+            dst.Tables("SOTCART1").AcceptChanges()
+            dst.Tables("SOTCART2").AcceptChanges()
+            dst.Tables("SOTCARTP").AcceptChanges()
+        End If
+        grdSOTCARTP.Text = grdSOTCART1.Text
         grdSOTCARTX.Text = grdSOTCART1.Text
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -3456,24 +3638,24 @@ Public Class SOFCORD1
             Dim IsMultiPO = grdSOTORDR0.ActiveRow.Cells("EDI_CONS_NO").Value & ""
 
             For Each rowSOTCARTP As DataRow In dst.Tables("SOTCARTP").Select("", "PALLET_NO, CART_NO")
-                    Dim CART_NO As String = rowSOTCARTP.Item("CART_NO").ToString & String.Empty
-                    Dim PALLET_NO As String = rowSOTCARTP.Item("PALLET_NO").ToString & String.Empty
+                Dim CART_NO As String = rowSOTCARTP.Item("CART_NO").ToString & String.Empty
+                Dim PALLET_NO As String = rowSOTCARTP.Item("PALLET_NO").ToString & String.Empty
 
-                    Sql.Length = 0
-                    Sql.AppendLine("SELECT")
-                    Sql.AppendLine("C1.CART_TOTAL_UNITS,")
-                    Sql.AppendLine("C1.CART_TOTAL_WGT_ACTUAL,")
-                    Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
-                    Sql.AppendLine("C1.CART_TRACKING_NO,")
-                    Sql.AppendLine("TO_CHAR (P1.INIT_DATE, 'HH12:MI:SS AM') AS SCAN_TIME,")
-                    Sql.AppendLine("S1.SHIP_LOAD_NO,")
-                    Sql.AppendLine("S1.BILL_OF_LADING_NO,")
-                    Sql.AppendLine("S1.MASTER_SHIP_BOL_NO")
-                    Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1, SOTSHIP1 S1")
-                    Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
-                    Sql.AppendLine("AND P1.SHIP_BOL_NO = S1.SHIP_BOL_NO (+)")
-                    Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
-                    Dim tbl As DataTable = ASCDATA1.GetDataTable(Sql.ToString())
+                Sql.Length = 0
+                Sql.AppendLine("SELECT")
+                Sql.AppendLine("C1.CART_TOTAL_UNITS,")
+                Sql.AppendLine("C1.CART_TOTAL_WGT_ACTUAL,")
+                Sql.AppendLine("C1.CART_TOTAL_WGT_CALC,")
+                Sql.AppendLine("C1.CART_TRACKING_NO,")
+                Sql.AppendLine("TO_CHAR (P1.INIT_DATE, 'HH12:MI:SS AM') AS SCAN_TIME,")
+                Sql.AppendLine("S1.SHIP_LOAD_NO,")
+                Sql.AppendLine("S1.BILL_OF_LADING_NO,")
+                Sql.AppendLine("S1.MASTER_SHIP_BOL_NO")
+                Sql.AppendLine("FROM SOTCART1 C1, WHTPALT1 P1, SOTSHIP1 S1")
+                Sql.AppendLine("WHERE C1.PALLET_NO = P1.PALLET_NO (+)")
+                Sql.AppendLine("AND P1.SHIP_BOL_NO = S1.SHIP_BOL_NO (+)")
+                Sql.AppendLine($"AND C1.CART_NO = '{CART_NO}'")
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(Sql.ToString())
                 If tbl.Rows.Count = 1 Then
                     rowSOTCARTP.Item("TRACKING_NO") = tbl.Rows(0).Item("CART_TRACKING_NO").ToString & String.Empty
                     Dim CARTON_WEIGHT As Double = 0
@@ -3555,34 +3737,34 @@ Public Class SOFCORD1
                     PALLET_NO_LAST = PALLET_NO
                 End If
                 rowSOTCARTP.Item("PALLET_VALUE") = PALLET_VALUE
-                Next
+            Next
 
-                Sort_grdColumns(grdSOTCARTP, "CUST_DC_NO,PALLET_NO")
-                PALLET_NO_LAST = ""
-                Dim PALLET_COLOR As Drawing.Color = Drawing.Color.LightBlue
-                For Each grow As UltraWinGrid.UltraGridRow In grdSOTCARTP.Rows
-                    Dim PALLET_NO As String = grow.Cells.Item("PALLET_NO").Text & String.Empty
-                    If PALLET_NO_LAST <> PALLET_NO Then
-                        If PALLET_COLOR = Drawing.Color.LightBlue Then
-                            PALLET_COLOR = Drawing.Color.LightGray
-                        Else
-                            PALLET_COLOR = Drawing.Color.LightBlue
-                        End If
-                        PALLET_NO_LAST = PALLET_NO
+            Sort_grdColumns(grdSOTCARTP, "CUST_DC_NO,PALLET_NO")
+            PALLET_NO_LAST = ""
+            Dim PALLET_COLOR As Drawing.Color = Drawing.Color.LightBlue
+            For Each grow As UltraWinGrid.UltraGridRow In grdSOTCARTP.Rows
+                Dim PALLET_NO As String = grow.Cells.Item("PALLET_NO").Text & String.Empty
+                If PALLET_NO_LAST <> PALLET_NO Then
+                    If PALLET_COLOR = Drawing.Color.LightBlue Then
+                        PALLET_COLOR = Drawing.Color.LightGray
+                    Else
+                        PALLET_COLOR = Drawing.Color.LightBlue
                     End If
-                    grow.Cells("PALLET_NO").Appearance.BackColor = PALLET_COLOR
-                    For Each CH As String In PALLET_NO
-                        If CH = "0" Then
-                            PALLET_NO = PALLET_NO.Substring(1)
-                        Else
-                            Exit For
-                        End If
-                    Next
-                    grow.Cells.Item("PALLET_NO").Value = PALLET_NO
+                    PALLET_NO_LAST = PALLET_NO
+                End If
+                grow.Cells("PALLET_NO").Appearance.BackColor = PALLET_COLOR
+                For Each CH As String In PALLET_NO
+                    If CH = "0" Then
+                        PALLET_NO = PALLET_NO.Substring(1)
+                    Else
+                        Exit For
+                    End If
                 Next
+                grow.Cells.Item("PALLET_NO").Value = PALLET_NO
+            Next
 
-            End If
-            Me.Cursor = Cursors.Default
+        End If
+        Me.Cursor = Cursors.Default
     End Sub
 
     Private Sub optOrders_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optOrders.ValueChanged
@@ -4285,6 +4467,152 @@ Public Class SOFCORD1
             grdSOTCARTP.Visible = True
 
         End If
+    End Sub
+
+    Private Sub btnRefreshOrders_Click(sender As Object, e As EventArgs) Handles btnRefreshOrders.Click
+
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Now Calculating all Supply & Demand")
+
+        ASCDATA1.ExecuteSQL($"Truncate Table {SOTORDRS_BASE}")
+        ASCMAIN1.sql = Get_SQL_SOTORDRS_BASE()
+        ASCDATA1.ExecuteSQL($"Insert into {SOTORDRS_BASE} {ASCMAIN1.sql }")
+
+        Fill_Records("SOTORDRS_ORDERS")
+        Sort_grdColumns(grdSOTORDRS_ORDERS, "CUST_CODE, ORDR_NO")
+
+        Fill_Records("SOTORDRS_SC")
+        Sort_grdColumns(grdSOTORDRS_sc, "STYLE_CODE, COLOR_CODE")
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
+
+    End Sub
+
+    Function Get_SQL_SOTORDRS_BASE(Optional initialize As Boolean = False) As String
+
+        Dim sql1 As String = "" _
+            & "Select SOTORDR2.ORDR_NO, SOTORDR1.CUST_CODE, SOTORDR1.ORDR_CUST_PO, SOTORDR1.ORDR_DATE, SOTORDR1.ORDR_SHIP_DATE, SOTORDR1.ORDR_CANCEL_DATE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR2.STYLE_DESC" & vbCrLf _
+            & ", SOTORDR2.STYLE_UOM, ICTCOLR1.COLOR_DESC, SOTORDR2.RANGE_STYLE_CODE" & vbCrLf _
+            & ", SOTORDR2.CUST_STYLE_CODE, ICTSTYL1.VEND_CODE" & vbCrLf _
+            & ", SOTORDR2.CUST_COLOR_CODE, SOTORDR2.CUST_SIZE_CODE, SOTORDR2.CUST_UPC, SOTORDR2.CUST_SKU" & vbCrLf _
+            & ", MAX (SOTORDR2.ORDR_UNIT_PRICE) ORDR_UNIT_PRICE" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY) ORDR_QTY, SUM (SOTORDR2.ORDR_QTY * ORDR_UNIT_PRICE) ORDR_AMT" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_OPEN) ORDR_QTY_OPEN, SUM (SOTORDR2.ORDR_QTY_ALLO) ORDR_QTY_ALLO" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_PICK) ORDR_QTY_PICK, SUM (SOTORDR2.ORDR_QTY_SHIP) ORDR_QTY_SHIP" & vbCrLf _
+            & ", SUM (SOTORDR2.ORDR_QTY_CANC) ORDR_QTY_CANC, SUM (SOTORDR2.ORDR_EXTD_COST) ORDR_CGS" & vbCrLf _
+            & ", MAX (SOTORDR2.ORDR_RELEASE_AVAIL) ORDR_RELEASE_AVAIL" & vbCrLf _
+            & "from SOTORDR2,ICTSTYL1,ICTCOLR1,SOTORDR1" & vbCrLf _
+            & "where ICTCOLR1.COLOR_CODE (+) = SOTORDR2.COLOR_CODE" & vbCrLf _
+            & "AND SOTORDR1.ORDR_STATUS = 'O'" & vbCrLf _
+            & "AND SOTORDR1.WHSE_CODE = 'MS'" & vbCrLf _
+            & "AND SOTORDR1.ORDR_TYPE_CODE = 'REG'" & vbCrLf _
+            & "AND SOTORDR2.ORDR_QTY_OPEN > 0" & vbCrLf _
+            & "and ICTSTYL1.STYLE_CODE (+) = SOTORDR2.STYLE_CODE" & vbCrLf _
+            & "and SOTORDR2.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+            & "group by SOTORDR2.ORDR_NO, SOTORDR1.CUST_CODE, SOTORDR1.ORDR_CUST_PO, SOTORDR1.ORDR_DATE, SOTORDR1.ORDR_SHIP_DATE, SOTORDR1.ORDR_CANCEL_DATE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
+            & ", SOTORDR2.STYLE_DESC, SOTORDR2.STYLE_UOM, ICTSTYL1.VEND_CODE, ICTCOLR1.COLOR_DESC, SOTORDR2.RANGE_STYLE_CODE" & vbCrLf _
+            & ", SOTORDR2.CUST_STYLE_CODE, SOTORDR2.CUST_COLOR_CODE, SOTORDR2.CUST_SIZE_CODE, SOTORDR2.CUST_UPC, SOTORDR2.CUST_SKU" & vbCrLf
+
+        Dim sql2 As String = "" _
+            & "SELECT X.*, SOTORDRS.WIP_IND" & vbCrLf _
+            & ", ICTSTAT2.WHSE_QTY_ON_HAND ONHD_3PL" & vbCrLf _
+            & ", ICTSTAT2.WHSE_QTY_TRAN TRAN_3PL" & vbCrLf _
+            & " from SOTORDRS, ICTSTAT2, (" & vbCrLf _
+            & sql1 _
+            & ") X" & vbCrLf _
+            & "where SOTORDRS.ORDR_GROUP_NO (+) = X.ORDR_NO and SOTORDRS.STYLE_CODE (+) = X.STYLE_CODE and SOTORDRS.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
+            & "and ICTSTAT2.WHSE_CODE (+) = 'US' and ICTSTAT2.STYLE_CODE (+) = X.STYLE_CODE and ICTSTAT2.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf
+
+        If initialize Then
+            sql2 &= " AND ROWNUM < 1"
+        End If
+        Return sql2
+
+    End Function
+
+    Function Get_SQL_SOTORDRS_ALL() As String
+
+        Dim SQL As String = "" _
+            & ", SUM (CASE WHEN ORDR_QTY_ALLO > 0 AND ORDR_RELEASE_AVAIL IS NULL THEN ORDR_QTY_ALLO ELSE 0 END) CUR_QTY_ONHD" & vbCrLf _
+            & ", SUM (CASE WHEN ORDR_QTY_ALLO > 0 AND ORDR_RELEASE_AVAIL IS NULL THEN ORDR_QTY_ALLO * ORDR_UNIT_PRICE ELSE 0 END) CUR_AMT_ONHD" & vbCrLf _
+            & ", SUM (CASE WHEN ORDR_QTY_ALLO > 0 AND ORDR_RELEASE_AVAIL IS NOT NULL AND WIP_IND = 'P' THEN ORDR_QTY_ALLO ELSE 0 END) FUT_QTY_ONPO" & vbCrLf _
+            & ", SUM (CASE WHEN ORDR_QTY_ALLO > 0 AND ORDR_RELEASE_AVAIL IS NOT NULL AND WIP_IND = 'P' THEN ORDR_QTY_ALLO * ORDR_UNIT_PRICE ELSE 0 END) FUT_AMT_ONPO" & vbCrLf _
+            & ", SUM (CASE WHEN ORDR_QTY_ALLO > 0 AND ORDR_RELEASE_AVAIL IS NOT NULL AND WIP_IND = 'S' THEN ORDR_QTY_ALLO ELSE 0 END) FUT_QTY_TRAN" & vbCrLf _
+            & ", SUM (CASE WHEN ORDR_QTY_ALLO > 0 AND ORDR_RELEASE_AVAIL IS NOT NULL AND WIP_IND = 'S' THEN ORDR_QTY_ALLO * ORDR_UNIT_PRICE ELSE 0 END) FUT_AMT_TRAN" & vbCrLf _
+            & ", SUM (CASE WHEN NVL(ORDR_QTY_ALLO,0) = 0 THEN ORDR_QTY_OPEN ELSE 0 END) UNAV_QTY" & vbCrLf _
+            & ", SUM (CASE WHEN NVL(ORDR_QTY_ALLO,0) = 0 THEN ORDR_QTY_OPEN * ORDR_UNIT_PRICE ELSE 0 END) UNAV_AMT" & vbCrLf _
+            & ", ONHD_3PL" & vbCrLf _
+            & ", TRAN_3PL" & vbCrLf _
+            & $" from {SOTORDRS_BASE} SOTORDRS_BASE" & vbCrLf
+        Return SQL
+
+    End Function
+
+    Function Get_SQL_SOTORDRS_ORDERS() As String
+        Dim sql1 As String = "Select ORDR_NO, CUST_CODE, ORDR_CUST_PO, ORDR_DATE, ORDR_SHIP_DATE, ORDR_CANCEL_DATE" & vbCrLf _
+        & Replace(Replace(Get_SQL_SOTORDRS_ALL(), ", ONHD_3PL", ", SUM (ONHD_3PL) ONHD_3PL"), ", TRAN_3PL", ", SUM (TRAN_3PL) TRAN_3PL") _
+        & " group by ORDR_NO, CUST_CODE, ORDR_CUST_PO, ORDR_DATE, ORDR_SHIP_DATE, ORDR_CANCEL_DATE"
+
+        Dim sql As String = $"Select X.*, ARTCUST1.CUST_NAME from ({sql1}) X, ARTCUST1" & vbCrLf _
+            & " where ARTCUST1.CUST_CODE = X.CUST_CODE"
+
+        Return sql
+
+    End Function
+
+    Function Get_SQL_SOTORDRS_SC() As String
+        Dim sql1 As String = "Select STYLE_CODE, COLOR_CODE" & vbCrLf _
+        & Get_SQL_SOTORDRS_ALL() _
+        & " group by STYLE_CODE, COLOR_CODE, ONHD_3PL, TRAN_3PL"
+
+        Dim sql As String = $"Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC from ({sql1}) X, ICTSTYL1, ICTCOLR1" & vbCrLf _
+            & " where ICTSTYL1.STYLE_CODE = X.STYLE_CODE and ICTCOLR1.COLOR_CODE = X.COLOR_CODE"
+
+        Return sql
+
+    End Function
+
+    Private Sub grdSOTORDRS_ORDERS_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTORDRS_ORDERS.AfterRowActivate
+        Setup_Synch()
+    End Sub
+
+    Sub Setup_Synch()
+        Dim dvw As DataView = dst.Tables("SOTORDRS_SC").DefaultView
+        If Not chkSynchronize.Checked Then
+            dvw.RowFilter = ""
+        Else
+            If grdSOTORDRS_ORDERS.ActiveRow Is Nothing OrElse Not grdSOTORDRS_ORDERS.ActiveRow.IsDataRow Then
+                dvw.RowFilter = ""
+            Else
+                dvw.RowFilter = ""
+                For Each row As DataRow In dst.Tables("SOTORDRS_SC").Select("SEL = '1'")
+                    row.Item("SEL") = DBNull.Value
+                Next
+
+                Dim ORDR_NO As String = grdSOTORDRS_ORDERS.ActiveRow.Cells("ORDR_NO").Value & ""
+                ASCMAIN1.sql = $"Select STYLE_CODE, COLOR_CODE from SOTORDR2 where ORDR_NO = '{ORDR_NO}'"
+                For Each row As DataRow In ASCDATA1.GetDataTable().Select("")
+                    Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+                    Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+                    Dim rowSC As DataRow = dst.Tables("SOTORDRS_SC").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+                    If rowSC IsNot Nothing Then
+                        rowSC.Item("SEL") = "1"
+                    End If
+                Next
+
+                Dim sql As String = "SEL = '1'"
+                dvw.RowFilter = sql
+            End If
+        End If
+    End Sub
+
+    Private Sub chkSynchronize_CheckedChanged(sender As Object, e As EventArgs) Handles chkSynchronize.CheckedChanged
+        Setup_Synch
+    End Sub
+
+    Private Sub btnSaveShort_Click(sender As Object, e As EventArgs) Handles btnSaveShort.Click
+        grdSOTORDR0.DisplayLayout.SaveAsXml(SOFCORD1_LAYOUT_SHORT, UltraWinGrid.PropertyCategories.All)
     End Sub
 End Class
 

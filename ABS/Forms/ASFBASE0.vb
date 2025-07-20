@@ -10656,6 +10656,14 @@ Public Class ASFBASE0
         Return JE_ERRORS
 
     End Function
+    Public Sub MakeTransparent(lbl As Infragistics.Win.Misc.UltraLabel)
+        With lbl
+            .Appearance.ForeColor = System.Drawing.Color.White
+            .Appearance.BackColor = System.Drawing.Color.FromArgb(98, 160, 232)
+            .Appearance.BackColor2 = System.Drawing.Color.FromArgb(83, 115, 191)
+            .Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        End With
+    End Sub
 
     Public Sub MakeTransparent(chk As ABSCS.ABSCheckBox)
         With chk

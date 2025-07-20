@@ -69,6 +69,8 @@ Public Class ASCMAIN1
     Public Shared USER_JWT_EXPIRES As DateTime
     Public Shared API_ENDPOINT As String
 
+    Public Shared useUNCPath As Boolean = False
+
     Public Enum DBS_TYPE_types
         Oracle
         SQLServer
@@ -229,6 +231,85 @@ Public Class ASCMAIN1
             ' do not want to throw error is user types in an invalid band number
         End Try
     End Sub
+
+
+
+
+
+
+
+    Public Shared Property InvoicePrinterIpAddress() As String
+        Get
+            Return (ASFMAIN1.invoicePrinterIP)
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.invoicePrinterIP = value
+        End Set
+    End Property
+
+    Public Shared Property UseLaserPrinterIPAddress() As Boolean
+        Get
+            Return (ASFMAIN1.useLaserPrinterIP)
+        End Get
+        Set(ByVal value As Boolean)
+            ASFMAIN1.useLaserPrinterIP = value
+        End Set
+    End Property
+
+    'Public Shared Property LaserPrinterIpAddress() As String
+    '    Get
+    '        Return (ASFMAIN1.laserPrinterIP)
+    '    End Get
+    '    Set(ByVal value As String)
+    '        ASFMAIN1.laserPrinterIP = value
+    '    End Set
+    'End Property
+
+    Public Shared Property LabelPrinterName() As String
+        Get
+            Return ASFMAIN1.labelPrinterName
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.labelPrinterName = value
+        End Set
+    End Property
+
+    ' AEG IP label printing
+    Public Shared Property LabelPrinterIPAddress() As String
+        Get
+            Return ASFMAIN1.labelPrinterIPAddress
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.labelPrinterIPAddress = value
+        End Set
+    End Property
+
+
+    Public Shared Property MiniLabelPrinterIPAddress() As String
+        Get
+            Return ASFMAIN1.miniLabelPrinterIPAddress
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.miniLabelPrinterIPAddress = value
+        End Set
+    End Property
+
+    Public Shared Property UPCFramePrinterIPAddress() As String
+        Get
+            Return ASFMAIN1.UPCFramePrinterIPAddress
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.UPCFramePrinterIPAddress = value
+        End Set
+    End Property
+
+
+
+
+
+
+
+
 
 
     Public Shared Sub Center(ByVal F As Form)
@@ -4013,14 +4094,14 @@ Public Class ASCMAIN1
         End Set
     End Property
 
-    Public Shared Property LabelPrinterName As String
-        Get
-            Return ASFMAIN1.labelPrinterName
-        End Get
-        Set(ByVal value As String)
-            ASFMAIN1.labelPrinterName = value
-        End Set
-    End Property
+    'Public Shared Property LabelPrinterName As String
+    '    Get
+    '        Return ASFMAIN1.labelPrinterName
+    '    End Get
+    '    Set(ByVal value As String)
+    '        ASFMAIN1.labelPrinterName = value
+    '    End Set
+    'End Property
 
     Public Shared ReadOnly Property ScalePort As System.IO.Ports.SerialPort
 

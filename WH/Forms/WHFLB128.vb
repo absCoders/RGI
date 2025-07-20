@@ -2544,6 +2544,9 @@ Public Class WHFLB128
         'Dim filename As String = "C:\dmp\ITEMSLOCS.txt"
         ' NEED TO ARCHIVE THE LOCATIONS FILE & MOVE IT OUT OF THE WAY
         Dim filename As String = "S:\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        If ASCMAIN1.useUNCPath Then
+            filename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        End If
         Dim data As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
@@ -2576,6 +2579,9 @@ Public Class WHFLB128
         'Dim filename As String = "C:\dmp\ITEMSLOCS.txt"
         ' NEED TO ARCHIVE THE LOCATIONS FILE & MOVE IT OUT OF THE WAY
         Dim filename As String = "S:\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        If ASCMAIN1.useUNCPath Then
+            filename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\ITEMSLOCS.txt"
+        End If
         Dim data As String = ""
         Dim STYLE_CODE As String = ""
         Dim COLOR_CODE As String = ""
@@ -2585,7 +2591,9 @@ Public Class WHFLB128
         Dim drCDATE As String = Now
 
         Dim HISTfilename As String = "S:\WAREHOUSE\LOCATIONS\HIST\ITEMSLOCS"
-
+        If ASCMAIN1.useUNCPath Then
+            HISTfilename = $"{ASCMAIN1.Folders("SharedRoot")}\WAREHOUSE\LOCATIONS\HIST\ITEMSLOCS"
+        End If
         '  Get_PARM("ICTPARMR")
 
         If My.Computer.FileSystem.FileExists(filename) Then
