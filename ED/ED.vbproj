@@ -413,10 +413,6 @@
       <Project>{F8DA3299-4A2C-473D-9AEE-C00295788E43}</Project>
       <Name>TAC</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WHC\WHC.vbproj">
-      <Project>{169f5e5f-d5e6-4dca-8571-a1d4e6188b97}</Project>
-      <Name>WHC</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\" />

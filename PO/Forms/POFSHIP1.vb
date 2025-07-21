@@ -15677,9 +15677,9 @@ Public Class POFSHIP1
                 Dim ED_PARM_3PL_FTP_DIR As String = ROWs("EDTPARM1")("ED_PARM_3PL_FTP_DIR") & "USL\PO\"
 
                 Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
-            Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
-            worksheet.Cells(0, 6).EntireColumn.NumberFormat = "@"
-            Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
+                Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+                worksheet.Cells(0, 8).EntireColumn.NumberFormat = "@"
+                Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
             range.CopyFromDataTable(tblEXPORT, SpreadsheetGear.Data.SetDataFlags.None)
             workbook.SaveAs(WorkDir & csvFileName, SpreadsheetGear.FileFormat.UnicodeText)
             range = Nothing

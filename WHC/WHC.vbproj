@@ -105,7 +105,6 @@
     <Compile Include="Classes\ASCDATA1.VB" />
     <Compile Include="Classes\ASCMAIN1.vb" />
     <Compile Include="Classes\ASCBASE0.vb" />
-    <Compile Include="Classes\EDC850I1.vb" />
     <Compile Include="Classes\WHCRF006.vb" />
     <Compile Include="Classes\WHCRF004.vb" />
     <Compile Include="Classes\WHCRF003.vb" />
@@ -191,16 +190,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ABS\ABS.vbproj">
-      <Project>{8ac20144-ad3b-4b63-b4ce-e14faa115dd2}</Project>
-      <Name>ABS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TAC\TAC.vbproj">
-      <Project>{f8da3299-4a2c-473d-9aee-c00295788e43}</Project>
-      <Name>TAC</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
