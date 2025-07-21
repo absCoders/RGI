@@ -793,6 +793,7 @@ Partial Class SOFCORD1
         Dim UltraTab15 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab16 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab19 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab23 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance221 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand20 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTCORDX", -1)
         Dim UltraGridColumn160 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SORT_SEQ")
@@ -960,6 +961,7 @@ Partial Class SOFCORD1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.UltraTabPageControl23 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -2304,7 +2306,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl17
         '
         Me.UltraTabPageControl17.Controls.Add(Me.grdSOTORDRT)
-        Me.UltraTabPageControl17.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
         Me.UltraTabPageControl17.Size = New System.Drawing.Size(1301, 420)
         '
@@ -2461,7 +2463,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl18
         '
         Me.UltraTabPageControl18.Controls.Add(Me.splComments)
-        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl18.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
         Me.UltraTabPageControl18.Size = New System.Drawing.Size(1301, 420)
         '
@@ -2646,7 +2648,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdSOTORDR1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1307, 332)
         '
@@ -4193,7 +4195,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 10.0R
+        Me.chtSATCSLS1_X.Axis.Y.TickmarkInterval = 50.0R
         Me.chtSATCSLS1_X.Axis.Y.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y.Visible = True
         Me.chtSATCSLS1_X.Axis.Y2.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -4221,7 +4223,7 @@ Partial Class SOFCORD1
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Color = System.Drawing.Color.LightGray
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.DrawStyle = Infragistics.UltraChart.[Shared].Styles.LineDrawStyle.Dot
         Me.chtSATCSLS1_X.Axis.Y2.MinorGridLines.Visible = False
-        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 10.0R
+        Me.chtSATCSLS1_X.Axis.Y2.TickmarkInterval = 50.0R
         Me.chtSATCSLS1_X.Axis.Y2.TickmarkStyle = Infragistics.UltraChart.[Shared].Styles.AxisTickStyle.Smart
         Me.chtSATCSLS1_X.Axis.Y2.Visible = False
         Me.chtSATCSLS1_X.Axis.Z.Labels.Font = New System.Drawing.Font("Verdana", 7.0!)
@@ -4979,6 +4981,7 @@ Partial Class SOFCORD1
         Me.tabDetails.Controls.Add(Me.UltraTabPageControl15)
         Me.tabDetails.Controls.Add(Me.UltraTabPageControl16)
         Me.tabDetails.Controls.Add(Me.UltraTabPageControl19)
+        Me.tabDetails.Controls.Add(Me.UltraTabPageControl23)
         Me.tabDetails.Dock = System.Windows.Forms.DockStyle.Fill
         Me.tabDetails.Location = New System.Drawing.Point(0, 0)
         Me.tabDetails.Name = "tabDetails"
@@ -5000,7 +5003,9 @@ Partial Class SOFCORD1
         UltraTab16.Text = "All Orders"
         UltraTab19.TabPage = Me.UltraTabPageControl19
         UltraTab19.Text = "Pallets"
-        Me.tabDetails.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab6, UltraTab5, UltraTab3, UltraTab4, UltraTab15, UltraTab16, UltraTab19})
+        UltraTab23.TabPage = Me.UltraTabPageControl23
+        UltraTab23.Text = "Comments"
+        Me.tabDetails.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab6, UltraTab5, UltraTab3, UltraTab4, UltraTab15, UltraTab16, UltraTab19, UltraTab23})
         '
         'UltraTabSharedControlsPage7
         '
@@ -5378,6 +5383,12 @@ Partial Class SOFCORD1
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1315, 927)
         '
+        'UltraTabPageControl23
+        '
+        Me.UltraTabPageControl23.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
+        Me.UltraTabPageControl23.Size = New System.Drawing.Size(1307, 332)
+        '
         'SOFCORD1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -5679,4 +5690,5 @@ Partial Class SOFCORD1
     Friend WithEvents grdSOTORDRS_SC As UltraWinGrid.UltraGrid
     Friend WithEvents chkSynchronize As ABSCS.ABSCheckBox
     Friend WithEvents btnSaveShort As Misc.UltraButton
+    Friend WithEvents UltraTabPageControl23 As UltraWinTabControl.UltraTabPageControl
 End Class

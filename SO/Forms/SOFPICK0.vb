@@ -2137,7 +2137,7 @@ Public Class SOFPICK0
             & "T1.PICK_RELEASED,T1.PICK_PRINTED,T1.PICK_PACKED,T1.PICK_SHIPPED,T1.PICK_BATCH_NO,T1.SHIP_BOL_NO,T1.INV_NO, " & vbCrLf _
             & "T1.PICK_CNT_CARTONS,T1.PICK_TOTAL_WGT, t1.INIT_OPER, t1.LAST_OPER, t1.INIT_DATE, t1.LAST_DATE, t1.PICK_PRINTED_OPER, " & vbCrLf _
             & "T1.PICK_NO_REV, t1.CCPA_NO, t1.SHIP_CNTL_NO, t1.CCPA_NO_STATUS, t1.CCPA_NO_AUTH, t1.CONFIG_NO, " & vbCrLf _
-            & "'" & PICK_NO_CONS & "'AS PICK_NO_CONS " & vbCrLf _
+            & "'" & PICK_NO_CONS & "'AS PICK_NO_CONS, T1.WHSE_CODE " & vbCrLf _
             & ",SOTORDR1.CUST_STORE_NO from SOTPICK1 T1, SOTORDR1" & vbCrLf _
             & " where SOTORDR1.ORDR_NO = T1.ORDR_NO" & vbCrLf _
             & "   And T1.SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"

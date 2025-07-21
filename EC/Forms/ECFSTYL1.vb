@@ -651,6 +651,8 @@ Public Class ECFSTYL1
                 For Each dc As DataColumn In dst.Tables.Item("ECTESTY1").Columns
                     newECTESTY1.Item(dc.ColumnName) = rowECTESTY1_NEW.Item(dc.ColumnName)
                 Next
+                newECTESTY1.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                newECTESTY1.Item("INIT_OPER") = ASCMAIN1.USER_ID
                 dst.Tables.Item("ECTESTY1").Rows.Add(newECTESTY1)
                 Dim STYLE_FILTER As String = String.Format("STYLE_CODE = '{0}'", rowECTESTY1_NEW.Item("STYLE_CODE").ToString & String.Empty)
                 For Each rowECTESTY2_NEW As DataRow In dst.Tables("ECTESTY2_NEW").Select(STYLE_FILTER)
@@ -660,6 +662,8 @@ Public Class ECFSTYL1
                             newECTESTY2.Item(dc.ColumnName) = rowECTESTY2_NEW.Item(dc.ColumnName)
                         End If
                     Next
+                    newECTESTY2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                    newECTESTY2.Item("INIT_OPER") = ASCMAIN1.USER_ID
                     dst.Tables.Item("ECTESTY2").Rows.Add(newECTESTY2)
                 Next
             Next
@@ -751,6 +755,8 @@ Public Class ECFSTYL1
                     newECTESTY1_NEW.Item("STYLE_DESC") = dr.Item("STYLE_DESC").ToString & String.Empty
                     newECTESTY1_NEW.Item("STYLE_PRICE") = Val(dr.Item("STYLE_PRICE").ToString & String.Empty)
                     newECTESTY1_NEW.Item("SET_QTY") = DEFAULT_SET_QTY
+                    newECTESTY1_NEW.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                    newECTESTY1_NEW.Item("INIT_OPER") = ASCMAIN1.USER_ID
                     dst.Tables.Item("ECTESTY1_NEW").Rows.Add(newECTESTY1_NEW)
 
                     Dim sql As New Text.StringBuilder With {.Length = 0}
@@ -765,6 +771,8 @@ Public Class ECFSTYL1
                         newECTESTY2_NEW.Item("COLOR_CODE") = COLOR_CODE
                         newECTESTY2_NEW.Item("ECOM_CODE") = cboPartnerNew.Text
                         newECTESTY2_NEW.Item("ECOM_STYLE_COLOR_STATUS") = "A"
+                        newECTESTY2_NEW.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                        newECTESTY2_NEW.Item("INIT_OPER") = ASCMAIN1.USER_ID
                         dst.Tables.Item("ECTESTY2_NEW").Rows.Add(newECTESTY2_NEW)
                     Next
                 End If
@@ -2312,6 +2320,8 @@ Public Class ECFSTYL1
             newECTESTY2.Item("COLOR_CODE") = COLOR_CODE
             newECTESTY2.Item("ECOM_CODE") = ECOM_CODE
             newECTESTY2.Item("ECOM_STYLE_COLOR_STATUS") = ECOM_STYLE_STATUS
+            newECTESTY2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+            newECTESTY2.Item("INIT_OPER") = ASCMAIN1.USER_ID
             dst.Tables("ECTESTY2").Rows.Add(newECTESTY2)
         End If
     End Sub
@@ -2382,6 +2392,8 @@ Public Class ECFSTYL1
             newECTESTY1.Item("NET_PRICE") = NET_PRICE
             newECTESTY1.Item("SET_QTY") = SET_QTY
             newECTESTY1.Item("ECOM_MIN_QTY_OVERRIDE") = ECOM_MIN_QTY_DEFAULT
+            newECTESTY1.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+            newECTESTY1.Item("INIT_OPER") = ASCMAIN1.USER_ID
             dst.Tables("ECTESTY1").Rows.Add(newECTESTY1)
         End If
     End Sub
@@ -2585,6 +2597,8 @@ Public Class ECFSTYL1
                                 newECTESTY2.Item("COLOR_CODE") = COLOR_CODE
                                 newECTESTY2.Item("ECOM_CODE") = ECOM_CODE
                                 newECTESTY2.Item("ECOM_STYLE_COLOR_STATUS") = "A"
+                                newECTESTY2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                                newECTESTY2.Item("INIT_OPER") = ASCMAIN1.USER_ID
                                 dst.Tables.Item("ECTESTY2").Rows.Add(newECTESTY2)
                             End If
 
@@ -3530,6 +3544,8 @@ Public Class ECFSTYL1
                     Next
                     If cngECTESTY1_U = True Then
                         If AddECTESTY1_U Then
+                            rowECTESTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            rowECTESTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
                             dst.Tables("ECTESTY1_U").Rows.Add(rowECTESTY1_U)
                         End If
                     End If
@@ -3598,6 +3614,8 @@ Public Class ECFSTYL1
                     Next
                     If cngECTESTY2_U = True Then
                         If AddECTESTY2_U Then
+                            rowECTESTY2_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            rowECTESTY2_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
                             dst.Tables("ECTESTY2_U").Rows.Add(rowECTESTY2_U)
                         End If
                     End If
@@ -3644,6 +3662,8 @@ Public Class ECFSTYL1
                     Next
                     If cngECTSTYL1_U = True Then
                         If AddECTSTYL1_U Then
+                            rowECTSTYL1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            rowECTSTYL1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
                             dst.Tables("ECTSTYL1_U").Rows.Add(rowECTSTYL1_U)
                         End If
                     End If

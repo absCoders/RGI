@@ -218,6 +218,7 @@
     <Compile Include="Classes\SOCORDR1.vb" />
     <Compile Include="Classes\SOCPRNT1.vb" />
     <Compile Include="Classes\TACSCOM1.vb" />
+    <Compile Include="Classes\TACZPLT1.vb" />
     <Compile Include="Classes\test.vb" />
     <Compile Include="Classes\WHCMAIN1.vb" />
     <Compile Include="Classes\POCMAIN1.vb" />
@@ -312,6 +313,14 @@
     <Compile Include="Forms\TAFIMGV1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\TAFZPLH1.Designer.vb" />
+    <Compile Include="Forms\TAFZPLH1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TAFZPLT1.Designer.vb" />
+    <Compile Include="Forms\TAFZPLT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WHFPKGM1.Designer.vb">
       <DependentUpon>WHFPKGM1.vb</DependentUpon>
     </Compile>
@@ -379,6 +388,8 @@
     <EmbeddedResource Include="Forms\TAFIMGV1.resx">
       <DependentUpon>TAFIMGV1.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TAFZPLH1.resx" />
+    <EmbeddedResource Include="Forms\TAFZPLT1.resx" />
     <EmbeddedResource Include="Forms\WHFPKGM1.resx">
       <DependentUpon>WHFPKGM1.vb</DependentUpon>
     </EmbeddedResource>

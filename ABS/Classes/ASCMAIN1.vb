@@ -233,6 +233,85 @@ Public Class ASCMAIN1
     End Sub
 
 
+
+
+
+
+
+    Public Shared Property InvoicePrinterIpAddress() As String
+        Get
+            Return (ASFMAIN1.invoicePrinterIP)
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.invoicePrinterIP = value
+        End Set
+    End Property
+
+    Public Shared Property UseLaserPrinterIPAddress() As Boolean
+        Get
+            Return (ASFMAIN1.useLaserPrinterIP)
+        End Get
+        Set(ByVal value As Boolean)
+            ASFMAIN1.useLaserPrinterIP = value
+        End Set
+    End Property
+
+    'Public Shared Property LaserPrinterIpAddress() As String
+    '    Get
+    '        Return (ASFMAIN1.laserPrinterIP)
+    '    End Get
+    '    Set(ByVal value As String)
+    '        ASFMAIN1.laserPrinterIP = value
+    '    End Set
+    'End Property
+
+    Public Shared Property LabelPrinterName() As String
+        Get
+            Return ASFMAIN1.labelPrinterName
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.labelPrinterName = value
+        End Set
+    End Property
+
+    ' AEG IP label printing
+    Public Shared Property LabelPrinterIPAddress() As String
+        Get
+            Return ASFMAIN1.labelPrinterIPAddress
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.labelPrinterIPAddress = value
+        End Set
+    End Property
+
+
+    Public Shared Property MiniLabelPrinterIPAddress() As String
+        Get
+            Return ASFMAIN1.miniLabelPrinterIPAddress
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.miniLabelPrinterIPAddress = value
+        End Set
+    End Property
+
+    Public Shared Property UPCFramePrinterIPAddress() As String
+        Get
+            Return ASFMAIN1.UPCFramePrinterIPAddress
+        End Get
+        Set(ByVal value As String)
+            ASFMAIN1.UPCFramePrinterIPAddress = value
+        End Set
+    End Property
+
+
+
+
+
+
+
+
+
+
     Public Shared Sub Center(ByVal F As Form)
         F.SetBounds((System.Windows.Forms.Screen.GetBounds(F).Width / 2) - (F.Width / 2),
     (System.Windows.Forms.Screen.GetBounds(F).Height / 2) - (F.Height / 2),
@@ -4015,14 +4094,14 @@ Public Class ASCMAIN1
         End Set
     End Property
 
-    Public Shared Property LabelPrinterName As String
-        Get
-            Return ASFMAIN1.labelPrinterName
-        End Get
-        Set(ByVal value As String)
-            ASFMAIN1.labelPrinterName = value
-        End Set
-    End Property
+    'Public Shared Property LabelPrinterName As String
+    '    Get
+    '        Return ASFMAIN1.labelPrinterName
+    '    End Get
+    '    Set(ByVal value As String)
+    '        ASFMAIN1.labelPrinterName = value
+    '    End Set
+    'End Property
 
     Public Shared ReadOnly Property ScalePort As System.IO.Ports.SerialPort
 
