@@ -15565,12 +15565,12 @@ Public Class POFSHIP1
             Dim RecCnt As Int32 = 0
 
             If ChangesMade Then
-                MsgBox($"Changes to the Warehouse are only allowed for 'MS'.{Environment.NewLine}Change the 'MS' shipment associated with this shipment to send a Loted pre-receipt.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                MsgBox($"Changes to the Warehouse and Shipment Details are not allowed at the same time.{Environment.NewLine}Change the Warehouse after other updates have been completed.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
                 Return False
             End If
 
             If WHSE_CODE_ORIG <> "MS" Then
-                MsgBox($"Only MS shipments are allowed to be changed.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                MsgBox($"Changes to the Warehouse are only allowed for 'MS'.{Environment.NewLine}Change the 'MS' shipment associated with this shipment to send a Loted pre-receipt.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
                 Return False
             End If
 
