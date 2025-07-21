@@ -245,7 +245,7 @@ Public Class SOFOXFR1
 
         Dim WHSE_CODE As String = "US"
 
-        Create_Transfer_Order() ' Create a Single XFR Order for the selected SCs to Transfer
+        Create_Transfer_Order(dst.Tables("SOTOXFRX").Select("SEL = '1'"), "QTY_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
         Release_Transfer_Order() ' Release that XFR Order
 
         For Each TABLE_NAME As String In TABLES_OXFR
@@ -523,7 +523,7 @@ Public Class SOFOXFR1
 
     End Function
 
-    Sub Create_Transfer_Order()
+    Sub Create_Transfer_Order(rows2() As DataRow, QTY_col As String)
         ' SOTORDR1 SOTORDR2 SOTORDR5 SOTORDR0 ICTSTAT2
 
         Me.Cursor = Cursors.WaitCursor
@@ -552,14 +552,12 @@ Public Class SOFOXFR1
         Dim rowARTCUST1_BT As DataRow = LookUp("ARTCUST1", CUST_BILL_TO_CUST)
 
         Dim WHSE_CODE As String = "US"
-        For Each rowSOTOXFRX As DataRow In dst.Tables("SOTOXFRX").Select("SEL = '1'")
-            Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
-            Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
-            Dim ORDR_QTY_OPEN As Int32 = Val(rowSOTOXFRX.Item("UNITS_2_XFR"))
+        For Each row2 As DataRow In rows2
+            Dim STYLE_CODE As String = row2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = row2.Item("COLOR_CODE")
+            Dim ORDR_QTY_OPEN As Int32 = Val(row2.Item(QTY_col))
 
-            Dim ORDR_RETAIL_PRICE As Decimal = 0
             Dim ORDR_UNIT_PRICE As Decimal = 0
-
             Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
             Dim STYLE_DESC As String = rowICTSTYL1.Item("STYLE_DESC")
 
@@ -580,7 +578,7 @@ Public Class SOFOXFR1
                 .Item("ORDR_QTY_ALLO") = 0
                 .Item("INNER_PACK_QTY") = rowICTSTYL1.Item("INNER_PACK_QTY")
                 .Item("ORDR_EXTD_COST") = 0
-                .Item("STYLE_UOM") = "EA"
+                .Item("STYLE_UOM") = rowICTSTYL1.Item("STYLE_UOM")
                 .Item("ORDR_QTY_PICK") = 0
                 .Item("ORDR_QTY_SHIP") = 0
                 .Item("ORDR_QTY_CANC") = 0
@@ -594,10 +592,6 @@ Public Class SOFOXFR1
                 .Item("STYLE_RETAIL") = 0
                 .Item("PO_COST") = 0
                 .Item("COMM_RATE") = 0
-                '.Item("ORDR_RETAIL_PRICE") = ORDR_UNIT_PRICE
-                '.Item("ORDR_SELLER_FEE") = 0
-                '.Item("ORDR_FULLFILL_FEE") = 0
-
             End With
             dst.Tables("SOTORDR2").Rows.Add(rowSOTORDR2)
         Next
@@ -660,22 +654,6 @@ Public Class SOFOXFR1
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("", "")
     End Sub
-
-
-    Sub ADD_SOTORDR5(ORDR_NO As String, CUST_CODE As String, CUST_ADDR_TYPE As String, CUST_ADDR_CODE As String, row As DataRow)
-        Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").NewRow
-        With rowSOTORDR5
-            .Item("ORDR_NO") = ORDR_NO
-            .Item("CUST_ADDR_TYPE") = CUST_ADDR_TYPE
-            .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
-            For Each COLUMN_NAME As String In New String() _
-                {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY"}
-                .Item(COLUMN_NAME) = row.Item(COLUMN_NAME)
-            Next
-        End With
-        dst.Tables("SOTORDR5").Rows.Add(rowSOTORDR5)
-    End Sub
-
     Sub Release_Transfer_Order()
         ' SOTPICK1 SOTPICK2 SOTPICK0 SOTSHIP1 SOTCART1 SOTCAR2 ICTSTAT2
 
@@ -771,7 +749,7 @@ Public Class SOFOXFR1
 
             'If TOTAL_OPEN = 0 Then
             rowSOTORDR1.Item("ORDR_STATUS") = "P"
-                rowSOTORDR1.Item("ORDR_CUST_PO") = PICK_NO
+            rowSOTORDR1.Item("ORDR_CUST_PO") = PICK_NO
 
             'End If
 
@@ -897,9 +875,23 @@ Public Class SOFOXFR1
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("", "")
-
-
     End Sub
+
+
+    Sub ADD_SOTORDR5(ORDR_NO As String, CUST_CODE As String, CUST_ADDR_TYPE As String, CUST_ADDR_CODE As String, row As DataRow)
+        Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").NewRow
+        With rowSOTORDR5
+            .Item("ORDR_NO") = ORDR_NO
+            .Item("CUST_ADDR_TYPE") = CUST_ADDR_TYPE
+            .Item("CUST_ADDR_CODE") = CUST_ADDR_CODE
+            For Each COLUMN_NAME As String In New String() _
+                {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY"}
+                .Item(COLUMN_NAME) = row.Item(COLUMN_NAME)
+            Next
+        End With
+        dst.Tables("SOTORDR5").Rows.Add(rowSOTORDR5)
+    End Sub
+
 
     Function New_Carton(PICK_NO As String, ByRef CART_NO_seq As Int32) As String
         Dim rowSOTCART1 As DataRow = dst.Tables("SOTCART1").NewRow
