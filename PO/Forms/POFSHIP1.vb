@@ -5248,6 +5248,7 @@ Public Class POFSHIP1
                 .Item("PICK_BATCH_NO") = "000000"
                 .Item("SHIP_BOL_NO") = SHIP_BOL_NO
                 .Item("INV_NO") = INV_NO
+                .Item("WHSE_CODE") = WHSE_CODE
                 .Item("PICK_CNT_CARTONS") = SHIP_CNT_CARTONS
                 .Item("PICK_TOTAL_WGT") = SHIP_TOTAL_WGT
                 .Item("INIT_OPER") = ASCMAIN1.USER_ID
