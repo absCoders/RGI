@@ -1196,7 +1196,7 @@
 
         Dim ICTSTAT2_STATUS As String = "ICTSTAT2"
         Dim combine_MS_US As Boolean = False
-        If ASCMAIN1.CLIENT = "RGI" Then
+        If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE_to_allocate = "MS" Then
             combine_MS_US = True ' False ' TRUE
             If combine_MS_US Then
                 ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, 'MS' WHSE_CODE" & vbCrLf _
