@@ -15569,20 +15569,31 @@ Public Class POFSHIP1
                 Return False
             End If
 
-            If 1 = 2 Then ' skip these checks need to check for multi-carton units
-                ASCMAIN1.sql = $"Select distinct PO_SHIPMENT_NO from POTSHIP4
-                        where PO_SHIPMENT_NO <> '{PO_SHIPMENT_NO}'
+            If WHSE_CODE_ORIG <> "MS" Then
+                MsgBox($"Only MS shipments are allowed to be changed.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                Return False
+            End If
+
+            ASCMAIN1.sql = $"Select distinct POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.WHSE_CODE from POTSHIP4, POTSHIP1
+                        where POTSHIP1.PO_SHIPMENT_NO = POTSHIP4.PO_SHIPMENT_NO
+                        and POTSHIP1.PO_SHIPMENT_NO <> '{PO_SHIPMENT_NO}'
                         and CONTAINER_NO in (
                         select CONTAINER_NO from POTSHIP4
                         where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}')"
-                Dim tblErr As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
-                If tblErr.Rows.Count > 0 Then
-                    For Each row As DataRow In tblErr.Select()
-                        msgtext &= "," & row("PO_SHIPMENT_NO")
-                    Next
-                    MsgBox($"This Shipment:'{PO_SHIPMENT_NO}' is tied to additional shipment records:{msgtext.Substring(1) & Environment.NewLine} not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
-                    Return False
-                End If
+            Dim tblErr As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+            If tblErr.Rows.Count > 0 Then
+                For Each row As DataRow In tblErr.Select()
+                    msgtext &= "," & row("PO_SHIPMENT_NO")
+                    If row("WHSE_CODE") <> "MS" And row("WHSE_CODE") <> "NY" Then
+                        MsgBox($"This Shipment has Merchandise for warehouse {row("WHSE_CODE")}. This change is not allowed", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                        Return False
+                    End If
+                Next
+                MsgBox($"This Shipment:'{PO_SHIPMENT_NO}' is tied to additional shipment records: {msgtext.Substring(1) & Environment.NewLine} ", MsgBoxStyle.Critical, "Multiple Shipments")
+
+            End If
+
+            If 1 = 2 Then ' skip these checks need to check for multi-carton units
 
                 ASCMAIN1.sql = $"Select count(1) From POTSHIP2
                          Where POTSHIP2.ORDR_NO is not null 
@@ -15667,8 +15678,8 @@ Public Class POFSHIP1
                         and POTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE
                         and POTORDR2.COLOR_CODE = ICTCOLR1.COLOR_CODE
                         and SOTORDR1.ORDR_NO(+) = POTSHIP2.ORDR_NO
-                        and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'
-                        and POTSHIP2.CONTAINER_NO = '{row("CONTAINER_NO")}'"
+                        and POTSHIP2.CONTAINER_NO = '{row("CONTAINER_NO")}'
+                        order by 1,2,3,4"
                 Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
 
                 'this is USL specific so add USL to dir plus outbound dir and find a filename
@@ -15746,48 +15757,6 @@ Public Class POFSHIP1
         End Try
 
     End Sub
-
-    Private Sub ImportPoRcv(filePath As String, ByRef dataTable As DataTable)
-        dataTable = New DataTable()
-
-        Using reader As New IO.StreamReader(filePath)
-            Dim isFirstLine As Boolean = True
-
-            While Not reader.EndOfStream
-                Dim line As String = reader.ReadLine()
-                Dim fields As String() = line.Split(ControlChars.Tab)
-
-                If isFirstLine Then
-                    ' Initialize DataTable columns using field names from first row
-                    For Each field As String In fields
-                        dataTable.Columns.Add(field.Trim())
-                    Next
-                    isFirstLine = False
-                Else
-                    ' Add data rows
-                    Dim dataRow As DataRow = dataTable.NewRow()
-                    For i As Integer = 0 To fields.Length - 1
-                        dataRow(i) = fields(i).Trim()
-                    Next
-                    dataTable.Rows.Add(dataRow)
-                End If
-            End While
-        End Using
-
-        'Create Receipts from file
-        'one WHTWREC1 per container  
-        'insert into WHTWREC1 (WH_REC_NO, WH_DATE_RECEIVED, WHSE_CODE, INIT_DATE, LAST_DATE, INIT_OPER, LAST_OPER, WH_REC_STATUS, PO_SHIPMENT_NO, UNLOADED_BY_OPER, CONTAINER_NO)
-        'values('009901','20250708 03.33.44 PM','US','20250708 03.33.44 PM','20250708 03.33.44 PM','rick','rick','C','013045','rick','BEAU5445300');
-
-        'Key is PO_SHIPMENT_NO, PO_SHIPMENT_LNO, WHSE_TRAN_NO, WHSE_TRAN_LNO (Use WH_REC_NO for WHSE_TRAN_NO, rownum for WHSE_TRAN_LNO)
-        'insert into WHTPREC2 (WH_REC_NO, PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE,PO_QTY_REC,WHSE_TRAN_NO, WHSE_TRAN_LNO)
-
-        'update POTSHIP2
-        'set WH_REC_NO = ''
-        'where POTSHIP2.PO_SHIPMENT_NO = '013045';
-
-    End Sub
-
 
 End Class
 
