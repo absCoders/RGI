@@ -15591,6 +15591,20 @@ Public Class POFSHIP1
                     MsgBox($"This Shipment '{PO_SHIPMENT_NO}' is tied a Back-2-Back Order, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
                     Return False
                 End If
+
+                'Magaly has provided a list of vendors whose stuff should not be sent to USL  **** See VEND_CODE in SQL
+                ASCMAIN1.sql = $"Select count(1) from POTSHIP2, POTSHIP3, POTORDR1 
+                        where POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
+                        and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
+                        and POTSHIP3.PO_ORDER_NO = POTORDR1.PO_ORDER_NO
+                        and POTORDR1.VEND_CODE in (SELECT VEND_CODE FROM POTVEND1 WHERE DO_NOT_DIRECT_TO_3PL = '1')
+                        and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
+                RecCnt = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
+                If RecCnt > 1 Then
+                    MsgBox($"This Shipment '{PO_SHIPMENT_NO}' has Merchandise from restricted Vendor, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
+                    Return False
+                End If
+
             End If
 
             ASCMAIN1.sql = $"select ICTSTYL1.* from ICTSTYL1, POTSHIP3, POTORDR2
@@ -15609,20 +15623,7 @@ Public Class POFSHIP1
                 Return False
             End If
 
-            'Magaly has provided a list of vendors whose stuff should not be sent to USL  **** See VEND_CODE in SQL
-            ASCMAIN1.sql = $"Select count(1) from POTSHIP2, POTSHIP3, POTORDR1 
-                        where POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
-                        and POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO
-                        and POTSHIP3.PO_ORDER_NO = POTORDR1.PO_ORDER_NO
-                        and POTORDR1.VEND_CODE in (SELECT VEND_CODE FROM POTVEND1 WHERE DO_NOT_DIRECT_TO_3PL = '1')
-                        and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'"
-                RecCnt = Val(ASCDATA1.GetDataValue(ASCMAIN1.sql))
-                If RecCnt > 1 Then
-                    MsgBox($"This Shipment '{PO_SHIPMENT_NO}' has Merchandise from restricted Vendor, not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
-                    Return False
-                End If
-
-            End If
+        End If
             Return True
     End Function
     Private Sub UpdateFor3PL()
