@@ -15565,7 +15565,7 @@ Public Class POFSHIP1
             Dim RecCnt As Int32 = 0
 
             If ChangesMade Then
-                MsgBox($"Changes to the Warehouse and Shipment Details are not allowed at the same time.{Environment.NewLine}Change the Warehouse after other updates have been completed.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                MsgBox($"Changes to the Warehouse are only allowed for 'MS'.{Environment.NewLine}Change the 'MS' shipment associated with this shipment to send a Loted pre-receipt.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
                 Return False
             End If
 
@@ -15664,7 +15664,7 @@ Public Class POFSHIP1
             For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select()
                 ASCMAIN1.sql = $"select POTSHIP2.CONTAINER_NO Container#, POTSHIP2.PO_SHIPMENT_NO, POTSHIP3.PO_ORDER_NO PO#
                         , POTSHIP3.PO_ORDER_LNO Line#, POTORDR2.STYLE_CODE || '-' || POTORDR2.COLOR_CODE Product 
-                        , ICTSTYL1.STYLE_DESC || ' - ' || ICTCOLR1.COLOR_DESC Product_Desc, '' Product_Desc_2
+                        , REPLACE(REPLACE(ICTSTYL1.STYLE_DESC || ' - ' || ICTCOLR1.COLOR_DESC, CHR(13), ''), CHR(10), '') Product_Desc, '' Product_Desc_2
                         , substr(case when POTSHIP2.ORDR_NO is null then '' else POTSHIP3.PO_ORDER_NO || ' ' || SOTORDR1.ORDR_CUST_PO end, 1, 20) LOT#
                         , ICTSTYC1.UPC_CODE UPC, POTSHIP3.PO_QTY_SHP QTY
                         , ICTSTYL1.STYLE_UOM UOM, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY
@@ -15678,6 +15678,11 @@ Public Class POFSHIP1
                         and POTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE
                         and POTORDR2.COLOR_CODE = ICTCOLR1.COLOR_CODE
                         and SOTORDR1.ORDR_NO(+) = POTSHIP2.ORDR_NO
+                        and POTSHIP2.PO_SHIPMENT_NO in (
+                            Select distinct PO_SHIPMENT_NO from POTSHIP4
+                            where  CONTAINER_NO in (
+                            select CONTAINER_NO from POTSHIP4
+                            where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'))
                         and POTSHIP2.CONTAINER_NO = '{row("CONTAINER_NO")}'
                         order by 1,2,3,4"
                 Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
@@ -15689,7 +15694,9 @@ Public Class POFSHIP1
 
                 Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
                 Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
-                worksheet.Cells(0, 8).EntireColumn.NumberFormat = "@"
+                worksheet.Cells(0, 1).EntireColumn.NumberFormat = "@" ' PO_SHIPMENT_NO
+                worksheet.Cells(0, 2).EntireColumn.NumberFormat = "@" ' PO_NUMBER
+                worksheet.Cells(0, 8).EntireColumn.NumberFormat = "@" 'UPC
                 Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
             range.CopyFromDataTable(tblEXPORT, SpreadsheetGear.Data.SetDataFlags.None)
             workbook.SaveAs(WorkDir & csvFileName, SpreadsheetGear.FileFormat.UnicodeText)
