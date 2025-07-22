@@ -65,6 +65,12 @@
                         Dim PICK_NO_USL As String = SCANTEXT.Substring(14)
                         Dim SCAN_DATE As DateTime = Now
 
+                        'Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.VerifyColor(Me, SCANTEXT, STYLE_CODE, COLOR_CODEs)
+                        'If CheckResponse.ContainsKey("Error") Then
+                        '    CreateResponse("", "R", DisplayMsg(CheckResponse("Error")))
+                        '    Exit Select
+                        'End If
+
                         dst.Tables("WHTTRAN1").Rows.Clear()
                         dst.Tables("WHTTRAN2").Rows.Clear()
                         Dim rowWHTTRAN1 As DataRow = dst.Tables("WHTTRAN1").NewRow
@@ -374,6 +380,5 @@
         ClearScanner()
         CommitTrans()
     End Sub
-
 
 End Class

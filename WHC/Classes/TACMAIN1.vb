@@ -358,4 +358,43 @@
         End If
         Return RtnDict
     End Function
+
+    Public Shared Function VerifyTransferPalette(
+    clsWHCRF000 As WHCRF000,
+    ByVal SCANTEXT As String,
+    ByVal PICK_NO As String,
+    ByVal PALETTE_SEQ_NO As Integer,
+    ByVal PICK_NO_USL As String) As Dictionary(Of String, String)
+
+        Dim RtnDict As New Dictionary(Of String, String)
+        Dim tblEDT945T3 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable("SELECT * FROM EDT945T3 WHERE EDI_PALETTE_NO = :PARM1", "EDT945T3", "V", New Object() {SCANTEXT})
+
+        Dim rows() As DataRow = tblEDT945T3.Select("")
+        If rows.Length = 1 Then
+            RtnDict.Add("EDI_DOC_SEQ_NO", rows(0)("EDI_DOC_SEQ_NO"))
+            RtnDict.Add("EDI_STATUS", rows(0)("EDI_STATUS"))
+        Else
+
+            RtnDict.Add("Error", $"{SCANTEXT} is not a valid EDI Palette No")
+        End If
+        Return RtnDict
+    End Function
+    Public Shared Function VerifyTransferUPC(
+clsWHCRF000 As WHCRF000,
+ByVal SCANTEXT As String,
+ByVal EDI_DOC_SEQ_NO As String) As Dictionary(Of String, String)
+
+        Dim RtnDict As New Dictionary(Of String, String)
+        Dim sqlEDT945T2 As String = "SELECT * FROM EDT945T2 WHERE EDI_DOC_SEQ_NO = :PARM1 AND UPC_CODE = :PARM2"
+        Dim tblEDT945T2 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable("", "EDT945T2", "VV", New Object() {EDI_DOC_SEQ_NO, SCANTEXT})
+
+        Dim rows() As DataRow = tblEDT945T2.Select("")
+        If rows.Length = 1 Then
+            RtnDict.Add("STYLE_CODE", rows(0)("STYLE_CODE"))
+        Else
+
+            RtnDict.Add("Error", $"{SCANTEXT} is not a valid UPC for this Palette")
+        End If
+        Return RtnDict
+    End Function
 End Class

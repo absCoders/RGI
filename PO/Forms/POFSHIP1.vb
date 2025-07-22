@@ -3634,7 +3634,69 @@ Public Class POFSHIP1
         Proceed(eItemKey)
 
     End Sub
+    Sub Fix_Receipt()
+        Stop
+        'Dim dst2 As New DataSet
+        dst.Clear()
+        dst.EnforceConstraints = False
+        dst.ReadXml("C:\Users\rdw\Desktop\Clients\RGI\mangledShipment\patrizia_20250721093635.xml")
+        ' dst.EnforceConstraints = True
+        'dst2.ReadXml("C:\Users\rdw\Desktop\Clients\RGI\mangledShipment\patrizia_20250721093635.xml")
+        'Stop
+        ' Set_AddNew(dst2.Tables("SOTPICK1"))
+        'Stop
+        'dst.Tables("SOTPICK1").Rows(0).Item("WHSE_CODE") = "FE"
+        Dim INV_NO As String = dst.Tables("SOTPICK1").Rows(0).Item("INV_NO")
+        Stop
+        Dim INV_NOs As New List(Of String)
+        INV_NOs.Add(INV_NO)
 
+        Dim ORDR_GROUP_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_GROUP_NO")
+        Stop
+        Dim ORDR_GROUP_NOs As New List(Of String)
+        ORDR_GROUP_NOs.Add(ORDR_GROUP_NO)
+        'Update_Record_TDA("SOTPICK1")
+        'Stop
+        'Update_Record_TDA("SOTPICK2")
+        'Stop
+        'Update_Record_TDA("SOTSHIP1")
+        Stop
+        Update_Record_TDA("ARTOPEN1")
+        'Stop
+        'Update_Record_TDA("SOTINVHM")
+        Stop
+
+        For Each INV_NO In INV_NOs
+
+            ASCMAIN1.sql = "BEGIN SOPSTAT1('I','" & INV_NO & "'); END;"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "BEGIN SOPSTAT2_OH_ONLY('I','" & INV_NO & "'); END;"
+            ASCDATA1.ExecuteSQL()
+
+            ' When should this be called - Only whses that use Locationss
+            'If WHSE_LOCATOR Then
+            '    TAC.ICCMAIN1.Update_WHTLOCBX("S", INV_NO)
+            'End If
+
+            ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV",
+               New Object() {"I", INV_NO},
+               New String() {"INV_TYPE_IN", "INV_NO_IN"})
+        Next
+
+        For Each ORDR_GROUP_NO In ORDR_GROUP_NOs
+            ASCMAIN1.sql = "BEGIN SOPORDR0_G('" & ORDR_GROUP_NO & "'); END;"
+            ASCDATA1.ExecuteSQL()
+        Next
+
+    End Sub
+    Sub Set_AddNew(tbl As DataTable)
+        tbl.AcceptChanges()
+        For Each row As DataRow In tbl.Select()
+            row.SetAdded()
+
+        Next
+    End Sub
     Sub Proceed(ByVal eItemKey As String)
 
         Select Case eItemKey
@@ -3659,6 +3721,9 @@ Public Class POFSHIP1
                 EntryMode = "D"
                 Delete_Record()
                 Mode_Settings(False)
+
+            Case "UpdateFix" 'this was used to recover from a partially committed receipt (runtime error)
+                Fix_Receipt()
 
             Case "Update"
                 Update_Record()
