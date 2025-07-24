@@ -359,42 +359,70 @@
         Return RtnDict
     End Function
 
-    Public Shared Function VerifyTransferPalette(
+    Public Shared Function VerifyTransferPallet(
     clsWHCRF000 As WHCRF000,
-    ByVal SCANTEXT As String,
-    ByVal PICK_NO As String,
-    ByVal PALETTE_SEQ_NO As Integer,
-    ByVal PICK_NO_USL As String) As Dictionary(Of String, String)
+    ByVal SCANTEXT As String) As Dictionary(Of String, String)
 
         Dim RtnDict As New Dictionary(Of String, String)
-        Dim tblEDT945T3 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable("SELECT * FROM EDT945T3 WHERE EDI_PALETTE_NO = :PARM1", "EDT945T3", "V", New Object() {SCANTEXT})
+        Dim sqlWHTTRAN1 As String = $"SELECT * FROM WHTTRAN1 WHERE PALLET_NO = '{SCANTEXT}'"
+        Dim tblWHTTRAN1 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlWHTTRAN1)
 
-        Dim rows() As DataRow = tblEDT945T3.Select("")
-        If rows.Length = 1 Then
-            RtnDict.Add("EDI_DOC_SEQ_NO", rows(0)("EDI_DOC_SEQ_NO"))
-            RtnDict.Add("EDI_STATUS", rows(0)("EDI_STATUS"))
+        If tblWHTTRAN1.Rows.Count > 0 Then
+            RtnDict.Add("Error", $"{SCANTEXT} has already been received.")
         Else
+            Dim sqlPallet As String = $"SELECT * FROM EDT945T3 WHERE EDI_PALLET_NO = '{SCANTEXT}'"
+            Dim tblEDT945T3 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlPallet)
+            Dim PICK_NO As String = SCANTEXT.Substring(0, 10)
+            Dim PALLET_SEQ_NO As Integer = CInt(SCANTEXT.Substring(10, 3))
+            Dim PICK_NO_USL As String = SCANTEXT.Substring(13)
+            Dim sqlSOTPICK1 As String = $"SELECT * FROM SOTPICK1 WHERE PICK_NO = '{PICK_NO}'"
+            Dim tblSOTPICK1 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlSOTPICK1)
 
-            RtnDict.Add("Error", $"{SCANTEXT} is not a valid EDI Palette No")
+            Dim rows() As DataRow = tblEDT945T3.Select("")
+            If rows.Length = 1 Then
+                RtnDict.Add("EDI_DOC_SEQ_NO", rows(0)("EDI_DOC_SEQ_NO"))
+                RtnDict.Add("EDI_STATUS", rows(0)("EDI_STATUS"))
+                Dim rowSOTPICK1() As DataRow = tblSOTPICK1.Select("")
+                If rowSOTPICK1.Length = 1 Then
+                    Dim PICK_STATUS As String = rowSOTPICK1(0)("PICK_STATUS")
+                    If PICK_STATUS <> "P" Then
+                        RtnDict.Add("Error", $"{PICK_NO} is not in pick (PICK_STATUS <> 'P')")
+                    End If
+                Else
+                    RtnDict.Add("Error", $"{SCANTEXT} is not a valid Pick Ticket")
+                End If
+            Else
+                RtnDict.Add("Error", $"{SCANTEXT} is not a valid EDI Pallet No")
+            End If
         End If
+
         Return RtnDict
     End Function
+
     Public Shared Function VerifyTransferUPC(
 clsWHCRF000 As WHCRF000,
 ByVal SCANTEXT As String,
-ByVal EDI_DOC_SEQ_NO As String) As Dictionary(Of String, String)
+ByVal EDI_DOC_SEQ_NO As String,
+ByVal UPCDict As Dictionary(Of String, String)) As Dictionary(Of String, String)
 
-        Dim RtnDict As New Dictionary(Of String, String)
-        Dim sqlEDT945T2 As String = "SELECT * FROM EDT945T2 WHERE EDI_DOC_SEQ_NO = :PARM1 AND UPC_CODE = :PARM2"
-        Dim tblEDT945T2 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable("", "EDT945T2", "VV", New Object() {EDI_DOC_SEQ_NO, SCANTEXT})
+        Dim sqlEDT945T2 As String = $"SELECT * FROM EDT945T2 WHERE EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND UPC_CODE = '{SCANTEXT}'"
+        Dim tblEDT945T2 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlEDT945T2, "EDT945T2", "VV", New Object() {EDI_DOC_SEQ_NO, SCANTEXT})
 
         Dim rows() As DataRow = tblEDT945T2.Select("")
         If rows.Length = 1 Then
-            RtnDict.Add("STYLE_CODE", rows(0)("STYLE_CODE"))
+            Dim STYLE_CODE As String = UPCDict("STYLE_CODE")
+            Dim COLOR_CODE As String = UPCDict("COLOR_CODE")
+            Dim EDI_STYLE As String = rows(0)("EDI_STYLE")
+            Dim EDI_COLOR As String = rows(0)("EDI_COLOR")
+            If STYLE_CODE = EDI_STYLE AndAlso COLOR_CODE = EDI_COLOR Then
+                UPCDict.Add("EDI_STYLE", EDI_STYLE)
+                UPCDict.Add("EDI_COLOR", EDI_COLOR)
+            Else
+                UPCDict.Add("Error", $"Style/Color Mismatch for UPC {SCANTEXT} ")
+            End If
         Else
-
-            RtnDict.Add("Error", $"{SCANTEXT} is not a valid UPC for this Palette")
+            UPCDict.Add("Error", $"{SCANTEXT} is not a valid UPC for this Pallet")
         End If
-        Return RtnDict
+        Return UPCDict
     End Function
 End Class
