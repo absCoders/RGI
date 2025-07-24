@@ -20,7 +20,7 @@
     Dim PALLET_NO As String = ""
     Dim upcSummaryPageIndex As Integer = 0
     Dim upcSummaryPages As Integer = 1
-    Const upcSummaryLinesPerPage As Integer = 1
+    Const upcSummaryLinesPerPage As Integer = 6
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -132,7 +132,8 @@
                         CreateResponse("", "R", DisplayMsg("Mode was Changed"))
                         Exit Select
                     ElseIf SCANTEXT = "SHOW" Then
-                        AppStates("SCAN_SHOW") = "Viewing Scans|NEXT|CANCEL|"
+                        Dim nextBtn As String = If(upcSummaryPages = 1, "", "NEXT|")
+                        AppStates("SCAN_SHOW") = $"Viewing Scans|{nextBtn}CANCEL|"
                         upcSummaryPageIndex = 1
                         Dim pageText As String = GetUpcSummaryPage(dst.Tables("WHTTRAN2"), upcSummaryPageIndex)
                         CreateResponse("SCAN_SHOW", "R", pageText)
@@ -151,6 +152,14 @@
                                 CreateResponse("", "R", DisplayMsg(CheckResponse("Error")))
                                 Exit Select
                             End If
+                        End If
+
+                        Dim result As Object = dst.Tables("WHTTRAN2").Compute("SUM(SCAN_QTY)", $"UPC_CODE = '{SCANTEXT}'")
+                        Dim currentTotalQty As Integer = If(IsDBNull(result), 0, Convert.ToInt32(result))
+
+                        If Mode = "MINUS" AndAlso currentTotalQty = 0 Then
+                            CreateResponse("", "R", DisplayMsg("Nothing to remove"))
+                            Exit Select
                         End If
 
                         Dim rowWHTTRAN2 As DataRow = dst.Tables("WHTTRAN2").NewRow
