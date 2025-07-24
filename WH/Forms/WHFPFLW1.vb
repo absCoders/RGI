@@ -774,6 +774,7 @@ Public Class WHFPFLW1
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
             & " AND SOTPICK1.PICK_PRINTED IS NULL " & vbCrLf _
+            & " AND SOTPICK1.WHSE_CODE in ('MS','NY') " & vbCrLf _
             & "	AND SOTPICK1.PICK_NO not in (" & vbCrLf _
             & "	SELECT PICK_NO from SOTPICK5 " & vbCrLf _
             & "	WHERE SOTPICK5.PICK_NO = SOTPICK1.PICK_NO)" & vbCrLf _
@@ -797,6 +798,7 @@ Public Class WHFPFLW1
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
             & " AND SOTPICK1.PICK_PRINTED IS NULL " & vbCrLf _
+            & " AND SOTPICK1.WHSE_CODE in ('MS','NY') " & vbCrLf _
             & "	AND SOTPICK1.PICK_NO not in (" & vbCrLf _
             & "	SELECT PICK_NO from SOTPICK5 " & vbCrLf _
             & "	WHERE SOTPICK5.PICK_NO = SOTPICK1.PICK_NO)" & vbCrLf _
