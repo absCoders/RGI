@@ -3634,7 +3634,69 @@ Public Class POFSHIP1
         Proceed(eItemKey)
 
     End Sub
+    Sub Fix_Receipt()
+        Stop
+        'Dim dst2 As New DataSet
+        dst.Clear()
+        dst.EnforceConstraints = False
+        dst.ReadXml("C:\Users\rdw\Desktop\Clients\RGI\mangledShipment\patrizia_20250721093635.xml")
+        ' dst.EnforceConstraints = True
+        'dst2.ReadXml("C:\Users\rdw\Desktop\Clients\RGI\mangledShipment\patrizia_20250721093635.xml")
+        'Stop
+        ' Set_AddNew(dst2.Tables("SOTPICK1"))
+        'Stop
+        'dst.Tables("SOTPICK1").Rows(0).Item("WHSE_CODE") = "FE"
+        Dim INV_NO As String = dst.Tables("SOTPICK1").Rows(0).Item("INV_NO")
+        Stop
+        Dim INV_NOs As New List(Of String)
+        INV_NOs.Add(INV_NO)
 
+        Dim ORDR_GROUP_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_GROUP_NO")
+        Stop
+        Dim ORDR_GROUP_NOs As New List(Of String)
+        ORDR_GROUP_NOs.Add(ORDR_GROUP_NO)
+        'Update_Record_TDA("SOTPICK1")
+        'Stop
+        'Update_Record_TDA("SOTPICK2")
+        'Stop
+        'Update_Record_TDA("SOTSHIP1")
+        Stop
+        Update_Record_TDA("ARTOPEN1")
+        'Stop
+        'Update_Record_TDA("SOTINVHM")
+        Stop
+
+        For Each INV_NO In INV_NOs
+
+            ASCMAIN1.sql = "BEGIN SOPSTAT1('I','" & INV_NO & "'); END;"
+            ASCDATA1.ExecuteSQL()
+
+            ASCMAIN1.sql = "BEGIN SOPSTAT2_OH_ONLY('I','" & INV_NO & "'); END;"
+            ASCDATA1.ExecuteSQL()
+
+            ' When should this be called - Only whses that use Locationss
+            'If WHSE_LOCATOR Then
+            '    TAC.ICCMAIN1.Update_WHTLOCBX("S", INV_NO)
+            'End If
+
+            ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV",
+               New Object() {"I", INV_NO},
+               New String() {"INV_TYPE_IN", "INV_NO_IN"})
+        Next
+
+        For Each ORDR_GROUP_NO In ORDR_GROUP_NOs
+            ASCMAIN1.sql = "BEGIN SOPORDR0_G('" & ORDR_GROUP_NO & "'); END;"
+            ASCDATA1.ExecuteSQL()
+        Next
+
+    End Sub
+    Sub Set_AddNew(tbl As DataTable)
+        tbl.AcceptChanges()
+        For Each row As DataRow In tbl.Select()
+            row.SetAdded()
+
+        Next
+    End Sub
     Sub Proceed(ByVal eItemKey As String)
 
         Select Case eItemKey
@@ -3659,6 +3721,9 @@ Public Class POFSHIP1
                 EntryMode = "D"
                 Delete_Record()
                 Mode_Settings(False)
+
+            Case "UpdateFix" 'this was used to recover from a partially committed receipt (runtime error)
+                Fix_Receipt()
 
             Case "Update"
                 Update_Record()
@@ -15569,20 +15634,31 @@ Public Class POFSHIP1
                 Return False
             End If
 
-            If 1 = 2 Then ' skip these checks need to check for multi-carton units
-                ASCMAIN1.sql = $"Select distinct PO_SHIPMENT_NO from POTSHIP4
-                        where PO_SHIPMENT_NO <> '{PO_SHIPMENT_NO}'
+            If WHSE_CODE_ORIG <> "MS" Then
+                MsgBox($"Changes to the Warehouse are only allowed for 'MS'.{Environment.NewLine}Change the 'MS' shipment associated with this shipment to send a Loted pre-receipt.", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                Return False
+            End If
+
+            ASCMAIN1.sql = $"Select distinct POTSHIP1.PO_SHIPMENT_NO, POTSHIP1.WHSE_CODE from POTSHIP4, POTSHIP1
+                        where POTSHIP1.PO_SHIPMENT_NO = POTSHIP4.PO_SHIPMENT_NO
+                        and POTSHIP1.PO_SHIPMENT_NO <> '{PO_SHIPMENT_NO}'
                         and CONTAINER_NO in (
                         select CONTAINER_NO from POTSHIP4
                         where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}')"
-                Dim tblErr As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
-                If tblErr.Rows.Count > 0 Then
-                    For Each row As DataRow In tblErr.Select()
-                        msgtext &= "," & row("PO_SHIPMENT_NO")
-                    Next
-                    MsgBox($"This Shipment:'{PO_SHIPMENT_NO}' is tied to additional shipment records:{msgtext.Substring(1) & Environment.NewLine} not available for 3PL", MsgBoxStyle.Critical, "Not Available for 3PL")
-                    Return False
-                End If
+            Dim tblErr As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+            If tblErr.Rows.Count > 0 Then
+                For Each row As DataRow In tblErr.Select()
+                    msgtext &= "," & row("PO_SHIPMENT_NO")
+                    If row("WHSE_CODE") <> "MS" And row("WHSE_CODE") <> "NY" Then
+                        MsgBox($"This Shipment has Merchandise for warehouse {row("WHSE_CODE")}. This change is not allowed", MsgBoxStyle.Critical, "Warehouse Change not allowed")
+                        Return False
+                    End If
+                Next
+                MsgBox($"This Shipment:'{PO_SHIPMENT_NO}' is tied to additional shipment records: {msgtext.Substring(1) & Environment.NewLine} ", MsgBoxStyle.Critical, "Multiple Shipments")
+
+            End If
+
+            If 1 = 2 Then ' skip these checks need to check for multi-carton units
 
                 ASCMAIN1.sql = $"Select count(1) From POTSHIP2
                          Where POTSHIP2.ORDR_NO is not null 
@@ -15653,7 +15729,7 @@ Public Class POFSHIP1
             For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select()
                 ASCMAIN1.sql = $"select POTSHIP2.CONTAINER_NO Container#, POTSHIP2.PO_SHIPMENT_NO, POTSHIP3.PO_ORDER_NO PO#
                         , POTSHIP3.PO_ORDER_LNO Line#, POTORDR2.STYLE_CODE || '-' || POTORDR2.COLOR_CODE Product 
-                        , ICTSTYL1.STYLE_DESC || ' - ' || ICTCOLR1.COLOR_DESC Product_Desc, '' Product_Desc_2
+                        , REPLACE(REPLACE(ICTSTYL1.STYLE_DESC || ' - ' || ICTCOLR1.COLOR_DESC, CHR(13), ''), CHR(10), '') Product_Desc, '' Product_Desc_2
                         , substr(case when POTSHIP2.ORDR_NO is null then '' else POTSHIP3.PO_ORDER_NO || ' ' || SOTORDR1.ORDR_CUST_PO end, 1, 20) LOT#
                         , ICTSTYC1.UPC_CODE UPC, POTSHIP3.PO_QTY_SHP QTY
                         , ICTSTYL1.STYLE_UOM UOM, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY
@@ -15667,8 +15743,13 @@ Public Class POFSHIP1
                         and POTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE
                         and POTORDR2.COLOR_CODE = ICTCOLR1.COLOR_CODE
                         and SOTORDR1.ORDR_NO(+) = POTSHIP2.ORDR_NO
-                        and POTSHIP2.PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'
-                        and POTSHIP2.CONTAINER_NO = '{row("CONTAINER_NO")}'"
+                        and POTSHIP2.PO_SHIPMENT_NO in (
+                            Select distinct PO_SHIPMENT_NO from POTSHIP4
+                            where  CONTAINER_NO in (
+                            select CONTAINER_NO from POTSHIP4
+                            where PO_SHIPMENT_NO = '{PO_SHIPMENT_NO}'))
+                        and POTSHIP2.CONTAINER_NO = '{row("CONTAINER_NO")}'
+                        order by 1,2,3,4"
                 Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
 
                 'this is USL specific so add USL to dir plus outbound dir and find a filename
@@ -15677,9 +15758,11 @@ Public Class POFSHIP1
                 Dim ED_PARM_3PL_FTP_DIR As String = ROWs("EDTPARM1")("ED_PARM_3PL_FTP_DIR") & "USL\PO\"
 
                 Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
-            Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
-            worksheet.Cells(0, 6).EntireColumn.NumberFormat = "@"
-            Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
+                Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+                worksheet.Cells(0, 1).EntireColumn.NumberFormat = "@" ' PO_SHIPMENT_NO
+                worksheet.Cells(0, 2).EntireColumn.NumberFormat = "@" ' PO_NUMBER
+                worksheet.Cells(0, 8).EntireColumn.NumberFormat = "@" 'UPC
+                Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
             range.CopyFromDataTable(tblEXPORT, SpreadsheetGear.Data.SetDataFlags.None)
             workbook.SaveAs(WorkDir & csvFileName, SpreadsheetGear.FileFormat.UnicodeText)
             range = Nothing
@@ -15746,48 +15829,6 @@ Public Class POFSHIP1
         End Try
 
     End Sub
-
-    Private Sub ImportPoRcv(filePath As String, ByRef dataTable As DataTable)
-        dataTable = New DataTable()
-
-        Using reader As New IO.StreamReader(filePath)
-            Dim isFirstLine As Boolean = True
-
-            While Not reader.EndOfStream
-                Dim line As String = reader.ReadLine()
-                Dim fields As String() = line.Split(ControlChars.Tab)
-
-                If isFirstLine Then
-                    ' Initialize DataTable columns using field names from first row
-                    For Each field As String In fields
-                        dataTable.Columns.Add(field.Trim())
-                    Next
-                    isFirstLine = False
-                Else
-                    ' Add data rows
-                    Dim dataRow As DataRow = dataTable.NewRow()
-                    For i As Integer = 0 To fields.Length - 1
-                        dataRow(i) = fields(i).Trim()
-                    Next
-                    dataTable.Rows.Add(dataRow)
-                End If
-            End While
-        End Using
-
-        'Create Receipts from file
-        'one WHTWREC1 per container  
-        'insert into WHTWREC1 (WH_REC_NO, WH_DATE_RECEIVED, WHSE_CODE, INIT_DATE, LAST_DATE, INIT_OPER, LAST_OPER, WH_REC_STATUS, PO_SHIPMENT_NO, UNLOADED_BY_OPER, CONTAINER_NO)
-        'values('009901','20250708 03.33.44 PM','US','20250708 03.33.44 PM','20250708 03.33.44 PM','rick','rick','C','013045','rick','BEAU5445300');
-
-        'Key is PO_SHIPMENT_NO, PO_SHIPMENT_LNO, WHSE_TRAN_NO, WHSE_TRAN_LNO (Use WH_REC_NO for WHSE_TRAN_NO, rownum for WHSE_TRAN_LNO)
-        'insert into WHTPREC2 (WH_REC_NO, PO_SHIPMENT_NO, PO_SHIPMENT_LNO, STYLE_CODE, COLOR_CODE,PO_QTY_REC,WHSE_TRAN_NO, WHSE_TRAN_LNO)
-
-        'update POTSHIP2
-        'set WH_REC_NO = ''
-        'where POTSHIP2.PO_SHIPMENT_NO = '013045';
-
-    End Sub
-
 
 End Class
 
