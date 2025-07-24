@@ -277,7 +277,7 @@ Public Class SOFOXFR1
             TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_PICK", QTY)
         Next
 
-        ExportPickTckts(Ship_bol_no)
+        ExportPickTckts(SHIP_BOL_NO)
 
         CommitTrans("Update Successful")
 
