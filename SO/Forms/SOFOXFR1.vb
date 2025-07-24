@@ -245,7 +245,7 @@ Public Class SOFOXFR1
 
         Dim WHSE_CODE As String = "US"
 
-        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("SOTOXFRX").Select("SEL = '1'"), "QTY_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
+        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("SOTOXFRX").Select("SEL = '1'"), "UNITS_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
         TAC.SOCMAIN1.Release_Transfer_Order(Me) ' Release that XFR Order
 
         For Each TABLE_NAME As String In TABLES_OXFR
@@ -277,7 +277,7 @@ Public Class SOFOXFR1
             TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_PICK", QTY)
         Next
 
-        ExportPickTckts(Ship_bol_no)
+        ExportPickTckts(SHIP_BOL_NO)
 
         CommitTrans("Update Successful")
 
