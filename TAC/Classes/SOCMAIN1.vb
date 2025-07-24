@@ -5462,6 +5462,9 @@ DETAIL:
                 .Item("WHSE_CODE") = WHSE_CODE
                 .Item("CCPA_NO_STATUS") = "0"
 
+                .Item("PICK_PRINTED") = frmASFBASE0.DATETIME_STAMP
+                .Item("PICK_PRINTED_OPER") = ASCMAIN1.USER_ID
+
                 .Item("SHIP_BOL_NO") = SHIP_BOL_NO
             End With
 
@@ -5528,6 +5531,9 @@ DETAIL:
                 .Item("INIT_DATE") = frmASFBASE0.DATETIME_STAMP
                 .Item("INIT_OPER") = ASCMAIN1.USER_ID
                 .Item("LP_STATUS") = DBNull.Value
+
+                .Item("SHIP_PICK_PRINTED") = frmASFBASE0.DATETIME_STAMP
+
                 '.Item("ORDR_PICK_TYPE") = ORDR_PICK_TYPE
                 '.Item("SHIP_CART_REQD") = SHIP_CART_REQD
                 .Item("ORDR_DEPT") = rowSOTORDR1.Item("ORDR_DEPT")
