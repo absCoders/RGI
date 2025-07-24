@@ -1196,10 +1196,10 @@
 
         Dim ICTSTAT2_STATUS As String = "ICTSTAT2"
         Dim combine_MS_US As Boolean = False
-        If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE_to_allocate = "MS" Then
+        If ASCMAIN1.CLIENT = "RGI" Then
             combine_MS_US = True ' False ' TRUE
             If combine_MS_US Then
-                ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, 'MS' WHSE_CODE" & vbCrLf _
+                ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, DECODE(WHSE_CODE, 'US', 'MS', WHSE_CODE) WHSE_CODE" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_ON_HAND,0)) WHSE_QTY_ON_HAND" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_ON_ORDER,0)) WHSE_QTY_ON_ORDER" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_TRAN,0)) WHSE_QTY_TRAN" & vbCrLf _
@@ -1209,12 +1209,31 @@
                 & ", SUM(NVL(WHSE_QTY_COMM,0)) WHSE_QTY_COMM" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_PROD,0)) WHSE_QTY_PROD" & vbCrLf _
                 & " from ICTSTAT2" & vbCrLf _
-                & " where WHSE_CODE IN ('MS','US')" & vbCrLf _
-                & " group by STYLE_CODE, COLOR_CODE"
+                & " group by STYLE_CODE, COLOR_CODE, DECODE(WHSE_CODE, 'US', 'MS', WHSE_CODE)"
                 ICTSTAT2_STATUS = ASCMAIN1.Temp_Table
                 ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_STATUS} Add Primary Key (WHSE_CODE, STYLE_CODE, COLOR_CODE)")
             End If
         End If
+
+        'If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE_to_allocate = "MS" Then
+        '    combine_MS_US = True ' False ' TRUE
+        '    If combine_MS_US Then
+        '        ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, 'MS' WHSE_CODE" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_ON_HAND,0)) WHSE_QTY_ON_HAND" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_ON_ORDER,0)) WHSE_QTY_ON_ORDER" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_TRAN,0)) WHSE_QTY_TRAN" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_OPEN,0)) WHSE_QTY_OPEN" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_PICK,0)) WHSE_QTY_PICK" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_ALLO,0)) WHSE_QTY_ALLO" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_COMM,0)) WHSE_QTY_COMM" & vbCrLf _
+        '        & ", SUM(NVL(WHSE_QTY_PROD,0)) WHSE_QTY_PROD" & vbCrLf _
+        '        & " from ICTSTAT2" & vbCrLf _
+        '        & " where WHSE_CODE IN ('MS','US')" & vbCrLf _
+        '        & " group by STYLE_CODE, COLOR_CODE"
+        '        ICTSTAT2_STATUS = ASCMAIN1.Temp_Table
+        '        ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_STATUS} Add Primary Key (WHSE_CODE, STYLE_CODE, COLOR_CODE)")
+        '    End If
+        'End If
 
         If Not force_pick And Not manual_release Then
             ASCMAIN1.sql = "" _
