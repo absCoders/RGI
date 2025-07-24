@@ -245,7 +245,7 @@ Public Class SOFOXFR1
 
         Dim WHSE_CODE As String = "US"
 
-        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("SOTOXFRX").Select("SEL = '1'"), "QTY_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
+        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("SOTOXFRX").Select("SEL = '1'"), "UNITS_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
         TAC.SOCMAIN1.Release_Transfer_Order(Me) ' Release that XFR Order
 
         For Each TABLE_NAME As String In TABLES_OXFR
