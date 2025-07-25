@@ -288,7 +288,7 @@
                 .Item("LOCATION_CODE_FROM") = FromLoc
                 .Item("LOCATION_CODE_TO") = ToLoc
                 .Item("BAR_CODE") = "0000000000"
-                .Item("WHSE_TRAN_QTY") = totalQty
+                .Item("WHSE_TRAN_QTY") = totalQty * CInt(CheckResponse("INNER_PACK_QTY"))
                 .Item("STYLE_CODE") = CheckResponse("STYLE_CODE")
                 .Item("COLOR_CODE") = CheckResponse("COLOR_CODE")
                 .Item("INIT_OPER") = G.USER_ID
