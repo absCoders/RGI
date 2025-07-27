@@ -180,7 +180,7 @@ Partial Class WBFSTYLW
         Me.chkUSEUPLOADS = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
-        Me.chkMultiFuture = New System.Windows.Forms.CheckBox()
+        Me.chkIncludeUSTST = New System.Windows.Forms.CheckBox()
         Me.btnCheckInventory = New System.Windows.Forms.Button()
         Me.btnRemoveInventory = New System.Windows.Forms.Button()
         Me.txtInventoryLast = New System.Windows.Forms.TextBox()
@@ -394,6 +394,7 @@ Partial Class WBFSTYLW
         UltraExplorerBarGroup2.Visible = False
         UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl4
         UltraExplorerBarGroup5.Key = "Inventory"
+        UltraExplorerBarGroup5.Settings.ContainerHeight = 175
         UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup5.Text = "Inventory"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl5
@@ -500,7 +501,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 5)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -208)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -620,14 +621,14 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 274)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 61)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
-        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 175)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
         '
         'Panel3
         '
-        Me.Panel3.Controls.Add(Me.chkMultiFuture)
+        Me.Panel3.Controls.Add(Me.chkIncludeUSTST)
         Me.Panel3.Controls.Add(Me.btnCheckInventory)
         Me.Panel3.Controls.Add(Me.btnRemoveInventory)
         Me.Panel3.Controls.Add(Me.txtInventoryLast)
@@ -635,24 +636,23 @@ Partial Class WBFSTYLW
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(172, 150)
+        Me.Panel3.Size = New System.Drawing.Size(172, 175)
         Me.Panel3.TabIndex = 0
         '
-        'chkMultiFuture
+        'chkIncludeUSTST
         '
-        Me.chkMultiFuture.AutoSize = True
-        Me.chkMultiFuture.Enabled = False
-        Me.chkMultiFuture.Location = New System.Drawing.Point(14, 68)
-        Me.chkMultiFuture.Name = "chkMultiFuture"
-        Me.chkMultiFuture.Size = New System.Drawing.Size(108, 20)
-        Me.chkMultiFuture.TabIndex = 12
-        Me.chkMultiFuture.Text = "Multi-Future"
-        Me.chkMultiFuture.UseVisualStyleBackColor = True
-        Me.chkMultiFuture.Visible = False
+        Me.chkIncludeUSTST.AutoSize = True
+        Me.chkIncludeUSTST.Location = New System.Drawing.Point(13, 53)
+        Me.chkIncludeUSTST.Name = "chkIncludeUSTST"
+        Me.chkIncludeUSTST.Size = New System.Drawing.Size(140, 20)
+        Me.chkIncludeUSTST.TabIndex = 22
+        Me.chkIncludeUSTST.Text = "Test US File Only"
+        Me.chkIncludeUSTST.UseVisualStyleBackColor = True
+        Me.chkIncludeUSTST.Visible = False
         '
         'btnCheckInventory
         '
-        Me.btnCheckInventory.Location = New System.Drawing.Point(14, 95)
+        Me.btnCheckInventory.Location = New System.Drawing.Point(13, 105)
         Me.btnCheckInventory.Name = "btnCheckInventory"
         Me.btnCheckInventory.Size = New System.Drawing.Size(150, 23)
         Me.btnCheckInventory.TabIndex = 11
@@ -661,7 +661,7 @@ Partial Class WBFSTYLW
         '
         'btnRemoveInventory
         '
-        Me.btnRemoveInventory.Location = New System.Drawing.Point(13, 124)
+        Me.btnRemoveInventory.Location = New System.Drawing.Point(13, 129)
         Me.btnRemoveInventory.Name = "btnRemoveInventory"
         Me.btnRemoveInventory.Size = New System.Drawing.Size(150, 23)
         Me.btnRemoveInventory.TabIndex = 10
@@ -671,7 +671,7 @@ Partial Class WBFSTYLW
         'txtInventoryLast
         '
         Me.txtInventoryLast.Enabled = False
-        Me.txtInventoryLast.Location = New System.Drawing.Point(13, 43)
+        Me.txtInventoryLast.Location = New System.Drawing.Point(13, 26)
         Me.txtInventoryLast.Name = "txtInventoryLast"
         Me.txtInventoryLast.Size = New System.Drawing.Size(150, 23)
         Me.txtInventoryLast.TabIndex = 4
@@ -679,7 +679,7 @@ Partial Class WBFSTYLW
         'chkInventoryRunning
         '
         Me.chkInventoryRunning.AutoSize = True
-        Me.chkInventoryRunning.Location = New System.Drawing.Point(13, 16)
+        Me.chkInventoryRunning.Location = New System.Drawing.Point(13, 8)
         Me.chkInventoryRunning.Name = "chkInventoryRunning"
         Me.chkInventoryRunning.Size = New System.Drawing.Size(83, 20)
         Me.chkInventoryRunning.TabIndex = 3
@@ -689,7 +689,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 468)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 280)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
@@ -790,7 +790,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 662)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 474)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
@@ -2453,5 +2453,5 @@ Partial Class WBFSTYLW
     Friend WithEvents chkNoDNR As CheckBox
     Friend WithEvents btnRun999Group As Button
     Friend WithEvents btnReGroup As Button
-    Friend WithEvents chkMultiFuture As CheckBox
+    Friend WithEvents chkIncludeUSTST As CheckBox
 End Class
