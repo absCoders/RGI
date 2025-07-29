@@ -594,7 +594,7 @@ Public Class WBFCUST1
                     tlb_btn.SharedProps.Visible = True
                 Else
                     If Not ScreenMode And (grdWBTCUST1.ActiveRow IsNot Nothing And grdWBTCUST1.Selected.Rows.Count = 1) Then
-                        tlb_btn.SharedProps.Visible = (rdoShowNew.Checked) And MY_CLAIM
+                        tlb_btn.SharedProps.Visible = (rdoShowNew.Checked Or rdoShowCredit.Checked) And MY_CLAIM
                     Else
                         tlb_btn.SharedProps.Visible = False
                     End If

@@ -2727,12 +2727,19 @@ Public Class SOFCORD1
     End Sub
 
     Private Sub grdSOTORDR0_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdSOTORDR0.AfterRowActivate
+
         If ScreenMode Then
+
             Setup_SOTORDR0()
-            If ASCMAIN1.CLIENT = "RGI" Then
-                Dim ORDR_NO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_NO_MIN").Value
-                Fill_Records("SOTORDR4", ORDR_NO)
-                grdSOTORDR4.Text = $"Internal Comments for Order {ORDR_NO}"
+
+            If grdSOTORDR0.ActiveRow Is Nothing OrElse Not grdSOTORDR0.ActiveRow.IsDataRow Then
+                grdSOTORDR4.Visible = False
+            Else
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    Dim ORDR_NO As String = grdSOTORDR0.ActiveRow.Cells("ORDR_NO_MIN").Value
+                    Fill_Records("SOTORDR4", ORDR_NO)
+                    grdSOTORDR4.Text = $"Internal Comments for Order {ORDR_NO}"
+                End If
             End If
         Else
             If ASCMAIN1.CLIENT = "RGI" Then

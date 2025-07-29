@@ -1,3 +1,5 @@
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class SOFOXFR1
 
     Dim SOTOXFRX As String = ""
@@ -136,6 +138,20 @@ Public Class SOFOXFR1
                 If dst.Tables("SOTOXFRX").Select("SEL='1'").Length = 0 Then
                     EMsg &= vbCr & "Nothing Selected to Transfer"
                 End If
+
+                Dim ava_check() As DataRow = dst.Tables("SOTOXFRX").Select("SEL='1' AND ISNULL(UNITS_2_XFR,0) > ISNULL(US_AVA,0)")
+
+                If ava_check.Length > 0 Then
+                    Dim SCs As New List(Of String)
+                    For Each row As DataRow In ava_check
+                        Dim STYLE_CODE As String = row.Item("STYLE_CODE")
+                        Dim COLOR_CODE As String = row.Item("COLOR_CODE")
+                        SCs.Add(STYLE_CODE & "-" & COLOR_CODE)
+                    Next
+                    EMsg &= vbCr & "SCs Queued for Transfer where Units2Xfr is greater than Ava US" & vbCr & Join(SCs.ToArray, ",")
+                End If
+
+                If ASCMAIN1.Running_in_VS Then Stop
 
             Case "Cancel"
                 If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
@@ -583,4 +599,20 @@ Public Class SOFOXFR1
 
     End Sub
 
+    Private Sub grdSOTOXFRX_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdSOTOXFRX.InitializeRow
+
+        If e.Row.IsDataRow Then
+            Dim UNITS_2_XFR As Int32 = Val(e.Row.Cells("UNITS_2_XFR").Value & "")
+            Dim US_AVA As Int32 = Val(e.Row.Cells("US_AVA").Value & "")
+
+            If UNITS_2_XFR > US_AVA Then
+                e.Row.Cells("UNITS_2_XFR").Appearance.ForeColor = Drawing.Color.Red
+                e.Row.Cells("UNITS_2_XFR").ToolTipText = "Units Ava in US is less than Units 2 Xfr"
+            Else
+                e.Row.Cells("UNITS_2_XFR").Appearance.ForeColor = Drawing.Color.Empty
+            End If
+        End If
+
+
+    End Sub
 End Class

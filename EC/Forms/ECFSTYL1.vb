@@ -3544,8 +3544,8 @@ Public Class ECFSTYL1
                     Next
                     If cngECTESTY1_U = True Then
                         If AddECTESTY1_U Then
-                            rowECTESTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                            rowECTESTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            'rowECTESTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            'rowECTESTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
                             dst.Tables("ECTESTY1_U").Rows.Add(rowECTESTY1_U)
                         End If
                     End If
@@ -3601,8 +3601,8 @@ Public Class ECFSTYL1
                                                 newSOTCSTY1_U.Item("STYLE_CODE") = rowECUPSERT.Item("STYLE_CODE").ToString & String.Empty
                                                 newSOTCSTY1_U.Item("COLOR_CODE") = rowECUPSERT.Item("COLOR_CODE").ToString & String.Empty
                                                 newSOTCSTY1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                                                newSOTCSTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                                                newSOTCSTY1_U.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                                                'newSOTCSTY1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                                                'newSOTCSTY1_U.Item("LAST_OPER") = ASCMAIN1.USER_ID
                                                 newSOTCSTY1_U.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
                                                 dst.Tables.Item("SOTCSTY1_U").Rows.Add(newSOTCSTY1_U)
                                             End If
@@ -3614,8 +3614,8 @@ Public Class ECFSTYL1
                     Next
                     If cngECTESTY2_U = True Then
                         If AddECTESTY2_U Then
-                            rowECTESTY2_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                            rowECTESTY2_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            'rowECTESTY2_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            'rowECTESTY2_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
                             dst.Tables("ECTESTY2_U").Rows.Add(rowECTESTY2_U)
                         End If
                     End If
@@ -3662,8 +3662,8 @@ Public Class ECFSTYL1
                     Next
                     If cngECTSTYL1_U = True Then
                         If AddECTSTYL1_U Then
-                            rowECTSTYL1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
-                            rowECTSTYL1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                            'rowECTSTYL1_U.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
+                            'rowECTSTYL1_U.Item("INIT_OPER") = ASCMAIN1.USER_ID
                             dst.Tables("ECTSTYL1_U").Rows.Add(rowECTSTYL1_U)
                         End If
                     End If
