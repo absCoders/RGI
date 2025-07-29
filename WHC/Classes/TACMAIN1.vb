@@ -385,8 +385,8 @@
                 Dim rowSOTPICK1() As DataRow = tblSOTPICK1.Select("")
                 If rowSOTPICK1.Length = 1 Then
                     Dim PICK_STATUS As String = rowSOTPICK1(0)("PICK_STATUS")
-                    If PICK_STATUS <> "P" Then
-                        RtnDict.Add("Error", $"{PICK_NO} is not in pick (PICK_STATUS <> 'P')")
+                    If PICK_STATUS <> "F" Then
+                        RtnDict.Add("Error", $"{PICK_NO} is not Finalized (PICK_STATUS <> 'F')")
                     End If
                 Else
                     RtnDict.Add("Error", $"{SCANTEXT} is not a valid Pick Ticket")

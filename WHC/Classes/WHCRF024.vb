@@ -31,6 +31,7 @@
         AppStates.Add("SCAN_PALLET", "Scan PALLET ID|EXIT|")
         AppStates.Add("SCAN_UPC", "Scan UPC|DONE|") ' BLUE
         AppStates.Add("SCAN_SHOW", "NEXT|PREV|CANCEL|") ' BLUE
+        AppStates.Add("LEAVE", "Units in Gun, Gun must be Empty for Receipt|EXIT|")
         AppStates.Add("VERIFY", "Update (Y/N)|Y|N|CANCEL|")
 
         AppState = "SCAN_PALLET"
@@ -46,6 +47,11 @@
         End With
 
         tbl = dst.Tables("WHTTRAN2") ' New DataTable
+
+        Dim styles As String = TACMAIN1.LookupLocation(Me, g.GUN_LOC)
+        If styles.Length > 0 Then
+            AppState = "LEAVE"
+        End If
 
     End Sub
 
