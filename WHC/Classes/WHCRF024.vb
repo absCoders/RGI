@@ -31,6 +31,7 @@
         AppStates.Add("SCAN_PALLET", "Scan PALLET ID|EXIT|")
         AppStates.Add("SCAN_UPC", "Scan UPC|DONE|") ' BLUE
         AppStates.Add("SCAN_SHOW", "NEXT|PREV|CANCEL|") ' BLUE
+        AppStates.Add("SCAN_LOC", "Scan Deposit Location") ' yellow
         AppStates.Add("LEAVE", "Units in Gun, Gun must be Empty for Receipt|EXIT|")
         AppStates.Add("VERIFY", "Update (Y/N)|Y|N|CANCEL|")
 
@@ -204,25 +205,36 @@
                         CreateResponse("SCAN_SHOW", "R", pageText)
                         Exit Select
                     End If
+                Case "SCAN_LOC"
 
-                Case "VERIFY"
-                    If SCANTEXT = "Y" Then
-                        Update_Record()
-                        ASCMAIN1.MultiTask_Release()
-                        CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg(""))
-                    ElseIf SCANTEXT = "N" Then
-                        'ClearScanner()
-                        CreateResponse("SCAN_UPC", "BLUE", $"Pallet: {PALLET_NO & vbCrLf}Scan UPC:")
-                    ElseIf SCANTEXT = "CANCEL" Then
-                        ClearScanner()
-                        dst.Tables("WHTTRAN1").Rows.Clear()
-                        dst.Tables("WHTTRAN2").Rows.Clear()
-                        ASCMAIN1.MultiTask_Release()
-                        CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg("Transfer Receipt Cancelled, Re - scan PALLET"))
+                    Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckLocation(Me, SCANTEXT, False)
+                    If CheckResponse.ContainsKey("Error") Then
+                        CreateResponse("", "R", DisplayMsg(CheckResponse("Error")))
+                        Exit Select
                     Else
-                        CreateResponse("", "R", DisplayMsg("Invalid Response"))
+                        Deposit_Transfer_From_Gun(SCANTEXT)
+                        ClearScanner()
+                        CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg(""))
                     End If
-            End Select
+                Case "VERIFY"
+                            If SCANTEXT = "Y" Then
+                                Update_Record()
+                                ASCMAIN1.MultiTask_Release()
+                        CreateResponse("SCAN_LOC", "Y", $"Deposit Pallet {PALLET_NO}")
+
+                    ElseIf SCANTEXT = "N" Then
+                                'ClearScanner()
+                                CreateResponse("SCAN_UPC", "BLUE", $"Pallet: {PALLET_NO & vbCrLf}Scan UPC:")
+                            ElseIf SCANTEXT = "CANCEL" Then
+                                ClearScanner()
+                                dst.Tables("WHTTRAN1").Rows.Clear()
+                                dst.Tables("WHTTRAN2").Rows.Clear()
+                                ASCMAIN1.MultiTask_Release()
+                                CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg("Transfer Receipt Cancelled, Re - scan PALLET"))
+                            Else
+                                CreateResponse("", "R", DisplayMsg("Invalid Response"))
+                            End If
+                    End Select
         End If
     End Sub
 
@@ -324,7 +336,7 @@
                        New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
         CommitTrans()
 
-        ClearScanner()
+
 
     End Sub
 
@@ -379,5 +391,66 @@
 
         Return output.ToString()
     End Function
+    Sub Deposit_Transfer_From_Gun(depositLocation As String)
+        Dim FromLoc As String = G.GUN_LOC
+        Dim ToLoc As String = depositLocation
+        Dim WHSE_TRAN_NO As String = ASCMAIN1.Next_Control_No("WHTMOVE1.WHSE_TRAN_NO")
 
+        dst.Tables("WHTMOVE1").Clear()
+        dst.Tables("WHTMOVE2").Clear()
+
+        Dim rowWHTMOVE1 As DataRow = dst.Tables("WHTMOVE1").NewRow
+        With rowWHTMOVE1
+            .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+            .Item("WHSE_TRAN_TYPE") = "M"
+            .Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+            .Item("WHSE_CODE") = G.WHSE_CODE
+            .Item("INIT_OPER") = G.USER_ID
+            .Item("INIT_DATE") = DATETIME_STAMP
+            .Item("LAST_DATE") = DATETIME_STAMP
+            .Item("LAST_OPER") = G.USER_ID
+            .Item("STATUS") = "U"
+        End With
+        dst.Tables("WHTMOVE1").Rows.Add(rowWHTMOVE1)
+
+        Dim WHSE_TRAN_LNO_ctr As Integer = 0
+
+        Dim sqlWHTLOCB1 As String = $"select * from WHTLOCB1 where WHSE_CODE = '{G.WHSE_CODE}' and LOCATION_CODE = '{FromLoc}' and location_QTY > 0"
+        Dim tblWHTLOCB1 As DataTable = ASCDATA1.GetDataTable(sqlWHTLOCB1)
+
+        For Each row As DataRow In tblWHTLOCB1.Rows
+            Dim totalQty As Integer = row.Item("LOCATION_QTY")
+
+            Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+
+            With rowWHTMOVE2
+                .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
+                WHSE_TRAN_LNO_ctr += 1
+                .Item("WHSE_TRAN_LNO") = WHSE_TRAN_LNO_ctr
+                .Item("LOCATION_CODE_FROM") = FromLoc
+                .Item("LOCATION_CODE_TO") = ToLoc
+                .Item("BAR_CODE") = "0000000000"
+                .Item("WHSE_TRAN_QTY") = totalQty
+                .Item("STYLE_CODE") = row.Item("STYLE_CODE")
+                .Item("COLOR_CODE") = row.Item("COLOR_CODE")
+                .Item("INIT_OPER") = G.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("STATUS") = "U"
+                .Item("LOAD_NO_FROM") = ""
+                .Item("LOAD_NO_TO") = ""
+            End With
+            dst.Tables("WHTMOVE2").Rows.Add(rowWHTMOVE2)
+        Next
+
+        BeginTrans()
+
+        Update_Record_TDA("WHTMOVE1")
+        Update_Record_TDA("WHTMOVE2")
+
+        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
+                       New Object() {WHSE_TRAN_NO, 0, 1},
+                       New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
+        CommitTrans()
+
+    End Sub
 End Class

@@ -425,4 +425,21 @@ ByVal UPCDict As Dictionary(Of String, String)) As Dictionary(Of String, String)
         End If
         Return UPCDict
     End Function
+    Public Shared Function VerifyTransferDeposit(
+clsWHCRF000 As WHCRF000,
+ByVal SCANTEXT As String,
+ByVal WHSE_CODE As String,
+ByVal LOCATION_CODE As String) As Dictionary(Of String, String)
+
+        Dim sqlWHTLOCB1 As String = $"select * from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and location_QTY > 0"
+        Dim tblWHTLOCB1 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlWHTLOCB1)
+        Dim RtnDict As New Dictionary(Of String, String)
+        Dim rows() As DataRow = tblWHTLOCB1.Select("")
+        If rows.Length > 0 Then
+
+        Else
+            RtnDict.Add("Error", $"Nothing in {LOCATION_CODE} to Deposit")
+        End If
+        Return RtnDict
+    End Function
 End Class
