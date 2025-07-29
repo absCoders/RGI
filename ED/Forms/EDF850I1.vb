@@ -501,11 +501,11 @@ Public Class EDF850I1
                     Delete_Orders()
                     optACTION.Value = "I"
                 Else
-                    If useClass Then
-                        Import_Orders_using_Class()
-                    Else
-                        Import_Orders()
-                    End If
+                    'If useClass Then
+                    '    Import_Orders_using_Class()
+                    'Else
+                    Import_Orders()
+                    'End If
 
                 End If
 
@@ -1250,22 +1250,22 @@ Public Class EDF850I1
         ' do we instantiate 1 order at a time
         ' or for a list of orders - performance
 
-        Dim EDI_DOC_SEQ_NOs As New List(Of String)
-        For Each row As DataRow In dst.Tables("EDT850T1").Select("SEL='1'")
-            Dim EDI_DOC_SEQ_NO As String = row.Item("EDI_DOC_SEQ_NO")
-            EDI_DOC_SEQ_NOs.Add(EDI_DOC_SEQ_NO)
-        Next
-        Dim g As New WHC.GunEnvironment
+        'Dim EDI_DOC_SEQ_NOs As New List(Of String)
+        'For Each row As DataRow In dst.Tables("EDT850T1").Select("SEL='1'")
+        '    Dim EDI_DOC_SEQ_NO As String = row.Item("EDI_DOC_SEQ_NO")
+        '    EDI_DOC_SEQ_NOs.Add(EDI_DOC_SEQ_NO)
+        'Next
+        'Dim g As New WHC.GunEnvironment
 
-        g.DBS_COMPANY = ASCMAIN1.DBS_COMPANY
-        g.DBS_PASSWORD = ASCMAIN1.DBS_PASSWORD
-        g.DBS_SERVER = ASCMAIN1.DBS_SERVER
+        'g.DBS_COMPANY = ASCMAIN1.DBS_COMPANY
+        'g.DBS_PASSWORD = ASCMAIN1.DBS_PASSWORD
+        'g.DBS_SERVER = ASCMAIN1.DBS_SERVER
 
-        Dim x As New WHC.EDC850I1(EDI_DOC_SEQ_NOs, g, EDT850T1, dst.Tables("EDT850TE"))
+        'Dim x As New WHC.EDC850I1(EDI_DOC_SEQ_NOs, g, EDT850T1, dst.Tables("EDT850TE"))
 
-        x.Import_Orders()
+        'x.Import_Orders()
 
-        Stop
+        'Stop
 
         ' NEED EDTPARM1 SETTING THAT SAYS AUTOMATION IS ACTIVE
 

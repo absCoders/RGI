@@ -4,6 +4,7 @@ Public Class WBFHORNT
     Dim FromDate As Date
     Dim ToDate As Date
     Dim RankOption As String = "R"
+    Dim FormLoading As Boolean = True
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -124,6 +125,7 @@ Public Class WBFHORNT
 
         tab.Visible = False
 
+        FormLoading = False
         'grdWBFHORNT.Parent = tab.Parent
 
     End Sub
@@ -219,6 +221,7 @@ Public Class WBFHORNT
                 SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                SQLs.AppendLine(filterORDR_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
             Case "C"
                 RANKING = "Ranking Customers"
@@ -244,6 +247,7 @@ Public Class WBFHORNT
                 SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                SQLs.AppendLine(filterORDR_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.CUST_CODE, S1.CUST_NAME,  C1.CUST_CITY,  C1.CUST_STATE,  C1.CUST_COUNTRY")
             Case "S"
                 RANKING = "Ranking Styles"
@@ -296,6 +300,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                    SQLs.AppendLine(filterORDR_SOURCE("S1"))
                     If chkStylesInventory.Checked Then
                         SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
                         SQLs.AppendLine("(SELECT")
@@ -330,6 +335,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                    SQLs.AppendLine(filterORDR_SOURCE("S1"))
                     If chkStylesInventory.Checked Then
                         SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
                         SQLs.AppendLine("(SELECT")
@@ -364,6 +370,7 @@ Public Class WBFHORNT
                 SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                SQLs.AppendLine(filterORDR_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY R1.SREP_NAME")
         End Select
 
@@ -415,6 +422,29 @@ Public Class WBFHORNT
         End If
         Application.DoEvents()
     End Sub
+
+    Private Function filterORDR_SOURCE(ByVal ORDR_NAME As String) As String
+        Dim RETVAL As String = ""
+        If chkOTYPE_A.Checked = False Then
+            If chkOTYPE_K.Checked = True Then
+                RETVAL = RETVAL & ",'K'"
+            End If
+            If chkOTYPE_E.Checked = True Then
+                RETVAL = RETVAL & ",'E'"
+            End If
+            If chkOTYPE_L.Checked = True Then
+                RETVAL = RETVAL & ",'L'"
+            End If
+            If chkOTYPE_W.Checked = True Then
+                RETVAL = RETVAL & ",'W'"
+            End If
+        End If
+        If RETVAL.Length > 3 Then
+            RETVAL = RETVAL.Substring(1, RETVAL.Length - 1)
+            RETVAL = $"AND {ORDR_NAME}.ORDR_SOURCE IN ({RETVAL})"
+        End If
+        Return RETVAL
+    End Function
 
     Sub Delete_Record(ByVal ORDR_NO As String)
         'Call BeginTrans()
@@ -710,6 +740,7 @@ Public Class WBFHORNT
                         S.AppendLine(String.Format("AND S1.SREP_CODE = '{0}'", SREP_CODE))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        S.AppendLine(filterORDR_SOURCE("S1"))
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
                         S.AppendLine("R1.SREP_NAME,")
@@ -753,6 +784,7 @@ Public Class WBFHORNT
                         S.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        S.AppendLine(filterORDR_SOURCE("S1"))
                         If chkSHIP_ECOM.Checked Then
                             Dim SEL_LIST As New List(Of String)
                             For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
@@ -817,6 +849,7 @@ Public Class WBFHORNT
                         S.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", CUST_CODE))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                         S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        S.AppendLine(filterORDR_SOURCE("S1"))
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
                         S.AppendLine("R1.SREP_NAME,")
@@ -833,6 +866,29 @@ Public Class WBFHORNT
 
                 Fill_Records("WBTHORND", , , S.ToString)
             End If
+        End If
+    End Sub
+
+    Private Sub chkOTYPE_A_CheckedChanged(sender As Object, e As EventArgs) Handles chkOTYPE_A.CheckedChanged
+
+        If chkOTYPE_A.Checked Then
+            chkOTYPE_K.Checked = False
+            chkOTYPE_K.Visible = False
+            chkOTYPE_E.Checked = False
+            chkOTYPE_E.Visible = False
+            chkOTYPE_L.Checked = False
+            chkOTYPE_L.Visible = False
+            chkOTYPE_W.Checked = False
+            chkOTYPE_W.Visible = False
+        Else
+            chkOTYPE_K.Checked = True
+            chkOTYPE_K.Visible = True
+            chkOTYPE_E.Checked = True
+            chkOTYPE_E.Visible = True
+            chkOTYPE_L.Checked = True
+            chkOTYPE_L.Visible = True
+            chkOTYPE_W.Checked = True
+            chkOTYPE_W.Visible = True
         End If
     End Sub
 #End Region
