@@ -1,5 +1,8 @@
+Imports System.Drawing
+
 Public Class WHFRFAPP
-    Dim TXTs As New Dictionary(Of Integer, UltraWinEditors.UltraTextEditor)
+    'Dim TXTs As New Dictionary(Of Integer, UltraWinEditors.UltraTextEditor)
+    Dim TXTs As New Dictionary(Of Integer, TextBox)
     Dim LBLs As New Dictionary(Of Integer, Misc.UltraLabel)
     Dim Cs As New Dictionary(Of Integer, WHC.WHCRF000)
     Dim Bs As New Dictionary(Of Integer, Misc.UltraButton())
@@ -229,14 +232,15 @@ Public Class WHFRFAPP
         Dim THREAD_NO As Integer = tabMain.Tabs.Count
         tabMain.Tabs.Add(CStr(THREAD_NO))
 
-        Dim txt As New UltraWinEditors.UltraTextEditor
+        'Dim txt As New UltraWinEditors.UltraTextEditor
+        Dim txt As New TextBox()
         Dim spl As New SplitContainer
         Dim lbl As New Misc.UltraLabel
 
         With tabMain.Tabs(THREAD_NO)
 
             txt.Multiline = True
-            txt.Scrollbars = ScrollBars.Vertical
+            txt.ScrollBars = ScrollBars.Vertical
 
             .TabPage.Controls.Add(spl)
             spl.Dock = DockStyle.Fill
@@ -249,7 +253,16 @@ Public Class WHFRFAPP
             spl.Panel2.Controls.Add(txt)
             txt.Visible = True
             txt.Dock = DockStyle.Fill
-
+            txt.ScrollBars = ScrollBars.Vertical
+            With txt
+                .Multiline = True
+                .BackColor = Color.Black
+                .ForeColor = Color.LimeGreen
+                .Font = New Font("Consolas", 14, FontStyle.Regular)
+                .BorderStyle = BorderStyle.None
+                .WordWrap = False
+                .ReadOnly = True
+            End With
             spl.SplitterDistance = spl.Height * 0.8
             spl.Tag = THREAD_NO
 
@@ -322,9 +335,9 @@ Public Class WHFRFAPP
             End With
         Next
 
-        LBLs(THREAD_NO).TEXT = TXT
+        LBLs(THREAD_NO).Text = TXT
 
-        TXTs(THREAD_NO).Text &= vbCrLf & "Thread " & THREAD_NO & ":" & TXT
+        TXTs(THREAD_NO).Text &= "Thread: " & THREAD_NO & vbCrLf & TXT & vbCrLf
         TXTs(THREAD_NO).SelectionStart = TXTs(THREAD_NO).Text.Length - 1
         TXTs(THREAD_NO).ScrollToCaret()
 
@@ -358,7 +371,7 @@ Public Class WHFRFAPP
 
     Private Sub tabMain_SelectedTabChanged(sender As Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs) Handles tabMain.SelectedTabChanged
         If tabMain.SelectedTab Is Nothing Then Exit Sub
-        setup_Tab()
+        Setup_Tab()
     End Sub
 
     Sub Setup_Tab()

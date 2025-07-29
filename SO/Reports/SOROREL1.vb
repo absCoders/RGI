@@ -959,7 +959,7 @@ Public Class SOROREL1
                 ASCMAIN1.sql = "" _
                     & "Begin" & vbCrLf _
                     & " Declare Cursor C1 is" & vbCrLf _
-                    & $"  Select * from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1';" & vbCrLf _
+                    & $"  Select * from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1' and SHORT < 0;" & vbCrLf _
                     & " Begin" & vbCrLf _
                     & "  For R1 in C1 Loop" & vbCrLf _
                     & "   Update ICTSTAT2 Set WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN,0) + NVL(R1.ALLO,0)" & vbCrLf _

@@ -191,7 +191,7 @@ Public Class WHFPACK1
                 If printer.ToLower.Contains("zebra") Or printer.ToLower.Contains("upc") Or printer.ToLower.Contains("microsoft") _
                     Or printer.ToLower.Contains("brother ql") Or printer.ToLower.Contains("pdf") Then
                 Else
-                    If ASCMAIN1.USER_ID = "rick" Then MsgBox($"About to open Printer {printer}")
+                    'If ASCMAIN1.USER_ID = "rick" Then MsgBox($"About to open Printer {printer}")
                     settings.PrinterName = printer
                     Debug.Print(printer)
                     If settings.DefaultPageSettings.PaperSize.PaperName = "Letter" Then
@@ -201,7 +201,7 @@ Public Class WHFPACK1
                         End If
                     End If
                 End If
-                If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
+                'If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
             Next
 
             If ASCMAIN1.USER_ID = "rick" Then MsgBox("Done with Label Printers")
@@ -1363,8 +1363,8 @@ Public Class WHFPACK1
             Dim qty = row.Item("QTY_PACKED")
             rowWHTCART1.Item("CART_TOTAL_UNITS") = rowWHTCART1.Item("CART_TOTAL_UNITS") - qty
             For Each rowSOTPICK5 As DataRow In dst.Tables("SOTPICK5").Select("UPC_CODE = '" & row.Item("UPC_CODE") & "'")
-                If rowSOTPICK5.Item("PACK_QTY") < qty Then
-                    qty = qty - rowSOTPICK5.Item("PACK_QTY")
+                If Val(rowSOTPICK5.Item("PACK_QTY") & "") < qty Then
+                    qty = qty - Val(rowSOTPICK5.Item("PACK_QTY") & "")
                     rowSOTPICK5.Item("PACK_QTY") = 0
                 Else
                     rowSOTPICK5.Item("PACK_QTY") = rowSOTPICK5.Item("PACK_QTY") - qty

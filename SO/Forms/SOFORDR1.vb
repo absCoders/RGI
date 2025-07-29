@@ -6535,6 +6535,7 @@ Public Class SOFORDR1
                     Dim rowSOTPICK1_0 As DataRow = REPORTS(REPORTFILE).clsASCBASE1.dst.Tables("SOTPICK1").NewRow
                     rowSOTPICK1_0.Item("PICK_NO") = "0000000000"
                     rowSOTPICK1_0.Item("PICK_STATUS") = "F"
+                    rowSOTPICK1_0.Item("WHSE_CODE") = rowSOTORDR1("WHSE_CODE")
                     REPORTS(REPORTFILE).clsASCBASE1.dst.Tables("SOTPICK1").Rows.Add(rowSOTPICK1_0)
                     'REPORTS(REPORTFILE).clsASCBASE1.dst.Tables("SOTPICK1").Rows.Add(New Object() {"0000000000"})
                 End If

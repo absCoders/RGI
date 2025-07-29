@@ -23,6 +23,10 @@ Public Class SOTUCCL1
             Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
             Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
             PrinterName = PRINTER_PORT
+        ElseIf ASCMAIN1.CLIENT = "RGI" Then
+            Dim ZebraPrinter As String = cboZebraPrinter.SelectedValue
+            'Dim PRINTER_PORT As String = ZebraPrinter.Split("|")(2)
+            PrinterName = ZebraPrinter
         End If
 
         If txtCartonNo.Text <> "" Then
