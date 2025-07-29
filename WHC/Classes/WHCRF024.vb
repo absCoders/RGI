@@ -211,11 +211,8 @@
                         ASCMAIN1.MultiTask_Release()
                         CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg(""))
                     ElseIf SCANTEXT = "N" Then
-                        ClearScanner()
-                        dst.Tables("WHTTRAN1").Rows.Clear()
-                        dst.Tables("WHTTRAN2").Rows.Clear()
-                        ASCMAIN1.MultiTask_Release()
-                        CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg("Transfer Receipt Cancelled, Re - scan PALLET"))
+                        'ClearScanner()
+                        CreateResponse("SCAN_UPC", "BLUE", $"Pallet: {PALLET_NO & vbCrLf}Scan UPC:")
                     ElseIf SCANTEXT = "CANCEL" Then
                         ClearScanner()
                         dst.Tables("WHTTRAN1").Rows.Clear()
@@ -287,6 +284,9 @@
             Dim totalQty As Integer = Convert.ToInt32(dst.Tables("WHTTRAN2").Compute("SUM(SCAN_QTY)", $"UPC_CODE = '{UPC_CODE_sum}'"))
             Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, UPC_CODE_sum)
             Dim rowWHTMOVE2 As DataRow = dst.Tables("WHTMOVE2").NewRow
+            Dim CtnQty = CInt(CheckResponse("CARTON_PACK_QTY"))
+            If CtnQty = 0 Then CtnQty = 1
+
             With rowWHTMOVE2
                 .Item("WHSE_TRAN_NO") = WHSE_TRAN_NO
                 WHSE_TRAN_LNO_ctr += 1
@@ -294,7 +294,7 @@
                 .Item("LOCATION_CODE_FROM") = FromLoc
                 .Item("LOCATION_CODE_TO") = ToLoc
                 .Item("BAR_CODE") = "0000000000"
-                .Item("WHSE_TRAN_QTY") = totalQty * CInt(CheckResponse("INNER_PACK_QTY"))
+                .Item("WHSE_TRAN_QTY") = totalQty * CtnQty
                 .Item("STYLE_CODE") = CheckResponse("STYLE_CODE")
                 .Item("COLOR_CODE") = CheckResponse("COLOR_CODE")
                 .Item("INIT_OPER") = G.USER_ID
@@ -315,6 +315,9 @@
         Update_Record_TDA("WHTTRAN2")
         Update_Record_TDA("WHTMOVE1")
         Update_Record_TDA("WHTMOVE2")
+
+        Dim sql As String = "Update EDT945T3 Set EDI_STATUS = 'F' Where EDI_PALLET_NO = '" & PALLET_NO & "'"
+        ASCDATA1.ExecuteSQL(sql)
 
         ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
                        New Object() {WHSE_TRAN_NO, 0, 1},

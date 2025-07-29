@@ -409,7 +409,7 @@ ByVal UPCDict As Dictionary(Of String, String)) As Dictionary(Of String, String)
         Dim tblEDT945T2 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlEDT945T2, "EDT945T2", "VV", New Object() {EDI_DOC_SEQ_NO, SCANTEXT})
 
         Dim rows() As DataRow = tblEDT945T2.Select("")
-        If rows.Length = 1 Then
+        If rows.Length > 0 Then
             Dim STYLE_CODE As String = UPCDict("STYLE_CODE")
             Dim COLOR_CODE As String = UPCDict("COLOR_CODE")
             Dim EDI_STYLE As String = rows(0)("EDI_STYLE")
