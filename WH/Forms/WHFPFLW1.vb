@@ -138,6 +138,7 @@ Public Class WHFPFLW1
             If Not .Tables("SOTPICK2").Columns.Contains("LOCATION_ROUTE_SEQ") Then
                 .Tables("SOTPICK2").Columns.Add("LOCATION_ROUTE_SEQ", GetType(System.Int32))
             End If
+            .Tables("SOTPICK2").Columns.Add("USL_FLAG", GetType(System.String))
 
             ASCMAIN1.sql = "Select SOTSHIP1.* , DECODE (SOTSHIP1.SHIP_ADDR_TYPE,'DC',SOTSHIP1.SHIP_BOL_NO,'MK') SHIP_BOL_NO_X from SOTSHIP1 WHERE SHIP_BOL_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTSHIP1", "**", 0, True, "V", 1, "SHIP_PICK_PRINTED,BILL_OF_LADING_NO")
@@ -774,6 +775,7 @@ Public Class WHFPFLW1
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
             & " AND SOTPICK1.PICK_PRINTED IS NULL " & vbCrLf _
+            & " AND SOTPICK1.WHSE_CODE in ('MS','NY') " & vbCrLf _
             & "	AND SOTPICK1.PICK_NO not in (" & vbCrLf _
             & "	SELECT PICK_NO from SOTPICK5 " & vbCrLf _
             & "	WHERE SOTPICK5.PICK_NO = SOTPICK1.PICK_NO)" & vbCrLf _
@@ -797,6 +799,7 @@ Public Class WHFPFLW1
             & "	AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
             & "	AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
             & " AND SOTPICK1.PICK_PRINTED IS NULL " & vbCrLf _
+            & " AND SOTPICK1.WHSE_CODE in ('MS','NY') " & vbCrLf _
             & "	AND SOTPICK1.PICK_NO not in (" & vbCrLf _
             & "	SELECT PICK_NO from SOTPICK5 " & vbCrLf _
             & "	WHERE SOTPICK5.PICK_NO = SOTPICK1.PICK_NO)" & vbCrLf _
@@ -906,9 +909,10 @@ Public Class WHFPFLW1
         Fill_Records("SOTPICK2", ORDR_NO)
 
         Dim row As DataRow
-        Dim SHIP_BOL_NO As String
+            Dim SHIP_BOL_NO As String
+            Dim USL_LIST As New List(Of String)
 
-        If MergedPicks Then
+            If MergedPicks Then
             row = dst.Tables("SOTPICK1").Select("ORDR_NO = '" & ORDR_NO & "'")(0)
         Else
             row = dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")(0)
@@ -966,21 +970,34 @@ Public Class WHFPFLW1
             Next
             rowSOTORDR1.Item("ORDR_SHIP_INSTR") = rowSOTORDR1.Item("ORDR_SHIP_INSTR").ToString.Replace(vbCrLf, ", ") & ""
 
-        GetLocs(WHSE_CODE, PICK_NO)
+            GetLocs(WHSE_CODE, PICK_NO)
 
-        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
-            For Each rowSOTPICKD As DataRow In dst.Tables("SOTPICKD").Select("PICK_NO = '" & rowSOTPICK2.Item("PICK_NO") & "' and PICK_LNO = " & rowSOTPICK2.Item("PICK_LNO"))
+            ASCMAIN1.sql = "Select * from ICTSTAT2 where WHSE_CODE = 'US' and WHSE_QTY_PICK > 0"
+            Dim tblICTSTAT2 As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+
+            For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("")
+                For Each rowSOTPICKD As DataRow In dst.Tables("SOTPICKD").Select("PICK_NO = '" & rowSOTPICK2.Item("PICK_NO") & "' and PICK_LNO = " & rowSOTPICK2.Item("PICK_LNO"))
                     rowSOTPICK2.Item("LOCATION_CODE") = rowSOTPICKD.Item("LOCATION_CODE")
                     rowSOTPICK2.Item("LOCATION_ROUTE_SEQ") = rowSOTPICKD.Item("LOCATION_ROUTE_SEQ")
-                Exit For
+                    Exit For
+                Next
+                For Each rowICTSTAT2 As DataRow In tblICTSTAT2.Select($"STYLE_CODE = '{rowSOTPICK2.Item("STYLE_CODE")}' and COLOR_CODE = '{rowSOTPICK2.Item("COLOR_CODE")}'")
+                    rowSOTPICK2.Item("USL_FLAG") = "1"
+                    If USL_LIST.Count < 5 Then
+                        USL_LIST.Add(rowSOTPICK2.Item("STYLE_CODE") & "-" & rowSOTPICK2.Item("COLOR_CODE"))
+                    ElseIf USL_LIST.Count = 5 Then
+                        USL_LIST.Add("More...")
+                    End If
+                    Exit For
+                Next
             Next
-        Next
 
-        Print_Report_Begin()
-        CR_params.Add("SUBT", "")
-        Dim RPT As String = "WHRPFLW1"
 
-        Generate_Report(RPT, "Pick Ticket", "", "")
+            Print_Report_Begin()
+            CR_params.Add("SUBT", IIf(USL_LIST.Count = 0, "", "This pick ticket has USL inventory:" & String.Join(", ", USL_LIST)))
+            Dim RPT As String = "WHRPFLW1"
+
+            Generate_Report(RPT, "Pick Ticket", "", "")
 
             If ASCMAIN1.Running_in_VS Then
                 Print_Report_End(False)
@@ -990,10 +1007,10 @@ Public Class WHFPFLW1
             End If
             UpdatePrintRecord(SHIP_BOL_NO, PICK_NO)
 
-        If MergedPicks Then
-            Proceed("Refresh")
-            MergedPicks = False
-        End If
+            If MergedPicks Then
+                Proceed("Refresh")
+                MergedPicks = False
+            End If
 
         Catch ex As Exception
             Rollback(ex.Message)

@@ -117,7 +117,7 @@ Public Class WBFIMGWB
 
     Private Sub SetFileLocations()
         txtREMOTE_FOLDER.Text = "/www/media/product/"
-        txtLOCAL_FOLDER.Text = "S:\Images\"
+        txtLOCAL_FOLDER.Text = $"{ASCMAIN1.Folders("SharedRoot")}\Images\"
         txtFILE_EXT.Text = "*.jpg"
 
         If Not (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then

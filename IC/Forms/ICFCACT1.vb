@@ -11,6 +11,9 @@ Public Class ICFCACT1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Dim fromDate As String = New DateTime(DateTime.Today.Year - 1, 1, 1).ToString("dd-MMM-yyyy").ToUpper()
+        Set_cmbYP("RYP0", ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -60), 0, 61, 0)
+        Set_cmbYP("RYP1", ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -60), 0, 61, 60)
+
         With dst
 
             ASCMAIN1.sql = $"select * from (
@@ -121,6 +124,7 @@ Public Class ICFCACT1
                 .Groups("Screen Control").Items("Cancel").Settings.Enabled = iScreenMode
                 .Groups("Screen Control").Items("Generate").Settings.Enabled = iScreenMode
                 .Groups("Screen Control").Items("Refresh").Settings.Enabled = not_iScreenMode
+                .Groups("Balances").Expanded = ScreenMode
             End With
         End If
 
@@ -128,6 +132,7 @@ Public Class ICFCACT1
         cmdMulti.Visible = ScreenMode
         grdICTCACTX.Visible = False
         UltraLabel2.Visible = ScreenMode
+        SplitContainer2.Panel1.Visible = ScreenMode
 
         If ScreenMode Then
         Else
@@ -144,7 +149,10 @@ Public Class ICFCACT1
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         ' Refresh_Entries()
-        txtBalanceTot.Text = ""
+        Absx1.txtFor("OpenBal").Text = ""
+        Absx1.txtFor("RcvBal").Text = ""
+        Absx1.txtFor("ShipBal").Text = ""
+        Absx1.txtFor("AdjBal").Text = ""
 
         EnforceConstraints(True)
     End Sub
@@ -159,7 +167,10 @@ Public Class ICFCACT1
             Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
             Dim Emsg As String = String.Empty
 
-            txtBalanceTot.Text = ""
+            Absx1.txtFor("OpenBal").Text = ""
+            Absx1.txtFor("RcvBal").Text = ""
+            Absx1.txtFor("ShipBal").Text = ""
+            Absx1.txtFor("AdjBal").Text = ""
 
             EnforceConstraints(True)
 
@@ -174,30 +185,88 @@ Public Class ICFCACT1
 
     Private Sub Generate()
         UpdateSelectedStylesFromTextbox()
+        Dim FromYYYYPP As String = Absx1.cmbFor("RYP0").Value
+        Dim ToYYYYPP As String = Absx1.cmbFor("RYP1").Value
+
+        If Not String.IsNullOrEmpty(FromYYYYPP) Then
+            FromYYYYPP = FromYYYYPP.Substring(0, 4) & FromYYYYPP.Substring(5, 2)
+        End If
+        If Not String.IsNullOrEmpty(ToYYYYPP) Then
+            ToYYYYPP = ToYYYYPP.Substring(0, 4) & ToYYYYPP.Substring(5, 2)
+        End If
+
         ASCMAIN1.sql = $"select * from (
-                                select ICTIREC1.OPS_YYYYPP PERIOD, 'Received' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
-                                from POTORDR1, ICTIREC1, ICTIREC2
-                                where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
-                                and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
-                                and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
-                                group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
-                                union
-                                Select SOTINVH2.ORDR_YYYYPP_UPDATED, 'Shipped', ' ',  SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
-                                from SOTINVH1, SOTINVH2, SOTORDR1
-                                where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
-                                and SOTINVH1.INV_NO = SOTINVH2.INV_NO
-                                and SOTORDR1.ORDR_NO (+) = SOTINVH1.ORDR_NO
-                                and SOTINVH2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
-                                group by SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE
-                                union
-                                select to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), 'Adjusted', ' ', ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
-                                from ICTIADJ1, ICTIADJ2
-                                Where ICTIADJ1.ADJ_NO =  ICTIADJ2.ADJ_NO
-                                AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
-                                AND ICTIADJ1.REVERSES_ADJ_NO IS NULL
-                                AND ICTIADJ2.STYLE_CODE in ('{String.Join("','", selectedStylesList)}')
-                                group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
-                                ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
+                            SELECT
+                                '{FromYYYYPP}' AS PERIOD,
+                                'Received' AS ACTIVITY,
+                                'Open Balance' AS PO_REFERENCE, 
+                                STYLE_CODE,
+                                SUM(PO_QTY_REC) AS PO_QTY_REC
+                            FROM (
+                                -- Received quantities prior to FromYYYYPP
+                                SELECT ICTIREC2.STYLE_CODE, SUM(NVL(ICTIREC2.QTY_REC, 0)) AS PO_QTY_REC
+                                FROM POTORDR1, ICTIREC1, ICTIREC2
+                                WHERE
+                                    POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                                    AND ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                                    AND ICTIREC1.OPS_YYYYPP < '{FromYYYYPP}' 
+                                    AND ICTIREC2.STYLE_CODE IN ('{String.Join("','", selectedStylesList)}')
+                                GROUP BY
+                                    ICTIREC2.STYLE_CODE
+                                UNION ALL
+                                -- Shipped quantities prior to FromYYYYPP
+                                SELECT SOTINVH2.STYLE_CODE, SUM(NVL(SOTINVH2.ORDR_QTY_SHIP, 0) * -1) AS PO_QTY_REC -- Negate for shipped quantities
+                                FROM SOTINVH1, SOTINVH2, SOTORDR1
+                                WHERE SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
+                                    AND SOTINVH1.INV_NO = SOTINVH2.INV_NO
+                                    AND SOTORDR1.ORDR_NO (+) = SOTINVH1.ORDR_NO
+                                    AND SOTINVH2.ORDR_YYYYPP_UPDATED < '{FromYYYYPP}'
+                                    AND SOTINVH2.STYLE_CODE IN ('{String.Join("','", selectedStylesList)}')
+                                GROUP BY
+                                    SOTINVH2.STYLE_CODE
+                                UNION ALL
+                                -- Adjusted quantities prior to FromYYYYPP
+                                SELECT ICTIADJ2.STYLE_CODE, SUM(ICTIADJ2.ADJ_QTY) AS PO_QTY_REC
+                                FROM ICTIADJ1, ICTIADJ2
+                                WHERE ICTIADJ1.ADJ_NO = ICTIADJ2.ADJ_NO
+                                    AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
+                                    AND ICTIADJ1.REVERSES_ADJ_NO IS NULL
+                                    AND TO_CHAR(ICTIADJ1.ADJ_DATE, 'YYYYmm') < '{FromYYYYPP}'
+                                    AND ICTIADJ2.STYLE_CODE IN ('{String.Join("','", selectedStylesList)}')
+                                GROUP BY
+                                    ICTIADJ2.STYLE_CODE
+                            )
+                            group by STYLE_CODE
+                            )
+                            PIVOT (SUM(PO_QTY_REC) FOR STYLE_CODE IN ('{String.Join("','", selectedStylesList)}'))
+                            union
+                            select * from (
+                            select ICTIREC1.OPS_YYYYPP PERIOD, 'Received' ACTIVITY, POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0)) PO_QTY_REC
+                            from POTORDR1, ICTIREC1, ICTIREC2
+                            where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                            and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                            and ICTIREC1.OPS_YYYYPP >= '{FromYYYYPP}' and ICTIREC1.OPS_YYYYPP <= '{ToYYYYPP}' 
+                            and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
+                            group by POTORDR1.PO_REFERENCE, ICTIREC1.OPS_YYYYPP, ICTIREC2.STYLE_CODE
+                            union
+                            Select SOTINVH2.ORDR_YYYYPP_UPDATED, 'Shipped', ' ',  SOTINVH2.STYLE_CODE, SUM(nvl(SOTINVH2.ORDR_QTY_SHIP,0) * -1)
+                            from SOTINVH1, SOTINVH2, SOTORDR1
+                            where SOTINVH1.INV_TYPE = SOTINVH2.INV_TYPE
+                            and SOTINVH1.INV_NO = SOTINVH2.INV_NO
+                            and SOTORDR1.ORDR_NO (+) = SOTINVH1.ORDR_NO
+                            and SOTINVH2.ORDR_YYYYPP_UPDATED >= '{FromYYYYPP}' and SOTINVH2.ORDR_YYYYPP_UPDATED <= '{ToYYYYPP}'
+                            and SOTINVH2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
+                            group by SOTINVH2.ORDR_YYYYPP_UPDATED, SOTINVH2.STYLE_CODE
+                            union
+                            select to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), 'Adjusted', ' ', ICTIADJ2.STYLE_CODE, sum(ICTIADJ2.ADJ_QTY)
+                            from ICTIADJ1, ICTIADJ2
+                            Where ICTIADJ1.ADJ_NO =  ICTIADJ2.ADJ_NO
+                            AND ICTIADJ1.REVERSED_BY_ADJ_NO IS NULL
+                            AND ICTIADJ1.REVERSES_ADJ_NO IS NULL
+                            AND TO_CHAR(ICTIADJ1.ADJ_DATE, 'YYYYmm') >= '{FromYYYYPP}' AND TO_CHAR(ICTIADJ1.ADJ_DATE, 'YYYYmm') <= '{ToYYYYPP}'
+                            AND ICTIADJ2.STYLE_CODE in ('{String.Join("','", selectedStylesList)}')
+                            group by to_CHAR(ICTIADJ1.ADJ_DATE,'YYYYmm'), ICTIADJ2.STYLE_CODE
+                            ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
 
         grdICTCACTX.DisplayLayout.NewColumnLoadStyle = NewColumnLoadStyle.Show
         grdICTCACTX.DisplayLayout.NewBandLoadStyle = NewBandLoadStyle.Show
@@ -222,10 +291,19 @@ Public Class ICFCACT1
         'dst.Tables("ICTCACTX").Columns("BALANCE").Expression = balexpr.Substring(2)
 
         ASCMAIN1.sql = $"select * from (
+                        select '{FromYYYYPP}' PERIOD, 't_Bal' ACTIVITY, 'Open Balance' AS PO_REFERENCE, max(ICTIREC1.OPS_YYYYPP) ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
+                        from POTORDR1, ICTIREC1, ICTIREC2
+                        where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
+                        and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                        and ICTIREC1.OPS_YYYYPP < '{FromYYYYPP}'
+                        and ICTIREC2.STYLE_CODE in('{selectedStylesList.First()}')
+                        group by ICTIREC2.STYLE_CODE
+                        union
                         select MIN(ICTIREC1.OPS_YYYYPP) PERIOD, 't_Bal' ACTIVITY, POTORDR1.PO_REFERENCE, MIN(ICTIREC1.OPS_YYYYPP) ORIG_PERIOD, ICTIREC2.STYLE_CODE,  sum(nvl(ICTIREC2.QTY_REC,0) * 0)  PO_QTY_REC
                         from POTORDR1, ICTIREC1, ICTIREC2
                         where  POTORDR1.PO_ORDER_NO = ICTIREC2.PO_ORDER_NO
                         and ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO
+                        and ICTIREC1.OPS_YYYYPP >= '{FromYYYYPP}' 
                         and ICTIREC2.STYLE_CODE in('{String.Join("','", selectedStylesList)}')
                         group by POTORDR1.PO_REFERENCE, ICTIREC2.STYLE_CODE
                         ) pivot (sum (PO_QTY_REC) for STYLE_CODE in({SLQColumnsList}))"
@@ -234,6 +312,10 @@ Public Class ICFCACT1
         Dim lastpoRef As String = String.Empty 'use this to add the forcedrow to the last poref
         'add a row after every shipment record
         Dim OpenBalanceAll As Int32 = 0
+        Dim RcvBal As Int32 = 0
+        Dim ShipBal As Int32 = 0
+        Dim AdjBal As Int32 = 0
+
         For Each row As DataRow In dst.Tables("ICTCACTX").Select("ACTIVITY = 'Shipped' or ACTIVITY = 'Adjusted' or ACTIVITY = 'Received'", "PERIOD,ACTIVITY,PO_REFERENCE")
             Dim rowdist As DataRow = dst.Tables("ICTCACTX").NewRow()
             Dim forcerow As Boolean = False
@@ -249,6 +331,27 @@ Public Class ICFCACT1
                     OpenBalanceAll += Val(rowdist(col.ColumnName) & "")
                 End If
             Next
+            If row("ACTIVITY") = "Received" Then
+                For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
+                    If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
+                        RcvBal += Val(rowdist(col.ColumnName) & "")
+                    End If
+                Next
+            End If
+            If row("ACTIVITY") = "Shipped" Then
+                For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
+                    If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
+                        ShipBal += Val(rowdist(col.ColumnName) & "")
+                    End If
+                Next
+            End If
+            If row("ACTIVITY") = "Adjusted" Then
+                For Each col As DataColumn In dst.Tables("ICTCACTX").Columns
+                    If Not SkipCols.Contains(col.ColumnName) And col.ColumnName <> "''" Then
+                        AdjBal += Val(rowdist(col.ColumnName) & "")
+                    End If
+                Next
+            End If
 
             'If rowdist("PO_REFERENCE") = "WM24101" Then Stop
 
@@ -335,8 +438,10 @@ forcerow_here:
         Sort_grdColumns(grdICTCACTX, "PERIOD, ACTIVITY, PO_REFERENCE")
         grdICTCACTX.Visible = True
 
-        txtBalanceTot.Text = OpenBalanceAll
-
+        Absx1.txtFor("OpenBal").Text = OpenBalanceAll
+        Absx1.txtFor("RcvBal").Text = RcvBal
+        Absx1.txtFor("ShipBal").Text = ShipBal
+        Absx1.txtFor("AdjBal").Text = AdjBal
 
     End Sub
     Overrides Sub Prepare_for_View_Lookup_Special(

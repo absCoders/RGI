@@ -358,4 +358,88 @@
         End If
         Return RtnDict
     End Function
+
+    Public Shared Function VerifyTransferPallet(
+    clsWHCRF000 As WHCRF000,
+    ByVal SCANTEXT As String) As Dictionary(Of String, String)
+
+        Dim RtnDict As New Dictionary(Of String, String)
+        Dim sqlWHTTRAN1 As String = $"SELECT * FROM WHTTRAN1 WHERE PALLET_NO = '{SCANTEXT}'"
+        Dim tblWHTTRAN1 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlWHTTRAN1)
+
+        If tblWHTTRAN1.Rows.Count > 0 Then
+            RtnDict.Add("Error", $"{SCANTEXT} has already been received.")
+        Else
+            Dim sqlPallet As String = $"SELECT * FROM EDT945T3 WHERE EDI_PALLET_NO = '{SCANTEXT}'"
+            Dim tblEDT945T3 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlPallet)
+            Dim PICK_NO As String = SCANTEXT.Substring(0, 10)
+            Dim PALLET_SEQ_NO As Integer = CInt(SCANTEXT.Substring(10, 3))
+            Dim PICK_NO_USL As String = SCANTEXT.Substring(13)
+            Dim sqlSOTPICK1 As String = $"SELECT * FROM SOTPICK1 WHERE PICK_NO = '{PICK_NO}'"
+            Dim tblSOTPICK1 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlSOTPICK1)
+
+            Dim rows() As DataRow = tblEDT945T3.Select("")
+            If rows.Length = 1 Then
+                RtnDict.Add("EDI_DOC_SEQ_NO", rows(0)("EDI_DOC_SEQ_NO"))
+                RtnDict.Add("EDI_STATUS", rows(0)("EDI_STATUS"))
+                Dim rowSOTPICK1() As DataRow = tblSOTPICK1.Select("")
+                If rowSOTPICK1.Length = 1 Then
+                    Dim PICK_STATUS As String = rowSOTPICK1(0)("PICK_STATUS")
+                    If PICK_STATUS <> "F" Then
+                        RtnDict.Add("Error", $"{PICK_NO} is not Finalized (PICK_STATUS <> 'F')")
+                    End If
+                Else
+                    RtnDict.Add("Error", $"{SCANTEXT} is not a valid Pick Ticket")
+                End If
+            Else
+                RtnDict.Add("Error", $"{SCANTEXT} is not a valid EDI Pallet No")
+            End If
+        End If
+
+        Return RtnDict
+    End Function
+
+    Public Shared Function VerifyTransferUPC(
+clsWHCRF000 As WHCRF000,
+ByVal SCANTEXT As String,
+ByVal EDI_DOC_SEQ_NO As String,
+ByVal UPCDict As Dictionary(Of String, String)) As Dictionary(Of String, String)
+
+        Dim sqlEDT945T2 As String = $"SELECT * FROM EDT945T2 WHERE EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}' AND UPC_CODE = '{SCANTEXT}'"
+        Dim tblEDT945T2 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlEDT945T2, "EDT945T2", "VV", New Object() {EDI_DOC_SEQ_NO, SCANTEXT})
+
+        Dim rows() As DataRow = tblEDT945T2.Select("")
+        If rows.Length > 0 Then
+            Dim STYLE_CODE As String = UPCDict("STYLE_CODE")
+            Dim COLOR_CODE As String = UPCDict("COLOR_CODE")
+            Dim EDI_STYLE As String = rows(0)("EDI_STYLE")
+            Dim EDI_COLOR As String = rows(0)("EDI_COLOR")
+            If STYLE_CODE = EDI_STYLE AndAlso COLOR_CODE = EDI_COLOR Then
+                UPCDict.Add("EDI_STYLE", EDI_STYLE)
+                UPCDict.Add("EDI_COLOR", EDI_COLOR)
+            Else
+                UPCDict.Add("Error", $"Style/Color Mismatch for UPC {SCANTEXT} ")
+            End If
+        Else
+            UPCDict.Add("Error", $"{SCANTEXT} is not a valid UPC for this Pallet")
+        End If
+        Return UPCDict
+    End Function
+    Public Shared Function VerifyTransferDeposit(
+clsWHCRF000 As WHCRF000,
+ByVal SCANTEXT As String,
+ByVal WHSE_CODE As String,
+ByVal LOCATION_CODE As String) As Dictionary(Of String, String)
+
+        Dim sqlWHTLOCB1 As String = $"select * from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE = '{LOCATION_CODE}' and location_QTY > 0"
+        Dim tblWHTLOCB1 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlWHTLOCB1)
+        Dim RtnDict As New Dictionary(Of String, String)
+        Dim rows() As DataRow = tblWHTLOCB1.Select("")
+        If rows.Length > 0 Then
+
+        Else
+            RtnDict.Add("Error", $"Nothing in {LOCATION_CODE} to Deposit")
+        End If
+        Return RtnDict
+    End Function
 End Class

@@ -237,7 +237,7 @@ Public Class POFORDR1
                 & ", POTSHIP2.PO_SHIPMENT_NO, POTSHIP2.PO_SHIPMENT_LNO, POTSHIP1.PO_SHIP_VESSEL" & vbCrLf _
                 & ", POTSHIP1.PO_DATE_SHIPPED, POTSHIP1.PO_SHIP_ETA" & vbCrLf _
                 & ", POTSHIP1.PO_SHIP_LANDING_LEAD_DAYS" & vbCrLf _
-                & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO" & vbCrLf _
+                & ", POTSHIP1.PO_SHIP_REF_NO, POTSHIP2.CONTAINER_NO, POTSHIP1.WHSE_CODE" & vbCrLf _
                 & ", POTSHIP2.TRAN_NO, POTSHIP2.PO_SOURCE_DOC" & vbCrLf _
                 & ", POTSHIP2.PO_DATE_RECEIVED" & vbCrLf _
                 & ", POTSHIP3.PO_QTY_SHP, POTSHIP3.PO_QTY_REC" & vbCrLf _
@@ -853,6 +853,9 @@ Public Class POFORDR1
             .AllowDelete = DefaultableBoolean.False
             .AllowUpdate = DefaultableBoolean.False
         End With
+        With grdPOTSHIPX.DisplayLayout.Bands(0)
+            .Columns("WHSE_CODE").Hidden = ASCMAIN1.CLIENT <> "RGI"
+        End With
 
         With grdPOTORDRT.DisplayLayout.Bands(0)
             For Each GCOL As UltraWinGrid.UltraGridColumn In .Columns
@@ -1456,19 +1459,19 @@ Public Class POFORDR1
 
 
                 If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-                    ASCMAIN1.sql = "Select * from POTPACK1 where PO_ORDER_NO = '" & PO_ORDER_NO & "' OR PO_ORDER_NO2 = '" & PO_ORDER_NO & "' or PO_ORDER_NO3 = '" & PO_ORDER_NO & "' or PO_ORDER_NO4 = '" & PO_ORDER_NO & "' Or PO_ORDER_NO5 = '" & PO_ORDER_NO & "' or PO_ORDER_NO6 = '" & PO_ORDER_NO & "' or PO_ORDER_NO7 = '" & PO_ORDER_NO & "' or PO_ORDER_NO8 = '" & PO_ORDER_NO & "'"
+                    ASCMAIN1.sql = "Select * from POTPACK1 where PO_ORDER_NO = '" & PO_ORDER_NO & "' OR PO_ORDER_NO2 = '" & PO_ORDER_NO & "' or PO_ORDER_NO3 = '" & PO_ORDER_NO & "' or PO_ORDER_NO4 = '" & PO_ORDER_NO & "'"
                     Dim tblPOTPACK1 As DataTable = ASCDATA1.GetDataTable()
                     If tblPOTPACK1.Rows.Count > 0 Then
-                        EMsg &= vbCr & "You May Not Delete an Order which has Pack Lists Assigned To it"
+                        EMsg &= vbCr & "You May Not Delete an Order which has Pack Lists Assigned to it"
                     End If
-                    ' dgj new
+
 
 
                 End If
 
 
                 If EMsg = "" Then
-                    If MsgBox("Do You Really Want To Delete this PO?",
+                    If MsgBox("Do You Really Want to Delete this PO?",
                               MsgBoxStyle.YesNo + MsgBoxStyle.Critical, "WARNING! - Answering 'Yes' will PERMANENTLY DELETE THIS PO!!") <> MsgBoxResult.Yes Then
                         Exit Sub
                     End If

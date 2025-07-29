@@ -2193,6 +2193,9 @@ Public Class SORORDRL
         Dim WAY As String = ""
         Dim PWord As String = "ShopEncrypt22"
         Dim folder As String = "S:\Archive\xml\orders\"
+        If ASCMAIN1.useUNCPath Then
+            folder = $"{ASCMAIN1.Folders("SharedRoot")}\Archive\xml\orders\"
+        End If
         Dim ext As String = ""
         Dim title As String = ""
         Dim iMsg As New StringBuilder With {.Length = 0}

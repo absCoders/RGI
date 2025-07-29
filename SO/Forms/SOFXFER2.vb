@@ -1474,7 +1474,7 @@ Public Class SOFXFER2
     Private Sub UpdateMasterfiles(Optional ByRef FetchTime As String = "", Optional ByRef RefreshTime As String = "")
         Dim STime As DateTime = Now()
         Dim ETime As DateTime
-        Dim FTPFILES As String() = New String() {"DBUPDATES.BAT", "RGO_DB.ZIP", "RGO_DB.SQL", "ARTCUST.SQL", "SOTORDR.SQL", "RGO_DB2.SQL"}
+        Dim FTPFILES As String() = New String() {"DBUPDATES_TST.BAT", "DBUPDATES.BAT", "RGO_DB.ZIP", "RGO_DB.SQL", "ARTCUST.SQL", "SOTORDR.SQL", "RGO_DB2.SQL", "RGO_DB3.SQL"}
         For Each FTPFILE As String In FTPFILES
             ftpS_File(FTPFILE, "/DB/", FTPFILE, "C:\Shared\RGO\")
         Next
@@ -2400,6 +2400,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes to Tariff Notices On Various Output.")
+
+        VersionNo = "25.07.21.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Rollup MS and US Warehouse Data.")
 
         lblVersionNo.Text = VersionNo
     End Sub

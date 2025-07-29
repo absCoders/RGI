@@ -3414,12 +3414,14 @@ Public Class ICFSTAT1
                                   TABLE_NAMEs,
                                   read_only, (optASL.Value = "1"), STYLE_CODE)
 
-        If ASCMAIN1.CLIENT = "RGIX" Then
+        If ASCMAIN1.CLIENT = "RGI" Then
             ' why RGIX?  allocation calculates dates for a single color at a time
             ' so this update should have been constrained to the current color, not all colors in a multi-color sty;e
             ASCMAIN1.sql = "" _
                 & "Begin" & vbCrLf _
-                & " Declare Cursor C1 is Select * from " & SOTORDR2 & $" where STYLE_CODE = '{STYLE_CODE}';" & vbCrLf _
+                & " Declare Cursor C1 is" & vbCrLf _
+                & "  Select X.* from " & SOTORDR2 & " X" & vbCrLf _
+                & $" where STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}';" & vbCrLf _
                 & " Begin" & vbCrLf _
                 & "  For R1 in C1 Loop" & vbCrLf _
                 & "   Update SOTORDR2 Set" & vbCrLf _
@@ -3457,7 +3459,10 @@ Public Class ICFSTAT1
                 Dim WHSE_CODE As String = rowWHSE.Item("WHSE_CODE")
                 Dim BALANCE As Int64 = 0
 
-                For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'")
+                ' WJZ 06/22/25 NEEDED TO CONSTRAIN TO A SINGLE SC OR ELSE BALANCE GETS SCREWED UP
+                Dim SQLW As String = $"WHSE_CODE = '{WHSE_CODE}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'"
+                For Each row As DataRow In dst.Tables("SOTALLO1").Select(SQLW)
+                    'For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'")
 
                     If row.Item("RECORD_TYPE") = "0" Then
                         If row.Item("RECORD_SUB_TYPE") = "H" Then
@@ -3470,7 +3475,9 @@ Public Class ICFSTAT1
 
                 ' Dim rowICTSTDQ1_supply As DataRow = Nothing
 
-                For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'",
+                ' WJZ 06/22/25 NEEDED TO CONSTRAIN TO A SINGLE SC OR ELSE BALANCE GETS SCREWED UP
+                'For Each row As DataRow In dst.Tables("SOTALLO1").Select($"WHSE_CODE = '{WHSE_CODE}'",
+                For Each row As DataRow In dst.Tables("SOTALLO1").Select(SQLW,
                     "WHSE_CODE,SD_DATE,RECORD_TYPE,ORDR_PRIORITY_DATE,ORDR_PRIORITY_DATE_ORIG,RECORD_SUB_TYPE")
                     Dim SD_QTY As Int64 = Val(row.Item("SD_QTY"))
 
@@ -5621,7 +5628,38 @@ Public Class ICFSTAT1
     End Sub
 
     Private Sub cmdAllocate_Click(sender As System.Object, e As System.EventArgs) Handles cmdAllocate.Click
+
+        Dim ICTSTAT2_MSUS_BEFORE As String = ""
+        Dim ICTSTAT2_MSUS_AFTER As String = ""
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            ASCMAIN1.sql = "Select US.STYLE_CODE, US.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" & vbCrLf _
+            & ", US_ONHD, US_PICK, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
+            & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
+            & "from ICTSTYL1, ICTCOLR1" & vbCrLf _
+            & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_PICK US_PICK from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
+            & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_PICK MS_PICK from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
+            & "where ICTSTYL1.STYLE_CODE = US.STYLE_CODE and ICTCOLR1.COLOR_CODE = US.COLOR_CODE" & vbCrLf _
+            & "and MS.STYLE_CODE = US.STYLE_CODE and MS.COLOR_CODE = US.COLOR_CODE"
+
+            ICTSTAT2_MSUS_BEFORE = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_MSUS_BEFORE} Add Primary Key (STYLE_CODE, COLOR_CODE)")
+            'TABLE_NAMEs.Add("ICTSTAT2_MSUS_BEFORE", ICTSTAT2_MSUS_BEFORE)
+            'TABLE_NAMEs.Add("sqlICTSTAT2_MSUS_BEFORE", ASCMAIN1.sql)
+        End If
+
         Allocate()
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            ASCMAIN1.sql = "Select US.*, SOTORDR2.ALLO, LEAST(NVL(US.MS_AVA,0) - NVL(SOTORDR2.ALLO,0),0) SHORT" & vbCrLf _
+                & $"from {ICTSTAT2_MSUS_BEFORE} US" & vbCrLf _
+                & $", (Select STYLE_CODE, COLOR_CODE, SUM (ORDR_QTY_ALLO) ALLO from {TABLE_NAMEs("SOTORDR2")} where WHSE_CODE = 'MS' group by STYLE_CODE, COLOR_CODE) SOTORDR2" & vbCrLf _
+                & "where SOTORDR2.STYLE_CODE (+) = US.STYLE_CODE and SOTORDR2.COLOR_CODE (+) = US.COLOR_CODE"
+            ICTSTAT2_MSUS_AFTER = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_MSUS_AFTER} Add Primary Key (STYLE_CODE, COLOR_CODE)")
+        End If
+
+
     End Sub
 
     Private Sub grdPOTORDRX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdPOTORDRX.AfterRowActivate

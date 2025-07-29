@@ -191,7 +191,7 @@ Public Class WHFPACK1
                 If printer.ToLower.Contains("zebra") Or printer.ToLower.Contains("upc") Or printer.ToLower.Contains("microsoft") _
                     Or printer.ToLower.Contains("brother ql") Or printer.ToLower.Contains("pdf") Then
                 Else
-                    If ASCMAIN1.USER_ID = "rick" Then MsgBox($"About to open Printer {printer}")
+                    'If ASCMAIN1.USER_ID = "rick" Then MsgBox($"About to open Printer {printer}")
                     settings.PrinterName = printer
                     Debug.Print(printer)
                     If settings.DefaultPageSettings.PaperSize.PaperName = "Letter" Then
@@ -201,7 +201,7 @@ Public Class WHFPACK1
                         End If
                     End If
                 End If
-                If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
+                'If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
             Next
 
             If ASCMAIN1.USER_ID = "rick" Then MsgBox("Done with Label Printers")
@@ -1193,8 +1193,12 @@ Public Class WHFPACK1
         Generate_Report(RPT, "Packing List", , , "PDF", REPORT_NAME, True)
         Generate_Report(RPT, "Packing List")
 
-        FileCopy(ASCMAIN1.Folders("Temp") & REPORT_NAME & ".PDF", "S:\PackingSlips\" & REPORT_NAME & ".PDF")
-        Attach_File("S:\PackingSlips\" & REPORT_NAME & ".PDF", "Packing List")
+        Dim fileToAttach As String = "S:\PackingSlips\" & REPORT_NAME & ".PDF"
+        If ASCMAIN1.useUNCPath Then
+            fileToAttach = $"{ASCMAIN1.Folders("SharedRoot")}\PackingSlips\" & REPORT_NAME & ".PDF"
+        End If
+        FileCopy(ASCMAIN1.Folders("Temp") & REPORT_NAME & ".PDF", fileToAttach)
+        Attach_File(fileToAttach, "Packing List")
         ASCMAIN1.Record_Event(ENTITY.TABLE_NAME, ORDR_NO, "", Now + ASCMAIN1.NowTSD, ASCMAIN1.USER_ID, "PCK_CLS", "Packing Slip Printed", "")
         If grdSOTPACKX.ActiveRow.Cells("GRP_CNT").Value & "" > "1" Then
             If MsgBox("Print Summary Report", vbYesNo, "Combined shipment") = vbYes Then
@@ -1359,8 +1363,8 @@ Public Class WHFPACK1
             Dim qty = row.Item("QTY_PACKED")
             rowWHTCART1.Item("CART_TOTAL_UNITS") = rowWHTCART1.Item("CART_TOTAL_UNITS") - qty
             For Each rowSOTPICK5 As DataRow In dst.Tables("SOTPICK5").Select("UPC_CODE = '" & row.Item("UPC_CODE") & "'")
-                If rowSOTPICK5.Item("PACK_QTY") < qty Then
-                    qty = qty - rowSOTPICK5.Item("PACK_QTY")
+                If Val(rowSOTPICK5.Item("PACK_QTY") & "") < qty Then
+                    qty = qty - Val(rowSOTPICK5.Item("PACK_QTY") & "")
                     rowSOTPICK5.Item("PACK_QTY") = 0
                 Else
                     rowSOTPICK5.Item("PACK_QTY") = rowSOTPICK5.Item("PACK_QTY") - qty

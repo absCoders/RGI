@@ -69,6 +69,7 @@ Public Class SOROREL1
 
     Dim tblEDT850TM As DataTable
     Private clsTACENCRY As TAC.ASCENCRY
+    Dim tblSOTORDRU As New DataTable
 
 #End Region
 
@@ -144,7 +145,7 @@ Public Class SOROREL1
         SOTORDRG_manual = ASCMAIN1.Temp_Table("Select ORDR_GROUP_NO from SOTORDR0 where ROWNUM < 1")
         ASCDATA1.ExecuteSQL("Alter Table " & SOTORDRG_manual & " Add Primary Key (ORDR_GROUP_NO)")
 
-        Dim tblSOTORDRU As New DataTable
+
         With tblSOTORDRU
             .Columns.Add("SEL")
             .Columns.Add("USER_ID")
@@ -182,16 +183,7 @@ Public Class SOROREL1
             chkMerge.Checked = True
             chkCustCreditHold.Checked = True
 
-            ASCMAIN1.sql = "Select '0' SEL, ORDR_REL_SHORT_OPER USER_ID, COUNT (*) ORDERS" & vbCrLf _
-                & " from SOTORDRG,SOTORDR0" & vbCrLf _
-                & " where SOTORDRG.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
-                & "   and SOTORDR0.ORDR_CNT_OPEN > 0" & vbCrLf _
-                & "   and SOTORDRG.ORDR_REL_SHORT = '1'" & vbCrLf _
-                & " group by ORDR_REL_SHORT_OPER"
-            Dim tbl As DataTable = ASCDATA1.GetDataTable
-            For Each ROW As DataRow In tbl.Rows
-                tblSOTORDRU.Rows.Add(ROW.ItemArray)
-            Next
+            Refresh_SOTORDRU
             grdSOTORDRU.Visible = False
 
         Else
@@ -269,7 +261,7 @@ Public Class SOROREL1
 
 
     Overrides Sub Clear_Record()
-
+        Refresh_SOTORDRU()
     End Sub
 
     Protected Overrides Sub Build_Workfile()
@@ -371,6 +363,26 @@ Public Class SOROREL1
                 sql_where &= " and SOTORDR1.ECOM_CODE IS NULL"
             End If
 
+        End If
+
+
+        Dim ICTSTAT2_MSUS_BEFORE As String = ""
+        Dim ICTSTAT2_MSUS_AFTER As String = ""
+
+        If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "MS" Then
+            ASCMAIN1.sql = "Select US.STYLE_CODE, US.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY" & vbCrLf _
+            & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) - NVL(US_OPEN,0) US_AVA" & vbCrLf _
+            & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
+            & "from ICTSTYL1, ICTCOLR1" & vbCrLf _
+            & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_OPEN US_OPEN, WHSE_QTY_PICK US_PICK, WHSE_QTY_TRAN US_TRAN from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
+            & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_OPEN MS_OPEN, WHSE_QTY_PICK MS_PICK, WHSE_QTY_TRAN MS_TRAN from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
+            & "where ICTSTYL1.STYLE_CODE = US.STYLE_CODE and ICTCOLR1.COLOR_CODE = US.COLOR_CODE" & vbCrLf _
+            & "  and MS.STYLE_CODE (+) = US.STYLE_CODE and MS.COLOR_CODE (+) = US.COLOR_CODE"
+
+            ICTSTAT2_MSUS_BEFORE = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_MSUS_BEFORE} Add Primary Key (STYLE_CODE, COLOR_CODE)")
+            'TABLE_NAMEs.Add("ICTSTAT2_MSUS_BEFORE", ICTSTAT2_MSUS_BEFORE)
+            'TABLE_NAMEs.Add("sqlICTSTAT2_MSUS_BEFORE", ASCMAIN1.sql)
         End If
 
         If TABLE_NAMEs Is Nothing Then
@@ -635,40 +647,11 @@ Public Class SOROREL1
         Create_TDA(dst.Tables.Add("SOTORDRG"), SOTORDRG, "**", 0, True, "", 1)
         Fill_Records("SOTORDRG")
 
-        'dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTORDRG", 1))
-
-        ' dst.Tables("SOTORDRG").Columns.Add("ORDR_REL_HOLD_CODES")
-
-        '    'Added to include Reservations when allocating only for Gabe by WR - 8/27/05
-        '    If blnALLOCATION_ONLY Then
-        '        sql = "INSERT INTO SOWORDRG"
-        '        & " Select SOWRSRV1.RSRV_NO AS ORDR_GROUP_NO, SOWRSRV1.CUST_CODE,"
-        '        & "'" & String$(20, "X") & "'  as ORDR_REL_HOLD_CODES, SOWRSRV1.SALES_DIVISION_CODE, "
-        '        & " Min (SOWRSRV1.INIT_DATE) as ORDR_DATE, Min (SOWRSRV1.ORDR_CUST_PO) as ORDR_CUST_PO, "
-        '        & " Min (SOWRSRV1.ORDR_SHIP_DATE) as ORDR_SHIP_DATE, Min (SOWRSRV1.ORDR_CANCEL_DATE) as ORDR_CANCEL_DATE, "
-        '        & " Min (SOWRSRV1.RSRV_NO) as ORDR_NO_MIN, Max (SOWRSRV1.RSRV_NO) as ORDR_NO_MAX, "
-        '        & " Count (*) as ORDR_NOS"
-        '        & " from SOWRSRV1"
-        '        & " where SOWRSRV1.ORDR_REL_HOLD_CODES is Not Null"
-        '        & " group by SOWRSRV1.RSRV_NO, SOWRSRV1.CUST_CODE, '" & String$(20, "X") & "'" & ", SOWRSRV1.SALES_DIVISION_CODE"
-        '        AccD.Execute sql
-        '    End If
-        '    'End of Addition for Gabe.
-
-        'Removed from criteria by WR for Gabe on 4/17/02
-        '    If blnALLOCATION_ONLY Then
-        '        & "   and SOWORDR1.ORDR_CANCEL_DATE < #" & Format$(Now + Absx1.numFor("FPDSHORT_HOR_DAYS").Value, "MM/DD/YYYY") & "#"
-        '    End If
-
         ASCMAIN1.sql = "Select DISTINCT ORDR_GROUP_NO, ORDR_REL_HOLD_CODES" _
             & " from " & SOTORDR1 _
             & " where ORDR_REL_HOLD_CODES is Not Null "
-        'Removed from criteria by WR for Gabe on 4/17/02
-        '    If blnALLOCATION_ONLY Then
-        '        & "   and SOWORDR1.ORDR_CANCEL_DATE < #" & Format$(Now + Absx1.numFor("FPDSHORT_HOR_DAYS").Value, "MM/DD/YYYY") & "#"
-        '    End If
-        ASCMAIN1.sql &= " order by ORDR_GROUP_NO"
-        For Each row As DataRow In ASCDATA1.GetDataTable.Rows
+        'ASCMAIN1.sql &= " order by ORDR_GROUP_NO"
+        For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "ORDR_GROUP_NO") ' .Rows
             Dim ORDR_GROUP_NO As String = row.Item("ORDR_GROUP_NO")
             Dim rowSOTORDRG As DataRow = dst.Tables("SOTORDRG").Rows.Find(ORDR_GROUP_NO)
             If rowSOTORDRG IsNot Nothing Then
@@ -686,11 +669,6 @@ Public Class SOROREL1
         Next
 
         Update_Record_TDA("SOTORDRG")
-
-        'ASCMAIN1.sql = "Insert into SOTORDRG (ORDR_GROUP_NO, INIT_DATE, INIT_OPER)" & vbCrLf _
-        '    & " Select ORDR_GROUP_NO, SYSDATE, '" & ASCMAIN1.USER_ID & "' from " & SOTORDRG & vbCrLf _
-        '    & "  where ORDR_GROUP_NO in (Select ORDR_GROUP_NO from " & SOTORDRG & " minus Select ORDR_GROUP_NO from SOTORDRG)"
-        'ASCDATA1.ExecuteSQL()
 
         ' Probably need to open this up to all companies.
         ' THIS ALSO APPLIES TO SOTORDRS CHANGE BELOW
@@ -753,10 +731,6 @@ Public Class SOROREL1
             & " from " & SOTORDR1 & " SOTORDR1," & SOTORDR2 & " SOTORDR2" & vbCrLf _
             & " where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
             & "   and SOTORDR1.ORDR_REL_HOLD_CODES is Not Null " & vbCrLf
-        'Removed from criteria by WR for Gabe on 4/17/02
-        '    If blnALLOCATION_ONLY Then
-        '        & "   and SOWORDR1.ORDR_CANCEL_DATE < #" & Format$(Now + Absx1.numFor("FPDSHORT_HOR_DAYS").Value, "MM/DD/YYYY") & "#"
-        '    End If
         ASCMAIN1.sql &= "" _
             & " group by SOTORDR1.ORDR_GROUP_NO, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE"
 
@@ -776,6 +750,31 @@ Public Class SOROREL1
         If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
             ASCDATA1.ExecuteSQL("Delete from SOTORDRS where ORDR_GROUP_NO in (Select Distinct ORDR_GROUP_NO from " & SOTORDR1 & ")")
         End If
+
+        '        ASCDATA1.ExecuteSQL("Insert into SOTORDRS (ORDR_GROUP_NO,
+        'STYLE_CODE,
+        'COLOR_CODE,
+        'STYLE_DESC,
+        'SREP_CODE,
+        'ORDR_QTY,
+        'ORDR_QTY_OPEN,
+        'ORDR_QTY_ALLO,
+        'ORDR_QTY_PICK,
+        'ORDR_QTY_SHIP,
+        'ORDR_QTY_CANC,
+        'ORDR_RELEASE_AVAIL,
+        'ORDR_RELEASE_SHIP,
+        'WIP_IND,
+        'ORDR_QTY_ALLO_CUR,
+        'ORDR_QTY_ALLO_FUT,
+        'ORDR_QTY_ALLO_CXL,
+        'ORDR_AMT,
+        'ORDR_AMT_OPEN,
+        'ORDR_AMT_ALLO_CUR,
+        'ORDR_AMT_ALLO_FUT,
+        'ORDR_AMT_ALLO_CXL,
+        'RANGE_STYLE_CODE
+        ') Select * from " & SOTORDRS)
 
         ASCDATA1.ExecuteSQL("Insert into SOTORDRS Select * from " & SOTORDRS)
 
@@ -919,6 +918,63 @@ Public Class SOROREL1
 
         Else
             Update_Release() ' Update Pick Ticket, Shipment Control & Carton Tables
+
+            If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "MS" Then
+
+                'ASCMAIN1.sql = "Select US.*, SOTORDR2.ALLO, LEAST(NVL(US.MS_AVA,0) - NVL(SOTORDR2.ALLO,0),0) SHORT, '0' RELEASE" & vbCrLf _
+                '    & $"from {ICTSTAT2_MSUS_BEFORE} US" & vbCrLf _
+                '    & $", (Select STYLE_CODE, COLOR_CODE, SUM (ORDR_QTY_ALLO) ALLO from {TABLE_NAMEs("SOTORDR2")} where WHSE_CODE = 'MS' group by STYLE_CODE, COLOR_CODE) SOTORDR2" & vbCrLf _
+                '    & "where SOTORDR2.STYLE_CODE (+) = US.STYLE_CODE and SOTORDR2.COLOR_CODE (+) = US.COLOR_CODE"
+
+                ASCMAIN1.sql = "Select US.*, 0 ALLO, 0 SHORT, '0' RELEASE" & vbCrLf _
+                    & $"from {ICTSTAT2_MSUS_BEFORE} US"
+                ICTSTAT2_MSUS_AFTER = ASCMAIN1.Temp_Table
+                ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_MSUS_AFTER} Add Primary Key (STYLE_CODE, COLOR_CODE)")
+
+                ASCMAIN1.sql = "Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SUM (SOTPICK2.PICK_QTY) PICK_QTY" & vbCrLf _
+                    & $"from {SOTPICK2} SOTPICK2, {SOTORDR2} SOTORDR2 " & vbCrLf _
+                    & " where SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
+                    & " group by SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE"
+
+                ASCMAIN1.sql = $"
+                    Begin
+                    Declare Cursor C1 is {ASCMAIN1.sql};
+                    Begin For R1 in C1 Loop
+                     Update {ICTSTAT2_MSUS_AFTER} X Set ALLO = R1.PICK_QTY, SHORT = LEAST(NVL(MS_AVA,0) - NVL(R1.PICK_QTY,0), 0), RELEASE = '1'
+                      where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;
+                    End Loop; End; End;
+                    "
+                ASCDATA1.ExecuteSQL()
+
+                ASCMAIN1.sql = "Insert into SOTOXFR1" & vbCrLf _
+                    & $"Select '{PICK_BATCH_NO}' PICK_BATCH_NO, STYLE_CODE, COLOR_CODE" & vbCrLf _
+                    & ", US_ONHD, US_TRAN, US_PICK, US_OPEN, US_AVA" & vbCrLf _
+                    & ", MS_ONHD, MS_PICK, MS_AVA" & vbCrLf _
+                    & ", ALLO, SHORT" & vbCrLf _
+                    & ", CASE WHEN SHORT >= 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
+                    & $", SYSDATE INIT_DATE, '{ASCMAIN1.USER_ID}' INIT_OPER, NULL LAST_DATE, NULL LAST_OPER" & vbCrLf _
+                    & $" from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1'"
+                ASCDATA1.ExecuteSQL()
+
+                ASCMAIN1.sql = "" _
+                    & "Begin" & vbCrLf _
+                    & " Declare Cursor C1 is" & vbCrLf _
+                    & $"  Select * from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1' and SHORT < 0;" & vbCrLf _
+                    & " Begin" & vbCrLf _
+                    & "  For R1 in C1 Loop" & vbCrLf _
+                    & "   Update ICTSTAT2 Set WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN,0) + NVL(R1.ALLO,0)" & vbCrLf _
+                    & "    where WHSE_CODE = 'US' and STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
+                    & "   If SQL%NOTFOUND Then" & vbCrLf _
+                    & "    Insert into ICTSTAT2 (WHSE_CODE,STYLE_CODE,COLOR_CODE,WHSE_QTY_OPEN)" & vbCrLf _
+                    & "     values ('US',R1.STYLE_CODE,R1.COLOR_CODE,R1.ALLO);" & vbCrLf _
+                    & "   End If;" & vbCrLf _
+                    & "  End Loop;" & vbCrLf _
+                    & " End;" & vbCrLf _
+                    & "End;"
+                ASCDATA1.ExecuteSQL()
+
+
+            End If
 
             ' Special things for Regency Int'l
             If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
@@ -2289,7 +2345,7 @@ Public Class SOROREL1
         Dim rowARTCUST1 As DataRow
         Dim CUST_CODE As String = ""
         For Each rowSOTORDR1_rel As DataRow In dst.Tables("SOTORDR1").Select _
-                ("ORDR_REL_BATCH_NO is Not Null and ORDR_REL_HOLD_CODES is Null", _
+                ("ORDR_REL_BATCH_NO is Not Null and ORDR_REL_HOLD_CODES is Null",
                  "CUST_CODE, ORDR_GROUP_NO, ORDR_ADDR_TYPE_ST, SHIP_TO, ORDR_NO")
             If CUST_CODE <> rowSOTORDR1_rel.Item("CUST_CODE") Then
                 CUST_CODE = rowSOTORDR1_rel.Item("CUST_CODE")
@@ -2297,6 +2353,8 @@ Public Class SOROREL1
             End If
 
             Dim ORDR_NO As String = rowSOTORDR1_rel.Item("ORDR_NO")
+            Dim WHSE_CODE_LNO As String = rowSOTORDR1_rel.Item("WHSE_CODE")
+            Dim SHIP_VIA_CODE As String = rowSOTORDR1_rel.Item("SHIP_VIA_CODE")
             Dim PICK_SEQ_NO As Integer = Val(rowSOTORDR1_rel.Item("ORDR_PICK_SEQ") & "") + 1
             rowSOTORDR1_rel.Item("ORDR_PICK_SEQ") = PICK_SEQ_NO
 
@@ -2312,6 +2370,8 @@ Public Class SOROREL1
                 .Item("INIT_OPER") = ASCMAIN1.USER_ID
                 .Item("INIT_DATE") = DATETIME_STAMP
                 .Item("SHIP_BOL_NO") = "X"
+                .Item("SHIP_VIA_CODE") = SHIP_VIA_CODE
+                .Item("WHSE_CODE") = WHSE_CODE_LNO
 
                 ' 04/05/2015 RGI to process CC after Release.
                 If (ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI") Then
@@ -2334,7 +2394,8 @@ Public Class SOROREL1
                 Dim rowSOTPICK2 As DataRow = dst.Tables("SOTPICK2").NewRow
                 With rowSOTPICK2
                     .Item("PICK_NO") = PICK_NO
-                    .Item("PICK_LNO") = rowSOTORDR2_rel.Item("ORDR_LNO")
+                    Dim PICK_LNO As Int32 = Val(rowSOTORDR2_rel.Item("ORDR_LNO"))
+                    .Item("PICK_LNO") = PICK_LNO ' rowSOTORDR2_rel.Item("ORDR_LNO")
                     .Item("ORDR_NO") = ORDR_NO
                     .Item("ORDR_LNO") = rowSOTORDR2_rel.Item("ORDR_LNO")
 
@@ -2347,7 +2408,7 @@ Public Class SOROREL1
                         .Item("STANDARD_CUBE_PER_UNIT") = rowSOTORDR2_rel.Item("STANDARD_CUBE_PER_UNIT")
                     End If
 
-                    If ASCMAIN1.Running_in_VS And (.Item("STYLE_CODE") = "MTX59907" Or .Item("STYLE_CODE") = "720R") Then Stop
+                    ' If ASCMAIN1.Running_in_VS And (.Item("STYLE_CODE") = "MTX59907" Or .Item("STYLE_CODE") = "720R") Then Stop
 
                     Dim qCANC As Int64 = 0
                     Dim qBACK As Int64 = 0
@@ -2437,11 +2498,6 @@ Public Class SOROREL1
 
         Dim CART_LNO_seq As Int64 = 0
         SHIP_BOL_NO_seq = 0
-
-        ' TROUBLE PRINTING PICK TICKETS IF WE ALLOW BREAKS ON SHIP VIA NOW
-        ' & " SOWORDR1.SHIP_VIA_CODE"
-        '            & ", NULL SHIP_VIA_CODE " & vbCrLf _
-
 
         ASCMAIN1.sql = "Select SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
             & ", SOTORDR1.WHSE_CODE, SOTORDR1.CUST_CODE" & vbCrLf _
@@ -2589,13 +2645,6 @@ Public Class SOROREL1
                 sqlw &= " and CUST_STORE_NO = '" & SHIP_TO & "'"
             End If
 
-            ' TROUBLE PRINTING PICK TICKETS IF WE ALLOW BREAKS ON SHIP VIA NOW
-            'If SHIP_VIA_CODE = "" Then
-            '    & "   and SHIP_VIA_CODE is Null"
-            'Else
-            '    & "   and SHIP_VIA_CODE = '" & SHIP_VIA_CODE & "'"
-            'End If
-
             For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select(sqlw)
                 Dim rowSOTPICK1 As DataRow = rowSOTORDR1.GetChildRows("SOTORDR1_SOTPICK1")(0)
                 rowSOTPICK1.Item("SHIP_BOL_NO") = SHIP_BOL_NO
@@ -2628,8 +2677,6 @@ Public Class SOROREL1
                 rowSOTSHIP2.Item("PICK_QTY") = PICK_QTY
                 dst.Tables("SOTSHIP2").Rows.Add(rowSOTSHIP2)
             Next
-
-            ' DCG SAYS TO CALCULATE THE SHIP_VIA HERE - BUT FROM WHAT, A ROUTING INSTRUCTION IN TEXT?
 
             Dim rowSOTSHIP1 As DataRow = dst.Tables("SOTSHIP1").NewRow
             With rowSOTSHIP1
@@ -4429,5 +4476,19 @@ Public Class SOROREL1
         If ORDR_CANCEL_DATE_MAX <> ORDR_CANCEL_DATE_MIN Then
             e.Row.Cells("ORDR_CANCEL_DATE_MAX").Appearance.ForeColor = Drawing.Color.Red
         End If
+    End Sub
+
+    Sub Refresh_SOTORDRU()
+        tblSOTORDRU.ROWS.CLEAR
+        ASCMAIN1.sql = "Select '0' SEL, ORDR_REL_SHORT_OPER USER_ID, COUNT (*) ORDERS" & vbCrLf _
+            & " from SOTORDRG,SOTORDR0" & vbCrLf _
+            & " where SOTORDRG.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
+            & "   and SOTORDR0.ORDR_CNT_OPEN > 0" & vbCrLf _
+            & "   and SOTORDRG.ORDR_REL_SHORT = '1'" & vbCrLf _
+            & " group by ORDR_REL_SHORT_OPER"
+        Dim tbl As DataTable = ASCDATA1.GetDataTable
+        For Each ROW As DataRow In tbl.Rows
+            tblSOTORDRU.Rows.Add(ROW.ItemArray)
+        Next
     End Sub
 End Class
