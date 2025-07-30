@@ -1124,6 +1124,12 @@ Public Class ICCMAIN1
         End If
         adding_cost = False
 
+        Dim RGITEMP As String = ", NVL(POTSHIP3.PO_COST_LANDED,0)"
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            RGITEMP = ", NVL(POTSHIP3.PO_COST,0)"
+        End If
+
         Dim sqlICTCOSTL As String = "Select" & vbCrLf _
             & " STYLE_CODE, COLOR_CODE, OPS_YYYYPP, TRAN_DATE, TRAN_NO, TRAN_TYPE, TRAN_REF, TRAN_QTY, TRAN_COST, TRAN_LNO" & vbCrLf _
             & ", INIT_DATE, INIT_OPER, LAST_DATE, LAST_OPER" & vbCrLf _
@@ -1142,7 +1148,7 @@ Public Class ICCMAIN1
             & " union" & vbCrLf _
             & " Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTSHIP2.PO_DATE_RECEIVED TRAN_DATE," & vbCrLf _
             & " ICTIREC2.OPS_YYYYPP, ICTIREC2.RECEIPT_NO TRAN_NO, 'R' TRAN_TYPE, POTSHIP1.PO_SHIPMENT_NO ||' - ' || POTSHIP1.PO_SHIP_VESSEL TRAN_REF, POTSHIP3.PO_QTY_REC TRAN_QTY" & vbCrLf _
-            & ", NVL(POTSHIP3.PO_COST_LANDED,0)" & vbCrLf _
+            & RGITEMP & vbCrLf _
             & IIf(adding_cost, " + (NVL(POTSHIP3.PO_COST_VCOST,0) + NVL(POTSHIP3.PO_COST_MATLS,0) + NVL(POTSHIP3.PO_COST_OTHER,0)) * .02", "") _
             & " TRAN_COST, ICTIREC2.RECEIPT_LNO TRAN_LNO" & vbCrLf _
             & ", ICTIREC1.INIT_DATE, ICTIREC1.INIT_OPER, ICTIREC1.LAST_DATE, ICTIREC1.LAST_OPER" & vbCrLf _
@@ -1190,7 +1196,7 @@ Public Class ICCMAIN1
             & " from (" & vbCrLf _
             & " Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTSHIP2.PO_DATE_RECEIVED TRAN_DATE," & vbCrLf _
             & " ICTIREC2.OPS_YYYYPP, ICTIREC2.RECEIPT_NO TRAN_NO, 'R' TRAN_TYPE, POTSHIP1.PO_SHIPMENT_NO ||' - ' || POTSHIP1.PO_SHIP_VESSEL TRAN_REF, POTSHIP3.PO_QTY_REC TRAN_QTY" & vbCrLf _
-            & ", NVL(POTSHIP3.PO_COST_LANDED,0)" & vbCrLf _
+            & RGITEMP & vbCrLf _
             & IIf(adding_cost, " + (NVL(POTSHIP3.PO_COST_VCOST,0) + NVL(POTSHIP3.PO_COST_MATLS,0) + NVL(POTSHIP3.PO_COST_OTHER,0)) * .02", "") _
             & " TRAN_COST, ICTIREC2.RECEIPT_LNO TRAN_LNO" & vbCrLf _
             & ", ICTIREC1.INIT_DATE, ICTIREC1.INIT_OPER, ICTIREC1.LAST_DATE, ICTIREC1.LAST_OPER" & vbCrLf _

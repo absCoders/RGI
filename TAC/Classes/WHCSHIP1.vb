@@ -4887,7 +4887,7 @@ Public Class WHCSHIP1
                     objUpsShip.LabelImageType = UpsshipLabelImageTypes.uitEPL
             End Select
 
-            Dim extension As String = EzshipLabelImage.ToString
+            Dim extension As String = objUpsShip.LabelImageType.ToString
             If extension.StartsWith("uit") Then
                 extension = "." & extension.Substring(3)
             Else
