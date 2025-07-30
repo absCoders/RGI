@@ -318,6 +318,10 @@ Public Class POFBATC1
                     Else
                         EMsg &= vbCr & "No Record of Whse " & Absx1.txtFor("WHSE_CODE").Text
                     End If
+                    If WHSE_CODE = "US" Then
+                        EMsg &= vbCr & "'US' Warehouse is prohibited "
+                        WHSE_CODE = ""
+                    End If
                 End If
 
                 STYLE_CLASS_CODEs.Clear()
@@ -833,10 +837,33 @@ Public Class POFBATC1
             ASCMAIN1.sql = "Update " & POTBATC2 & " Set QTY_ONH = 0, QTY_OPEN = 0, QTY_PICK = 0, QTY_PO = 0"
             ASCDATA1.ExecuteSQL()
 
+            'DGJ
+
+            Dim ICTSTAT2_STATUS As String = "ICTSTAT2"
+            Dim combine_MS_US As Boolean = False
+            If ASCMAIN1.CLIENT = "RGI" And Absx1.txtFor("WHSE_CODE").Text = "MS" Then
+                combine_MS_US = True ' False ' TRUE
+                If combine_MS_US Then
+                    ASCMAIN1.sql = "Select STYLE_CODE, COLOR_CODE, DECODE(WHSE_CODE, 'US', 'MS', WHSE_CODE) WHSE_CODE" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_ON_HAND,0)) WHSE_QTY_ON_HAND" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_ON_ORDER,0)) WHSE_QTY_ON_ORDER" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_TRAN,0)) WHSE_QTY_TRAN" & vbCrLf _
+                & ", SUM (NVL(CASE WHEN WHSE_CODE = 'MS' THEN WHSE_QTY_OPEN ELSE 0 END,0)) WHSE_QTY_OPEN" & vbCrLf _
+                & ", SUM (NVL(CASE WHEN WHSE_CODE = 'MS' THEN WHSE_QTY_PICK ELSE 0 END,0)) WHSE_QTY_PICK" & vbCrLf _
+                & ", SUM (NVL(CASE WHEN WHSE_CODE = 'MS' THEN WHSE_QTY_ALLO ELSE 0 END,0)) WHSE_QTY_ALLO" & vbCrLf _
+                & ", SUM (NVL(CASE WHEN WHSE_CODE = 'MS' THEN WHSE_QTY_COMM ELSE 0 END,0)) WHSE_QTY_COMM" & vbCrLf _
+                & ", SUM(NVL(WHSE_QTY_PROD,0)) WHSE_QTY_PROD" & vbCrLf _
+                & " from ICTSTAT2" & vbCrLf _
+                & " group by STYLE_CODE, COLOR_CODE, DECODE(WHSE_CODE, 'US', 'MS', WHSE_CODE)"
+                    ICTSTAT2_STATUS = ASCMAIN1.Temp_Table
+                    ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_STATUS} Add Primary Key (WHSE_CODE, STYLE_CODE, COLOR_CODE)")
+                End If
+            End If
+
             ASCMAIN1.sql = "" _
                 & "Begin" & vbCrLf _
                 & " Declare Cursor C1 is" & vbCrLf _
-                & "  Select * from ICTSTAT2" & vbCrLf _
+                & $"  Select * from {ICTSTAT2_STATUS} ICTSTAT2" & vbCrLf _
                 & "   where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'" & vbCrLf _
                 & "     and (STYLE_CODE, COLOR_CODE) in" & vbCrLf _
                 & "   (Select STYLE_CODE, COLOR_CODE from " & POTBATC2 & ");" & vbCrLf _
@@ -852,6 +879,28 @@ Public Class POFBATC1
                 & " End;" & vbCrLf _
                 & "End;"
             ASCDATA1.ExecuteSQL()
+
+
+
+            '''ASCMAIN1.sql = "" _
+            '''    & "Begin" & vbCrLf _
+            '''    & " Declare Cursor C1 is" & vbCrLf _
+            '''    & "  Select * from ICTSTAT2" & vbCrLf _
+            '''    & "   where WHSE_CODE = '" & Absx1.txtFor("WHSE_CODE").Text & "'" & vbCrLf _
+            '''    & "     and (STYLE_CODE, COLOR_CODE) in" & vbCrLf _
+            '''    & "   (Select STYLE_CODE, COLOR_CODE from " & POTBATC2 & ");" & vbCrLf _
+            '''    & " Begin" & vbCrLf _
+            '''    & "  For R1 in C1 Loop" & vbCrLf _
+            '''    & "   Update " & POTBATC2 & " Set QTY_ONH = NVL(R1.WHSE_QTY_ON_HAND,0)" & vbCrLf _
+            '''    & "    , QTY_OPEN = NVL(R1.WHSE_QTY_OPEN,0)" & vbCrLf _
+            '''    & "    , QTY_PICK =  + NVL(R1.WHSE_QTY_PICK,0)" & vbCrLf _
+            '''    & "    , QTY_PO = NVL(R1.WHSE_QTY_ON_ORDER,0)" & vbCrLf _
+            '''    & "    , QTY_PS = NVL(R1.WHSE_QTY_TRAN,0)" & vbCrLf _
+            '''    & "    where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
+            '''    & "  End Loop;" & vbCrLf _
+            '''    & " End;" & vbCrLf _
+            '''    & "End;"
+            '''ASCDATA1.ExecuteSQL()
 
             ASCMAIN1.sql = "Update " & POTBATC2 & " Set CUST_OPEN = 0"
             ASCDATA1.ExecuteSQL()
