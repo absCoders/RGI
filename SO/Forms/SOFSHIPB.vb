@@ -5497,6 +5497,12 @@ Public Class SOFSHIPB
                 Next
             End If
 
+            If isProcessingRegencyULShipment Then
+                For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("", "", DataViewRowState.CurrentRows)
+                    rowSOTSHIP1.Item("BILL_OF_LADING_NO") = BOL_NO
+                Next
+            End If
+
             SHIP_BOL_NO = String.Empty
             For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("BILL_OF_LADING_NO = '" & BOL_NO & "'", "", DataViewRowState.CurrentRows)
                 SHIP_BOL_NO = rowSOTSHIP1.Item("SHIP_BOL_NO")
@@ -5848,6 +5854,12 @@ Public Class SOFSHIPB
 
             INIT_LAST("SOTSHIP1", False, , True)
             INIT_LAST("SOTPICK1", False, , True)
+
+            If isProcessingRegencyULShipment Then
+                For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("", "", DataViewRowState.CurrentRows)
+                    rowSOTSHIP1.Item("BILL_OF_LADING_NO") = BOL_NO
+                Next
+            End If
 
             SHIP_BOL_NO = String.Empty
             For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("BILL_OF_LADING_NO = '" & BOL_NO & "'", "", DataViewRowState.CurrentRows)
@@ -6323,7 +6335,7 @@ Public Class SOFSHIPB
 
             ' Create Web Invoices
             Try
-                If Not isEcommProcessing Then ' OrElse (ASCMAIN1.CLIENT = "RGI" AndAlso dst.Tables("SOTINVH1").Select("SREP_CODE = 'DM'").Length > 0) 5/1/2019 - Danny does not want the emails
+                If Not (isEcommProcessing OrElse isProcessingRegencyULShipment) Then ' OrElse (ASCMAIN1.CLIENT = "RGI" AndAlso dst.Tables("SOTINVH1").Select("SREP_CODE = 'DM'").Length > 0) 5/1/2019 - Danny does not want the emails
                     ASCMAIN1.Progress("Creating Web Invoice", "")
                     For Each row As DataRow In dst.Tables("SOTINVH1").Select("")
                         TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))

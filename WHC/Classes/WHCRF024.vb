@@ -21,6 +21,11 @@
     Dim upcSummaryPageIndex As Integer = 0
     Dim upcSummaryPages As Integer = 1
     Const upcSummaryLinesPerPage As Integer = 6
+    Dim upcVariancePageIndex As Integer = 0
+    Dim upcVarincePages As Integer = 1
+    Const upcVarianceLinesPerPage As Integer = 6
+    Dim updateWithVariance As Boolean = False
+
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -34,11 +39,21 @@
         AppStates.Add("SCAN_LOC", "Scan Deposit Location") ' yellow
         AppStates.Add("LEAVE", "Units in Gun, Gun must be Empty for Receipt|EXIT|")
         AppStates.Add("VERIFY", "Update (Y/N)|Y|N|CANCEL|")
+        AppStates.Add("CHECK4VAR", "") ' BLUE
+        AppStates.Add("SHOW_VAR", "NEXT|PREV|CANCEL|OOBOK|") ' BLUE
 
         AppState = "SCAN_PALLET"
         LAST_CLR = ""
 
         With dst
+
+            With .Tables.Add("WHTTRANV")
+                .Columns.Add("STYLE_CODE")
+                .Columns.Add("COLOR_CODE")
+                .Columns.Add("UPC_CODE")
+                .Columns.Add("VARIANCE", GetType(System.Int32))
+                .PrimaryKey = New DataColumn() { .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
+            End With
 
             Create_TDA(.Tables.Add, "WHTMOVE1", "*")
             Create_TDA(.Tables.Add, "WHTMOVE2", "*")
@@ -94,7 +109,7 @@
                             End If
                         End If
 
-                        Dim PICK_NO As String = SCANTEXT.Substring(1, 9)
+                        Dim PICK_NO As String = SCANTEXT.Substring(1, 10)
                         Dim PALLET_SEQ_NO As Integer = CInt(SCANTEXT.Substring(10, 3))
                         Dim PICK_NO_USL As String = SCANTEXT.Substring(13)
                         Dim SCAN_DATE As DateTime = Now
@@ -102,6 +117,8 @@
                         EDI_DOC_SEQ_NO = CheckResponse("EDI_DOC_SEQ_NO")
                         dst.Tables("WHTTRAN1").Rows.Clear()
                         dst.Tables("WHTTRAN2").Rows.Clear()
+                        dst.Tables("WHTTRANV").Rows.Clear()
+
                         Dim rowWHTTRAN1 As DataRow = dst.Tables("WHTTRAN1").NewRow
                         rowWHTTRAN1("PALLET_NO") = PALLET_NO
                         rowWHTTRAN1("SCAN_DATE") = SCAN_DATE
@@ -124,10 +141,12 @@
                     ElseIf SCANTEXT = "DONE" Then
                         If dst.Tables("WHTTRAN2").Rows.Count > 0 Then
                             CreateResponse("VERIFY", "", "")
+                            'CreateResponse("CHECK4VAR", "", "")
                         Else
                             ClearScanner()
                             dst.Tables("WHTTRAN1").Rows.Clear()
                             dst.Tables("WHTTRAN2").Rows.Clear()
+                            dst.Tables("WHTTRANV").Rows.Clear()
                             ASCMAIN1.MultiTask_Release()
                             CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg("Transfer Receipt Cancelled, Re - scan PALLET"))
                         End If
@@ -217,24 +236,63 @@
                         CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg(""))
                     End If
                 Case "VERIFY"
-                            If SCANTEXT = "Y" Then
-                                Update_Record()
-                                ASCMAIN1.MultiTask_Release()
+                    If SCANTEXT = "Y" Then
+                        Update_Record()
+                        ASCMAIN1.MultiTask_Release()
                         CreateResponse("SCAN_LOC", "Y", $"Deposit Pallet {PALLET_NO}")
 
                     ElseIf SCANTEXT = "N" Then
-                                'ClearScanner()
-                                CreateResponse("SCAN_UPC", "BLUE", $"Pallet: {PALLET_NO & vbCrLf}Scan UPC:")
-                            ElseIf SCANTEXT = "CANCEL" Then
-                                ClearScanner()
-                                dst.Tables("WHTTRAN1").Rows.Clear()
-                                dst.Tables("WHTTRAN2").Rows.Clear()
-                                ASCMAIN1.MultiTask_Release()
-                                CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg("Transfer Receipt Cancelled, Re - scan PALLET"))
-                            Else
-                                CreateResponse("", "R", DisplayMsg("Invalid Response"))
-                            End If
-                    End Select
+                        'ClearScanner()
+                        CreateResponse("SCAN_UPC", "BLUE", $"Pallet: {PALLET_NO & vbCrLf}Scan UPC:")
+                    ElseIf SCANTEXT = "CANCEL" Then
+                        ClearScanner()
+                        dst.Tables("WHTTRAN1").Rows.Clear()
+                        dst.Tables("WHTTRAN2").Rows.Clear()
+                        ASCMAIN1.MultiTask_Release()
+                        CreateResponse("SCAN_PALLET", "YELLOW", DisplayMsg("Transfer Receipt Cancelled, Re - scan PALLET"))
+                    Else
+                        CreateResponse("", "R", DisplayMsg("Invalid Response"))
+                    End If
+                Case "CHECK4VAR"
+                    Dim PICK_NO As String = "0001037342"
+                    If Receipt_Variance(PICK_NO) Then
+                        Dim nextBtn As String = If(upcVarincePages = 1, "", "NEXT|")
+                        AppStates("SHOW_VAR") = $"Viewing Scans|{nextBtn}CANCEL|OOBOK|"
+                        upcVariancePageIndex = 1
+                        Dim pageText As String = GetUpcVariancePage(dst.Tables("WHTTRANV"), upcVariancePageIndex)
+                        CreateResponse("SHOW_VAR", "R", pageText)
+                    Else
+                        CreateResponse("VERIFY", "", "")
+                    End If
+                Case "SHOW_VAR"
+                    If SCANTEXT = "CANCEL" Then
+                        CreateResponse("SCAN_UPC", "BLUE", DisplayMsg(""))
+                        Exit Select
+                    ElseIf SCANTEXT = "NEXT" Then
+                        upcVariancePageIndex += 1
+                        Dim pageText As String = GetUpcVariancePage(dst.Tables("WHTTRANV"), upcVariancePageIndex)
+                        If upcVariancePageIndex = upcSummaryPages Then
+                            AppStates("SHOW_VAR") = "Viewing OOB|PREV|CANCEL|OOBOK|"
+                        Else
+                            AppStates("SHOW_VAR") = "Viewing OOB|NEXT|PREV|CANCEL|OOBOK|"
+                        End If
+                        CreateResponse("SHOW_VAR", "R", pageText)
+                        Exit Select
+                    ElseIf SCANTEXT = "PREV" Then
+                        upcVariancePageIndex -= 1
+                        Dim pageText As String = GetUpcVariancePage(dst.Tables("WHTTRANV"), upcVariancePageIndex)
+                        If upcVariancePageIndex = 1 Then
+                            AppStates("SHOW_VAR") = "Viewing OOB|NEXT|CANCEL|OOBOK|"
+                        Else
+                            AppStates("SHOW_VAR") = "Viewing OOB|NEXT|PREV|CANCEL|OOBOK|"
+                        End If
+                        CreateResponse("SHOW_VAR", "R", pageText)
+                        Exit Select
+                    ElseIf SCANTEXT = "OOBOK" Then
+                        updateWithVariance = True
+                        CreateResponse("VERIFY", "", "")
+                    End If
+            End Select
         End If
     End Sub
 
@@ -267,6 +325,7 @@
         UPC_CODE = ""
         EDI_DOC_SEQ_NO = ""
         PALLET_NO = ""
+        updateWithVariance = False
     End Sub
 
     Sub Update_Record()
@@ -334,6 +393,15 @@
         ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
                        New Object() {WHSE_TRAN_NO, 0, 1},
                        New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
+
+        If updateWithVariance Then
+            'call SP to auto correct inventory
+            'send email with csv attached
+            'Dim csv As String = ASCDATA1.Table2Csv(dst.Tables("WHTTRANV"))
+
+
+        End If
+
         CommitTrans()
 
 
@@ -391,6 +459,43 @@
 
         Return output.ToString()
     End Function
+
+    Function GetUpcVariancePage(dt As DataTable, pageIndex As Integer) As String
+
+        Dim upcList As New List(Of String)()
+
+
+        For Each row As DataRow In dt.Select("")
+            Dim STYLE_CODE As String = row("STYLE_CODE").ToString()
+            Dim COLOR_CODE As String = row("COLOR_CODE").ToString()
+            Dim UPC_CODE As String = row("UPC_CODE").ToString()
+            Dim VARIANCE As Integer = Convert.ToInt32(row("VARIANCE"))
+            upcList.Add($"{STYLE_CODE}-{COLOR_CODE}:{VARIANCE}")
+        Next
+
+        ' Total pages
+        Dim totalPages As Integer = Math.Ceiling(upcList.Count / upcVarianceLinesPerPage)
+        upcVarincePages = totalPages
+
+        ' Clamp page index
+        If pageIndex < 1 Then pageIndex = 1
+        If pageIndex > totalPages Then pageIndex = totalPages
+
+        ' Get subset of UPCs for current page
+        Dim startIdx As Integer = (pageIndex - 1) * upcVarianceLinesPerPage
+        Dim pagedList = upcList.Skip(startIdx).Take(upcVarianceLinesPerPage)
+
+        ' Build output string
+        Dim output As New System.Text.StringBuilder()
+        For Each entry As String In pagedList
+            output.AppendLine(entry)
+        Next
+
+        output.Append($"Page {pageIndex}/{totalPages}")
+
+        Return output.ToString()
+    End Function
+
     Sub Deposit_Transfer_From_Gun(depositLocation As String)
         Dim FromLoc As String = G.GUN_LOC
         Dim ToLoc As String = depositLocation
@@ -453,4 +558,36 @@
         CommitTrans()
 
     End Sub
+
+    Function Receipt_Variance(PICK_NO As String) As Boolean
+
+        ASCMAIN1.sql = $"select PICK_NO, STYLE_CODE, COLOR_CODE, UPC_CODE, sum(PICK_QTY) SHIP_QTY, sum(nvl(SCAN_QTY,0)) SCAN_QTY , sum(PICK_QTY) - sum(nvl(SCAN_QTY,0)) VARIANCE from 
+            (select SOTPICK2.PICK_NO, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYC1.UPC_CODE, SOTPICK2.PICK_QTY, 0 SCAN_QTY 
+            from SOTPICK2, SOTORDR2, ICTSTYC1 
+            where SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO
+            and SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO
+            and ICTSTYC1.STYLE_CODE = SOTORDR2.STYLE_CODE
+            and ICTSTYC1.COLOR_CODE = SOTORDR2.COLOR_CODE
+            and SOTPICK2.PICK_NO = '{PICK_NO}'
+            union  
+            select WHTTRAN1.PICK_NO, ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, WHTTRAN2.UPC_CODE, 0 PICK_QTY, sum(SCAN_QTY * nvl(CARTON_PACK_QTY,1)) SCAN_QTY 
+            from WHTTRAN2, WHTTRAN1, ICTSTYC1, ICTSTYL1
+            where WHTTRAN2.PALLET_NO =  WHTTRAN1.PALLET_NO
+            and WHTTRAN2.UPC_CODE = ICTSTYC1.UPC_CODE(+)
+            and ICTSTYC1.STYLE_CODE = ICTSTYL1.STYLE_CODE
+            and WHTTRAN1.PICK_NO = '{PICK_NO}'
+            group by WHTTRAN1.PICK_NO, ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, WHTTRAN2.UPC_CODE
+            )
+            group by PICK_NO, STYLE_CODE, COLOR_CODE, UPC_CODE
+            order by 1,2"
+        For Each rowVariance As DataRow In ASCDATA1.GetDataTable.Select("", "")
+            Dim rowWHTTRANV As DataRow = dst.Tables("WHTTRANV").NewRow
+            rowWHTTRANV("STYLE_CODE") = rowWHTTRANV("STYLE_CODE")
+            rowWHTTRANV("COLOR_CODE") = rowWHTTRANV("COLOR_CODE")
+            rowWHTTRANV("UPC_CODE") = rowWHTTRANV("UPC_CODE")
+            rowWHTTRANV("VARIANCE") = rowWHTTRANV("VARIANCE")
+            dst.Tables("WHTTRANV").Rows.Add(rowWHTTRANV)
+        Next
+        Return (dst.Tables("WHTTRANV").Rows.Count > 0)
+    End Function
 End Class
