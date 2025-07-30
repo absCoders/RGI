@@ -39,6 +39,7 @@ Public Class SOFSHIPB
     Private ConsolidatedPOProcessing As Boolean = False
     Private VandaleVersion2Billing As Boolean = False
     Private MASTER_SHIP_BOL_NO As String = String.Empty
+    Private isProcessingRegencyULShipment As Boolean = False
 
     Private NMFC_CODE As String = String.Empty
     Private NMFC_DESC As String = String.Empty
@@ -1673,7 +1674,7 @@ Public Class SOFSHIPB
                 SHIP_BOL_NO_CONS = rowSOTSHIP1.Item("SHIP_BOL_NO_CONS") & String.Empty
 
                 If SHIP_STATUS <> "P" AndAlso Not InquiryMode Then
-                    EMsg = vbCr & "The proivided shipment does not have a status of 'In Pick'. You must use Shipment Confirmation Inquiry screen to view this shipment."
+                    EMsg = vbCr & "The provided shipment does not have a status of 'In Pick'. You must use Shipment Confirmation Inquiry screen to view this shipment."
                     Exit Select
                 End If
 
@@ -1782,7 +1783,7 @@ Public Class SOFSHIPB
                             End If
                         End If
 
-                        If select_from_3PL_list Then
+                        If select_from_3PL_list OrElse isProcessingRegencyULShipment Then
                             If Not SHIP_BOL_NOs.Contains(SHIP_BOL_NO2) Then
                                 'Dim rowWHT3PLS1 As DataRow = dst.Tables("WHT3PLS1").Rows.Find(SHIP_BOL_NO2)
                                 If dst.Tables("WHT3PLS1").Select("SHIP_BOL_NO = '" & SHIP_BOL_NO2 & "'") Is Nothing Then
@@ -1815,6 +1816,14 @@ Public Class SOFSHIPB
                             Else
                                 If dst.Tables("WHT3PLS1").Select("PICK_NO = '" & row.Item("PICK_NO") & "'").Length <> 0 Then
                                     EDI_DOC_SEQ_NOs.Add(dst.Tables("WHT3PLS1").Select("PICK_NO = '" & row.Item("PICK_NO") & "'")(0).Item("EDI_DOC_SEQ_NO"))
+                                End If
+                            End If
+
+                            If Not InquiryMode AndAlso ASCMAIN1.CLIENT = "RGI" AndAlso EDI_DOC_SEQ_NOs.Count > 0 AndAlso Not isEcommProcessing Then
+                                ASCMAIN1.sql = "SELECT * FROM EDT945T3 WHERE EDI_DOC_SEQ_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1))) AND EDI_STATUS = 'F'"
+                                Dim tbl As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "EDT945T3", "V", {String.Join(",", EDI_DOC_SEQ_NOs.ToArray)})
+                                If tbl.Rows.Count > 0 Then
+                                    EMsg &= vbCr & $"There are {tbl.Rows.Count} Pallets that are finalized."
                                 End If
                             End If
                         End If
@@ -1883,10 +1892,11 @@ Public Class SOFSHIPB
                                     End If
                                 End If
 
-                                If EMsg.Length = 0 AndAlso isEcommProcessing AndAlso isLpCodeWarehouse Then
+                                If EMsg.Length = 0 AndAlso (isLpCodeWarehouse OrElse (ASCMAIN1.CLIENT = "RGI" AndAlso rowSOTSHIP1.Item("WHSE_CODE") & String.Empty = "US")) Then
 
-                                    ASCMAIN1.sql = "Select EDT945T1.* " _
-                                         & "  from EDT945T1, SOTORDR1, SOTSHIP1, EDTTRPM1" _
+                                    If isEcommProcessing Then
+                                        ASCMAIN1.sql = "Select EDT945T1.* 
+                                                    from EDT945T1, SOTORDR1, SOTSHIP1, EDTTRPM1" _
                                          & "  WHERE EDT945T1.EDI_ORDR_CUST_PO = SOTORDR1.ORDR_CUST_PO" _
                                          & "  AND SOTORDR1.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" _
                                          & "  AND SOTSHIP1.SHIP_BOL_NO = '" & SHIP_BOL_NO & "'" _
@@ -1897,20 +1907,29 @@ Public Class SOFSHIPB
                                          & "  AND EDTTRPM1.CUST_CODE = SOTORDR1.CUST_CODE" _
                                          & "  AND SOTSHIP1.SHIP_STATUS = 'P' AND SOTORDR1.ECOM_CODE IS NOT NULL" _
                                          & ecommSql
+                                    Else
+                                        ASCMAIN1.sql = $"Select EDT945T1.* 
+                                            from EDT945T1, SOTSHIP1
+                                            WHERE SOTSHIP1.SHIP_BOL_NO = '{SHIP_BOL_NO}'
+                                            AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0'
+                                            AND SOTSHIP1.SHIP_STATUS = 'P' 
+                                            AND SOTSHIP1.SHIP_BOL_NO = EDT945T1.EDI_SHIPMENT_ID"
+                                    End If
 
                                     Fill_Records("EDT945T1", String.Empty, True, ASCMAIN1.sql)
                                     Select Case dst.Tables("EDT945T1").Rows.Count
                                         Case 0
-                                            EMsg &= vbCr & "Cannot locate EDI 945 header record for this shipment."
+                                            EMsg &= vbCr & $"Cannot locate EDI 945 header record shipment: {SHIP_BOL_NO}"
+
                                         Case 1
                                             Dim EDI_DOC_SEQ_NO As String = dst.Tables("EDT945T1").Rows(0).Item("EDI_DOC_SEQ_NO")
-                                            Fill_Records("EDT945T2", String.Empty, True, "SELECT * FROM EDT945T2 WHERE EDI_DOC_SEQ_NO = '" & EDI_DOC_SEQ_NO & "'")
+                                            Fill_Records("EDT945T2", String.Empty, True, $"SELECT * FROM EDT945T2 WHERE EDI_DOC_SEQ_NO = '{EDI_DOC_SEQ_NO}'")
                                             If dst.Tables("EDT945T2").Rows.Count = 0 Then
-                                                EMsg &= vbCr & "Cannot locate EDI 945 details for this shipment."
+                                                EMsg &= vbCr & $"Cannot locate EDI 945 details for this shipment: {SHIP_BOL_NO}"
                                             End If
 
                                         Case Else
-                                            EMsg &= vbCr & "Multile EDI 945's found for this shipment."
+                                            EMsg &= vbCr & $"Multile EDI 945's found for this shipment: {SHIP_BOL_NO}"
                                     End Select
 
                                 End If
@@ -1996,27 +2015,27 @@ Public Class SOFSHIPB
                 If EMsg = String.Empty Then
                     Dim SHIP_BOL_NO_list As String = "'" & String.Join("', '", SHIP_BOL_NOs) & "'"
 
-                    ASCMAIN1.sql = " select artcust1.cust_code" _
-                        & " from sotordr0, sotship1, artcust1" _
-                        & " where sotordr0.ordr_group_no = sotship1.ordr_group_no" _
-                        & " and sotship1.SHIP_BOL_NO in (" & SHIP_BOL_NO_list & ")" _
-                        & " and artcust1.cust_code = sotordr0.cust_code" _
-                        & " and artcust1.EDI_REQUIRES_EXP_DATE = '1'"
+                    ASCMAIN1.sql = " SELECT ARTCUST1.CUST_CODE" _
+                        & " FROM SOTORDR0, SOTSHIP1, ARTCUST1" _
+                        & " WHERE SOTORDR0.ORDR_GROUP_NO = SOTSHIP1.ORDR_GROUP_NO" _
+                        & " AND SOTSHIP1.SHIP_BOL_NO IN (" & SHIP_BOL_NO_list & ")" _
+                        & " AND ARTCUST1.CUST_CODE = SOTORDR0.CUST_CODE" _
+                        & " AND ARTCUST1.EDI_REQUIRES_EXP_DATE = '1'"
                     Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql)
                     If row IsNot Nothing Then
-                        ASCMAIN1.sql = " select distinct(ictstyl1.style_code) style_code" _
-                         & " from sotpick1, sotcart1, sotcart2, ictstyl1" _
-                         & " where sotpick1.SHIP_BOL_NO in (" & SHIP_BOL_NO_list & ")" _
-                         & " and sotpick1.pick_no = sotcart1.pick_no" _
-                         & " and sotcart1.cart_no = sotcart2.cart_no" _
-                         & " and sotcart2.style_code = ictstyl1.style_code" _
-                         & " and ictstyl1.REQUIRES_EXP_DATE = '1'" _
-                         & " AND SOTCART2.item_exp_date is null"
+                        ASCMAIN1.sql = " SELECT DISTINCT(ICTSTYL1.STYLE_CODE) STYLE_CODE" _
+                         & " FROM SOTPICK1, SOTCART1, SOTCART2, ICTSTYL1" _
+                         & " WHERE SOTPICK1.SHIP_BOL_NO IN (" & SHIP_BOL_NO_list & ")" _
+                         & " AND SOTPICK1.PICK_NO = SOTCART1.PICK_NO" _
+                         & " AND SOTCART1.CART_NO = SOTCART2.CART_NO" _
+                         & " AND SOTCART2.STYLE_CODE = ICTSTYL1.STYLE_CODE" _
+                         & " AND ICTSTYL1.REQUIRES_EXP_DATE = '1'" _
+                         & " AND SOTCART2.ITEM_EXP_DATE IS NULL"
                         Dim tbl As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
                         If tbl IsNot Nothing AndAlso tbl.Rows.Count > 0 Then
                             EMsg &= vbCr & "The following styles require Expiration Dates on their cartons: "
                             For Each row In tbl.Select("", "style_code")
-                                EMsg &= row.Item("style_code") & ", "
+                                EMsg &= row.Item("STYLE_CODE") & ", "
                             Next
 
                             EMsg = EMsg.Substring(0, EMsg.Length - 2)
@@ -2122,7 +2141,7 @@ Public Class SOFSHIPB
                 End If
 
                 If Not processingMasterBOL Then
-                    If select_from_3PL_list Then
+                    If select_from_3PL_list OrElse isProcessingRegencyULShipment Then
                         If dst.Tables("SOTPICK1").Select("ISNULL(SELECTED,'0')<>'1'").Length > 0 Then
                             EMsg &= vbCr & "Cannot De-Select Pick Tickets from a 3PL Shipment"
                             EMsg &= vbCr & "- If they did not ship, they must be confirmed as 0 Shipped"
@@ -2728,7 +2747,7 @@ Public Class SOFSHIPB
                         End If
                     End If
 
-                    If EMsg.Length = 0 AndAlso ASCMAIN1.CLIENT = "NYA" Then
+                    If EMsg.Length = 0 AndAlso (ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "RGI") Then
                         For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1' AND ORDR_TYPE_CODE = 'XFR'", "")
                             If Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) <> 0 Then
                                 EMsg &= vbCr & "Pick Ticket (" & rowSOTPICK1.Item("PICK_NO") & ") is a Transfer Sales Order and cannot have freight."
@@ -2821,7 +2840,7 @@ Public Class SOFSHIPB
                 End If
 
                 ' 04/17/2019 - message for ecommerce short ship
-                If EMsg.Length = 0 AndAlso eItemKey = "Finalize" AndAlso ASCMAIN1.CLIENT = "RGI" And isEcommProcessing Then
+                If EMsg.Length = 0 AndAlso eItemKey = "Finalize" AndAlso ASCMAIN1.CLIENT = "RGI" AndAlso isEcommProcessing Then
                     If dst.Tables("SOTPICK2").Select("PICK_QTY > 0 AND PICK_QTY_CONF < PICK_QTY", "").Length > 0 Then
                         Dim msg As String = "There are items short shipped on this Ecommerce sales order. Do you want to short ship this Ecommerce sales order?"
                         If MessageBox.Show(msg, "Finalize", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
@@ -2838,8 +2857,6 @@ Public Class SOFSHIPB
                         End If
                     End If
                 End If
-
-
 
                 If EMsg.Length = 0 AndAlso (eItemKey = "Finalize" OrElse UpdateOnlyMode) Then
                     If (Absx1.dteFor("BOL_DATE").Value & "" = "" _
@@ -3415,7 +3432,7 @@ Public Class SOFSHIPB
                 End If
 
                 ' Special EDI Processing
-                If Not InquiryMode AndAlso select_from_3PL_list AndAlso EntryMode = "E" Then
+                If Not InquiryMode AndAlso (select_from_3PL_list OrElse isProcessingRegencyULShipment) AndAlso EntryMode = "E" Then
                     If ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "RGI" Then
                         If Not Load_3PL_Shipment_Details_EDT945T1() Then
                             select_from_3PL_list = False
@@ -3695,7 +3712,7 @@ Public Class SOFSHIPB
         tabSelect.Visible = Not tf
 
         ' Currently, This tab is always hidden
-        tabSelect.Tabs("3PL Shipments").Visible = ASCMAIN1.CLIENT = "RGI" AndAlso isEcommProcessing
+        tabSelect.Tabs("3PL Shipments").Visible = ASCMAIN1.CLIENT = "RGI" ' AndAlso isEcommProcessing
 
         tabSOTPICK1.Tabs("Misc Charges").Visible = ASCMAIN1.CLIENT = "RGI"
         tabSOTPICK1.Tabs("PickPack").Visible = ASCMAIN1.CLIENT = "RGI"
@@ -3841,8 +3858,8 @@ Public Class SOFSHIPB
         'End If
 
         If Not InquiryMode Then
-            If select_from_3PL_list Then
-                If Not (ASCMAIN1.CLIENT = "NYA") Then
+            If select_from_3PL_list AndAlso Not isProcessingRegencyULShipment Then
+                If Not (ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.sql = "RGI") Then
                     grdSOTPICK2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
                     grdSOTPICK2_SC.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
                 End If
@@ -3952,35 +3969,41 @@ Public Class SOFSHIPB
         EnforceConstraints(True)
 
         select_from_3PL_list = False
+        isProcessingRegencyULShipment = False
 
         Load_SOTSHIPX()
 
+        Fill_Records("WHT3PLS1")
         If isEcommProcessing Then
-            Fill_Records("WHT3PLS1")
-            ASCMAIN1.sql = "SELECT * FROM EDT945T1 WHERE NVL(EDI_PROCESS_IND, '0') = '0'"
-            ASCMAIN1.sql = "Select EDT945T1.* " _
-                 & "  from EDT945T1, SOTORDR1, EDTTRPM1" _
-                 & "  WHERE EDT945T1.EDI_ORDR_CUST_PO = SOTORDR1.ORDR_CUST_PO" _
-                 & "  AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0'" _
-                 & "  AND TRIM(EDT945T1.EDI_TP_QUAL) = TRIM(EDTTRPM1.EDI_TP_QUAL)" _
-                 & "  AND TRIM(EDT945T1.EDI_TP_ID) = TRIM(EDTTRPM1.EDI_TP_ID)" _
-                 & "  AND EDTTRPM1.EDI_DOC_NO = '945'" _
-                 & "  AND EDTTRPM1.CUST_CODE = SOTORDR1.CUST_CODE" _
-                 & "  AND SOTORDR1.ECOM_CODE IS NOT NULL" _
-                 & ecommSql
-
-            Fill_Records("EDT945T1_X", String.Empty, True, ASCMAIN1.sql)
-
-            For Each row As DataRow In dst.Tables("WHT3PLS1").Select("")
-                Dim EDI_DOC_SEQ_NO As String = row.Item("EDI_DOC_SEQ_NO") & String.Empty
-                Dim rowEDT945T1 As DataRow = dst.Tables("EDT945T1_X").Rows.Find(EDI_DOC_SEQ_NO)
-                If rowEDT945T1 IsNot Nothing Then
-                    rowEDT945T1.Delete()
-                End If
-            Next
-
-            dst.Tables("EDT945T1_X").AcceptChanges()
+            ASCMAIN1.sql = "Select EDT945T1.*" _
+                  & "  from EDT945T1, SOTORDR1, EDTTRPM1" _
+                  & "  WHERE EDT945T1.EDI_ORDR_CUST_PO = SOTORDR1.ORDR_CUST_PO" _
+                  & "  AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0'" _
+                  & "  AND TRIM(EDT945T1.EDI_TP_QUAL) = TRIM(EDTTRPM1.EDI_TP_QUAL)" _
+                  & "  AND TRIM(EDT945T1.EDI_TP_ID) = TRIM(EDTTRPM1.EDI_TP_ID)" _
+                  & "  AND EDTTRPM1.EDI_DOC_NO = '945'" _
+                  & "  AND EDTTRPM1.CUST_CODE = SOTORDR1.CUST_CODE" _
+                  & "  AND SOTORDR1.ECOM_CODE IS NOT NULL" _
+                  & ecommSql
+        Else
+            ASCMAIN1.sql = $"Select EDT945T1.*
+                    from EDT945T1, SOTSHIP1, ICTWHSE1
+                    WHERE NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0'
+                    AND SOTSHIP1.SHIP_STATUS = 'P' 
+                    AND EDT945T1.EDI_SHIPMENT_ID = SOTSHIP1.SHIP_BOL_NO
+                    AND SOTSHIP1.WHSE_CODE = ICTWHSE1.WHSE_CODE (+)
+                    AND ICTWHSE1.WHSE_CODE IN ('US')"
         End If
+        Fill_Records("EDT945T1_X", String.Empty, True, ASCMAIN1.sql)
+
+        For Each row As DataRow In dst.Tables("WHT3PLS1").Select("")
+            Dim EDI_DOC_SEQ_NO As String = row.Item("EDI_DOC_SEQ_NO") & String.Empty
+            Dim rowEDT945T1 As DataRow = dst.Tables("EDT945T1_X").Rows.Find(EDI_DOC_SEQ_NO)
+            If rowEDT945T1 IsNot Nothing Then
+                rowEDT945T1.Delete()
+            End If
+        Next
+        dst.Tables("EDT945T1_X").AcceptChanges()
 
         Load_SOTSHIPS()
 
@@ -3995,6 +4018,7 @@ Public Class SOFSHIPB
         optPayor.Value = "O"
         select_from_3PL_list = False
         processing_select_from_3PL_list = False
+        isProcessingRegencyULShipment = False
         selectedEDI_BOL_NO = String.Empty
         RecreateLabel = False
         finalizeShipment = False
@@ -4095,7 +4119,7 @@ Public Class SOFSHIPB
             edi856_customer = rowEDTTRPMC IsNot Nothing AndAlso rowEDTTRPMC.Item("EDI_STATUS") & "" = "P"
             lblASN.Visible = (edi856_customer And edi_order)
 
-            ASCMAIN1.Progress("v", "SOTORDR0")
+            ASCMAIN1.Progress("-", "SOTORDR0")
             Dim rowSOTORDR0 As DataRow = LookUp("SOTORDR0", ORDR_GROUP_NO)
             If Not processingMasterBOL Then
                 ORDR_SHIP_DATE = rowSOTORDR0.Item("ORDR_SHIP_DATE")
@@ -4142,7 +4166,7 @@ Public Class SOFSHIPB
             isLpCodeWarehouse = False
 
             If isEcommProcessing Then
-                Dim tbl As DataTable = ASCDATA1.GetDataTable("select * from ictwhse1 where whse_code = (select whse_code from sotship1 where ship_bol_no in (select ship_bol_no from " & SOTSHIP0 & ")) and lp_code is null")
+                Dim tbl As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICTWHSE1 WHERE WHSE_CODE = (SELECT WHSE_CODE FROM SOTSHIP1 WHERE SHIP_BOL_NO IN (SELECT SHIP_BOL_NO FROM " & SOTSHIP0 & ")) AND LP_CODE IS NULL")
                 If tbl.Rows.Count = 0 Then
                     isLpCodeWarehouse = True
                 End If
@@ -4161,7 +4185,12 @@ Public Class SOFSHIPB
             ' this is hokey
             If ASCMAIN1.CLIENT = "RGI" AndAlso processing_select_from_3PL_list AndAlso isEcommProcessing Then
                 ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace("ICTWHSE1.LP_CODE IS NULL", "ICTWHSE1.LP_CODE IS NOT NULL")
-                ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace("AND ICTWHSE1.WHSE_CODE <> 'CG'", "")
+                ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace($"AND ICTWHSE1.WHSE_CODE <> 'CG'", "")
+            ElseIf ASCMAIN1.CLIENT = "RGI" AndAlso processing_select_from_3PL_list Then
+                'ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace("ICTWHSE1.LP_CODE IS NULL", "ICTWHSE1.LP_CODE IS NOT NULL")
+                'ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace($"AND ICTWHSE1.WHSE_CODE <> '{RegencyCastleGate}'", $"AND ICTWHSE1.LP_CODE in ('{String.Join("','", lstRegency3PlWarehouseLpCodes.ToArray)}')")
+                ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace("AND SOTORDR1.ECOM_CODE IS NOT NULL", "AND SOTORDR1.ECOM_CODE IS NULL")
+                ASCMAIN1.sql = ASCMAIN1.sql.ToUpper.Replace("AND SOTSHIP1.SHIP_PICK_PRINTED IS NOT NULL", "")
             End If
 
             ASCMAIN1.Progress("Now Loading Data", "SOTSHIP1")
@@ -4196,7 +4225,7 @@ Public Class SOFSHIPB
             End If
 
             Dim fillPickBol As Boolean = False
-            If Not InquiryMode AndAlso Not MaintenanceMode AndAlso Not select_from_3PL_list Then
+            If Not InquiryMode AndAlso Not MaintenanceMode AndAlso (Not select_from_3PL_list OrElse isProcessingRegencyULShipment) Then
                 If BOL_NO.Length = 0 AndAlso Not processingMasterBOL Then
 
                     If ASCMAIN1.CLIENT = "VAN" Then
@@ -5468,6 +5497,12 @@ Public Class SOFSHIPB
                 Next
             End If
 
+            If isProcessingRegencyULShipment Then
+                For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("", "", DataViewRowState.CurrentRows)
+                    rowSOTSHIP1.Item("BILL_OF_LADING_NO") = BOL_NO
+                Next
+            End If
+
             SHIP_BOL_NO = String.Empty
             For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("BILL_OF_LADING_NO = '" & BOL_NO & "'", "", DataViewRowState.CurrentRows)
                 SHIP_BOL_NO = rowSOTSHIP1.Item("SHIP_BOL_NO")
@@ -5820,6 +5855,12 @@ Public Class SOFSHIPB
             INIT_LAST("SOTSHIP1", False, , True)
             INIT_LAST("SOTPICK1", False, , True)
 
+            If isProcessingRegencyULShipment Then
+                For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("", "", DataViewRowState.CurrentRows)
+                    rowSOTSHIP1.Item("BILL_OF_LADING_NO") = BOL_NO
+                Next
+            End If
+
             SHIP_BOL_NO = String.Empty
             For Each rowSOTSHIP1 As DataRow In dst.Tables("SOTSHIP1").Select("BILL_OF_LADING_NO = '" & BOL_NO & "'", "", DataViewRowState.CurrentRows)
                 SHIP_BOL_NO = rowSOTSHIP1.Item("SHIP_BOL_NO")
@@ -5907,7 +5948,7 @@ Public Class SOFSHIPB
                     ASCMAIN1.sql = "BEGIN SOPSTAT2('" & rowSOTINVH1.Item("INV_TYPE") & "','" & rowSOTINVH1.Item("INV_NO") & "'); END;"
                     ASCDATA1.ExecuteSQL()
 
-                    ' When should this be called - Only whses that use Locationss
+                    ' When should this be called - Only whses that use Locations
                     If WHSE_LOCATOR Then
                         TAC.ICCMAIN1.Update_WHTLOCBX("S", rowSOTINVH1.Item("INV_NO"))
 
@@ -6294,7 +6335,7 @@ Public Class SOFSHIPB
 
             ' Create Web Invoices
             Try
-                If Not isEcommProcessing Then ' OrElse (ASCMAIN1.CLIENT = "RGI" AndAlso dst.Tables("SOTINVH1").Select("SREP_CODE = 'DM'").Length > 0) 5/1/2019 - Danny does not want the emails
+                If Not (isEcommProcessing OrElse isProcessingRegencyULShipment) Then ' OrElse (ASCMAIN1.CLIENT = "RGI" AndAlso dst.Tables("SOTINVH1").Select("SREP_CODE = 'DM'").Length > 0) 5/1/2019 - Danny does not want the emails
                     ASCMAIN1.Progress("Creating Web Invoice", "")
                     For Each row As DataRow In dst.Tables("SOTINVH1").Select("")
                         TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))
@@ -6343,6 +6384,45 @@ Public Class SOFSHIPB
         Else
             Dim XFR_NO As String = ASCDATA1.ExecuteSF _
                                    ("SOPSHIP1_XFR", New String() {"INV_NO_IN"}, New Object() {INV_NO})
+
+            Select Case ASCMAIN1.CLIENT
+                Case "RGI"
+                    Dim rowSOTINVH1 As DataRow = dst.Tables("SOTINVH1").Rows.Find({"I", INV_NO})
+                    Dim WHSE_CODE As String = rowSOTINVH1.Item("WHSE_CODE") & String.Empty
+
+                    Select Case WHSE_CODE
+                        Case "US"
+                            Dim ORDR_NO As String = rowSOTINVH1.Item("ORDR_NO") & String.Empty
+                            Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find({ORDR_NO})
+                            Dim WHSE_CODE_TO As String = rowSOTORDR1.Item("WHSE_CODE_TO") & String.Empty
+
+                            Select Case WHSE_CODE_TO
+                                Case "MS", "NY"
+                                    ASCMAIN1.sql = "SELECT * FROM ICTIXFR1 WHERE WHSE_CODE = :PARM1 AND WHSE_CODE_TO = :PARM2 AND XFR_SOURCE = :PARM3 AND CTL_NO = :PARM4"
+                                    Dim rowICTIXFR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVVV", {WHSE_CODE, WHSE_CODE_TO, "S", INV_NO})
+
+                                    ' TAC.ICCMAIN1.Update_WHTLOCBX("T", rowICTIXFR1.Item("XFR_NO"))
+                                    Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(WHSE_CODE)
+                                    If rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1" Then
+                                        ASCDATA1.ExecuteSP("WHPLOCB2",
+                                                   "VVV",
+                                                   New String() {"T", rowICTIXFR1.Item("XFR_NO"), ASCMAIN1.SESSION_NO},
+                                                   New String() {"WHSE_TRAN_TYPE_IN", "WHSE_TRAN_NO_IN", "SESSION_NO_IN"})
+                                    End If
+
+                                    ' TAC.ICCMAIN1.Update_WHTLOCBX("T", rowICTIXFR1.Item("XFR_NO"))
+                                    rowICTWHSE1 = dst.Tables("ICTWHSE1").Rows.Find(WHSE_CODE_TO)
+                                    If rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1" Then
+                                        ASCDATA1.ExecuteSP("WHPLOCB2",
+                                                       "VVV",
+                                                       New String() {"X", rowICTIXFR1.Item("XFR_NO"), ASCMAIN1.SESSION_NO},
+                                                       New String() {"WHSE_TRAN_TYPE_IN", "WHSE_TRAN_NO_IN", "SESSION_NO_IN"})
+                                    End If
+
+                            End Select
+
+                    End Select
+            End Select
         End If
     End Sub
 
@@ -6616,94 +6696,137 @@ Public Class SOFSHIPB
     Private Sub Create_WHT3PLS1()
 
         ' Regency WayFair EDI 945s
-        If ASCMAIN1.CLIENT = "NYA" Then
-            ASCMAIN1.sql = " SELECT SOTSHIP1.SHIP_BOL_NO, EDT945T1.EDI_DOC_SEQ_NO" _
-            & " ,EDT945T1.EDI_SHIPMENT_DATE SHIP_DATE_SHIPPED, EDT945T1.EDI_BOL_NO, ARTCUST1.CUST_NAME" _
-            & " ,SOTSHIP1.SHIP_VIA_CODE" _
-            & " ,SOTSHIP1.SHIP_ADDR_TYPE" _
-            & " ,SOTSHIP1.SHIP_ADDR_CODE" _
-            & " ,SOTSHIP1.ORDR_GROUP_NO" _
-            & " ,SOTSHIP1.SHIP_PICK_PRINTED" _
-            & " ,SOTSHIP1.PICK_BATCH_NO" _
-            & " ,SOTSHIP1.FRT_TERMS" _
-            & " ,SOTSHIP1.WHSE_CODE" _
-            & " ,SOTSHIP1.INIT_DATE, SOTSHIP1.INIT_OPER" _
-            & " ,SOTSHIP1.LAST_DATE, SOTSHIP1.LAST_OPER" _
-            & " ,SOTSHIP1.SREP_CODE" _
-            & " ,SOTSHIP1.ORDR_DEPT" _
-            & " ,SOTSHIP1.SHIP_DATE_RECEIVED" _
-            & " ,SOTSHIP1.SHIP_NOTES" _
-            & " ,SOTSHIP1.SREP2_CODE" _
-            & " ,SOTSHIP1.BOL_PRINTED" _
-            & " ,SOTSHIP1.SHIP_DATE_PACKED" _
-            & " ,SOTORDR0.CUST_CODE" _
-            & " ,SOTORDR0.ORDR_SHIP_DATE" _
-            & " ,SOTORDR0.ORDR_CANCEL_DATE" _
-            & " ,SOTORDR0.ORDR_CUST_PO" _
-            & " ,SOTPICK1.PICK_NO" _
-            & " FROM EDT945T1, SOTPICK1, SOTSHIP1, SOTORDR0, ICTWHSE1, ARTCUST1" _
-            & " WHERE EDT945T1.EDI_PICK_NO = SOTPICK1.PICK_NO" _
-            & " AND SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" _
-            & " AND SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
-            & " AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0' " _
-            & " and SOTSHIP1.WHSE_CODE = ICTWHSE1.WHSE_CODE" _
-            & " and ICTWHSE1.LP_CODE IS NOT NULL" _
-            & " and SOTORDR0.CUST_CODE = ARTCUST1.CUST_CODE"
 
-            Create_TDA(dst.Tables.Add, "WHT3PLS1", "**", 0, False, , 2)
-            dst.Tables("WHT3PLS1").Columns("CUST_CODE").AllowDBNull = True
+        Select Case ASCMAIN1.CLIENT
+            Case "NYA"
+                ASCMAIN1.sql = " SELECT SOTSHIP1.SHIP_BOL_NO, EDT945T1.EDI_DOC_SEQ_NO" _
+                & " ,EDT945T1.EDI_SHIPMENT_DATE SHIP_DATE_SHIPPED, EDT945T1.EDI_BOL_NO, ARTCUST1.CUST_NAME" _
+                & " ,SOTSHIP1.SHIP_VIA_CODE" _
+                & " ,SOTSHIP1.SHIP_ADDR_TYPE" _
+                & " ,SOTSHIP1.SHIP_ADDR_CODE" _
+                & " ,SOTSHIP1.ORDR_GROUP_NO" _
+                & " ,SOTSHIP1.SHIP_PICK_PRINTED" _
+                & " ,SOTSHIP1.PICK_BATCH_NO" _
+                & " ,SOTSHIP1.FRT_TERMS" _
+                & " ,SOTSHIP1.WHSE_CODE" _
+                & " ,SOTSHIP1.INIT_DATE, SOTSHIP1.INIT_OPER" _
+                & " ,SOTSHIP1.LAST_DATE, SOTSHIP1.LAST_OPER" _
+                & " ,SOTSHIP1.SREP_CODE" _
+                & " ,SOTSHIP1.ORDR_DEPT" _
+                & " ,SOTSHIP1.SHIP_DATE_RECEIVED" _
+                & " ,SOTSHIP1.SHIP_NOTES" _
+                & " ,SOTSHIP1.SREP2_CODE" _
+                & " ,SOTSHIP1.BOL_PRINTED" _
+                & " ,SOTSHIP1.SHIP_DATE_PACKED" _
+                & " ,SOTORDR0.CUST_CODE" _
+                & " ,SOTORDR0.ORDR_SHIP_DATE" _
+                & " ,SOTORDR0.ORDR_CANCEL_DATE" _
+                & " ,SOTORDR0.ORDR_CUST_PO" _
+                & " ,SOTPICK1.PICK_NO" _
+                & " FROM EDT945T1, SOTPICK1, SOTSHIP1, SOTORDR0, ICTWHSE1, ARTCUST1" _
+                & " WHERE EDT945T1.EDI_PICK_NO = SOTPICK1.PICK_NO" _
+                & " AND SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" _
+                & " AND SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
+                & " AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0' " _
+                & " and SOTSHIP1.WHSE_CODE = ICTWHSE1.WHSE_CODE" _
+                & " and ICTWHSE1.LP_CODE IS NOT NULL" _
+                & " and SOTORDR0.CUST_CODE = ARTCUST1.CUST_CODE"
 
-            'Create_TDA(dst.Tables.Add, "EDT945T1", "*")
-            'Create_TDA(dst.Tables.Add, "EDT945T2", "*", 1)
+                Create_TDA(dst.Tables.Add, "WHT3PLS1", "**", 0, False, , 2)
+                dst.Tables("WHT3PLS1").Columns("CUST_CODE").AllowDBNull = True
 
-        ElseIf ASCMAIN1.CLIENT = "RGI" Then
-            ASCMAIN1.sql = " SELECT SOTSHIP1.SHIP_BOL_NO, EDT945T1.EDI_DOC_SEQ_NO" _
-            & " ,EDT945T1.EDI_SHIPMENT_DATE SHIP_DATE_SHIPPED, EDT945T1.EDI_BOL_NO, ARTCUST1.CUST_NAME" _
-            & " ,SOTSHIP1.SHIP_VIA_CODE" _
-            & " ,SOTSHIP1.SHIP_ADDR_TYPE" _
-            & " ,SOTSHIP1.SHIP_ADDR_CODE" _
-            & " ,SOTSHIP1.ORDR_GROUP_NO" _
-            & " ,SOTSHIP1.SHIP_PICK_PRINTED" _
-            & " ,SOTSHIP1.PICK_BATCH_NO" _
-            & " ,SOTSHIP1.FRT_TERMS" _
-            & " ,SOTSHIP1.WHSE_CODE" _
-            & " ,SOTSHIP1.INIT_DATE, SOTSHIP1.INIT_OPER" _
-            & " ,SOTSHIP1.LAST_DATE, SOTSHIP1.LAST_OPER" _
-            & " ,SOTSHIP1.SREP_CODE" _
-            & " ,SOTSHIP1.ORDR_DEPT" _
-            & " ,SOTSHIP1.SHIP_DATE_RECEIVED" _
-            & " ,SOTSHIP1.SHIP_NOTES" _
-            & " ,SOTSHIP1.SREP2_CODE" _
-            & " ,SOTSHIP1.BOL_PRINTED" _
-            & " ,SOTSHIP1.SHIP_DATE_PACKED" _
-            & " ,SOTORDR0.CUST_CODE" _
-            & " ,SOTORDR0.ORDR_SHIP_DATE" _
-            & " ,SOTORDR0.ORDR_CANCEL_DATE" _
-            & " ,SOTORDR0.ORDR_CUST_PO" _
-            & " ,SOTPICK1.PICK_NO" _
-            & " FROM EDT945T1, SOTPICK1, SOTSHIP1, SOTORDR0, ICTWHSE1, ARTCUST1, EDTTRPM1, SOTORDR1" _
-            & " WHERE EDT945T1.EDI_ORDR_CUST_PO = SOTORDR0.ORDR_CUST_PO" _
-            & " AND SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" _
-            & " AND SOTORDR1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
-            & " AND SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
-            & " AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0' " _
-            & " and SOTSHIP1.WHSE_CODE = ICTWHSE1.WHSE_CODE" _
-            & " and ICTWHSE1.LP_CODE IS NOT NULL" _
-            & " and SOTORDR0.CUST_CODE = ARTCUST1.CUST_CODE" _
-            & "  AND TRIM(EDT945T1.EDI_TP_QUAL) = TRIM(EDTTRPM1.EDI_TP_QUAL)" _
-            & "  AND TRIM(EDT945T1.EDI_TP_ID) = TRIM(EDTTRPM1.EDI_TP_ID)" _
-            & "  AND EDTTRPM1.EDI_DOC_NO = '945'" _
-            & "  AND EDTTRPM1.CUST_CODE = SOTORDR0.CUST_CODE" _
-            & "  AND SOTPICK1.PICK_STATUS = 'P'" _
-            & "  AND SOTSHIP1.SHIP_STATUS = 'P'" _
-            & "  AND SOTORDR1.ECOM_CODE IS NOT NULL" _
-            & ecommSql
+            Case "RGI"
+                If isEcommProcessing Then
+                    ASCMAIN1.sql = " SELECT SOTSHIP1.SHIP_BOL_NO, EDT945T1.EDI_DOC_SEQ_NO" _
+                            & " ,EDT945T1.EDI_SHIPMENT_DATE SHIP_DATE_SHIPPED, EDT945T1.EDI_BOL_NO, ARTCUST1.CUST_NAME" _
+                            & " ,SOTSHIP1.SHIP_VIA_CODE" _
+                            & " ,SOTSHIP1.SHIP_ADDR_TYPE" _
+                            & " ,SOTSHIP1.SHIP_ADDR_CODE" _
+                            & " ,SOTSHIP1.ORDR_GROUP_NO" _
+                            & " ,SOTSHIP1.SHIP_PICK_PRINTED" _
+                            & " ,SOTSHIP1.PICK_BATCH_NO" _
+                            & " ,SOTSHIP1.FRT_TERMS" _
+                            & " ,SOTSHIP1.WHSE_CODE" _
+                            & " ,SOTSHIP1.INIT_DATE, SOTSHIP1.INIT_OPER" _
+                            & " ,SOTSHIP1.LAST_DATE, SOTSHIP1.LAST_OPER" _
+                            & " ,SOTSHIP1.SREP_CODE" _
+                            & " ,SOTSHIP1.ORDR_DEPT" _
+                            & " ,SOTSHIP1.SHIP_DATE_RECEIVED" _
+                            & " ,SOTSHIP1.SHIP_NOTES" _
+                            & " ,SOTSHIP1.SREP2_CODE" _
+                            & " ,SOTSHIP1.BOL_PRINTED" _
+                            & " ,SOTSHIP1.SHIP_DATE_PACKED" _
+                            & " ,SOTORDR0.CUST_CODE" _
+                            & " ,SOTORDR0.ORDR_SHIP_DATE" _
+                            & " ,SOTORDR0.ORDR_CANCEL_DATE" _
+                            & " ,SOTORDR0.ORDR_CUST_PO" _
+                            & " ,SOTPICK1.PICK_NO" _
+                            & " FROM EDT945T1, SOTPICK1, SOTSHIP1, SOTORDR0, ICTWHSE1, ARTCUST1, EDTTRPM1, SOTORDR1" _
+                            & " WHERE EDT945T1.EDI_ORDR_CUST_PO = SOTORDR0.ORDR_CUST_PO" _
+                            & " AND SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO" _
+                            & " AND SOTORDR1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
+                            & " AND SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
+                            & " AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0' " _
+                            & " and SOTSHIP1.WHSE_CODE = ICTWHSE1.WHSE_CODE" _
+                            & " and ICTWHSE1.LP_CODE IS NOT NULL" _
+                            & " and SOTORDR0.CUST_CODE = ARTCUST1.CUST_CODE" _
+                            & "  AND TRIM(EDT945T1.EDI_TP_QUAL) = TRIM(EDTTRPM1.EDI_TP_QUAL)" _
+                            & "  AND TRIM(EDT945T1.EDI_TP_ID) = TRIM(EDTTRPM1.EDI_TP_ID)" _
+                            & "  AND EDTTRPM1.EDI_DOC_NO = '945'" _
+                            & "  AND EDTTRPM1.CUST_CODE = SOTORDR0.CUST_CODE" _
+                            & "  AND SOTPICK1.PICK_STATUS = 'P'" _
+                            & "  AND SOTSHIP1.SHIP_STATUS = 'P'" _
+                            & "  AND SOTORDR1.ECOM_CODE IS NOT NULL" _
+                            & ecommSql
+                Else
+                    ASCMAIN1.sql = $"SELECT SOTSHIP1.SHIP_BOL_NO, EDT945T1.EDI_DOC_SEQ_NO
+                        ,EDT945T1.EDI_SHIPMENT_DATE SHIP_DATE_SHIPPED, EDT945T1.EDI_BOL_NO, ARTCUST1.CUST_NAME
+                        ,SOTSHIP1.SHIP_VIA_CODE
+                        ,SOTSHIP1.SHIP_ADDR_TYPE
+                        ,SOTSHIP1.SHIP_ADDR_CODE
+                        ,SOTSHIP1.ORDR_GROUP_NO
+                        ,SOTSHIP1.SHIP_PICK_PRINTED
+                        ,SOTSHIP1.PICK_BATCH_NO
+                        ,SOTSHIP1.FRT_TERMS
+                        ,SOTSHIP1.WHSE_CODE
+                        ,SOTSHIP1.INIT_DATE, SOTSHIP1.INIT_OPER
+                        ,SOTSHIP1.LAST_DATE, SOTSHIP1.LAST_OPER
+                        ,SOTSHIP1.SREP_CODE
+                        ,SOTSHIP1.ORDR_DEPT
+                        ,SOTSHIP1.SHIP_DATE_RECEIVED
+                        ,SOTSHIP1.SHIP_NOTES
+                        ,SOTSHIP1.SREP2_CODE
+                        ,SOTSHIP1.BOL_PRINTED
+                        ,SOTSHIP1.SHIP_DATE_PACKED
+                        ,SOTORDR0.CUST_CODE
+                        ,SOTORDR0.ORDR_SHIP_DATE
+                        ,SOTORDR0.ORDR_CANCEL_DATE
+                        ,SOTORDR0.ORDR_CUST_PO
+                        ,SOTPICK1.PICK_NO
+                        FROM EDT945T1, SOTPICK1, SOTSHIP1, SOTORDR0, ICTWHSE1, ARTCUST1, SOTORDR1
+                        WHERE EDT945T1.EDI_ORDR_CUST_PO = SOTORDR0.ORDR_CUST_PO
+                        AND SOTPICK1.SHIP_BOL_NO = SOTSHIP1.SHIP_BOL_NO
+                        AND SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO
+                        AND NVL(EDT945T1.EDI_PROCESS_IND, '0') = '0'
+                        AND SOTSHIP1.WHSE_CODE = ICTWHSE1.WHSE_CODE
+                        AND SOTORDR0.CUST_CODE = ARTCUST1.CUST_CODE
+                        AND SOTPICK1.PICK_STATUS = 'P'
+                        AND SOTSHIP1.SHIP_STATUS = 'P'
+                        AND SOTSHIP1.SHIP_BOL_NO = EDT945T1.EDI_SHIPMENT_ID
+                        AND SOTORDR1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO
+                        AND SOTORDR1.ECOM_CODE IS NULL
+                        AND ICTWHSE1.WHSE_CODE IN ('US')"
+                    ' As per Rick, Walter did not want the LP_CODE set for US
+                    ' AND ICTWHSE1.LP_CODE IN ('{String.Join("','", lstRegency3PlWarehouseLpCodes.ToArray)}')
+                    ' AND ICTWHSE1.LP_CODE IS NOT NULL
 
-            Create_TDA(dst.Tables.Add, "WHT3PLS1", "**", 0, False, , 2)
-            dst.Tables("WHT3PLS1").Columns("CUST_CODE").AllowDBNull = True
-        Else
-            ' place holder for table
-            ASCMAIN1.sql = " SELECT SOTSHIP1.SHIP_BOL_NO" _
+                End If
+
+                Create_TDA(dst.Tables.Add, "WHT3PLS1", "**", 0, False, , 2)
+                dst.Tables("WHT3PLS1").Columns("CUST_CODE").AllowDBNull = True
+            Case Else
+                ' place holder for table
+                ASCMAIN1.sql = " SELECT SOTSHIP1.SHIP_BOL_NO" _
                & " ,SYSDATE SHIP_DATE_SHIPPED" _
                & " ,SOTSHIP1.SHIP_BOL_NO EDI_BOL_NO" _
                & " ,SOTSHIP1.SHIP_VIA_CODE" _
@@ -6731,9 +6854,8 @@ Public Class SOFSHIPB
                & " FROM SOTSHIP1, SOTORDR0, SOTPICK1" _
                & " WHERE SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" _
                & " AND SOTSHIP1.SHIP_BOL_NO = '@@@@@@@@@@@@' "
-
-            Create_TDA(dst.Tables.Add, "WHT3PLS1", "**", 0, False, , 1)
-        End If
+                Create_TDA(dst.Tables.Add, "WHT3PLS1", "**", 0, False, , 1)
+        End Select
 
     End Sub
 
@@ -9022,12 +9144,34 @@ Public Class SOFSHIPB
         Dim SHIP_BOL_NO As String = (e.Row.Cells("SHIP_BOL_NO").Value & String.Empty).trim
         If SHIP_BOL_NO.Length = 0 Then Exit Sub
 
+        Dim markAs3PLList As Boolean = True
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Dim WHSE_CODE As String = (e.Row.Cells("WHSE_CODE").Value & String.Empty).trim
+            Dim EDI_DOC_SEQ_NO As String = (e.Row.Cells("EDI_DOC_SEQ_NO").Value & String.Empty).trim
+            If WHSE_CODE = "US" Then
+                markAs3PLList = False
+
+                Dim tblEDT945T3 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM EDT945T3 WHERE EDI_DOC_SEQ_NO = :PARM1", "EDT945T3", "V", {EDI_DOC_SEQ_NO})
+                If tblEDT945T3.Rows.Count = 0 Then
+                    MessageBox.Show("The selected shipment does not have any pallets.", "Select 3PL Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                ElseIf tblEDT945T3.Select("EDI_STATUS = 'F'").Length > 0 Then
+                    MessageBox.Show($"The selected shipment has {tblEDT945T3.Select("EDI_STATUS = 'F'").Length} finalized pallets.", "Select 3PL Shipment", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+            End If
+        End If
+
         processing_select_from_3PL_list = True
         selectedEDI_BOL_NO = (e.Row.Cells("EDI_BOL_NO").Value & String.Empty).trim
         select_from_3PL_list = True
+        isProcessingRegencyULShipment = True
+
         Absx1.txtFor("SHIP_BOL_NO").Text = SHIP_BOL_NO
         Click_Command("Select")
         processing_select_from_3PL_list = False
+        select_from_3PL_list = markAs3PLList
 
     End Sub
 
@@ -15283,6 +15427,8 @@ Public Class SOFSHIPB
                 Dim CART_SEQ As Int32 = 0
                 Dim CART_LNO As Int16 = 0
 
+                Dim rowSOTSHIP1 As DataRow = Nothing
+
                 If rowSOTSVIA1 Is Nothing Then
                     If EDI_CARRIER_SCAC_CODE = String.Empty Then
                         EDI_CARRIER_SCAC_CODE = (rowEDT945T1.Item("EDI_CARRIER_SCAC_CODE") & String.Empty).ToString.Trim
@@ -15293,8 +15439,19 @@ Public Class SOFSHIPB
                 End If
 
                 If rowSOTSVIA1 Is Nothing Then
-                    MessageBox.Show("945 for EDI Document: " & EDI_DOC_SEQ_NO & " using SCAC: " & EDI_CARRIER_SCAC_CODE & ", ship via not found. Add ship via with SCAC and reproceess", "Import 945 EDI Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                    Return False
+                    ' We need a SCAC code only for EDI 856
+                    rowSOTSHIP1 = dst.Tables("SOTSHIP1").Rows.Find(rowEDT945T1.Item("EDI_SHIPMENT_ID") & String.Empty)
+                    If rowSOTSHIP1 Is Nothing Then
+                        If dst.Tables("SOTPICK1").Rows.Find(PICK_NO) IsNot Nothing Then
+                            Dim shipBolNo As String = dst.Tables("SOTPICK1").Rows.Find(PICK_NO).Item("SHIP_BOL_NO") & String.Empty
+                            rowSOTSHIP1 = dst.Tables("SOTSHIP1").Rows.Find(shipBolNo)
+                        End If
+                    End If
+
+                    If rowSOTSHIP1 Is Nothing OrElse rowSOTSHIP1.Item("SHIP_856_IND") & String.Empty = "1" Then
+                        MessageBox.Show($"EDI 945 Document: {EDI_DOC_SEQ_NO} requires a SCAC Code since it generates an ASN.", "Import 945 EDI Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return False
+                    End If
                 End If
 
                 Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select("PICK_NO = '" & PICK_NO & "'")(0)
@@ -15315,7 +15472,7 @@ Public Class SOFSHIPB
                 End If
 
                 ' Update Shipment Header
-                Dim rowSOTSHIP1 As DataRow = dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & rowSOTPICK1.Item("SHIP_BOL_NO") & "'")(0)
+                rowSOTSHIP1 = dst.Tables("SOTSHIP1").Select("SHIP_BOL_NO = '" & rowSOTPICK1.Item("SHIP_BOL_NO") & "'")(0)
 
                 If rowEDT945T1.Item("EDI_BOL_NO") & String.Empty <> String.Empty Then
                     Dim BILL_OF_LADING_NO As String = rowSOTSHIP1.Item("BILL_OF_LADING_NO") & String.Empty
@@ -16606,9 +16763,9 @@ Public Class SOFSHIPB
                                 End If
                                 .State = rowARTCUSTS.Item("FDX_RTN_SHIP_STATE") & String.Empty
                                 .ZipCode = rowARTCUSTS.Item("FDX_RTN_SHIP_ZIP_CODE") & String.Empty
-                                End If
+                            End If
 
-                                Case "U" ' UPS
+                        Case "U" ' UPS
                             If rowARTCUSTS.Item("UPS_RTN_SHIP_COMPANY") & String.Empty <> String.Empty Then
                                 .Address1 = rowARTCUSTS.Item("UPS_RTN_SHIP_ADDR1") & String.Empty
                                 .Address2 = rowARTCUSTS.Item("UPS_RTN_SHIP_ADDR2") & String.Empty
