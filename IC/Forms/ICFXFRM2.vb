@@ -501,17 +501,17 @@ Public Class ICFXFRM2
         Dim ORDR_GROUP_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("ORDR_GROUP_NO")
         ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
 
-        For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0")
-            Dim STYLE_CODE As String = rowICTSTYLX.Item("STYLE_CODE")
-            Dim COLOR_CODE As String = rowICTSTYLX.Item("COLOR_CODE")
-            Dim QTY As Int32 = Val(rowICTSTYLX.Item("QTY2XFR"))
+        'For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0")
+        '    Dim STYLE_CODE As String = rowICTSTYLX.Item("STYLE_CODE")
+        '    Dim COLOR_CODE As String = rowICTSTYLX.Item("COLOR_CODE")
+        '    Dim QTY As Int32 = Val(rowICTSTYLX.Item("QTY2XFR"))
 
-            TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
+        '    TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
-            ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}'" & vbCrLf _
-                     & "WHERE STYLE_CODE = :PARM1 AND COLOR_CODE = :PARM2 AND OXFR_STATUS = '0'"
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {STYLE_CODE, COLOR_CODE})
-        Next
+        '    ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}'" & vbCrLf _
+        '             & "WHERE STYLE_CODE = :PARM1 AND COLOR_CODE = :PARM2 AND OXFR_STATUS = '0'"
+        '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {STYLE_CODE, COLOR_CODE})
+        'Next
 
         ' Incease Qty In PICK by the PICK_QTY for all selected SCs to Transfer
 

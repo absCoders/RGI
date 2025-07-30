@@ -215,9 +215,11 @@ Public Class SOFOXFR1
 
         If ScreenMode Then
             grdSOTOXFRX.Parent = SplitContainer1.Panel1
+            grdSOTOXFRX.DisplayLayout.Bands(0).Columns("SEL").Hidden = False
         Else
             Clear_Record()
             grdSOTOXFRX.Parent = SplitContainer2.Panel1
+            grdSOTOXFRX.DisplayLayout.Bands(0).Columns("SEL").Hidden = True
         End If
 
     End Sub
@@ -344,7 +346,10 @@ Public Class SOFOXFR1
             'e.Cancel = True
         Else
             Select Case e.SourceControl.Name
-
+                Case "grdSOTOXFR1"
+                    For Each tt As String In New String() {"Select All", "De-Select All", "Select Selected", "De-Select Selected"}
+                        tlb_pop.Tools(tt).SharedProps.Visible = ScreenMode
+                    Next
             End Select
         End If
     End Sub
@@ -492,7 +497,7 @@ Public Class SOFOXFR1
 
             Case "SOTOXFRX"
                 SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
-                    & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) - NVL(US_OPEN,0) US_AVA" & vbCrLf _
+                    & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
                     & ", CASE WHEN MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(ALLO,0)" & vbCrLf _
                     & "       ELSE NVL(ALLO,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
