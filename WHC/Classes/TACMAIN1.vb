@@ -421,7 +421,7 @@ ByVal UPCDict As Dictionary(Of String, String)) As Dictionary(Of String, String)
                 UPCDict.Add("Error", $"Style/Color Mismatch for UPC {SCANTEXT} ")
             End If
         Else
-            UPCDict.Add("Error", $"{SCANTEXT} is not a valid UPC for this Pallet")
+            UPCDict.Add("Added", "1")
         End If
         Return UPCDict
     End Function
