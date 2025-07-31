@@ -1203,8 +1203,8 @@
                 & ", SUM(NVL(WHSE_QTY_ON_HAND,0)) WHSE_QTY_ON_HAND" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_ON_ORDER,0)) WHSE_QTY_ON_ORDER" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_TRAN,0)) WHSE_QTY_TRAN" & vbCrLf _
-                & ", SUM(NVL(WHSE_QTY_OPEN,0)) WHSE_QTY_OPEN" & vbCrLf _
-                & ", SUM(NVL(WHSE_QTY_PICK,0)) WHSE_QTY_PICK" & vbCrLf _
+                & ", SUM(CASE WHEN WHSE_CODE = 'US' THEN 0 ELSE NVL(WHSE_QTY_OPEN,0) END) WHSE_QTY_OPEN" & vbCrLf _
+                & ", SUM(CASE WHEN WHSE_CODE = 'US' THEN 0 ELSE NVL(WHSE_QTY_PICK,0) END) WHSE_QTY_PICK" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_ALLO,0)) WHSE_QTY_ALLO" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_COMM,0)) WHSE_QTY_COMM" & vbCrLf _
                 & ", SUM(NVL(WHSE_QTY_PROD,0)) WHSE_QTY_PROD" & vbCrLf _
@@ -1212,6 +1212,9 @@
                 & " group by STYLE_CODE, COLOR_CODE, DECODE(WHSE_CODE, 'US', 'MS', WHSE_CODE)"
                 ICTSTAT2_STATUS = ASCMAIN1.Temp_Table
                 ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_STATUS} Add Primary Key (WHSE_CODE, STYLE_CODE, COLOR_CODE)")
+
+                '& ", SUM(NVL(WHSE_QTY_PICK,0)) WHSE_QTY_PICK" & vbCrLf _
+                '& ", SUM(NVL(WHSE_QTY_OPEN,0)) WHSE_QTY_OPEN" & vbCrLf _
             End If
         End If
 

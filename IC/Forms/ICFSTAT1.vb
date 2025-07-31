@@ -322,10 +322,23 @@ Public Class ICFSTAT1
                     End If
                     .Columns.Add("OTS_INV", GetType(System.Int64), "ISNULL(ON_HAND,0) - ISNULL(PICK,0)")
                     .Columns.Add("OTS_WIP", GetType(System.Int64), "ISNULL(OTS_INV,0) + ISNULL(TRAN,0) + ISNULL(ON_ORDER,0)")
-                    .Columns.Add("NET_POS", GetType(System.Int64), "ISNULL(OTS_WIP,0) - ISNULL(OPEN,0) - ISNULL(COMM,0) - ISNULL(PROD,0)")
+
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        If TABLE_NAME = "ICTSTATA" Then
+                        Else
+                            .Columns.Add("NET_POS", GetType(System.Int64), "IIF(WHSE_CODE='US',ISNULL(ON_HAND,0) + ISNULL(TRAN,0) + ISNULL(ON_ORDER,0),ISNULL(OTS_WIP,0) - ISNULL(OPEN,0) - ISNULL(COMM,0) - ISNULL(PROD,0))")
+                        End If
+                    Else
+                        .Columns.Add("NET_POS", GetType(System.Int64), "ISNULL(OTS_WIP,0) - ISNULL(OPEN,0) - ISNULL(COMM,0) - ISNULL(PROD,0)")
+                    End If
+
                 End With
             Next
             Create_Relation("ICTSTATA", "ICTSTATW", "STYLE_CODE,COLOR_CODE")
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                dst.Tables("ICTSTATA").Columns.Add("NET_POS", GetType(System.Int64), "SUM(CHILD.NET_POS)")
+            End If
 
             ASCMAIN1.sql = "Select OPS_YYYYPP, STYLE_CODE, COLOR_CODE" & vbCrLf _
                 & ", WHSE_QTY_BEG BEG, WHSE_QTY_SHP SHP, WHSE_QTY_RTN RTN, WHSE_QTY_REC REC" & vbCrLf _
