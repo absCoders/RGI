@@ -193,12 +193,25 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\WBCRGIDD.vb" />
     <Compile Include="Classes\WBCITEMA.vb" />
     <Compile Include="Classes\WBCCHKB1.vb" />
     <Compile Include="Classes\WBCMAIN1.vb" />
     <Compile Include="Classes\WBCSHIPT.vb" />
     <Compile Include="Classes\WBCNXTPN.vb" />
     <Compile Include="Classes\WBCNXTPA.vb" />
+    <Compile Include="Forms\WBFRGIDD.Designer.vb">
+      <DependentUpon>WBFRGIDD.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WBFRGIDD.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WBFFSR01.Designer.vb">
+      <DependentUpon>WBFFSR01.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WBFFSR01.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WBFTSPO1.Designer.vb">
       <DependentUpon>WBFTSPO1.vb</DependentUpon>
     </Compile>
@@ -366,6 +379,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\WBFRGIDD.resx">
+      <DependentUpon>WBFRGIDD.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\WBFFSR01.resx">
+      <DependentUpon>WBFFSR01.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WBFTSPO1.resx">
       <DependentUpon>WBFTSPO1.vb</DependentUpon>
     </EmbeddedResource>
