@@ -4,8 +4,8 @@ $clientSettings = @{
     "RGI" = @{"emailTo"=@("maria@absolution.com","rick@absolution.com", "whr@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
             "emailFrom"="abs@absolution.com";
             "SmtpServer"="mail.absolution.com";
-            "PROD"="\\192.168.110.83\Shared\RGI";
-            "QA"="";
+            "PROD"="\\192.168.110.229\Shared\RGI";
+            "QA"="\\192.168.110.83\Shared\RGI";
             "ReportsDir"="C:\VS\VDI\Reports\";
             "Solution"="VDI"};
     "NYA" = @{"emailTo"=@("maria@absolution.com", "wjz@absolution.com", "ewz@absolution.com");
