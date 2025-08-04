@@ -21,6 +21,7 @@
     Dim RcvQty As Integer
     Dim NotOnList As Boolean
     Dim QtyKeyIn As String
+    Dim LockWarning As Boolean
 
     Dim FinLoc As String = ""
     Dim RecLoc As String = ""
@@ -110,6 +111,8 @@
 
         tbl = dst.Tables("WHTSCANS")
 
+        LockWarning = False
+
     End Sub
 
     Public Overrides Function Hello() As String
@@ -182,10 +185,23 @@
                     End If
                     ttl_ctn = 0
                     ttlRcv = 0
-                    If Not ASCMAIN1.Logical_Lock("POTSHIP1", PO_SHIPMENT_NO) Then
-                        CreateResponse("", "GREEN", "PO Shipment is locked.")
+
+                    If Not ASCMAIN1.Logical_Lock("WHCRF013", SCANTEXT) Then
+                        Dim User As String = ASCMAIN1.MultiTask_Get_Users("WHCRF013", SCANTEXT, "L")
+                        If (Not User.Contains(G.USER_ID)) Or LockWarning = False Then
+                            EMsg = vbCr & "PO Shipment is Locked " _
+                                     & User
+                            CreateResponse("", "GREEN", EMsg)
+                            If User.Contains(G.USER_ID) Then LockWarning = True
+                            Exit Select
+                        End If
+                    End If
+                    If Not ASCMAIN1.Logical_Open("POTSHIP1", PO_SHIPMENT_NO) Then
+                        CreateResponse("", "GREEN", "PO Shipment is Locked by the office.")
                         Exit Select
                     End If
+                    LockWarning = False
+
 
                     Dim PO_SHIPMENT_LNOs As String = ""
                     tbl.Rows.Clear()
