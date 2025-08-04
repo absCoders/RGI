@@ -31,22 +31,22 @@ Partial Class ICTPARM1
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance41 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance40 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance39 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance38 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance34 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance33 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
@@ -233,8 +233,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel1
         '
-        Appearance41.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel1.Appearance = Appearance41
+        Appearance16.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel1.Appearance = Appearance16
         Me.UltraLabel1.AutoSize = True
         Me.UltraLabel1.Location = New System.Drawing.Point(16, 45)
         Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -255,8 +255,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel2
         '
-        Appearance40.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance40
+        Appearance15.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance15
         Me.UltraLabel2.AutoSize = True
         Me.UltraLabel2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel2.Location = New System.Drawing.Point(16, 122)
@@ -277,8 +277,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel4
         '
-        Appearance39.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel4.Appearance = Appearance39
+        Appearance14.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel4.Appearance = Appearance14
         Me.UltraLabel4.AutoSize = True
         Me.UltraLabel4.Location = New System.Drawing.Point(16, 84)
         Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -289,8 +289,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel5
         '
-        Appearance38.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel5.Appearance = Appearance38
+        Appearance13.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel5.Appearance = Appearance13
         Me.UltraLabel5.AutoSize = True
         Me.UltraLabel5.Location = New System.Drawing.Point(16, 143)
         Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -310,8 +310,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel6
         '
-        Appearance37.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel6.Appearance = Appearance37
+        Appearance12.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel6.Appearance = Appearance12
         Me.UltraLabel6.AutoSize = True
         Me.UltraLabel6.Location = New System.Drawing.Point(16, 167)
         Me.UltraLabel6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -331,8 +331,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel7
         '
-        Appearance34.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel7.Appearance = Appearance34
+        Appearance9.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel7.Appearance = Appearance9
         Me.UltraLabel7.AutoSize = True
         Me.UltraLabel7.Location = New System.Drawing.Point(16, 250)
         Me.UltraLabel7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -352,8 +352,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel8
         '
-        Appearance35.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel8.Appearance = Appearance35
+        Appearance10.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel8.Appearance = Appearance10
         Me.UltraLabel8.AutoSize = True
         Me.UltraLabel8.Location = New System.Drawing.Point(16, 226)
         Me.UltraLabel8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -373,8 +373,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel9
         '
-        Appearance36.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel9.Appearance = Appearance36
+        Appearance11.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel9.Appearance = Appearance11
         Me.UltraLabel9.AutoSize = True
         Me.UltraLabel9.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel9.Location = New System.Drawing.Point(16, 205)
@@ -407,8 +407,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel10
         '
-        Appearance33.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel10.Appearance = Appearance33
+        Appearance8.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel10.Appearance = Appearance8
         Me.UltraLabel10.AutoSize = True
         Me.UltraLabel10.Location = New System.Drawing.Point(16, 359)
         Me.UltraLabel10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -440,8 +440,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel11
         '
-        Appearance32.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel11.Appearance = Appearance32
+        Appearance7.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel11.Appearance = Appearance7
         Me.UltraLabel11.AutoSize = True
         Me.UltraLabel11.Location = New System.Drawing.Point(16, 335)
         Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -473,8 +473,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel12
         '
-        Appearance31.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel12.Appearance = Appearance31
+        Appearance6.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel12.Appearance = Appearance6
         Me.UltraLabel12.AutoSize = True
         Me.UltraLabel12.Location = New System.Drawing.Point(16, 383)
         Me.UltraLabel12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -506,8 +506,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel13
         '
-        Appearance30.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel13.Appearance = Appearance30
+        Appearance5.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel13.Appearance = Appearance5
         Me.UltraLabel13.AutoSize = True
         Me.UltraLabel13.Location = New System.Drawing.Point(16, 407)
         Me.UltraLabel13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -539,8 +539,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel14
         '
-        Appearance29.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel14.Appearance = Appearance29
+        Appearance4.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel14.Appearance = Appearance4
         Me.UltraLabel14.AutoSize = True
         Me.UltraLabel14.Location = New System.Drawing.Point(16, 311)
         Me.UltraLabel14.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -551,8 +551,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel3
         '
-        Appearance28.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel3.Appearance = Appearance28
+        Appearance3.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel3.Appearance = Appearance3
         Me.UltraLabel3.AutoSize = True
         Me.UltraLabel3.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel3.Location = New System.Drawing.Point(16, 288)
@@ -573,8 +573,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel15
         '
-        Appearance27.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel15.Appearance = Appearance27
+        Appearance2.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel15.Appearance = Appearance2
         Me.UltraLabel15.AutoSize = True
         Me.UltraLabel15.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.UltraLabel15.Location = New System.Drawing.Point(16, 435)
@@ -586,8 +586,8 @@ Partial Class ICTPARM1
         '
         'UltraLabel16
         '
-        Appearance26.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel16.Appearance = Appearance26
+        Appearance1.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel16.Appearance = Appearance1
         Me.UltraLabel16.AutoSize = True
         Me.UltraLabel16.Location = New System.Drawing.Point(16, 461)
         Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -598,7 +598,7 @@ Partial Class ICTPARM1
         '
         'UltraNumericEditor1
         '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "DUTY_RATE")
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor1, "IC_PARM_TARIFF_OFFSET_PCT")
         Me.UltraNumericEditor1.AlwaysInEditMode = True
         Me.UltraNumericEditor1.Location = New System.Drawing.Point(142, 454)
         Me.UltraNumericEditor1.MaskInput = "nnn.nnnn"
