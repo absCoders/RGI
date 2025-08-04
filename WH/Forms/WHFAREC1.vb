@@ -16,10 +16,12 @@ Public Class WHFAREC1
         With dst
 
 
-            ASCMAIN1.sql = "Select WHSE_CODE, WHSE_DESC from ICTWHSE1 where WHSE_CODE in" & vbCrLf _
-                & " (Select Distinct WHSE_CODE from POTSHIP1,POTSHIP2" & vbCrLf _
-                & " where POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
-                & "   and POTSHIP2.PO_SHIP_STATUS = 'O')"
+            ASCMAIN1.sql = "Select ICTWHSE1.WHSE_CODE, ICTWHSE1.WHSE_DESC, shipx.containers, shipx.records from ICTWHSE1 ,
+                            (Select POTSHIP1.WHSE_CODE, count(distinct CONTAINER_NO)CONTAINERS, count(1) records from POTSHIP1,POTSHIP2
+                            where POTSHIP1.PO_SHIPMENT_NO = POTSHIP2.PO_SHIPMENT_NO
+                            and POTSHIP2.PO_SHIP_STATUS = 'O'
+                            group by POTSHIP1.WHSE_CODE) SHIPX
+                            where ICTWHSE1.WHSE_CODE  = SHIPX.WHSE_CODE"
             Create_TDA(.Tables.Add, "ICTWHSEX", "**", 0, False, "", 1)
 
 
