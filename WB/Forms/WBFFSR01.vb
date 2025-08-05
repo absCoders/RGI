@@ -200,6 +200,7 @@ Public Class WBFFSR01
                         End If
                     End If
                 Next
+                Clear_Record()
                 Load_Record(True)
             Case "Exit"
                 Call Mode_Settings(False)
@@ -776,6 +777,8 @@ Public Class WBFFSR01
     Private Function setDates() As Boolean
         Dim Retval As Boolean = False
         Try
+            TY_DAYS.Clear()
+            LY_DAYS.Clear()
             Dim fltr As String = $"WEEK_END_DATE = '{Format(dteSaturday.DateTime, "dd-MMM-yyyy")}'"
             Dim rowGLTPARM3TY As DataRow = dst.Tables.Item("GLTPARM3").Select(fltr).FirstOrDefault
             Dim rowGLTPARM3LY As DataRow = Nothing
