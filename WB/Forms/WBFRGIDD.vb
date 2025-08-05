@@ -14,8 +14,8 @@ Public Class WBFRGIDD
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Dim defPrd As Int64 = (Val(ASCMAIN1.CYP.Substring(4, 2)) - 1) * -1 '-3
-        Set_cmbYP("RYP0", ASCMAIN1.CYP, -36, 0, defPrd)
-        Set_cmbYP("RYP1", ASCMAIN1.CYP, -36, 0, 0)
+        Set_cmbYP("RYP0", ASCMAIN1.CYP, -48, 0, defPrd)
+        Set_cmbYP("RYP1", ASCMAIN1.CYP, -48, 0, 0)
 
         With dst
 
