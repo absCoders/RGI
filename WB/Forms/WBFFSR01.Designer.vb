@@ -336,22 +336,22 @@ Partial Class WBFFSR01
         'rdoDollars
         '
         Me.rdoDollars.AutoSize = True
+        Me.rdoDollars.Checked = True
         Me.rdoDollars.Location = New System.Drawing.Point(114, 0)
         Me.rdoDollars.Name = "rdoDollars"
         Me.rdoDollars.Size = New System.Drawing.Size(69, 20)
         Me.rdoDollars.TabIndex = 1
+        Me.rdoDollars.TabStop = True
         Me.rdoDollars.Text = "Dollars"
         Me.rdoDollars.UseVisualStyleBackColor = True
         '
         'rdoUnits
         '
         Me.rdoUnits.AutoSize = True
-        Me.rdoUnits.Checked = True
         Me.rdoUnits.Location = New System.Drawing.Point(51, -1)
         Me.rdoUnits.Name = "rdoUnits"
         Me.rdoUnits.Size = New System.Drawing.Size(59, 20)
         Me.rdoUnits.TabIndex = 0
-        Me.rdoUnits.TabStop = True
         Me.rdoUnits.Text = "Units"
         Me.rdoUnits.UseVisualStyleBackColor = True
         '
