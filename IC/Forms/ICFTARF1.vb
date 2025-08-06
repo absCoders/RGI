@@ -1,6 +1,6 @@
 Public Class ICFTARF1
 
-    Dim ORIG_CODE As String
+    Dim COUNTRY_CODE As String
 
     'AUDITING
     'sqlsort in cmdtest
@@ -11,101 +11,65 @@ Public Class ICFTARF1
 
         With dst
 
-            ASCMAIN1.sql = "Select * from ICTORIG1"
-            Create_TDA(.Tables.Add, "ICTORIG1", "**", 0, , "")
-
-            ASCMAIN1.sql = "Select ICTCOSTD.*,APTVEND1.VEND_NAME " _
-            & " from ICTCOSTD,APTVEND1 " _
-            & " where ICTCOSTD.ORIG_CODE = :PARM1 " _
-            & "   and APTVEND1.VEND_CODE (+) = ICTCOSTD.VEND_CODE"
-            Create_TDA(.Tables.Add, "ICTCOSTD", "**", 0, , "V")
-
-            ASCMAIN1.sql = "Select ICTCOSTC.*,ICTPROD1.PROD_DESC " _
-            & " from ICTCOSTC,ICTPROD1 " _
-            & " where ICTCOSTC.ORIG_CODE = :PARM1 " _
-            & "   and ICTPROD1.PROD_CODE (+) = ICTCOSTC.PROD_CODE"
-            Create_TDA(.Tables.Add, "ICTCOSTC", "**", 0, , "V")
-
-            Create_Relation("ICTCOSTD", "ICTCOSTC", "ORIG_CODE,VEND_CODE")
-
-            .Tables.Add("ICTCOSTX")
-            With .Tables("ICTCOSTX").Columns
-                .Add("ORIG_CODE")
-                .Add("ORIG_DESC")
-                .Add("VEND_CODES")
+            ASCMAIN1.sql = "Select * from ICTTARF1"
+            Create_TDA(.Tables.Add, "ICTTARF1", "**", 0, , "")
+            With .Tables("ICTTARF1").Columns
+                .Add("EFFECTIVE_TARIFF_PCT", GetType(System.Decimal))
+                .Add("DATE_TO_USE", GetType(System.String))
             End With
 
-            .Tables.Add("ICTCOSTT")
-            With .Tables("ICTCOSTT").Columns
-                .Add("FEE")
-                .Add("PAYEE")
-                .Add("COST")
-            End With
-
-            .Tables.Add("ICTCOSTV")
-            With .Tables("ICTCOSTV").Columns
-                .Add("SOURCE")
-                .Add("SUPPLIER")
-                .Add("AGENT")
-                .Add("INSPECTOR")
-                .Add("OTHER")
-            End With
+            ASCMAIN1.sql = "Select * from ICTTARF2"
+            Create_TDA(.Tables.Add, "ICTTARF2", "**", 0, , "")
 
         End With
 
-        Fill_Records("ICTORIG1")
+        Load_ICTTARF1()
 
-        grdICTCOSTX.DataSource = dst.Tables("ICTCOSTX")
-        grdICTCOSTC.DataSource = dst.Tables("ICTCOSTC")
-        grdICTCOSTD.DataSource = dst.Tables("ICTCOSTD")
-        grdICTCOSTT.DataSource = dst.Tables("ICTCOSTT")
+        grdICTTARFX.DataSource = dst.Tables("ICTTARF1")
+        grdICTTARF2.DataSource = dst.Tables("ICTTARF2")
 
-        Create_Summary(grdICTCOSTX, "ORIG_CODE", "Count")
+        Create_Summary(grdICTTARFX, "COUNTRY_CODE", "Count")
 
+        With grdICTTARF2.DisplayLayout.Bands(0)
+            '    For Each COLUMN_NAME In New String() {"PROD_CODE", "PROD_DESC", "BRAND_CODE"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Goldenrod
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            '    For Each COLUMN_NAME In New String() {"COMMISSION", "COMM_TYPE"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Violet
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            '    For Each COLUMN_NAME In New String() {"INSPECTION", "INSP_TYPE"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Green
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            '    For Each COLUMN_NAME In New String() {"OTHER", "OTHER_TYPE"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Orange
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            'End With
 
-        With grdICTCOSTC.DisplayLayout.Bands(0)
-            For Each COLUMN_NAME In New String() {"PROD_CODE", "PROD_DESC", "BRAND_CODE"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Goldenrod
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-            For Each COLUMN_NAME In New String() {"COMMISSION", "COMM_TYPE"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Violet
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-            For Each COLUMN_NAME In New String() {"INSPECTION", "INSP_TYPE"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Green
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-            For Each COLUMN_NAME In New String() {"OTHER", "OTHER_TYPE"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Orange
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
+            'With grdICTCOSTD.DisplayLayout.Bands(0)
+            '    For Each COLUMN_NAME In New String() {"VEND_CODE", "VEND_NAME"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Goldenrod
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            '    For Each COLUMN_NAME In New String() {"PAYEE_COMMISSION"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Violet
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            '    For Each COLUMN_NAME In New String() {"PAYEE_INSPECTION"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Green
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
+            '    For Each COLUMN_NAME In New String() {"PAYEE_OTHER"}
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Orange
+            '        .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            '    Next
         End With
 
-        With grdICTCOSTD.DisplayLayout.Bands(0)
-            For Each COLUMN_NAME In New String() {"VEND_CODE", "VEND_NAME"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Goldenrod
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-            For Each COLUMN_NAME In New String() {"PAYEE_COMMISSION"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Violet
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-            For Each COLUMN_NAME In New String() {"PAYEE_INSPECTION"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Green
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-            For Each COLUMN_NAME In New String() {"PAYEE_OTHER"}
-                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.Orange
-                .Columns(COLUMN_NAME).Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            Next
-        End With
-
-
-        ASCMAIN1.Add_Value_List(grdICTCOSTC, "COMM_TYPE", Nothing, New String() {":", "$:$/LB", "%:%Cost"})
-        ASCMAIN1.Add_Value_List(grdICTCOSTC, "INSP_TYPE", Nothing, New String() {":", "$:$/LB", "%:%Cost"})
-        ASCMAIN1.Add_Value_List(grdICTCOSTC, "OTHER_TYPE", Nothing, New String() {":", "$:$/LB", "%:%Cost"})
-
+        ASCMAIN1.Add_Value_List(grdICTTARFX, "DATE_TO_USE", Nothing, New String() {":", "S:Ship Date", "R:Receive Date", "N:Not Active"})
+        ASCMAIN1.Add_Value_List(grdICTTARF2, "TARIFF_DATE_TO_USE", Nothing, New String() {":", "S:Ship Date", "R:Receive Date"})
 
     End Sub
 
@@ -116,15 +80,15 @@ Public Class ICFTARF1
         Select Case eItemKey
 
             Case "View", "Edit"
-                If Validate_Code("ORIG_CODE") Then
+                If Validate_Code("COUNTRY_CODE") Then
                     If eItemKey = "Edit" Then
-                        If Not ASCMAIN1.Logical_Lock("ICTCOSTD", Absx1.txtFor("ORIG_CODE").Text) Then Exit Sub
+                        If Not ASCMAIN1.Logical_Lock("ICTTARF1", Absx1.txtFor("COUNTRY_CODE").Text) Then Exit Sub
                     End If
 
-                    ORIG_CODE = Absx1.txtFor("ORIG_CODE").Text
-                    Dim rowICTORIG1 As DataRow = Lookup("ICTORIG1", ORIG_CODE)
-                    If rowICTORIG1 Is Nothing Then
-                        EMsg &= vbCr & "Invalid Origin Code (" & ORIG_CODE & ")"
+                    COUNTRY_CODE = Absx1.txtFor("COUNTRY_CODE").Text
+                    Dim rowTATCNTRY As DataRow = LookUp("TATCNTRY", COUNTRY_CODE)
+                    If rowTATCNTRY Is Nothing Then
+                        EMsg &= vbCr & "Invalid Country Code (" & COUNTRY_CODE & ")"
                     Else
 
                     End If
@@ -132,57 +96,57 @@ Public Class ICFTARF1
 
             Case "Update"
 
-                For Each COLUMN_NAME As String In New String() {"VEND_CODE", "PAYEE_COMMISSION", "PAYEE_INSPECTION", "PAYEE_OTHER"}
-                    For Each row As DataRow In ASCDATA1.SelectDistinct("ICTCOSTD", COLUMN_NAME).Rows
-                        Dim VEND_CODE As String = row.Item(0) & ""
-                        If COLUMN_NAME = "VEND_CODE" And VEND_CODE = "Z" Then
-                        Else
-                            If VEND_CODE <> "" Then
-                                If Lookup("APTVEND1", VEND_CODE) Is Nothing Then
-                                    EMsg &= vbCr & "Invalide Value Specified for " & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Header.Caption & " (" & VEND_CODE & ")"
-                                End If
-                            End If
-                        End If
-                        If COLUMN_NAME = "VEND_CODE" Then
-                            Dim rows() As DataRow = dst.Tables("ICTCOSTC").Select _
-                                ("ORIG_CODE = '" & ORIG_CODE & "' and VEND_CODE = '" & VEND_CODE & "'")
-                            If rows.Length = 0 Then
-                                EMsg &= vbCr & "No Commission details defined for Supplier " & VEND_CODE & "; Delete or Complete"
-                            Else
-                                Dim rowICTCOSTD As DataRow = dst.Tables("ICTCOSTD").Rows.Find(New String() {ORIG_CODE, VEND_CODE})
-                                For Each rowICTCOSTC As DataRow In rows
-                                    Dim BRAND_CODE As String = rowICTCOSTC.Item("BRAND_CODE") & ""
-                                    If BRAND_CODE <> "Z" Then
-                                        If Lookup("ICTBRAN1", BRAND_CODE) Is Nothing Then
-                                            EMsg &= vbCr & "Invalid Value Specified for Brand Code (See Supplier " & VEND_CODE & ")"
-                                        End If
-                                    End If
-                                    Dim PROD_CODE As String = rowICTCOSTC.Item("PROD_CODE") & ""
-                                    If PROD_CODE <> "ZZZ" Then
-                                        If Lookup("ICTPROD1", PROD_CODE) Is Nothing Then
-                                            EMsg &= vbCr & "Invalid Value Specified for Product Code (See Supplier " & VEND_CODE & ")"
-                                        End If
-                                    End If
+                'For Each COLUMN_NAME As String In New String() {"VEND_CODE", "PAYEE_COMMISSION", "PAYEE_INSPECTION", "PAYEE_OTHER"}
+                '    For Each row As DataRow In ASCDATA1.SelectDistinct("ICTCOSTD", COLUMN_NAME).Rows
+                '        Dim VEND_CODE As String = row.Item(0) & ""
+                '        If COLUMN_NAME = "VEND_CODE" And VEND_CODE = "Z" Then
+                '        Else
+                '            If VEND_CODE <> "" Then
+                '                If LookUp("APTVEND1", VEND_CODE) Is Nothing Then
+                '                    EMsg &= vbCr & "Invalide Value Specified for " & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Header.Caption & " (" & VEND_CODE & ")"
+                '                End If
+                '            End If
+                '        End If
+                '        If COLUMN_NAME = "VEND_CODE" Then
+                '            Dim rows() As DataRow = dst.Tables("ICTCOSTC").Select _
+                '                ("ORIG_CODE = '" & ORIG_CODE & "' and VEND_CODE = '" & VEND_CODE & "'")
+                '            If rows.Length = 0 Then
+                '                EMsg &= vbCr & "No Commission details defined for Supplier " & VEND_CODE & "; Delete or Complete"
+                '            Else
+                '                Dim rowICTCOSTD As DataRow = dst.Tables("ICTCOSTD").Rows.Find(New String() {ORIG_CODE, VEND_CODE})
+                '                For Each rowICTCOSTC As DataRow In rows
+                '                    Dim BRAND_CODE As String = rowICTCOSTC.Item("BRAND_CODE") & ""
+                '                    If BRAND_CODE <> "Z" Then
+                '                        If LookUp("ICTBRAN1", BRAND_CODE) Is Nothing Then
+                '                            EMsg &= vbCr & "Invalid Value Specified for Brand Code (See Supplier " & VEND_CODE & ")"
+                '                        End If
+                '                    End If
+                '                    Dim PROD_CODE As String = rowICTCOSTC.Item("PROD_CODE") & ""
+                '                    If PROD_CODE <> "ZZZ" Then
+                '                        If LookUp("ICTPROD1", PROD_CODE) Is Nothing Then
+                '                            EMsg &= vbCr & "Invalid Value Specified for Product Code (See Supplier " & VEND_CODE & ")"
+                '                        End If
+                '                    End If
 
 
-                                    For Each COLUMN_NAME2 As String In New String() {"COMMISSION", "INSPECTION", "OTHER"}
-                                        Dim COLUMN_NAME3 As String = "PAYEE_" & COLUMN_NAME2
+                '                    For Each COLUMN_NAME2 As String In New String() {"COMMISSION", "INSPECTION", "OTHER"}
+                '                        Dim COLUMN_NAME3 As String = "PAYEE_" & COLUMN_NAME2
 
-                                        If Val(rowICTCOSTC.Item(COLUMN_NAME2) & "") = 0 Then
-                                            If rowICTCOSTD.Item(COLUMN_NAME3) & "" <> "" Then
-                                                EMsg &= vbCr & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME3).Header.Caption & " Specified, but no value specified for " & grdICTCOSTC.DisplayLayout.Bands(0).Columns(COLUMN_NAME2).Header.Caption & " (See Supplier " & VEND_CODE & ")"
-                                            End If
-                                        Else
-                                            If rowICTCOSTD.Item(COLUMN_NAME3) & "" = "" Then
-                                                EMsg &= vbCr & "A Value was specified for " & grdICTCOSTC.DisplayLayout.Bands(0).Columns(COLUMN_NAME2).Header.Caption & ", but no Payee specified for " & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME3).Header.Caption & " (See Supplier " & VEND_CODE & ")"
-                                            End If
-                                        End If
-                                    Next
-                                Next
-                            End If
-                        End If
-                    Next
-                Next
+                '                        If Val(rowICTCOSTC.Item(COLUMN_NAME2) & "") = 0 Then
+                '                            If rowICTCOSTD.Item(COLUMN_NAME3) & "" <> "" Then
+                '                                EMsg &= vbCr & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME3).Header.Caption & " Specified, but no value specified for " & grdICTTARF2.DisplayLayout.Bands(0).Columns(COLUMN_NAME2).Header.Caption & " (See Supplier " & VEND_CODE & ")"
+                '                            End If
+                '                        Else
+                '                            If rowICTCOSTD.Item(COLUMN_NAME3) & "" = "" Then
+                '                                EMsg &= vbCr & "A Value was specified for " & grdICTTARF2.DisplayLayout.Bands(0).Columns(COLUMN_NAME2).Header.Caption & ", but no Payee specified for " & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME3).Header.Caption & " (See Supplier " & VEND_CODE & ")"
+                '                            End If
+                '                        End If
+                '                    Next
+                '                Next
+                '            End If
+                '        End If
+                '    Next
+                'Next
 
         End Select
 
@@ -219,11 +183,6 @@ Public Class ICFTARF1
             Case "Done"
                 Mode_Settings(False)
 
-            Case "Check Open POs"
-                Check_Open_POs()
-
-            Case "Print Report"
-                Print_Record()
         End Select
 
     End Sub
@@ -247,45 +206,42 @@ Public Class ICFTARF1
             .Groups("Screen Control").Items("Cancel").Visible = (EntryMode = "E")
             .Groups("Screen Control").Items("Done").Visible = (EntryMode = "V")
 
-            .Groups("Test").Visible = ScreenMode
-
-            .Groups("Screen Control").Items("Check Open POs").Settings.Enabled = iScreenMode
-            .Groups("Screen Control").Items("Print Report").Settings.Enabled = iScreenMode
+            .Groups("Showing").Visible = Not ScreenMode
 
         End With
 
         Set_Read_Only(UltraGroupBox1, ScreenMode)
 
         If ScreenMode And EntryMode = "E" Then
-            With grdICTCOSTD.DisplayLayout.Override
-                .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-                .AllowDelete = DefaultableBoolean.True
-                .AllowUpdate = DefaultableBoolean.True
-                .CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
-            End With
-            With grdICTCOSTC.DisplayLayout.Override
-                .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
-                .AllowDelete = DefaultableBoolean.True
-                .AllowUpdate = DefaultableBoolean.True
-                .CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
-            End With
+            'With grdICTCOSTD.DisplayLayout.Override
+            '    .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+            '    .AllowDelete = DefaultableBoolean.True
+            '    .AllowUpdate = DefaultableBoolean.True
+            '    .CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+            'End With
+            'With grdICTTARF2.DisplayLayout.Override
+            '    .AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+            '    .AllowDelete = DefaultableBoolean.True
+            '    .AllowUpdate = DefaultableBoolean.True
+            '    .CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+            'End With
         Else
-            With grdICTCOSTD.DisplayLayout.Override
-                .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                .AllowDelete = DefaultableBoolean.False
-                .AllowUpdate = DefaultableBoolean.False
-                .CellClickAction = UltraWinGrid.CellClickAction.Default
-            End With
-            With grdICTCOSTC.DisplayLayout.Override
-                .AllowAddNew = UltraWinGrid.AllowAddNew.No
-                .AllowDelete = DefaultableBoolean.False
-                .AllowUpdate = DefaultableBoolean.False
-                .CellClickAction = UltraWinGrid.CellClickAction.Default
-            End With
+            'With grdICTCOSTD.DisplayLayout.Override
+            '    .AllowAddNew = UltraWinGrid.AllowAddNew.No
+            '    .AllowDelete = DefaultableBoolean.False
+            '    .AllowUpdate = DefaultableBoolean.False
+            '    .CellClickAction = UltraWinGrid.CellClickAction.Default
+            'End With
+            'With grdICTTARF2.DisplayLayout.Override
+            '    .AllowAddNew = UltraWinGrid.AllowAddNew.No
+            '    .AllowDelete = DefaultableBoolean.False
+            '    .AllowUpdate = DefaultableBoolean.False
+            '    .CellClickAction = UltraWinGrid.CellClickAction.Default
+            'End With
         End If
 
-        grdICTCOSTX.Visible = Not ScreenMode
-        splICTCOSTC.Visible = ScreenMode
+        grdICTTARFX.Visible = Not ScreenMode
+        splICTTARF1.Visible = ScreenMode
 
         If ScreenMode Then
         Else
@@ -299,16 +255,24 @@ Public Class ICFTARF1
         ASCMAIN1.Progress("Now Loading Data")
         Me.Cursor = Cursors.WaitCursor
 
+        Dim tblICTTARF2 As DataTable = dst.Tables("ICTTARF2")
+        Dim dvw As DataView = tblICTTARF2.DefaultView
+        dvw.RowFilter = $"COUNTRY_CODE = '{COUNTRY_CODE}'"
+        grdICTTARF2.DataSource = tblICTTARF2
+
         EnforceConstraints(False)
-        Fill_Records("ICTCOSTD", ORIG_CODE)
-        Sort_grdColumns(grdICTCOSTD, "VEND_CODE")
-        Fill_Records("ICTCOSTC", ORIG_CODE)
-        Sort_grdColumns(grdICTCOSTC, "BRAND_CODE,PROD_CODE")
+        'Fill_Records("ICTCOSTD", ORIG_CODE)
+        'Sort_grdColumns(grdICTCOSTD, "VEND_CODE")
+        'Fill_Records("ICTCOSTC", ORIG_CODE)
+        'Sort_grdColumns(grdICTTARF2, "BRAND_CODE,PROD_CODE")
         EnforceConstraints(True)
 
-        grdICTCOSTD.Text = "Suppliers with Commission Schedules for Origin " & ORIG_CODE
+        grdICTTARF2.Text = $"Tariff Schedule for: {COUNTRY_CODE} "
 
-        Setup_ICTCOSTC()
+        'sort by date
+        'select current (or most recent)
+        'fill form controls with row values
+        'Setup_ICTCOSTC()
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
@@ -317,13 +281,12 @@ Public Class ICFTARF1
     Sub Clear_Record()
 
         EnforceConstraints(False)
-        dst.Tables("ICTCOSTC").Rows.Clear()
-        dst.Tables("ICTCOSTD").Rows.Clear()
-        dst.Tables("ICTCOSTT").Rows.Clear()
+        dst.Tables("ICTTARF1").Rows.Clear()
+        dst.Tables("ICTTARF2").Rows.Clear()
         EnforceConstraints(True)
 
-        Load_ICTCOSTX()
-        ' Absx1.txtFor("ORIG_CODE").Text = ""
+        Load_ICTTARF1()
+        Absx1.txtFor("COUNTRY_CODE").Text = ""
     End Sub
 
     Sub Update_Record()
@@ -333,8 +296,8 @@ Public Class ICFTARF1
 
         BeginTrans()
 
-        Dim sql_delete As String = "ORIG_CODE = '" & ORIG_CODE & "'"
-        Update_Record_TDA("ICTCOSTC", sql_delete)
+        Dim sql_delete As String = "COUNTRY_CODE = '" & COUNTRY_CODE & "'"
+        Update_Record_TDA("ICTTARF1", "")
         Update_Record_TDA("ICTCOSTD", sql_delete)
 
         Me.Cursor = Cursors.Default
@@ -417,7 +380,7 @@ Public Class ICFTARF1
 #Region "ABSColumn Controls"
 
     Public Overrides Sub Leaving_txt_Special_After(ByVal COLUMN_NAME As String, ByVal ctl As System.Windows.Forms.Control)
-        If COLUMN_NAME = "ORIG_CODE" Then
+        If COLUMN_NAME = "COUNTRY_CODE" Then
             If ctl.Text <> "" Then
                 'Call Click_Command("Load Reports")
             End If
@@ -425,7 +388,7 @@ Public Class ICFTARF1
     End Sub
 
     Public Overrides Sub txt_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
-        If Absx1.GetABSColumnName(sender) = "ORIG_CODE" Then
+        If Absx1.GetABSColumnName(sender) = "COUNTRY_CODE" Then
             If e.KeyCode = Windows.Forms.Keys.Enter Then
                 Click_Command("View")
             End If
@@ -437,7 +400,7 @@ Public Class ICFTARF1
         Dim COLUMN_NAME As String = Absx1.GetABSColumnName(txtctl)
 
         Select Case Absx1.GetABSColumnName(txtctl)
-            Case "ORIG_CODE"
+            Case "COUNTRY_CODE"
                 If txtctl.Text <> "" Then
                     Click_Command("View")
                 End If
@@ -446,431 +409,38 @@ Public Class ICFTARF1
 
 #End Region
 
-#Region "grdICTCOSTD"
-
-    Private Sub grdICTCOSTD_AfterCellUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTCOSTD.AfterCellUpdate
-        Select Case e.Cell.Column.Key
-            Case "VEND_CODE"
-                If e.Cell.Value & "" <> "Z" Then
-                    grdCodeDesc(grdICTCOSTD, "APTVEND1", "VEND_CODE", "VEND_NAME")
-                End If
-        End Select
+    Sub Load_ICTTARF1()
+        Fill_Records("ICTTARF1")
+        Fill_Records("ICTTARF2")
+        Calculate_Effective_Tariff_Pct()
     End Sub
 
-    Private Sub grdICTCOSTD_AfterRowActivate(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdICTCOSTD.AfterRowActivate
-        Setup_ICTCOSTC()
+    Sub Calculate_Effective_Tariff_Pct()
+        Dim today As Date = Date.Today
+        Dim tblICTTARF1 As DataTable = dst.Tables("ICTTARF1")
+        Dim tblICTTARF2 As DataTable = dst.Tables("ICTTARF2")
 
-        If grdICTCOSTD.ActiveRow.IsAddRow Then
-            grdICTCOSTD.DisplayLayout.Bands(0).Columns("VEND_CODE").CellActivation = UltraWinGrid.Activation.AllowEdit
-        Else
-            grdICTCOSTD.DisplayLayout.Bands(0).Columns("VEND_CODE").CellActivation = UltraWinGrid.Activation.NoEdit
-        End If
-    End Sub
+        For Each rowICTTARF1 As DataRow In tblICTTARF1.Rows
+            Dim TARIFF_ACTIVE As String = rowICTTARF1("TARIFF_ACTIVE") & ""
+            If TARIFF_ACTIVE = "1" Then
+                Dim COUNTRY_CODE As String = rowICTTARF1("COUNTRY_CODE") & ""
+                For Each rowICTTARF2 As DataRow In tblICTTARF2.Select($"COUNTRY_CODE = '{COUNTRY_CODE}'")
+                    Dim startDate As Date = rowICTTARF2.Field(Of Date)("TARIFF_START")
+                    Dim endDate As Nullable(Of Date) = If(rowICTTARF2.IsNull("TARIFF_END"), CType(Nothing, Nullable(Of Date)), rowICTTARF2.Field(Of Date)("TARIFF_END"))
 
-    Private Sub grdICTCOSTD_AfterRowsDeleted(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdICTCOSTD.AfterRowsDeleted
-
-    End Sub
-
-    Private Sub grdICTCOSTD_AfterRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdICTCOSTD.AfterRowUpdate
-
-    End Sub
-
-    Private Sub grdICTCOSTD_BeforeRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdICTCOSTD.BeforeRowUpdate
-        Dim EMsg As String = ""
-
-        If e.Row.Cells("VEND_CODE").Value & "" <> "Z" Then
-            If Lookup("APTVEND1", e.Row.Cells("VEND_CODE").Value & "") Is Nothing Then
-                EMsg &= vbCr & "Invalid Value specifed for Supplier"
-                e.Cancel = True
-            End If
-        End If
-
-        For Each COLUMN_NAME As String In New String() {"PAYEE_COMMISSION", "PAYEE_INSPECTION", "PAYEE_OTHER"}
-            If e.Row.Cells(COLUMN_NAME).Value & "" <> "" Then
-                If Lookup("APTVEND1", e.Row.Cells(COLUMN_NAME).Value & "") Is Nothing Then
-                    EMsg &= vbCr & "Invalid Value specifed for " & grdICTCOSTD.DisplayLayout.Bands(0).Columns(COLUMN_NAME).Header.Caption
-                    e.Cancel = True
-                End If
-            End If
-        Next
-
-        If e.Cancel Then
-            MsgBox(Mid(EMsg, 2), MsgBoxStyle.OkOnly, "Cannot Add Row")
-        Else
-            If e.Row.IsAddRow Then
-                e.Row.Cells("ORIG_CODE").Value = ORIG_CODE
-            End If
-        End If
-    End Sub
-
-    Private Sub grdICTCOSTD_ClickCellButton(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTCOSTD.ClickCellButton
-        grdClickCellButton(grdICTCOSTD, "", False, e.Cell.Column.Key, "VEND_CODE")
-    End Sub
-
-    Private Sub grdICTCOSTD_InitializeRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdICTCOSTD.InitializeRow
-        If e.Row.Cells("VEND_CODE").Value & "" = "Z" Then
-            e.Row.Cells("VEND_NAME").Value = "Any Supplier"
-            e.Row.Update()
-        End If
-    End Sub
-#End Region
-
-#Region "grdICTCOSTC"
-
-    Private Sub grdICTCOSTC_AfterCellUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTCOSTC.AfterCellUpdate
-        Select Case e.Cell.Column.Key
-            Case "PROD_CODE"
-                If e.Cell.Value & "" <> "ZZZ" Then
-                    grdCodeDesc(grdICTCOSTC, "ICTPROD1", "PROD_CODE", "PROD_DESC")
-                End If
-        End Select
-    End Sub
-
-    Private Sub grdICTCOSTC_AfterRowActivate(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdICTCOSTC.AfterRowActivate
-        Setup_ICTCOSTC()
-
-        If grdICTCOSTC.ActiveRow Is Nothing Then
-
-        Else
-            If grdICTCOSTC.ActiveRow.IsAddRow Then
-                grdICTCOSTC.DisplayLayout.Bands(0).Columns("PROD_CODE").CellActivation = UltraWinGrid.Activation.AllowEdit
-                grdICTCOSTC.DisplayLayout.Bands(0).Columns("BRAND_CODE").CellActivation = UltraWinGrid.Activation.AllowEdit
-            Else
-                grdICTCOSTC.DisplayLayout.Bands(0).Columns("PROD_CODE").CellActivation = UltraWinGrid.Activation.NoEdit
-                grdICTCOSTC.DisplayLayout.Bands(0).Columns("BRAND_CODE").CellActivation = UltraWinGrid.Activation.NoEdit
-            End If
-        End If
-    End Sub
-
-    Private Sub grdICTCOSTC_AfterRowsDeleted(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdICTCOSTC.AfterRowsDeleted
-
-    End Sub
-
-    Private Sub grdICTCOSTC_AfterRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdICTCOSTC.AfterRowUpdate
-
-    End Sub
-
-    Private Sub grdICTCOSTC_BeforeRowUpdate(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CancelableRowEventArgs) Handles grdICTCOSTC.BeforeRowUpdate
-        Dim EMsg As String = ""
-
-        If e.Row.Cells("PROD_CODE").Value & "" <> "ZZZ" Then
-            If Lookup("ICTPROD1", e.Row.Cells("PROD_CODE").Value & "") Is Nothing Then
-                EMsg &= vbCr & "Invalid Value specifed for Product"
-                e.Cancel = True
-            End If
-        End If
-
-        If e.Row.Cells("BRAND_CODE").Value & "" <> "Z" Then
-            If Lookup("ICTBRAN1", e.Row.Cells("BRAND_CODE").Value & "") Is Nothing Then
-                EMsg &= vbCr & "Invalid Value specifed for Brand"
-                e.Cancel = True
-            End If
-        End If
-
-        If Val(e.Row.Cells("COMMISSION").Value & "") = 0 Then
-            e.Row.Cells("COMM_TYPE").Value = ""
-        Else
-            If Val(e.Row.Cells("COMMISSION").Value & "") < 0 Then
-                EMsg &= vbCr & "Invalid Value specifed for Commission"
-                e.Cancel = True
-            Else
-                If e.Row.Cells("COMM_TYPE").Value & "" = "" Then
-                    EMsg &= vbCr & "Invalid Value specifed for Commission Type"
-                    e.Cancel = True
-                End If
-            End If
-        End If
-
-        If Val(e.Row.Cells("INSPECTION").Value & "") = 0 Then
-            e.Row.Cells("INSP_TYPE").Value = ""
-        Else
-            If Val(e.Row.Cells("INSPECTION").Value & "") < 0 Then
-                EMsg &= vbCr & "Invalid Value specifed for Inspection"
-                e.Cancel = True
-            Else
-                If e.Row.Cells("INSP_TYPE").Value & "" = "" Then
-                    EMsg &= vbCr & "Invalid Value specifed for Inspection Type"
-                    e.Cancel = True
-                End If
-            End If
-        End If
-
-        If Val(e.Row.Cells("OTHER").Value & "") = 0 Then
-            e.Row.Cells("OTHER_TYPE").Value = ""
-        Else
-            If Val(e.Row.Cells("OTHER").Value & "") < 0 Then
-                EMsg &= vbCr & "Invalid Value specifed for Other"
-                e.Cancel = True
-            Else
-                If e.Row.Cells("OTHER_TYPE").Value & "" = "" Then
-                    EMsg &= vbCr & "Invalid Value specifed for Other Type"
-                    e.Cancel = True
-                End If
-            End If
-        End If
-
-
-        If e.Cancel Then
-            MsgBox(Mid(EMsg, 2), MsgBoxStyle.OkOnly, "Cannot Add Row")
-        Else
-            If e.Row.IsAddRow Then
-                e.Row.Cells("ORIG_CODE").Value = ORIG_CODE
-                e.Row.Cells("VEND_CODE").Value = grdICTCOSTD.ActiveRow.Cells("VEND_CODE").Value
-            End If
-        End If
-    End Sub
-
-    Private Sub grdICTCOSTC_ClickCellButton(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTCOSTC.ClickCellButton
-        Select Case e.Cell.Column.Key
-            Case "PROD_CODE"
-                grdClickCellButton(grdICTCOSTC, "", False, e.Cell.Column.Key, "PROD_CODE")
-            Case "BRAND_CODE"
-                grdClickCellButton(grdICTCOSTC, "", False, e.Cell.Column.Key, "BRAND_CODE")
-        End Select
-    End Sub
-
-    Private Sub grdICTCOSTC_InitializeRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdICTCOSTC.InitializeRow
-        If e.Row.Cells("PROD_CODE").Value & "" = "ZZZ" Then
-            e.Row.Cells("PROD_DESC").Value = "Any Product"
-        End If
-    End Sub
-#End Region
-
-    Sub Setup_ICTCOSTC()
-        If grdICTCOSTD.ActiveRow Is Nothing OrElse grdICTCOSTD.ActiveRow.IsAddRow Then
-            grdICTCOSTC.Visible = False
-        Else
-            Dim VEND_CODE As String = grdICTCOSTD.ActiveRow.Cells("VEND_CODE").Value
-            Dim dvw As DataView = DirectCast(grdICTCOSTC.DataSource, DataTable).DefaultView
-            dvw.RowFilter = "VEND_CODE = '" & VEND_CODE & "'"
-            grdICTCOSTC.Text = "Commission Schedules for Origin " & ORIG_CODE & ", Supplier " & VEND_CODE
-
-            grdICTCOSTC.Visible = True
-        End If
-
-        grdICTCOSTT.Visible = False
-
-    End Sub
-
-    Sub Load_ICTCOSTX()
-
-        Dim ORIG_CODE As String = ""
-
-        dst.Tables("ICTCOSTX").Rows.Clear()
-        Dim rowICTCOSTX As DataRow = Nothing
-
-        ASCMAIN1.sql = ASCMAIN1.Flattened_List("ORIG_CODE", "VEND_CODE", "ICTCOSTD", ",")
-        For Each row As DataRow In ASCDATA1.GetDataTable.Rows
-            ORIG_CODE = row.Item("ORIG_CODE")
-            Dim rowICTORIG1 As DataRow = Lookup("ICTORIG1", ORIG_CODE)
-            rowICTCOSTX = dst.Tables("ICTCOSTX").NewRow
-            rowICTCOSTX.Item("ORIG_CODE") = ORIG_CODE
-            rowICTCOSTX.Item("ORIG_DESC") = rowICTORIG1.Item("ORIG_DESC") & ""
-            rowICTCOSTX.Item("VEND_CODES") = row.Item("VEND_CODES")
-            dst.Tables("ICTCOSTX").Rows.Add(rowICTCOSTX)
-        Next
-        Sort_grdColumns(grdICTCOSTC, "ORIG_CODE")
-
-        'ASCMAIN1.sql = "Select * from ICTCOSTD"
-        'For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "ORIG_CODE,VEND_CODE")
-        '    If row.Item("ORIG_CODE") & "" <> ORIG_CODE Then
-        '        ORIG_CODE = row.Item("ORIG_CODE")
-        '        Dim rowICTORIG1 As DataRow = LookUp("ICTORIG1", ORIG_CODE)
-        '        rowICTCOSTX = dst.Tables("ICTCOSTX").NewRow
-        '        rowICTCOSTX.Item("ORIG_CODE") = ORIG_CODE
-        '        rowICTCOSTX.Item("ORIG_DESC") = rowICTORIG1.Item("ORIG_DESC") & ""
-        '        dst.Tables("ICTCOSTX").Rows.Add(rowICTCOSTX)
-        '    End If
-        '    Dim VEND_CODES As String = rowICTCOSTX.Item("VEND_CODES") & ""
-        '    If VEND_CODES <> "" Then
-        '        VEND_CODES &= ","
-        '    End If
-        '    VEND_CODES &= row.Item("VEND_CODE")
-        '    rowICTCOSTX.Item("VEND_CODES") = VEND_CODES
-        'Next
-
-        dst.Tables("ICTCOSTX").AcceptChanges()
-    End Sub
-
-    Private Sub grdICTCOSTX_DoubleClickRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdICTCOSTX.DoubleClickRow
-        If e.Row.IsDataRow Then
-            Absx1.txtFor("ORIG_CODE").Text = e.Row.Cells("ORIG_CODE").Value
-            Click_Command("View")
-        End If
-    End Sub
-
-    Private Sub grdICTCOSTC_InitializeLayout(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeLayoutEventArgs) Handles grdICTCOSTC.InitializeLayout
-
-    End Sub
-
-    Private Sub grdICTCOSTC_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles grdICTCOSTC.KeyDown
-        If e.KeyValue = Keys.Delete Then
-            If grdICTCOSTC.ActiveCell IsNot Nothing Then
-                Dim COLUMN_NAME As String = grdICTCOSTC.ActiveCell.Column.Key
-                If COLUMN_NAME = "COMM_TYPE" Or COLUMN_NAME = "INSP_TYPE" Or COLUMN_NAME = "OTHER_TYPE" Then
-                    grdICTCOSTC.ActiveCell.Value = DBNull.Value
-                End If
-            End If
-        End If
-    End Sub
-
-    Private Sub grdICTCOSTC_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles grdICTCOSTC.KeyPress
-    End Sub
-
-    Private Sub cmdTest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdTest.Click
-
-        Dim BRAND_CODE As String = Absx1.txtFor("BRAND_CODE").Text
-        Dim PROD_CODE As String = Absx1.txtFor("PROD_CODE").Text
-        Dim VEND_CODE As String = grdICTCOSTD.ActiveRow.Cells("VEND_CODE").Text
-
-        If BRAND_CODE <> "Z" Then
-            If Lookup("ICTBRAN1", BRAND_CODE) Is Nothing Then
-                MsgBox("Invalid Value specified for Brand Code (" & BRAND_CODE & ")", MsgBoxStyle.OkOnly, "Cannot Perform Test")
-                Exit Sub
-            End If
-        End If
-        If PROD_CODE <> "ZZZ" Then
-            If Lookup("ICTPROD1", PROD_CODE) Is Nothing Then
-                MsgBox("Invalid Value specified for Product Code (" & PROD_CODE & ")", MsgBoxStyle.OkOnly, "Cannot Perform Test")
-                Exit Sub
-            End If
-        End If
-
-        dst.Tables("ICTCOSTT").Rows.Clear()
-
-        Dim sqlwhere As String = "" _
-        & "ORIG_CODE = '" & ORIG_CODE & "'" _
-        & "   and (BRAND_CODE = '" & BRAND_CODE & "' or BRAND_CODE = 'Z')" _
-        & "   and (VEND_CODE = '" & VEND_CODE & "' or VEND_CODE = 'Z')" _
-        & "   and (PROD_CODE = '" & PROD_CODE & "' or PROD_CODE = 'ZZZ')"
-
-        'Dim sqlsort As String = "" _
-        '& " order by ORIG_CODE" _
-        '& ", IIf(BRAND_CODE = 'Z','ZZZZZZZZZZZZ',BRAND_CODE)" _
-        '& ", IIf(VEND_CODE = 'Z','ZZZZZZZZZZ',VEND_CODE)" _
-        '& ", IIf(PROD_CODE = 'ZZZ','ZZZ',PROD_CODE)"
-
-        Dim sqlsort As String = "" _
-        & "ORIG_CODE,BRAND_CODE,VEND_CODE,PROD_CODE"
-
-        Dim rowICTCOSTD As DataRow = dst.Tables("ICTCOSTD").Rows.Find(New String() {ORIG_CODE, VEND_CODE})
-
-        Dim fee(3, 2) As String
-        fee(1, 1) = "COMMISSION" : fee(1, 2) = "COMM"
-        fee(2, 1) = "INSPECTION" : fee(2, 2) = "INSP"
-        fee(3, 1) = "OTHER" : fee(3, 2) = "OTHER"
-
-        For Each rowICTCOSTC As DataRow In dst.Tables("ICTCOSTC").Select(sqlwhere, sqlsort)
-
-            For i As Integer = 1 To 3
-                Dim AMT As Decimal = Val(rowICTCOSTC.Item(fee(i, 1)) & "")
-                Dim COST As String = ""
-                If Val(AMT) <> 0 And rowICTCOSTD.Item("PAYEE_" & fee(i, 1)) & "" <> "" Then
-                    If rowICTCOSTC.Item(fee(i, 2) & "_TYPE") & "" = "%" Then
-                        COST = Format$(AMT, "##.0000") & "%"
-                    ElseIf rowICTCOSTC.Item(fee(1, 2) & "_TYPE") & "" = "$" Then
-                        COST = Format$(AMT, "$##.0000")
-                    Else
-                        COST = "?" & Format$(rowICTCOSTC.Item(fee(i, 1)), "##.0000") & "?"
+                    ' Check if today's date is within the range
+                    If today >= startDate AndAlso (Not endDate.HasValue OrElse today <= endDate.Value) Then
+                        rowICTTARF1("EFFECTIVE_TARIFF_PCT") = Val(rowICTTARF2("TARIFF_PCT"))
+                        rowICTTARF1("DATE_TO_USE") = rowICTTARF2("TARIFF_DATE_TO_USE")
+                        Exit For ' Only apply the first matching range, that there is only one match is enforced at entry
                     End If
-                    dst.Tables("ICTCOSTT").Rows.Add(New Object() {fee(i, 2), rowICTCOSTD.Item("PAYEE_" & fee(i, 1)), COST})
-                End If
-            Next i
+                Next
+            Else
+                rowICTTARF1("EFFECTIVE_TARIFF_PCT") = 0
+                rowICTTARF1("DATE_TO_USE") = "N"
+            End If
 
-            Exit For
         Next
-
-        grdICTCOSTT.Text = "Test for " & VEND_CODE
-        grdICTCOSTT.Visible = True
-    End Sub
-
-    Sub Print_Record()
-
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Printing Report")
-
-        Print_Report_Begin()
-        CR_params.Add("SUBT", "")
-        Generate_Report("ICRCOSTC", "Commission Schedule", , , , , False)
-        Print_Report_End()
-
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-
-    End Sub
-
-    Private Sub Check_Open_POs()
-
-        Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Checking POs")
-
-        dst.Tables("ICTCOSTV").Rows.Clear()
-
-        ASCMAIN1.sql = "SELECT PO_ORDER_NO, VEND_CODE, ORIG_CODE" & vbCrLf _
-        & ", VEND_CODE_AGENT, VEND_CODE_INSPECTION, VEND_CODE_OTHER" & vbCrLf _
-        & " from POTORDR1" & vbCrLf _
-        & " WHERE PO_STATUS_CODE = 'O' AND ORIG_CODE = '" & ORIG_CODE & "'" & vbCrLf _
-        & " order by VEND_CODE"
-
-        For Each row As DataRow In ASCDATA1.GetDataTable.Rows
-            Dim all_match As Boolean = False
-            Dim VEND_CODE As String = row.Item("VEND_CODE") & ""
-            Dim rowICTCOSTD As DataRow = dst.Tables("ICTCOSTD").Rows.Find(New String() {ORIG_CODE, VEND_CODE})
-            If rowICTCOSTD Is Nothing Then
-                rowICTCOSTD = dst.Tables("ICTCOSTD").Rows.Find(New String() {ORIG_CODE, "Z"})
-            End If
-            If rowICTCOSTD IsNot Nothing Then
-                If rowICTCOSTD.Item("PAYEE_COMMISSION") & "" = row.Item("VEND_CODE_AGENT") & "" _
-                And rowICTCOSTD.Item("PAYEE_INSPECTION") & "" = row.Item("VEND_CODE_INSPECTION") & "" _
-                And rowICTCOSTD.Item("PAYEE_OTHER") & "" = row.Item("VEND_CODE_OTHER") & "" Then
-                    all_match = True
-                End If
-            End If
-
-            If Not all_match Then
-                If VEND_CODE <> row.Item("VEND_CODE") & "" Then
-                    VEND_CODE = row.Item("VEND_CODE") & ""
-                    If rowICTCOSTD Is Nothing Then
-                        dst.Tables("ICTCOSTV").Rows.Add _
-                           (New String() {"Table",
-                                          row.Item("VEND_CODE"),
-                                          ".",
-                                          ".",
-                                          "."})
-                    Else
-                        dst.Tables("ICTCOSTV").Rows.Add _
-                            (New String() {"Table",
-                                           row.Item("VEND_CODE"),
-                                           rowICTCOSTD.Item("PAYEE_COMMISSION"),
-                                           rowICTCOSTD.Item("PAYEE_INSPECTION"),
-                                           rowICTCOSTD.Item("PAYEE_OTHER")})
-                    End If
-                End If
-
-                dst.Tables("ICTCOSTV").Rows.Add _
-                    (New Object() {row.Item("PO_ORDER_NO"),
-                                   row.Item("VEND_CODE"),
-                                   row.Item("VEND_CODE_AGENT"),
-                                   row.Item("VEND_CODE_INSPECTION"),
-                                   row.Item("VEND_CODE_OTHER")})
-            End If
-        Next
-
-        If dst.Tables("ICTCOSTV").Rows.Count <> 0 Then
-            Using F As New ASFMSGBF
-                F.Show_grd(dst.Tables("ICTCOSTV"), Me, "Open PO's with Different Payees than the Tables Show")
-            End Using
-
-        Else
-            MsgBox("There are No Open PO's with different Payees than those reflected in the Tables, as shown." _
-                   & vbCrLf & vbCrLf _
-                   & "If you have made changes, please make sure that you click Update to save those changes.",
-                   MsgBoxStyle.OkOnly, "Verification")
-        End If
-
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-
     End Sub
 
 End Class
