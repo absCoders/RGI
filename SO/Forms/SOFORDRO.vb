@@ -6,6 +6,7 @@ Imports System.Net.Http.Formatting
 Imports Newtonsoft.Json
 Imports Newtonsoft
 Imports System.Text
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class SOFORDRO
     Dim rowSOTORDRB As DataRow
@@ -3173,17 +3174,17 @@ Public Class SOFORDRO
             Dim ORDR_NO As String = grdSOTORDR1.ActiveRow.Cells("ORDR_NO").Value
             dvw.RowFilter = String.Format("ORDR_NO = '{0}'", ORDR_NO)
             Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select(String.Format("ORDR_NO = '{0}'", ORDR_NO)).FirstOrDefault
-                            If Not IsNothing(rowSOTORDR5) Then
-                                Dim Address As String = String.Format("{0}, {1} {2} {3}", rowSOTORDR5.Item("CUST_ADDR1"), rowSOTORDR5.Item("CUST_CITY"),
+            If Not IsNothing(rowSOTORDR5) Then
+                Dim Address As String = String.Format("{0}, {1} {2} {3}", rowSOTORDR5.Item("CUST_ADDR1"), rowSOTORDR5.Item("CUST_CITY"),
                                         rowSOTORDR5.Item("CUST_STATE"), rowSOTORDR5.Item("CUST_ZIP_CODE"))
-                                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0} At {1}", ORDR_NO, Address)
-                            Else
-                                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0}", ORDR_NO)
-                            End If
+                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0} At {1}", ORDR_NO, Address)
+            Else
+                grdSOTORDR2.Text = String.Format("Customer Style / Color Details for Order {0}", ORDR_NO)
+            End If
 
-                            grdSOTORDR2.Visible = True
-                        End If
-                        End Sub
+            grdSOTORDR2.Visible = True
+        End If
+    End Sub
 
     Private Sub ShowClassTip(sender As Object, e As System.EventArgs)
         tip.AutoPopDelay = 3000
@@ -5142,4 +5143,57 @@ Public Class SOFORDRO
     Private Sub chkShowDiscColors_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowDiscColors.CheckedChanged
         FilterColors(Absx1.txtFor("STYLE_CODE").Text)
     End Sub
+
+    'Private Sub grdSOTORDR2_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdSOTORDR2.InitializeRow
+    '    Dim CARTON_PACK_QTY As Integer = Val(e.Row.Cells("CARTON_PACK_QTY").Value & "")
+    '    Dim INNER_PACK_QTY As Integer = Val(e.Row.Cells("INNER_PACK_QTY").Value & "")
+    '    Dim ORDR_QTY As Int32 = Val(e.Row.Cells("ORDR_QTY").Value & "")
+    '    ' Dim ORDR_QTY_OPEN As Int32 = Val(e.Row.Cells("ORDR_QTY_OPEN").Value & "")
+
+    '    Dim MIN_ORD_QTY As Integer = INNER_PACK_QTY
+
+    '    Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & ""
+    '    Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & ""
+
+    '    e.Row.Cells("ORDR_QTY_ALLO").Appearance.ForeColor = Drawing.Color.Empty
+    '    e.Row.Cells("ORDR_RELEASE_AVAIL").Appearance.ForeColor = Drawing.Color.Empty
+    '    e.Row.Cells("ORDR_QTY_ALLO").ToolTipText = ""
+    '    e.Row.Cells("ORDR_RELEASE_AVAIL").ToolTipText = ""
+    '    Dim ORDR_QTY_OPEN As Int64 = Val(e.Row.Cells("ORDR_QTY_OPEN").Value & "")
+    '    Dim ORDR_QTY_ALLO As Int64 = Val(e.Row.Cells("ORDR_QTY_ALLO").Value & "")
+
+    '    If ORDR_QTY_OPEN <> 0 And ORDR_QTY_ALLO = 0 Then
+    '        e.Row.Cells("ORDR_QTY_ALLO").Appearance.BackColor = Drawing.Color.Red
+    '        e.Row.Cells("ORDR_QTY_ALLO").ToolTipText = "Inventory Shortage"
+    '    Else
+    '        If e.Row.Cells("ORDR_RELEASE_AVAIL").Value & "" <> "" Then
+    '            Dim ORDR_RELEASE_AVAIL As Date = e.Row.Cells("ORDR_RELEASE_AVAIL").Value
+    '            If Absx1.dteFor("ORDR_CANCEL_DATE").Value & "" <> "" Then
+    '                If Format(ORDR_RELEASE_AVAIL, "yyyyMMdd") > Format(Absx1.dteFor("ORDR_CANCEL_DATE").Value, "yyyyMMdd") Then
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").Appearance.ForeColor = Drawing.Color.Red
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").ToolTipText = "Availability date is > Cancel Date"
+    '                End If
+    '            End If
+    '        Else
+    '            Dim QTY_1 As Int32 = Val(e.Row.Cells("QTY_1").Value & "")
+    '            Dim QTY_2 As Int32 = Val(e.Row.Cells("QTY_2").Value & "")
+    '            Dim QTY_3 As Int32 = Val(e.Row.Cells("QTY_3").Value & "")
+    '            Dim QTY_4 As Int32 = Val(e.Row.Cells("QTY_4").Value & "")
+
+    '            If ORDR_QTY_OPEN <> 0 Then
+    '                If QTY_1 <> 0 And QTY_2 = 0 And QTY_3 = 0 And QTY_4 = 0 Then
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").Appearance.BackColor = Drawing.Color.LightGreen
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").ToolTipText = "Green: Allocation is Drawing from Current Stock O/H"
+    '                ElseIf QTY_1 = 0 And QTY_2 = 0 And QTY_3 = 0 And QTY_4 = 0 Then
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").Appearance.BackColor = Drawing.Color.Orange
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").ToolTipText = "Orange: No Availability"
+    '                Else
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").Appearance.BackColor = Drawing.Color.Yellow
+    '                    e.Row.Cells("ORDR_RELEASE_AVAIL").ToolTipText = "Yellow: Check Style/Color Allocation below"
+    '                End If
+    '            End If
+    '        End If
+
+    '    End If
+    'End Sub
 End Class

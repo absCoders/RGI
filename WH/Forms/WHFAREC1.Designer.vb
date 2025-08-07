@@ -43,6 +43,8 @@ Partial Class WHFAREC1
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTWHSEX", -1)
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_CODE")
         Dim UltraGridColumn1 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_DESC")
+        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONTAINERS")
+        Dim UltraGridColumn47 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RECORDS")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -490,7 +492,15 @@ Partial Class WHFAREC1
         UltraGridColumn1.Header.Caption = "Name"
         UltraGridColumn1.Header.VisiblePosition = 1
         UltraGridColumn1.Width = 366
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn4, UltraGridColumn1})
+        UltraGridColumn13.Format = "##,##0"
+        UltraGridColumn13.Header.Caption = "Containers"
+        UltraGridColumn13.Header.VisiblePosition = 2
+        UltraGridColumn13.Width = 91
+        UltraGridColumn47.Format = "##,##0"
+        UltraGridColumn47.Header.Caption = "Shipments"
+        UltraGridColumn47.Header.VisiblePosition = 3
+        UltraGridColumn47.Width = 84
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn4, UltraGridColumn1, UltraGridColumn13, UltraGridColumn47})
         Me.grdICTWHSEX.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTWHSEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -557,7 +567,7 @@ Partial Class WHFAREC1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(775, 509)
         '
@@ -585,7 +595,7 @@ Partial Class WHFAREC1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.splShipments)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(775, 509)
         '
@@ -609,7 +619,6 @@ Partial Class WHFAREC1
         '
         'grdPOTSHIP2
         '
-        Me.grdPOTSHIP2.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdPOTSHIP2.DisplayLayout.Appearance = Appearance13
