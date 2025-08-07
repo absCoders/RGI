@@ -231,6 +231,12 @@
     <Compile Include="Forms\SOFPVTL1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\SOFSHIPE.Designer.vb">
+      <DependentUpon>SOFSHIPE.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SOFSHIPE.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SOFSHPW2.Designer.vb">
       <DependentUpon>SOFSHPW2.vb</DependentUpon>
     </Compile>
@@ -1108,6 +1114,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFPVTL1.resx">
       <DependentUpon>SOFPVTL1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SOFSHIPE.resx">
+      <DependentUpon>SOFSHIPE.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SOFSHPW2.resx">
       <DependentUpon>SOFSHPW2.vb</DependentUpon>
