@@ -14,6 +14,8 @@ Public Class WBFFSR01
 
     Dim valueColsTY As String() = {"TY_WK1", "TY_WK2", "TY_WK3", "TY_WK4", "TY_WK5", "TY_WK6", "TY_WK7", "TOT_TY_WK", "TY_MTD", "TY_YTD"}
     Dim valueColsLY As String() = {"LY_WK1", "LY_WK2", "LY_WK3", "LY_WK4", "LY_WK5", "LY_WK6", "LY_WK7", "TOT_LY_WK", "LY_MTD", "LY_YTD", "LY_FULL_MO", "LY_FULL_YR", "PCT_TY_LY", "PCT_TY_FY"}
+    Dim valueColsYOY As String() = {"WTD_FULL_WK_YOY", "MTD_YOY", "YTD_YOY", "MTD_FULL_MO_YOY", "YTD_FULL_YR_YOY"}
+    Dim valueColsPCT As String() = {"WTD_FULL_WK_YOY_PCT", "MTD_YOY_PCT", "YTD_YOY_PCT", "MTD_FULL_MO_YOY_PCT", "YTD_FULL_YR_YOY_PCT"}
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -72,6 +74,18 @@ Public Class WBFFSR01
                 .Add("PCT_TY_LY", GetType(System.Decimal), "IIF(ISNULL(TOT_LY_WK,0)=0,0,(TOT_TY_WK/TOT_LY_WK) * 100)")
                 .Add("PCT_TY_FY", GetType(System.Decimal), "IIF(ISNULL(LY_FULL_YR,0)=0,0,(TY_YTD/LY_FULL_YR) * 100)")
                 '"IIF(ISNULL(STYLE_PRICE,0)=0,0,100*DISC_AMT/ISNULL(STYLE_PRICE,0))"
+
+                .Add("WTD_FULL_WK_YOY", GetType(System.Decimal), "(ISNULL(TOT_TY_WK,0) - ISNULL(TOT_LY_WK,0))")
+                .Add("MTD_YOY", GetType(System.Decimal), "(ISNULL(TY_MTD,0) - ISNULL(LY_MTD,0))")
+                .Add("YTD_YOY", GetType(System.Decimal), "(ISNULL(TY_YTD,0) - ISNULL(LY_YTD,0))")
+                .Add("MTD_FULL_MO_YOY", GetType(System.Decimal), "(ISNULL(TY_MTD,0) - ISNULL(LY_FULL_MO,0))")
+                .Add("YTD_FULL_YR_YOY", GetType(System.Decimal), "(ISNULL(TY_YTD,0) - ISNULL(LY_FULL_YR,0))")
+
+                .Add("WTD_FULL_WK_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(TOT_LY_WK,0)=0,0,(ISNULL(WTD_FULL_WK_YOY,0) / ISNULL(TOT_LY_WK,0)) * 100)")
+                .Add("MTD_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_MTD,0)=0,0,(ISNULL(MTD_YOY,0) / ISNULL(LY_MTD,0)) * 100)")
+                .Add("YTD_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_YTD,0)=0,0,(ISNULL(YTD_YOY,0) / ISNULL(LY_YTD,0)) * 100)")
+                .Add("MTD_FULL_MO_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_FULL_MO,0)=0,0,(ISNULL(MTD_FULL_MO_YOY,0) / ISNULL(LY_FULL_MO,0)) * 100)")
+                .Add("YTD_FULL_YR_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_FULL_YR,0)=0,0,(ISNULL(YTD_FULL_YR_YOY,0) / ISNULL(LY_FULL_YR,0)) * 100)")
             End With
 
             tmpWBFFSR01 = ASCMAIN1.Temp_Table
@@ -89,9 +103,9 @@ Public Class WBFFSR01
         grdWBFFSR01.DataSource = dst.Tables("WBFFSR01")
 
         For Each COL As String In valueColsTY
-            Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,##0")
+            Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
             With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,##0"
+                .Columns(COL).Format = "###,###,##0"
                 .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightBlue
                 .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
                 .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightBlue
@@ -100,11 +114,14 @@ Public Class WBFFSR01
         Next
 
         For Each COL As String In valueColsLY
-            If COL <> "PCT_TY_LY" And COL <> "PCT_TY_FY" Then
-                Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,##0")
+            If COL = "PCT_TY_LY" Or COL = "PCT_TY_FY" Then
+                'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
+                grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0.00"
+            Else
+                Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
+                grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0"
             End If
             With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,##0"
                 .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightGreen
                 .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
                 .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
@@ -113,6 +130,28 @@ Public Class WBFFSR01
             If COL.Substring(0, 5) = "LY_WK" Then
                 grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Hidden = True
             End If
+        Next
+
+        For Each COL As String In valueColsYOY
+            Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
+            With grdWBFFSR01.DisplayLayout.Bands(0)
+                .Columns(COL).Format = "###,###,##0"
+                .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightPink
+                .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+                .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+                .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+            End With
+        Next
+
+        For Each COL As String In valueColsPCT
+            'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
+            With grdWBFFSR01.DisplayLayout.Bands(0)
+                .Columns(COL).Format = "###,##0.00"
+                .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
+                .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+                .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+                .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+            End With
         Next
 
         With grdWBFFSR01.DisplayLayout.Bands(0)
@@ -185,11 +224,13 @@ Public Class WBFFSR01
                     SEL_CODE = "WHSE_CODE"
                     SEL_DESC = "WHSE_DESC"
                     SEL_TABLE = "ICTWHSE1"
+                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "WHSE"
                 End If
                 If rdoCUST_CODE.Checked Then
                     SEL_CODE = "CUST_CODE"
                     SEL_DESC = "CUST_NAME"
                     SEL_TABLE = "ARTCUST1"
+                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "CUST"
                 End If
                 For Each COL As String In valueColsLY
                     If COL.Substring(0, 5) = "LY_WK" Then

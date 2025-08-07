@@ -369,6 +369,10 @@
                 If chkImages.Checked Then
                     CX = 0
                     Dim PictureFileName As String = GetImageLocation(rowSOTORDR2.Item("STYLE_CODE"), rowSOTORDR2.Item("COLOR_CODE"))
+                    If PictureFileName.Length = 0 Then
+                        TryPullWebImage(rowSOTORDR2.Item("STYLE_CODE"), rowSOTORDR2.Item("COLOR_CODE"))
+                        PictureFileName = GetImageLocation(rowSOTORDR2.Item("STYLE_CODE"), rowSOTORDR2.Item("COLOR_CODE"))
+                    End If
                     If PictureFileName.Length > 0 Then
                         Add_Image_to_Worksheet(oSheet, PictureFileName, CX, RX)
                         range.Cells(RX, CX).ColumnWidth = 8
@@ -525,7 +529,9 @@
         If Not IsNothing(rowSOTPARM3) Then
             RO_PARM_STYLE_IMG_DIR = rowSOTPARM3.Item("RO_PARM_STYLE_IMG_DIR").ToString
             If RO_PARM_STYLE_IMG_DIR.Length > 0 Then
-                TryPullWebImage(STYLE_CODE, COLOR_CODE)
+                If chkImagesWeb.Checked Then
+                    TryPullWebImage(STYLE_CODE, COLOR_CODE)
+                End If
 
                 FileMatch = Dir(String.Format("{0}\{1}-{2}.jpg", RO_PARM_STYLE_IMG_DIR, STYLE_CODE, COLOR_CODE))
                 If FileMatch.Length > 0 Then
@@ -649,5 +655,12 @@
 
     End Sub
 
-
+    Private Sub chkImages_CheckedChanged(sender As Object, e As EventArgs) Handles chkImages.CheckedChanged
+        If chkImages.Checked Then
+            chkImagesWeb.Visible = True
+        Else
+            chkImagesWeb.Visible = False
+            chkImagesWeb.Checked = False
+        End If
+    End Sub
 End Class
