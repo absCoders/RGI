@@ -305,7 +305,7 @@ Public Class SOFOXFR1
         For Each rowSOTOXFRX As DataRow In dst.Tables("SOTOXFRX").Select("SEL = '1'")
             Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
-            Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("ALLO"))
+            Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("SHORT"))
             TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
             ' Update Status of Transfer Queue Records
