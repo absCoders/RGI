@@ -72,7 +72,7 @@ Partial Class SOFOXFR1
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTOXFRX", -1)
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
-        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALLO")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHORT")
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC")
         Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_PACK_QTY")
@@ -492,7 +492,7 @@ Partial Class SOFOXFR1
         UltraGridColumn7.Header.VisiblePosition = 2
         UltraGridColumn7.Width = 67
         UltraGridColumn18.Format = "#,##0"
-        UltraGridColumn18.Header.Caption = "Allo"
+        UltraGridColumn18.Header.Caption = "Short"
         UltraGridColumn18.Header.VisiblePosition = 7
         UltraGridColumn18.Width = 68
         UltraGridColumn16.Header.Caption = "Style Description"
@@ -529,7 +529,7 @@ Partial Class SOFOXFR1
         UltraGridColumn22.Header.VisiblePosition = 18
         UltraGridColumn22.Width = 84
         UltraGridColumn10.Format = "#,##0"
-        UltraGridColumn10.Header.Caption = "Ava US"
+        UltraGridColumn10.Header.Caption = "OTS US"
         UltraGridColumn10.Header.VisiblePosition = 13
         UltraGridColumn10.Width = 90
         UltraGridColumn23.Format = "#,##0"
@@ -541,7 +541,7 @@ Partial Class SOFOXFR1
         UltraGridColumn12.Header.VisiblePosition = 16
         UltraGridColumn12.Width = 90
         UltraGridColumn15.Format = "#,##0"
-        UltraGridColumn15.Header.Caption = "Ava MS"
+        UltraGridColumn15.Header.Caption = "OTS MS"
         UltraGridColumn15.Header.VisiblePosition = 17
         UltraGridColumn15.Width = 90
         UltraGridColumn24.Format = "#,##0"
