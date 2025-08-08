@@ -251,7 +251,8 @@ Public Class SOFOXFR1
         Fill_Records("SOTOXFRX")
         Sort_grdColumns(grdSOTOXFRX, "STYLE_CODE, COLOR_CODE")
 
-        Dim sqlOTS As String = "ISNULL(MS_AVA,0) >= ISNULL(SHORT,0)"
+        'Dim sqlOTS As String = "ISNULL(MS_AVA,0) >= ISNULL(SHORT,0)"
+        Dim sqlOTS As String = "ISNULL(MS_AVA,0) >= ISNULL(ALLO,0)"
         'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
         '    sqlOTS &= " and STYLE_CODE = 'MTX71886' and COLOR_CODE = 'BURG'"
         'End If
@@ -305,7 +306,8 @@ Public Class SOFOXFR1
         For Each rowSOTOXFRX As DataRow In dst.Tables("SOTOXFRX").Select("SEL = '1'")
             Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
             Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
-            Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("SHORT"))
+            'Dim QTY As Int32 = Val(rowSOTOXFRX.Item("SHORT"))
+            Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("ALLO"))
             TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
             ' Update Status of Transfer Queue Records
@@ -525,39 +527,40 @@ Public Class SOFOXFR1
 
             Case "SOTOXFRX"
 
-                'SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
-                '    & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
-                '    & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
-                '    & ", CASE WHEN MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(ALLO,0)" & vbCrLf _
-                '    & "       ELSE NVL(ALLO,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
-                '    & "from ICTSTYL1,ICTCOLR1, (" & vbCrLf _
-                '    & "Select SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE" & vbCrLf _
-                '    & ", Sum (ALLO) ALLO" & vbCrLf _
-                '    & "from SOTOXFR1" & vbCrLf _
-                '    & " where SOTOXFR1.OXFR_STATUS = '0' and SOTOXFR1.ALLO <> 0" & vbCrLf _
-                '    & "group by SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE) X" & vbCrLf _
-                '    & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_OPEN US_OPEN, WHSE_QTY_PICK US_PICK, WHSE_QTY_TRAN US_TRAN from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
-                '    & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_OPEN MS_OPEN, WHSE_QTY_PICK MS_PICK, WHSE_QTY_TRAN MS_TRAN from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
-                '    & "where ICTSTYL1.STYLE_CODE = X.STYLE_CODE and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
-                '    & "and US.STYLE_CODE (+) = X.STYLE_CODE and US.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
-                '    & "and MS.STYLE_CODE (+) = X.STYLE_CODE and MS.COLOR_CODE (+) = X.COLOR_CODE"
-
                 SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
                     & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
-                    & ", CASE WHEN MOD(NVL(SHORT,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(SHORT,0)" & vbCrLf _
-                    & "       ELSE NVL(SHORT,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(SHORT,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
+                    & ", CASE WHEN MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(ALLO,0)" & vbCrLf _
+                    & "       ELSE NVL(ALLO,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
                     & "from ICTSTYL1,ICTCOLR1, (" & vbCrLf _
                     & "Select SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE" & vbCrLf _
-                    & ", Sum (-1 * SHORT) SHORT" & vbCrLf _
+                    & ", Sum (ALLO) ALLO" & vbCrLf _
                     & "from SOTOXFR1" & vbCrLf _
-                    & " where SOTOXFR1.OXFR_STATUS = '0' and -1 * SOTOXFR1.SHORT <> 0" & vbCrLf _
+                    & " where SOTOXFR1.OXFR_STATUS = '0' and SOTOXFR1.ALLO <> 0" & vbCrLf _
                     & "group by SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE) X" & vbCrLf _
                     & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_OPEN US_OPEN, WHSE_QTY_PICK US_PICK, WHSE_QTY_TRAN US_TRAN from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
                     & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_OPEN MS_OPEN, WHSE_QTY_PICK MS_PICK, WHSE_QTY_TRAN MS_TRAN from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
                     & "where ICTSTYL1.STYLE_CODE = X.STYLE_CODE and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
                     & "and US.STYLE_CODE (+) = X.STYLE_CODE and US.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
                     & "and MS.STYLE_CODE (+) = X.STYLE_CODE and MS.COLOR_CODE (+) = X.COLOR_CODE"
+
+                'SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
+                '    & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
+                '    & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
+                '    & ", CASE WHEN MOD(NVL(SHORT,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(SHORT,0)" & vbCrLf _
+                '    & "       ELSE NVL(SHORT,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(SHORT,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
+                '    & "from ICTSTYL1,ICTCOLR1, (" & vbCrLf _
+                '    & "Select SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE" & vbCrLf _
+                '    & ", Sum (-1 * SHORT) SHORT" & vbCrLf _
+                '    & ", Sum (ALLO) ALLO" & vbCrLf _
+                '    & "from SOTOXFR1" & vbCrLf _
+                '    & " where SOTOXFR1.OXFR_STATUS = '0' and -1 * SOTOXFR1.SHORT <> 0 and SOTOXFR1.ALLO <> 0" & vbCrLf _
+                '    & "group by SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE) X" & vbCrLf _
+                '    & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_OPEN US_OPEN, WHSE_QTY_PICK US_PICK, WHSE_QTY_TRAN US_TRAN from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
+                '    & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_OPEN MS_OPEN, WHSE_QTY_PICK MS_PICK, WHSE_QTY_TRAN MS_TRAN from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
+                '    & "where ICTSTYL1.STYLE_CODE = X.STYLE_CODE and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
+                '    & "and US.STYLE_CODE (+) = X.STYLE_CODE and US.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
+                '    & "and MS.STYLE_CODE (+) = X.STYLE_CODE and MS.COLOR_CODE (+) = X.COLOR_CODE"
 
             Case "SOTORDRX"
                 SQL = "SELECT 'O' ORDR_TYPE, SOTORDR1.ORDR_GROUP_NO" & vbCrLf _
