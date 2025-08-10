@@ -136,10 +136,10 @@ Public Class WBFFSR01
             Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
             With grdWBFFSR01.DisplayLayout.Bands(0)
                 .Columns(COL).Format = "###,###,##0"
-                .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightPink
-                .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
-                .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
-                .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+                '.Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightPink
+                '.Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+                '.Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
             End With
         Next
 
@@ -147,10 +147,10 @@ Public Class WBFFSR01
             'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
             With grdWBFFSR01.DisplayLayout.Bands(0)
                 .Columns(COL).Format = "###,##0.00"
-                .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
-                .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
-                .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
-                .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+                '.Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
+                '.Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+                '.Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
             End With
         Next
 
@@ -243,6 +243,7 @@ Public Class WBFFSR01
                 Next
                 Clear_Record()
                 Load_Record(True)
+                setGridTitle()
             Case "Exit"
                 Call Mode_Settings(False)
                 Me.Close()
@@ -868,6 +869,27 @@ Public Class WBFFSR01
         Dim endOfWeekSaturday As Date = inDate.AddDays(daysUntilSaturday)
         Return CDate(endOfWeekSaturday.ToString("MM/dd/yyy"))
     End Function
+
+    Private Sub setGridTitle()
+        Dim titleRoot As String = "Flash Sales Report"
+        Dim titleSelection As String = ""
+        Dim titlePeriod As String = ""
+        Dim titleValues As String = ""
+        If rdoWSHE_CODE.Checked Then
+            titleSelection = "Warehouse"
+        End If
+        If rdoCUST_CODE.Checked Then
+            titleSelection = "Customer"
+        End If
+        titlePeriod = "For The Period Ending " & Format(dteSaturday.DateTime, "MM/dd/yy")
+        If rdoUnits.Checked Then
+            titleValues = "Showing Units"
+        End If
+        If rdoDollars.Checked Then
+            titleValues = "Showing Dollars"
+        End If
+        grdWBFFSR01.Text = $"{titleSelection} {titleRoot} {titlePeriod} {titleValues}."
+    End Sub
 
 #End Region
 
