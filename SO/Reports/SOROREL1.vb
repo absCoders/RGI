@@ -2354,7 +2354,7 @@ Public Class SOROREL1
 
             Dim ORDR_NO As String = rowSOTORDR1_rel.Item("ORDR_NO")
             Dim WHSE_CODE_LNO As String = rowSOTORDR1_rel.Item("WHSE_CODE")
-            Dim SHIP_VIA_CODE As String = rowSOTORDR1_rel.Item("SHIP_VIA_CODE")
+            Dim SHIP_VIA_CODE As String = rowSOTORDR1_rel.Item("SHIP_VIA_CODE") & ""
             Dim PICK_SEQ_NO As Integer = Val(rowSOTORDR1_rel.Item("ORDR_PICK_SEQ") & "") + 1
             rowSOTORDR1_rel.Item("ORDR_PICK_SEQ") = PICK_SEQ_NO
 
