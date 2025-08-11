@@ -98,7 +98,7 @@ Public Class WHTLOCM1
 
     Private Sub btnTest_Click(sender As Object, e As EventArgs) Handles btnTest.Click
 
-        Dim LocationLabel As String = "^XA^FO200,75^BY8^BCR,500,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,75^FD{1}^FS^XZ"
+        Dim LocationLabel As String = "^XA^FO200,75^BY7^BCR,500,N,N,N^FD{0}^FS^CF0,190^FWR^FO10,75^FD{1}^FS^XZ"
 
         Dim PrinterName As String
         If ASCMAIN1.CLIENT = "VAN" Then
