@@ -7068,6 +7068,7 @@ Public Class SOFORDR1
                 rowSOTPICK1.Item("PF_WEIGHT_UOM") = Absx1.optFor("PF_WEIGHT_UOM").Text
                 rowSOTPICK1.Item("PO_SHIPMENT_NO") = Absx1.txtFor("PO_SHIPMENT_NO").Text
                 rowSOTPICK1.Item("PICK_STATUS") = "P"
+                rowSOTPICK1.Item("WHSE_CODE") = rowSOTORDR1.Item("WHSE_CODE")
                 REPORTS(REPORT_NAME).dst.Tables("SOTPICK1").Rows.Add(rowSOTPICK1)
 
                 Dim rowSOTINVH1 As DataRow = REPORTS(REPORT_NAME).dst.Tables("SOTINVH1").Rows.Find(New Object() {"P", ORDR_NO})
