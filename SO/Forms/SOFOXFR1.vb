@@ -508,10 +508,12 @@ Public Class SOFOXFR1
             ASCDATA1.ExecuteSQL($"Create Index I_{SOTORDRX}_1 on {SOTORDRX} (STYLE_CODE, COLOR_CODE)")
 
         Else
-            ASCDATA1.ExecuteSQL($"Truncate Table {SOTOXFRX}")
+            'ASCDATA1.ExecuteSQL($"Truncate Table {SOTOXFRX}")
+            ASCDATA1.ExecuteSQL($"Delete from {SOTOXFRX}")
             ASCDATA1.ExecuteSQL($"Insert into {SOTOXFRX} {Get_SQL("SOTOXFRX")}")
 
-            ASCDATA1.ExecuteSQL($"Truncate Table {SOTORDRX}")
+            'ASCDATA1.ExecuteSQL($"Truncate Table {SOTORDRX}")
+            ASCDATA1.ExecuteSQL($"Delete from {SOTORDRX}")
             ASCDATA1.ExecuteSQL($"Insert into {SOTORDRX} {Get_SQL("SOTORDRX")}")
             'ASCDATA1.ExecuteSQL($"Update {SOTORDRX} SOTORDRX Set LINES_OPEN = (Select Count (*) from SOTORDR2 where ORDR_NO = SOTORDRX.ORDR_NO and ORDR_QTY_OPEN > 0)")
             'ASCDATA1.ExecuteSQL($"Update {SOTORDRX} SOTORDRX Set LINES_US = (Select Count (*) from SOTORDR2 where ORDR_NO = SOTORDRX.ORDR_NO and ORDR_QTY_OPEN > 0 and (STYLE_CODE, COLOR_CODE) in (Select STYLE_CODE, COLOR_CODE from {SOTOXFRX}))")
