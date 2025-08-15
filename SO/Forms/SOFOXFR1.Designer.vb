@@ -72,7 +72,8 @@ Partial Class SOFOXFR1
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("SOTOXFRX", -1)
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
-        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALLO")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SHORT")
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ALLO")
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_DESC")
         Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC")
         Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_PACK_QTY")
@@ -301,7 +302,7 @@ Partial Class SOFOXFR1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(937, 452)
         '
@@ -454,7 +455,7 @@ Partial Class SOFOXFR1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(937, 452)
         '
@@ -492,9 +493,13 @@ Partial Class SOFOXFR1
         UltraGridColumn7.Header.VisiblePosition = 2
         UltraGridColumn7.Width = 67
         UltraGridColumn18.Format = "#,##0"
-        UltraGridColumn18.Header.Caption = "Allo"
+        UltraGridColumn18.Header.Caption = "Short"
         UltraGridColumn18.Header.VisiblePosition = 7
         UltraGridColumn18.Width = 68
+        UltraGridColumn35.Format = "#,##0"
+        UltraGridColumn35.Header.Caption = "Allo"
+        UltraGridColumn35.Header.VisiblePosition = 8
+        UltraGridColumn35.Width = 68
         UltraGridColumn16.Header.Caption = "Style Description"
         UltraGridColumn16.Header.VisiblePosition = 1
         UltraGridColumn17.Header.Caption = "Color Desc"
@@ -514,57 +519,57 @@ Partial Class SOFOXFR1
         UltraGridColumn29.Width = 73
         UltraGridColumn14.Format = "#,##0"
         UltraGridColumn14.Header.Caption = "Tran MS"
-        UltraGridColumn14.Header.VisiblePosition = 19
+        UltraGridColumn14.Header.VisiblePosition = 20
         UltraGridColumn14.Width = 90
         UltraGridColumn21.Format = "#,##0"
         UltraGridColumn21.Header.Caption = "OnHd US"
-        UltraGridColumn21.Header.VisiblePosition = 14
+        UltraGridColumn21.Header.VisiblePosition = 15
         UltraGridColumn21.Width = 84
         UltraGridColumn9.Format = "#,##0"
         UltraGridColumn9.Header.Caption = "Pick US"
-        UltraGridColumn9.Header.VisiblePosition = 15
+        UltraGridColumn9.Header.VisiblePosition = 16
         UltraGridColumn9.Width = 90
         UltraGridColumn22.Format = "#,##0"
         UltraGridColumn22.Header.Caption = "Open US"
-        UltraGridColumn22.Header.VisiblePosition = 18
+        UltraGridColumn22.Header.VisiblePosition = 19
         UltraGridColumn22.Width = 84
         UltraGridColumn10.Format = "#,##0"
-        UltraGridColumn10.Header.Caption = "Ava US"
-        UltraGridColumn10.Header.VisiblePosition = 13
+        UltraGridColumn10.Header.Caption = "OTS US"
+        UltraGridColumn10.Header.VisiblePosition = 14
         UltraGridColumn10.Width = 90
         UltraGridColumn23.Format = "#,##0"
         UltraGridColumn23.Header.Caption = "OnHd MS"
-        UltraGridColumn23.Header.VisiblePosition = 20
+        UltraGridColumn23.Header.VisiblePosition = 21
         UltraGridColumn23.Width = 87
         UltraGridColumn12.Format = "#,##0"
         UltraGridColumn12.Header.Caption = "Pick MS"
-        UltraGridColumn12.Header.VisiblePosition = 16
+        UltraGridColumn12.Header.VisiblePosition = 17
         UltraGridColumn12.Width = 90
         UltraGridColumn15.Format = "#,##0"
-        UltraGridColumn15.Header.Caption = "Ava MS"
-        UltraGridColumn15.Header.VisiblePosition = 17
+        UltraGridColumn15.Header.Caption = "OTS MS"
+        UltraGridColumn15.Header.VisiblePosition = 18
         UltraGridColumn15.Width = 90
         UltraGridColumn24.Format = "#,##0"
         UltraGridColumn24.Header.Caption = "Qty2Xfr"
-        UltraGridColumn24.Header.VisiblePosition = 8
+        UltraGridColumn24.Header.VisiblePosition = 9
         UltraGridColumn24.Width = 72
         UltraGridColumn28.Header.Caption = "Sel"
-        UltraGridColumn28.Header.VisiblePosition = 9
+        UltraGridColumn28.Header.VisiblePosition = 10
         UltraGridColumn28.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn28.Width = 60
         UltraGridColumn32.Format = "#,##0"
         UltraGridColumn32.Header.Caption = "Units2Xfr"
-        UltraGridColumn32.Header.VisiblePosition = 10
+        UltraGridColumn32.Header.VisiblePosition = 11
         UltraGridColumn32.Width = 91
         UltraGridColumn33.Format = "#,##0"
         UltraGridColumn33.Header.Caption = "Cases2Xfr"
-        UltraGridColumn33.Header.VisiblePosition = 11
+        UltraGridColumn33.Header.VisiblePosition = 12
         UltraGridColumn33.Width = 88
         UltraGridColumn31.Format = "#,##0.0"
         UltraGridColumn31.Header.Caption = "Cube2Xfr"
-        UltraGridColumn31.Header.VisiblePosition = 12
+        UltraGridColumn31.Header.VisiblePosition = 13
         UltraGridColumn31.Width = 83
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn6, UltraGridColumn7, UltraGridColumn18, UltraGridColumn16, UltraGridColumn17, UltraGridColumn19, UltraGridColumn20, UltraGridColumn29, UltraGridColumn14, UltraGridColumn21, UltraGridColumn9, UltraGridColumn22, UltraGridColumn10, UltraGridColumn23, UltraGridColumn12, UltraGridColumn15, UltraGridColumn24, UltraGridColumn28, UltraGridColumn32, UltraGridColumn33, UltraGridColumn31})
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn6, UltraGridColumn7, UltraGridColumn18, UltraGridColumn35, UltraGridColumn16, UltraGridColumn17, UltraGridColumn19, UltraGridColumn20, UltraGridColumn29, UltraGridColumn14, UltraGridColumn21, UltraGridColumn9, UltraGridColumn22, UltraGridColumn10, UltraGridColumn23, UltraGridColumn12, UltraGridColumn15, UltraGridColumn24, UltraGridColumn28, UltraGridColumn32, UltraGridColumn33, UltraGridColumn31})
         Me.grdSOTOXFRX.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdSOTOXFRX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"

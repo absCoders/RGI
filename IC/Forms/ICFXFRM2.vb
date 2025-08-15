@@ -29,9 +29,13 @@ Public Class ICFXFRM2
             .Tables("ICTSTYLX").Columns.Add("QTY2XFR", GetType(System.Int32))
             .Tables("ICTSTYLX").Columns.Add("SUG_XFR", GetType(System.Int32))
             .Tables("ICTSTYLX").Columns.Add("HIDE_STYLE")
-            .Tables("ICTSTYLX").Columns.Add("AVA_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(PICK_MS,0)-ISNULL(OPEN_MS,0)+ISNULL(ONPO_MS,0)+ISNULL(TRAN_MS,0)")
-            .Tables("ICTSTYLX").Columns.Add("AVA_US", GetType(System.Int32), "ISNULL(ONHD_US,0)-ISNULL(PICK_US,0)")
+            '.Tables("ICTSTYLX").Columns.Add("AVA_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(PICK_MS,0)-ISNULL(OPEN_MS,0)+ISNULL(ONPO_MS,0)+ISNULL(TRAN_MS,0)")
+            '.Tables("ICTSTYLX").Columns.Add("AVA_US", GetType(System.Int32), "ISNULL(ONHD_US,0)-ISNULL(PICK_US,0)-ISNULL(OPEN_US,0)")
             .Tables("ICTSTYLX").Columns.Add("ATS_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(OPEN_MS,0)-ISNULL(PICK_MS,0)")
+            .Tables("ICTSTYLX").Columns.Add("OTS_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(PICK_MS,0)")
+            .Tables("ICTSTYLX").Columns.Add("OTS_US", GetType(System.Int32))
+            .Tables("ICTSTYLX").Columns.Add("AVA_US", GetType(System.Int32))
+            .Tables("ICTSTYLX").Columns.Add("TOTAL_FUT_AVA", GetType(System.Int32))
             '.Tables("ICTSTYLX").Columns.Add("QTY_SHORT", GetType(System.Int32), "IIF(ORDR_QTY_OPEN > 0 AND AVA_MS < ORDR_QTY_OPEN, AVA_MS - ORDR_QTY_OPEN, NULL)")
             .Tables("ICTSTYLX").Columns.Add("TOTAL_UNITS", GetType(System.Int32), "QTY2XFR")
             .Tables("ICTSTYLX").Columns.Add("TOTAL_CASES", GetType(System.Int32), "TOTAL_UNITS / ISNULL(CARTON_PACK_QTY,0)")
@@ -149,6 +153,8 @@ Public Class ICFXFRM2
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.PaleVioletRed
                 ElseIf New String() {"QTY_SHORT"}.Contains(gcol.Key) Then
                     gcol.Header.Appearance.BackColor2 = Drawing.Color.LightPink
+                ElseIf New String() {"TOTAL_FUT_AVA"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Drawing.Color.MediumPurple
                 End If
             Next
         End With
@@ -234,25 +240,30 @@ Public Class ICFXFRM2
 
         Select Case eItemKey
 
-            'need to change ava_ms back to ava_us after testing
             Case "Update"
                 If dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0").Length = 0 Then
                     EMsg &= "No transfer quantities were entered. Nothing to update."
                 End If
 
-
                 For Each row As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0")
                     Dim QTY2XFR As Integer = row.Field(Of Integer)("QTY2XFR")
-                    Dim AVA_US As Integer = row.Field(Of Integer)("AVA_US")
+                    Dim OTS_US As Integer = If(row.IsNull("OTS_US"), 0, row.Field(Of Integer)("OTS_US"))
+                    Dim CARTON_PACK_QTY As Integer = If(row.IsNull("CARTON_PACK_QTY"), 0, CInt(row("CARTON_PACK_QTY")))
 
-                    If QTY2XFR > AVA_US Then
-                        EMsg &= $"Transfer qty for {row("STYLE_CODE")}-{row("COLOR_CODE")} exceeds available US qty ({QTY2XFR} > {AVA_US}).{vbCrLf}"
+                    Dim MAX_US As Integer
+                    If CARTON_PACK_QTY > 0 Then
+                        MAX_US = (OTS_US \ CARTON_PACK_QTY) * CARTON_PACK_QTY
+                    Else
+                        MAX_US = OTS_US
+                    End If
+
+                    If QTY2XFR > MAX_US Then
+                        EMsg &= $"Transfer qty for {row("STYLE_CODE")}-{row("COLOR_CODE")} exceeds rounded US avail ({QTY2XFR} > {MAX_US}).{vbCrLf}"
                         Continue For
                     End If
 
                     Dim valid As Boolean = True
                     Dim INNER_PACK_QTY = row("INNER_PACK_QTY")
-                    Dim CARTON_PACK_QTY = row("CARTON_PACK_QTY")
 
                     If Not IsDBNull(INNER_PACK_QTY) AndAlso CInt(INNER_PACK_QTY) > 0 Then
                         If QTY2XFR Mod CInt(INNER_PACK_QTY) <> 0 Then
@@ -298,13 +309,10 @@ Public Class ICFXFRM2
 
             Case "Update"
                 Update_Record()
-                Mode_Settings(True)
+                Mode_Settings(False)
 
             Case "Cancel"
                 Mode_Settings(False)
-
-            Case "Auto Populate #ToXfr"
-                Auto_Populate()
 
             Case "Save Progress"
                 Save_Progress()
@@ -327,7 +335,6 @@ Public Class ICFXFRM2
                     .Items("Update").Settings.Enabled = iScreenMode
                     .Items("Cancel").Settings.Enabled = iScreenMode
                     .Items("Update").Visible = (ScreenMode And EntryMode = "E")
-                    .Items("Auto Populate #ToXfr").Visible = (ScreenMode And EntryMode = "E")
                     .Items("Save Progress").Visible = (ScreenMode And EntryMode = "E")
                     .Items("Load from Save").Visible = (ScreenMode And EntryMode = "E")
                     .Items("Cancel").Visible = (ScreenMode And EntryMode = "E")
@@ -417,6 +424,21 @@ Public Class ICFXFRM2
         For Each row As DataRow In dst.Tables("ICTSTYLX").Rows
             Dim STYLE_CODE As String = row("STYLE_CODE")
             Dim COLOR_CODE As String = row("COLOR_CODE")
+
+            Dim ONHD_US As Integer = Val(row("ONHD_US") & "")
+            Dim PICK_US As Integer = Val(row("PICK_US") & "")
+            Dim OPEN_US As Integer = Val(row("OPEN_US") & "")
+            Dim TRAN_US As Integer = Val(row("TRAN_US") & "")
+            Dim CARTON_PACK_QTY As Integer = Val(row("CARTON_PACK_QTY") & "")
+
+            Dim roundedOpenUS As Integer = If(CARTON_PACK_QTY > 0,
+                CInt(Math.Ceiling(OPEN_US / CDbl(CARTON_PACK_QTY))) * CARTON_PACK_QTY,
+                OPEN_US)
+
+            row("OTS_US") = ONHD_US - PICK_US - roundedOpenUS
+            row("AVA_US") = Val(row("OTS_US") & "") + Val(row("TRAN_US") & "") + PICK_US
+            row("TOTAL_FUT_AVA") = Val(row("ATS_MS") & "") + Val(row("AVA_US") & "")
+
             Dim matchedRows = dtMonthlySales.Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'")
 
             If matchedRows.Length = 0 Then
@@ -476,6 +498,7 @@ Public Class ICFXFRM2
                 row("WOS_MS") = 0
             End If
 
+
         Next
 
 
@@ -490,7 +513,7 @@ Public Class ICFXFRM2
 
         BeginTrans()
         Dim WHSE_CODE As String = "US"
-        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0"), "QTY2XFR")
+        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("ICTSTYLX").Select("QTY2XFR Is Not NULL And QTY2XFR > 0"), "QTY2XFR")
         TAC.SOCMAIN1.Release_Transfer_Order(Me)
 
         For Each TABLE_NAME As String In TABLES_OXFR
@@ -501,14 +524,14 @@ Public Class ICFXFRM2
         Dim ORDR_GROUP_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("ORDR_GROUP_NO")
         ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
 
-        'For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0")
+        'For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR Is Not NULL And QTY2XFR > 0")
         '    Dim STYLE_CODE As String = rowICTSTYLX.Item("STYLE_CODE")
         '    Dim COLOR_CODE As String = rowICTSTYLX.Item("COLOR_CODE")
         '    Dim QTY As Int32 = Val(rowICTSTYLX.Item("QTY2XFR"))
 
         '    TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
-        '    ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}'" & vbCrLf _
+        '    ASCMAIN1.sql = $"Update SOTOXFR1 Set OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}'" & vbCrLf _
         '             & "WHERE STYLE_CODE = :PARM1 AND COLOR_CODE = :PARM2 AND OXFR_STATUS = '0'"
         '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {STYLE_CODE, COLOR_CODE})
         'Next
@@ -525,6 +548,8 @@ Public Class ICFXFRM2
         'Stop
         ' create Sales Order of type XFR - SOTORDR1/2/5 SOTORDR0
         ' release the order - SOTPICK1/2 SOTPICK0, SOTSHIP1, SOTCART1/2
+
+        ExportPickTckts(SHIP_BOL_NO)
 
         CommitTrans("Update Complete")
 
@@ -966,42 +991,6 @@ Public Class ICFXFRM2
         Next
 
     End Sub
-    Sub Auto_Populate()
-        'Dim ANY_POPULATED As Boolean = False
-        'For Each row As DataRow In dst.Tables("ICTSTYLX").Select("QTY_SHORT < 0")
-        '    Dim QTY_SHORT As Integer = Math.Abs(Val(row("QTY_SHORT") & ""))
-        '    Dim AVA_US As Integer = Val(row("AVA_US") & "")
-        '    Dim INNER_PACK_QTY As Integer = Val(row("INNER_PACK_QTY") & "")
-        '    Dim CARTON_PACK_QTY As Integer = Val(row("CARTON_PACK_QTY") & "")
-
-        '    If QTY_SHORT > AVA_US Then
-        '        row("QTY2XFR") = DBNull.Value
-        '        Continue For
-        '    End If
-
-        '    Dim QTY2XFR As Integer = QTY_SHORT
-
-        '    If INNER_PACK_QTY > 0 Then
-        '        QTY2XFR = Math.Ceiling(QTY_SHORT / INNER_PACK_QTY) * INNER_PACK_QTY
-        '    ElseIf CARTON_PACK_QTY > 0 Then
-        '        QTY2XFR = Math.Ceiling(QTY_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
-        '    End If
-
-        '    If QTY2XFR <= AVA_US Then
-        '        row("QTY2XFR") = QTY2XFR
-        '        ANY_POPULATED = True
-        '    Else
-        '        row("QTY2XFR") = DBNull.Value
-        '    End If
-        'Next
-
-        'If ANY_POPULATED Then
-        '    MsgBox("Transfer quantities auto-populated based on shortage and available US inventory.", MsgBoxStyle.Information)
-        'Else
-        '    MsgBox("No rows qualified for auto-population.", MsgBoxStyle.Exclamation)
-        'End If
-
-    End Sub
     Sub Save_Progress()
         ASCMAIN1.Progress("Now Saving Data")
         Cursor.Current = Cursors.WaitCursor
@@ -1092,32 +1081,111 @@ Public Class ICFXFRM2
                 CARTON_PACK_QTY = CInt(e.Cell.Row.Cells("CARTON_PACK_QTY").Value)
             End If
 
-            If CARTON_PACK_QTY > 0 Then
-                Dim entered As Integer
-                If Integer.TryParse(e.Cell.Text, entered) Then
-                    Dim rounded As Integer = CInt(Math.Ceiling(entered / CARTON_PACK_QTY) * CARTON_PACK_QTY)
+            Dim OTS_US As Integer = 0
+            If Not IsDBNull(e.Cell.Row.Cells("OTS_US").Value) Then
+                OTS_US = CInt(e.Cell.Row.Cells("OTS_US").Value)
+            End If
+
+            Dim entered As Integer
+            If Integer.TryParse(e.Cell.Text, entered) Then
+
+                If CARTON_PACK_QTY > 0 Then
+                    Dim rounded As Integer = If(
+                entered Mod CARTON_PACK_QTY = 0,
+                entered,
+                ((entered \ CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY
+            )
                     If rounded <> entered Then
                         e.Cell.Value = rounded
                     End If
                 End If
+
             End If
+
             Dim QTY2XFR As Integer = If(e.Cell.Value Is Nothing, 0, CInt(e.Cell.Value))
-            Dim TOTAL_UNITS = e.Cell.Row.Cells("TOTAL_UNITS").Value
-            Dim ATS_US = e.Cell.Row.Cells("AVA_US").Value
+            Dim MAX_US As Integer
+
+            If CARTON_PACK_QTY > 0 Then
+                MAX_US = (OTS_US \ CARTON_PACK_QTY) * CARTON_PACK_QTY
+            Else
+                MAX_US = OTS_US
+            End If
+
+            If QTY2XFR > MAX_US Then
+                MessageBox.Show($"Cannot transfer more than {MAX_US} units (US OTS rounded to case multiples).",
+                            "Qty Too Large", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                e.Cell.Value = MAX_US
+                QTY2XFR = MAX_US
+            End If
 
             Dim totCell = e.Cell.Row.Cells("TOTAL_UNITS")
-            If QTY2XFR > ATS_US Then
+            If QTY2XFR > OTS_US Then
                 totCell.Appearance.BackColor = Color.LightCoral
             Else
                 totCell.Appearance.ResetBackColor()
             End If
         End If
 
+    End Sub
+    Private Sub ExportPickTckts(SHIP_BOL_NO As String)
+
+        ASCMAIN1.sql = $"select TO_CHAR(SYSDATE, 'YYYYMMDD') as ""Date"", SOTPICK1.PICK_NO as ""P.O.#"", SOTORDR5.CUST_NAME Customer
+                            , SOTORDR5.CUST_ADDR1 ""Ship To Addr 1"", SOTORDR5.CUST_ADDR2 ""Ship To Addr 2"", SOTORDR5.CUST_CITY
+                            , SOTORDR5.CUST_STATE, SOTORDR5.CUST_ZIP_CODE, TATCNTRY.COUNTRY_CODE2  ""Country""
+                            , SOTORDR2.STYLE_CODE || '-' || SOTORDR2.COLOR_CODE PRODUCT, '' LOT#, SOTPICK2.PICK_QTY QTY
+                            , SOTORDR1.SHIP_VIA_CODE ""SHP Via"", ''  ACCT#, SOTORDR1.ORDR_SHIP_INSTR ""Ship Inst 1"",
+                            case when RESIDENTIAL_ORDR = '1' then 'Residential Order ' end || 
+                            case when INSIDE_REQ = '1' then 'Inside Delivery ' end ||
+                            case when GATE_LIFT_REQ = '1' then 'Lift Gate Req ' end ||
+                            case when LIMITED_ACCESS = '1' then 'Limited Access- ' || LIMITED_ACCESS_NOTE || ' ' end ||
+                            case when IRREGULAR_HOURS = '1' then 'Hours- ' || IRREGULAR_HOURS_NOTE || ' ' end ||
+                            case when APPOINTMENT_REQUIRED = '1' then 'Appointment Req- ' || APPOINTMENT_REQUIRED_NOTE || ' ' end ||
+                            case when BROKER = '1' then 'Broker- ' || BROKER_NOTE || ' ' end
+                            as ""Ship Inst 2"", '' ""Ship Inst 3"", '' ""Ship Inst 4""
+                            from SOTPICK1, SOTORDR1, SOTORDR5, SOTPICK2, SOTORDR2, ARTCUSTQ, TATCNTRY
+                            where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO
+                            and SOTORDR1.ORDR_NO = SOTORDR5.ORDR_NO
+                            and SOTORDR5.CUST_ADDR_TYPE = 'ST'
+                            and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO
+                            and SOTPICK2.PICK_QTY > 0
+                            and SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO
+                            and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO
+                            and ARTCUSTQ.CUST_CODE(+) = SOTORDR1.CUST_CODE
+                            and ARTCUSTQ.CUST_ADDR_CODE(+) = SOTORDR1.CUST_STORE_NO
+                            AND TATCNTRY.COUNTRY_CODE3(+) = SOTORDR5.CUST_COUNTRY
+                            And SOTPICK1.SHIP_BOL_NO = '{SHIP_BOL_NO}'"
+
+
+        Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+
+        'this is USL specific so add USL to dir plus outbound dir and find a filename
+        Dim csvFileName = $"Order_Standard{SHIP_BOL_NO}_" & DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") & ".txt"
+        Dim WorkDir = ASCMAIN1.Folders("Work")
+
+        Dim ED_PARM_3PL_FTP_DIR As String = ROWs("EDTPARM1")("ED_PARM_3PL_FTP_DIR") & "USL\Order\"
+        If ASCMAIN1.Running_in_VS Then
+            ED_PARM_3PL_FTP_DIR = ASCMAIN1.Folders("Work")
+        End If
+        Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook()
+        Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
+        worksheet.Cells(0, 1).EntireColumn.NumberFormat = "@" ' PO#/PICK_NO - preserve leading zeros
+        worksheet.Cells(0, 7).EntireColumn.NumberFormat = "@" ' ZipCode - preserve leading zeros
+        worksheet.Cells(0, 13).EntireColumn.NumberFormat = "@" ' Acct# - preserve leading zeros
+        Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
+        range.CopyFromDataTable(tblEXPORT, SpreadsheetGear.Data.SetDataFlags.None)
+        workbook.SaveAs(WorkDir & csvFileName, SpreadsheetGear.FileFormat.UnicodeText)
+        range = Nothing
+        worksheet = Nothing
+        workbook = Nothing
+
+        If ASCMAIN1.Running_in_VS Then
+            Show_Document(WorkDir & csvFileName)
+        Else
+            'Copy to sftp EDI machine for transmitting
+            My.Computer.FileSystem.CopyFile(WorkDir & csvFileName, ED_PARM_3PL_FTP_DIR & csvFileName, True)
+        End If
 
 
     End Sub
 
-    Private Sub ICFXFRM2_LocationChanged(sender As Object, e As EventArgs) Handles Me.LocationChanged
-
-    End Sub
 End Class
