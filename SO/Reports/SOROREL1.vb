@@ -951,7 +951,7 @@ Public Class SOROREL1
                     & ", US_ONHD, US_TRAN, US_PICK, US_OPEN, US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, MS_AVA" & vbCrLf _
                     & ", ALLO, SHORT" & vbCrLf _
-                    & ", CASE WHEN SHORT >= 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
+                    & ", CASE WHEN SHORT + NVL(US_PICK,0) >= 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
                     & $", SYSDATE INIT_DATE, '{ASCMAIN1.USER_ID}' INIT_OPER, NULL LAST_DATE, NULL LAST_OPER" & vbCrLf _
                     & $" from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1'"
                 ASCDATA1.ExecuteSQL()
