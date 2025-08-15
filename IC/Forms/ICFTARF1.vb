@@ -24,6 +24,7 @@ Public Class ICFTARF1
             With .Tables("ICTTARF1").Columns
                 .Add("EFFECTIVE_TARIFF_PCT", GetType(System.Decimal))
                 .Add("DATE_TO_USE", GetType(System.String))
+                .Add("TARIFF_NOTES", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "Select * from ICTTARF2"
@@ -513,6 +514,7 @@ Public Class ICFTARF1
                     If today.Date >= startDate.Date AndAlso (Not endDate.HasValue OrElse today <= endDate.Value) Then
                         rowICTTARF1("EFFECTIVE_TARIFF_PCT") = Val(rowICTTARF2("TARIFF_PCT"))
                         rowICTTARF1("DATE_TO_USE") = rowICTTARF2("TARIFF_DATE_TO_USE")
+                        rowICTTARF1("TARIFF_NOTES") = rowICTTARF2("TARIFF_NOTES") & ""
                         Exit For ' Only apply the first matching range, that there is only one match is enforced at entry
                     End If
                 Next
