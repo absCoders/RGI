@@ -93,6 +93,7 @@ Partial Class WBFFSR01
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.chkHideCredits = New System.Windows.Forms.CheckBox()
         Me.chkHideLYDays = New System.Windows.Forms.CheckBox()
         Me.grpGroupBy = New System.Windows.Forms.GroupBox()
         Me.rdoCUST_CODE = New System.Windows.Forms.RadioButton()
@@ -112,6 +113,7 @@ Partial Class WBFFSR01
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.chkSeperateWebEDI = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -276,6 +278,8 @@ Partial Class WBFFSR01
         '
         'SplitContainer2.Panel1
         '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.chkSeperateWebEDI)
+        Me.SplitContainer2.Panel1.Controls.Add(Me.chkHideCredits)
         Me.SplitContainer2.Panel1.Controls.Add(Me.chkHideLYDays)
         Me.SplitContainer2.Panel1.Controls.Add(Me.grpGroupBy)
         Me.SplitContainer2.Panel1.Controls.Add(Me.grpUnitsDollars)
@@ -286,8 +290,20 @@ Partial Class WBFFSR01
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdWBFFSR01)
         Me.SplitContainer2.Size = New System.Drawing.Size(994, 562)
-        Me.SplitContainer2.SplitterDistance = 122
+        Me.SplitContainer2.SplitterDistance = 143
         Me.SplitContainer2.TabIndex = 0
+        '
+        'chkHideCredits
+        '
+        Me.chkHideCredits.AutoSize = True
+        Me.chkHideCredits.Checked = True
+        Me.chkHideCredits.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkHideCredits.Location = New System.Drawing.Point(34, 91)
+        Me.chkHideCredits.Name = "chkHideCredits"
+        Me.chkHideCredits.Size = New System.Drawing.Size(172, 20)
+        Me.chkHideCredits.TabIndex = 172
+        Me.chkHideCredits.Text = "Hide Credits / Returns"
+        Me.chkHideCredits.UseVisualStyleBackColor = True
         '
         'chkHideLYDays
         '
@@ -305,9 +321,9 @@ Partial Class WBFFSR01
         '
         Me.grpGroupBy.Controls.Add(Me.rdoCUST_CODE)
         Me.grpGroupBy.Controls.Add(Me.rdoWSHE_CODE)
-        Me.grpGroupBy.Location = New System.Drawing.Point(558, 11)
+        Me.grpGroupBy.Location = New System.Drawing.Point(437, 11)
         Me.grpGroupBy.Name = "grpGroupBy"
-        Me.grpGroupBy.Size = New System.Drawing.Size(351, 100)
+        Me.grpGroupBy.Size = New System.Drawing.Size(118, 77)
         Me.grpGroupBy.TabIndex = 170
         Me.grpGroupBy.TabStop = False
         Me.grpGroupBy.Text = "Group By"
@@ -529,7 +545,7 @@ Partial Class WBFFSR01
         Me.grdWBFFSR01.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWBFFSR01.Location = New System.Drawing.Point(0, 0)
         Me.grdWBFFSR01.Name = "grdWBFFSR01"
-        Me.grdWBFFSR01.Size = New System.Drawing.Size(994, 436)
+        Me.grdWBFFSR01.Size = New System.Drawing.Size(994, 415)
         Me.grdWBFFSR01.TabIndex = 27
         Me.grdWBFFSR01.Text = "Flash Sales Report"
         '
@@ -629,6 +645,18 @@ Partial Class WBFFSR01
         '
         Me.Timer1.Interval = 1000
         '
+        'chkSeperateWebEDI
+        '
+        Me.chkSeperateWebEDI.AutoSize = True
+        Me.chkSeperateWebEDI.Checked = True
+        Me.chkSeperateWebEDI.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkSeperateWebEDI.Location = New System.Drawing.Point(570, 33)
+        Me.chkSeperateWebEDI.Name = "chkSeperateWebEDI"
+        Me.chkSeperateWebEDI.Size = New System.Drawing.Size(282, 20)
+        Me.chkSeperateWebEDI.TabIndex = 173
+        Me.chkSeperateWebEDI.Text = "Seperate Web And EDI As Warehouses"
+        Me.chkSeperateWebEDI.UseVisualStyleBackColor = True
+        '
         'WBFFSR01
         '
         Me.Absx1.SetABSTableName(Me, "SOTORDRT_L")
@@ -697,4 +725,6 @@ Partial Class WBFFSR01
     Friend WithEvents rdoCUST_CODE As RadioButton
     Friend WithEvents rdoWSHE_CODE As RadioButton
     Friend WithEvents chkHideLYDays As CheckBox
+    Friend WithEvents chkHideCredits As CheckBox
+    Friend WithEvents chkSeperateWebEDI As CheckBox
 End Class

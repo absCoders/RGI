@@ -283,7 +283,14 @@ Public Class WBFFSR01
         ASCDATA1.ExecuteSQL()
 
         'Fill_Records("WBTHORNT", , , SQLs.ToString)
-        fillTempTable()
+        If chkSeperateWebEDI.Checked = False Then
+            fillTempTable("A")
+        Else
+            fillTempTable("X")
+            fillTempTable("E")
+            fillTempTable("W")
+        End If
+
         loadTempTable()
         'Stop
         'EnforceConstraints(True)
@@ -426,13 +433,43 @@ Public Class WBFFSR01
 #End Region
 
 #Region "Custom Methods"
-    Private Sub fillTempTable()
+    Private Sub fillTempTable(ByVal OrdrType As String)
+        ' --- OrdrType ---
+        ' A = All Order Types
+        ' X = All Order Types Except EDI & Web
+        ' E = EDI
+        ' W = Web
+        ' Anything Else Don't Fill.
+
+        Dim SCODES_SEL As String = ""
+        Dim SCODES_GRP As String = ""
+        Dim SCODES_WHR As String = ""
+        Select Case OrdrType
+            Case "A"
+                SCODES_SEL = $"I1.{SEL_CODE} AS CODE, W1.{SEL_DESC} AS CODE_DESC,"
+                SCODES_GRP = $"I1.{SEL_CODE}, W1.{SEL_DESC}"
+                SCODES_WHR = ""
+            Case "X"
+                SCODES_SEL = $"I1.{SEL_CODE} AS CODE, W1.{SEL_DESC} AS CODE_DESC,"
+                SCODES_GRP = $"I1.{SEL_CODE}, W1.{SEL_DESC}"
+                SCODES_WHR = "AND O1.ORDR_SOURCE NOT IN ('E','W')"
+            Case "E"
+                SCODES_SEL = $"'EDI' AS CODE, 'EDI Orders' AS CODE_DESC,"
+                SCODES_GRP = $"'EDI', 'EDI Orders'"
+                SCODES_WHR = "AND O1.ORDR_SOURCE = 'E'"
+            Case "W"
+                SCODES_SEL = $"'WEB' AS CODE, 'Web Orders' AS CODE_DESC,"
+                SCODES_GRP = $"'WEB', 'Web Orders'"
+                SCODES_WHR = "AND O1.ORDR_SOURCE = 'W'"
+            Case Else
+                Exit Sub
+        End Select
+
         For i As Int64 = 0 To 6
             SQLs.Length = 0
             SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
             SQLs.AppendLine("SELECT")
-            SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-            SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+            SQLs.AppendLine(SCODES_SEL)
             If i = 0 Then
                 SQLs.AppendLine($"SUM({QTY_DOLLAR}) TY_WK1,")
             Else
@@ -481,22 +518,25 @@ Public Class WBFFSR01
             SQLs.AppendLine("0 LY_YTD,")
             SQLs.AppendLine("0 LY_FULL_MO,")
             SQLs.AppendLine("0 LY_FULL_YR")
-            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
             SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
             SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+            SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
             SQLs.AppendLine($"AND I1.INV_DATE = '{Format(TY_DAYS(i), "dd-MMM-yyyy")}'")
+            If chkHideCredits.Checked Then
+                SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+            End If
+            SQLs.AppendLine(SCODES_WHR)
             SQLs.AppendLine("GROUP BY ")
-            SQLs.AppendLine($"I1.{SEL_CODE}, ")
-            SQLs.AppendLine($"W1.{SEL_DESC}")
+            SQLs.AppendLine(SCODES_GRP)
             ASCMAIN1.sql = SQLs.ToString
             ASCDATA1.ExecuteSQL()
 
             SQLs.Length = 0
             SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
             SQLs.AppendLine("SELECT")
-            SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-            SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+            SQLs.AppendLine(SCODES_SEL)
             SQLs.AppendLine("0 TY_WK1,")
             SQLs.AppendLine("0 TY_WK2,")
             SQLs.AppendLine("0 TY_WK3,")
@@ -545,14 +585,18 @@ Public Class WBFFSR01
             SQLs.AppendLine("0 LY_YTD,")
             SQLs.AppendLine("0 LY_FULL_MO,")
             SQLs.AppendLine("0 LY_FULL_YR")
-            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
             SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
             SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+            SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
             SQLs.AppendLine($"AND I1.INV_DATE = '{Format(LY_DAYS(i), "dd-MMM-yyyy")}'")
+            If chkHideCredits.Checked Then
+                SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+            End If
+            SQLs.AppendLine(SCODES_WHR)
             SQLs.AppendLine("GROUP BY ")
-            SQLs.AppendLine($"I1.{SEL_CODE}, ")
-            SQLs.AppendLine($"W1.{SEL_DESC}")
+            SQLs.AppendLine(SCODES_GRP)
             ASCMAIN1.sql = SQLs.ToString
             ASCDATA1.ExecuteSQL()
         Next
@@ -561,8 +605,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -583,14 +626,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_TY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_TY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -598,8 +645,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -620,14 +666,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_TY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_TY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -635,8 +685,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -657,14 +706,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -672,8 +725,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -694,14 +746,18 @@ Public Class WBFFSR01
         SQLs.AppendLine($"SUM({QTY_DOLLAR}) LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -710,8 +766,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -732,14 +787,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine($"SUM({QTY_DOLLAR}) LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(LY_EOM, "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -748,8 +807,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -770,14 +828,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine($"SUM({QTY_DOLLAR}) LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(LY_EOY, "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -889,6 +951,24 @@ Public Class WBFFSR01
             titleValues = "Showing Dollars"
         End If
         grdWBFFSR01.Text = $"{titleSelection} {titleRoot} {titlePeriod} {titleValues}."
+    End Sub
+
+    Private Sub rdoCUST_CODE_CheckedChanged(sender As Object, e As EventArgs) Handles rdoCUST_CODE.CheckedChanged
+        setWebEDIOption()
+    End Sub
+
+    Private Sub setWebEDIOption()
+        If rdoCUST_CODE.Checked Then
+            chkSeperateWebEDI.Checked = False
+            chkSeperateWebEDI.Visible = False
+        Else
+            chkSeperateWebEDI.Checked = True
+            chkSeperateWebEDI.Visible = True
+        End If
+    End Sub
+
+    Private Sub rdoWSHE_CODE_CheckedChanged(sender As Object, e As EventArgs) Handles rdoWSHE_CODE.CheckedChanged
+        setWebEDIOption()
     End Sub
 
 #End Region
