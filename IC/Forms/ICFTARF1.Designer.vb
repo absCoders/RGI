@@ -54,6 +54,7 @@ Partial Class ICFTARF1
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DATE_TO_USE")
         Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COUNTRY_NAME")
+        Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TARIFF_NOTES")
         Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -329,7 +330,7 @@ Partial Class ICFTARF1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTTARFX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(772, 588)
         '
@@ -367,10 +368,13 @@ Partial Class ICFTARF1
         UltraGridColumn7.Width = 70
         UltraGridColumn8.Header.Caption = "Date To Use"
         UltraGridColumn8.Header.VisiblePosition = 8
+        UltraGridColumn8.Width = 95
         UltraGridColumn25.Header.Caption = "Name"
         UltraGridColumn25.Header.VisiblePosition = 1
         UltraGridColumn25.Width = 396
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn25})
+        UltraGridColumn10.Header.Caption = "Notes"
+        UltraGridColumn10.Header.VisiblePosition = 9
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn25, UltraGridColumn10})
         Me.grdICTTARFX.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTTARFX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance5.TextHAlignAsString = "Left"
@@ -436,7 +440,7 @@ Partial Class ICFTARF1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splICTTARF1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(772, 588)
         '

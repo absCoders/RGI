@@ -3301,6 +3301,8 @@ Public Class ICCMAIN1
             End If
             Return 0
         Else
+            Dim tariffByCountry_pct As Decimal = Get_Tariff_Pct_By_Country(COUNTRY_CODE)
+            COMPOUNDED_DUTY_RATE += tariffByCountry_pct
 
             STYLE_PRICE = (PO_COST * (100 + COMPOUNDED_DUTY_RATE) / 100 + FRT_PER_CTN / CARTON_PACK_QTY + FRT_PER_CUBE * CASE_CUBE / CARTON_PACK_QTY) * MARGIN_FACTOR
 
@@ -3317,9 +3319,8 @@ Public Class ICCMAIN1
         Dim IC_PARM_TARIFF_OFFSET_PCT As Decimal = Val(rowICTPARM1.Item("IC_PARM_TARIFF_OFFSET_PCT") & "")
         Dim trumpTax_amt As Decimal = STYLE_PRICE * (IC_PARM_TARIFF_OFFSET_PCT / 100)
 
-        Dim tariffByCountry_amt As Decimal = Calculate_Tariff_By_Country(STYLE_PRICE, COUNTRY_CODE)
-
-        Return Math.Round(STYLE_PRICE + trumpTax_amt + tariffByCountry_amt, 1)
+        Dim stylePriceCalc As Decimal = Math.Round(STYLE_PRICE + trumpTax_amt, 1)
+        Return stylePriceCalc
 
 
     End Function
@@ -3329,9 +3330,9 @@ Public Class ICCMAIN1
             ASCMAIN1.sql = $"Select * from ICTTARF1 where COUNTRY_CODE = '{COUNTRY_CODE}' AND NVL(TARIFF_ACTIVE,'0') = '1'"
             Dim rowICTTARF1 As DataRow = ASCDATA1.GetDataRow
             If rowICTTARF1 IsNot Nothing Then
-                Dim TARIFF_DATE As Date = Now
+                Dim TARIFF_DATE As Date = Now.Date
                 ASCMAIN1.sql = $"Select * from ICTTARF2 where COUNTRY_CODE = '{COUNTRY_CODE}' 
-                                    AND TARIFF_START <= '{TARIFF_DATE}' AND (TARIFF_END IS NULL OR TARIFF_END >= '{TARIFF_DATE}') "
+                                    AND TARIFF_START >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}' AND (TARIFF_END IS NULL OR TARIFF_END >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}') "
                 Dim rowICTTARF2 As DataRow = ASCDATA1.GetDataRow
                 If rowICTTARF2 IsNot Nothing Then
                     Dim TARIFF_PCT As Decimal = Val(rowICTTARF2("TARIFF_PCT") & "")
@@ -3340,5 +3341,22 @@ Public Class ICCMAIN1
             End If
         End If
         Return tariffByCountry_amt
+    End Function
+    Public Shared Function Get_Tariff_Pct_By_Country(COUNTRY_CODE As String) As Decimal
+        Dim tariffByCountry_pct As Decimal = 0
+        If COUNTRY_CODE <> "" Then
+            ASCMAIN1.sql = $"Select * from ICTTARF1 where COUNTRY_CODE = '{COUNTRY_CODE}' AND NVL(TARIFF_ACTIVE,'0') = '1'"
+            Dim rowICTTARF1 As DataRow = ASCDATA1.GetDataRow
+            If rowICTTARF1 IsNot Nothing Then
+                Dim TARIFF_DATE As Date = Now.Date
+                ASCMAIN1.sql = $"Select * from ICTTARF2 where COUNTRY_CODE = '{COUNTRY_CODE}' 
+                                    AND TARIFF_START >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}' AND (TARIFF_END IS NULL OR TARIFF_END >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}') "
+                Dim rowICTTARF2 As DataRow = ASCDATA1.GetDataRow
+                If rowICTTARF2 IsNot Nothing Then
+                    tariffByCountry_pct = Val(rowICTTARF2("TARIFF_PCT") & "")
+                End If
+            End If
+        End If
+        Return tariffByCountry_pct
     End Function
 End Class
