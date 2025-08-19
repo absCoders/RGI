@@ -919,7 +919,7 @@ Public Class SOROREL1
         Else
             Update_Release() ' Update Pick Ticket, Shipment Control & Carton Tables
 
-            If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "MS" Then
+            If ASCMAIN1.CLIENT = "RGI" And (chkManualOnly.Checked Or WHSE_CODE = "MS") Then
 
                 'ASCMAIN1.sql = "Select US.*, SOTORDR2.ALLO, LEAST(NVL(US.MS_AVA,0) - NVL(SOTORDR2.ALLO,0),0) SHORT, '0' RELEASE" & vbCrLf _
                 '    & $"from {ICTSTAT2_MSUS_BEFORE} US" & vbCrLf _
@@ -3667,6 +3667,17 @@ Public Class SOROREL1
                 If Absx1.chkFor("CHKMANUAL_ONLY").Checked Then
                     If DirectCast(grdSOTORDRU.DataSource, DataTable).Select("SEL='1'").Length = 0 Then
                         EMsg &= vbCr & "You Must Select Specific Users when choosing Manually Selected only"
+                    End If
+                    If Absx1.txtFor("WHSE_CODE").Text <> "MS" Then
+                        EMsg &= vbCr & "You Must Select Whse Code MS when choosing Manually Selected only in order to enable USL Transfer Option"
+                    End If
+                Else
+                    If chkAllocateNoRelease.Checked Then
+                        ' this is ok
+                    ElseIf Absx1.txtFor("WHSE_CODE").Text = "MS" Then
+                        EMsg &= vbCr & "MS Sales Order Release must be done by choosing Manually Selected only"
+                    ElseIf Absx1.txtFor("WHSE_CODE").Text = "" Then
+                        EMsg &= vbCr & "Sales Order Release must be done by choosing a specific Whse"
                     End If
                 End If
             End If

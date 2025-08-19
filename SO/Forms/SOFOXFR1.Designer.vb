@@ -229,6 +229,7 @@ Partial Class SOFOXFR1
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTORDR0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.chkShowOnlyNetShort = New ABSCS.ABSCheckBox()
         Me.grdICTSTATS = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTOXFR1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -263,6 +264,7 @@ Partial Class SOFOXFR1
         Me.UltraTabPageControl5.SuspendLayout()
         CType(Me.grdSOTORDR0, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl6.SuspendLayout()
+        CType(Me.chkShowOnlyNetShort, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdICTSTATS, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
         CType(Me.grdSOTOXFR1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -434,7 +436,7 @@ Partial Class SOFOXFR1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdSOTORDR0)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(933, 199)
         '
@@ -572,10 +574,22 @@ Partial Class SOFOXFR1
         '
         'UltraTabPageControl6
         '
+        Me.UltraTabPageControl6.Controls.Add(Me.chkShowOnlyNetShort)
         Me.UltraTabPageControl6.Controls.Add(Me.grdICTSTATS)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(933, 199)
+        '
+        'chkShowOnlyNetShort
+        '
+        Me.chkShowOnlyNetShort.ABSChecked = "1"
+        Me.chkShowOnlyNetShort.Checked = True
+        Me.chkShowOnlyNetShort.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkShowOnlyNetShort.Location = New System.Drawing.Point(390, 3)
+        Me.chkShowOnlyNetShort.Name = "chkShowOnlyNetShort"
+        Me.chkShowOnlyNetShort.Size = New System.Drawing.Size(420, 20)
+        Me.chkShowOnlyNetShort.TabIndex = 179
+        Me.chkShowOnlyNetShort.Text = "Show only if there is a Net Short, and US On Hand > 0"
         '
         'grdICTSTATS
         '
@@ -1352,6 +1366,7 @@ Partial Class SOFOXFR1
         Me.UltraTabPageControl5.ResumeLayout(False)
         CType(Me.grdSOTORDR0, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl6.ResumeLayout(False)
+        CType(Me.chkShowOnlyNetShort, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdICTSTATS, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl3.ResumeLayout(False)
         CType(Me.grdSOTOXFR1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1405,4 +1420,5 @@ Partial Class SOFOXFR1
     Friend WithEvents UltraExplorerBarContainerControl1 As UltraWinExplorerBar.UltraExplorerBarContainerControl
     Friend WithEvents grpAction As Misc.UltraGroupBox
     Friend WithEvents optAction As UltraWinEditors.UltraOptionSet
+    Friend WithEvents chkShowOnlyNetShort As ABSCS.ABSCheckBox
 End Class

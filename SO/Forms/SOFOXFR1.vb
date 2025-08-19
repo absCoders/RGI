@@ -24,7 +24,7 @@ Public Class SOFOXFR1
 
         With dst
             ASCMAIN1.sql = $"Select * from {SOTOXFRX}"
-            Create_TDA(.Tables.Add, "SOTOXFRX", "**", 0, False)
+            Create_TDA(.Tables.Add, "SOTOXFRX", "**", 0, False, , 2)
             With .Tables("SOTOXFRX")
                 .Columns.Add("SEL")
                 .Columns("SEL").DefaultValue = "0"
@@ -207,7 +207,7 @@ Public Class SOFOXFR1
 
         ASCMAIN1.Add_Value_List(grdSOTOXFR1, "OXFR_STATUS", Nothing, New String() {":", "0:Pending Xfr", "1:Sent to USL"})
 
-
+        MakeTransparent(chkShowOnlyNetShort)
     End Sub
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
@@ -493,7 +493,7 @@ Public Class SOFOXFR1
         Load_Popup_Menu(grdSOTOXFRX, "SSBBBBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdSOTORDRX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTORDR0, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
-        Load_Popup_Menu(grdICTSTATS, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
+        Load_Popup_Menu(grdICTSTATS, "SSBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Add to Transfer Queue")
 
     End Sub
 
@@ -523,6 +523,10 @@ Public Class SOFOXFR1
                     For Each tt As String In New String() {"Select All", "De-Select All", "Select Selected", "De-Select Selected"}
                         tlb_pop.Tools(tt).SharedProps.Visible = ScreenMode And (optAction.Value = "X")
                     Next
+
+                Case "grdICTSTATS"
+                    tlb_pop.Tools("Add to Transfer Queue").SharedProps.Visible = chkShowOnlyNetShort.Checked
+
             End Select
         End If
     End Sub
@@ -575,6 +579,82 @@ Public Class SOFOXFR1
                     grow.Cells("SEL").Value = IIf(e.Tool.Key = "Select Selected", "1", "0")
                     grow.Update()
                 Next
+
+            Case "Add to Transfer Queue"
+
+                If grd.Selected.Rows.Count = 0 Then
+                    If grd.ActiveRow IsNot Nothing Then
+                        grd.ActiveRow.Selected = True
+                    End If
+                End If
+
+                If grd.Selected.Rows.Count = 0 Then
+                    MsgBox("No Rows Selected", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+                    Exit Sub
+                End If
+
+                'For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                '    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value
+                '    Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Value
+                '    Dim US_ONHD As Int32 = Val(grow.Cells("US_ONHD").Value & "")
+                '    Dim NET_SHORT As Int32 = Val(grow.Cells("NET_SHORT").Value & "")
+
+                '    If US_ONHD > 0 And NET_SHORT < 0 Then
+                '    Else
+                '        MsgBox($"Invalid Selection - {STYLE_CODE} / {COLOR_CODE}", MsgBoxStyle.OkOnly, "Re-Queue Candidates: US On Hand > 0 and Net Short < 0")
+                '        Exit Sub
+                '    End If
+                'Next
+
+                If MsgBox($"OK to Queue up {grd.Selected.Rows.Count} Style / Colors selected?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
+
+                dst.Tables("SOTOXFR1").Rows.Clear()
+
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value
+                    Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Value
+                    Dim US_ONHD As Int32 = Val(grow.Cells("US_ONHD").Value & "")
+                    Dim NET_SHORT As Int32 = Val(grow.Cells("NET_SHORT").Value & "")
+
+                    If dst.Tables("SOTOXFRX").Rows.Find(New String() {STYLE_CODE, COLOR_CODE}) Is Nothing Then
+                    Else
+                        MsgBox($"Style / Color {STYLE_CODE} / {COLOR_CODE} is already in the Transfer Queue", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+                        Exit Sub
+                    End If
+
+                    Dim rowSOTOXFR1 As DataRow = dst.Tables("SOTOXFR1").NewRow
+                    With rowSOTOXFR1
+                        Dim PICK_BATCH_NO As String = ""
+                        .Item("PICK_BATCH_NO") = "Q" & Mid(ASCMAIN1.Next_Control_No("SOTOXFR1.PICK_BATCH_NO_Q"), 6, 5)
+                        .Item("STYLE_CODE") = STYLE_CODE
+                        .Item("COLOR_CODE") = COLOR_CODE
+
+                        .Item("US_ONHD") = grow.Cells("US_ONHD").Value
+                        .Item("US_PICK") = grow.Cells("US_PICK").Value
+                        .Item("US_AVA") = grow.Cells("US_OTS").Value
+
+                        .Item("MS_ONHD") = grow.Cells("MS_ONHD").Value
+                        .Item("MS_PICK") = grow.Cells("MS_PICK").Value
+                        .Item("MS_AVA") = grow.Cells("MS_OTS").Value
+
+                        .Item("ALLO") = -1 * NET_SHORT
+                        .Item("SHORT") = NET_SHORT
+                        .Item("OXFR_STATUS") = "0"
+
+                        .Item("INIT_DATE") = DATETIME_STAMP
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    End With
+                    dst.Tables("SOTOXFR1").Rows.Add(rowSOTOXFR1)
+                Next
+
+                Update_Record_TDA("SOTOXFR1")
+
+                MsgBox("Transfer Queue Record(s) Added - Transfer Queue will be Refreshed")
+
+                Refresh_Documents()
+
         End Select
     End Sub
 #End Region
@@ -621,6 +701,7 @@ Public Class SOFOXFR1
 
         Fill_Records("ICTSTATS")
         Sort_grdColumns(grdICTSTATS, "STYLE_CODE, COLOR_CODE")
+        ShowOnlyNetShort()
 
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("", "")
@@ -846,5 +927,31 @@ Public Class SOFOXFR1
             End If
         End With
 
+    End Sub
+
+    Private Sub grdICTSTATS_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdICTSTATS.InitializeRow
+        If e.Row.IsDataRow Then
+            Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value
+            Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value
+            If dst.Tables("SOTOXFRX").Rows.Find(New String() {STYLE_CODE, COLOR_CODE}) Is Nothing Then
+                e.Row.Appearance.ForeColor = System.Drawing.Color.Red
+            Else
+                e.Row.Appearance.ForeColor = System.Drawing.Color.Empty
+            End If
+        End If
+    End Sub
+
+    Private Sub chkShowOnlyNetShort_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowOnlyNetShort.CheckedChanged
+        If Me.SELECTION_NO = 0 Then Exit Sub
+        ShowOnlyNetShort()
+    End Sub
+
+    Sub ShowOnlyNetShort()
+        Dim dvw As DataView = dst.Tables("ICTSTATS").DefaultView
+        If chkShowOnlyNetShort.Checked Then
+            dvw.RowFilter = "US_ONHD > 0 AND ISNULL(NET_SHORT,0) < 0"
+        Else
+            dvw.RowFilter = ""
+        End If
     End Sub
 End Class
