@@ -3674,6 +3674,10 @@ Public Class SOROREL1
                 Else
                     If chkAllocateNoRelease.Checked Then
                         ' this is ok
+                    ElseIf chkECommerce.Checked Then
+                        ' this is ok
+                    ElseIf chkForcePick.Checked Then
+                        ' this is ok
                     ElseIf Absx1.txtFor("WHSE_CODE").Text = "MS" Then
                         EMsg &= vbCr & "MS Sales Order Release must be done by choosing Manually Selected only"
                     ElseIf Absx1.txtFor("WHSE_CODE").Text = "" Then
