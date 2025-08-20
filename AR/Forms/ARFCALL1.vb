@@ -62,6 +62,10 @@ Public Class ARFCALL1
             SQLSB.AppendLine("    0")
             SQLSB.AppendLine("  END ) AS DAYS120,")
             SQLSB.AppendLine("SUM(NVL(O1.INV_BALANCE,0)) AS TOTAL_BAL,")
+            SQLSB.AppendLine("0 AS ORDS_RELD,")
+            SQLSB.AppendLine("0 AS ORDS_PEND,")
+            SQLSB.AppendLine("0 AS CUST_CREDIT_LIMIT,")
+            SQLSB.AppendLine("'' AS CREDIT_PCT,")
             SQLSB.AppendLine("SYSDATE AS LAST_FU,")
             SQLSB.AppendLine("SYSDATE AS NEXT_FU,")
             SQLSB.AppendLine("'MAP THIS!' AS EMP_NAME_FU")
@@ -119,9 +123,9 @@ Public Class ARFCALL1
             ASCMAIN1.sql = SQLSB.ToString
             Create_TDA(.Tables.Add, "ARTPYMTX", "**", 0, False, "V", 2)
 
-            .Relations.Add("PMTINVHX_ARTPYMTX", _
-                New DataColumn() {.Tables("PMTINVHX").Columns("INV_NO")}, _
-                New DataColumn() {.Tables("ARTPYMTX").Columns("INV_NO")})
+            .Relations.Add("PMTINVHX_ARTPYMTX",
+                New DataColumn() { .Tables("PMTINVHX").Columns("INV_NO")},
+                New DataColumn() { .Tables("ARTPYMTX").Columns("INV_NO")})
 
             SQLSB.Length = 0
             SQLSB.AppendLine("SELECT TATCONV1.*,")
@@ -395,6 +399,7 @@ Public Class ARFCALL1
         dst.EnforceConstraints = False
 
         Fill_Records("ARTOPENX")
+        ComputeCreditSnapshot()
         Fill_Records("PMTEMPL1")
         Fill_Records("ARTCUSTD")
         dst.EnforceConstraints = True
@@ -426,6 +431,7 @@ Public Class ARFCALL1
         dst.EnforceConstraints = False
         dst.Tables("ARTOPENX").Rows.Clear()
         Fill_Records("ARTOPENX")
+        ComputeCreditSnapshot()
         'Fill_Records("PMTEMPL1")
         dst.EnforceConstraints = True
         SetFollowUpData()
@@ -591,11 +597,11 @@ Public Class ARFCALL1
                     End If
                     FILENAME = SOCMAIN1.Create_Invoice(Me, INV_NO)
                     SUBJECT = "Invoice " & INV_NO
-                    SOCMAIN1.email_Invoice(Me, _
-                        CUST_CODE, _
-                        CUST_NAME, _
-                        CONTACT_EMAIL, _
-                        CONTACT_NAME, _
+                    SOCMAIN1.email_Invoice(Me,
+                        CUST_CODE,
+                        CUST_NAME,
+                        CONTACT_EMAIL,
+                        CONTACT_NAME,
                         FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO)
 
                 End If
@@ -820,7 +826,7 @@ Public Class ARFCALL1
         grdPMTINVHX.Refresh()
     End Sub
 
-    Private Sub FindAndReplace(ByVal doc As Microsoft.Office.Interop.Word.Document, _
+    Private Sub FindAndReplace(ByVal doc As Microsoft.Office.Interop.Word.Document,
                                ByVal FindText As String, ByVal ReplaceText As String)
         Dim WordRange As Microsoft.Office.Interop.Word.Range
 
@@ -1068,7 +1074,7 @@ Public Class ARFCALL1
         FindAndReplace(WD, "<<FullName>>", Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(CONTACT_NAME.ToLower()))
         WD.SaveAs(ASCMAIN1.Folders("Temp") & "CollectionsHTML.doc", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatHTML)
         WD.SaveAs(ASCMAIN1.Folders("Temp") & "CollectionsText.doc", Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatDOSTextLineBreaks)
-        WD.Close(Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges, _
+        WD.Close(Microsoft.Office.Interop.Word.WdSaveOptions.wdDoNotSaveChanges,
                       Microsoft.Office.Interop.Word.WdOriginalFormat.wdOriginalDocumentFormat)
         W.Quit()
         W = Nothing
@@ -1143,6 +1149,82 @@ Public Class ARFCALL1
         dst.Tables("TATCONV1").Rows.Clear()
         FetchCONVH()
     End Sub
+    Private Sub ComputeCreditSnapshot()
+        If dst.Tables("ARTOPENX") Is Nothing OrElse dst.Tables("ARTOPENX").Rows.Count = 0 Then Exit Sub
+
+        Dim distinctCusts As DataTable = dst.Tables("ARTOPENX").DefaultView.ToTable(True, "CUST_CODE")
+        Dim sbIn As New Text.StringBuilder()
+        For Each r As DataRow In distinctCusts.Rows
+            Dim c As String = CStr(r("CUST_CODE") & "")
+            If c <> "" Then
+                c = c.Replace("'", "''")
+                If sbIn.Length > 0 Then sbIn.Append(",")
+                sbIn.Append("'").Append(c).Append("'")
+            End If
+        Next
+        If sbIn.Length = 0 Then Exit Sub
+        Dim inList As String = sbIn.ToString()
+
+        Dim sb As New Text.StringBuilder()
+        sb.AppendLine("SELECT C1.CUST_CODE, NVL(C1.CUST_CREDIT_LIMIT,0) CUST_CREDIT_LIMIT")
+        sb.AppendLine("FROM ARTCUST1 C1")
+        sb.AppendLine("WHERE C1.CUST_CODE IN (" & inList & ")")
+        ASCMAIN1.sql = sb.ToString()
+        Dim dtCL As DataTable = ASCDATA1.GetDataTable()
+
+        Dim CL As New Dictionary(Of String, Decimal)(StringComparer.OrdinalIgnoreCase)
+        For Each r As DataRow In dtCL.Rows
+            CL(CStr(r("CUST_CODE"))) = Val(r("CUST_CREDIT_LIMIT") & "")
+        Next
+
+        sb.Length = 0
+        sb.AppendLine("SELECT S1.CUST_CODE,")
+        sb.AppendLine("  SUM(NVL(S2.ORDR_QTY_PICK,0)*NVL(S2.ORDR_UNIT_PRICE,0)) ORDS_RELD,")
+        sb.AppendLine("  SUM(NVL(S2.ORDR_QTY_OPEN,0)*NVL(S2.ORDR_UNIT_PRICE,0)) ORDS_PEND")
+        sb.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
+        sb.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+        sb.AppendLine("  AND S1.ORDR_STATUS IN ('O','P')")
+        sb.AppendLine("  AND S1.CUST_CODE IN (" & inList & ")")
+        sb.AppendLine("GROUP BY S1.CUST_CODE")
+        ASCMAIN1.sql = sb.ToString()
+        Dim dtOO As DataTable = ASCDATA1.GetDataTable()
+
+        Dim REL As New Dictionary(Of String, Decimal)(StringComparer.OrdinalIgnoreCase)
+        Dim PEND As New Dictionary(Of String, Decimal)(StringComparer.OrdinalIgnoreCase)
+        For Each r As DataRow In dtOO.Rows
+            Dim k As String = CStr(r("CUST_CODE"))
+            REL(k) = Val(r("ORDS_RELD") & "")
+            PEND(k) = Val(r("ORDS_PEND") & "")
+        Next
+
+        For Each r As DataRow In dst.Tables("ARTOPENX").Rows
+            Dim cust As String = CStr(r("CUST_CODE"))
+            Dim limit As Decimal = If(CL.ContainsKey(cust), CL(cust), 0D)
+            Dim openAR As Decimal = Val(r("TOTAL_BAL") & "")
+            Dim ordR As Decimal = If(REL.ContainsKey(cust), REL(cust), 0D)
+            Dim ordP As Decimal = If(PEND.ContainsKey(cust), PEND(cust), 0D)
+
+            r("CUST_CREDIT_LIMIT") = limit
+            r("ORDS_RELD") = ordR
+            r("ORDS_PEND") = ordP
+
+            Dim avail As Decimal = limit - openAR - ordR
+            If avail < 0D Then avail = 0D
+            r("CREDIT_PCT") = If(limit > 0D, Math.Round(100D * avail / limit, 0), 0D)
+        Next
+
+        With grdARTOPENX.DisplayLayout.Bands(0)
+            For Each col As String In New String() {"ORDS_RELD", "ORDS_PEND", "CREDIT_PCT", "CUST_CREDIT_LIMIT"}
+                If grdARTOPENX.DisplayLayout.Bands(0).Columns.Exists(col) Then
+                    grdARTOPENX.DisplayLayout.Bands(0).Columns(col).Header.Appearance.BackColor2 = System.Drawing.Color.LightBlue
+                    grdARTOPENX.DisplayLayout.Bands(0).Columns(col).Header.Appearance.BackColor = System.Drawing.Color.White
+                    grdARTOPENX.DisplayLayout.Bands(0).Columns(col).Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                End If
+            Next
+        End With
+    End Sub
+
+
 
 #End Region
 End Class
