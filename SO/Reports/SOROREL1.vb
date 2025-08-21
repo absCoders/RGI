@@ -292,6 +292,10 @@ Public Class SOROREL1
         SQL_ins.Add("SALES_DIVISION_CODE", SQL_in("SOTORDR1.SALES_DIVISION_CODE"))
         SQL_ins.Add("ORDR_GROUP_NO", SQL_in("SOTORDR1.ORDR_GROUP_NO"))
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            SQL_ins.Add("ORDR_TYPE_CODE", " and SOTORDR1.ORDR_TYPE_CODE <> 'B2C'")
+        End If
+
         If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
             SQL_ins.Add("TERM_CODE", SQL_in("SOTORDR1.TERM_CODE"))
         End If
