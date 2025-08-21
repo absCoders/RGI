@@ -19,6 +19,7 @@ Public Class ICFXFRM2
         Create_WorkTables(True)
         Get_PARM("SOTPARM1")
         Get_PARM("POTPARM1")
+        Get_PARM("EDTPARM1")
         With dst
 
             ASCMAIN1.sql = $"Select * from {SOTORDRX} where STYLE_CODE = :PARM1 and COLOR_CODE = :PARM2"
