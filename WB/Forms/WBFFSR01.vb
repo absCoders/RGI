@@ -17,6 +17,8 @@ Public Class WBFFSR01
     Dim valueColsYOY As String() = {"WTD_FULL_WK_YOY", "MTD_YOY", "YTD_YOY", "MTD_FULL_MO_YOY", "YTD_FULL_YR_YOY"}
     Dim valueColsPCT As String() = {"WTD_FULL_WK_YOY_PCT", "MTD_YOY_PCT", "YTD_YOY_PCT", "MTD_FULL_MO_YOY_PCT", "YTD_FULL_YR_YOY_PCT"}
 
+    Dim EOM_MODE As Boolean = False
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -29,6 +31,8 @@ Public Class WBFFSR01
         DATES.Add("BOY_LY", Now())
         DATES.Add("BOM_TY", Now())
         DATES.Add("BOM_LY", Now())
+        DATES.Add("EOM_TY", Now())
+        DATES.Add("EOM_LY", Now())
 
         dteSaturday.Value = calcSaturdayEOW(Now())
 
@@ -187,11 +191,36 @@ Public Class WBFFSR01
         Select Case eItemKey
 
             Case "Refresh"
-                If dteSaturday.DateTime.DayOfWeek <> DayOfWeek.Saturday Then
-                    EMsg &= vbCr & $"{Format(dteSaturday.DateTime, "MM/dd/yy")} In Not A Saturday."
+                Dim inputDate As DateTime = dteSaturday.DateTime
+                Dim lastDay As Integer = DateTime.DaysInMonth(inputDate.Year, inputDate.Month)
+                Dim lastDateOfMonth As DateTime = New DateTime(inputDate.Year, inputDate.Month, lastDay)
+                If inputDate = lastDateOfMonth Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "EOM Version"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("You Select The Last Day Of The Month.")
+                    iMSG.AppendLine("Do You Want To Run The End-Of-Month")
+                    iMSG.AppendLine("Version Of The Report?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult = MsgBoxResult.Yes Then
+                        EOM_MODE = True
+                        If setDates() = False Then
+                            EMsg &= vbCr & $"Problem Setting Dates For {Format(dteSaturday.DateTime, "MM/dd/yy")}."
+                        End If
+                    Else
+                        EOM_MODE = False
+                    End If
                 Else
-                    If setDates() = False Then
-                        EMsg &= vbCr & $"Problem Setting Dates For {Format(dteSaturday.DateTime, "MM/dd/yy")}."
+                    EOM_MODE = False
+                End If
+
+                If EOM_MODE = False Then
+                    If dteSaturday.DateTime.DayOfWeek <> DayOfWeek.Saturday Then
+                        EMsg &= vbCr & $"{Format(dteSaturday.DateTime, "MM/dd/yy")} In Not A Saturday."
+                    Else
+                        If setDates() = False Then
+                            EMsg &= vbCr & $"Problem Setting Dates For {Format(dteSaturday.DateTime, "MM/dd/yy")}."
+                        End If
                     End If
                 End If
 
@@ -299,6 +328,8 @@ Public Class WBFFSR01
         Else
             dst.AcceptChanges()
         End If
+
+        setEOM_MODES()
 
         Me.Cursor = Cursors.Default
         If showRefreshing Then
@@ -465,7 +496,12 @@ Public Class WBFFSR01
                 Exit Sub
         End Select
 
-        For i As Int64 = 0 To 6
+        Dim MOs As Int64 = 0
+        If EOM_MODE Then
+            MOs = 6
+        End If
+
+        For i As Int64 = MOs To 6
             SQLs.Length = 0
             SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
             SQLs.AppendLine("SELECT")
@@ -523,7 +559,11 @@ Public Class WBFFSR01
             SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
             SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
-            SQLs.AppendLine($"AND I1.INV_DATE = '{Format(TY_DAYS(i), "dd-MMM-yyyy")}'")
+            If EOM_MODE Then
+                SQLs.AppendLine($"AND (I1.INV_DATE >= '{Format(DATES("BOM_TY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_TY"), "dd-MMM-yyyy")}')")
+            Else
+                SQLs.AppendLine($"AND I1.INV_DATE = '{Format(TY_DAYS(i), "dd-MMM-yyyy")}'")
+            End If
             If chkHideCredits.Checked Then
                 SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
             End If
@@ -590,7 +630,11 @@ Public Class WBFFSR01
             SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
             SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
-            SQLs.AppendLine($"AND I1.INV_DATE = '{Format(LY_DAYS(i), "dd-MMM-yyyy")}'")
+            If EOM_MODE Then
+                SQLs.AppendLine($"AND (I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}')")
+            Else
+                SQLs.AppendLine($"AND I1.INV_DATE = '{Format(LY_DAYS(i), "dd-MMM-yyyy")}'")
+            End If
             If chkHideCredits.Checked Then
                 SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
             End If
@@ -711,7 +755,11 @@ Public Class WBFFSR01
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
         SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
-        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        If EOM_MODE Then
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}'")
+        Else
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        End If
         If chkHideCredits.Checked Then
             SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
         End If
@@ -751,7 +799,11 @@ Public Class WBFFSR01
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
         SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
-        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        If EOM_MODE Then
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}'")
+        Else
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        End If
         If chkHideCredits.Checked Then
             SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
         End If
@@ -762,7 +814,7 @@ Public Class WBFFSR01
         ASCDATA1.ExecuteSQL()
 
         'Fill LY_FULL_MO
-        Dim LY_EOM As Date = DateSerial(DATES("BOM_LY").Year, DATES("BOM_LY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
+        'Dim LY_EOM As Date = DateSerial(DATES("BOM_LY").Year, DATES("BOM_LY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
@@ -792,7 +844,7 @@ Public Class WBFFSR01
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
         SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
-        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(LY_EOM, "dd-MMM-yyyy")}'")
+        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}'")
         If chkHideCredits.Checked Then
             SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
         End If
@@ -884,6 +936,11 @@ Public Class WBFFSR01
             TY_DAYS.Clear()
             LY_DAYS.Clear()
             Dim fltr As String = $"WEEK_END_DATE = '{Format(dteSaturday.DateTime, "dd-MMM-yyyy")}'"
+            If EOM_MODE Then
+                Dim daysToSubtract As Integer = (dteSaturday.DateTime.DayOfWeek - DayOfWeek.Saturday + 7) Mod 7
+                Dim previousSaturday As DateTime = dteSaturday.DateTime.AddDays(-daysToSubtract)
+                fltr = $"WEEK_END_DATE = '{Format(previousSaturday, "dd-MMM-yyyy")}'"
+            End If
             Dim rowGLTPARM3TY As DataRow = dst.Tables.Item("GLTPARM3").Select(fltr).FirstOrDefault
             Dim rowGLTPARM3LY As DataRow = Nothing
             If Not IsNothing(rowGLTPARM3TY) Then
@@ -899,6 +956,9 @@ Public Class WBFFSR01
                     DATES("BOM_TY") = DateSerial(DATES("EOW_TY").Year, DATES("EOW_TY").Month, 1)
                     DATES("BOY_LY") = DateSerial(DATES("EOW_LY").Year, 4, 1)
                     DATES("BOM_LY") = DateSerial(DATES("EOW_LY").Year, DATES("EOW_TY").Month, 1)
+                    DATES("EOM_TY") = DateSerial(DATES("BOM_TY").Year, DATES("BOM_TY").Month, DATES("BOM_TY").AddMonths(1).AddDays(-1).Day)
+                    DATES("EOM_LY") = DateSerial(DATES("BOM_LY").Year, DATES("BOM_TY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
+
                     Dim C As Int64 = 0
                     For i As Int64 = 6 To 0 Step -1
                         C += 1
@@ -944,6 +1004,9 @@ Public Class WBFFSR01
             titleSelection = "Customer"
         End If
         titlePeriod = "For The Period Ending " & Format(dteSaturday.DateTime, "MM/dd/yy")
+        If EOM_MODE Then
+            titlePeriod = titlePeriod & " (EOM Mode)"
+        End If
         If rdoUnits.Checked Then
             titleValues = "Showing Units"
         End If
@@ -969,6 +1032,13 @@ Public Class WBFFSR01
 
     Private Sub rdoWSHE_CODE_CheckedChanged(sender As Object, e As EventArgs) Handles rdoWSHE_CODE.CheckedChanged
         setWebEDIOption()
+    End Sub
+
+    Private Sub setEOM_MODES()
+        Dim COLS As String() = {"TY_WK1", "TY_WK2", "TY_WK3", "TY_WK4", "TY_WK5", "TY_WK6", "TY_WK7", "TOT_TY_WK", "TOT_LY_WK", "LY_MTD", "WTD_FULL_WK_YOY", "WTD_FULL_WK_YOY_PCT"}
+        For Each COL As String In COLS
+            grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Hidden = EOM_MODE
+        Next
     End Sub
 
 #End Region
