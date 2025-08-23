@@ -40,8 +40,11 @@ Public Class ECFPRC01
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "ECTPRCG3", "**", 3, True, "V", 3)
             Dim Calc_Exp As String = "FINAL_PARTNER_PRICE / IIF(ISNULL(SET_QTY,1)=0,1,ISNULL(SET_QTY,1))"
-            .Tables("ECTPRCG3").Columns.Add("FINAL_PARTNER_SET_PRICE", GetType(System.Double), Calc_Exp)
-            .Tables("ECTPRCG3").Columns.Add("IS_ECOM")
+            With .Tables("ECTPRCG3").Columns
+                .Add("FINAL_PARTNER_SET_PRICE", GetType(System.Double), Calc_Exp)
+                .Add("IS_ECOM")
+                .Add("PO_DATE_ETA", GetType(System.DateTime))
+            End With
 
             S.Length = 0
             S.AppendLine("SELECT *")
@@ -51,12 +54,26 @@ Public Class ECFPRC01
             Create_TDA(.Tables.Add("ECTESTYS"), "ECTESTY1", "**", 0, False)
             Fill_Records("ECTESTYS")
 
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("STYLE_CODE,")
+            S.AppendLine("COLOR_CODE,")
+            S.AppendLine("MIN(PO_DATE_ETA) AS PO_DATE_ETA")
+            S.AppendLine("FROM POTORDR2")
+            S.AppendLine("WHERE PO_QTY_OPN > 0")
+            S.AppendLine("GROUP BY STYLE_CODE, COLOR_CODE")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "POTORDRX", "**", 0, False)
+            Fill_Records("POTORDRX")
+
             'S.Length = 0
             'S.AppendLine("SELECT *")
             'S.AppendLine("FROM ECTPRCG2")
             'ASCMAIN1.sql = S.ToString()
             'Create_TDA(.Tables.Add, "ECTPRCG2", "**", 0, False)
             '.Tables("ECTPRCG2").Columns.Add("SEL", GetType(System.String))
+
+
         End With
 
         'Fill_Records("ECTPRCG2")
@@ -101,7 +118,7 @@ Public Class ECFPRC01
             .Columns("MANUAL_PARTNER_PRICE").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("MANUAL_PARTNER_PRICE").CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
 
-            ''.Columns("EDI_REPORT_DATE").Format = "MM/dd/yyyy hh:mm"
+            .Columns("PO_DATE_ETA").Format = "MM/dd/yy"
             .Columns("SET_QTY").Format = "###,###,##0"
             .Columns("STYLE_PRICE").Format = "###,###,##0.00"
             .Columns("CASE_QTY").Format = "###,###,##0"
@@ -151,8 +168,10 @@ Public Class ECFPRC01
             '.Columns("SEL").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("ECOM_PRICE_ADD").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("ECOM_PRICE_MARKUP_PCT").CellActivation = UltraWinGrid.Activation.AllowEdit
+            .Columns("ECOM_PRICE_TARIFF_PCT").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("ECOM_PRICE_ADD").Format = "###,###,##0.00"
             .Columns("ECOM_PRICE_MARKUP_PCT").Format = "###,###,##0.0000"
+            .Columns("ECOM_PRICE_TARIFF_PCT").Format = "###,###,##0.0000"
         End With
 
         'For i As Integer = 0 To grdECTPRCG3.DisplayLayout.Bands(0).Columns.Count - 1
@@ -387,7 +406,8 @@ Public Class ECFPRC01
             S.AppendLine("ECOM_PRICE_NOTES,")
             S.AppendLine("ECOM_PRICE_LAST,")
             S.AppendLine("ECOM_PRICE_ADD,")
-            S.AppendLine("ECOM_PRICE_MARKUP_PCT")
+            S.AppendLine("ECOM_PRICE_MARKUP_PCT,")
+            S.AppendLine("ECOM_PRICE_TARIFF_PCT")
             S.AppendLine("FROM ECTPRCG2")
             S.AppendLine($"WHERE PRCG_NO = '{txtPRCG_NO.Text}'")
             Fill_Records("ECTPRCG2",,, S.ToString)
@@ -400,12 +420,13 @@ Public Class ECFPRC01
             S.AppendLine("ECOM_PRICE_NOTES,")
             S.AppendLine("ECOM_PRICE_LAST,")
             S.AppendLine("ECOM_PRICE_ADD,")
-            S.AppendLine("ECOM_PRICE_MARKUP_PCT")
+            S.AppendLine("ECOM_PRICE_MARKUP_PCT,")
+            S.AppendLine("ECOM_PRICE_TARIFF_PCT")
             S.AppendLine("FROM ECTECOM1")
             S.AppendLine($"WHERE ECOM_CODE = '{ECOM_CODE}'")
             Fill_Records("ECTPRCG2",, False, S.ToString)
             For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'")
-                Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT"}
+                Dim COLS As String() = {"ECOM_PRICE_ADD", "ECOM_PRICE_MARKUP_PCT", "ECOM_PRICE_TARIFF_PCT"}
                 For Each COL As String In COLS
                     If IsDBNull(rowECTPRCG2.Item(COL)) Then
                         rowECTPRCG2.Item(COL) = 0
@@ -502,6 +523,7 @@ Public Class ECFPRC01
 
             Fill_Records("ECTPRCG3",, False, S.ToString)
             Calc_Extra_Fields()
+            AddPOETA()
             dst.AcceptChanges()
         End If
 
@@ -513,6 +535,20 @@ Public Class ECFPRC01
 
         ASCMAIN1.Progress("", "")
         Me.Cursor = Cursors.Default
+    End Sub
+
+    Private Sub AddPOETA()
+        For Each rowECTPRCG3 As DataRow In dst.Tables("ECTPRCG3").Select()
+            Dim STYLE_CODE As String = rowECTPRCG3.Item("STYLE_CODE").ToString & String.Empty
+            Dim COLOR_CODE As String = rowECTPRCG3.Item("COLOR_CODE").ToString & String.Empty
+            Dim fltr As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+            Dim rowPOTORDRX As DataRow = dst.Tables("POTORDRX").Select(fltr).FirstOrDefault
+            If Not IsNothing(rowPOTORDRX) Then
+                If IsDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString & String.Empty) Then
+                    rowECTPRCG3.Item("PO_DATE_ETA") = CDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString & String.Empty)
+                End If
+            End If
+        Next
     End Sub
 
     Private Sub calcISECOM()
@@ -591,6 +627,7 @@ Public Class ECFPRC01
 
             Dim ECOM_PRICE_ADD As Decimal = 0
             Dim ECOM_PRICE_MARKUP_PCT As Decimal = 0
+            Dim ECOM_PRICE_TARIFF_PCT As Decimal = 0
             If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty) Then
                 ECOM_PRICE_ADD = Val(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty)
             Else
@@ -601,6 +638,12 @@ Public Class ECFPRC01
                 ECOM_PRICE_MARKUP_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty)
             Else
                 MsgBox($"Invalid Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+                Exit Sub
+            End If
+            If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty) Then
+                ECOM_PRICE_TARIFF_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty)
+            Else
+                MsgBox($"Invalid Tariff Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
                 Exit Sub
             End If
 
@@ -630,7 +673,7 @@ Public Class ECFPRC01
             CARTON_SET_PRICE = STANDARD_SET_PRICE + CARTON_PACK_QTY_ADDITION
             STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + ECOM_PRICE_ADD
             'FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * (1 + ECOM_PRICE_MARKUP_PCT)) + MANUAL_PARTNER_PRICE
-            FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE / (1 - ECOM_PRICE_MARKUP_PCT)) + MANUAL_PARTNER_PRICE
+            FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE / (1 - (ECOM_PRICE_MARKUP_PCT + ECOM_PRICE_TARIFF_PCT))) + MANUAL_PARTNER_PRICE
             rowECTPRCG3.Item("STANDARD_PRICE") = STANDARD_PRICE
             rowECTPRCG3.Item("STANDARD_SET_PRICE") = STANDARD_SET_PRICE
             rowECTPRCG3.Item("CARTON_SET_PRICE") = CARTON_SET_PRICE
