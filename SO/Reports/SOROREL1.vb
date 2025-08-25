@@ -2377,6 +2377,9 @@ Public Class SOROREL1
                 .Item("SHIP_VIA_CODE") = SHIP_VIA_CODE
                 .Item("WHSE_CODE") = WHSE_CODE_LNO
 
+                'Next Line Supports SOTPICK1.SALES_DIVISION_CODE
+                .Item("SALES_DIVISION_CODE") = rowSOTORDR1_rel.Item("SALES_DIVISION_CODE")
+
                 ' 04/05/2015 RGI to process CC after Release.
                 If (ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI") Then
                     If tblARTCCPA1.Select("ORDR_NO = '" & ORDR_NO & "'").Length > 0 Then
