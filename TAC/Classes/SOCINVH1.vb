@@ -449,7 +449,9 @@
 
                                                     ' Get this number to be evenly divisible by ORDR_QTY_SHIP
                                                     ' So we do not have rounding issues on the Invoice
-                                                    Dim INV_MISC_CHG_TAR As Decimal = Math.Round(ORDR_UNIT_PRICE * (SURCHARGE_PERC / 100), 2) * ORDR_QTY_SHIP
+                                                    ' Calcultion chnaged by Andy/Regency 8/22
+                                                    'Dim INV_MISC_CHG_TAR As Decimal = Math.Round(ORDR_UNIT_PRICE * (SURCHARGE_PERC / 100), 2) * ORDR_QTY_SHIP
+                                                    Dim INV_MISC_CHG_TAR As Decimal = Math.Round((ORDR_UNIT_PRICE * ORDR_QTY_SHIP) * (SURCHARGE_PERC / 100), 2)
 
                                                     rowSOTINVHM.Item("INV_MISC_CHG") = INV_MISC_CHG_TAR
                                                     'rowSOTINVHM.Item("CTL_NO ") = ""
