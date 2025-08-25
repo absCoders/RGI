@@ -134,6 +134,8 @@ Partial Class ECTECOM1
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.UltraNumericEditor8 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -182,6 +184,7 @@ Partial Class ECTECOM1
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
+        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -603,6 +606,8 @@ Partial Class ECTECOM1
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.UltraNumericEditor8)
+        Me.Panel4.Controls.Add(Me.UltraLabel17)
         Me.Panel4.Controls.Add(Me.UltraLabel16)
         Me.Panel4.Controls.Add(Me.UltraTextEditor7)
         Me.Panel4.Controls.Add(Me.UltraNumericEditor7)
@@ -622,7 +627,7 @@ Partial Class ECTECOM1
         Appearance7.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel16.Appearance = Appearance7
         Me.UltraLabel16.AutoSize = True
-        Me.UltraLabel16.Location = New System.Drawing.Point(13, 113)
+        Me.UltraLabel16.Location = New System.Drawing.Point(13, 143)
         Me.UltraLabel16.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraLabel16.Name = "UltraLabel16"
         Me.UltraLabel16.Size = New System.Drawing.Size(166, 18)
@@ -632,7 +637,7 @@ Partial Class ECTECOM1
         'UltraTextEditor7
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "ECOM_PRICE_NOTES")
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(13, 130)
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(13, 160)
         Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor7.Multiline = True
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
@@ -1067,6 +1072,29 @@ Partial Class ECTECOM1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(768, 422)
         '
+        'UltraNumericEditor8
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor8, "ECOM_PRICE_TARIFF_PCT")
+        Me.UltraNumericEditor8.FormatString = "#,##0.00000"
+        Me.UltraNumericEditor8.Location = New System.Drawing.Point(205, 96)
+        Me.UltraNumericEditor8.MaxValue = 9999
+        Me.UltraNumericEditor8.MinValue = 0
+        Me.UltraNumericEditor8.Name = "UltraNumericEditor8"
+        Me.UltraNumericEditor8.NullText = "0"
+        Me.UltraNumericEditor8.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Decimal]
+        Me.UltraNumericEditor8.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor8.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor8.TabIndex = 342
+        '
+        'UltraLabel17
+        '
+        Me.UltraLabel17.AutoSize = True
+        Me.UltraLabel17.Location = New System.Drawing.Point(13, 101)
+        Me.UltraLabel17.Name = "UltraLabel17"
+        Me.UltraLabel17.Size = New System.Drawing.Size(163, 18)
+        Me.UltraLabel17.TabIndex = 341
+        Me.UltraLabel17.Text = "Price Tariff Mark Up Pct"
+        '
         'ECTECOM1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1127,6 +1155,7 @@ Partial Class ECTECOM1
         CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
+        CType(Me.UltraNumericEditor8, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1191,4 +1220,6 @@ Partial Class ECTECOM1
     Friend WithEvents UltraTextEditor7 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraNumericEditor7 As UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel15 As Misc.UltraLabel
+    Friend WithEvents UltraNumericEditor8 As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel17 As Misc.UltraLabel
 End Class

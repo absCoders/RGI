@@ -601,7 +601,7 @@
         Dim rtn_row As DataRow = Nothing
         Dim ab_row As DataRow = Nothing
         ' Dim tmp_LOC As String
-        ASCMAIN1.sql = " select b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE " & vbCrLf _
+        ASCMAIN1.sql = " select b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE, nvl(m1.LOCATION_USE,'A') LOCATION_USE " & vbCrLf _
             & " from whtlocb1 b1 " & vbCrLf _
             & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
             & "  where b1.STYLE_CODE = '" & Style & "' and b1.COLOR_CODE = '" & Color & "' " & vbCrLf _
@@ -609,12 +609,15 @@
             & "  and m1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
             & "  and NVL(m1.LOCATION_LOCKED,'0') <> '1'" & vbCrLf _
             & "  order by b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
-        For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "LOCATION_QTY")
-            If Style = "MTX65577" Then Stop
+        For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "LOCATION_USE, LOCATION_QTY")
+            If Style = "MTH13478" Then Stop
 
             rtn_row = row
+            If Val(row("LOCATION_QTY") & "") > 0 Then Exit For
+
             'previous logic tried to clean locs by taking picker to lowest qty > pick
             'Now we have largest qty first, so first rec always satisfies rule.
+            'New change - 8/16/2025 - show lowest qty first so we can clear locations.
             'tmp_LOC = row("LOCATION_CODE")
             'If row("LOCATION_QTY") > 0 And (tmp_LOC.Substring(tmp_LOC.Length - 1, 1) = "A" Or tmp_LOC.Substring(tmp_LOC.Length - 1, 1) = "B") Then
             '    ab_row = row

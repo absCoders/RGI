@@ -2462,8 +2462,8 @@ Public Class ICCMAIN1
                     .Item("MISC_CHG_CODE") = DTL_MISC_CHG_CODE
                     .Item("MISC_CHG_DESC") = DTL_MISC_CHG_CODE
                     .Item("MISC_CHG_NOTE") = "Returns Handling"
-                    .Item("INV_MISC_CHG") = -1 * rowSOTRTRN2("LINE_TARIFF")
-                    .Item("INV_MISC_CHG_CURR") = -1 * rowSOTRTRN2("LINE_TARIFF")
+                    .Item("INV_MISC_CHG") = -1 * Val(rowSOTRTRN2("LINE_TARIFF") & "")
+                    .Item("INV_MISC_CHG_CURR") = -1 * Val(rowSOTRTRN2("LINE_TARIFF") & "")
                     .Item("SURCHARGE_PERC") = rowSOTRTRN2("SURCHARGE_PERC")
                     .Item("MISC_CHARGE_TYPE") = "T"
                     .Item("COUNTRY_CODE") = rowSOTRTRN2("COUNTRY_CODE")
@@ -3194,22 +3194,22 @@ Public Class ICCMAIN1
         Dim VEND_CODE As String
         Dim VEND_COUNTRY As String
         Dim DUTY_RATE_CODE As String
-
-        If rowICTSTYL1 IsNot Nothing Then
-            CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
-            LIST_CALC_CODE = rowICTSTYL1.Item("LIST_CALC_CODE") & ""
-            CASE_CUBE = Val(rowICTSTYL1.Item("CASE_CUBE") & "")
-            VEND_CODE = rowICTSTYL1.Item("VEND_CODE") & ""
-            DUTY_RATE_CODE = rowICTSTYL1.Item("DUTY_RATE_CODE") & ""
-        Else
+        Dim COUNTRY_CODE As String = ""
+        If rowICTSTYL1 Is Nothing Then
             rowICTSTYL1 = frmASFBASE0.LookUp("ICTSTYL1", STYLE_CODE)
-            CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
-            LIST_CALC_CODE = rowICTSTYL1.Item("LIST_CALC_CODE") & ""
-            CASE_CUBE = Val(rowICTSTYL1.Item("CASE_CUBE") & "")
-            VEND_CODE = rowICTSTYL1.Item("VEND_CODE") & ""
-            DUTY_RATE_CODE = rowICTSTYL1.Item("DUTY_RATE_CODE") & ""
         End If
-
+        If rowICTSTYL1 Is Nothing Then
+            If Not SILENT Then
+                MsgBox("Missing or Invalid Style Code", vbOKOnly, "Cannot Calculate Style Price")
+            End If
+            Return 0
+        End If
+        CARTON_PACK_QTY = Val(rowICTSTYL1.Item("CARTON_PACK_QTY") & "")
+        LIST_CALC_CODE = rowICTSTYL1.Item("LIST_CALC_CODE") & ""
+        CASE_CUBE = Val(rowICTSTYL1.Item("CASE_CUBE") & "")
+        VEND_CODE = rowICTSTYL1.Item("VEND_CODE") & ""
+        DUTY_RATE_CODE = rowICTSTYL1.Item("DUTY_RATE_CODE") & ""
+        COUNTRY_CODE = rowICTSTYL1.Item("COUNTRY_CODE") & ""
 
         If rowICTLSTC1 Is Nothing Then
             rowICTLSTC1 = frmASFBASE0.LookUp("ICTLSTC1", LIST_CALC_CODE)
@@ -3301,6 +3301,8 @@ Public Class ICCMAIN1
             End If
             Return 0
         Else
+            Dim tariffByCountry_pct As Decimal = Get_Tariff_Pct_By_Country(COUNTRY_CODE)
+            COMPOUNDED_DUTY_RATE += tariffByCountry_pct
 
             STYLE_PRICE = (PO_COST * (100 + COMPOUNDED_DUTY_RATE) / 100 + FRT_PER_CTN / CARTON_PACK_QTY + FRT_PER_CUBE * CASE_CUBE / CARTON_PACK_QTY) * MARGIN_FACTOR
 
@@ -3314,13 +3316,47 @@ Public Class ICCMAIN1
 
         ASCMAIN1.sql = "Select * from ICTPARM1 where IC_PARM_KEY = 'Z'"
         Dim rowICTPARM1 As DataRow = ASCDATA1.GetDataRow
-        Dim IC_PARM_TARIFF_OFFSET_PCT As Double = Val(rowICTPARM1.Item("IC_PARM_TARIFF_OFFSET_PCT") & "")
-        Dim trumpTax_amt As Double = STYLE_PRICE * (IC_PARM_TARIFF_OFFSET_PCT / 100)
+        Dim IC_PARM_TARIFF_OFFSET_PCT As Decimal = Val(rowICTPARM1.Item("IC_PARM_TARIFF_OFFSET_PCT") & "")
+        Dim trumpTax_amt As Decimal = STYLE_PRICE * (IC_PARM_TARIFF_OFFSET_PCT / 100)
 
-
-        Return Math.Round(STYLE_PRICE + trumpTax_amt, 1)
+        Dim stylePriceCalc As Decimal = Math.Round(STYLE_PRICE + trumpTax_amt, 1)
+        Return stylePriceCalc
 
 
     End Function
-
+    Public Shared Function Calculate_Tariff_By_Country(STYLE_PRICE As Decimal, COUNTRY_CODE As String) As Decimal
+        Dim tariffByCountry_amt As Decimal = 0
+        If COUNTRY_CODE <> "" Then
+            ASCMAIN1.sql = $"Select * from ICTTARF1 where COUNTRY_CODE = '{COUNTRY_CODE}' AND NVL(TARIFF_ACTIVE,'0') = '1'"
+            Dim rowICTTARF1 As DataRow = ASCDATA1.GetDataRow
+            If rowICTTARF1 IsNot Nothing Then
+                Dim TARIFF_DATE As Date = Now.Date
+                ASCMAIN1.sql = $"Select * from ICTTARF2 where COUNTRY_CODE = '{COUNTRY_CODE}' 
+                                    AND TARIFF_START >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}' AND (TARIFF_END IS NULL OR TARIFF_END >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}') "
+                Dim rowICTTARF2 As DataRow = ASCDATA1.GetDataRow
+                If rowICTTARF2 IsNot Nothing Then
+                    Dim TARIFF_PCT As Decimal = Val(rowICTTARF2("TARIFF_PCT") & "")
+                    tariffByCountry_amt = STYLE_PRICE * (TARIFF_PCT / 100)
+                End If
+            End If
+        End If
+        Return tariffByCountry_amt
+    End Function
+    Public Shared Function Get_Tariff_Pct_By_Country(COUNTRY_CODE As String) As Decimal
+        Dim tariffByCountry_pct As Decimal = 0
+        If COUNTRY_CODE <> "" Then
+            ASCMAIN1.sql = $"Select * from ICTTARF1 where COUNTRY_CODE = '{COUNTRY_CODE}' AND NVL(TARIFF_ACTIVE,'0') = '1'"
+            Dim rowICTTARF1 As DataRow = ASCDATA1.GetDataRow
+            If rowICTTARF1 IsNot Nothing Then
+                Dim TARIFF_DATE As Date = Now.Date
+                ASCMAIN1.sql = $"Select * from ICTTARF2 where COUNTRY_CODE = '{COUNTRY_CODE}' 
+                                    AND TARIFF_START >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}' AND (TARIFF_END IS NULL OR TARIFF_END >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}') "
+                Dim rowICTTARF2 As DataRow = ASCDATA1.GetDataRow
+                If rowICTTARF2 IsNot Nothing Then
+                    tariffByCountry_pct = Val(rowICTTARF2("TARIFF_PCT") & "")
+                End If
+            End If
+        End If
+        Return tariffByCountry_pct
+    End Function
 End Class

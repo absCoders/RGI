@@ -19,6 +19,7 @@ Public Class ICFXFRM2
         Create_WorkTables(True)
         Get_PARM("SOTPARM1")
         Get_PARM("POTPARM1")
+        Get_PARM("EDTPARM1")
         With dst
 
             ASCMAIN1.sql = $"Select * from {SOTORDRX} where STYLE_CODE = :PARM1 and COLOR_CODE = :PARM2"
@@ -32,7 +33,7 @@ Public Class ICFXFRM2
             '.Tables("ICTSTYLX").Columns.Add("AVA_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(PICK_MS,0)-ISNULL(OPEN_MS,0)+ISNULL(ONPO_MS,0)+ISNULL(TRAN_MS,0)")
             '.Tables("ICTSTYLX").Columns.Add("AVA_US", GetType(System.Int32), "ISNULL(ONHD_US,0)-ISNULL(PICK_US,0)-ISNULL(OPEN_US,0)")
             .Tables("ICTSTYLX").Columns.Add("ATS_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(OPEN_MS,0)-ISNULL(PICK_MS,0)")
-            .Tables("ICTSTYLX").Columns.Add("OTS_MS", GetType(System.Int32))
+            .Tables("ICTSTYLX").Columns.Add("OTS_MS", GetType(System.Int32), "ISNULL(ONHD_MS,0)-ISNULL(PICK_MS,0)")
             .Tables("ICTSTYLX").Columns.Add("OTS_US", GetType(System.Int32))
             .Tables("ICTSTYLX").Columns.Add("AVA_US", GetType(System.Int32))
             .Tables("ICTSTYLX").Columns.Add("TOTAL_FUT_AVA", GetType(System.Int32))
@@ -424,6 +425,21 @@ Public Class ICFXFRM2
         For Each row As DataRow In dst.Tables("ICTSTYLX").Rows
             Dim STYLE_CODE As String = row("STYLE_CODE")
             Dim COLOR_CODE As String = row("COLOR_CODE")
+
+            Dim ONHD_US As Integer = Val(row("ONHD_US") & "")
+            Dim PICK_US As Integer = Val(row("PICK_US") & "")
+            Dim OPEN_US As Integer = Val(row("OPEN_US") & "")
+            Dim TRAN_US As Integer = Val(row("TRAN_US") & "")
+            Dim CARTON_PACK_QTY As Integer = Val(row("CARTON_PACK_QTY") & "")
+
+            Dim roundedOpenUS As Integer = If(CARTON_PACK_QTY > 0,
+                CInt(Math.Ceiling(OPEN_US / CDbl(CARTON_PACK_QTY))) * CARTON_PACK_QTY,
+                OPEN_US)
+
+            row("OTS_US") = ONHD_US - PICK_US - roundedOpenUS
+            row("AVA_US") = Val(row("OTS_US") & "") + Val(row("TRAN_US") & "") + PICK_US
+            row("TOTAL_FUT_AVA") = Val(row("ATS_MS") & "") + Val(row("AVA_US") & "")
+
             Dim matchedRows = dtMonthlySales.Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'")
 
             If matchedRows.Length = 0 Then
@@ -483,23 +499,7 @@ Public Class ICFXFRM2
                 row("WOS_MS") = 0
             End If
 
-            Dim ONHD_MS As Integer = Val(row("ONHD_MS") & "")
-            Dim PICK_MS As Integer = Val(row("PICK_MS") & "")
-            row("OTS_MS") = ONHD_MS - PICK_MS
 
-            Dim ONHD_US As Integer = Val(row("ONHD_US") & "")
-            Dim PICK_US As Integer = Val(row("PICK_US") & "")
-            Dim OPEN_US As Integer = Val(row("OPEN_US") & "")
-            Dim TRAN_US As Integer = Val(row("TRAN_US") & "")
-            Dim CARTON_PACK_QTY As Integer = Val(row("CARTON_PACK_QTY") & "")
-
-            Dim roundedOpenUS As Integer = If(CARTON_PACK_QTY > 0,
-                CInt(Math.Ceiling(OPEN_US / CDbl(CARTON_PACK_QTY))) * CARTON_PACK_QTY,
-                OPEN_US)
-
-            row("OTS_US") = ONHD_US - PICK_US - roundedOpenUS
-            row("AVA_US") = Val(row("OTS_US") & "") + Val(row("TRAN_US") & "")
-            row("TOTAL_FUT_AVA") = Val(row("ATS_MS") & "") + Val(row("AVA_US") & "")
         Next
 
 
@@ -514,7 +514,7 @@ Public Class ICFXFRM2
 
         BeginTrans()
         Dim WHSE_CODE As String = "US"
-        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0"), "QTY2XFR")
+        TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("ICTSTYLX").Select("QTY2XFR Is Not NULL And QTY2XFR > 0"), "QTY2XFR")
         TAC.SOCMAIN1.Release_Transfer_Order(Me)
 
         For Each TABLE_NAME As String In TABLES_OXFR
@@ -525,14 +525,14 @@ Public Class ICFXFRM2
         Dim ORDR_GROUP_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("ORDR_GROUP_NO")
         ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
 
-        'For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR IS NOT NULL AND QTY2XFR > 0")
+        'For Each rowICTSTYLX As DataRow In dst.Tables("ICTSTYLX").Select("QTY2XFR Is Not NULL And QTY2XFR > 0")
         '    Dim STYLE_CODE As String = rowICTSTYLX.Item("STYLE_CODE")
         '    Dim COLOR_CODE As String = rowICTSTYLX.Item("COLOR_CODE")
         '    Dim QTY As Int32 = Val(rowICTSTYLX.Item("QTY2XFR"))
 
         '    TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
-        '    ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}'" & vbCrLf _
+        '    ASCMAIN1.sql = $"Update SOTOXFR1 Set OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}'" & vbCrLf _
         '             & "WHERE STYLE_CODE = :PARM1 AND COLOR_CODE = :PARM2 AND OXFR_STATUS = '0'"
         '    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {STYLE_CODE, COLOR_CODE})
         'Next

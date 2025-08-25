@@ -292,6 +292,10 @@ Public Class SOROREL1
         SQL_ins.Add("SALES_DIVISION_CODE", SQL_in("SOTORDR1.SALES_DIVISION_CODE"))
         SQL_ins.Add("ORDR_GROUP_NO", SQL_in("SOTORDR1.ORDR_GROUP_NO"))
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            SQL_ins.Add("ORDR_TYPE_CODE", " and SOTORDR1.ORDR_TYPE_CODE <> 'B2C'")
+        End If
+
         If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
             SQL_ins.Add("TERM_CODE", SQL_in("SOTORDR1.TERM_CODE"))
         End If
@@ -919,7 +923,7 @@ Public Class SOROREL1
         Else
             Update_Release() ' Update Pick Ticket, Shipment Control & Carton Tables
 
-            If ASCMAIN1.CLIENT = "RGI" And WHSE_CODE = "MS" Then
+            If ASCMAIN1.CLIENT = "RGI" And (chkManualOnly.Checked Or WHSE_CODE = "MS") Then
 
                 'ASCMAIN1.sql = "Select US.*, SOTORDR2.ALLO, LEAST(NVL(US.MS_AVA,0) - NVL(SOTORDR2.ALLO,0),0) SHORT, '0' RELEASE" & vbCrLf _
                 '    & $"from {ICTSTAT2_MSUS_BEFORE} US" & vbCrLf _
@@ -951,7 +955,7 @@ Public Class SOROREL1
                     & ", US_ONHD, US_TRAN, US_PICK, US_OPEN, US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, MS_AVA" & vbCrLf _
                     & ", ALLO, SHORT" & vbCrLf _
-                    & ", CASE WHEN SHORT >= 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
+                    & ", CASE WHEN SHORT + NVL(US_PICK,0) >= 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
                     & $", SYSDATE INIT_DATE, '{ASCMAIN1.USER_ID}' INIT_OPER, NULL LAST_DATE, NULL LAST_OPER" & vbCrLf _
                     & $" from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1'"
                 ASCDATA1.ExecuteSQL()
@@ -2354,7 +2358,7 @@ Public Class SOROREL1
 
             Dim ORDR_NO As String = rowSOTORDR1_rel.Item("ORDR_NO")
             Dim WHSE_CODE_LNO As String = rowSOTORDR1_rel.Item("WHSE_CODE")
-            Dim SHIP_VIA_CODE As String = rowSOTORDR1_rel.Item("SHIP_VIA_CODE")
+            Dim SHIP_VIA_CODE As String = rowSOTORDR1_rel.Item("SHIP_VIA_CODE") & ""
             Dim PICK_SEQ_NO As Integer = Val(rowSOTORDR1_rel.Item("ORDR_PICK_SEQ") & "") + 1
             rowSOTORDR1_rel.Item("ORDR_PICK_SEQ") = PICK_SEQ_NO
 
@@ -2372,6 +2376,9 @@ Public Class SOROREL1
                 .Item("SHIP_BOL_NO") = "X"
                 .Item("SHIP_VIA_CODE") = SHIP_VIA_CODE
                 .Item("WHSE_CODE") = WHSE_CODE_LNO
+
+                'Next Line Supports SOTPICK1.SALES_DIVISION_CODE
+                .Item("SALES_DIVISION_CODE") = rowSOTORDR1_rel.Item("SALES_DIVISION_CODE")
 
                 ' 04/05/2015 RGI to process CC after Release.
                 If (ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI") Then
@@ -3667,6 +3674,21 @@ Public Class SOROREL1
                 If Absx1.chkFor("CHKMANUAL_ONLY").Checked Then
                     If DirectCast(grdSOTORDRU.DataSource, DataTable).Select("SEL='1'").Length = 0 Then
                         EMsg &= vbCr & "You Must Select Specific Users when choosing Manually Selected only"
+                    End If
+                    If Absx1.txtFor("WHSE_CODE").Text <> "MS" Then
+                        EMsg &= vbCr & "You Must Select Whse Code MS when choosing Manually Selected only in order to enable USL Transfer Option"
+                    End If
+                Else
+                    If chkAllocateNoRelease.Checked Then
+                        ' this is ok
+                    ElseIf chkECommerce.Checked Then
+                        ' this is ok
+                    ElseIf chkForcePick.Checked Then
+                        ' this is ok
+                    ElseIf Absx1.txtFor("WHSE_CODE").Text = "MS" Then
+                        EMsg &= vbCr & "MS Sales Order Release must be done by choosing Manually Selected only"
+                    ElseIf Absx1.txtFor("WHSE_CODE").Text = "" Then
+                        EMsg &= vbCr & "Sales Order Release must be done by choosing a specific Whse"
                     End If
                 End If
             End If

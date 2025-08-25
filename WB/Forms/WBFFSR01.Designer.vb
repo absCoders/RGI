@@ -64,6 +64,18 @@ Partial Class WBFFSR01
         Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TOT_LY_WK")
         Dim UltraGridColumn25 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PCT_TY_LY")
         Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PCT_TY_FY")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WTD_FULL_WK_YOY")
+        Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MTD_YOY")
+        Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YTD_YOY")
+        Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MTD_FULL_MO_YOY")
+        Dim UltraGridColumn31 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YTD_FULL_YR_YOY")
+        Dim UltraGridColumn32 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WTD_FULL_WK_YOY_PCT")
+        Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MTD_YOY_PCT")
+        Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YTD_YOY_PCT")
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("MTD_FULL_MO_YOY_PCT")
+        Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YTD_FULL_YR_YOY_PCT")
+        Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Space01", 0)
+        Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("Space02", 1)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -81,6 +93,8 @@ Partial Class WBFFSR01
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.chkSeperateWebEDI = New System.Windows.Forms.CheckBox()
+        Me.chkHideCredits = New System.Windows.Forms.CheckBox()
         Me.chkHideLYDays = New System.Windows.Forms.CheckBox()
         Me.grpGroupBy = New System.Windows.Forms.GroupBox()
         Me.rdoCUST_CODE = New System.Windows.Forms.RadioButton()
@@ -264,6 +278,8 @@ Partial Class WBFFSR01
         '
         'SplitContainer2.Panel1
         '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.chkSeperateWebEDI)
+        Me.SplitContainer2.Panel1.Controls.Add(Me.chkHideCredits)
         Me.SplitContainer2.Panel1.Controls.Add(Me.chkHideLYDays)
         Me.SplitContainer2.Panel1.Controls.Add(Me.grpGroupBy)
         Me.SplitContainer2.Panel1.Controls.Add(Me.grpUnitsDollars)
@@ -274,8 +290,32 @@ Partial Class WBFFSR01
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdWBFFSR01)
         Me.SplitContainer2.Size = New System.Drawing.Size(994, 562)
-        Me.SplitContainer2.SplitterDistance = 122
+        Me.SplitContainer2.SplitterDistance = 143
         Me.SplitContainer2.TabIndex = 0
+        '
+        'chkSeperateWebEDI
+        '
+        Me.chkSeperateWebEDI.AutoSize = True
+        Me.chkSeperateWebEDI.Checked = True
+        Me.chkSeperateWebEDI.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkSeperateWebEDI.Location = New System.Drawing.Point(570, 33)
+        Me.chkSeperateWebEDI.Name = "chkSeperateWebEDI"
+        Me.chkSeperateWebEDI.Size = New System.Drawing.Size(282, 20)
+        Me.chkSeperateWebEDI.TabIndex = 173
+        Me.chkSeperateWebEDI.Text = "Seperate Web And EDI As Warehouses"
+        Me.chkSeperateWebEDI.UseVisualStyleBackColor = True
+        '
+        'chkHideCredits
+        '
+        Me.chkHideCredits.AutoSize = True
+        Me.chkHideCredits.Checked = True
+        Me.chkHideCredits.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkHideCredits.Location = New System.Drawing.Point(34, 91)
+        Me.chkHideCredits.Name = "chkHideCredits"
+        Me.chkHideCredits.Size = New System.Drawing.Size(172, 20)
+        Me.chkHideCredits.TabIndex = 172
+        Me.chkHideCredits.Text = "Hide Credits / Returns"
+        Me.chkHideCredits.UseVisualStyleBackColor = True
         '
         'chkHideLYDays
         '
@@ -293,9 +333,9 @@ Partial Class WBFFSR01
         '
         Me.grpGroupBy.Controls.Add(Me.rdoCUST_CODE)
         Me.grpGroupBy.Controls.Add(Me.rdoWSHE_CODE)
-        Me.grpGroupBy.Location = New System.Drawing.Point(558, 11)
+        Me.grpGroupBy.Location = New System.Drawing.Point(437, 11)
         Me.grpGroupBy.Name = "grpGroupBy"
-        Me.grpGroupBy.Size = New System.Drawing.Size(351, 100)
+        Me.grpGroupBy.Size = New System.Drawing.Size(118, 77)
         Me.grpGroupBy.TabIndex = 170
         Me.grpGroupBy.TabStop = False
         Me.grpGroupBy.Text = "Group By"
@@ -397,29 +437,66 @@ Partial Class WBFFSR01
         UltraGridColumn11.Header.Caption = "TY YTD"
         UltraGridColumn11.Header.VisiblePosition = 11
         UltraGridColumn12.Header.VisiblePosition = 12
+        UltraGridColumn12.Hidden = True
         UltraGridColumn13.Header.VisiblePosition = 13
+        UltraGridColumn13.Hidden = True
         UltraGridColumn14.Header.VisiblePosition = 14
+        UltraGridColumn14.Hidden = True
         UltraGridColumn15.Header.VisiblePosition = 15
+        UltraGridColumn15.Hidden = True
         UltraGridColumn16.Header.VisiblePosition = 16
+        UltraGridColumn16.Hidden = True
         UltraGridColumn17.Header.VisiblePosition = 17
+        UltraGridColumn17.Hidden = True
         UltraGridColumn18.Header.VisiblePosition = 18
+        UltraGridColumn18.Hidden = True
         UltraGridColumn19.Header.Caption = "LY MTD"
-        UltraGridColumn19.Header.VisiblePosition = 21
+        UltraGridColumn19.Header.VisiblePosition = 20
         UltraGridColumn20.Header.Caption = "LY YTD"
-        UltraGridColumn20.Header.VisiblePosition = 22
-        UltraGridColumn22.Header.Caption = "FULL MO"
-        UltraGridColumn22.Header.VisiblePosition = 23
-        UltraGridColumn23.Header.Caption = "FULL YR"
-        UltraGridColumn23.Header.VisiblePosition = 24
-        UltraGridColumn21.Header.Caption = "TY DAILY TOTAL"
+        UltraGridColumn20.Header.VisiblePosition = 21
+        UltraGridColumn22.Header.Caption = "LY FULL MO"
+        UltraGridColumn22.Header.VisiblePosition = 22
+        UltraGridColumn23.Header.Caption = "LY FULL YR"
+        UltraGridColumn23.Header.VisiblePosition = 23
+        UltraGridColumn21.Header.Caption = "TY WTD"
         UltraGridColumn21.Header.VisiblePosition = 9
-        UltraGridColumn24.Header.Caption = "LY DAILY TOTAL"
+        UltraGridColumn24.Header.Caption = "LY FULL WEEK"
         UltraGridColumn24.Header.VisiblePosition = 19
-        UltraGridColumn25.Header.Caption = "PCT TO LY"
-        UltraGridColumn25.Header.VisiblePosition = 20
+        UltraGridColumn25.Header.Caption = "WTD-FULL WK YOY%"
+        UltraGridColumn25.Header.VisiblePosition = 25
+        UltraGridColumn25.Hidden = True
         UltraGridColumn26.Header.Caption = "PCT TO FULL YR"
-        UltraGridColumn26.Header.VisiblePosition = 25
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn21, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26})
+        UltraGridColumn26.Header.VisiblePosition = 26
+        UltraGridColumn26.Hidden = True
+        UltraGridColumn27.Header.Caption = "WTD-FULL WK YOY"
+        UltraGridColumn27.Header.VisiblePosition = 32
+        UltraGridColumn28.Header.Caption = "MTD YOY"
+        UltraGridColumn28.Header.VisiblePosition = 27
+        UltraGridColumn29.Header.Caption = "YTD YOY"
+        UltraGridColumn29.Header.VisiblePosition = 28
+        UltraGridColumn30.Header.Caption = "MTD-FULL MONTH YOY"
+        UltraGridColumn30.Header.VisiblePosition = 33
+        UltraGridColumn31.Header.Caption = "YTD-FULL YEAR YOY"
+        UltraGridColumn31.Header.VisiblePosition = 34
+        UltraGridColumn32.Header.Caption = "WTD-FULL WK YOY%"
+        UltraGridColumn32.Header.VisiblePosition = 35
+        UltraGridColumn33.Header.Caption = "MTD YOY %"
+        UltraGridColumn33.Header.VisiblePosition = 29
+        UltraGridColumn34.Header.Caption = "YTD YOY %"
+        UltraGridColumn34.Header.VisiblePosition = 30
+        UltraGridColumn35.Header.Caption = "MTD-FULL MONTH YOY %"
+        UltraGridColumn35.Header.VisiblePosition = 36
+        UltraGridColumn35.Width = 188
+        UltraGridColumn36.Header.Caption = "TD-FULL YEAR YOY %"
+        UltraGridColumn36.Header.VisiblePosition = 37
+        UltraGridColumn36.Width = 161
+        UltraGridColumn37.Header.Caption = ""
+        UltraGridColumn37.Header.VisiblePosition = 24
+        UltraGridColumn37.Width = 46
+        UltraGridColumn38.Header.Caption = ""
+        UltraGridColumn38.Header.VisiblePosition = 31
+        UltraGridColumn38.Width = 45
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn22, UltraGridColumn23, UltraGridColumn21, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38})
         Me.grdWBFFSR01.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWBFFSR01.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -480,7 +557,7 @@ Partial Class WBFFSR01
         Me.grdWBFFSR01.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWBFFSR01.Location = New System.Drawing.Point(0, 0)
         Me.grdWBFFSR01.Name = "grdWBFFSR01"
-        Me.grdWBFFSR01.Size = New System.Drawing.Size(994, 436)
+        Me.grdWBFFSR01.Size = New System.Drawing.Size(994, 415)
         Me.grdWBFFSR01.TabIndex = 27
         Me.grdWBFFSR01.Text = "Flash Sales Report"
         '
@@ -648,4 +725,6 @@ Partial Class WBFFSR01
     Friend WithEvents rdoCUST_CODE As RadioButton
     Friend WithEvents rdoWSHE_CODE As RadioButton
     Friend WithEvents chkHideLYDays As CheckBox
+    Friend WithEvents chkHideCredits As CheckBox
+    Friend WithEvents chkSeperateWebEDI As CheckBox
 End Class

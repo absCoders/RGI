@@ -7,6 +7,8 @@ Public Class WHFPACK1
     Dim rowICTWHSE1 As DataRow
     Dim ShipLoc As String = ""
     Dim C As WHC.WHCRF000
+    Dim sqlSHORTAGES As String = ""
+    Dim hashPICKS As New HashSet(Of String)
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -47,6 +49,11 @@ Public Class WHFPACK1
                 & "   and SOTSHIP1.WHSE_CODE = :PARM1" & vbCrLf _
                 & "   and NVL(SOTPICK1.PACK_STATUS,'0') = :PARM2"
             Create_TDA(.Tables.Add, "SOTPACKX", "**", 0, False, "VV", 1)
+            With .Tables("SOTPACKX")
+                .Columns.Add("PICKABLE", GetType(System.Int64))
+                .Columns.Add("UNPICKABLE", GetType(System.Int64))
+                .Columns.Add("IGNORE_ALLOC", GetType(System.String))
+            End With
 
             ASCMAIN1.sql = "Select ICTWHSE1.WHSE_CODE, ICTWHSE1.WHSE_DESC" & vbCrLf _
                 & ", X.SHIPS" & vbCrLf _
@@ -85,6 +92,7 @@ Public Class WHFPACK1
                 .Columns.Add("PACKED_QTY", GetType(System.Int64))
                 .Columns.Add("VARIANCE", GetType(System.Int64), "ISNULL(PICKED_QTY,0)-ISNULL(PACKED_QTY,0)")
                 .Columns.Add("SHORTAGE", GetType(System.Int64), "ISNULL(PICK_QTY,0)-ISNULL(PICKED_QTY,0)")
+                .Columns.Add("ALLOCATED", GetType(System.Int64))
                 .Columns.Add("LOCATION_CODE")
             End With
 
@@ -92,6 +100,18 @@ Public Class WHFPACK1
             Create_TDA(.Tables.Add, "SOTPICK5", "**", 0, True, "V")
 
             Create_TDA(dst.Tables.Add, "TATCNTRY", "*", 0, False)
+
+            ASCMAIN1.sql = "select STYLE_CODE, COLOR_CODE, SUM(LOCATION_QTY) LOCATION_QTY, SUM(LOCATION_QTY_WAVE) LOCATION_QTY_WAVE
+                            FROM WHTLOCB1, WHTLOCM1  
+                            WHERE WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE
+                            and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE
+                            and WHTLOCM1.LOCATION_USE = 'A'
+                            and LOCATION_QTY > 0
+                            and WHTLOCB1.WHSE_CODE = :PARM1
+                            and WHTLOCB1.STYLE_CODE = :PARM2
+                            and WHTLOCB1.COLOR_CODE = :PARM3
+                            group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
+            Create_TDA(dst.Tables.Add, "WHTLOCB1", "**", 0, False, "VVV", 2)
 
             ASCMAIN1.sql = "Select * from SOTORDR1 where ORDR_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTORDR1", "**", 0, False, "V", 1)
@@ -178,7 +198,31 @@ Public Class WHFPACK1
                                 )"
             Create_TDA(.Tables.Add, "WHTPACKC", ASCMAIN1.sql, 0, False, "V", 0)
 
-            If ASCMAIN1.USER_ID = "rick" Then MsgBox("About to open Label Printers")
+            sqlSHORTAGES = "Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, least(SOTPICK2.PICK_QTY, (SOTPICK2.PICK_QTY - nvl(SOTPICK5.PICKED_QTY,0))) SHORTAGE, NVL(WHTLOCB1.LOCATION_QTY,0) LOCATION_QTY
+                            FROM SOTPICK2
+                            JOIN SOTORDR2 ON SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO AND SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                            JOIN ICTSTYC1 ON ICTSTYC1.STYLE_CODE = SOTORDR2.STYLE_CODE AND ICTSTYC1.COLOR_CODE = SOTORDR2.COLOR_CODE
+                            LEFT JOIN (
+                                SELECT PICK_NO, UPC_CODE, SUM(PICK_QTY) AS PICKED_QTY
+                                FROM SOTPICK5
+                                GROUP BY PICK_NO, UPC_CODE
+                                ) SOTPICK5 ON SOTPICK2.PICK_NO = SOTPICK5.PICK_NO AND SOTPICK5.UPC_CODE = ICTSTYC1.UPC_CODE
+                            LEFT JOIN (
+                                SELECT WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE,
+                                       SUM(WHTLOCB1.LOCATION_QTY) AS LOCATION_QTY
+                                FROM WHTLOCB1
+                                JOIN WHTLOCM1 ON WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE
+                                             AND WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE
+                                WHERE WHTLOCM1.LOCATION_USE = 'A'
+                                GROUP BY WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE
+                                ) WHTLOCB1 ON WHTLOCB1.STYLE_CODE = SOTORDR2.STYLE_CODE
+                                      AND WHTLOCB1.COLOR_CODE = SOTORDR2.COLOR_CODE
+                                      AND WHTLOCB1.WHSE_CODE = :PARM1
+                            Where SOTPICK2.PICK_NO = :PARM2
+                            and (SOTPICK2.PICK_QTY - nvl(SOTPICK5.PICKED_QTY,0)) > 0"
+
+
+            ASCMAIN1.Progress("About to open Label Printers")
 
             Dim rows() As DataRow = ASCDATA1.GetDataTable("SELECT *  FROM WHTLPRT1").Select("")
             For Each row As DataRow In rows
@@ -204,7 +248,7 @@ Public Class WHFPACK1
                 'If ASCMAIN1.USER_ID = "rick" Then MsgBox($"Done with Printer {printer}")
             Next
 
-            If ASCMAIN1.USER_ID = "rick" Then MsgBox("Done with Label Printers")
+            ASCMAIN1.Progress("Done with Label Printers")
         End With
 
         With ultraComboPackage.DisplayLayout.Bands(0)
@@ -252,7 +296,7 @@ Public Class WHFPACK1
         Create_Summary(grdICTWHSEX, "SHIPS")
 
         Create_Summary(grdSOTPACKX, "PICK_NO", "Count")
-        Create_Summary(grdSOTPACKX, "SHIP_VALUE")
+        Create_Summary(grdSOTPACKX, New String() {"SHIP_VALUE", "PICKABLE", "UNPICKABLE"})
 
         Create_Summary(grdSOTPICK1, "PICK_NO", "Count")
 
@@ -275,6 +319,8 @@ Public Class WHFPACK1
         With grdSOTPACKX.DisplayLayout.Bands("SOTPACKX")
             .Columns("PICK_NO").Header.Fixed = True
             .Columns("CUST_CODE").Header.Fixed = True
+            .Columns("PICKABLE").CellAppearance.BackColor = Color.LightBlue
+            .Columns("UNPICKABLE").CellAppearance.BackColor = Color.Orange
             .Columns("SHIP_VALUE").CellAppearance.BackColor = Color.LightGreen
             For Each COLUMN_NAME As String In New String() {"INIT_DATE", "STARTED", "LAST", "PACK_FRST", "PACK_LAST"}
                 .Columns(COLUMN_NAME).Format = "MM/dd/yy HH:mm"
@@ -716,7 +762,7 @@ Public Class WHFPACK1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTWHSEX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
-        Load_Popup_Menu(grdSOTPACKX, "SB", "Show Filter", "Open Shipment", "Pick Shipment")
+        Load_Popup_Menu(grdSOTPACKX, "SBBS", "Show Filter", "Open Shipment", "Pick Shipment", "Ignore Alloc")
         Load_Popup_Menu(grdSOTPICKX, "BB", "Void Pick Ln", "Change Pick Qty")
         Load_Popup_Menu(grdSOTPICK1, "B", "Pick")
         'Load_Popup_Menu(grdSOTPACKX, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins" _
@@ -752,6 +798,9 @@ Public Class WHFPACK1
                     chkAutoRefresh_CheckedChanged(New Object, New EventArgs)
                     tlb_pop.Tools("Open Shipment").SharedProps.Visible = optPickFilter.Value = "F" And EntryMode = "L"
                     tlb_pop.Tools("Pick Shipment").SharedProps.Visible = optPickFilter.Value = "0" And EntryMode = "L" And tabShipment.SelectedTab.Text = "Pick Tickets"
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Ignore Alloc"), UltraWinToolbars.StateButtonTool)
+                    tlb_sbt.SharedProps.Visible = optPickFilter.Value = "P" And EntryMode = "L"
+                    tlb_sbt.Checked = hashPICKS.Contains(grd.ActiveRow.Cells("PICK_NO").Value)
                 Case "grdSOTPICKX"
                     tlb_pop.Tools("Void Pick Ln").SharedProps.Visible = optPickFilter.Value = "P" And EntryMode = "L" And grd.ActiveRow.Band.Index = 0 AndAlso (grd.ActiveRow.Cells("PACKED_QTY").Text = "" OrElse grd.ActiveRow.Cells("PACKED_QTY").Value = "0") AndAlso (grd.ActiveRow.Cells("PiCKED_QTY").Text <> "")
                     tlb_pop.Tools("Change Pick Qty").SharedProps.Visible = optPickFilter.Value = "P" And EntryMode = "L" And grd.ActiveRow.Band.Index = 0 'AndAlso (grd.ActiveRow.Cells("PACKED_QTY").Text = "" OrElse grd.ActiveRow.Cells("PICKED_QTY").Value >= grd.ActiveRow.Cells("PICK_QTY").Value) AndAlso (grd.ActiveRow.Cells("PICKED_QTY").Text <> "")
@@ -954,6 +1003,15 @@ Public Class WHFPACK1
                 Close_Picks()
                 Load_SOTPACKX()
 
+            Case "Ignore Alloc"
+                If hashPICKS.Contains(grdSOTPACKX.ActiveRow.Cells("PICK_NO").Value) Then
+                    grdSOTPACKX.ActiveRow.Cells("IGNORE_ALLOC").Value = "0"
+                    hashPICKS.Remove(grdSOTPACKX.ActiveRow.Cells("PICK_NO").Value)
+                Else
+                    grdSOTPACKX.ActiveRow.Cells("IGNORE_ALLOC").Value = "1"
+                    hashPICKS.Add(grdSOTPACKX.ActiveRow.Cells("PICK_NO").Value)
+                End If
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -1109,7 +1167,7 @@ Public Class WHFPACK1
 
         If optPickFilter.Value = "0" Then
             PACK_STATUS = "0"
-            grdSOTPACKX.Text = "Pick Tickets in Pick nd Not in Pack for Warehouse " & WHSE_CODE
+            grdSOTPACKX.Text = "Pick Tickets in Pick and Not in Pack for Warehouse " & WHSE_CODE
 
         ElseIf optPickFilter.Value = "P" Then
 
@@ -1132,7 +1190,58 @@ Public Class WHFPACK1
         UltraExplorerBar1.Groups("Screen Control").Items("Print").Visible = False
         UltraExplorerBar1.Groups("Screen Control").Items("Print Cons by P.O.").Visible = False
 
+        dst.Tables("WHTLOCB1").Rows.Clear()
         Fill_Records("SOTPACKX", New String() {WHSE_CODE, PACK_STATUS}, True)
+
+        If PACK_STATUS = "P" Then
+            For Each rowSOTPACKX As DataRow In dst.Tables("SOTPACKX").Select("", "PICK_RELEASED")
+                Dim SHIP_BOL_NO As String = rowSOTPACKX("SHIP_BOL_NO") & ""
+                Dim PICK_NO1 As String = rowSOTPACKX("PICK_NO") & ""
+                Dim ORDR_NO As String = rowSOTPACKX("ORDR_NO") & ""
+                Dim PICKABLE As Int16 = 0
+                Dim UNPICKABLE As Int16 = 0
+                Dim AVAILABLE As Int16 = 0
+                If hashPICKS.Contains(rowSOTPACKX("PICK_NO") & "") Then
+                    rowSOTPACKX("IGNORE_ALLOC") = "1"
+                End If
+                If rowSOTPACKX("IGNORE_ALLOC") & "" <> "1" Then
+                    For Each rowShortage As DataRow In ASCDATA1.GetDataTable(sqlSHORTAGES, "SHORTAGES", "VV", New Object() {WHSE_CODE, PICK_NO1}).Rows
+                        Dim rowLOCB1 As DataRow = dst.Tables("WHTLOCB1").Rows.Find(New String() {rowShortage("STYLE_CODE"), rowShortage("COLOR_CODE")})
+                        If rowLOCB1 Is Nothing Then
+                            rowLOCB1 = dst.Tables("WHTLOCB1").NewRow
+                            With rowLOCB1
+                                .Item("STYLE_CODE") = rowShortage("STYLE_CODE")
+                                .Item("COLOR_CODE") = rowShortage("COLOR_CODE")
+                                .Item("LOCATION_QTY") = rowShortage("LOCATION_QTY")
+                                .Item("LOCATION_QTY_WAVE") = 0
+                            End With
+                            dst.Tables("WHTLOCB1").Rows.Add(rowLOCB1)
+                        End If
+                        AVAILABLE = rowLOCB1.Item("LOCATION_QTY") - rowLOCB1.Item("LOCATION_QTY_WAVE")
+                        If AVAILABLE > 0 Then
+                            If rowShortage("SHORTAGE") <= AVAILABLE Then
+                                PICKABLE += rowShortage("SHORTAGE")
+                            Else
+                                PICKABLE += AVAILABLE
+                                UNPICKABLE += rowShortage("SHORTAGE") - AVAILABLE
+                            End If
+                            rowLOCB1.Item("LOCATION_QTY_WAVE") += rowShortage("SHORTAGE")
+                        Else
+                            UNPICKABLE += rowShortage("SHORTAGE")
+                        End If
+
+                    Next
+                End If
+                rowSOTPACKX("PICKABLE") = PICKABLE
+                rowSOTPACKX("UNPICKABLE") = UNPICKABLE
+            Next
+            grdSOTPACKX.DisplayLayout.Bands("SOTPACKX").Columns("UNPICKABLE").Hidden = False
+            grdSOTPACKX.DisplayLayout.Bands("SOTPACKX").Columns("PICKABLE").Hidden = False
+        Else
+            grdSOTPACKX.DisplayLayout.Bands("SOTPACKX").Columns("UNPICKABLE").Hidden = True
+            grdSOTPACKX.DisplayLayout.Bands("SOTPACKX").Columns("PICKABLE").Hidden = True
+        End If
+
         ASCMAIN1.Progress("Now Sorting Data")
         Sort_grdColumns(grdSOTPACKX, "PICK_NO".ToLower)
         If PICK_NO <> "" And PICK_NO IsNot Null Then
@@ -1605,6 +1714,9 @@ Public Class WHFPACK1
                 e.Row.Appearance.BackColor = System.Drawing.Color.Empty
             End If
         End With
+        If e.Row.Cells("IGNORE_ALLOC").Value & "" = "1" Then
+            e.Row.Appearance.BackColor = System.Drawing.Color.LightGray
+        End If
     End Sub
 
     Function GetLocation(ByVal Style As String, ByVal Color As String, ByVal PICK_QTY As Int32) As String

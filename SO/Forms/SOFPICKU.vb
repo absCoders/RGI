@@ -14,21 +14,21 @@ Public Class SOFPICKU
     Public TRUCK_TYPE As String = ""
     Dim SLOT_NO_to_Verify As Integer = 0
     Public SALES_DIVISION_CODE_DC As String = ""
-    Public DC_CODE As String = String.Empty
+    Public WHSE_CODE As String = String.Empty
 
     Dim Appearance_Magenta As New Infragistics.Win.Appearance
     Dim Appearance_Yellow As New Infragistics.Win.Appearance
     Dim Appearance_Empty As New Infragistics.Win.Appearance
 
 
-    Public Sub New(ByVal FF As ASFBASE1, ByVal inDC_CODE As String)
+    Public Sub New(ByVal FF As ASFBASE1, ByVal inWHSE_CODE As String)
         frmASFBASE1 = FF
         InitializeComponent()
-        DC_CODE = inDC_CODE & String.Empty
+        WHSE_CODE = inWHSE_CODE & String.Empty
 
-        DC_CODE = DC_CODE.Trim
-        If DC_CODE.Length = 0 Then
-            DC_CODE = "???"
+        WHSE_CODE = WHSE_CODE.Trim
+        If WHSE_CODE.Length = 0 Then
+            WHSE_CODE = "???"
         End If
     End Sub
 
@@ -71,9 +71,9 @@ Public Class SOFPICKU
             Create_TDA(.Tables.Add, "SOTTOTE0", "**", 0, False)
             Fill_Records("SOTTOTE0")
 
-            ASCMAIN1.sql = "Select * from SOTTRCK1 where DC_CODE = :PARM1 AND TRUCK_TYPE = 'P' AND PICK_BATCH_NO IS NULL"
+            ASCMAIN1.sql = "Select * from SOTTRCK1 where WHSE_CODE = :PARM1 AND TRUCK_TYPE = 'P' AND PICK_BATCH_NO IS NULL"
             Create_TDA(.Tables.Add, "SOTTRCKT", "**", 0, False, "V", 1)
-            Fill_Records("SOTTRCKT", DC_CODE)
+            Fill_Records("SOTTRCKT", WHSE_CODE)
             Dim lstTRUCK_NOs As New List(Of String)
             For Each rowSOTTRCKT As DataRow In dst.Tables("SOTTRCKT").Select("", "TRUCK_NO")
                 lstTRUCK_NOs.Add(rowSOTTRCKT.Item("TRUCK_NO"))
@@ -107,10 +107,11 @@ Public Class SOFPICKU
 
 
         Create_Summary(grdSOTORDQ1, "ORDR_NO", "Count")
-        Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_BACK", "ORDR_QTY_ALLO"})
+        'Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_BACK", "ORDR_QTY_ALLO"})
+        Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_ALLO"})
 
-        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "SKIN")
-        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "SKIN")
+        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "30")
+        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "30")
 
         cmdUpdate.Enabled = False
         chkCustomTruck.Visible = True
@@ -186,9 +187,9 @@ Public Class SOFPICKU
                 RESULT = $"Truck {SCAN} is a Custom Truck only for NPI"
             Else
                 TRUCK_NO = SCAN
-                Dim DC_CODE_truck As String = rowSOTTRCK1.Item("DC_CODE") & ""
-                If DC_CODE_truck <> DC_CODE Then
-                    RESULT = $"Truck {TRUCK_NO} is in DC {DC_CODE_truck}"
+                Dim WHSE_CODE_truck As String = rowSOTTRCK1.Item("WHSE_CODE") & ""
+                If WHSE_CODE_truck <> WHSE_CODE Then
+                    RESULT = $"Truck {TRUCK_NO} is in DC {WHSE_CODE_truck}"
                 Else
                     Dim PICK_BATCH_NO As String = rowSOTTRCK1.Item("PICK_BATCH_NO") & ""
                     If PICK_BATCH_NO <> "" Then
@@ -261,7 +262,7 @@ Public Class SOFPICKU
                                         With rowSOTTOTET
                                             .Item("TOTE_NO") = TOTE_NO
                                             .Item("TOTE_CLASS_CODE") = "X"
-                                            .Item("DC_CODE") = rowSOTTRCK1.Item("DC_CODE")
+                                            .Item("WHSE_CODE") = rowSOTTRCK1.Item("WHSE_CODE")
                                             .Item("TRUCK_NO") = TRUCK_NO
                                             .Item("SLOT_NO") = SLOT_NO
                                             .Item("TOTE_TYPE") = "X"
@@ -338,10 +339,10 @@ Public Class SOFPICKU
                     RESULT = "Invalid Value for Tote"
                 Else
                     Dim TOTE_NO As String = SCAN
-                    Dim DC_CODE_tote As String = rowSOTTOTE1.Item("DC_CODE") & ""
+                    Dim WHSE_CODE_tote As String = rowSOTTOTE1.Item("WHSE_CODE") & ""
 
-                    If DC_CODE_tote <> DC_CODE Then
-                        RESULT = $"Tote {TOTE_NO} is in DC {DC_CODE_tote}"
+                    If WHSE_CODE_tote <> WHSE_CODE Then
+                        RESULT = $"Tote {TOTE_NO} is in DC {WHSE_CODE_tote}"
                     Else
                         If TOTEs_in_SLOTs.Contains(TOTE_NO) Then
                             Dim SLOT As Integer = TOTEs_in_SLOTs.IndexOf(TOTE_NO) + 1

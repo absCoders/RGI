@@ -14,6 +14,10 @@ Public Class WBFFSR01
 
     Dim valueColsTY As String() = {"TY_WK1", "TY_WK2", "TY_WK3", "TY_WK4", "TY_WK5", "TY_WK6", "TY_WK7", "TOT_TY_WK", "TY_MTD", "TY_YTD"}
     Dim valueColsLY As String() = {"LY_WK1", "LY_WK2", "LY_WK3", "LY_WK4", "LY_WK5", "LY_WK6", "LY_WK7", "TOT_LY_WK", "LY_MTD", "LY_YTD", "LY_FULL_MO", "LY_FULL_YR", "PCT_TY_LY", "PCT_TY_FY"}
+    Dim valueColsYOY As String() = {"WTD_FULL_WK_YOY", "MTD_YOY", "YTD_YOY", "MTD_FULL_MO_YOY", "YTD_FULL_YR_YOY"}
+    Dim valueColsPCT As String() = {"WTD_FULL_WK_YOY_PCT", "MTD_YOY_PCT", "YTD_YOY_PCT", "MTD_FULL_MO_YOY_PCT", "YTD_FULL_YR_YOY_PCT"}
+
+    Dim EOM_MODE As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -27,6 +31,8 @@ Public Class WBFFSR01
         DATES.Add("BOY_LY", Now())
         DATES.Add("BOM_TY", Now())
         DATES.Add("BOM_LY", Now())
+        DATES.Add("EOM_TY", Now())
+        DATES.Add("EOM_LY", Now())
 
         dteSaturday.Value = calcSaturdayEOW(Now())
 
@@ -72,6 +78,18 @@ Public Class WBFFSR01
                 .Add("PCT_TY_LY", GetType(System.Decimal), "IIF(ISNULL(TOT_LY_WK,0)=0,0,(TOT_TY_WK/TOT_LY_WK) * 100)")
                 .Add("PCT_TY_FY", GetType(System.Decimal), "IIF(ISNULL(LY_FULL_YR,0)=0,0,(TY_YTD/LY_FULL_YR) * 100)")
                 '"IIF(ISNULL(STYLE_PRICE,0)=0,0,100*DISC_AMT/ISNULL(STYLE_PRICE,0))"
+
+                .Add("WTD_FULL_WK_YOY", GetType(System.Decimal), "(ISNULL(TOT_TY_WK,0) - ISNULL(TOT_LY_WK,0))")
+                .Add("MTD_YOY", GetType(System.Decimal), "(ISNULL(TY_MTD,0) - ISNULL(LY_MTD,0))")
+                .Add("YTD_YOY", GetType(System.Decimal), "(ISNULL(TY_YTD,0) - ISNULL(LY_YTD,0))")
+                .Add("MTD_FULL_MO_YOY", GetType(System.Decimal), "(ISNULL(TY_MTD,0) - ISNULL(LY_FULL_MO,0))")
+                .Add("YTD_FULL_YR_YOY", GetType(System.Decimal), "(ISNULL(TY_YTD,0) - ISNULL(LY_FULL_YR,0))")
+
+                .Add("WTD_FULL_WK_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(TOT_LY_WK,0)=0,0,(ISNULL(WTD_FULL_WK_YOY,0) / ISNULL(TOT_LY_WK,0)) * 100)")
+                .Add("MTD_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_MTD,0)=0,0,(ISNULL(MTD_YOY,0) / ISNULL(LY_MTD,0)) * 100)")
+                .Add("YTD_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_YTD,0)=0,0,(ISNULL(YTD_YOY,0) / ISNULL(LY_YTD,0)) * 100)")
+                .Add("MTD_FULL_MO_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_FULL_MO,0)=0,0,(ISNULL(MTD_FULL_MO_YOY,0) / ISNULL(LY_FULL_MO,0)) * 100)")
+                .Add("YTD_FULL_YR_YOY_PCT", GetType(System.Decimal), "IIF(ISNULL(LY_FULL_YR,0)=0,0,(ISNULL(YTD_FULL_YR_YOY,0) / ISNULL(LY_FULL_YR,0)) * 100)")
             End With
 
             tmpWBFFSR01 = ASCMAIN1.Temp_Table
@@ -89,9 +107,9 @@ Public Class WBFFSR01
         grdWBFFSR01.DataSource = dst.Tables("WBFFSR01")
 
         For Each COL As String In valueColsTY
-            Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,##0")
+            Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
             With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,##0"
+                .Columns(COL).Format = "###,###,##0"
                 .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightBlue
                 .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
                 .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightBlue
@@ -100,11 +118,14 @@ Public Class WBFFSR01
         Next
 
         For Each COL As String In valueColsLY
-            If COL <> "PCT_TY_LY" And COL <> "PCT_TY_FY" Then
-                Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,##0")
+            If COL = "PCT_TY_LY" Or COL = "PCT_TY_FY" Then
+                'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
+                grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0.00"
+            Else
+                Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
+                grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0"
             End If
             With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,##0"
                 .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightGreen
                 .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
                 .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
@@ -113,6 +134,28 @@ Public Class WBFFSR01
             If COL.Substring(0, 5) = "LY_WK" Then
                 grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Hidden = True
             End If
+        Next
+
+        For Each COL As String In valueColsYOY
+            Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
+            With grdWBFFSR01.DisplayLayout.Bands(0)
+                .Columns(COL).Format = "###,###,##0"
+                '.Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightPink
+                '.Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+                '.Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+            End With
+        Next
+
+        For Each COL As String In valueColsPCT
+            'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
+            With grdWBFFSR01.DisplayLayout.Bands(0)
+                .Columns(COL).Format = "###,##0.00"
+                '.Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
+                '.Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+                '.Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+            End With
         Next
 
         With grdWBFFSR01.DisplayLayout.Bands(0)
@@ -148,11 +191,36 @@ Public Class WBFFSR01
         Select Case eItemKey
 
             Case "Refresh"
-                If dteSaturday.DateTime.DayOfWeek <> DayOfWeek.Saturday Then
-                    EMsg &= vbCr & $"{Format(dteSaturday.DateTime, "MM/dd/yy")} In Not A Saturday."
+                Dim inputDate As DateTime = dteSaturday.DateTime
+                Dim lastDay As Integer = DateTime.DaysInMonth(inputDate.Year, inputDate.Month)
+                Dim lastDateOfMonth As DateTime = New DateTime(inputDate.Year, inputDate.Month, lastDay)
+                If inputDate = lastDateOfMonth Then
+                    Dim iResult As MsgBoxResult
+                    Dim iTitle As String = "EOM Version"
+                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                    iMSG.AppendLine("You Select The Last Day Of The Month.")
+                    iMSG.AppendLine("Do You Want To Run The End-Of-Month")
+                    iMSG.AppendLine("Version Of The Report?")
+                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                    If iResult = MsgBoxResult.Yes Then
+                        EOM_MODE = True
+                        If setDates() = False Then
+                            EMsg &= vbCr & $"Problem Setting Dates For {Format(dteSaturday.DateTime, "MM/dd/yy")}."
+                        End If
+                    Else
+                        EOM_MODE = False
+                    End If
                 Else
-                    If setDates() = False Then
-                        EMsg &= vbCr & $"Problem Setting Dates For {Format(dteSaturday.DateTime, "MM/dd/yy")}."
+                    EOM_MODE = False
+                End If
+
+                If EOM_MODE = False Then
+                    If dteSaturday.DateTime.DayOfWeek <> DayOfWeek.Saturday Then
+                        EMsg &= vbCr & $"{Format(dteSaturday.DateTime, "MM/dd/yy")} In Not A Saturday."
+                    Else
+                        If setDates() = False Then
+                            EMsg &= vbCr & $"Problem Setting Dates For {Format(dteSaturday.DateTime, "MM/dd/yy")}."
+                        End If
                     End If
                 End If
 
@@ -185,11 +253,13 @@ Public Class WBFFSR01
                     SEL_CODE = "WHSE_CODE"
                     SEL_DESC = "WHSE_DESC"
                     SEL_TABLE = "ICTWHSE1"
+                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "WHSE"
                 End If
                 If rdoCUST_CODE.Checked Then
                     SEL_CODE = "CUST_CODE"
                     SEL_DESC = "CUST_NAME"
                     SEL_TABLE = "ARTCUST1"
+                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "CUST"
                 End If
                 For Each COL As String In valueColsLY
                     If COL.Substring(0, 5) = "LY_WK" Then
@@ -202,6 +272,7 @@ Public Class WBFFSR01
                 Next
                 Clear_Record()
                 Load_Record(True)
+                setGridTitle()
             Case "Exit"
                 Call Mode_Settings(False)
                 Me.Close()
@@ -241,7 +312,14 @@ Public Class WBFFSR01
         ASCDATA1.ExecuteSQL()
 
         'Fill_Records("WBTHORNT", , , SQLs.ToString)
-        fillTempTable()
+        If chkSeperateWebEDI.Checked = False Then
+            fillTempTable("A")
+        Else
+            fillTempTable("X")
+            fillTempTable("E")
+            fillTempTable("W")
+        End If
+
         loadTempTable()
         'Stop
         'EnforceConstraints(True)
@@ -250,6 +328,8 @@ Public Class WBFFSR01
         Else
             dst.AcceptChanges()
         End If
+
+        setEOM_MODES()
 
         Me.Cursor = Cursors.Default
         If showRefreshing Then
@@ -384,13 +464,48 @@ Public Class WBFFSR01
 #End Region
 
 #Region "Custom Methods"
-    Private Sub fillTempTable()
-        For i As Int64 = 0 To 6
+    Private Sub fillTempTable(ByVal OrdrType As String)
+        ' --- OrdrType ---
+        ' A = All Order Types
+        ' X = All Order Types Except EDI & Web
+        ' E = EDI
+        ' W = Web
+        ' Anything Else Don't Fill.
+
+        Dim SCODES_SEL As String = ""
+        Dim SCODES_GRP As String = ""
+        Dim SCODES_WHR As String = ""
+        Select Case OrdrType
+            Case "A"
+                SCODES_SEL = $"I1.{SEL_CODE} AS CODE, W1.{SEL_DESC} AS CODE_DESC,"
+                SCODES_GRP = $"I1.{SEL_CODE}, W1.{SEL_DESC}"
+                SCODES_WHR = ""
+            Case "X"
+                SCODES_SEL = $"I1.{SEL_CODE} AS CODE, W1.{SEL_DESC} AS CODE_DESC,"
+                SCODES_GRP = $"I1.{SEL_CODE}, W1.{SEL_DESC}"
+                SCODES_WHR = "AND O1.ORDR_SOURCE NOT IN ('E','W')"
+            Case "E"
+                SCODES_SEL = $"'EDI' AS CODE, 'EDI Orders' AS CODE_DESC,"
+                SCODES_GRP = $"'EDI', 'EDI Orders'"
+                SCODES_WHR = "AND O1.ORDR_SOURCE = 'E'"
+            Case "W"
+                SCODES_SEL = $"'WEB' AS CODE, 'Web Orders' AS CODE_DESC,"
+                SCODES_GRP = $"'WEB', 'Web Orders'"
+                SCODES_WHR = "AND O1.ORDR_SOURCE = 'W'"
+            Case Else
+                Exit Sub
+        End Select
+
+        Dim MOs As Int64 = 0
+        If EOM_MODE Then
+            MOs = 6
+        End If
+
+        For i As Int64 = MOs To 6
             SQLs.Length = 0
             SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
             SQLs.AppendLine("SELECT")
-            SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-            SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+            SQLs.AppendLine(SCODES_SEL)
             If i = 0 Then
                 SQLs.AppendLine($"SUM({QTY_DOLLAR}) TY_WK1,")
             Else
@@ -439,22 +554,29 @@ Public Class WBFFSR01
             SQLs.AppendLine("0 LY_YTD,")
             SQLs.AppendLine("0 LY_FULL_MO,")
             SQLs.AppendLine("0 LY_FULL_YR")
-            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
             SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
             SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
-            SQLs.AppendLine($"AND I1.INV_DATE = '{Format(TY_DAYS(i), "dd-MMM-yyyy")}'")
+            SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
+            If EOM_MODE Then
+                SQLs.AppendLine($"AND (I1.INV_DATE >= '{Format(DATES("BOM_TY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_TY"), "dd-MMM-yyyy")}')")
+            Else
+                SQLs.AppendLine($"AND I1.INV_DATE = '{Format(TY_DAYS(i), "dd-MMM-yyyy")}'")
+            End If
+            If chkHideCredits.Checked Then
+                SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+            End If
+            SQLs.AppendLine(SCODES_WHR)
             SQLs.AppendLine("GROUP BY ")
-            SQLs.AppendLine($"I1.{SEL_CODE}, ")
-            SQLs.AppendLine($"W1.{SEL_DESC}")
+            SQLs.AppendLine(SCODES_GRP)
             ASCMAIN1.sql = SQLs.ToString
             ASCDATA1.ExecuteSQL()
 
             SQLs.Length = 0
             SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
             SQLs.AppendLine("SELECT")
-            SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-            SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+            SQLs.AppendLine(SCODES_SEL)
             SQLs.AppendLine("0 TY_WK1,")
             SQLs.AppendLine("0 TY_WK2,")
             SQLs.AppendLine("0 TY_WK3,")
@@ -503,14 +625,22 @@ Public Class WBFFSR01
             SQLs.AppendLine("0 LY_YTD,")
             SQLs.AppendLine("0 LY_FULL_MO,")
             SQLs.AppendLine("0 LY_FULL_YR")
-            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+            SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
             SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
             SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
             SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
-            SQLs.AppendLine($"AND I1.INV_DATE = '{Format(LY_DAYS(i), "dd-MMM-yyyy")}'")
+            SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
+            If EOM_MODE Then
+                SQLs.AppendLine($"AND (I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}')")
+            Else
+                SQLs.AppendLine($"AND I1.INV_DATE = '{Format(LY_DAYS(i), "dd-MMM-yyyy")}'")
+            End If
+            If chkHideCredits.Checked Then
+                SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+            End If
+            SQLs.AppendLine(SCODES_WHR)
             SQLs.AppendLine("GROUP BY ")
-            SQLs.AppendLine($"I1.{SEL_CODE}, ")
-            SQLs.AppendLine($"W1.{SEL_DESC}")
+            SQLs.AppendLine(SCODES_GRP)
             ASCMAIN1.sql = SQLs.ToString
             ASCDATA1.ExecuteSQL()
         Next
@@ -519,8 +649,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -541,14 +670,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_TY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_TY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -556,8 +689,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -578,14 +710,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_TY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_TY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -593,8 +729,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -615,14 +750,22 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
-        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
+        If EOM_MODE Then
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}'")
+        Else
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        End If
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -630,8 +773,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -652,24 +794,31 @@ Public Class WBFFSR01
         SQLs.AppendLine($"SUM({QTY_DOLLAR}) LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
-        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
+        If EOM_MODE Then
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}'")
+        Else
+            SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOW_LY"), "dd-MMM-yyyy")}'")
+        End If
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
         'Fill LY_FULL_MO
-        Dim LY_EOM As Date = DateSerial(DATES("BOM_LY").Year, DATES("BOM_LY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
+        'Dim LY_EOM As Date = DateSerial(DATES("BOM_LY").Year, DATES("BOM_LY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -690,14 +839,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine($"SUM({QTY_DOLLAR}) LY_FULL_MO,")
         SQLs.AppendLine("0 LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
-        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(LY_EOM, "dd-MMM-yyyy")}'")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
+        SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOM_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(DATES("EOM_LY"), "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -706,8 +859,7 @@ Public Class WBFFSR01
         SQLs.Length = 0
         SQLs.AppendLine($"INSERT INTO {tmpWBFFSR01}")
         SQLs.AppendLine("SELECT ")
-        SQLs.AppendLine($"I1.{SEL_CODE} AS CODE,")
-        SQLs.AppendLine($"W1.{SEL_DESC} AS CODE_DESC,")
+        SQLs.AppendLine(SCODES_SEL)
         SQLs.AppendLine("0 TY_WK1,")
         SQLs.AppendLine("0 TY_WK2,")
         SQLs.AppendLine("0 TY_WK3,")
@@ -728,14 +880,18 @@ Public Class WBFFSR01
         SQLs.AppendLine("0 LY_YTD,")
         SQLs.AppendLine("0 LY_FULL_MO,")
         SQLs.AppendLine($"SUM({QTY_DOLLAR}) LY_FULL_YR")
-        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1")
+        SQLs.AppendLine($"FROM SOTINVH1 I1, SOTINVH2 I2, {SEL_TABLE} W1, SOTORDR1 O1")
         SQLs.AppendLine($"WHERE I1.{SEL_CODE} = W1.{SEL_CODE}")
         SQLs.AppendLine("AND I1.INV_TYPE = I2.INV_TYPE")
         SQLs.AppendLine("AND I1.INV_NO = I2.INV_NO")
+        SQLs.AppendLine("AND I1.ORDR_NO = O1.ORDR_NO (+)")
         SQLs.AppendLine($"AND I1.INV_DATE >= '{Format(DATES("BOY_LY"), "dd-MMM-yyyy")}' AND I1.INV_DATE <= '{Format(LY_EOY, "dd-MMM-yyyy")}'")
+        If chkHideCredits.Checked Then
+            SQLs.AppendLine("AND I1.INV_TYPE = 'I'")
+        End If
+        SQLs.AppendLine(SCODES_WHR)
         SQLs.AppendLine("GROUP BY ")
-        SQLs.AppendLine($"I1.{SEL_CODE}, ")
-        SQLs.AppendLine($"W1.{SEL_DESC}")
+        SQLs.AppendLine(SCODES_GRP)
         ASCMAIN1.sql = SQLs.ToString()
         ASCDATA1.ExecuteSQL()
 
@@ -780,6 +936,11 @@ Public Class WBFFSR01
             TY_DAYS.Clear()
             LY_DAYS.Clear()
             Dim fltr As String = $"WEEK_END_DATE = '{Format(dteSaturday.DateTime, "dd-MMM-yyyy")}'"
+            If EOM_MODE Then
+                Dim daysToSubtract As Integer = (dteSaturday.DateTime.DayOfWeek - DayOfWeek.Saturday + 7) Mod 7
+                Dim previousSaturday As DateTime = dteSaturday.DateTime.AddDays(-daysToSubtract)
+                fltr = $"WEEK_END_DATE = '{Format(previousSaturday, "dd-MMM-yyyy")}'"
+            End If
             Dim rowGLTPARM3TY As DataRow = dst.Tables.Item("GLTPARM3").Select(fltr).FirstOrDefault
             Dim rowGLTPARM3LY As DataRow = Nothing
             If Not IsNothing(rowGLTPARM3TY) Then
@@ -795,6 +956,9 @@ Public Class WBFFSR01
                     DATES("BOM_TY") = DateSerial(DATES("EOW_TY").Year, DATES("EOW_TY").Month, 1)
                     DATES("BOY_LY") = DateSerial(DATES("EOW_LY").Year, 4, 1)
                     DATES("BOM_LY") = DateSerial(DATES("EOW_LY").Year, DATES("EOW_TY").Month, 1)
+                    DATES("EOM_TY") = DateSerial(DATES("BOM_TY").Year, DATES("BOM_TY").Month, DATES("BOM_TY").AddMonths(1).AddDays(-1).Day)
+                    DATES("EOM_LY") = DateSerial(DATES("BOM_LY").Year, DATES("BOM_TY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
+
                     Dim C As Int64 = 0
                     For i As Int64 = 6 To 0 Step -1
                         C += 1
@@ -827,6 +991,55 @@ Public Class WBFFSR01
         Dim endOfWeekSaturday As Date = inDate.AddDays(daysUntilSaturday)
         Return CDate(endOfWeekSaturday.ToString("MM/dd/yyy"))
     End Function
+
+    Private Sub setGridTitle()
+        Dim titleRoot As String = "Flash Sales Report"
+        Dim titleSelection As String = ""
+        Dim titlePeriod As String = ""
+        Dim titleValues As String = ""
+        If rdoWSHE_CODE.Checked Then
+            titleSelection = "Warehouse"
+        End If
+        If rdoCUST_CODE.Checked Then
+            titleSelection = "Customer"
+        End If
+        titlePeriod = "For The Period Ending " & Format(dteSaturday.DateTime, "MM/dd/yy")
+        If EOM_MODE Then
+            titlePeriod = titlePeriod & " (EOM Mode)"
+        End If
+        If rdoUnits.Checked Then
+            titleValues = "Showing Units"
+        End If
+        If rdoDollars.Checked Then
+            titleValues = "Showing Dollars"
+        End If
+        grdWBFFSR01.Text = $"{titleSelection} {titleRoot} {titlePeriod} {titleValues}."
+    End Sub
+
+    Private Sub rdoCUST_CODE_CheckedChanged(sender As Object, e As EventArgs) Handles rdoCUST_CODE.CheckedChanged
+        setWebEDIOption()
+    End Sub
+
+    Private Sub setWebEDIOption()
+        If rdoCUST_CODE.Checked Then
+            chkSeperateWebEDI.Checked = False
+            chkSeperateWebEDI.Visible = False
+        Else
+            chkSeperateWebEDI.Checked = True
+            chkSeperateWebEDI.Visible = True
+        End If
+    End Sub
+
+    Private Sub rdoWSHE_CODE_CheckedChanged(sender As Object, e As EventArgs) Handles rdoWSHE_CODE.CheckedChanged
+        setWebEDIOption()
+    End Sub
+
+    Private Sub setEOM_MODES()
+        Dim COLS As String() = {"TY_WK1", "TY_WK2", "TY_WK3", "TY_WK4", "TY_WK5", "TY_WK6", "TY_WK7", "TOT_TY_WK", "TOT_LY_WK", "LY_MTD", "WTD_FULL_WK_YOY", "WTD_FULL_WK_YOY_PCT"}
+        For Each COL As String In COLS
+            grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Hidden = EOM_MODE
+        Next
+    End Sub
 
 #End Region
 

@@ -57,6 +57,7 @@ Partial Class SOFCORS1
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.chkImages = New ABSCS.ABSCheckBox()
         Me.cmdCancel = New Infragistics.Win.Misc.UltraButton()
+        Me.chkImagesWeb = New ABSCS.ABSCheckBox()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -76,6 +77,7 @@ Partial Class SOFCORS1
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
         CType(Me.chkImages, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkImagesWeb, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ASFBASE2_Fill_Panel
@@ -290,6 +292,7 @@ Partial Class SOFCORS1
         '
         'SplitContainer1.Panel2
         '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.chkImagesWeb)
         Me.SplitContainer1.Panel2.Controls.Add(Me.chkImages)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdCancel)
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdSend)
@@ -302,7 +305,7 @@ Partial Class SOFCORS1
         Me.chkImages.ABSChecked = "1"
         Me.chkImages.Checked = True
         Me.chkImages.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkImages.Location = New System.Drawing.Point(523, 16)
+        Me.chkImages.Location = New System.Drawing.Point(473, 4)
         Me.chkImages.Name = "chkImages"
         Me.chkImages.Size = New System.Drawing.Size(133, 20)
         Me.chkImages.TabIndex = 133
@@ -317,6 +320,15 @@ Partial Class SOFCORS1
         Me.cmdCancel.Size = New System.Drawing.Size(83, 30)
         Me.cmdCancel.TabIndex = 16
         Me.cmdCancel.Text = "Cancel"
+        '
+        'chkImagesWeb
+        '
+        Me.chkImagesWeb.Location = New System.Drawing.Point(496, 22)
+        Me.chkImagesWeb.Name = "chkImagesWeb"
+        Me.chkImagesWeb.Size = New System.Drawing.Size(133, 20)
+        Me.chkImagesWeb.TabIndex = 134
+        Me.chkImagesWeb.Text = "Pull From Web"
+        Me.chkImagesWeb.UseFlatMode = Infragistics.Win.DefaultableBoolean.[True]
         '
         'SOFCORS1
         '
@@ -347,6 +359,7 @@ Partial Class SOFCORS1
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         CType(Me.chkImages, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkImagesWeb, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -359,4 +372,5 @@ Partial Class SOFCORS1
     Public WithEvents cmdSend As Misc.UltraButton
     Friend WithEvents grdSOTCORS1 As UltraWinGrid.UltraGrid
     Friend WithEvents chkImages As ABSCS.ABSCheckBox
+    Friend WithEvents chkImagesWeb As ABSCS.ABSCheckBox
 End Class

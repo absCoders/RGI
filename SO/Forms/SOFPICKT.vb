@@ -60,7 +60,7 @@ Public Class SOFPICKT
             Fill_Records("SOTTOTE0")
 
 
-            ASCMAIN1.sql = "Select * from SOTTRCK1 where DC_CODE = :PARM1 AND TRUCK_TYPE = 'P' AND PICK_BATCH_NO IS NULL"
+            ASCMAIN1.sql = "Select * from SOTTRCK1 where WHSE_CODE = :PARM1 AND TRUCK_TYPE = 'P' AND PICK_BATCH_NO IS NULL"
             Create_TDA(.Tables.Add, "SOTTRCKT", "**", 0, False, "V", 1)
             Fill_Records("SOTTRCKT", WHSE_CODE)
             Dim TRUCK_NOs As String = ""
@@ -102,7 +102,8 @@ Public Class SOFPICKT
 
 
         Create_Summary(grdSOTORDQ1, "ORDR_NO", "Count")
-        Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_BACK", "ORDR_QTY_ALLO"})
+        'Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_BACK", "ORDR_QTY_ALLO"})
+        Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_ALLO"})
 
         grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "SKIN")
         grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "SKIN")
@@ -174,9 +175,9 @@ Public Class SOFPICKT
         Else
             TRUCK_NO = SCAN
 
-            Dim DC_CODE_truck As String = rowSOTTRCK1.Item("DC_CODE") & ""
-            If DC_CODE_truck <> WHSE_CODE Then
-                RESULT = $"Truck {TRUCK_NO} is in DC {DC_CODE_truck}"
+            Dim WHSE_CODE_truck As String = rowSOTTRCK1.Item("WHSE_CODE") & ""
+            If WHSE_CODE_truck <> WHSE_CODE Then
+                RESULT = $"Truck {TRUCK_NO} is in DC {WHSE_CODE_truck}"
                 Record_Scan(SCAN, RESULT, ERR)
             Else
                 Dim PICK_BATCH_NO As String = rowSOTTRCK1.Item("PICK_BATCH_NO") & ""
@@ -212,10 +213,10 @@ Public Class SOFPICKT
                                     End If
 
                                     Dim TOTE_NO As String = rowSOTTOTE1.Item("TOTE_NO")
-                                    Dim DC_CODE_tote As String = rowSOTTOTE1.Item("DC_CODE") & ""
+                                    Dim WHSE_CODE_tote As String = rowSOTTOTE1.Item("WHSE_CODE") & ""
 
-                                    If DC_CODE_tote <> WHSE_CODE Then
-                                        RESULT = $"Tote {TOTE_NO} is in DC {DC_CODE_tote}"
+                                    If WHSE_CODE_tote <> WHSE_CODE Then
+                                        RESULT = $"Tote {TOTE_NO} is in DC {WHSE_CODE_tote}"
                                     Else
 
                                         Dim PICK_NO As String = rowSOTTOTE1.Item("PICK_NO") & ""
@@ -283,7 +284,7 @@ Public Class SOFPICKT
 
     Private Sub grdSOTORDQ1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdSOTORDQ1.InitializeRow
         Dim ORDR_QTY_OPEN As Integer = Val(e.Row.Cells("ORDR_QTY_OPEN").Value & "")
-        Dim ORDR_QTY_BACK As Integer = Val(e.Row.Cells("ORDR_QTY_BACK").Value & "")
+        'Dim ORDR_QTY_BACK As Integer = Val(e.Row.Cells("ORDR_QTY_BACK").Value & "")
         Dim ORDR_QTY_ALLO As Integer = Val(e.Row.Cells("ORDR_QTY_ALLO").Value & "")
 
         Dim BO As String = e.Row.Cells("BO").Value & ""
@@ -291,7 +292,7 @@ Public Class SOFPICKT
             'e.Row.Appearance = Appearance_Magenta
             e.Row.Appearance.BackColor = System.Drawing.Color.LightPink
         Else
-            If ORDR_QTY_ALLO <> ORDR_QTY_OPEN + ORDR_QTY_BACK Then
+            If ORDR_QTY_ALLO <> ORDR_QTY_OPEN Then ' If ORDR_QTY_ALLO <> ORDR_QTY_OPEN + ORDR_QTY_BACK Then
                 e.Row.Cells("ORDR_QTY_ALLO").Appearance = Appearance_Yellow
             Else
                 e.Row.Cells("ORDR_QTY_ALLO").Appearance = Nothing

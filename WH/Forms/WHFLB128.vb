@@ -1967,7 +1967,7 @@ Public Class WHFLB128
             & "T1.PICK_CNT_CARTONS,T1.PICK_TOTAL_WGT, t1.INIT_OPER, t1.LAST_OPER, t1.INIT_DATE, t1.LAST_DATE, t1.PICK_PRINTED_OPER, " & vbCrLf _
             & "T1.PICK_NO_REV, t1.CCPA_NO, t1.SHIP_CNTL_NO, t1.CCPA_NO_STATUS, t1.CCPA_NO_AUTH, t1.CONFIG_NO, " & vbCrLf _
             & "'" & PICK_NO_CONS & "'AS PICK_NO_CONS, SOTORDR1.ORDR_DEPT, SOTORDR1.ORDR_CUST_PO " & vbCrLf _
-            & ",SOTORDR1.CUST_STORE_NO from SOTPICK1 T1, SOTORDR1" & vbCrLf _
+            & ",SOTORDR1.CUST_STORE_NO, T1.WHSE_CODE from SOTPICK1 T1, SOTORDR1" & vbCrLf _
             & " where SOTORDR1.ORDR_NO = T1.ORDR_NO" & vbCrLf _
             & "   And T1.SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
         Fill_Records("SOTPICK1", "", True, ASCMAIN1.sql)

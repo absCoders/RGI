@@ -447,10 +447,13 @@ Public Class SOFPICKS
         Next
 
         ASCMAIN1.Add_Value_List(grdSOTORDQ1, "DESTINATION",, New String() {":", "S:Ship-To", "L:Lab", "D:DC"})
-        ASCMAIN1.Add_Value_List(grdSOTORDQ1, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
+        'ASCMAIN1.Add_Value_List(grdSOTORDQ1, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
         '('K', 'C', 'E', 'L', 'W')"
+        ASCMAIN1.Add_Value_List(grdSOTORDQ1, "ORDR_SOURCE",, New String() {":", "W:Web"})
+
         ASCMAIN1.Add_Value_List(grdSOTORDQ0, "DESTINATION",, New String() {":", "S:Ship-To", "L:Lab", "D:DC"})
-        ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
+        'ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
+        ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web"})
 
         ASCMAIN1.Add_Value_List(grdSOTPICK0, "PICK_BATCH_STATUS",, New String() {":", "O:Released", "P:Picking", "N:Picked", "R:ReqRes"})
         ASCMAIN1.Add_Value_List(grdSOTPICK0, "TRUCK_TYPE",, New String() {":", "P:Pre-Config", "X:Custom", "R:Regular"})
@@ -1657,6 +1660,7 @@ Public Class SOFPICKS
                   and SOTSVIA1.SHIP_VIA_CODE (+) = SOTORDR1.SHIP_VIA_CODE 
                   and SOTORDR1.WHSE_CODE = '??' AND SOTORDR1.SALES_DIVISION_CODE = '{SALES_DIVISION_CODE_SKIN}'
                   and SOTORDR1.ORDR_STATUS = 'O' 
+                  AND SOTORDR1.ORDR_SOURCE = 'W'
                   and (NVL(SOTORDR2.ORDR_QTY_OPEN,0) > 0)
                 ) Z 
                 where ICTSTYL1.STYLE_CODE = Z.STYLE_CODE
@@ -1681,13 +1685,13 @@ Public Class SOFPICKS
                 ASCMAIN1.sql = $"Select SOTORDR1.*, SOTORDR1.ORDR_SHIP_COMPLETE ORDR_ALLO_COMPLETE 
                     from SOTORDR1 
                     where WHSE_CODE = '{Absx1.txtFor("WHSE_CODE").Text}'
-                    and SALES_DIVISION_CODE = '{SALES_DIVISION_CODE_SKIN}' and SOTORDR1.WHSE_CODE IN ({WHSE_CODEs})"
+                    and SALES_DIVISION_CODE = '{SALES_DIVISION_CODE_SKIN}' and SOTORDR1.WHSE_CODE IN ({WHSE_CODEs}) AND SOTORDR1.ORDR_SOURCE = 'W' "
 
                 If inquirySingleSalesOrder Then
                     ASCMAIN1.sql &= $" AND SOTORDR1.ORDR_NO = :PARM1 " ' why do we permit orders whose status might not be O?
                     ASCDATA1.ExecuteSQL($"Insert into {SOTORDR1} {ASCMAIN1.sql}", "V", New Object() {txtORDR_NO.Text})
                 Else
-                    ASCMAIN1.sql &= $" AND SOTORDR1.ORDR_STATUS = 'O' "
+                    ASCMAIN1.sql &= $" AND SOTORDR1.ORDR_STATUS = 'O'"
                     ASCDATA1.ExecuteSQL($"Insert into {SOTORDR1} {ASCMAIN1.sql}")
                 End If
 
@@ -1746,7 +1750,9 @@ Public Class SOFPICKS
                     & ", NULL STYLE_CODE, NULL COLOR_CODE, NULL UPC_CODE, NULL STYLE_DESC, NULL ORDR_XFR_BATCH_NO" & vbCrLf _
                     & ", SOTORDR1.INIT_DATE, SOTORDR1.ORDR_HOLD, SOTORDR1.ORDR_SHIP_COMPLETE, SOTORDR1.ORDR_ALLO_COMPLETE, '0' BO" & vbCrLf _
                     & $" from {SOTORDR1} SOTORDR1, ({sqlICTSTAT2}) X" & vbCrLf _
-                    & " where SOTORDR1.ORDR_SOURCE in ('K', 'C', 'E', 'L', 'W','P')" & vbCrLf
+                    & " where SOTORDR1.ORDR_SOURCE in ('W')" & vbCrLf
+
+                '& " where SOTORDR1.ORDR_SOURCE in ('K', 'C', 'E', 'L', 'W','P')" & vbCrLf
 
                 If inquirySingleSalesOrder Then
                     sql1k &= $" AND SOTORDR1.ORDR_NO = '{txtORDR_NO.Text}'"
@@ -1786,7 +1792,8 @@ Public Class SOFPICKS
             End If
 
             sqlSOTPICK1 &= " and SOTPICK1.PICK_BATCH_NO = SOTPICK0.PICK_BATCH_NO" & vbCrLf _
-            & " and SOTPICK1.PICK_STATUS <> 'D'"
+            & " and SOTPICK1.PICK_STATUS <> 'D'" & vbCrLf _
+            & " and SOTPICK0.ORDR_SOURCE = 'W'" & vbCrLf
 
             If EntryMode = "R" Then
                 sqlSOTPICK1 &= $" and SOTPICK1.PICK_BATCH_NO = '{PICK_BATCH_NO}'"
@@ -1803,6 +1810,8 @@ Public Class SOFPICKS
 
     Function sqlGK(sql As String) As String
 
+        ' DO WE ALLOW K?
+
         Return $"Select DECODE(X.ORDR_SOURCE,
                     'K','K' || TO_CHAR(GREATEST(X.ORDR_DATE,SYSDATE-7),'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
                     'W','W' || TO_CHAR(GREATEST(X.ORDR_DATE,SYSDATE-7),'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
@@ -1810,73 +1819,45 @@ Public Class SOFPICKS
     End Function
 
     Sub Calculate_Allocations()
-        ' WE MAY NEED TO DO AN ALLOCATION COMPARING SOTORDR2.OPEN-PICK TO ICTSTAT2
-        Exit Sub
 
         Dim QTY_TO_ALLO_calc As String = "NVL(R2.ORDR_QTY_OPEN,0)"
 
-        'ASCMAIN1.sql = $"
-        'Begin
-        '  Declare 
-        '    Cursor C1 is Select * from {SOTORDR1} SOTORDR1 order by INIT_DATE, ORDR_NO for Update;
-        '  Begin   
-        '    Update {SOTORDRX} Set ORDR_QTY_ALLO = 0;
-        '    For R1 in C1 Loop
-        '      Begin
-        '        Declare 
-        '          RX {ICTSTATX}%ROWTYPE;
-        '          QTY_AVA NUMBER (6,0); 
-        '          QTY_TO_ALLO NUMBER (6,0); 
-        '          PATIENT_NAME_NOGO VARCHAR2(80); 
-        '          Cursor C2 is Select * from {SOTORDRX} SOTORDRX where ORDR_NO = R1.ORDR_NO order by PATIENT_NAME for Update;
-        '        Begin         
-        '          PATIENT_NAME_NOGO := NULL;       
+        ASCMAIN1.sql = $"
+        Begin
+          Declare 
+            Cursor C1 is Select * from {SOTORDR1} SOTORDR1 order by INIT_DATE, ORDR_NO for Update;
+          Begin   
+            Update {SOTORDRX} Set ORDR_QTY_ALLO = 0;
+            For R1 in C1 Loop
+              Begin
+                Declare 
+                  RX {ICTSTATX}%ROWTYPE;
+                  QTY_AVA NUMBER (6,0); 
+                  QTY_TO_ALLO NUMBER (6,0); 
+                  Cursor C2 is Select * from {SOTORDRX} SOTORDRX where ORDR_NO = R1.ORDR_NO order by INIT_DATE for Update;
+                Begin         
 
-        '          For R2 in C2 Loop      
-        '            QTY_TO_ALLO := {QTY_TO_ALLO_calc};          
-        '            Select ICTSTATX.* into RX from {ICTSTATX} ICTSTATX where STYLE_CODE = R2.STYLE_CODE and COLOR_CODE = R2.COLOR_CODE;
-        '            QTY_AVA := NVL(RX.WHSE_QTY_ON_HAND,0) - NVL(RX.WHSE_QTY_PICK,0) - NVL (RX.LOC_QTY_NOT_AVA,0) - NVL(RX.WHSE_QTY_ALLO,0);
+                  For R2 in C2 Loop      
+                    QTY_TO_ALLO := {QTY_TO_ALLO_calc};          
+                    Select ICTSTATX.* into RX from {ICTSTATX} ICTSTATX where STYLE_CODE = R2.STYLE_CODE and COLOR_CODE = R2.COLOR_CODE;
+                    QTY_AVA := NVL(RX.WHSE_QTY_ON_HAND,0) - NVL(RX.WHSE_QTY_PICK,0) - NVL (RX.LOC_QTY_NOT_AVA,0) - NVL(RX.WHSE_QTY_ALLO,0);
 
-        '            If QTY_TO_ALLO <= QTY_AVA AND NVL(PATIENT_NAME_NOGO,'?') <> NVL(R2.PATIENT_NAME,'??') Then
-        '              Update {SOTORDRX} Set ORDR_QTY_ALLO = QTY_TO_ALLO where Current of C2;
-        '              Update {ICTSTATX} Set WHSE_QTY_ALLO = NVL(WHSE_QTY_ALLO,0) + QTY_TO_ALLO, ORDERS_ALLO = NVL(ORDERS_ALLO,0) + 1 where STYLE_CODE = R2.STYLE_CODE and COLOR_CODE = R2.COLOR_CODE;
-        '            Else
+                    If QTY_TO_ALLO <= QTY_AVA Then
+                      Update {SOTORDRX} Set ORDR_QTY_ALLO = QTY_TO_ALLO where Current of C2;
+                      Update {ICTSTATX} Set WHSE_QTY_ALLO = NVL(WHSE_QTY_ALLO,0) + QTY_TO_ALLO, ORDERS_ALLO = NVL(ORDERS_ALLO,0) + 1 where STYLE_CODE = R2.STYLE_CODE and COLOR_CODE = R2.COLOR_CODE;
+                    Else
+                      If NVL(R1.ORDR_SHIP_COMPLETE,'0') = '1' Then
+                        Update {SOTORDR1} Set ORDR_ALLO_COMPLETE = '0' where ORDR_NO = R1.ORDR_NO;                 
+                      End If;
+                    End If;     
+                  End Loop;
+                End;
+              End;                      
+            End Loop;
+          End;
+        End;"
 
-        '              'If R2.PATIENT_NAME is Not Null 
-        '              '  and not (Trim(Upper(R2.PATIENT_NAME)) in ({List}) Or Trim(Upper(R2.PATIENT_NAME)) like 'STOCK #%')
-        '              'Then
-        '              '  Begin
-        '              '    Declare Cursor C3 is 
-        '              '      Select * from {SOTORDRX} SOTORDRX where ORDR_NO = R1.ORDR_NO and NVL(PATIENT_NAME,'??') = R2.PATIENT_NAME and ORDR_QTY_ALLO > 0 for Update;
-        '              '    Begin
-        '              '      For R3 in C3 Loop
-        '              '        Update {SOTORDRX} Set ORDR_QTY_ALLO = 0 where Current of C3;
-        '              '        Update {ICTSTATX} Set WHSE_QTY_ALLO = NVL(WHSE_QTY_ALLO,0) - R3.ORDR_QTY_ALLO, ORDERS_ALLO = NVL(ORDERS_ALLO,0) - 1 where STYLE_CODE = R3.STYLE_CODE and COLOR_CODE = R3.COLOR_CODE;      
-        '              '      End Loop;
-        '              '    End;
-        '              '  End;
-        '              'End If;
-
-        '              PATIENT_NAME_NOGO := R2.PATIENT_NAME;
-        '              If PATIENT_NAME_NOGO is Not Null Then
-        '                'If (Trim(Upper(PATIENT_NAME_NOGO)) in ({List}) Or Trim(Upper(PATIENT_NAME_NOGO)) like 'STOCK #%') Then
-        '                '  PATIENT_NAME_NOGO := NULL;
-        '                'End If;
-        '              End If;
-
-        '              If NVL(R1.ORDR_SHIP_COMPLETE,'0') = '1' Then
-        '                Update {SOTORDR1} Set ORDR_ALLO_COMPLETE = '0' where ORDR_NO = R1.ORDR_NO;                 
-        '              End If;
-        '            End If;     
-
-        '          End Loop;
-        '        End;
-        '      End;                      
-        '    End Loop;
-        '  End;
-        'End;"
-
-        'ASCDATA1.ExecuteSQL()
+        ASCDATA1.ExecuteSQL()
 
     End Sub
 
@@ -2270,7 +2251,7 @@ Public Class SOFPICKS
             If rows.Length > 0 Then
                 ErrorMessage &= vbCrLf & $"Some Items on Order {rows(0).Item("ORDR_NO")} have No Product Type - Call ABS"
             End If
-            rows = .Select("STYLE_CLASS_CODE<>'OP' and STYLE_CLASS_CODE<>'CC'")
+            rows = .Select("STYLE_CLASS_CODE<>'INTAPP'") ' IN THE FUTURE, WE MIGHT USE STYLE_CLASS_CODE TO INDICATE THAT THE STYLE IS NOT ONLY DIV 30 BUT ALSO FEASIBLE FOR WEBSITE SALES (?)
             If rows.Length > 0 Then
                 ErrorMessage &= vbCrLf & $"Some Items on Order {rows(0).Item("ORDR_NO")} have an Invalid Product Type {rows(0).Item("STYLE_CLASS_CODE")} - Call ABS"
             End If
@@ -2441,7 +2422,8 @@ Public Class SOFPICKS
             End If
         End If
 
-        Dim PICK_BATCH_NO As String = ASCMAIN1.Next_Control_No("SOTPICK0.PICK_BATCH_NO")
+        'Dim PICK_BATCH_NO As String = ASCMAIN1.Next_Control_No("SOTPICK0.PICK_BATCH_NO")
+        Dim PICK_BATCH_NO As String = ASCMAIN1.Next_Control_No("PICK_BATCH_NO")
         Dim rowSOTPICK0 As DataRow = dst.Tables("SOTPICK0").NewRow
         With rowSOTPICK0
             .Item("PICK_BATCH_NO") = PICK_BATCH_NO
@@ -2481,13 +2463,14 @@ Public Class SOFPICKS
                 .Item("PICK_STATUS") = IIf(BO = "1", "D", "P")
                 .Item("SHIP_VIA_CODE") = rowSOTORDR1.Item("SHIP_VIA_CODE")
                 .Item("WHSE_CODE") = rowSOTORDQ1.Item("WHSE_CODE")
-                .Item("CUST_CODE") = rowSOTORDQ1.Item("CUST_CODE")
-                .Item("CUST_SHIP_TO_NO") = rowSOTORDQ1.Item("CUST_SHIP_TO_NO")
+                '.Item("CUST_CODE") = rowSOTORDQ1.Item("CUST_CODE")
+                '.Item("CUST_SHIP_TO_NO") = rowSOTORDQ1.Item("CUST_SHIP_TO_NO")
                 .Item("INIT_DATE") = DATETIME_STAMP
                 .Item("LAST_DATE") = DATETIME_STAMP
                 .Item("PICK_BATCH_NO") = PICK_BATCH_NO
                 .Item("TOTE_NO") = row.Item("TOTE_NO")
                 .Item("SLOT_NO") = row.Item("SLOT_NO")
+                '.Item("PICK_SOURCE") = rowSOTORDR1.Item("ORDR_SOURCE") ' NECESSARY?
                 .Item("WHSE_CODE") = Absx1.txtFor("WHSE_CODE").Text
                 .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE_SKIN
             End With
@@ -2507,7 +2490,7 @@ Public Class SOFPICKS
             ' SORT THE PT DETAIL CANDIDATES BY PICK_SEQ: A = FR OR SG, Z = CS
             Dim sqlw As String = "ISNULL(ORDR_QTY_OPEN,0) <> 0"
             sqlw = Replace(sqlw, "SOTORDR2.", "")
-            sqlw = $"ISNULL(ORDR_QTY_OPEN,0) > 0{sqlw}"
+            sqlw = $"ISNULL(ORDR_QTY_OPEN,0) > 0 and {sqlw}"
             For Each row2 As DataRow In dst.Tables("SOTORDR2").Select(sqlw, "PICK_SEQ")
                 Dim STYLE_CODE As String = row2.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = row2.Item("COLOR_CODE")
@@ -2578,7 +2561,8 @@ Public Class SOFPICKS
                         ' DO NOT WRITE SOTPICK2 - NOTHING TO DO
                     Else
                         If PICK_LNO_ctr = 0 Then
-                            PICK_NO = ASCMAIN1.Next_Control_No("SOTPICK1.PICK_NO")
+                            'PICK_NO = ASCMAIN1.Next_Control_No("SOTPICK1.PICK_NO")
+                            PICK_NO = ASCMAIN1.Next_Control_No("PICK_NO")
                             rowSOTPICK1.Item("PICK_NO") = PICK_NO
                             dst.Tables("SOTPICK1").Rows.Add(rowSOTPICK1)
                         End If
@@ -2679,12 +2663,29 @@ Public Class SOFPICKS
             Update_Record_TDA("SOTPICK1")
             Update_Record_TDA("SOTPICK2")
 
+            'ASCMAIN1.sql = "Merge into ICTSTAT2 using (" & vbCrLf _
+            '        & "Select SOTPICK1.WHSE_CODE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
+            '        & ", Sum(NVL(SOTORDR2.ORDR_QTY_OPEN,0)) ORDR_QTY_OPEN" & vbCrLf _
+            '        & ", Sum(NVL(SOTORDR2.ORDR_QTY_BACK,0)) ORDR_QTY_BACK" & vbCrLf _
+            '        & ", Sum(NVL(SOTPICK2.PICK_QTY,0)) PICK_QTY" & vbCrLf _
+            '        & ", Sum(NVL(SOTPICK2.PICK_QTY_BACK,0)) PICK_QTY_BACK" & vbCrLf _
+            '        & " from SOTPICK1" & vbCrLf _
+            '        & " join SOTPICK2 on (SOTPICK1.PICK_NO = SOTPICK2.PICK_NO)" & vbCrLf _
+            '        & " join SOTORDR2 ON (SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO and SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO)" & vbCrLf _
+            '        & " where SOTPICK1.PICK_BATCH_NO = :PARM1" & vbCrLf _
+            '        & " group by SOTPICK1.WHSE_CODE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
+            '        & ") X on (X.WHSE_CODE = ICTSTAT2.WHSE_CODE and x.STYLE_CODE = ICTSTAT2.STYLE_CODE and x.COLOR_CODE = ICTSTAT2.COLOR_CODE)" & vbCrLf _
+            '        & " when matched Then Update" & vbCrLf _
+            '        & "Set WHSE_QTY_OPEN = NVL(ICTSTAT2.WHSE_QTY_OPEN,0) - (X.ORDR_QTY_OPEN + X.ORDR_QTY_BACK) + X.PICK_QTY_BACK," & vbCrLf _
+            '        & "    WHSE_QTY_PICK = NVL(ICTSTAT2.WHSE_QTY_PICK,0) + X.PICK_QTY" & vbCrLf _
+            '        & " when NOT matched Then" & vbCrLf _
+            '        & "    Insert (STYLE_CODE, COLOR_CODE, WHSE_CODE, WHSE_QTY_OPEN, WHSE_QTY_PICK)" & vbCrLf _
+            '        & "    Values (X.STYLE_CODE, X.COLOR_CODE, X.WHSE_CODE, -1 * (X.ORDR_QTY_OPEN + X.ORDR_QTY_BACK) + X.PICK_QTY_BACK, X.PICK_QTY)"
+
             ASCMAIN1.sql = "Merge into ICTSTAT2 using (" & vbCrLf _
                     & "Select SOTPICK1.WHSE_CODE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
                     & ", Sum(NVL(SOTORDR2.ORDR_QTY_OPEN,0)) ORDR_QTY_OPEN" & vbCrLf _
-                    & ", Sum(NVL(SOTORDR2.ORDR_QTY_BACK,0)) ORDR_QTY_BACK" & vbCrLf _
                     & ", Sum(NVL(SOTPICK2.PICK_QTY,0)) PICK_QTY" & vbCrLf _
-                    & ", Sum(NVL(SOTPICK2.PICK_QTY_BACK,0)) PICK_QTY_BACK" & vbCrLf _
                     & " from SOTPICK1" & vbCrLf _
                     & " join SOTPICK2 on (SOTPICK1.PICK_NO = SOTPICK2.PICK_NO)" & vbCrLf _
                     & " join SOTORDR2 ON (SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO and SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO)" & vbCrLf _
@@ -2692,40 +2693,83 @@ Public Class SOFPICKS
                     & " group by SOTPICK1.WHSE_CODE, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE" & vbCrLf _
                     & ") X on (X.WHSE_CODE = ICTSTAT2.WHSE_CODE and x.STYLE_CODE = ICTSTAT2.STYLE_CODE and x.COLOR_CODE = ICTSTAT2.COLOR_CODE)" & vbCrLf _
                     & " when matched Then Update" & vbCrLf _
-                    & "Set WHSE_QTY_OPEN = NVL(ICTSTAT2.WHSE_QTY_OPEN,0) - (X.ORDR_QTY_OPEN + X.ORDR_QTY_BACK) + X.PICK_QTY_BACK," & vbCrLf _
+                    & "Set WHSE_QTY_OPEN = NVL(ICTSTAT2.WHSE_QTY_OPEN,0) - (X.ORDR_QTY_OPEN)," & vbCrLf _
                     & "    WHSE_QTY_PICK = NVL(ICTSTAT2.WHSE_QTY_PICK,0) + X.PICK_QTY" & vbCrLf _
                     & " when NOT matched Then" & vbCrLf _
                     & "    Insert (STYLE_CODE, COLOR_CODE, WHSE_CODE, WHSE_QTY_OPEN, WHSE_QTY_PICK)" & vbCrLf _
-                    & "    Values (X.STYLE_CODE, X.COLOR_CODE, X.WHSE_CODE, -1 * (X.ORDR_QTY_OPEN + X.ORDR_QTY_BACK) + X.PICK_QTY_BACK, X.PICK_QTY)"
+                    & "    Values (X.STYLE_CODE, X.COLOR_CODE, X.WHSE_CODE, -1 * (X.ORDR_QTY_OPEN), X.PICK_QTY)"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PICK_BATCH_NO)
+
+            'ASCMAIN1.sql = "Merge into SOTORDR2 using (" & vbCrLf _
+            '        & "Select SOTPICK2.ORDR_NO, SOTPICK2.ORDR_LNO, SOTPICK1.WHSE_CODE" & vbCrLf _
+            '        & ", NVL(SOTPICK2.PICK_QTY,0) PICK_QTY" & vbCrLf _
+            '        & ", NVL(SOTPICK2.PICK_QTY_BACK,0) PICK_QTY_BACK" & vbCrLf _
+            '        & ", NVL(SOTPICK2.PICK_QTY_CANC,0) PICK_QTY_CANC from SOTPICK1" & vbCrLf _
+            '        & " join SOTPICK2 on (SOTPICK1.PICK_NO = SOTPICK2.PICK_NO)" & vbCrLf _
+            '        & " where SOTPICK1.PICK_BATCH_NO = :PARM1" & vbCrLf _
+            '        & ") X on (SOTORDR2.ORDR_NO = X.ORDR_NO AND SOTORDR2.ORDR_LNO = X.ORDR_LNO)" & vbCrLf _
+            '        & " when Matched Then Update" & vbCrLf _
+            '        & "Set ORDR_QTY_OPEN = 0, ORDR_QTY_BACK = X.PICK_QTY_BACK" & vbCrLf _
+            '        & ", ORDR_QTY_CANC = NVL(SOTORDR2.ORDR_QTY_CANC,0) + X.PICK_QTY_CANC" & vbCrLf _
+            '        & ", ORDR_QTY_PICK = NVL(SOTORDR2.ORDR_QTY_PICK,0) + X.PICK_QTY" & vbCrLf _
+            '        & ", ORDR_LINE_STATUS = CASE WHEN X.PICK_QTY_BACK <> 0 THEN 'B' ELSE CASE WHEN X.PICK_QTY <> 0 THEN 'P' ELSE CASE WHEN SOTORDR2.ORDR_QTY_SHIP <> 0 THEN 'F' ELSE 'C' END END END"
+            'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PICK_BATCH_NO)
 
             ASCMAIN1.sql = "Merge into SOTORDR2 using (" & vbCrLf _
                     & "Select SOTPICK2.ORDR_NO, SOTPICK2.ORDR_LNO, SOTPICK1.WHSE_CODE" & vbCrLf _
                     & ", NVL(SOTPICK2.PICK_QTY,0) PICK_QTY" & vbCrLf _
-                    & ", NVL(SOTPICK2.PICK_QTY_BACK,0) PICK_QTY_BACK" & vbCrLf _
                     & ", NVL(SOTPICK2.PICK_QTY_CANC,0) PICK_QTY_CANC from SOTPICK1" & vbCrLf _
                     & " join SOTPICK2 on (SOTPICK1.PICK_NO = SOTPICK2.PICK_NO)" & vbCrLf _
                     & " where SOTPICK1.PICK_BATCH_NO = :PARM1" & vbCrLf _
                     & ") X on (SOTORDR2.ORDR_NO = X.ORDR_NO AND SOTORDR2.ORDR_LNO = X.ORDR_LNO)" & vbCrLf _
                     & " when Matched Then Update" & vbCrLf _
-                    & "Set ORDR_QTY_OPEN = 0, ORDR_QTY_BACK = X.PICK_QTY_BACK" & vbCrLf _
+                    & "Set ORDR_QTY_OPEN = 0" & vbCrLf _
                     & ", ORDR_QTY_CANC = NVL(SOTORDR2.ORDR_QTY_CANC,0) + X.PICK_QTY_CANC" & vbCrLf _
                     & ", ORDR_QTY_PICK = NVL(SOTORDR2.ORDR_QTY_PICK,0) + X.PICK_QTY" & vbCrLf _
-                    & ", ORDR_LINE_STATUS = CASE WHEN X.PICK_QTY_BACK <> 0 THEN 'B' ELSE CASE WHEN X.PICK_QTY <> 0 THEN 'P' ELSE CASE WHEN SOTORDR2.ORDR_QTY_SHIP <> 0 THEN 'F' ELSE 'C' END END END"
+                    & ", ORDR_STATUS = CASE WHEN X.PICK_QTY <> 0 THEN 'P' ELSE CASE WHEN SOTORDR2.ORDR_QTY_SHIP <> 0 THEN 'F' ELSE 'C' END END"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", PICK_BATCH_NO)
+
+            'ASCMAIN1.sql = "" _
+            '& "Begin Declare ORDR_STATUS_calc VARCHAR2(1); Cursor C1 is" & vbCrLf _
+            '& "  Select SOTORDR2.ORDR_NO" & vbCrLf _
+            '& ", Sum (NVL(SOTORDR2.ORDR_QTY_OPEN,0)) ORDR_QTY_OPEN" & vbCrLf _
+            '& ", Sum (NVL(SOTORDR2.ORDR_QTY_BACK,0)) ORDR_QTY_BACK" & vbCrLf _
+            '& ", Sum (NVL(SOTORDR2.ORDR_QTY_PICK,0)) ORDR_QTY_PICK" & vbCrLf _
+            '& ", Sum (NVL(SOTORDR2.ORDR_QTY_SHIP,0)) ORDR_QTY_SHIP" & vbCrLf _
+            '& " from SOTORDR2,SOTPICK1" & vbCrLf _
+            '& " where SOTORDR2.ORDR_NO = SOTPICK1.ORDR_NO and SOTPICK1.PICK_BATCH_NO = :PARM1" & vbCrLf _
+            '& " group by SOTORDR2.ORDR_NO;" & vbCrLf _
+            '& " Begin For R1 in C1 loop" & vbCrLf _
+            '& " If R1.ORDR_QTY_OPEN > 0 OR R1.ORDR_QTY_BACK > 0 Then" & vbCrLf _
+            '& "  ORDR_STATUS_calc := 'O';" & vbCrLf _
+            '& " Else " & vbCrLf _
+            '& "  If R1.ORDR_QTY_PICK > 0 Then" & vbCrLf _
+            '& "   ORDR_STATUS_calc := 'P';" & vbCrLf _
+            '& "  Else " & vbCrLf _
+            '& "   If R1.ORDR_QTY_SHIP > 0 Then" & vbCrLf _
+            '& "    ORDR_STATUS_calc := 'F';" & vbCrLf _
+            '& "   Else " & vbCrLf _
+            '& "    ORDR_STATUS_calc := 'C';" & vbCrLf _
+            '& "   End if;" & vbCrLf _
+            '& "  End if;" & vbCrLf _
+            '& " End if;" & vbCrLf _
+            '& $" Update SOTORDR1 Set ORDR_STATUS = ORDR_STATUS_calc, ORDR_PICK_SEQ = NVL(ORDR_PICK_SEQ,0) + 1, LAST_OPER = :PARM2, LAST_DATE = SYSDATE" & vbCrLf _
+            '& "  where ORDR_NO = R1.ORDR_NO;" & vbCrLf _
+            '& " End Loop; End;" & vbCrLf _
+            '& "End;"
+            'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {PICK_BATCH_NO, ASCMAIN1.USER_ID})
 
             ASCMAIN1.sql = "" _
             & "Begin Declare ORDR_STATUS_calc VARCHAR2(1); Cursor C1 is" & vbCrLf _
             & "  Select SOTORDR2.ORDR_NO" & vbCrLf _
             & ", Sum (NVL(SOTORDR2.ORDR_QTY_OPEN,0)) ORDR_QTY_OPEN" & vbCrLf _
-            & ", Sum (NVL(SOTORDR2.ORDR_QTY_BACK,0)) ORDR_QTY_BACK" & vbCrLf _
             & ", Sum (NVL(SOTORDR2.ORDR_QTY_PICK,0)) ORDR_QTY_PICK" & vbCrLf _
             & ", Sum (NVL(SOTORDR2.ORDR_QTY_SHIP,0)) ORDR_QTY_SHIP" & vbCrLf _
             & " from SOTORDR2,SOTPICK1" & vbCrLf _
             & " where SOTORDR2.ORDR_NO = SOTPICK1.ORDR_NO and SOTPICK1.PICK_BATCH_NO = :PARM1" & vbCrLf _
             & " group by SOTORDR2.ORDR_NO;" & vbCrLf _
             & " Begin For R1 in C1 loop" & vbCrLf _
-            & " If R1.ORDR_QTY_OPEN > 0 OR R1.ORDR_QTY_BACK > 0 Then" & vbCrLf _
+            & " If R1.ORDR_QTY_OPEN > 0 Then" & vbCrLf _
             & "  ORDR_STATUS_calc := 'O';" & vbCrLf _
             & " Else " & vbCrLf _
             & "  If R1.ORDR_QTY_PICK > 0 Then" & vbCrLf _
@@ -2743,6 +2787,7 @@ Public Class SOFPICKS
             & " End Loop; End;" & vbCrLf _
             & "End;"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {PICK_BATCH_NO, ASCMAIN1.USER_ID})
+
 
             If PTsP > 0 Then
 

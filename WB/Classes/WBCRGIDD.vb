@@ -88,7 +88,8 @@ Public Class WBCRGIDD
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0)) ORDR_QTY,")
             S.AppendLine("O1.ORDR_SHIP_DATE,")
             S.AppendLine("O1.ORDR_CANCEL_DATE,")
-            S.AppendLine("O1.WHSE_CODE")
+            S.AppendLine("O1.WHSE_CODE,")
+            S.AppendLine("O1.SREP_CODE")
             S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2, ICTSTYL1 S1")
             S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
             S.AppendLine("AND O2.STYLE_CODE = S1.STYLE_CODE ")
@@ -106,7 +107,8 @@ Public Class WBCRGIDD
             S.AppendLine($"'{("").PadRight(30)}',")
             S.AppendLine("O1.ORDR_SHIP_DATE,")
             S.AppendLine("O1.ORDR_CANCEL_DATE,")
-            S.AppendLine("O1.WHSE_CODE")
+            S.AppendLine("O1.WHSE_CODE,")
+            S.AppendLine("O1.SREP_CODE")
             S.AppendLine("ORDER BY O1.ORDR_DATE")
             ASCMAIN1.sql = S.ToString
             tmpSOTORDRD = ASCMAIN1.Temp_Table
@@ -215,7 +217,9 @@ Public Class WBCRGIDD
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_SHIP,0) * NVL(O2.ORDR_UNIT_PRICE,0)) SHIP_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0)) ORDR_QTY,")
             S.AppendLine("O1.ORDR_SHIP_DATE,")
-            S.AppendLine("O1.ORDR_CANCEL_DATE")
+            S.AppendLine("O1.ORDR_CANCEL_DATE,")
+            S.AppendLine("O1.ORDR_SOURCE,")
+            S.AppendLine("O1.SREP_CODE")
             S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
             S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
             'S.AppendLine($"AND O1.ORDR_YYYYPP_BOOKED >= '{YYYYBP}'")
@@ -229,7 +233,9 @@ Public Class WBCRGIDD
             S.AppendLine("O1.CUST_CODE,")
             S.AppendLine("O1.CUST_NAME,")
             S.AppendLine("O1.ORDR_SHIP_DATE,")
-            S.AppendLine("O1.ORDR_CANCEL_DATE")
+            S.AppendLine("O1.ORDR_CANCEL_DATE,")
+            S.AppendLine("O1.ORDR_SOURCE,")
+            S.AppendLine("O1.SREP_CODE")
             S.AppendLine("ORDER BY O1.ORDR_DATE")
             ASCMAIN1.sql = S.ToString
             tmpSOTORDR1 = ASCMAIN1.Temp_Table
@@ -492,6 +498,7 @@ Public Class WBCRGIDD
             tblEXCEL.Rows.Add({"Orders", 14, "ORDR_SHIP_DATE", "D", 10, "Ship Date", ""})
             tblEXCEL.Rows.Add({"Orders", 15, "ORDR_CANCEL_DATE", "D", 10, "Cancel Date", ""})
             tblEXCEL.Rows.Add({"Orders", 16, "WHSE_CODE", "S", 10, "Whs", ""})
+            tblEXCEL.Rows.Add({"Orders", 17, "SREP_CODE", "S", 10, "Sales Rep", ""})
         Else
             tblEXCEL.Rows.Add({"Invoices", 0, "ORDR_YYYYPP_UPDATED", "S", 10, "Period", ""})
             tblEXCEL.Rows.Add({"Invoices", 1, "INV_TYPE_D", "S", 10, "Type", ""})
@@ -545,6 +552,8 @@ Public Class WBCRGIDD
             tblEXCEL.Rows.Add({"Orders", 9, "ORDR_QTY", "2", 10, "Order Qty", ""})
             tblEXCEL.Rows.Add({"Orders", 10, "ORDR_SHIP_DATE", "D", 10, "Ship Date", ""})
             tblEXCEL.Rows.Add({"Orders", 11, "ORDR_CANCEL_DATE", "D", 10, "Cancel Date", ""})
+            tblEXCEL.Rows.Add({"Orders", 12, "ORDR_SOURDE", "D", 10, "Source", ""})
+            tblEXCEL.Rows.Add({"Orders", 13, "SREP_CODE", "S", 10, "Sales Rep", ""})
 
             tblEXCEL.Rows.Add({"Customers", 0, "CUST_CODE", "S", 10, "Cust Code", ""})
             tblEXCEL.Rows.Add({"Customers", 1, "CUST_NAME", "S", 40, "Name", ""})
