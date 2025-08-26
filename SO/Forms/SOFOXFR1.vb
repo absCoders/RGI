@@ -819,6 +819,7 @@ Public Class SOFOXFR1
                     & ", SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf _
                     & " From SOTORDR2, SOTORDR1" & vbCrLf _
                     & " where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                    & " and SOTORDR1.ORDR_NO <> '0000865352'" & vbCrLf _
                     & $"   And (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) in (Select STYLE_CODE, COLOR_CODE from {SOTOXFRX})" & vbCrLf _
                     & "   And SOTORDR1.WHSE_CODE = 'MS' and SOTORDR2.ORDR_QTY_PICK > 0"
 
