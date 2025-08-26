@@ -7,6 +7,7 @@ Public Class SOFOXFR1
     Dim TABLES_OXFR() As String = {"SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTSHIP1", "SOTCART1", "SOTCART2"}
 
     Dim sqlSOTORDR0 As String
+    Dim one_and_done As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -216,6 +217,14 @@ Public Class SOFOXFR1
 
         Select Case eItemKey
             Case "Load"
+
+                If optAction.Value = "D" Then
+                Else
+                    If one_and_done Then
+                        EMsg &= vbCr & "Please exit and ree-enter this screen to start another Transfer"
+                    End If
+                End If
+
 
             Case "Update"
 
@@ -435,6 +444,8 @@ Public Class SOFOXFR1
 
             TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("SOTOXFRX").Select("SEL = '1'"), "UNITS_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
             TAC.SOCMAIN1.Release_Transfer_Order(Me) ' Release that XFR Order
+
+            one_and_done = True
 
             For Each TABLE_NAME As String In TABLES_OXFR
                 Update_Record_TDA(TABLE_NAME)
