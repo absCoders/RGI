@@ -661,7 +661,7 @@ Public Class ASCDATA1
     ByVal sql_to_Execute As String, _
     ByVal custom_parameters As String, _
     ByVal PARM As Object) As Integer
-        ExecuteSQL(sql_to_Execute, custom_parameters, New Object() {PARM})
+        Return ExecuteSQL(sql_to_Execute, custom_parameters, New Object() {PARM})
     End Function
 
     ''' <summary>
