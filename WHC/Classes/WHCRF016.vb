@@ -193,7 +193,8 @@
                             EMsg = vbCr & "Pick Ticket is Locked " _
                                      & User
                             CreateResponse("", "GREEN", EMsg)
-                            If User.Contains(G.USER_ID) Then LockWarning = True
+                            'don't allow LockWarning bypass - Managers will Unlock Pick ticket in pack control update
+                            If User.Contains(G.USER_ID) Then LockWarning = False 'LockWarning = True
                             Exit Select
                         End If
                     End If
@@ -613,11 +614,11 @@
             If Style = "MTH13478" Then Stop
 
             rtn_row = row
-            If Val(row("LOCATION_QTY") & "") > 0 Then Exit For
+            'If Val(row("LOCATION_QTY") & "") > 0 Then Exit For
 
             'previous logic tried to clean locs by taking picker to lowest qty > pick
             'Now we have largest qty first, so first rec always satisfies rule.
-            'New change - 8/16/2025 - show lowest qty first so we can clear locations.
+            'New change - 8/16/2025 - show lowest qty first so we can clear locations. 8/28/2025 revert change
             'tmp_LOC = row("LOCATION_CODE")
             'If row("LOCATION_QTY") > 0 And (tmp_LOC.Substring(tmp_LOC.Length - 1, 1) = "A" Or tmp_LOC.Substring(tmp_LOC.Length - 1, 1) = "B") Then
             '    ab_row = row
