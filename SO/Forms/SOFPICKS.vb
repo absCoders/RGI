@@ -165,9 +165,9 @@ Public Class SOFPICKS
             & "   And ICTSTYD1.COLOR_CODE (+) = SOTORDR2.COLOR_CODE" & vbCrLf _
             & "   And ICTSTYC1.STYLE_CODE (+) = SOTORDR2.STYLE_CODE" & vbCrLf & vbCrLf _
             & "   And ICTSTYC1.COLOR_CODE (+) = SOTORDR2.COLOR_CODE" & vbCrLf _
-            & "   And SOTORDR2.STYLE_CODE = :PARM1" & vbCrLf & vbCrLf _
-            & "   And SOTORDR2.COLOR_CODE = :PARM2" & vbCrLf _
             & "   And ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE"
+            '& "   And SOTORDR2.STYLE_CODE = :PARM1" & vbCrLf & vbCrLf _
+            '& "   And SOTORDR2.COLOR_CODE = :PARM2" & vbCrLf _
             sqlSOTPICK2 = ASCMAIN1.sql
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 1,, "VV", 2)
             'Create_TDA(.Tables.Add, "SOTPICK2", "**", 1,, "V")
@@ -2031,9 +2031,24 @@ Public Class SOFPICKS
             ASCMAIN1.sql = sqlSOTPICK2 & $" and SOTPICK1.PICK_BATCH_NO = '{PICK_BATCH_NO}'"
             'ASCMAIN1.sql = Replace(ASCMAIN1.sql, ":PARM1", $"'{WHSE_CODE}'")
 
+
+            ' THIS IS THE ORIGINAL QTY/LOC SQL
+            'Dim sqlLoc As String = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+            '& ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = ICTSTYD1.LOCATION_CODE THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
+            '& ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'OS%' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
+            '& ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'PALLET' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PAL" & vbCrLf _
+            '& ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'CART' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) CRT" & vbCrLf _
+            '& ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
+            '& ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'LOST' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
+            '& " from WHTLOCB1,ICTSTYD1" & vbCrLf _
+            '& $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}'" & vbCrLf _
+            '& "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
+            '& " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
+
+            ' THIS SQL ASSUMES THAT S2-%-01 AND S2-%-02 ARE PRIMARY, AND S2-%-03/04/05/06 ARE OSL
             Dim sqlLoc As String = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = ICTSTYD1.LOCATION_CODE THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'OS%' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
+            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-01' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-02' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-01' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-02' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
+            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-06' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S1%-06' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'PALLET' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PAL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'CART' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) CRT" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
@@ -2043,6 +2058,7 @@ Public Class SOFPICKS
             & "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             ASCMAIN1.sql = $"Select X.*, Z.PRI, Z.OSL, Z.PAL, Z.CRT, Z.TRK, Z.LNF from ({ASCMAIN1.sql}) X, ({sqlLoc}) Z where Z.STYLE_CODE (+) = X.STYLE_CODE and Z.COLOR_CODE (+) = X.COLOR_CODE"
+
 
             Fill_Records("SOTPICK2",,, ASCMAIN1.sql)
 
@@ -2152,9 +2168,23 @@ Public Class SOFPICKS
             & $" from ICTSTAT2, ICTCOLR1, ({ASCMAIN1.sql}) X" & vbCrLf _
             & " where ICTSTAT2.STYLE_CODE (+) = X.STYLE_CODE And ICTSTAT2.COLOR_CODE (+) = X.COLOR_CODE And ICTCOLR1.COLOR_CODE = X.COLOR_CODE And ICTSTAT2.WHSE_CODE (+) = X.WHSE_CODE"
 
+        ' THIS IS THE ORIGINAL QTY/LOC SQL
+        'Dim sqlLoc As String = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
+        '    & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = ICTSTYD1.LOCATION_CODE THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
+        '    & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE Like 'OS%' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
+        '    & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'PALLET' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PAL" & vbCrLf _
+        '    & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'CART' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) CRT" & vbCrLf _
+        '    & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
+        '    & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'LOST' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
+        '    & " from WHTLOCB1,ICTSTYD1" & vbCrLf _
+        '    & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}'" & vbCrLf _
+        '    & "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
+        '    & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
+
+        ' THIS SQL ASSUMES THAT S2-%-01 AND S2-%-02 ARE PRIMARY, AND S2-%-03/04/05/06 ARE OSL
         Dim sqlLoc As String = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = ICTSTYD1.LOCATION_CODE THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE Like 'OS%' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
+            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-01' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-02' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-01' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-02' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
+            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-06' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S1%-06' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'PALLET' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PAL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'CART' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) CRT" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
@@ -2163,6 +2193,8 @@ Public Class SOFPICKS
             & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}'" & vbCrLf _
             & "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
+
+
         ASCMAIN1.sql = $"Select Y.*, Z.PRI, Z.OSL, Z.PAL, Z.CRT, Z.TRK, Z.LNF from ({ASCMAIN1.sql}) Y, ({sqlLoc}) Z" & vbCrLf _
             & " where Z.STYLE_CODE (+) = Y.STYLE_CODE and Z.COLOR_CODE (+) = Y.COLOR_CODE"
         ASCMAIN1.sql = $"Select X.*" & vbCrLf _
@@ -2229,8 +2261,9 @@ Public Class SOFPICKS
             ErrorMessage = "Unable to lock all orders"
         ElseIf dst.Tables("ICTSTATO").Select("QTY_SHORT <> 0 AND ISNULL(ACTION_IF_SHORT,'?') <> 'C' AND ISNULL(ACTION_IF_SHORT,'?') <> 'B'").Length > 0 And Not chkIgnoreInvtyShort.Checked Then
             ErrorMessage = "Some Items are Short"
-        ElseIf dst.Tables("ICTSTATO").Select("ISNULL(LOCATION_CODE,'?') = '?' AND QTY_AVA > 0 AND ISNULL(ACTION_IF_SHORT,'?') = '?'").Length > 0 Then
-            ErrorMessage = "Some Items do NOT have a Primary Location"
+            ' DISABLING THE NEXT 2 LINES SO THAT WE CAN LIVE WITHOUT A PRIMARY
+            'ElseIf dst.Tables("ICTSTATO").Select("ISNULL(LOCATION_CODE,'?') = '?' AND QTY_AVA > 0 AND ISNULL(ACTION_IF_SHORT,'?') = '?'").Length > 0 Then
+            '    ErrorMessage = "Some Items do NOT have a Primary Location"
         End If
 
         ASCMAIN1.Progress("Now Checking Sales Orders")
@@ -2364,6 +2397,7 @@ Public Class SOFPICKS
                     Dim TRUCK_NO As String = ff.TRUCK_NO
                     Dim TRUCK_TYPE As String = ff.TRUCK_TYPE
                     Dim tblSOTTOTET As DataTable = ff.dst.Tables("SOTTOTET")
+
                     Create_Pick_Tickets_for_Batch(release_multiple_groups, GROUP_KEY, WHSE_CODE, PICK_DESCRIPTION, ORDR_SOURCE, TRUCK_NO, TRUCK_TYPE, "0", ff.tbl, tblSOTTOTET)
 
 
@@ -2393,6 +2427,7 @@ Public Class SOFPICKS
 
             End Using
         End If
+
 
         Return ""
 
@@ -2442,8 +2477,6 @@ Public Class SOFPICKS
             .Item("SALES_DIVISION_CODE") = SALES_DIVISION_CODE_SKIN
         End With
         dst.Tables("SOTPICK0").Rows.Add(rowSOTPICK0)
-
-
 
         For Each row As DataRow In tbl.Select(sqlT, "SLOT_NO")
             Dim ORDR_NO As String = row.Item("ORDR_NO")
@@ -2626,6 +2659,7 @@ Public Class SOFPICKS
                 If TRUCK_TYPE = "X" Then
                     sqlTT = ", TRUCK_TYPE = 'X'"
                 End If
+
                 ASCMAIN1.sql = $"Update SOTTRCK1 Set PICK_BATCH_NO = '{PICK_BATCH_NO}'" & sqlTT & " where TRUCK_NO = :PARM1 and PICK_BATCH_NO is Null"
                 r = ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", TRUCK_NO)
                 If r <> 1 Then
