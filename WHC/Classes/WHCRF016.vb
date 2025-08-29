@@ -610,7 +610,7 @@
             & "  and m1.WHSE_CODE = '" & WHSE_CODE & "'" & vbCrLf _
             & "  and NVL(m1.LOCATION_LOCKED,'0') <> '1'" & vbCrLf _
             & "  order by b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
-        For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "LOCATION_USE, LOCATION_QTY")
+        For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "LOCATION_QTY") ' "LOCATION_USE, LOCATION_QTY"
             If Style = "MTH13478" Then Stop
 
             rtn_row = row
