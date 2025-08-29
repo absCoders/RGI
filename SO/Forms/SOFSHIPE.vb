@@ -1,10 +1,11 @@
-Imports DPayments.DShippingSDK
+﻿Imports DPayments.DShippingSDK
 Imports System.Net
 Imports System.IO
 Imports Newtonsoft.Json
 Imports Infragistics.Win.UltraWinGrid
 Imports System.Text.RegularExpressions
 Imports System.Net.NetworkInformation
+Imports System.Drawing
 
 ' 08/08/2025
 ' This form was created for Vandale when they purchased Skin.
@@ -257,6 +258,7 @@ Public Class SOFSHIPE
 
         grdSOTORDR5.DataSource = dst.Tables("SOTORDR5")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
+        grdSOTCART1.AllowDrop = True
         grdSOTCART2.DataSource = dst.Tables("SOTCART2")
 
         With ultraComboPackage.DisplayLayout.Bands(0)
@@ -350,6 +352,28 @@ Public Class SOFSHIPE
                     EMsg &= vbCr & "You need to request shipping rates before the order can be shipped."
                 End If
 
+                Dim CART_SEQ As Int16 = 1
+                dst.Tables("SOTCART1").AcceptChanges()
+                dst.Tables("SOTCART2").AcceptChanges()
+
+                For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("", "CART_SEQ")
+                    drSOTCART1.SetAdded()
+                    drSOTCART1.Item("CART_SEQ") = CART_SEQ
+                    CART_SEQ += 1
+                    Dim CART_NO As String = drSOTCART1.Item("CART_NO") & String.Empty
+                    If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}'").Length = 0 Then
+                        EMsg &= vbCr & "All cartons must include at least one product before proceeding."
+                        Exit For
+                    End If
+
+                    Dim CART_LNO As Int16 = 1
+                    For Each drSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}'", "CART_LNO")
+                        drSOTCART2.SetAdded()
+                        drSOTCART2.Item("CART_LNO") = CART_LNO
+                        CART_LNO += 1
+                    Next
+                Next
+
                 Dim cost As Decimal = 0
 
                 If dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'").Length = 0 Then
@@ -369,6 +393,7 @@ Public Class SOFSHIPE
                 End If
 
                 Dim ErrorMessage As String = String.Empty
+                ' This is a prescreen for potential issues.
                 If Not RequestShippingLabel("", ErrorMessage, True) Then
                     EMsg &= vbCr & ErrorMessage
                 End If
@@ -599,7 +624,7 @@ Public Class SOFSHIPE
 
         Dim grd As UltraWinGrid.UltraGrid = Nothing
 
-        If grd Is Nothing OrElse (grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow) Then
+        If grdSOTCART1.ActiveRow Is Nothing Then
             Exit Sub
         End If
 
@@ -608,17 +633,12 @@ Public Class SOFSHIPE
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
-            Case ""
-
-        End Select
-
-        Me.Cursor = Cursors.Default
-
-        Select Case e.Tool.Key
             Case "Add Carton"
                 Dim PICK_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("PICK_NO")
                 AddCarton(PICK_NO)
         End Select
+
+        Me.Cursor = Cursors.Default
 
     End Sub
 
@@ -2513,10 +2533,13 @@ Public Class SOFSHIPE
                     Case WHCSHIP1.ProviderTypeFedex
                         drSOTCART1.Item("REFERENCE1") = $"CR:{drSOTORDR1.Item("ORDR_NO_WEB")}"
                         drSOTCART1.Item("REFERENCE2") = $"IN:{INV_NO}"
+                        drSOTCART1.Item("REFERENCE3") = ""
 
                     Case WHCSHIP1.ProviderTypeUPS
-                        drSOTCART1.Item("REFERENCE1") = $"PO:{drSOTORDR1.Item("ORDR_NO_WEB")}"
+                        drSOTCART1.Item("REFERENCE1") = $"TN:{drSOTORDR1.Item("ORDR_NO_WEB")}"
                         drSOTCART1.Item("REFERENCE2") = $"IK:{INV_NO}"
+                        drSOTCART1.Item("REFERENCE3") = ""
+
                 End Select
             Next
 
@@ -2664,8 +2687,14 @@ Public Class SOFSHIPE
                                 ' Ups allows up to 2 References
 
                                 If ASCMAIN1.CLIENT = "VAN" Then
-                                    reference &= (drSOTCART1.Item("REFERENCE1") & String.Empty).ToString
-                                    reference &= (drSOTCART1.Item("REFERENCE2") & String.Empty).ToString
+                                    If (drSOTCART1.Item("REFERENCE1") & String.Empty).ToString.Trim.Length > 0 Then
+                                        reference &= "; " & (drSOTCART1.Item("REFERENCE1") & String.Empty).ToString
+                                    End If
+
+                                    If (drSOTCART1.Item("REFERENCE2") & String.Empty).ToString.Trim.Length > 0 Then
+                                        reference &= "; " & (drSOTCART1.Item("REFERENCE2") & String.Empty).ToString
+                                    End If
+
                                     refCount = 5
                                 End If
 
@@ -3271,7 +3300,7 @@ Public Class SOFSHIPE
         End If
 
         If Not dst.Tables("SOTCART1").Columns.Contains("SHIP_BOL_NO") Then
-             dst.Tables("SOTCART1").Columns.add("SHIP_BOL_NO", GetType(String))
+            dst.Tables("SOTCART1").Columns.Add("SHIP_BOL_NO", GetType(String))
         End If
 
         For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select(CART_NO, "SHIP_BOL_NO,CART_NO")
@@ -4025,6 +4054,99 @@ Public Class SOFSHIPE
 
     Private Sub grdSOTPICK1X_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdSOTPICK1X.InitializeLayout
 
+    End Sub
+
+    Private dragRow As UltraGridRow = Nothing
+
+    Private Sub grdSOTCART2_MouseDown(sender As Object, e As MouseEventArgs) Handles grdSOTCART2.MouseDown
+        Try
+            If e.Button <> MouseButtons.Left Then
+                dragRow = Nothing
+                Exit Sub
+            End If
+
+            ' Get the element under the mouse
+            Dim element As UIElement = grdSOTCART2.DisplayLayout.UIElement.ElementFromPoint(New Point(e.X, e.Y))
+            If element Is Nothing Then
+                dragRow = Nothing
+                Return
+            End If
+
+            ' Ask the element for its UltraGridRow context
+            Dim row As UltraGridRow = TryCast(element.GetContext(GetType(UltraGridRow)), UltraGridRow)
+
+            If row IsNot Nothing AndAlso row.IsDataRow Then
+                dragRow = row
+            Else
+                dragRow = Nothing
+            End If
+
+        Catch ex As Exception
+            dragRow = Nothing
+        End Try
+    End Sub
+
+    Private Sub grdSOTCART2_MouseMove(sender As Object, e As MouseEventArgs) Handles grdSOTCART2.MouseMove
+        Try
+            If e.Button = MouseButtons.Left AndAlso dragRow IsNot Nothing Then
+                ' Start the drag operation with the row object
+                grdSOTCART2.DoDragDrop(dragRow, DragDropEffects.Copy)
+            End If
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub grdSOTCART1_DragEnter(sender As Object, e As DragEventArgs) Handles grdSOTCART1.DragEnter
+        Try
+            If e.Data.GetDataPresent(GetType(UltraGridRow)) Then
+                e.Effect = DragDropEffects.Copy
+            Else
+                e.Effect = DragDropEffects.None
+            End If
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
+
+    Private Sub grdSOTCART1_DragDrop(sender As Object, e As DragEventArgs) Handles grdSOTCART1.DragDrop
+        Try
+            If e.Data.GetDataPresent(GetType(UltraGridRow)) Then
+                Dim sourceRow As UltraGridRow = CType(e.Data.GetData(GetType(UltraGridRow)), UltraGridRow)
+
+                ' Convert screen coords → client coords for grdSOTCART1
+                Dim clientPoint As Point = grdSOTCART1.PointToClient(New Point(e.X, e.Y))
+
+                ' Find the UIElement under the cursor
+                Dim element As UIElement = grdSOTCART1.DisplayLayout.UIElement.ElementFromPoint(clientPoint)
+                If element Is Nothing Then Return
+
+                ' Get the row under the cursor
+                Dim targetRow As UltraGridRow = CType(element.GetContext(GetType(UltraGridRow)), UltraGridRow)
+
+                If targetRow IsNot Nothing Then
+                    Dim CART_NO_TARGET As String = targetRow.Cells("CART_NO").Value & String.Empty
+
+                    Dim CART_NO_SOURCE As String = sourceRow.Cells("CART_NO").Value & String.Empty
+                    Dim CART_NO_LNO_SOURCE As String = sourceRow.Cells("CART_LNO").Value & String.Empty
+
+                    If CART_NO_TARGET = CART_NO_SOURCE Then
+                        Exit Sub
+                    End If
+
+                    EnforceConstraints(False)
+                    Dim drSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find({CART_NO_SOURCE, CART_NO_LNO_SOURCE})
+                    If drSOTCART2 IsNot Nothing Then
+                        drSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
+                        drSOTCART2.Item("CART_NO") = CART_NO_TARGET
+                    End If
+                    EnforceConstraints(True)
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
     End Sub
 
 #End Region

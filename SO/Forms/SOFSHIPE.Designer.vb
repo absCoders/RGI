@@ -1520,7 +1520,7 @@ Partial Class SOFSHIPE
         Me.grdSOTCART1.DisplayLayout.Override.ActiveCellAppearance = Appearance78
         Me.grdSOTCART1.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         Me.grdSOTCART1.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
-        Me.grdSOTCART1.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
+        Me.grdSOTCART1.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[True]
         Me.grdSOTCART1.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[True]
         Me.grdSOTCART1.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdSOTCART1.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
