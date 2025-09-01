@@ -53,10 +53,12 @@ Partial Class SOTTRCK1
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -74,11 +76,12 @@ Partial Class SOTTRCK1
         Me.txtMini = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.splTruck = New System.Windows.Forms.SplitContainer()
+        Me.optToteCount = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.cmd27 = New Infragistics.Win.Misc.UltraButton()
         Me.splTote1 = New System.Windows.Forms.SplitContainer()
         Me.grpPrintToteLabels = New Infragistics.Win.Misc.UltraGroupBox()
         Me.chkOneTotePerLabel = New ABSCS.ABSCheckBox()
         Me.btnTest = New Infragistics.Win.Misc.UltraButton()
-        Me.cmd27 = New Infragistics.Win.Misc.UltraButton()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -100,6 +103,7 @@ Partial Class SOTTRCK1
         Me.splTruck.Panel1.SuspendLayout()
         Me.splTruck.Panel2.SuspendLayout()
         Me.splTruck.SuspendLayout()
+        CType(Me.optToteCount, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.splTote1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.splTote1.Panel1.SuspendLayout()
         Me.splTote1.Panel2.SuspendLayout()
@@ -112,22 +116,24 @@ Partial Class SOTTRCK1
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.splTruck)
-        Me.Panel1.Size = New System.Drawing.Size(849, 593)
+        Me.Panel1.Margin = New System.Windows.Forms.Padding(6, 4, 6, 4)
+        Me.Panel1.Size = New System.Drawing.Size(1328, 854)
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
-        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
+        Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
-        Me.UltraExplorerBar1.Size = New System.Drawing.Size(165, 640)
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 901)
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(853, 660)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1332, 925)
         '
         'grdASFBASEX
         '
@@ -176,21 +182,25 @@ Partial Class SOTTRCK1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 660)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 925)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 660)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1545, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 925)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1545, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 660)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 925)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1545, 0)
         '
         'tlb
         '
@@ -202,10 +212,10 @@ Partial Class SOTTRCK1
         Appearance4.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel1.Appearance = Appearance4
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(11, 15)
-        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel1.Location = New System.Drawing.Point(14, 17)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(65, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(81, 22)
         Me.UltraLabel1.TabIndex = 45
         Me.UltraLabel1.Text = "Truck No"
         '
@@ -213,19 +223,20 @@ Partial Class SOTTRCK1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "TRUCK_NO")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor1, True)
-        Me.UltraTextEditor1.Location = New System.Drawing.Point(125, 10)
-        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(156, 11)
+        Me.UltraTextEditor1.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor1.Name = "UltraTextEditor1"
-        Me.UltraTextEditor1.Size = New System.Drawing.Size(96, 25)
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(120, 29)
         Me.UltraTextEditor1.TabIndex = 0
         '
         'btnPrintTruckPlacard
         '
         Appearance2.TextHAlignAsString = "Left"
         Me.btnPrintTruckPlacard.Appearance = Appearance2
-        Me.btnPrintTruckPlacard.Location = New System.Drawing.Point(363, 10)
+        Me.btnPrintTruckPlacard.Location = New System.Drawing.Point(454, 11)
+        Me.btnPrintTruckPlacard.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnPrintTruckPlacard.Name = "btnPrintTruckPlacard"
-        Me.btnPrintTruckPlacard.Size = New System.Drawing.Size(153, 25)
+        Me.btnPrintTruckPlacard.Size = New System.Drawing.Size(191, 28)
         Me.btnPrintTruckPlacard.TabIndex = 52
         Me.btnPrintTruckPlacard.TabStop = False
         Me.btnPrintTruckPlacard.Text = "Print Truck ID Label"
@@ -309,8 +320,9 @@ Partial Class SOTTRCK1
         Me.grdSOTTOTE1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTTOTE1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTTOTE1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTTOTE1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTTOTE1.Name = "grdSOTTOTE1"
-        Me.grdSOTTOTE1.Size = New System.Drawing.Size(445, 466)
+        Me.grdSOTTOTE1.Size = New System.Drawing.Size(445, 727)
         Me.grdSOTTOTE1.TabIndex = 5
         Me.grdSOTTOTE1.Text = "Totes in Truck"
         '
@@ -319,19 +331,21 @@ Partial Class SOTTRCK1
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor10, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "WHSE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor10, "WHSE_CODE")
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(219, 39)
+        Me.UltraTextEditor10.Location = New System.Drawing.Point(274, 44)
+        Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.ReadOnly = True
-        Me.UltraTextEditor10.Size = New System.Drawing.Size(297, 25)
+        Me.UltraTextEditor10.Size = New System.Drawing.Size(371, 29)
         Me.UltraTextEditor10.TabIndex = 2
         Me.UltraTextEditor10.TabStop = False
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(11, 46)
+        Me.UltraLabel2.Location = New System.Drawing.Point(14, 52)
+        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(42, 18)
+        Me.UltraLabel2.Size = New System.Drawing.Size(52, 22)
         Me.UltraLabel2.TabIndex = 173
         Me.UltraLabel2.Text = "Whse"
         '
@@ -339,30 +353,33 @@ Partial Class SOTTRCK1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor11, "WHSE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor11, True)
-        Me.UltraTextEditor11.Location = New System.Drawing.Point(125, 39)
+        Me.UltraTextEditor11.Location = New System.Drawing.Point(156, 44)
+        Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTextEditor11.Name = "UltraTextEditor11"
-        Me.UltraTextEditor11.Size = New System.Drawing.Size(96, 25)
+        Me.UltraTextEditor11.Size = New System.Drawing.Size(120, 29)
         Me.UltraTextEditor11.TabIndex = 1
         '
         'lblTotes
         '
         Me.lblTotes.AutoSize = True
-        Me.lblTotes.Location = New System.Drawing.Point(11, 101)
+        Me.lblTotes.Location = New System.Drawing.Point(14, 114)
+        Me.lblTotes.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblTotes.Name = "lblTotes"
-        Me.lblTotes.Size = New System.Drawing.Size(41, 18)
+        Me.lblTotes.Size = New System.Drawing.Size(52, 22)
         Me.lblTotes.TabIndex = 186
         Me.lblTotes.Text = "Totes"
         '
         'numTotes
         '
         Me.numTotes.FormatString = "#0"
-        Me.numTotes.Location = New System.Drawing.Point(125, 94)
+        Me.numTotes.Location = New System.Drawing.Point(156, 106)
+        Me.numTotes.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.numTotes.MaxValue = 99
         Me.numTotes.MinValue = 1.0R
         Me.numTotes.Name = "numTotes"
         Me.numTotes.NullText = "0"
         Me.numTotes.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numTotes.Size = New System.Drawing.Size(74, 25)
+        Me.numTotes.Size = New System.Drawing.Size(92, 29)
         Me.numTotes.TabIndex = 4
         Me.numTotes.TabStop = False
         Me.numTotes.Value = 1
@@ -371,9 +388,10 @@ Partial Class SOTTRCK1
         '
         Appearance18.TextHAlignAsString = "Left"
         Me.btnPrintSelected.Appearance = Appearance18
-        Me.btnPrintSelected.Location = New System.Drawing.Point(15, 109)
+        Me.btnPrintSelected.Location = New System.Drawing.Point(19, 123)
+        Me.btnPrintSelected.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnPrintSelected.Name = "btnPrintSelected"
-        Me.btnPrintSelected.Size = New System.Drawing.Size(232, 25)
+        Me.btnPrintSelected.Size = New System.Drawing.Size(290, 28)
         Me.btnPrintSelected.TabIndex = 8
         Me.btnPrintSelected.TabStop = False
         Me.btnPrintSelected.Text = "Print Labels for Selected Totes"
@@ -382,9 +400,10 @@ Partial Class SOTTRCK1
         '
         Appearance17.TextHAlignAsString = "Left"
         Me.btnPrintToteLabels.Appearance = Appearance17
-        Me.btnPrintToteLabels.Location = New System.Drawing.Point(15, 78)
+        Me.btnPrintToteLabels.Location = New System.Drawing.Point(19, 88)
+        Me.btnPrintToteLabels.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnPrintToteLabels.Name = "btnPrintToteLabels"
-        Me.btnPrintToteLabels.Size = New System.Drawing.Size(232, 25)
+        Me.btnPrintToteLabels.Size = New System.Drawing.Size(290, 28)
         Me.btnPrintToteLabels.TabIndex = 7
         Me.btnPrintToteLabels.TabStop = False
         Me.btnPrintToteLabels.Text = "Print Tote Labels not yet Printed"
@@ -393,16 +412,17 @@ Partial Class SOTTRCK1
         '
         Me.Absx1.SetABSColumnName(Me.optTRUCK_TYPE, "TRUCK_TYPE")
         Me.optTRUCK_TYPE.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
-        ValueListItem6.DataValue = "P"
-        ValueListItem6.DisplayText = "Pre-Configured"
-        ValueListItem7.DataValue = "X"
-        ValueListItem7.DisplayText = "Custom"
-        ValueListItem1.DataValue = "R"
-        ValueListItem1.DisplayText = "Regular"
-        Me.optTRUCK_TYPE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem6, ValueListItem7, ValueListItem1})
-        Me.optTRUCK_TYPE.Location = New System.Drawing.Point(125, 70)
+        ValueListItem2.DataValue = "P"
+        ValueListItem2.DisplayText = "Pre-Configured"
+        ValueListItem3.DataValue = "X"
+        ValueListItem3.DisplayText = "Custom"
+        ValueListItem4.DataValue = "R"
+        ValueListItem4.DisplayText = "Regular"
+        Me.optTRUCK_TYPE.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem2, ValueListItem3, ValueListItem4})
+        Me.optTRUCK_TYPE.Location = New System.Drawing.Point(156, 79)
+        Me.optTRUCK_TYPE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optTRUCK_TYPE.Name = "optTRUCK_TYPE"
-        Me.optTRUCK_TYPE.Size = New System.Drawing.Size(280, 18)
+        Me.optTRUCK_TYPE.Size = New System.Drawing.Size(350, 20)
         Me.optTRUCK_TYPE.TabIndex = 3
         '
         'UltraLabel3
@@ -410,29 +430,30 @@ Partial Class SOTTRCK1
         Appearance3.BackColor = System.Drawing.Color.Transparent
         Me.UltraLabel3.Appearance = Appearance3
         Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(11, 70)
-        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel3.Location = New System.Drawing.Point(14, 79)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(79, 18)
+        Me.UltraLabel3.Size = New System.Drawing.Size(99, 22)
         Me.UltraLabel3.TabIndex = 189
         Me.UltraLabel3.Text = "Truck Type"
         '
         'txtMini
         '
-        Me.txtMini.Location = New System.Drawing.Point(15, 46)
-        Me.txtMini.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtMini.Location = New System.Drawing.Point(19, 52)
+        Me.txtMini.Margin = New System.Windows.Forms.Padding(4)
         Me.txtMini.Name = "txtMini"
         Me.txtMini.ReadOnly = True
-        Me.txtMini.Size = New System.Drawing.Size(179, 25)
+        Me.txtMini.Size = New System.Drawing.Size(224, 29)
         Me.txtMini.TabIndex = 6
         Me.txtMini.TabStop = False
         '
         'UltraLabel4
         '
         Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(15, 23)
+        Me.UltraLabel4.Location = New System.Drawing.Point(19, 26)
+        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(149, 18)
+        Me.UltraLabel4.Size = New System.Drawing.Size(186, 22)
         Me.UltraLabel4.TabIndex = 174
         Me.UltraLabel4.Text = "Mini Label IP Address"
         '
@@ -442,11 +463,13 @@ Partial Class SOTTRCK1
         Me.splTruck.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splTruck.IsSplitterFixed = True
         Me.splTruck.Location = New System.Drawing.Point(0, 0)
+        Me.splTruck.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splTruck.Name = "splTruck"
         Me.splTruck.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
         'splTruck.Panel1
         '
+        Me.splTruck.Panel1.Controls.Add(Me.optToteCount)
         Me.splTruck.Panel1.Controls.Add(Me.cmd27)
         Me.splTruck.Panel1.Controls.Add(Me.btnPrintTruckPlacard)
         Me.splTruck.Panel1.Controls.Add(Me.UltraLabel3)
@@ -462,9 +485,38 @@ Partial Class SOTTRCK1
         'splTruck.Panel2
         '
         Me.splTruck.Panel2.Controls.Add(Me.splTote1)
-        Me.splTruck.Size = New System.Drawing.Size(849, 593)
+        Me.splTruck.Size = New System.Drawing.Size(1328, 854)
         Me.splTruck.SplitterDistance = 123
         Me.splTruck.TabIndex = 190
+        '
+        'optToteCount
+        '
+        Me.optToteCount.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.optToteCount.CheckedIndex = 0
+        ValueListItem6.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem6.DataValue = "27"
+        ValueListItem6.DisplayText = "27"
+        ValueListItem7.DataValue = "10"
+        ValueListItem7.DisplayText = "10"
+        Me.optToteCount.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem6, ValueListItem7})
+        Me.optToteCount.Location = New System.Drawing.Point(523, 106)
+        Me.optToteCount.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.optToteCount.Name = "optToteCount"
+        Me.optToteCount.Size = New System.Drawing.Size(122, 26)
+        Me.optToteCount.TabIndex = 191
+        Me.optToteCount.Text = "27"
+        '
+        'cmd27
+        '
+        Appearance1.TextHAlignAsString = "Center"
+        Me.cmd27.Appearance = Appearance1
+        Me.cmd27.Location = New System.Drawing.Point(298, 106)
+        Me.cmd27.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmd27.Name = "cmd27"
+        Me.cmd27.Size = New System.Drawing.Size(209, 28)
+        Me.cmd27.TabIndex = 190
+        Me.cmd27.TabStop = False
+        Me.cmd27.Text = "Create Totes"
         '
         'splTote1
         '
@@ -472,6 +524,7 @@ Partial Class SOTTRCK1
         Me.splTote1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splTote1.IsSplitterFixed = True
         Me.splTote1.Location = New System.Drawing.Point(0, 0)
+        Me.splTote1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splTote1.Name = "splTote1"
         '
         'splTote1.Panel1
@@ -481,8 +534,9 @@ Partial Class SOTTRCK1
         'splTote1.Panel2
         '
         Me.splTote1.Panel2.Controls.Add(Me.grpPrintToteLabels)
-        Me.splTote1.Size = New System.Drawing.Size(849, 466)
+        Me.splTote1.Size = New System.Drawing.Size(1328, 727)
         Me.splTote1.SplitterDistance = 445
+        Me.splTote1.SplitterWidth = 5
         Me.splTote1.TabIndex = 0
         '
         'grpPrintToteLabels
@@ -496,45 +550,38 @@ Partial Class SOTTRCK1
         Me.grpPrintToteLabels.Controls.Add(Me.btnPrintSelected)
         Me.grpPrintToteLabels.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpPrintToteLabels.Location = New System.Drawing.Point(0, 0)
+        Me.grpPrintToteLabels.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPrintToteLabels.Name = "grpPrintToteLabels"
-        Me.grpPrintToteLabels.Size = New System.Drawing.Size(400, 466)
+        Me.grpPrintToteLabels.Size = New System.Drawing.Size(878, 727)
         Me.grpPrintToteLabels.TabIndex = 187
         Me.grpPrintToteLabels.Text = "Print Tote Labels"
         '
         'chkOneTotePerLabel
         '
         Me.Absx1.SetABSBindToTable(Me.chkOneTotePerLabel, False)
-        Me.chkOneTotePerLabel.Location = New System.Drawing.Point(15, 140)
+        Me.chkOneTotePerLabel.Location = New System.Drawing.Point(19, 158)
+        Me.chkOneTotePerLabel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkOneTotePerLabel.Name = "chkOneTotePerLabel"
-        Me.chkOneTotePerLabel.Size = New System.Drawing.Size(191, 18)
+        Me.chkOneTotePerLabel.Size = New System.Drawing.Size(239, 20)
         Me.chkOneTotePerLabel.TabIndex = 176
         Me.chkOneTotePerLabel.Text = "Print One Tote Per Label"
         '
         'btnTest
         '
-        Me.btnTest.Location = New System.Drawing.Point(200, 46)
+        Me.btnTest.Location = New System.Drawing.Point(250, 52)
+        Me.btnTest.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnTest.Name = "btnTest"
-        Me.btnTest.Size = New System.Drawing.Size(47, 25)
+        Me.btnTest.Size = New System.Drawing.Size(59, 28)
         Me.btnTest.TabIndex = 175
         Me.btnTest.TabStop = False
         Me.btnTest.Text = "Test"
         '
-        'cmd27
-        '
-        Appearance1.TextHAlignAsString = "Center"
-        Me.cmd27.Appearance = Appearance1
-        Me.cmd27.Location = New System.Drawing.Point(238, 94)
-        Me.cmd27.Name = "cmd27"
-        Me.cmd27.Size = New System.Drawing.Size(167, 25)
-        Me.cmd27.TabIndex = 190
-        Me.cmd27.TabStop = False
-        Me.cmd27.Text = "Create 27 Totes"
-        '
         'SOTTRCK1
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1236, 825)
+        Me.ClientSize = New System.Drawing.Size(1545, 925)
+        Me.Margin = New System.Windows.Forms.Padding(6, 4, 6, 4)
         Me.Name = "SOTTRCK1"
         Me.Text = "SOTTRCK1"
         Me.Panel1.ResumeLayout(False)
@@ -559,6 +606,7 @@ Partial Class SOTTRCK1
         Me.splTruck.Panel2.ResumeLayout(False)
         CType(Me.splTruck, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splTruck.ResumeLayout(False)
+        CType(Me.optToteCount, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splTote1.Panel1.ResumeLayout(False)
         Me.splTote1.Panel2.ResumeLayout(False)
         CType(Me.splTote1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -591,4 +639,5 @@ Partial Class SOTTRCK1
     Friend WithEvents btnTest As Misc.UltraButton
     Friend WithEvents chkOneTotePerLabel As ABSCS.ABSCheckBox
     Friend WithEvents cmd27 As Misc.UltraButton
+    Friend WithEvents optToteCount As UltraWinEditors.UltraOptionSet
 End Class

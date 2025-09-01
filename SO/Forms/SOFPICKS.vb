@@ -46,7 +46,7 @@ Public Class SOFPICKS
     Dim ORDR_NOs_Tried As New List(Of String)
 
     'Private Shared logger As Logger = LogManager.GetCurrentClassLogger()
-    Dim MAX_ORDERS_TO_RELEASE As Integer = 15
+    Dim MAX_ORDERS_TO_RELEASE As Integer = 25
     Dim SALES_DIVISION_CODE_SKIN As String = "30"
     Dim WHSE_CODE_SKIN As String = "NJC"
 
@@ -446,12 +446,12 @@ Public Class SOFPICKS
             End With
         Next
 
-        ASCMAIN1.Add_Value_List(grdSOTORDQ1, "DESTINATION",, New String() {":", "S:Ship-To", "L:Lab", "D:DC"})
+        ASCMAIN1.Add_Value_List(grdSOTORDQ1, "DESTINATION",, New String() {":", "S:Ship-To", "C:Consumer"})
         'ASCMAIN1.Add_Value_List(grdSOTORDQ1, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
         '('K', 'C', 'E', 'L', 'W')"
         ASCMAIN1.Add_Value_List(grdSOTORDQ1, "ORDR_SOURCE",, New String() {":", "W:Web"})
 
-        ASCMAIN1.Add_Value_List(grdSOTORDQ0, "DESTINATION",, New String() {":", "S:Ship-To", "L:Lab", "D:DC"})
+        ASCMAIN1.Add_Value_List(grdSOTORDQ0, "DESTINATION",, New String() {":", "S:Ship-To", "C:Consumer"})
         'ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
         ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web"})
 
@@ -885,27 +885,32 @@ Public Class SOFPICKS
 
         For Each PICK_NO As String In PICK_NOsD
             Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
-            rowSOTPICK1.Item("PICK_STATUS") = "D"
-            rowSOTPICK1.Item("LAST_OPER") = ASCMAIN1.USER_ID
-            rowSOTPICK1.Item("LAST_DATE") = DateTime.Now
-
-            Dim TOTE_NO As String = rowSOTPICK1.Item("TOTE_NO")
-
-            If TRUCK_TYPE = "X" Then
-                ASCMAIN1.sql = $"Delete from SOTTOTE1 where TOTE_NO = :PARM1 and PICK_NO = :PARM2"
+            If rowSOTPICK1.Item("PICK_STATUS") = "C" Then
+                ' Pick Ticket was Cancelled as a result of BO
             Else
-                Dim sqlT As String = ""
-                If TRUCK_TYPE = "R" Then sqlT = ", TRUCK_NO = NULL, SLOT_NO = NULL"
-                'ASCMAIN1.sql = $"Update SOTTOTE1 Set PICK_NO = NULL{sqlT} where TOTE_NO = :PARM1 and PICK_NO = :PARM2"
-                ASCMAIN1.sql = $"Update SOTTOTE1 Set LAST_OPER = '{ASCMAIN1.USER_ID}', PICK_NO = NULL {sqlT} where TOTE_NO = :PARM1 and PICK_NO = :PARM2"
-            End If
-            r = -1
-            r = ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {TOTE_NO, PICK_NO})
-            If r <> 1 Then
-                Throw New Exception($"Could not Clear Pick No {PICK_NO} from Tote {TOTE_NO}")
+                rowSOTPICK1.Item("PICK_STATUS") = "D"
+                rowSOTPICK1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                rowSOTPICK1.Item("LAST_DATE") = DateTime.Now
+
+                Dim TOTE_NO As String = rowSOTPICK1.Item("TOTE_NO")
+
+                If TRUCK_TYPE = "X" Then
+                    ASCMAIN1.sql = $"Delete from SOTTOTE1 where TOTE_NO = :PARM1 and PICK_NO = :PARM2"
+                Else
+                    Dim sqlT As String = ""
+                    If TRUCK_TYPE = "R" Then sqlT = ", TRUCK_NO = NULL, SLOT_NO = NULL"
+                    'ASCMAIN1.sql = $"Update SOTTOTE1 Set PICK_NO = NULL{sqlT} where TOTE_NO = :PARM1 and PICK_NO = :PARM2"
+                    ASCMAIN1.sql = $"Update SOTTOTE1 Set LAST_OPER = '{ASCMAIN1.USER_ID}', PICK_NO = NULL {sqlT} where TOTE_NO = :PARM1 and PICK_NO = :PARM2"
+                End If
+                r = -1
+                r = ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {TOTE_NO, PICK_NO})
+                If r <> 1 Then
+                    Throw New Exception($"Could not Clear Pick No {PICK_NO} from Tote {TOTE_NO}")
+                End If
+
+                De_Release_Updates(PICK_NO)
             End If
 
-            De_Release_Updates(PICK_NO)
         Next
     End Sub
 
@@ -944,12 +949,12 @@ Public Class SOFPICKS
            Declare 
             Cursor C1 Is
              Select ORDR_NO
-             , Sum (ORDR_QTY_OPEN) ORDR_QTY_OPEN, Sum (ORDR_QTY_BACK) ORDR_QTY_BACK, Sum (ORDR_QTY_PICK) ORDR_QTY_PICK, Sum (ORDR_QTY_SHIP) ORDR_QTY_SHIP
+             , Sum (ORDR_QTY_OPEN) ORDR_QTY_OPEN, Sum (ORDR_QTY_PICK) ORDR_QTY_PICK, Sum (ORDR_QTY_SHIP) ORDR_QTY_SHIP
               From SOTORDR2 Where ORDR_NO = :PARM1 group by ORDR_NO;
              Begin For R1 In C1 Loop
                 Update SOTORDR1 Set
                   ORDR_STATUS = 
-                    CASE WHEN R1.ORDR_QTY_OPEN > 0 OR R1.ORDR_QTY_BACK > 0 THEN 'O'
+                    CASE WHEN R1.ORDR_QTY_OPEN > 0 THEN 'O'
                          ELSE CASE WHEN R1.ORDR_QTY_PICK > 0 THEN 'P'
                                    ELSE CASE WHEN R1.ORDR_QTY_SHIP > 0 THEN 'F'
                                              ELSE 'C' END END END
@@ -1267,7 +1272,7 @@ Public Class SOFPICKS
                     If Not ASCMAIN1.Logical_Lock("SOTPICK1", PICK_NO) Then Exit Sub
                     If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO) Then Exit Sub
 
-                    If rowSOTPICK1.Item("PICK_STATUS") <> "P" Then
+                    If rowSOTPICK1.Item("PICK_STATUS") <> "P" And rowSOTPICK1.Item("PICK_STATUS") <> "C" And rowSOTPICK1.Item("PICK_STATUS") <> "D" Then
                         MsgBox($"Pick Ticket {PICK_NO} has already been Picked", MsgBoxStyle.OkOnly, "Cannot Proceed with De-Release")
                         ASCMAIN1.MultiTask_Release()
                         Exit Sub
@@ -1614,13 +1619,13 @@ Public Class SOFPICKS
         If initialize Then
             ASCMAIN1.sql = "Select SOTORDR1.ORDR_NO, SOTORDR1.WHSE_CODE, ROWNUM ORDR_CNT, SOTORDR2.ORDR_QTY_OPEN, SOTORDR2.ORDR_QTY_PICK" & vbCrLf _
                 & ", SOTORDR2.ORDR_QTY_PICK ORDR_QTY_ALLO, SOTORDR2.ORDR_QTY_PICK ORDR_QTY_ALLO_NC, SOTORDR2.ORDR_QTY_OPEN QTY_AVA" & vbCrLf _
-                & ", SOTORDR1.ORDR_TYPE_CODE, SOTORDR1.ORDR_DATE, SOTORDR1.ORDR_INV_COMMENT" & vbCrLf _
+                & ", ICTSTYLD.VOL_INDEX * 1 * 1 VOL_INDEX_TOT, SOTORDR1.ORDR_TYPE_CODE, SOTORDR1.ORDR_DATE, SOTORDR1.ORDR_INV_COMMENT" & vbCrLf _
                 & ", SOTORDR1.CUST_CODE, SOTORDR1.CUST_STORE_NO, SOTORDR1.ORDR_BUYER_NAME, SOTORDR1.ORDR_CUST_PO, SOTORDR1.ORDR_SOURCE" & vbCrLf _
                 & ", SOTORDR1.ORDR_PICK_SEQ, SOTORDR1.SHIP_VIA_CODE" & vbCrLf _
                 & ", 'X' DESTINATION" & vbCrLf _
                 & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYC1.UPC_CODE, ICTSTYL1.STYLE_DESC, 'X' ORDR_XFR_BATCH_NO" & vbCrLf _
                 & ", SOTORDR1.INIT_DATE, SOTORDR1.ORDR_HOLD, SOTORDR1.ORDR_SHIP_COMPLETE, SOTORDR1.ORDR_SHIP_COMPLETE ORDR_ALLO_COMPLETE, '0' BO" & vbCrLf _
-                & " from SOTORDR1,SOTORDR2,ICTSTYL1,ICTSTYC1" & vbCrLf _
+                & " from SOTORDR1,SOTORDR2,ICTSTYL1,ICTSTYC1,ICTSTYLD" & vbCrLf _
                 & " where ROWNUM < 1"
             SOTORDQ1 = ASCMAIN1.Temp_Table(sqlGK(ASCMAIN1.sql))
             ASCDATA1.ExecuteSQL($"Alter Table {SOTORDQ1} Add Primary Key (ORDR_NO)")
@@ -1735,14 +1740,17 @@ Public Class SOFPICKS
                     & ", SUM (SOTORDR2.ORDR_QTY_OPEN) ORDR_QTY_OPEN, SUM (SOTORDR2.ORDR_QTY_PICK) ORDR_QTY_PICK" & vbCrLf _
                     & ", SUM (SOTORDRX.ORDR_QTY_ALLO) ORDR_QTY_ALLO" & vbCrLf _
                     & ", SUM (CASE WHEN NVL(SOTORDR2.STYLE_CLASS_CODE,'??') = 'CC' THEN SOTORDRX.ORDR_QTY_OPEN ELSE 0 END) ORDR_QTY_ALLO_NC" & vbCrLf _
-                    & $" from {SOTORDRX} SOTORDRX, SOTORDR2 " & vbCrLf _
+                    & ", SUM (CASE WHEN NVL(ICTSTYLD.VOL_INDEX,1) = 1 THEN 5 ELSE CASE WHEN NVL(ICTSTYLD.VOL_INDEX,1) = 2 THEN 40 ELSE 110 END END) VOL_INDEX_TOT" & vbCrLf _
+                    & $" from {SOTORDRX} SOTORDRX, SOTORDR2, ICTSTYLD " & vbCrLf _
                     & IIf(inquirySingleSalesOrder, $"where SOTORDR2.ORDR_NO = '{txtORDR_NO.Text}'", "where NVL(SOTORDR2.ORDR_QTY_OPEN,0) > 0 ") & vbCrLf _
                     & "  And SOTORDRX.ORDR_NO (+) = SOTORDR2.ORDR_NO" & vbCrLf _
                     & "  And SOTORDRX.ORDR_LNO (+) = SOTORDR2.ORDR_LNO" & vbCrLf _
+                    & "  And ICTSTYLD.STYLE_CODE (+) = SOTORDR2.STYLE_CODE" & vbCrLf _
+                    & "  And ICTSTYLD.PACK_CODE (+) = 'EA'" & vbCrLf _
                     & " group by SOTORDR2.ORDR_NO"
 
                 Dim sql1k As String = "Select SOTORDR1.ORDR_NO, SOTORDR1.WHSE_CODE, 1 ORDR_CNT, X.ORDR_QTY_OPEN, X.ORDR_QTY_PICK" & vbCrLf _
-                    & ", X.ORDR_QTY_ALLO, X.ORDR_QTY_ALLO_NC, 0 QTY_AVA" & vbCrLf _
+                    & ", X.ORDR_QTY_ALLO, X.ORDR_QTY_ALLO_NC, 0 QTY_AVA, X.VOL_INDEX_TOT" & vbCrLf _
                     & ", SOTORDR1.ORDR_TYPE_CODE, SOTORDR1.ORDR_DATE, SOTORDR1.ORDR_INV_COMMENT" & vbCrLf _
                     & ", SOTORDR1.CUST_CODE, SOTORDR1.CUST_STORE_NO, SOTORDR1.ORDR_BUYER_NAME, SOTORDR1.ORDR_CUST_PO, SOTORDR1.ORDR_SOURCE" & vbCrLf _
                     & ", SOTORDR1.ORDR_PICK_SEQ, SOTORDR1.SHIP_VIA_CODE" & vbCrLf _
@@ -2219,11 +2227,13 @@ Public Class SOFPICKS
                 Dim STYLE_CODE As String = row.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = row.Item("COLOR_CODE")
                 Dim rowICTSTATZ As DataRow = dst.Tables("ICTSTATZ").Rows.Find(New String() {STYLE_CODE, COLOR_CODE})
+
+                Dim ACTION_IF_SHORT_default As String = "C" ' "B"
                 If rowICTSTATZ Is Nothing Then
-                    dst.Tables("ICTSTATZ").Rows.Add(New String() {STYLE_CODE, COLOR_CODE, "B"})
+                    dst.Tables("ICTSTATZ").Rows.Add(New String() {STYLE_CODE, COLOR_CODE, ACTION_IF_SHORT_default})
                 Else
                     If rowICTSTATZ.Item("ACTION_IF_SHORT") & "" = "" Then
-                        rowICTSTATZ.Item("ACTION_IF_SHORT") = "B"
+                        rowICTSTATZ.Item("ACTION_IF_SHORT") = ACTION_IF_SHORT_default
                     End If
                 End If
             Next

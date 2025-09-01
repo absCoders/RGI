@@ -78,10 +78,10 @@ Public Class TAFZPLH1
 
         ASCMAIN1.sql = "" _
             & "Select LABEL_MINI_IP_ADDRESS PRINTER_IP, STATION_ID || ' (mini)' DESCRIPTION" & vbCrLf _
-            & " from shtline1 WHERE LABEL_MINI_IP_ADDRESS Is Not NULL" & vbCrLf _
+            & " from WHTLINE1 WHERE LABEL_MINI_IP_ADDRESS Is Not NULL" & vbCrLf _
             & " UNION" & vbCrLf _
-            & "Select FRAME_UPC_LABEL_PRINTER, STATION_ID || ' (4x6)'" & vbCrLf _
-            & " from shtline1 WHERE FRAME_UPC_LABEL_PRINTER IS NOT NULL"
+            & "Select LABEL_IP_ADDRESS PRINTER_IP, STATION_ID || ' (4x6)'" & vbCrLf _
+            & " from WHTLINE1 WHERE LABEL_IP_ADDRESS IS NOT NULL"
         cmbPrinters.DataSource = ASCDATA1.GetDataTable
 
         Create_Summary(grdTATZPLH1, "ZPL_CTL_NO", "Count")

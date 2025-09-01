@@ -88,17 +88,24 @@ Partial Class SOFPICKT
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdSOTORDQ1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTSCAN1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.lblDone = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblBackOrdered = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblUnassigned = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblAssigned = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.lblInstruction1 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
@@ -106,19 +113,11 @@ Partial Class SOFPICKT
         Me.lblInstruction2 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSCAN = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.cmdUpdate = New Infragistics.Win.Misc.UltraButton()
-        Me.lblDone = New Infragistics.Win.Misc.UltraLabel()
         Me.btnSimulateScan = New Infragistics.Win.Misc.UltraButton()
         Me.lblInstruction = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
-        Me.lblAssigned = New Infragistics.Win.Misc.UltraLabel()
-        Me.lblUnassigned = New Infragistics.Win.Misc.UltraLabel()
-        Me.lblBackOrdered = New Infragistics.Win.Misc.UltraLabel()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
-        'CType(Me.tblASTLOGX1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -138,30 +137,30 @@ Partial Class SOFPICKT
         'ASFBASE2_Fill_Panel
         '
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.SplitContainer1)
-        Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(1148, 490)
+        Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(1435, 551)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 490)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 551)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1148, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 490)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1435, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 551)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1148, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1435, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 490)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1148, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 551)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1435, 0)
         '
         'tlb
         '
@@ -172,6 +171,7 @@ Partial Class SOFPICKT
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -197,8 +197,8 @@ Partial Class SOFPICKT
         Me.SplitContainer1.Panel2.Controls.Add(Me.cmdUpdate)
         Me.SplitContainer1.Panel2.Controls.Add(Me.btnSimulateScan)
         Me.SplitContainer1.Panel2.Controls.Add(Me.lblInstruction)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1148, 490)
-        Me.SplitContainer1.SplitterDistance = 385
+        Me.SplitContainer1.Size = New System.Drawing.Size(1435, 551)
+        Me.SplitContainer1.SplitterDistance = 432
         Me.SplitContainer1.TabIndex = 0
         '
         'SplitContainer2
@@ -206,6 +206,7 @@ Partial Class SOFPICKT
         Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer2.Name = "SplitContainer2"
         '
         'SplitContainer2.Panel1
@@ -215,8 +216,9 @@ Partial Class SOFPICKT
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdSOTSCAN1)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1148, 385)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1435, 432)
         Me.SplitContainer2.SplitterDistance = 750
+        Me.SplitContainer2.SplitterWidth = 5
         Me.SplitContainer2.TabIndex = 0
         '
         'grdSOTORDQ1
@@ -282,7 +284,7 @@ Partial Class SOFPICKT
         UltraGridColumn43.Width = 87
         UltraGridColumn44.Header.Caption = "ShipTo"
         UltraGridColumn44.Header.VisiblePosition = 20
-        UltraGridColumn44.Width = 57
+        UltraGridColumn44.Width = 78
         UltraGridColumn45.Header.Caption = "Store"
         UltraGridColumn45.Header.VisiblePosition = 22
         UltraGridColumn45.Hidden = True
@@ -407,8 +409,9 @@ Partial Class SOFPICKT
         Me.grdSOTORDQ1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTORDQ1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDQ1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTORDQ1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDQ1.Name = "grdSOTORDQ1"
-        Me.grdSOTORDQ1.Size = New System.Drawing.Size(750, 385)
+        Me.grdSOTORDQ1.Size = New System.Drawing.Size(750, 432)
         Me.grdSOTORDQ1.TabIndex = 167
         Me.grdSOTORDQ1.Text = "Orders to be Assigned to a Trucked & Slotted"
         '
@@ -486,75 +489,11 @@ Partial Class SOFPICKT
         Me.grdSOTSCAN1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSCAN1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTSCAN1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTSCAN1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTSCAN1.Name = "grdSOTSCAN1"
-        Me.grdSOTSCAN1.Size = New System.Drawing.Size(394, 385)
+        Me.grdSOTSCAN1.Size = New System.Drawing.Size(680, 432)
         Me.grdSOTSCAN1.TabIndex = 173
         Me.grdSOTSCAN1.Text = "Scan History"
-        '
-        'UltraLabel2
-        '
-        Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(8, 54)
-        Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(120, 18)
-        Me.UltraLabel2.TabIndex = 188
-        Me.UltraLabel2.Text = "Available Trucks:"
-        '
-        'lblInstruction1
-        '
-        Appearance29.ForeColor = System.Drawing.Color.Blue
-        Me.lblInstruction1.Appearance = Appearance29
-        Me.lblInstruction1.AutoSize = True
-        Me.lblInstruction1.Location = New System.Drawing.Point(134, 54)
-        Me.lblInstruction1.Name = "lblInstruction1"
-        Me.lblInstruction1.Size = New System.Drawing.Size(81, 18)
-        Me.lblInstruction1.TabIndex = 189
-        Me.lblInstruction1.Text = "N999,N999"
-        '
-        'UltraLabel1
-        '
-        Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(8, 14)
-        Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(84, 18)
-        Me.UltraLabel1.TabIndex = 182
-        Me.UltraLabel1.Text = "Instruction:"
-        '
-        'cmdCancel
-        '
-        Me.cmdCancel.Location = New System.Drawing.Point(1013, 39)
-        Me.cmdCancel.Name = "cmdCancel"
-        Me.cmdCancel.Size = New System.Drawing.Size(69, 33)
-        Me.cmdCancel.TabIndex = 179
-        Me.cmdCancel.Text = "Cancel"
-        '
-        'lblInstruction2
-        '
-        Appearance30.ForeColor = System.Drawing.Color.Blue
-        Me.lblInstruction2.Appearance = Appearance30
-        Me.lblInstruction2.AutoSize = True
-        Me.lblInstruction2.Location = New System.Drawing.Point(782, 14)
-        Me.lblInstruction2.Name = "lblInstruction2"
-        Me.lblInstruction2.Size = New System.Drawing.Size(133, 18)
-        Me.lblInstruction2.TabIndex = 187
-        Me.lblInstruction2.Text = "Scan Tote in Slot 1"
-        Me.lblInstruction2.Visible = False
-        '
-        'txtSCAN
-        '
-        Me.txtSCAN.Location = New System.Drawing.Point(782, 47)
-        Me.txtSCAN.Margin = New System.Windows.Forms.Padding(4)
-        Me.txtSCAN.Name = "txtSCAN"
-        Me.txtSCAN.Size = New System.Drawing.Size(128, 25)
-        Me.txtSCAN.TabIndex = 177
-        '
-        'cmdUpdate
-        '
-        Me.cmdUpdate.Location = New System.Drawing.Point(939, 39)
-        Me.cmdUpdate.Name = "cmdUpdate"
-        Me.cmdUpdate.Size = New System.Drawing.Size(69, 33)
-        Me.cmdUpdate.TabIndex = 178
-        Me.cmdUpdate.Text = "Update"
         '
         'lblDone
         '
@@ -563,18 +502,157 @@ Partial Class SOFPICKT
         Me.lblDone.Appearance = Appearance25
         Me.lblDone.AutoSize = True
         Me.lblDone.BorderStyleOuter = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.lblDone.Location = New System.Drawing.Point(236, 6)
+        Me.lblDone.Location = New System.Drawing.Point(295, 7)
+        Me.lblDone.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblDone.Name = "lblDone"
-        Me.lblDone.Size = New System.Drawing.Size(300, 45)
+        Me.lblDone.Size = New System.Drawing.Size(468, 63)
         Me.lblDone.TabIndex = 185
         Me.lblDone.Text = "Ready to Release"
         Me.lblDone.Visible = False
         '
+        'lblBackOrdered
+        '
+        Appearance26.ForeColor = System.Drawing.Color.Blue
+        Me.lblBackOrdered.Appearance = Appearance26
+        Me.lblBackOrdered.AutoSize = True
+        Me.lblBackOrdered.Location = New System.Drawing.Point(862, 16)
+        Me.lblBackOrdered.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblBackOrdered.Name = "lblBackOrdered"
+        Me.lblBackOrdered.Size = New System.Drawing.Size(48, 25)
+        Me.lblBackOrdered.TabIndex = 195
+        Me.lblBackOrdered.Text = "999"
+        '
+        'lblUnassigned
+        '
+        Appearance27.ForeColor = System.Drawing.Color.Blue
+        Me.lblUnassigned.Appearance = Appearance27
+        Me.lblUnassigned.AutoSize = True
+        Me.lblUnassigned.Location = New System.Drawing.Point(604, 38)
+        Me.lblUnassigned.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblUnassigned.Name = "lblUnassigned"
+        Me.lblUnassigned.Size = New System.Drawing.Size(48, 25)
+        Me.lblUnassigned.TabIndex = 194
+        Me.lblUnassigned.Text = "999"
+        '
+        'lblAssigned
+        '
+        Appearance28.ForeColor = System.Drawing.Color.Blue
+        Me.lblAssigned.Appearance = Appearance28
+        Me.lblAssigned.AutoSize = True
+        Me.lblAssigned.Location = New System.Drawing.Point(604, 16)
+        Me.lblAssigned.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblAssigned.Name = "lblAssigned"
+        Me.lblAssigned.Size = New System.Drawing.Size(48, 25)
+        Me.lblAssigned.TabIndex = 193
+        Me.lblAssigned.Text = "999"
+        '
+        'UltraLabel5
+        '
+        Me.UltraLabel5.AutoSize = True
+        Me.UltraLabel5.Location = New System.Drawing.Point(692, 16)
+        Me.UltraLabel5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel5.Name = "UltraLabel5"
+        Me.UltraLabel5.Size = New System.Drawing.Size(202, 25)
+        Me.UltraLabel5.TabIndex = 192
+        Me.UltraLabel5.Text = "Back-Order Batch:"
+        '
+        'UltraLabel4
+        '
+        Me.UltraLabel4.AutoSize = True
+        Me.UltraLabel4.Location = New System.Drawing.Point(425, 38)
+        Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel4.Name = "UltraLabel4"
+        Me.UltraLabel4.Size = New System.Drawing.Size(214, 25)
+        Me.UltraLabel4.TabIndex = 191
+        Me.UltraLabel4.Text = "Not Assigned (yet):"
+        '
+        'UltraLabel3
+        '
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(424, 16)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(215, 25)
+        Me.UltraLabel3.TabIndex = 190
+        Me.UltraLabel3.Text = "Assigned to Trucks:"
+        '
+        'UltraLabel2
+        '
+        Me.UltraLabel2.AutoSize = True
+        Me.UltraLabel2.Location = New System.Drawing.Point(10, 61)
+        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel2.Name = "UltraLabel2"
+        Me.UltraLabel2.Size = New System.Drawing.Size(188, 25)
+        Me.UltraLabel2.TabIndex = 188
+        Me.UltraLabel2.Text = "Available Trucks:"
+        '
+        'lblInstruction1
+        '
+        Appearance29.ForeColor = System.Drawing.Color.Blue
+        Me.lblInstruction1.Appearance = Appearance29
+        Me.lblInstruction1.AutoSize = True
+        Me.lblInstruction1.Location = New System.Drawing.Point(168, 61)
+        Me.lblInstruction1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblInstruction1.Name = "lblInstruction1"
+        Me.lblInstruction1.Size = New System.Drawing.Size(126, 25)
+        Me.lblInstruction1.TabIndex = 189
+        Me.lblInstruction1.Text = "N999,N999"
+        '
+        'UltraLabel1
+        '
+        Me.UltraLabel1.AutoSize = True
+        Me.UltraLabel1.Location = New System.Drawing.Point(10, 16)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel1.Name = "UltraLabel1"
+        Me.UltraLabel1.Size = New System.Drawing.Size(131, 25)
+        Me.UltraLabel1.TabIndex = 182
+        Me.UltraLabel1.Text = "Instruction:"
+        '
+        'cmdCancel
+        '
+        Me.cmdCancel.Location = New System.Drawing.Point(1266, 44)
+        Me.cmdCancel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdCancel.Name = "cmdCancel"
+        Me.cmdCancel.Size = New System.Drawing.Size(86, 37)
+        Me.cmdCancel.TabIndex = 179
+        Me.cmdCancel.Text = "Cancel"
+        '
+        'lblInstruction2
+        '
+        Appearance30.ForeColor = System.Drawing.Color.Blue
+        Me.lblInstruction2.Appearance = Appearance30
+        Me.lblInstruction2.AutoSize = True
+        Me.lblInstruction2.Location = New System.Drawing.Point(978, 16)
+        Me.lblInstruction2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblInstruction2.Name = "lblInstruction2"
+        Me.lblInstruction2.Size = New System.Drawing.Size(208, 25)
+        Me.lblInstruction2.TabIndex = 187
+        Me.lblInstruction2.Text = "Scan Tote in Slot 1"
+        Me.lblInstruction2.Visible = False
+        '
+        'txtSCAN
+        '
+        Me.txtSCAN.Location = New System.Drawing.Point(978, 53)
+        Me.txtSCAN.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me.txtSCAN.Name = "txtSCAN"
+        Me.txtSCAN.Size = New System.Drawing.Size(160, 29)
+        Me.txtSCAN.TabIndex = 177
+        '
+        'cmdUpdate
+        '
+        Me.cmdUpdate.Location = New System.Drawing.Point(1174, 44)
+        Me.cmdUpdate.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.cmdUpdate.Name = "cmdUpdate"
+        Me.cmdUpdate.Size = New System.Drawing.Size(86, 37)
+        Me.cmdUpdate.TabIndex = 178
+        Me.cmdUpdate.Text = "Update"
+        '
         'btnSimulateScan
         '
-        Me.btnSimulateScan.Location = New System.Drawing.Point(939, 6)
+        Me.btnSimulateScan.Location = New System.Drawing.Point(1174, 7)
+        Me.btnSimulateScan.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnSimulateScan.Name = "btnSimulateScan"
-        Me.btnSimulateScan.Size = New System.Drawing.Size(142, 33)
+        Me.btnSimulateScan.Size = New System.Drawing.Size(178, 37)
         Me.btnSimulateScan.TabIndex = 184
         Me.btnSimulateScan.Text = "Simulate Scan"
         Me.btnSimulateScan.Visible = False
@@ -584,85 +662,25 @@ Partial Class SOFPICKT
         Appearance31.ForeColor = System.Drawing.Color.Blue
         Me.lblInstruction.Appearance = Appearance31
         Me.lblInstruction.AutoSize = True
-        Me.lblInstruction.Location = New System.Drawing.Point(98, 14)
+        Me.lblInstruction.Location = New System.Drawing.Point(122, 16)
+        Me.lblInstruction.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblInstruction.Name = "lblInstruction"
-        Me.lblInstruction.Size = New System.Drawing.Size(92, 18)
+        Me.lblInstruction.Size = New System.Drawing.Size(144, 25)
         Me.lblInstruction.TabIndex = 183
         Me.lblInstruction.Text = "Scan a Truck"
-        '
-        'UltraLabel3
-        '
-        Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(339, 14)
-        Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(138, 18)
-        Me.UltraLabel3.TabIndex = 190
-        Me.UltraLabel3.Text = "Assigned to Trucks:"
-        '
-        'UltraLabel4
-        '
-        Me.UltraLabel4.AutoSize = True
-        Me.UltraLabel4.Location = New System.Drawing.Point(340, 34)
-        Me.UltraLabel4.Name = "UltraLabel4"
-        Me.UltraLabel4.Size = New System.Drawing.Size(137, 18)
-        Me.UltraLabel4.TabIndex = 191
-        Me.UltraLabel4.Text = "Not Assigned (yet):"
-        '
-        'UltraLabel5
-        '
-        Me.UltraLabel5.AutoSize = True
-        Me.UltraLabel5.Location = New System.Drawing.Point(554, 14)
-        Me.UltraLabel5.Name = "UltraLabel5"
-        Me.UltraLabel5.Size = New System.Drawing.Size(130, 18)
-        Me.UltraLabel5.TabIndex = 192
-        Me.UltraLabel5.Text = "Back-Order Batch:"
-        '
-        'lblAssigned
-        '
-        Appearance28.ForeColor = System.Drawing.Color.Blue
-        Me.lblAssigned.Appearance = Appearance28
-        Me.lblAssigned.AutoSize = True
-        Me.lblAssigned.Location = New System.Drawing.Point(483, 14)
-        Me.lblAssigned.Name = "lblAssigned"
-        Me.lblAssigned.Size = New System.Drawing.Size(30, 18)
-        Me.lblAssigned.TabIndex = 193
-        Me.lblAssigned.Text = "999"
-        '
-        'lblUnassigned
-        '
-        Appearance27.ForeColor = System.Drawing.Color.Blue
-        Me.lblUnassigned.Appearance = Appearance27
-        Me.lblUnassigned.AutoSize = True
-        Me.lblUnassigned.Location = New System.Drawing.Point(483, 34)
-        Me.lblUnassigned.Name = "lblUnassigned"
-        Me.lblUnassigned.Size = New System.Drawing.Size(30, 18)
-        Me.lblUnassigned.TabIndex = 194
-        Me.lblUnassigned.Text = "999"
-        '
-        'lblBackOrdered
-        '
-        Appearance26.ForeColor = System.Drawing.Color.Blue
-        Me.lblBackOrdered.Appearance = Appearance26
-        Me.lblBackOrdered.AutoSize = True
-        Me.lblBackOrdered.Location = New System.Drawing.Point(690, 14)
-        Me.lblBackOrdered.Name = "lblBackOrdered"
-        Me.lblBackOrdered.Size = New System.Drawing.Size(30, 18)
-        Me.lblBackOrdered.TabIndex = 195
-        Me.lblBackOrdered.Text = "999"
         '
         'SOFPICKT
         '
         Me.Absx1.SetABSBindToTable(Me, False)
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1148, 490)
-        Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.ClientSize = New System.Drawing.Size(1435, 551)
+        Me.Margin = New System.Windows.Forms.Padding(5, 6, 5, 6)
         Me.Name = "SOFPICKT"
         Me.Text = "Select Trucks for Release Batch"
         Me.ASFBASE2_Fill_Panel.ResumeLayout(False)
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).EndInit()
-        'CType(Me.tblASTLOGX1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
