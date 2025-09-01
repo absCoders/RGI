@@ -4601,7 +4601,7 @@ Public Class POFSHIP1
             & "      If R1.CLOSE_PO = '1' Then QTY_OPN_NEW := 0; END IF;" & vbCrLf _
             & "      PO_STATUS_NEW := R2.PO_STATUS;" & vbCrLf _
             & "      If QTY_OPN_NEW <=0 Then PO_STATUS_NEW := 'C'; End If;" & vbCrLf _
-            & "      If PO_STATUS_NEW = 'C' and QTY_OPN_NEW >0 Then PO_STATUS_NEW := 'O'; End If;" & vbCrLf _
+            & $"      If PO_STATUS_NEW = 'C' and QTY_OPN_NEW >0 and '{ASCMAIN1.CLIENT}' <> 'RGI' Then PO_STATUS_NEW := 'O'; End If;" & vbCrLf _
             & "      If QTY_OPN_NEW <=0 or PO_STATUS_NEW = 'C' Then QTY_OPN_NEW := 0; End If;" & vbCrLf _
             & "      Update POTORDR2 Set PO_QTY_SHP = PO_QTY_SHP_NEW, PO_QTY_OPN = QTY_OPN_NEW, PO_STATUS = PO_STATUS_NEW where Current of C2;" & vbCrLf _
             & "      Select WHSE_CODE into WHSE_CODE_PO from POTORDR1 where PO_ORDER_NO = R1.PO_ORDER_NO;" & vbCrLf _
