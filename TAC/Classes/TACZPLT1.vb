@@ -834,7 +834,7 @@ Public Class TACZPLT1
         If (ASCMAIN1.Running_in_VS AndAlso (ASCMAIN1.USER_ID = "edz" Or ASCMAIN1.USER_ID = "wjz")) Then
             If LABEL_ACTION <> "" And ZPL_KEY <> "" Then
                 ASCMAIN1.sql = $"Insert into TATZPLH1 (ZPL_CTL_NO,PRINTER_IP,ZPL_KEY,ZPL_BODY,INIT_DATE,INIT_OPER,MENU_ITEM_OBJECT,SESSION_NO,SELECTION_NO,RE_XNO,KEY1,LNO1,KEY2,LNO2, LABEL_ACTION)" & vbCrLf _
-                    & $" Values (TAPCTLN1('TATZPLH1.ZPL_CTL_NO',10,1), '{labelPrinterIP}','{ZPL_KEY}','{labelImage}',SYSDATE,'{ASCMAIN1.USER_ID}','{ASCMAIN1.ActiveForm.MENU_ITEM_OBJECT}','{ASCMAIN1.SESSION_NO}',{CStr(ASCMAIN1.ActiveForm.SELECTION_NO)},{CStr(ASCMAIN1.ActiveForm.RE_XNO)},'{KEY1}',{CStr(LNO1)},'{KEY2}',{CStr(LNO2)},'{LABEL_ACTION}') "
+                    & $" Values (TAPCTLN1('TATZPLH1.ZPL_CTL_NO',1), '{labelPrinterIP}','{ZPL_KEY}','{labelImage}',SYSDATE,'{ASCMAIN1.USER_ID}','{ASCMAIN1.ActiveForm.MENU_ITEM_OBJECT}','{ASCMAIN1.SESSION_NO}',{CStr(ASCMAIN1.ActiveForm.SELECTION_NO)},{CStr(ASCMAIN1.ActiveForm.RE_XNO)},'{KEY1}',{CStr(LNO1)},'{KEY2}',{CStr(LNO2)},'{LABEL_ACTION}') "
                 ASCDATA1.ExecuteSQL()
             End If
 

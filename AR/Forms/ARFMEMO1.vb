@@ -611,7 +611,21 @@ Public Class ARFMEMO1
         Dim rowARTOPEN1 As DataRow = dst.Tables("ARTOPEN1").NewRow
         rowARTOPEN1.Item("CUST_CODE") = HFs("CUST_CODE")
         rowARTOPEN1.Item("INV_NUM") = rowSOTINVH1.Item("INV_NO")
-        rowARTOPEN1.Item("INV_DUE_DATE") = rowSOTINVH1.Item("INV_DATE")
+
+        Dim INV_DUE_DATE As Date = TAC.TACMAIN1.Calculate_INV_DUE_DATE(Me, rowSOTINVH1.Item("TERM_CODE"), Nothing, rowSOTINVH1.Item("INV_DATE"))
+
+        If ASCMAIN1.DBS_COMPANY = "RGI" Then
+            If Absx1.optFor("INV_TYPE").Value <> "I" Then
+                INV_DUE_DATE = rowSOTINVH1.Item("INV_DATE") & ""
+            End If
+        Else
+            INV_DUE_DATE = rowSOTINVH1.Item("INV_DATE") & ""
+        End If
+
+
+
+        rowARTOPEN1.Item("INV_DUE_DATE") = INV_DUE_DATE
+        '  rowARTOPEN1.Item("INV_DUE_DATE") = rowSOTINVH1.Item("INV_DATE")
         rowARTOPEN1.Item("INV_CUST_PO") = rowSOTINVH1.Item("ORDR_CUST_PO")
         rowARTOPEN1.Item("INV_DISC") = 0
         rowARTOPEN1.Item("INV_DISC_CURR") = 0

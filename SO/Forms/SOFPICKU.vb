@@ -14,21 +14,21 @@ Public Class SOFPICKU
     Public TRUCK_TYPE As String = ""
     Dim SLOT_NO_to_Verify As Integer = 0
     Public SALES_DIVISION_CODE_DC As String = ""
-    Public DC_CODE As String = String.Empty
+    Public WHSE_CODE As String = String.Empty
 
     Dim Appearance_Magenta As New Infragistics.Win.Appearance
     Dim Appearance_Yellow As New Infragistics.Win.Appearance
     Dim Appearance_Empty As New Infragistics.Win.Appearance
 
 
-    Public Sub New(ByVal FF As ASFBASE1, ByVal inDC_CODE As String)
+    Public Sub New(ByVal FF As ASFBASE1, ByVal inWHSE_CODE As String)
         frmASFBASE1 = FF
         InitializeComponent()
-        DC_CODE = inDC_CODE & String.Empty
+        WHSE_CODE = inWHSE_CODE & String.Empty
 
-        DC_CODE = DC_CODE.Trim
-        If DC_CODE.Length = 0 Then
-            DC_CODE = "???"
+        WHSE_CODE = WHSE_CODE.Trim
+        If WHSE_CODE.Length = 0 Then
+            WHSE_CODE = "???"
         End If
     End Sub
 
@@ -71,9 +71,9 @@ Public Class SOFPICKU
             Create_TDA(.Tables.Add, "SOTTOTE0", "**", 0, False)
             Fill_Records("SOTTOTE0")
 
-            ASCMAIN1.sql = "Select * from SOTTRCK1 where DC_CODE = :PARM1 AND TRUCK_TYPE = 'P' AND PICK_BATCH_NO IS NULL"
+            ASCMAIN1.sql = "Select * from SOTTRCK1 where WHSE_CODE = :PARM1 AND TRUCK_TYPE = 'P' AND PICK_BATCH_NO IS NULL"
             Create_TDA(.Tables.Add, "SOTTRCKT", "**", 0, False, "V", 1)
-            Fill_Records("SOTTRCKT", DC_CODE)
+            Fill_Records("SOTTRCKT", WHSE_CODE)
             Dim lstTRUCK_NOs As New List(Of String)
             For Each rowSOTTRCKT As DataRow In dst.Tables("SOTTRCKT").Select("", "TRUCK_NO")
                 lstTRUCK_NOs.Add(rowSOTTRCKT.Item("TRUCK_NO"))
@@ -107,10 +107,11 @@ Public Class SOFPICKU
 
 
         Create_Summary(grdSOTORDQ1, "ORDR_NO", "Count")
-        Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_BACK", "ORDR_QTY_ALLO"})
+        'Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_BACK", "ORDR_QTY_ALLO"})
+        Create_Summary(grdSOTORDQ1, New String() {"ORDR_QTY_OPEN", "ORDR_QTY_ALLO"})
 
-        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "SKIN")
-        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "SKIN")
+        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "30")
+        grdSOTORDQ1.DisplayLayout.Bands(0).Columns("ORDR_QTY_ALLO").Hidden = (SALES_DIVISION_CODE_DC <> "30")
 
         cmdUpdate.Enabled = False
         chkCustomTruck.Visible = True
@@ -186,9 +187,9 @@ Public Class SOFPICKU
                 RESULT = $"Truck {SCAN} is a Custom Truck only for NPI"
             Else
                 TRUCK_NO = SCAN
-                Dim DC_CODE_truck As String = rowSOTTRCK1.Item("DC_CODE") & ""
-                If DC_CODE_truck <> DC_CODE Then
-                    RESULT = $"Truck {TRUCK_NO} is in DC {DC_CODE_truck}"
+                Dim WHSE_CODE_truck As String = rowSOTTRCK1.Item("WHSE_CODE") & ""
+                If WHSE_CODE_truck <> WHSE_CODE Then
+                    RESULT = $"Truck {TRUCK_NO} is in DC {WHSE_CODE_truck}"
                 Else
                     Dim PICK_BATCH_NO As String = rowSOTTRCK1.Item("PICK_BATCH_NO") & ""
                     If PICK_BATCH_NO <> "" Then
@@ -261,7 +262,7 @@ Public Class SOFPICKU
                                         With rowSOTTOTET
                                             .Item("TOTE_NO") = TOTE_NO
                                             .Item("TOTE_CLASS_CODE") = "X"
-                                            .Item("DC_CODE") = rowSOTTRCK1.Item("DC_CODE")
+                                            .Item("WHSE_CODE") = rowSOTTRCK1.Item("WHSE_CODE")
                                             .Item("TRUCK_NO") = TRUCK_NO
                                             .Item("SLOT_NO") = SLOT_NO
                                             .Item("TOTE_TYPE") = "X"
@@ -280,15 +281,82 @@ Public Class SOFPICKU
                                     chkCustomTruck.Visible = False
                                 End If
 
-
                                 If TRUCK_TYPE = "P" Or TRUCK_TYPE = "X" Then
+
                                     Record_Scan(SCAN, RESULT, ERR)
-                                    For SLOT_NO As Integer = 1 To dst.Tables("SOTORDQ1").Rows.Count
-                                        Dim rowSOTTOTET As DataRow = dst.Tables("SOTTOTET").Select($"SLOT_NO = {CStr(SLOT_NO)}")(0)
-                                        Dim TOTE_NO As String = rowSOTTOTET.Item("TOTE_NO")
-                                        txtSCAN.Text = TOTE_NO
-                                        Process_Scan()
-                                    Next
+
+                                    If ASCMAIN1.CLIENT = "VAN" Then
+                                        Dim totesC() As DataRow = dst.Tables("SOTTOTET").Select($"TOTE_CLASS_CODE = 'C'")
+                                        Dim C_TOTES As Integer = totesC.Length
+                                        Dim rowB As DataRow = LookUp("SOTTOTE0", "B")
+                                        Dim TOTE_CLASS_MAX_QTY_B As Integer = Val(rowB.Item("TOTE_CLASS_MAX_QTY") & "")
+                                        Dim rowA As DataRow = LookUp("SOTTOTE0", "A")
+                                        Dim TOTE_CLASS_MAX_QTY_A As Integer = Val(rowA.Item("TOTE_CLASS_MAX_QTY") & "")
+                                        Dim C_ORDERS As Integer = dst.Tables("SOTORDQ1").Select($"VOL_INDEX_TOT > {TOTE_CLASS_MAX_QTY_B}").Length
+
+                                        If C_TOTES > 0 Then ' If we have any C Totes in this truck
+                                            ' If we have any orders with VolTot > Max for B class
+                                            ' Assign those orders to the C Totes, up to the number of C Totes in the truck
+                                            Dim Cs As Integer = C_TOTES
+                                            If C_ORDERS < C_TOTES And C_TOTES <> 10 Then
+                                                Cs = C_ORDERS
+                                            End If
+                                            For t As Integer = 1 To Cs
+                                                Dim TOTE_NO As String = totesC(t - 1).Item("TOTE_NO")
+                                                txtSCAN.Text = TOTE_NO
+                                                Process_Scan()
+                                            Next
+                                        End If
+
+                                        Dim totesAB() As DataRow = dst.Tables("SOTTOTET").Select("TOTE_CLASS_CODE = 'A' OR TOTE_CLASS_CODE = 'B'", "TOTE_CLASS_CODE DESC")
+                                        Dim totesA() As DataRow = dst.Tables("SOTTOTET").Select("TOTE_CLASS_CODE = 'A'", "TOTE_NO")
+                                        Dim totesB() As DataRow = dst.Tables("SOTTOTET").Select("TOTE_CLASS_CODE = 'B'", "TOTE_NO")
+                                        Dim indA As Integer = -1
+                                        Dim indB As Integer = -1
+
+                                        If totesAB.Length > 0 Then
+                                            For t As Integer = 1 To dst.Tables("SOTORDQ1").Select("TOTE_NO IS NULL").Length
+                                                Dim rowSOTTOTET_AB As DataRow = Nothing
+                                                Dim rowSOTORDRQ1s() As DataRow = dst.Tables("SOTORDQ1").Select("TOTE_NO IS NULL", "VOL_INDEX_TOT DESC")
+                                                Dim VOL_INDEX_TOT As Int32 = Val(rowSOTORDRQ1s(0).Item("VOL_INDEX_TOT") & "")
+                                                If VOL_INDEX_TOT <= TOTE_CLASS_MAX_QTY_A Then
+                                                    If totesA.Length >= (indA + 2) Then
+                                                        ' get next A
+                                                        indA += 1
+                                                        rowSOTTOTET_AB = totesA(indA)
+                                                    End If
+                                                End If
+                                                If rowSOTTOTET_AB Is Nothing Then ' GET NEXT B
+
+                                                    If totesB.Length >= (indB + 2) Then
+                                                        indB += 1
+                                                        rowSOTTOTET_AB = totesB(indB)
+                                                    Else
+                                                        ' get next A
+                                                        indA += 1
+                                                        rowSOTTOTET_AB = totesA(indA)
+                                                    End If
+
+                                                End If
+
+                                                Dim TOTE_NO As String = rowSOTTOTET_AB.Item("TOTE_NO")
+                                                txtSCAN.Text = TOTE_NO
+                                                Process_Scan()
+                                            Next
+                                        End If
+
+
+                                        Sort_grdColumns(grdSOTORDQ1, "SLOT_NO")
+                                    Else
+
+                                        For SLOT_NO As Integer = 1 To dst.Tables("SOTORDQ1").Rows.Count
+                                            Dim rowSOTTOTET As DataRow = dst.Tables("SOTTOTET").Select($"SLOT_NO = {CStr(SLOT_NO)}")(0)
+                                            Dim TOTE_NO As String = rowSOTTOTET.Item("TOTE_NO")
+                                            txtSCAN.Text = TOTE_NO
+                                            Process_Scan()
+                                        Next
+                                    End If
+
                                     RESULT = ""
                                 End If
                             End If
@@ -338,10 +406,10 @@ Public Class SOFPICKU
                     RESULT = "Invalid Value for Tote"
                 Else
                     Dim TOTE_NO As String = SCAN
-                    Dim DC_CODE_tote As String = rowSOTTOTE1.Item("DC_CODE") & ""
+                    Dim WHSE_CODE_tote As String = rowSOTTOTE1.Item("WHSE_CODE") & ""
 
-                    If DC_CODE_tote <> DC_CODE Then
-                        RESULT = $"Tote {TOTE_NO} is in DC {DC_CODE_tote}"
+                    If WHSE_CODE_tote <> WHSE_CODE Then
+                        RESULT = $"Tote {TOTE_NO} is in Whse {WHSE_CODE_tote}"
                     Else
                         If TOTEs_in_SLOTs.Contains(TOTE_NO) Then
                             Dim SLOT As Integer = TOTEs_in_SLOTs.IndexOf(TOTE_NO) + 1
@@ -351,7 +419,7 @@ Public Class SOFPICKU
                             If PICK_NO <> "" Then
                                 RESULT = $"Tote {TOTE_NO} is in use in Pick No {PICK_NO}"
                             Else
-                                Dim rowSOTORDRQ1s() As DataRow = dst.Tables("SOTORDQ1").Select("TOTE_NO IS NULL")
+                                Dim rowSOTORDRQ1s() As DataRow = dst.Tables("SOTORDQ1").Select("TOTE_NO IS NULL", "VOL_INDEX_TOT DESC")
                                 If rowSOTORDRQ1s.Length = 0 Then
                                     RESULT = $"No Orders Open to assign to Tote {TOTE_NO}"
                                 Else
@@ -361,7 +429,13 @@ Public Class SOFPICKU
                                         RESULT = $"Tote {TOTE_NO} Accepted"
                                         TOTEs_in_SLOTs.Add(TOTE_NO)
                                         rowSOTORDRQ1s(0).Item("TOTE_NO") = TOTE_NO
-                                        rowSOTORDRQ1s(0).Item("SLOT_NO") = TOTEs_in_SLOTs.Count
+                                        If ASCMAIN1.CLIENT = "VAN" Then
+                                            Dim rowSOTTOTET As DataRow = dst.Tables("SOTTOTET").Rows.Find(TOTE_NO)
+                                            rowSOTORDRQ1s(0).Item("SLOT_NO") = Val(rowSOTTOTET.Item("SLOT_NO") & "")
+                                        Else
+                                            rowSOTORDRQ1s(0).Item("SLOT_NO") = TOTEs_in_SLOTs.Count
+                                        End If
+
 
                                         Dim TOTE_CLASS_CODE As String = rowSOTTOTE1.Item("TOTE_CLASS_CODE") & ""
                                         Dim rowSOTTOTE0 As DataRow = dst.Tables("SOTTOTE0").Rows.Find(TOTE_CLASS_CODE)
@@ -434,7 +508,19 @@ Public Class SOFPICKU
     End Sub
 
     Private Sub grdSOTORDQ1_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdSOTORDQ1.InitializeRow
+        Dim TOTE_CLASS_CODE As String = e.Row.Cells("TOTE_CLASS_CODE").Value & ""
+        If TOTE_CLASS_CODE = "" Then Exit Sub
 
+        Dim TOTE_CLASS_MAX_QTY As Int32 = Val(e.Row.Cells("TOTE_CLASS_MAX_QTY").Value & "")
+        Dim VOL_INDEX_TOT As Int32 = Val(e.Row.Cells("VOL_INDEX_TOT").Value & "")
+
+        If VOL_INDEX_TOT > TOTE_CLASS_MAX_QTY AndAlso TOTE_CLASS_CODE <> "C" Then
+            e.Row.Appearance.ForeColor = Drawing.Color.Red
+            e.Row.Cells("TOTE_CLASS_MAX_QTY").ToolTipText = "VolMax is > MaxVol for Tote"
+        Else
+            e.Row.Appearance.ForeColor = Drawing.Color.Empty
+            e.Row.Cells("TOTE_CLASS_MAX_QTY").ToolTipText = ""
+        End If
     End Sub
 
     Private Sub chkCustomTruck_CheckedChanged(sender As Object, e As EventArgs) Handles chkCustomTruck.CheckedChanged
@@ -444,5 +530,9 @@ Public Class SOFPICKU
             chkCustomTruck.Appearance.ForeColor = System.Drawing.Color.Empty
 
         End If
+    End Sub
+
+    Private Sub grdSOTORDQ1_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdSOTORDQ1.InitializeLayout
+
     End Sub
 End Class

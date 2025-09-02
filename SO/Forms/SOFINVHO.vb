@@ -2564,6 +2564,7 @@ Public Class SOFINVHO
                 .Item("PICK_SHIPPED") = DATETIME_STAMP
                 .Item("PICK_BATCH_NO") = "000000"
                 .Item("SHIP_BOL_NO") = SHIP_BOL_NO
+                .Item("WHSE_CODE") = rowSOTORDR1.Item("WHSE_CODE")
                 .Item("INV_NO") = String.Empty
                 .Item("PICK_CNT_CARTONS") = SHIP_CNT_CARTONS
                 .Item("PICK_TOTAL_WGT") = SHIP_TOTAL_WGT

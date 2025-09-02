@@ -108,9 +108,6 @@ Public Class TACMAIN1
             Exit Sub
         End If
 
-        ASCMAIN1.LabelPrinterSerialPort = Nothing
-        ASCMAIN1.LaserPrinterName = String.Empty
-
         'Dim n1 As New nsoftware.IPWorks.Ftp
         'Debug.Print(n1.RuntimeLicense)
         'Dim n2 As New nsoftware.IPWorksEncrypt.Keymgr
@@ -162,7 +159,7 @@ Public Class TACMAIN1
             End If
         End If
 
-        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID <> "edz" Then
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID <> "edz" AndAlso ASCMAIN1.USER_ID <> "wjz" AndAlso ASCMAIN1.USER_ID <> "rick" Then
             rowWHTLINE1 = Nothing
         End If
 
@@ -171,6 +168,11 @@ Public Class TACMAIN1
             ' ************************* Laser Printer Name *************************
             ASCMAIN1.LaserPrinterName = (rowWHTLINE1.Item("LASER_PRT_NAME") & String.Empty).ToString.Trim
 
+            ' ************************* Label Printer Name *************************
+            ' ASCMAIN1.LabelPrinterSerialPort = Nothing
+
+            ASCMAIN1.MiniLabelPrinterIPAddress = (rowWHTLINE1.Item("LABEL_MINI_IP_ADDRESS") & String.Empty).ToString.Trim
+            ASCMAIN1.LabelPrinterIPAddress = (rowWHTLINE1.Item("LABEL_IP_ADDRESS") & String.Empty).ToString.Trim
 
             ' ************************* Label Printer *************************
             Try
@@ -293,7 +295,13 @@ Public Class TACMAIN1
                     End If
 
                     .PortName = ASFMAIN1.scaleComPort
-                    .Open()
+                    If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then
+                        ' no comm port
+                    Else
+                        .Open()
+                    End If
+
+
                 End With
 
             Catch ex As Exception
@@ -697,6 +705,7 @@ Public Class TACMAIN1
                 VL.Add("P", "In Pick")
                 VL.Add("F", "Shipped")
                 VL.Add("D", "Deleted")
+                VL.Add("C", "Cancelled")
 
                 'Case "PO_ORDER_TYPE"
                 '    VL.Add("R", "Rx")

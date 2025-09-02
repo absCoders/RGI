@@ -292,6 +292,10 @@ Public Class SOROREL1
         SQL_ins.Add("SALES_DIVISION_CODE", SQL_in("SOTORDR1.SALES_DIVISION_CODE"))
         SQL_ins.Add("ORDR_GROUP_NO", SQL_in("SOTORDR1.ORDR_GROUP_NO"))
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            SQL_ins.Add("ORDR_TYPE_CODE", " and SOTORDR1.ORDR_TYPE_CODE <> 'B2C'")
+        End If
+
         If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
             SQL_ins.Add("TERM_CODE", SQL_in("SOTORDR1.TERM_CODE"))
         End If
@@ -875,6 +879,13 @@ Public Class SOROREL1
             ASCDATA1.ExecuteSQL("Alter Table " & SOTPICK2W & " Add Primary Key (PICK_NO,PICK_LNO)")
         End If
 
+        If ASCMAIN1.CLIENT = "RGI" And (chkManualOnly.Checked Or WHSE_CODE = "MS") And Not blnALLOCATION_ONLY Then
+            Dim sqlOpen2Cases As String = "NVL(US_OPEN,0) + CASE WHEN NVL(CARTON_PACK_QTY,0) > 0 AND MOD(NVL(US_OPEN,0),NVL(CARTON_PACK_QTY,0)) > 0 THEN NVL(CARTON_PACK_QTY,0) - MOD(NVL(US_OPEN,0),NVL(CARTON_PACK_QTY,0)) ELSE 0 END"
+            ASCMAIN1.sql = $"Select US.*, 0 ALLO, 0 SHORT, '0' RELEASE, {sqlOpen2Cases} OPEN2CASES, 0 COMING, 0 NEEDED" & vbCrLf _
+                    & $"from {ICTSTAT2_MSUS_BEFORE} US"
+            ICTSTAT2_MSUS_AFTER = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_MSUS_AFTER} Add Primary Key (STYLE_CODE, COLOR_CODE)")
+        End If
 
         BeginTrans()
 
@@ -926,10 +937,18 @@ Public Class SOROREL1
                 '    & $", (Select STYLE_CODE, COLOR_CODE, SUM (ORDR_QTY_ALLO) ALLO from {TABLE_NAMEs("SOTORDR2")} where WHSE_CODE = 'MS' group by STYLE_CODE, COLOR_CODE) SOTORDR2" & vbCrLf _
                 '    & "where SOTORDR2.STYLE_CODE (+) = US.STYLE_CODE and SOTORDR2.COLOR_CODE (+) = US.COLOR_CODE"
 
-                ASCMAIN1.sql = "Select US.*, 0 ALLO, 0 SHORT, '0' RELEASE" & vbCrLf _
-                    & $"from {ICTSTAT2_MSUS_BEFORE} US"
-                ICTSTAT2_MSUS_AFTER = ASCMAIN1.Temp_Table
-                ASCDATA1.ExecuteSQL($"Alter Table {ICTSTAT2_MSUS_AFTER} Add Primary Key (STYLE_CODE, COLOR_CODE)")
+                ' we might not even need this because we are able to build ICTSTAT2_MSUS_AFTER above the BeginTrans
+                'Dim sqlOpen2Cases As String = "NVL(US_OPEN,0) + CASE WHEN NVL(CARTON_PACK_QTY,0) > 0 AND MOD(NVL(US_OPEN,0),NVL(CARTON_PACK_QTY,0)) > 0 THEN NVL(CARTON_PACK_QTY,0) - MOD(NVL(US_OPEN,0),NVL(CARTON_PACK_QTY,0)) ELSE 0 END"
+                'ASCMAIN1.sql = $"Select US.*, 0 ALLO, 0 SHORT, '0' RELEASE, {sqlOpen2Cases} OPEN2CASES, 0 COMING, 0 NEEDED" & vbCrLf _
+                '    & $"from {ICTSTAT2_MSUS_BEFORE} US"
+                'ASCDATA1.ExecuteSQL($"Insert into {ICTSTAT2_MSUS_AFTER} {ASCMAIN1.sql}")
+
+
+                ASCDATA1.ExecuteSQL($"Update {ICTSTAT2_MSUS_AFTER} Set COMING = NVL(US_PICK,0) + NVL(OPEN2CASES,0)")
+
+
+                Dim TBL1 As DataTable = ASCDATA1.GetDataTable($"SELECT * FROM {ICTSTAT2_MSUS_AFTER} WHERE STYLE_CODE = 'MTC10125'")
+                If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then Stop
 
                 ASCMAIN1.sql = "Select SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SUM (SOTPICK2.PICK_QTY) PICK_QTY" & vbCrLf _
                     & $"from {SOTPICK2} SOTPICK2, {SOTORDR2} SOTORDR2 " & vbCrLf _
@@ -940,39 +959,81 @@ Public Class SOROREL1
                     Begin
                     Declare Cursor C1 is {ASCMAIN1.sql};
                     Begin For R1 in C1 Loop
-                     Update {ICTSTAT2_MSUS_AFTER} X Set ALLO = R1.PICK_QTY, SHORT = LEAST(NVL(MS_AVA,0) - NVL(R1.PICK_QTY,0), 0), RELEASE = '1'
-                      where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;
+                        Update {ICTSTAT2_MSUS_AFTER} X Set ALLO = R1.PICK_QTY, SHORT = LEAST(NVL(MS_AVA,0) - NVL(R1.PICK_QTY,0), 0), RELEASE = '1'
+                        where STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;
                     End Loop; End; End;
                     "
                 ASCDATA1.ExecuteSQL()
+                ASCDATA1.ExecuteSQL($"Update {ICTSTAT2_MSUS_AFTER} Set NEEDED = -1 * LEAST(NVL(SHORT,0) + COMING,0)")
+
+                Dim TBL2 As DataTable = ASCDATA1.GetDataTable($"SELECT * FROM {ICTSTAT2_MSUS_AFTER} WHERE STYLE_CODE = 'MTC10125'")
+                If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then Stop
+
+                'ASCMAIN1.sql = "Insert into SOTOXFR1" & vbCrLf _
+                '    & $"Select '{PICK_BATCH_NO}' PICK_BATCH_NO, STYLE_CODE, COLOR_CODE" & vbCrLf _
+                '    & ", US_ONHD, US_TRAN, US_PICK, US_OPEN, US_AVA" & vbCrLf _
+                '    & ", MS_ONHD, MS_PICK, MS_AVA" & vbCrLf _
+                '    & ", ALLO, SHORT" & vbCrLf _
+                '    & ", CASE WHEN SHORT + NVL(US_PICK,0) >= 0 OR ALLO = 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
+                '    & $", SYSDATE INIT_DATE, '{ASCMAIN1.USER_ID}' INIT_OPER, NULL LAST_DATE, NULL LAST_OPER" & vbCrLf _
+                '    & $" from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1'"
+
+                'Dim sqlRoundedOpen As String = "NVL(US_OPEN,0) + CASE WHEN NVL(CARTON_PACK_QTY,0) > 0 AND MOD(NVL(US_OPEN,0),NVL(CARTON_PACK_QTY,0)) > 0 THEN NVL(CARTON_PACK_QTY,0) - MOD(NVL(US_OPEN,0),NVL(CARTON_PACK_QTY,0)) ELSE 0 END"
+                'ASCMAIN1.sql = "Insert into SOTOXFR1" & vbCrLf _
+                '    & $"Select '{PICK_BATCH_NO}' PICK_BATCH_NO, STYLE_CODE, COLOR_CODE" & vbCrLf _
+                '    & ", US_ONHD, US_TRAN, US_PICK, US_OPEN, US_AVA" & vbCrLf _
+                '    & ", MS_ONHD, MS_PICK, MS_AVA" & vbCrLf _
+                '    & ", ALLO, SHORT" & vbCrLf _
+                '    & $", CASE WHEN SHORT + NVL(US_PICK,0) + {sqlRoundedOpen} >= 0 OR ALLO = 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
+                '    & $", SYSDATE INIT_DATE, '{ASCMAIN1.USER_ID}' INIT_OPER, NULL LAST_DATE, NULL LAST_OPER" & vbCrLf _
+                '    & $" from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1'"
 
                 ASCMAIN1.sql = "Insert into SOTOXFR1" & vbCrLf _
                     & $"Select '{PICK_BATCH_NO}' PICK_BATCH_NO, STYLE_CODE, COLOR_CODE" & vbCrLf _
                     & ", US_ONHD, US_TRAN, US_PICK, US_OPEN, US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, MS_AVA" & vbCrLf _
                     & ", ALLO, SHORT" & vbCrLf _
-                    & ", CASE WHEN SHORT + NVL(US_PICK,0) >= 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
+                    & $", CASE WHEN NEEDED <= 0 OR ALLO = 0 THEN 'N' ELSE '0' END OXFR_STATUS, NULL SHIP_BOL_NO" & vbCrLf _
                     & $", SYSDATE INIT_DATE, '{ASCMAIN1.USER_ID}' INIT_OPER, NULL LAST_DATE, NULL LAST_OPER" & vbCrLf _
+                    & ", OPEN2CASES, COMING, NEEDED" & vbCrLf _
                     & $" from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1'"
                 ASCDATA1.ExecuteSQL()
+                Dim TBL3 As DataTable = ASCDATA1.GetDataTable($"SELECT * FROM SOTOXFR1 WHERE STYLE_CODE = 'MTC10125' and PICK_BATCH_NO = '{PICK_BATCH_NO}'")
+                If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then Stop
+                'ASCMAIN1.sql = "" _
+                '    & "Begin" & vbCrLf _
+                '    & " Declare Cursor C1 is" & vbCrLf _
+                '    & $"  Select * from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1' and SHORT < 0;" & vbCrLf _
+                '    & " Begin" & vbCrLf _
+                '    & "  For R1 in C1 Loop" & vbCrLf _
+                '    & "   Update ICTSTAT2 Set WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN,0) + NVL(R1.ALLO,0)" & vbCrLf _
+                '    & "    where WHSE_CODE = 'US' and STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
+                '    & "   If SQL%NOTFOUND Then" & vbCrLf _
+                '    & "    Insert into ICTSTAT2 (WHSE_CODE,STYLE_CODE,COLOR_CODE,WHSE_QTY_OPEN)" & vbCrLf _
+                '    & "     values ('US',R1.STYLE_CODE,R1.COLOR_CODE,R1.ALLO);" & vbCrLf _
+                '    & "   End If;" & vbCrLf _
+                '    & "  End Loop;" & vbCrLf _
+                '    & " End;" & vbCrLf _
+                '    & "End;"
 
                 ASCMAIN1.sql = "" _
                     & "Begin" & vbCrLf _
                     & " Declare Cursor C1 is" & vbCrLf _
-                    & $"  Select * from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1' and SHORT < 0;" & vbCrLf _
+                    & $"  Select * from {ICTSTAT2_MSUS_AFTER} where RELEASE = '1' and NEEDED > 0;" & vbCrLf _
                     & " Begin" & vbCrLf _
                     & "  For R1 in C1 Loop" & vbCrLf _
-                    & "   Update ICTSTAT2 Set WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN,0) + NVL(R1.ALLO,0)" & vbCrLf _
+                    & "   Update ICTSTAT2 Set WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN,0) + R1.NEEDED" & vbCrLf _
                     & "    where WHSE_CODE = 'US' and STYLE_CODE = R1.STYLE_CODE and COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
                     & "   If SQL%NOTFOUND Then" & vbCrLf _
                     & "    Insert into ICTSTAT2 (WHSE_CODE,STYLE_CODE,COLOR_CODE,WHSE_QTY_OPEN)" & vbCrLf _
-                    & "     values ('US',R1.STYLE_CODE,R1.COLOR_CODE,R1.ALLO);" & vbCrLf _
+                    & "     values ('US',R1.STYLE_CODE,R1.COLOR_CODE,R1.NEEDED);" & vbCrLf _
                     & "   End If;" & vbCrLf _
                     & "  End Loop;" & vbCrLf _
                     & " End;" & vbCrLf _
                     & "End;"
                 ASCDATA1.ExecuteSQL()
-
+                Dim TBL4 As DataTable = ASCDATA1.GetDataTable($"SELECT * FROM {ICTSTAT2_MSUS_AFTER} WHERE STYLE_CODE = 'MTC10125'")
+                If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then Stop
 
             End If
 
@@ -2372,6 +2433,9 @@ Public Class SOROREL1
                 .Item("SHIP_BOL_NO") = "X"
                 .Item("SHIP_VIA_CODE") = SHIP_VIA_CODE
                 .Item("WHSE_CODE") = WHSE_CODE_LNO
+
+                'Next Line Supports SOTPICK1.SALES_DIVISION_CODE
+                .Item("SALES_DIVISION_CODE") = rowSOTORDR1_rel.Item("SALES_DIVISION_CODE")
 
                 ' 04/05/2015 RGI to process CC after Release.
                 If (ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGI") Then

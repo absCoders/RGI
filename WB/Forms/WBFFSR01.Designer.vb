@@ -93,6 +93,7 @@ Partial Class WBFFSR01
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.chkSeperateWebEDI = New System.Windows.Forms.CheckBox()
         Me.chkHideCredits = New System.Windows.Forms.CheckBox()
         Me.chkHideLYDays = New System.Windows.Forms.CheckBox()
         Me.grpGroupBy = New System.Windows.Forms.GroupBox()
@@ -113,7 +114,6 @@ Partial Class WBFFSR01
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkSeperateWebEDI = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -292,6 +292,18 @@ Partial Class WBFFSR01
         Me.SplitContainer2.Size = New System.Drawing.Size(994, 562)
         Me.SplitContainer2.SplitterDistance = 143
         Me.SplitContainer2.TabIndex = 0
+        '
+        'chkSeperateWebEDI
+        '
+        Me.chkSeperateWebEDI.AutoSize = True
+        Me.chkSeperateWebEDI.Checked = True
+        Me.chkSeperateWebEDI.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkSeperateWebEDI.Location = New System.Drawing.Point(570, 33)
+        Me.chkSeperateWebEDI.Name = "chkSeperateWebEDI"
+        Me.chkSeperateWebEDI.Size = New System.Drawing.Size(282, 20)
+        Me.chkSeperateWebEDI.TabIndex = 173
+        Me.chkSeperateWebEDI.Text = "Seperate Web And EDI As Warehouses"
+        Me.chkSeperateWebEDI.UseVisualStyleBackColor = True
         '
         'chkHideCredits
         '
@@ -644,18 +656,6 @@ Partial Class WBFFSR01
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'chkSeperateWebEDI
-        '
-        Me.chkSeperateWebEDI.AutoSize = True
-        Me.chkSeperateWebEDI.Checked = True
-        Me.chkSeperateWebEDI.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkSeperateWebEDI.Location = New System.Drawing.Point(570, 33)
-        Me.chkSeperateWebEDI.Name = "chkSeperateWebEDI"
-        Me.chkSeperateWebEDI.Size = New System.Drawing.Size(282, 20)
-        Me.chkSeperateWebEDI.TabIndex = 173
-        Me.chkSeperateWebEDI.Text = "Seperate Web And EDI As Warehouses"
-        Me.chkSeperateWebEDI.UseVisualStyleBackColor = True
         '
         'WBFFSR01
         '

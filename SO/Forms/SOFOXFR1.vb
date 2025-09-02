@@ -7,6 +7,8 @@ Public Class SOFOXFR1
     Dim TABLES_OXFR() As String = {"SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTSHIP1", "SOTCART1", "SOTCART2"}
 
     Dim sqlSOTORDR0 As String
+    Dim one_and_done As Boolean = False
+    Dim sqlICTSTATQ As String = ""
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -32,7 +34,8 @@ Public Class SOFOXFR1
                 .Columns.Add("UNITS_2_XFR", GetType(System.Int32), "IIF(ISNULL(SEL,'0') = '1', QTY_TO_XFR, 0)")
                 .Columns.Add("CASES_2_XFR", GetType(System.Int32), "UNITS_2_XFR / ISNULL(CARTON_PACK_QTY,0)")
                 .Columns.Add("CUBE_2_XFR", GetType(System.Decimal), "CASES_2_XFR * ISNULL(CASE_CUBE,0)")
-                .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(SHORT + ISNULL(US_PICK,0) >= 0, NULL, SHORT + ISNULL(US_PICK,0))")
+                '.Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(SHORT + ISNULL(US_PICK,0) >= 0, NULL, SHORT + ISNULL(US_PICK,0))")
+                .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(NEEDED <= 0, NULL, NEEDED)")
             End With
 
             ASCMAIN1.sql = $"Select * from {SOTORDRX} where STYLE_CODE = :PARM1 and COLOR_CODE = :PARM2"
@@ -64,7 +67,8 @@ Public Class SOFOXFR1
             With .Tables("SOTOXFR1")
                 .Columns.Add("SEL")
                 .Columns("SEL").DefaultValue = "0"
-                .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(SHORT + ISNULL(US_PICK,0) >= 0, NULL, SHORT + ISNULL(US_PICK,0))")
+                '.Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(SHORT + ISNULL(US_PICK,0) >= 0, NULL, SHORT + ISNULL(US_PICK,0))")
+                .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(NEEDED <= 0, NULL, NEEDED)")
             End With
 
             ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY" & vbCrLf _
@@ -83,11 +87,31 @@ Public Class SOFOXFR1
                 .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(ISNULL(MS_OTS,0) + ISNULL(US_PICK,0) >= 0, NULL, ISNULL(MS_OTS,0) + ISNULL(US_PICK,0))")
             End With
 
+
+            ASCMAIN1.sql = "SELECT * FROM (" & vbCrLf _
+                & "SELECT STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & ", SUM (WHSE_QTY_OPEN) WHSE_QTY_OPEN" & vbCrLf _
+                & ", SUM (ALLO) ALLO, SUM (SHORT) SHORT" & vbCrLf _
+                & ", SUM (COMING) COMING, SUM (NEEDED) NEEDED" & vbCrLf _
+                & ", SUM (WHSE_QTY_OPEN) - SUM (NEEDED) DIFF" & vbCrLf _
+                & "FROM (" & vbCrLf _
+                & "SELECT WHSE_CODE, STYLE_CODE, COLOR_CODE, WHSE_QTY_OPEN, 0 ALLO, 0 SHORT, 0 COMING, 0 NEEDED" & vbCrLf _
+                & "FROM ICTSTAT2 WHERE WHSE_CODE = 'US' AND WHSE_QTY_OPEN <> 0" & vbCrLf _
+                & "UNION" & vbCrLf _
+                & "SELECT 'US' WHSE_CODE, STYLE_CODE, COLOR_CODE, 0 WHSE_QTY_OPEN, ALLO, -1 * SHORT SHORT, COMING, NEEDED" & vbCrLf _
+                & "FROM SOTOXFR1 WHERE OXFR_STATUS =  '0' AND NEEDED > 0" & vbCrLf _
+                & ") GROUP BY STYLE_CODE, COLOR_CODE" & vbCrLf _
+                & ")"
+            sqlICTSTATQ = ASCMAIN1.sql
+            ASCMAIN1.sql = $"Select X.*, ICTSTYL1.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY from ICTSTYL1, ({ASCMAIN1.sql}) X where ICTSTYL1.STYLE_CODE = X.STYLE_CODE"
+            Create_TDA(.Tables.Add, "ICTSTATQ", "**", 0, False, "", 2)
+
         End With
 
         grdSOTOXFRX.DataSource = dst.Tables("SOTOXFRX")
         grdSOTOXFR1.DataSource = dst.Tables("SOTOXFR1")
         grdICTSTATS.DataSource = dst.Tables("ICTSTATS")
+        grdICTSTATQ.DataSource = dst.Tables("ICTSTATQ")
 
         For Each gcol As UltraWinGrid.UltraGridColumn In grdSOTOXFRX.DisplayLayout.Bands(0).Columns
             gcol.Header.Appearance.BackColor = System.Drawing.Color.White
@@ -101,7 +125,7 @@ Public Class SOFOXFR1
             ElseIf gcol.Key = "SEL" Then
                 gcol.Header.Appearance.BackColor2 = System.Drawing.Color.Goldenrod
                 gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
-            ElseIf gcol.Key = "ALLO" Or gcol.Key = "QTY_TO_XFR" Then
+            ElseIf gcol.Key = "ALLO" Or gcol.Key = "COMING" Or gcol.Key = "NEEDED" Or gcol.Key = "QTY_TO_XFR" Then
                 gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightPink
             ElseIf gcol.Key = "NET_SHORT" Then
                 gcol.Header.Appearance.BackColor2 = System.Drawing.Color.PaleVioletRed
@@ -125,9 +149,25 @@ Public Class SOFOXFR1
             End If
         Next
 
+
+        For Each gcol As UltraWinGrid.UltraGridColumn In grdICTSTATQ.DisplayLayout.Bands(0).Columns
+            gcol.Header.Appearance.BackColor = System.Drawing.Color.White
+            gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightGray
+            gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+            gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+            If gcol.Key = ("STYLE_CODE") Or gcol.Key = ("STYLE_DESC") Or gcol.Key = ("CARTON_PACK_QTY") Or gcol.Key = ("COLOR_CODE") Then
+                gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightBlue
+            ElseIf gcol.Key = ("DIFF") Then
+                gcol.Header.Appearance.BackColor2 = System.Drawing.Color.PaleVioletRed
+            End If
+        Next
+
         Show_Filter(grdICTSTATS, True)
         Create_Summary(grdICTSTATS, "STYLE_CODE", "Count")
 
+        Show_Filter(grdICTSTATQ, True)
+        Create_Summary(grdICTSTATQ, "STYLE_CODE", "Count")
+        Create_Summary(grdICTSTATQ, New String() {"WHSE_QTY_OPEN", "ALLO", "SHORT", "DIFF"})
 
         With grdSOTOXFR1.DisplayLayout.Override
             .AllowAddNew = AllowAddNew.No
@@ -207,6 +247,8 @@ Public Class SOFOXFR1
 
         ASCMAIN1.Add_Value_List(grdSOTOXFR1, "OXFR_STATUS", Nothing, New String() {":", "0:Pending Xfr", "1:Sent to USL"})
 
+        tab1.Tabs("US Qty Open Diagnostic").Visible = ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz"
+
         MakeTransparent(chkShowOnlyNetShort)
     End Sub
 
@@ -216,6 +258,14 @@ Public Class SOFOXFR1
 
         Select Case eItemKey
             Case "Load"
+
+                If optAction.Value = "D" Then
+                Else
+                    If one_and_done Then
+                        EMsg &= vbCr & "Please exit and ree-enter this screen to start another Transfer"
+                    End If
+                End If
+
 
             Case "Update"
 
@@ -421,7 +471,7 @@ Public Class SOFOXFR1
                 Dim STYLE_CODE As String = rowSOTOXFR1.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowSOTOXFR1.Item("COLOR_CODE")
                 'Dim QTY As Int32 = Val(rowSOTOXFRX.Item("SHORT"))
-                Dim QTY As Int32 = -1 * Val(rowSOTOXFR1.Item("ALLO"))
+                Dim QTY As Int32 = -1 * Val(rowSOTOXFR1.Item("NEEDED"))
                 TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
                 rowSOTOXFR1.Item("OXFR_STATUS") = "D"
@@ -436,6 +486,8 @@ Public Class SOFOXFR1
             TAC.SOCMAIN1.Create_Transfer_Order(Me, dst.Tables("SOTOXFRX").Select("SEL = '1'"), "UNITS_2_XFR") ' Create a Single XFR Order for the selected SCs to Transfer
             TAC.SOCMAIN1.Release_Transfer_Order(Me) ' Release that XFR Order
 
+            one_and_done = True
+
             For Each TABLE_NAME As String In TABLES_OXFR
                 Update_Record_TDA(TABLE_NAME)
             Next
@@ -448,7 +500,7 @@ Public Class SOFOXFR1
                 Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
                 'Dim QTY As Int32 = Val(rowSOTOXFRX.Item("SHORT"))
-                Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("ALLO"))
+                Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("NEEDED"))
                 TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
 
                 ' Update Status of Transfer Queue Records
@@ -703,6 +755,9 @@ Public Class SOFOXFR1
         Sort_grdColumns(grdICTSTATS, "STYLE_CODE, COLOR_CODE")
         ShowOnlyNetShort()
 
+        Fill_Records("ICTSTATQ")
+        Sort_grdColumns(grdICTSTATQ, "STYLE_CODE,COLOR_CODE")
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("", "")
     End Sub
@@ -765,20 +820,40 @@ Public Class SOFOXFR1
                 SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
                     & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
-                    & ", CASE WHEN MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(ALLO,0)" & vbCrLf _
-                    & "       ELSE NVL(ALLO,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
+                    & ", CASE WHEN MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(NEEDED,0)" & vbCrLf _
+                    & "       ELSE NVL(NEEDED,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
                     & "from ICTSTYL1,ICTCOLR1, (" & vbCrLf _
                     & "Select SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE" & vbCrLf _
                     & ", Sum (ALLO) ALLO" & vbCrLf _
                     & ", Sum (SHORT) SHORT" & vbCrLf _
+                    & ", Sum (COMING) COMING" & vbCrLf _
+                    & ", Sum (NEEDED) NEEDED" & vbCrLf _
                     & "from SOTOXFR1" & vbCrLf _
-                    & " where SOTOXFR1.OXFR_STATUS = '0' and SOTOXFR1.ALLO <> 0" & vbCrLf _
+                    & " where SOTOXFR1.OXFR_STATUS = '0' and SOTOXFR1.NEEDED <> 0" & vbCrLf _
                     & "group by SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE) X" & vbCrLf _
                     & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_OPEN US_OPEN, WHSE_QTY_PICK US_PICK, WHSE_QTY_TRAN US_TRAN from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
                     & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_OPEN MS_OPEN, WHSE_QTY_PICK MS_PICK, WHSE_QTY_TRAN MS_TRAN from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
                     & "where ICTSTYL1.STYLE_CODE = X.STYLE_CODE and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
                     & "and US.STYLE_CODE (+) = X.STYLE_CODE and US.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
                     & "and MS.STYLE_CODE (+) = X.STYLE_CODE and MS.COLOR_CODE (+) = X.COLOR_CODE"
+
+                'SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
+                '    & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
+                '    & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
+                '    & ", CASE WHEN MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(ALLO,0)" & vbCrLf _
+                '    & "       ELSE NVL(ALLO,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(ALLO,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
+                '    & "from ICTSTYL1,ICTCOLR1, (" & vbCrLf _
+                '    & "Select SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE" & vbCrLf _
+                '    & ", Sum (ALLO) ALLO" & vbCrLf _
+                '    & ", Sum (SHORT) SHORT" & vbCrLf _
+                '    & "from SOTOXFR1" & vbCrLf _
+                '    & " where SOTOXFR1.OXFR_STATUS = '0' and SOTOXFR1.ALLO <> 0" & vbCrLf _
+                '    & "group by SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE) X" & vbCrLf _
+                '    & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND US_ONHD, WHSE_QTY_OPEN US_OPEN, WHSE_QTY_PICK US_PICK, WHSE_QTY_TRAN US_TRAN from ICTSTAT2 where WHSE_CODE = 'US') US" & vbCrLf _
+                '    & ", (Select STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND MS_ONHD, WHSE_QTY_OPEN MS_OPEN, WHSE_QTY_PICK MS_PICK, WHSE_QTY_TRAN MS_TRAN from ICTSTAT2 where WHSE_CODE = 'MS') MS" & vbCrLf _
+                '    & "where ICTSTYL1.STYLE_CODE = X.STYLE_CODE and ICTCOLR1.COLOR_CODE = X.COLOR_CODE" & vbCrLf _
+                '    & "and US.STYLE_CODE (+) = X.STYLE_CODE and US.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
+                '    & "and MS.STYLE_CODE (+) = X.STYLE_CODE and MS.COLOR_CODE (+) = X.COLOR_CODE"
 
                 'SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
                 '    & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
@@ -819,6 +894,7 @@ Public Class SOFOXFR1
                     & ", SOTORDR1.ORDR_DATE_RECD, SOTORDR1.INIT_DATE" & vbCrLf _
                     & " From SOTORDR2, SOTORDR1" & vbCrLf _
                     & " where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
+                    & " and SOTORDR1.ORDR_NO <> '0000865352'" & vbCrLf _
                     & $"   And (SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE) in (Select STYLE_CODE, COLOR_CODE from {SOTOXFRX})" & vbCrLf _
                     & "   And SOTORDR1.WHSE_CODE = 'MS' and SOTORDR2.ORDR_QTY_PICK > 0"
 
@@ -953,5 +1029,25 @@ Public Class SOFOXFR1
         Else
             dvw.RowFilter = ""
         End If
+    End Sub
+
+    Private Sub cmdFixOpen_Click(sender As Object, e As EventArgs) Handles cmdFixOpen.Click
+
+        If MsgBox("OK to Reset Qty Open?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+            Exit Sub
+        End If
+
+        ASCMAIN1.sql = "" _
+            & "BEGIN DECLARE CURSOR C1 IS" & vbCrLf _
+            & sqlICTSTATQ & vbCrLf _
+            & " WHERE DIFF <> 0;" & vbCrLf _
+            & "BEGIN FOR R1 IN C1 LOOP" & vbCrLf _
+            & "UPDATE ICTSTAT2 SET WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN,0) - R1.DIFF" & vbCrLf _
+            & "WHERE WHSE_CODE = 'US' AND STYLE_CODE = R1.STYLE_CODE AND COLOR_CODE = R1.COLOR_CODE;" & vbCrLf _
+            & "END LOOP; END; END;"
+        ASCDATA1.ExecuteSQL()
+
+        Fill_Records("ICTSTATQ")
+        Sort_grdColumns(grdICTSTATQ, "STYLE_CODE,COLOR_CODE")
     End Sub
 End Class

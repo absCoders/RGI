@@ -2462,8 +2462,8 @@ Public Class ICCMAIN1
                     .Item("MISC_CHG_CODE") = DTL_MISC_CHG_CODE
                     .Item("MISC_CHG_DESC") = DTL_MISC_CHG_CODE
                     .Item("MISC_CHG_NOTE") = "Returns Handling"
-                    .Item("INV_MISC_CHG") = -1 * rowSOTRTRN2("LINE_TARIFF")
-                    .Item("INV_MISC_CHG_CURR") = -1 * rowSOTRTRN2("LINE_TARIFF")
+                    .Item("INV_MISC_CHG") = -1 * Val(rowSOTRTRN2("LINE_TARIFF") & "")
+                    .Item("INV_MISC_CHG_CURR") = -1 * Val(rowSOTRTRN2("LINE_TARIFF") & "")
                     .Item("SURCHARGE_PERC") = rowSOTRTRN2("SURCHARGE_PERC")
                     .Item("MISC_CHARGE_TYPE") = "T"
                     .Item("COUNTRY_CODE") = rowSOTRTRN2("COUNTRY_CODE")
