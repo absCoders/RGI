@@ -15318,6 +15318,7 @@ Public Class SOFSHIPB
             Dim EDI_DOC_SEQ_NO As String
             Dim SHIP_BOL_NO As String = String.Empty
             Dim PICK_NO As String = String.Empty
+            Dim EDI_TP_ID As String = String.Empty
 
             If EDI_DOC_SEQ_NOs.Count = 0 Then
                 MessageBox.Show("No EDI 945s found.", "Load", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -15361,6 +15362,7 @@ Public Class SOFSHIPB
                 rowEDT945T1.Item("EDI_PROCESS_IND") = "1"
 
                 EDI_TOTAL_ORDR_WEIGHT = Val(rowEDT945T1.Item("EDI_TOTAL_ORDR_WEIGHT") & String.Empty)
+                EDI_TP_ID = rowEDT945T1.Item("EDI_TP_ID") & ""
 
                 'EDI_CARRIER_SCAC_CODE = String.Empty
                 EDI_DOC_SEQ_NO = rowEDT945T1.Item("EDI_DOC_SEQ_NO")
@@ -15706,8 +15708,10 @@ Public Class SOFSHIPB
 
             Load_3PL_Shipment_Details_EDT945T1 = True
 
-            Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = False
-            Absx1.dteFor("INV_DATE").Enabled = False
+            If ASCMAIN1.CLIENT <> "RGI" And Not String.IsNullOrEmpty(EDI_TP_ID) Then
+                Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = False
+                Absx1.dteFor("INV_DATE").Enabled = False
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Error processing EDI: " & ex.Message, "Import EDI", MessageBoxButtons.OK, MessageBoxIcon.Error)
