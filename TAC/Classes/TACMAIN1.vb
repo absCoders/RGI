@@ -159,7 +159,7 @@ Public Class TACMAIN1
             End If
         End If
 
-        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID <> "edz" AndAlso ASCMAIN1.USER_ID <> "wjz" Then
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID <> "edz" AndAlso ASCMAIN1.USER_ID <> "wjz" AndAlso ASCMAIN1.USER_ID <> "rick" Then
             rowWHTLINE1 = Nothing
         End If
 
