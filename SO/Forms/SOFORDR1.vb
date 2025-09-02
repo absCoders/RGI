@@ -116,7 +116,7 @@ Public Class SOFORDR1
         End If
 
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
-            cmdAutoPO.Visible = True
+            cmdAutoPO.Visible = False ' True
         End If
 
         With dst
@@ -317,14 +317,14 @@ Public Class SOFORDR1
                 & " where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & "   and SOTINVH1.INV_TYPE (+) = 'I'" & vbCrLf _
                 & "   and SOTINVH1.INV_NO (+) = SOTPICK1.INV_NO" & vbCrLf _
-                & "   and SOTPICK1.PICK_STATUS <> 'D'" & vbCrLf _
+                & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'C'" & vbCrLf _
                 & "   and SOTPICK1.ORDR_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTPICK1", "**", 0, False, "V", 1)
 
             ASCMAIN1.sql = "Select SOTPICK2.*" & vbCrLf _
                 & " from SOTPICK2,SOTPICK1 " & vbCrLf _
                 & " where SOTPICK2.PICK_NO = SOTPICK1.PICK_NO and SOTPICK1.ORDR_NO = :PARM1" _
-                & "   and SOTPICK1.PICK_STATUS <> 'D'"
+                & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'C'"
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, False, "V", 2)
 
 
@@ -3813,6 +3813,8 @@ Public Class SOFORDR1
             Select Case rowSOTORDR1.Item("ORDR_STATUS")
                 Case "O"
                     lblStatus.Text = "Open"
+                Case "H"
+                    lblStatus.Text = "On Hold"
                 Case "P"
                     lblStatus.Text = "In Pick"
                 Case "C"
@@ -3865,8 +3867,8 @@ Public Class SOFORDR1
             For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select("")
                 Dim STYLE_CODE As String = rowSOTORDR2.Item("STYLE_CODE")
                 Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                Dim rowICTDUTY1 As DataRow = clsASCBASE1.LookUp("ICTDUTY1", rowICTSTYL1.Item("DUTY_RATE_CODE"))
-                rowSOTORDR2.Item("PF_DUTY_HTS_CODE") = rowICTDUTY1.Item("DUTY_HTS_CODE")
+                Dim rowICTDUTY1 As DataRow = clsASCBASE1.LookUp("ICTDUTY1", rowICTSTYL1.Item("DUTY_RATE_CODE") & "")
+                If rowICTDUTY1 IsNot Nothing Then rowSOTORDR2.Item("PF_DUTY_HTS_CODE") = rowICTDUTY1.Item("DUTY_HTS_CODE")
                 rowSOTORDR2.Item("PF_QTY") = rowSOTORDR2.Item("ORDR_QTY")
             Next
 

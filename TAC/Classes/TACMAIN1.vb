@@ -705,6 +705,7 @@ Public Class TACMAIN1
                 VL.Add("P", "In Pick")
                 VL.Add("F", "Shipped")
                 VL.Add("D", "Deleted")
+                VL.Add("C", "Cancelled")
 
                 'Case "PO_ORDER_TYPE"
                 '    VL.Add("R", "Rx")

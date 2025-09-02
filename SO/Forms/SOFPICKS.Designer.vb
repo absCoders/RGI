@@ -81,6 +81,7 @@ Partial Class SOFPICKS
         Dim UltraGridColumn64 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_ALLO")
         Dim UltraGridColumn235 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_ALLO_NC")
         Dim UltraGridColumn75 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_AVA")
+        Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VOL_INDEX_TOT")
         Dim UltraGridColumn79 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_TYPE_CODE")
         Dim UltraGridColumn43 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_DATE")
         Dim UltraGridColumn236 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_INV_COMMENT")
@@ -137,6 +138,9 @@ Partial Class SOFPICKS
         Dim UltraGridColumn138 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LNF")
         Dim UltraGridColumn170 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ACTION_IF_SHORT")
         Dim UltraGridColumn242 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_PICKED")
+        Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VOL_INDEX")
+        Dim UltraGridColumn33 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VOL_INDEX_WGT")
+        Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VOL_INDEX_TOT")
         Dim UltraGridColumn155 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ICTSTATO_ICTSTATP")
         Dim UltraGridBand8 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTSTATO_ICTSTATP", 0)
         Dim UltraGridColumn243 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
@@ -408,8 +412,8 @@ Partial Class SOFPICKS
         Me.lblSEL = New Infragistics.Win.Misc.UltraLabel()
         Me.numSEL = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.grdSOTORDQ1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.chkIgnoreInvtyShort = New ABSCS.ABSCheckBox()
         Me.grdICTSTATO = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkIgnoreInvtyShort = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTSVIA1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -455,8 +459,8 @@ Partial Class SOFPICKS
         Me.SplitContainer1.SuspendLayout()
         CType(Me.numSEL, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdSOTORDQ1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkIgnoreInvtyShort, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdICTSTATO, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkIgnoreInvtyShort, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.grdSOTSVIA1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl2.SuspendLayout()
@@ -509,19 +513,21 @@ Partial Class SOFPICKS
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
         Me.UltraExplorerBar1.ShowDefaultContextMenu = False
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 842)
         '
         'ASFBASE1_Fill_Panel
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.tabMain)
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.UltraGroupBox1)
-        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1019, 616)
+        Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(1711, 866)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.UltraGroupBox1, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.tabMain, 0)
@@ -571,17 +577,27 @@ Partial Class SOFPICKS
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        '_ASFBASE1_Toolbars_Dock_Area_Left
+        '
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 866)
+        '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1232, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1924, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 866)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1232, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1924, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1232, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 866)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1924, 0)
         '
         'tlb
         '
@@ -591,14 +607,16 @@ Partial Class SOFPICKS
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splOrders)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1015, 513)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(1707, 750)
         '
         'splOrders
         '
         Me.splOrders.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splOrders.Location = New System.Drawing.Point(0, 0)
+        Me.splOrders.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splOrders.Name = "splOrders"
         Me.splOrders.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -609,8 +627,8 @@ Partial Class SOFPICKS
         'splOrders.Panel2
         '
         Me.splOrders.Panel2.Controls.Add(Me.SplitContainer1)
-        Me.splOrders.Size = New System.Drawing.Size(1015, 513)
-        Me.splOrders.SplitterDistance = 178
+        Me.splOrders.Size = New System.Drawing.Size(1707, 750)
+        Me.splOrders.SplitterDistance = 260
         Me.splOrders.TabIndex = 165
         '
         'grdSOTORDQ0
@@ -725,8 +743,9 @@ Partial Class SOFPICKS
         Me.grdSOTORDQ0.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTORDQ0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDQ0.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTORDQ0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDQ0.Name = "grdSOTORDQ0"
-        Me.grdSOTORDQ0.Size = New System.Drawing.Size(1015, 178)
+        Me.grdSOTORDQ0.Size = New System.Drawing.Size(1707, 260)
         Me.grdSOTORDQ0.TabIndex = 166
         Me.grdSOTORDQ0.Text = "Open Order Queues"
         '
@@ -734,6 +753,7 @@ Partial Class SOFPICKS
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -746,40 +766,42 @@ Partial Class SOFPICKS
         '
         'SplitContainer1.Panel2
         '
-        Me.SplitContainer1.Panel2.Controls.Add(Me.chkIgnoreInvtyShort)
         Me.SplitContainer1.Panel2.Controls.Add(Me.grdICTSTATO)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1015, 331)
-        Me.SplitContainer1.SplitterDistance = 200
+        Me.SplitContainer1.Panel2.Controls.Add(Me.chkIgnoreInvtyShort)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1707, 486)
+        Me.SplitContainer1.SplitterDistance = 293
         Me.SplitContainer1.TabIndex = 168
         '
         'btnMaxRelease
         '
-        Me.btnMaxRelease.Location = New System.Drawing.Point(920, 0)
+        Me.btnMaxRelease.Location = New System.Drawing.Point(1150, 0)
         Me.btnMaxRelease.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
         Me.btnMaxRelease.Name = "btnMaxRelease"
-        Me.btnMaxRelease.Size = New System.Drawing.Size(85, 27)
+        Me.btnMaxRelease.Size = New System.Drawing.Size(106, 30)
         Me.btnMaxRelease.TabIndex = 168
-        Me.btnMaxRelease.Text = "15"
+        Me.btnMaxRelease.Text = "25"
         '
         'lblSEL
         '
         Me.lblSEL.AutoSize = True
-        Me.lblSEL.Location = New System.Drawing.Point(599, 5)
+        Me.lblSEL.Location = New System.Drawing.Point(749, 6)
+        Me.lblSEL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblSEL.Name = "lblSEL"
-        Me.lblSEL.Size = New System.Drawing.Size(167, 18)
+        Me.lblSEL.Size = New System.Drawing.Size(209, 22)
         Me.lblSEL.TabIndex = 167
         Me.lblSEL.Text = "Select this many Orders"
         '
         'numSEL
         '
         Me.numSEL.FormatString = "#0"
-        Me.numSEL.Location = New System.Drawing.Point(821, 1)
+        Me.numSEL.Location = New System.Drawing.Point(1026, 1)
+        Me.numSEL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.numSEL.MaxValue = 99
         Me.numSEL.MinValue = 1.0R
         Me.numSEL.Name = "numSEL"
         Me.numSEL.NullText = "0"
         Me.numSEL.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numSEL.Size = New System.Drawing.Size(74, 25)
+        Me.numSEL.Size = New System.Drawing.Size(92, 29)
         Me.numSEL.TabIndex = 166
         Me.numSEL.TabStop = False
         Me.numSEL.Value = 1
@@ -818,72 +840,76 @@ Partial Class SOFPICKS
         UltraGridColumn75.Header.VisiblePosition = 9
         UltraGridColumn75.Hidden = True
         UltraGridColumn75.Width = 69
+        UltraGridColumn38.Format = "#,##0"
+        UltraGridColumn38.Header.Caption = "VolTot"
+        UltraGridColumn38.Header.VisiblePosition = 11
+        UltraGridColumn38.Width = 70
         UltraGridColumn79.Header.Caption = "Type"
-        UltraGridColumn79.Header.VisiblePosition = 14
+        UltraGridColumn79.Header.VisiblePosition = 15
         UltraGridColumn79.Hidden = True
         UltraGridColumn79.Width = 51
         UltraGridColumn43.Header.Caption = "Order Date"
-        UltraGridColumn43.Header.VisiblePosition = 11
+        UltraGridColumn43.Header.VisiblePosition = 12
         UltraGridColumn43.Width = 110
         UltraGridColumn236.Header.Caption = "Invoice Comment"
-        UltraGridColumn236.Header.VisiblePosition = 12
+        UltraGridColumn236.Header.VisiblePosition = 13
         UltraGridColumn111.Header.Caption = "Customer"
-        UltraGridColumn111.Header.VisiblePosition = 18
+        UltraGridColumn111.Header.VisiblePosition = 19
         UltraGridColumn111.Width = 87
         UltraGridColumn113.Header.Caption = "Store"
-        UltraGridColumn113.Header.VisiblePosition = 19
-        UltraGridColumn113.Width = 54
+        UltraGridColumn113.Header.VisiblePosition = 20
+        UltraGridColumn113.Width = 74
         UltraGridColumn237.Header.Caption = "Buyer Name"
-        UltraGridColumn237.Header.VisiblePosition = 15
+        UltraGridColumn237.Header.VisiblePosition = 16
         UltraGridColumn116.Header.Caption = "Customer PO"
-        UltraGridColumn116.Header.VisiblePosition = 20
+        UltraGridColumn116.Header.VisiblePosition = 21
         UltraGridColumn116.Hidden = True
         UltraGridColumn116.Width = 115
         UltraGridColumn117.Header.Caption = "Source"
-        UltraGridColumn117.Header.VisiblePosition = 17
+        UltraGridColumn117.Header.VisiblePosition = 18
         UltraGridColumn117.Hidden = True
         UltraGridColumn117.Width = 86
         UltraGridColumn118.Header.Caption = "#Picks"
-        UltraGridColumn118.Header.VisiblePosition = 23
+        UltraGridColumn118.Header.VisiblePosition = 24
         UltraGridColumn118.Width = 60
         UltraGridColumn119.Header.Caption = "SVia"
-        UltraGridColumn119.Header.VisiblePosition = 24
+        UltraGridColumn119.Header.VisiblePosition = 25
         UltraGridColumn119.Width = 70
         UltraGridColumn120.Header.Caption = "Destination"
-        UltraGridColumn120.Header.VisiblePosition = 16
+        UltraGridColumn120.Header.VisiblePosition = 17
         UltraGridColumn120.Hidden = True
         UltraGridColumn120.Width = 85
         UltraGridColumn123.Header.Caption = "Style Code"
-        UltraGridColumn123.Header.VisiblePosition = 26
+        UltraGridColumn123.Header.VisiblePosition = 27
         UltraGridColumn123.Hidden = True
         UltraGridColumn123.Width = 114
         UltraGridColumn238.Header.Caption = "Color"
-        UltraGridColumn238.Header.VisiblePosition = 21
+        UltraGridColumn238.Header.VisiblePosition = 22
         UltraGridColumn238.Width = 60
         UltraGridColumn124.Header.Caption = "UPC Code"
-        UltraGridColumn124.Header.VisiblePosition = 27
+        UltraGridColumn124.Header.VisiblePosition = 28
         UltraGridColumn124.Hidden = True
         UltraGridColumn124.Width = 128
         UltraGridColumn36.Header.Caption = "Style Description"
-        UltraGridColumn36.Header.VisiblePosition = 22
+        UltraGridColumn36.Header.VisiblePosition = 23
         UltraGridColumn36.Hidden = True
         UltraGridColumn131.Header.Caption = "Xfr Batch No"
-        UltraGridColumn131.Header.VisiblePosition = 28
+        UltraGridColumn131.Header.VisiblePosition = 29
         UltraGridColumn131.Width = 104
         UltraGridColumn63.Format = "MM/dd/yy/HH:mm:ss"
         UltraGridColumn63.Header.Caption = "FIFO Date"
-        UltraGridColumn63.Header.VisiblePosition = 13
+        UltraGridColumn63.Header.VisiblePosition = 14
         UltraGridColumn63.Width = 150
         UltraGridColumn239.Header.Caption = "Hold"
-        UltraGridColumn239.Header.VisiblePosition = 25
+        UltraGridColumn239.Header.VisiblePosition = 26
         UltraGridColumn239.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn239.Width = 60
         UltraGridColumn44.Header.Caption = "Shp Cmp"
-        UltraGridColumn44.Header.VisiblePosition = 29
+        UltraGridColumn44.Header.VisiblePosition = 30
         UltraGridColumn44.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn44.Width = 70
         UltraGridColumn45.Header.Caption = "Allo Cmp"
-        UltraGridColumn45.Header.VisiblePosition = 30
+        UltraGridColumn45.Header.VisiblePosition = 31
         UltraGridColumn45.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn45.Width = 70
         UltraGridColumn147.Header.VisiblePosition = 2
@@ -893,7 +919,7 @@ Partial Class SOFPICKS
         UltraGridColumn132.Header.VisiblePosition = 1
         UltraGridColumn132.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn132.Width = 40
-        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn110, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn172, UltraGridColumn64, UltraGridColumn235, UltraGridColumn75, UltraGridColumn79, UltraGridColumn43, UltraGridColumn236, UltraGridColumn111, UltraGridColumn113, UltraGridColumn237, UltraGridColumn116, UltraGridColumn117, UltraGridColumn118, UltraGridColumn119, UltraGridColumn120, UltraGridColumn123, UltraGridColumn238, UltraGridColumn124, UltraGridColumn36, UltraGridColumn131, UltraGridColumn63, UltraGridColumn239, UltraGridColumn44, UltraGridColumn45, UltraGridColumn147, UltraGridColumn132})
+        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn69, UltraGridColumn110, UltraGridColumn71, UltraGridColumn72, UltraGridColumn73, UltraGridColumn172, UltraGridColumn64, UltraGridColumn235, UltraGridColumn75, UltraGridColumn38, UltraGridColumn79, UltraGridColumn43, UltraGridColumn236, UltraGridColumn111, UltraGridColumn113, UltraGridColumn237, UltraGridColumn116, UltraGridColumn117, UltraGridColumn118, UltraGridColumn119, UltraGridColumn120, UltraGridColumn123, UltraGridColumn238, UltraGridColumn124, UltraGridColumn36, UltraGridColumn131, UltraGridColumn63, UltraGridColumn239, UltraGridColumn44, UltraGridColumn45, UltraGridColumn147, UltraGridColumn132})
         Me.grdSOTORDQ1.DisplayLayout.BandsSerializer.Add(UltraGridBand6)
         Me.grdSOTORDQ1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance66.TextHAlignAsString = "Left"
@@ -951,18 +977,11 @@ Partial Class SOFPICKS
         Me.grdSOTORDQ1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTORDQ1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDQ1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTORDQ1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDQ1.Name = "grdSOTORDQ1"
-        Me.grdSOTORDQ1.Size = New System.Drawing.Size(1015, 200)
+        Me.grdSOTORDQ1.Size = New System.Drawing.Size(1707, 293)
         Me.grdSOTORDQ1.TabIndex = 165
         Me.grdSOTORDQ1.Text = "Open Orders"
-        '
-        'chkIgnoreInvtyShort
-        '
-        Me.chkIgnoreInvtyShort.Location = New System.Drawing.Point(198, 3)
-        Me.chkIgnoreInvtyShort.Name = "chkIgnoreInvtyShort"
-        Me.chkIgnoreInvtyShort.Size = New System.Drawing.Size(198, 20)
-        Me.chkIgnoreInvtyShort.TabIndex = 184
-        Me.chkIgnoreInvtyShort.Text = "Ignore Invty Shortages"
         '
         'grdICTSTATO
         '
@@ -1039,8 +1058,17 @@ Partial Class SOFPICKS
         UltraGridColumn242.Header.Caption = "Qty Picked"
         UltraGridColumn242.Header.VisiblePosition = 20
         UltraGridColumn242.Width = 80
-        UltraGridColumn155.Header.VisiblePosition = 21
-        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn82, UltraGridColumn240, UltraGridColumn83, UltraGridColumn241, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn145, UltraGridColumn168, UltraGridColumn4, UltraGridColumn169, UltraGridColumn34, UltraGridColumn141, UltraGridColumn142, UltraGridColumn143, UltraGridColumn160, UltraGridColumn149, UltraGridColumn138, UltraGridColumn170, UltraGridColumn242, UltraGridColumn155})
+        UltraGridColumn8.Header.Caption = "VolIdx"
+        UltraGridColumn8.Header.VisiblePosition = 21
+        UltraGridColumn8.Width = 70
+        UltraGridColumn33.Header.Caption = "VolWgt"
+        UltraGridColumn33.Header.VisiblePosition = 22
+        UltraGridColumn33.Width = 70
+        UltraGridColumn35.Header.Caption = "VolTot"
+        UltraGridColumn35.Header.VisiblePosition = 23
+        UltraGridColumn35.Width = 70
+        UltraGridColumn155.Header.VisiblePosition = 24
+        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn82, UltraGridColumn240, UltraGridColumn83, UltraGridColumn241, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn145, UltraGridColumn168, UltraGridColumn4, UltraGridColumn169, UltraGridColumn34, UltraGridColumn141, UltraGridColumn142, UltraGridColumn143, UltraGridColumn160, UltraGridColumn149, UltraGridColumn138, UltraGridColumn170, UltraGridColumn242, UltraGridColumn8, UltraGridColumn33, UltraGridColumn35, UltraGridColumn155})
         UltraGridColumn243.Header.VisiblePosition = 0
         UltraGridColumn243.Hidden = True
         UltraGridColumn244.Header.VisiblePosition = 1
@@ -1106,17 +1134,28 @@ Partial Class SOFPICKS
         Me.grdICTSTATO.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.Horizontal
         Me.grdICTSTATO.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTATO.Location = New System.Drawing.Point(0, 0)
+        Me.grdICTSTATO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTATO.Name = "grdICTSTATO"
-        Me.grdICTSTATO.Size = New System.Drawing.Size(1015, 127)
+        Me.grdICTSTATO.Size = New System.Drawing.Size(1707, 189)
         Me.grdICTSTATO.TabIndex = 167
         Me.grdICTSTATO.Text = "Inventory Requirements"
+        '
+        'chkIgnoreInvtyShort
+        '
+        Me.chkIgnoreInvtyShort.Location = New System.Drawing.Point(248, 3)
+        Me.chkIgnoreInvtyShort.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkIgnoreInvtyShort.Name = "chkIgnoreInvtyShort"
+        Me.chkIgnoreInvtyShort.Size = New System.Drawing.Size(248, 22)
+        Me.chkIgnoreInvtyShort.TabIndex = 184
+        Me.chkIgnoreInvtyShort.Text = "Ignore Invty Shortages"
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTSVIA1)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1015, 513)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(1707, 750)
         '
         'grdSOTSVIA1
         '
@@ -1218,8 +1257,9 @@ Partial Class SOFPICKS
         Me.grdSOTSVIA1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSVIA1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTSVIA1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTSVIA1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTSVIA1.Name = "grdSOTSVIA1"
-        Me.grdSOTSVIA1.Size = New System.Drawing.Size(1015, 513)
+        Me.grdSOTSVIA1.Size = New System.Drawing.Size(1707, 750)
         Me.grdSOTSVIA1.TabIndex = 165
         Me.grdSOTSVIA1.Text = "Associated Ship Vias"
         '
@@ -1227,13 +1267,15 @@ Partial Class SOFPICKS
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splPickTickets)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1015, 513)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1707, 750)
         '
         'splPickTickets
         '
         Me.splPickTickets.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splPickTickets.Location = New System.Drawing.Point(0, 0)
+        Me.splPickTickets.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splPickTickets.Name = "splPickTickets"
         Me.splPickTickets.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1244,8 +1286,8 @@ Partial Class SOFPICKS
         'splPickTickets.Panel2
         '
         Me.splPickTickets.Panel2.Controls.Add(Me.splPicks)
-        Me.splPickTickets.Size = New System.Drawing.Size(1015, 513)
-        Me.splPickTickets.SplitterDistance = 178
+        Me.splPickTickets.Size = New System.Drawing.Size(1707, 750)
+        Me.splPickTickets.SplitterDistance = 260
         Me.splPickTickets.TabIndex = 167
         '
         'grdSOTPICK0
@@ -1365,8 +1407,9 @@ Partial Class SOFPICKS
         Me.grdSOTPICK0.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTPICK0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK0.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTPICK0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTPICK0.Name = "grdSOTPICK0"
-        Me.grdSOTPICK0.Size = New System.Drawing.Size(1015, 178)
+        Me.grdSOTPICK0.Size = New System.Drawing.Size(1707, 260)
         Me.grdSOTPICK0.TabIndex = 167
         Me.grdSOTPICK0.Text = "Pick Batches"
         '
@@ -1374,19 +1417,22 @@ Partial Class SOFPICKS
         '
         Me.splPicks.Dock = System.Windows.Forms.DockStyle.Fill
         Me.splPicks.Location = New System.Drawing.Point(0, 0)
+        Me.splPicks.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.splPicks.Name = "splPicks"
         '
         'splPicks.Panel2
         '
         Me.splPicks.Panel2.Controls.Add(Me.SplitContainer2)
-        Me.splPicks.Size = New System.Drawing.Size(1015, 331)
-        Me.splPicks.SplitterDistance = 118
+        Me.splPicks.Size = New System.Drawing.Size(1707, 486)
+        Me.splPicks.SplitterDistance = 198
+        Me.splPicks.SplitterWidth = 5
         Me.splPicks.TabIndex = 201
         '
         'SplitContainer2
         '
         Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer2.Name = "SplitContainer2"
         Me.SplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1397,8 +1443,8 @@ Partial Class SOFPICKS
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdSOTPICK2)
-        Me.SplitContainer2.Size = New System.Drawing.Size(893, 331)
-        Me.SplitContainer2.SplitterDistance = 200
+        Me.SplitContainer2.Size = New System.Drawing.Size(1504, 486)
+        Me.SplitContainer2.SplitterDistance = 293
         Me.SplitContainer2.TabIndex = 200
         '
         'grdSOTPICK1
@@ -1487,7 +1533,7 @@ Partial Class SOFPICKS
         UltraGridColumn273.Hidden = True
         UltraGridColumn183.Header.Caption = "Via"
         UltraGridColumn183.Header.VisiblePosition = 3
-        UltraGridColumn183.Width = 48
+        UltraGridColumn183.Width = 61
         UltraGridColumn52.Header.VisiblePosition = 42
         UltraGridColumn52.Hidden = True
         UltraGridColumn195.Header.Caption = "Src"
@@ -1602,8 +1648,9 @@ Partial Class SOFPICKS
         Me.grdSOTPICK1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTPICK1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTPICK1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTPICK1.Name = "grdSOTPICK1"
-        Me.grdSOTPICK1.Size = New System.Drawing.Size(893, 200)
+        Me.grdSOTPICK1.Size = New System.Drawing.Size(1504, 293)
         Me.grdSOTPICK1.TabIndex = 166
         Me.grdSOTPICK1.Text = "Pick Tickets"
         '
@@ -1776,22 +1823,25 @@ Partial Class SOFPICKS
         Me.grdSOTPICK2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTPICK2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK2.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTPICK2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTPICK2.Name = "grdSOTPICK2"
-        Me.grdSOTPICK2.Size = New System.Drawing.Size(893, 127)
+        Me.grdSOTPICK2.Size = New System.Drawing.Size(1504, 189)
         Me.grdSOTPICK2.TabIndex = 168
         Me.grdSOTPICK2.Text = "Pick Ticket Details"
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1015, 513)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(1707, 750)
         '
         'SplitContainer3
         '
         Me.SplitContainer3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer3.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer3.Name = "SplitContainer3"
         Me.SplitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -1802,8 +1852,8 @@ Partial Class SOFPICKS
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdSOTORDRX)
-        Me.SplitContainer3.Size = New System.Drawing.Size(1015, 513)
-        Me.SplitContainer3.SplitterDistance = 213
+        Me.SplitContainer3.Size = New System.Drawing.Size(1707, 750)
+        Me.SplitContainer3.SplitterDistance = 311
         Me.SplitContainer3.TabIndex = 167
         '
         'grdICTSTATX
@@ -1920,8 +1970,9 @@ Partial Class SOFPICKS
         Me.grdICTSTATX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTATX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTATX.Location = New System.Drawing.Point(0, 0)
+        Me.grdICTSTATX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdICTSTATX.Name = "grdICTSTATX"
-        Me.grdICTSTATX.Size = New System.Drawing.Size(1015, 213)
+        Me.grdICTSTATX.Size = New System.Drawing.Size(1707, 311)
         Me.grdICTSTATX.TabIndex = 167
         Me.grdICTSTATX.Text = "Inventory Allocations"
         '
@@ -2082,8 +2133,9 @@ Partial Class SOFPICKS
         Me.grdSOTORDRX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTORDRX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDRX.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTORDRX.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDRX.Name = "grdSOTORDRX"
-        Me.grdSOTORDRX.Size = New System.Drawing.Size(1015, 296)
+        Me.grdSOTORDRX.Size = New System.Drawing.Size(1707, 435)
         Me.grdSOTORDRX.TabIndex = 166
         Me.grdSOTORDRX.Text = "Open Orders"
         '
@@ -2099,15 +2151,17 @@ Partial Class SOFPICKS
         Me.UltraGroupBox1.Controls.Add(Me.UltraLabel2)
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Top
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(1019, 75)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(1711, 84)
         Me.UltraGroupBox1.TabIndex = 2
         '
         'chkShowHolds
         '
-        Me.chkShowHolds.Location = New System.Drawing.Point(702, 24)
+        Me.chkShowHolds.Location = New System.Drawing.Point(878, 27)
+        Me.chkShowHolds.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowHolds.Name = "chkShowHolds"
-        Me.chkShowHolds.Size = New System.Drawing.Size(196, 40)
+        Me.chkShowHolds.Size = New System.Drawing.Size(245, 45)
         Me.chkShowHolds.TabIndex = 174
         Me.chkShowHolds.Text = "Show Orders on Hold (Release Not Permitted)"
         '
@@ -2115,18 +2169,20 @@ Partial Class SOFPICKS
         '
         Me.Absx1.SetABSBindToTable(Me.txtORDR_NO, False)
         Me.Absx1.SetABSColumnName(Me.txtORDR_NO, "ORDR_NO")
-        Me.txtORDR_NO.Location = New System.Drawing.Point(354, 37)
+        Me.txtORDR_NO.Location = New System.Drawing.Point(442, 42)
+        Me.txtORDR_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtORDR_NO.MaxLength = 10
         Me.txtORDR_NO.Name = "txtORDR_NO"
-        Me.txtORDR_NO.Size = New System.Drawing.Size(146, 25)
+        Me.txtORDR_NO.Size = New System.Drawing.Size(182, 29)
         Me.txtORDR_NO.TabIndex = 2
         '
         'lblORDR_NO
         '
         Me.lblORDR_NO.AutoSize = True
-        Me.lblORDR_NO.Location = New System.Drawing.Point(354, 13)
+        Me.lblORDR_NO.Location = New System.Drawing.Point(442, 15)
+        Me.lblORDR_NO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblORDR_NO.Name = "lblORDR_NO"
-        Me.lblORDR_NO.Size = New System.Drawing.Size(66, 18)
+        Me.lblORDR_NO.Size = New System.Drawing.Size(82, 22)
         Me.lblORDR_NO.TabIndex = 172
         Me.lblORDR_NO.Text = "Order No"
         '
@@ -2136,9 +2192,10 @@ Partial Class SOFPICKS
         Me.lblRESOLUTION.Appearance = Appearance113
         Me.lblRESOLUTION.AutoSize = True
         Me.lblRESOLUTION.Font = New System.Drawing.Font("Verdana", 20.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblRESOLUTION.Location = New System.Drawing.Point(898, 13)
+        Me.lblRESOLUTION.Location = New System.Drawing.Point(1122, 15)
+        Me.lblRESOLUTION.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblRESOLUTION.Name = "lblRESOLUTION"
-        Me.lblRESOLUTION.Size = New System.Drawing.Size(271, 36)
+        Me.lblRESOLUTION.Size = New System.Drawing.Size(339, 45)
         Me.lblRESOLUTION.TabIndex = 5
         Me.lblRESOLUTION.Text = "Order Resolution"
         Me.lblRESOLUTION.Visible = False
@@ -2146,9 +2203,10 @@ Partial Class SOFPICKS
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(111, 12)
+        Me.UltraLabel1.Location = New System.Drawing.Point(139, 14)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(80, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(100, 22)
         Me.UltraLabel1.TabIndex = 3
         Me.UltraLabel1.Text = "Description"
         '
@@ -2156,10 +2214,11 @@ Partial Class SOFPICKS
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "WHSE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor3, "WHSE_CODE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(111, 37)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(139, 42)
+        Me.UltraTextEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.ReadOnly = True
-        Me.UltraTextEditor3.Size = New System.Drawing.Size(237, 25)
+        Me.UltraTextEditor3.Size = New System.Drawing.Size(296, 29)
         Me.UltraTextEditor3.TabIndex = 1
         Me.UltraTextEditor3.TabStop = False
         '
@@ -2168,17 +2227,19 @@ Partial Class SOFPICKS
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor4, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "WHSE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor4, True)
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(12, 37)
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(15, 42)
+        Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
-        Me.UltraTextEditor4.Size = New System.Drawing.Size(100, 25)
+        Me.UltraTextEditor4.Size = New System.Drawing.Size(125, 29)
         Me.UltraTextEditor4.TabIndex = 0
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(12, 12)
+        Me.UltraLabel2.Location = New System.Drawing.Point(15, 14)
+        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(42, 18)
+        Me.UltraLabel2.Size = New System.Drawing.Size(52, 22)
         Me.UltraLabel2.TabIndex = 2
         Me.UltraLabel2.Text = "Whse"
         '
@@ -2190,10 +2251,11 @@ Partial Class SOFPICKS
         Me.tabMain.Controls.Add(Me.UltraTabPageControl3)
         Me.tabMain.Controls.Add(Me.UltraTabPageControl4)
         Me.tabMain.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tabMain.Location = New System.Drawing.Point(0, 75)
+        Me.tabMain.Location = New System.Drawing.Point(0, 84)
+        Me.tabMain.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tabMain.Size = New System.Drawing.Size(1019, 541)
+        Me.tabMain.Size = New System.Drawing.Size(1711, 782)
         Me.tabMain.TabIndex = 166
         Me.tabMain.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab4.TabPage = Me.UltraTabPageControl3
@@ -2210,8 +2272,9 @@ Partial Class SOFPICKS
         'UltraTabSharedControlsPage1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1015, 513)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1707, 750)
         '
         'Timer1
         '
@@ -2219,10 +2282,10 @@ Partial Class SOFPICKS
         '
         'SOFPICKS
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1232, 616)
-        Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.ClientSize = New System.Drawing.Size(1924, 866)
+        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.Name = "SOFPICKS"
         Me.Text = "SOFPICKF"
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2246,8 +2309,8 @@ Partial Class SOFPICKS
         Me.SplitContainer1.ResumeLayout(False)
         CType(Me.numSEL, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdSOTORDQ1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkIgnoreInvtyShort, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdICTSTATO, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkIgnoreInvtyShort, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         CType(Me.grdSOTSVIA1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)

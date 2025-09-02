@@ -31,6 +31,7 @@ Partial Class SOFPICKU
         Dim UltraGridColumn34 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_OPEN")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_BACK")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_ALLO")
+        Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VOL_INDEX_TOT")
         Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY_AVA")
         Dim UltraGridColumn36 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_ORDER_TYPE")
         Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_TYPE_CODE")
@@ -87,15 +88,17 @@ Partial Class SOFPICKU
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance33 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance29 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.grdSOTORDQ1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTSCAN1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
+        Me.lblInstruction1 = New Infragistics.Win.Misc.UltraLabel()
         Me.chkCustomTruck = New ABSCS.ABSCheckBox()
         Me.UltraLabel1 = New Infragistics.Win.Misc.UltraLabel()
         Me.cmdCancel = New Infragistics.Win.Misc.UltraButton()
@@ -108,12 +111,9 @@ Partial Class SOFPICKU
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.lblInstruction = New Infragistics.Win.Misc.UltraLabel()
         Me.txtTRUCK = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
-        Me.lblInstruction1 = New Infragistics.Win.Misc.UltraLabel()
         Me.ASFBASE2_Fill_Panel.SuspendLayout()
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).BeginInit()
-        'CType(Me.tblASTLOGX1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -135,30 +135,30 @@ Partial Class SOFPICKU
         'ASFBASE2_Fill_Panel
         '
         Me.ASFBASE2_Fill_Panel.Controls.Add(Me.SplitContainer1)
-        Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(1148, 405)
+        Me.ASFBASE2_Fill_Panel.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ASFBASE2_Fill_Panel.Size = New System.Drawing.Size(1435, 456)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Left
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 405)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Left.Size = New System.Drawing.Size(0, 456)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1148, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 405)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1435, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 456)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1148, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1435, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 405)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1148, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 456)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1435, 0)
         '
         'tlb
         '
@@ -169,6 +169,7 @@ Partial Class SOFPICKU
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer1.Name = "SplitContainer1"
         Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
@@ -192,8 +193,8 @@ Partial Class SOFPICKU
         Me.SplitContainer1.Panel2.Controls.Add(Me.UltraLabel2)
         Me.SplitContainer1.Panel2.Controls.Add(Me.lblInstruction)
         Me.SplitContainer1.Panel2.Controls.Add(Me.txtTRUCK)
-        Me.SplitContainer1.Size = New System.Drawing.Size(1148, 405)
-        Me.SplitContainer1.SplitterDistance = 284
+        Me.SplitContainer1.Size = New System.Drawing.Size(1435, 456)
+        Me.SplitContainer1.SplitterDistance = 319
         Me.SplitContainer1.TabIndex = 0
         '
         'SplitContainer2
@@ -201,6 +202,7 @@ Partial Class SOFPICKU
         Me.SplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.SplitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer2.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.SplitContainer2.Name = "SplitContainer2"
         '
         'SplitContainer2.Panel1
@@ -210,8 +212,9 @@ Partial Class SOFPICKU
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grdSOTSCAN1)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1148, 284)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1435, 319)
         Me.SplitContainer2.SplitterDistance = 818
+        Me.SplitContainer2.SplitterWidth = 5
         Me.SplitContainer2.TabIndex = 0
         '
         'grdSOTORDQ1
@@ -242,6 +245,10 @@ Partial Class SOFPICKU
         UltraGridColumn7.Header.Caption = "Allo"
         UltraGridColumn7.Header.VisiblePosition = 8
         UltraGridColumn7.Width = 50
+        UltraGridColumn8.Format = "#,##0"
+        UltraGridColumn8.Header.Caption = "VolTot"
+        UltraGridColumn8.Header.VisiblePosition = 35
+        UltraGridColumn8.Width = 70
         UltraGridColumn35.Header.Caption = "Qty Ava"
         UltraGridColumn35.Header.VisiblePosition = 9
         UltraGridColumn35.Hidden = True
@@ -279,7 +286,7 @@ Partial Class SOFPICKU
         UltraGridColumn44.Width = 52
         UltraGridColumn45.Header.Caption = "Store"
         UltraGridColumn45.Header.VisiblePosition = 22
-        UltraGridColumn45.Width = 54
+        UltraGridColumn45.Width = 67
         UltraGridColumn46.Header.Caption = "Ship-To Name"
         UltraGridColumn46.Header.VisiblePosition = 21
         UltraGridColumn46.Hidden = True
@@ -333,13 +340,16 @@ Partial Class SOFPICKU
         UltraGridColumn2.Header.Caption = "Slot#"
         UltraGridColumn2.Header.VisiblePosition = 31
         UltraGridColumn2.Width = 56
+        UltraGridColumn3.Header.Caption = "Cls"
         UltraGridColumn3.Header.VisiblePosition = 32
-        UltraGridColumn3.Hidden = True
+        UltraGridColumn3.Width = 50
+        UltraGridColumn4.Header.Caption = "MinVol"
         UltraGridColumn4.Header.VisiblePosition = 33
-        UltraGridColumn4.Hidden = True
+        UltraGridColumn4.Width = 60
+        UltraGridColumn5.Header.Caption = "MaxVol"
         UltraGridColumn5.Header.VisiblePosition = 34
-        UltraGridColumn5.Hidden = True
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn6, UltraGridColumn7, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn58, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5})
+        UltraGridColumn5.Width = 70
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn58, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5})
         Me.grdSOTORDQ1.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdSOTORDQ1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -397,8 +407,9 @@ Partial Class SOFPICKU
         Me.grdSOTORDQ1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTORDQ1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDQ1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTORDQ1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDQ1.Name = "grdSOTORDQ1"
-        Me.grdSOTORDQ1.Size = New System.Drawing.Size(818, 284)
+        Me.grdSOTORDQ1.Size = New System.Drawing.Size(818, 319)
         Me.grdSOTORDQ1.TabIndex = 167
         Me.grdSOTORDQ1.Text = "Open Orders"
         '
@@ -476,16 +487,40 @@ Partial Class SOFPICKU
         Me.grdSOTSCAN1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTSCAN1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTSCAN1.Location = New System.Drawing.Point(0, 0)
+        Me.grdSOTSCAN1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTSCAN1.Name = "grdSOTSCAN1"
-        Me.grdSOTSCAN1.Size = New System.Drawing.Size(326, 284)
+        Me.grdSOTSCAN1.Size = New System.Drawing.Size(612, 319)
         Me.grdSOTSCAN1.TabIndex = 173
         Me.grdSOTSCAN1.Text = "Scan History"
         '
+        'UltraLabel3
+        '
+        Me.UltraLabel3.AutoSize = True
+        Me.UltraLabel3.Location = New System.Drawing.Point(10, 98)
+        Me.UltraLabel3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraLabel3.Name = "UltraLabel3"
+        Me.UltraLabel3.Size = New System.Drawing.Size(150, 22)
+        Me.UltraLabel3.TabIndex = 190
+        Me.UltraLabel3.Text = "Available Trucks:"
+        '
+        'lblInstruction1
+        '
+        Appearance25.ForeColor = System.Drawing.Color.Blue
+        Me.lblInstruction1.Appearance = Appearance25
+        Me.lblInstruction1.AutoSize = True
+        Me.lblInstruction1.Location = New System.Drawing.Point(168, 98)
+        Me.lblInstruction1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblInstruction1.Name = "lblInstruction1"
+        Me.lblInstruction1.Size = New System.Drawing.Size(101, 22)
+        Me.lblInstruction1.TabIndex = 191
+        Me.lblInstruction1.Text = "N999,N999"
+        '
         'chkCustomTruck
         '
-        Me.chkCustomTruck.Location = New System.Drawing.Point(656, 39)
+        Me.chkCustomTruck.Location = New System.Drawing.Point(820, 44)
+        Me.chkCustomTruck.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkCustomTruck.Name = "chkCustomTruck"
-        Me.chkCustomTruck.Size = New System.Drawing.Size(124, 19)
+        Me.chkCustomTruck.Size = New System.Drawing.Size(155, 21)
         Me.chkCustomTruck.TabIndex = 188
         Me.chkCustomTruck.Text = "Custom Truck"
         Me.chkCustomTruck.Visible = False
@@ -493,99 +528,108 @@ Partial Class SOFPICKU
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(8, 14)
+        Me.UltraLabel1.Location = New System.Drawing.Point(10, 16)
+        Me.UltraLabel1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel1.Name = "UltraLabel1"
-        Me.UltraLabel1.Size = New System.Drawing.Size(84, 18)
+        Me.UltraLabel1.Size = New System.Drawing.Size(105, 22)
         Me.UltraLabel1.TabIndex = 182
         Me.UltraLabel1.Text = "Instruction:"
         '
         'cmdCancel
         '
-        Me.cmdCancel.Location = New System.Drawing.Point(1013, 39)
+        Me.cmdCancel.Location = New System.Drawing.Point(1266, 44)
+        Me.cmdCancel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.cmdCancel.Name = "cmdCancel"
-        Me.cmdCancel.Size = New System.Drawing.Size(69, 33)
+        Me.cmdCancel.Size = New System.Drawing.Size(86, 37)
         Me.cmdCancel.TabIndex = 179
         Me.cmdCancel.Text = "Cancel"
         '
         'lblInstruction2
         '
-        Appearance30.ForeColor = System.Drawing.Color.Blue
-        Me.lblInstruction2.Appearance = Appearance30
+        Appearance26.ForeColor = System.Drawing.Color.Blue
+        Me.lblInstruction2.Appearance = Appearance26
         Me.lblInstruction2.AutoSize = True
-        Me.lblInstruction2.Location = New System.Drawing.Point(656, 14)
+        Me.lblInstruction2.Location = New System.Drawing.Point(820, 16)
+        Me.lblInstruction2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblInstruction2.Name = "lblInstruction2"
-        Me.lblInstruction2.Size = New System.Drawing.Size(133, 18)
+        Me.lblInstruction2.Size = New System.Drawing.Size(166, 22)
         Me.lblInstruction2.TabIndex = 187
         Me.lblInstruction2.Text = "Scan Tote in Slot 1"
         Me.lblInstruction2.Visible = False
         '
         'txtSCAN
         '
-        Me.txtSCAN.Location = New System.Drawing.Point(804, 9)
-        Me.txtSCAN.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtSCAN.Location = New System.Drawing.Point(1005, 10)
+        Me.txtSCAN.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
         Me.txtSCAN.Name = "txtSCAN"
-        Me.txtSCAN.Size = New System.Drawing.Size(128, 25)
+        Me.txtSCAN.Size = New System.Drawing.Size(160, 29)
         Me.txtSCAN.TabIndex = 177
         '
         'lblPreConfigured
         '
-        Appearance31.ForeColor = System.Drawing.Color.Red
-        Me.lblPreConfigured.Appearance = Appearance31
+        Appearance27.ForeColor = System.Drawing.Color.Red
+        Me.lblPreConfigured.Appearance = Appearance27
         Me.lblPreConfigured.AutoSize = True
-        Me.lblPreConfigured.Location = New System.Drawing.Point(166, 46)
+        Me.lblPreConfigured.Location = New System.Drawing.Point(208, 52)
+        Me.lblPreConfigured.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblPreConfigured.Name = "lblPreConfigured"
-        Me.lblPreConfigured.Size = New System.Drawing.Size(139, 18)
+        Me.lblPreConfigured.Size = New System.Drawing.Size(174, 22)
         Me.lblPreConfigured.TabIndex = 186
         Me.lblPreConfigured.Text = "Pre-Configured with"
         Me.lblPreConfigured.Visible = False
         '
         'cmdUpdate
         '
-        Me.cmdUpdate.Location = New System.Drawing.Point(939, 39)
+        Me.cmdUpdate.Location = New System.Drawing.Point(1174, 44)
+        Me.cmdUpdate.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.cmdUpdate.Name = "cmdUpdate"
-        Me.cmdUpdate.Size = New System.Drawing.Size(69, 33)
+        Me.cmdUpdate.Size = New System.Drawing.Size(86, 37)
         Me.cmdUpdate.TabIndex = 178
         Me.cmdUpdate.Text = "Update"
         '
         'lblTruckIsReady
         '
-        Appearance32.FontData.SizeInPoints = 24.0!
-        Appearance32.ForeColor = System.Drawing.Color.Fuchsia
-        Me.lblTruckIsReady.Appearance = Appearance32
+        Appearance28.FontData.SizeInPoints = 24.0!
+        Appearance28.ForeColor = System.Drawing.Color.Fuchsia
+        Me.lblTruckIsReady.Appearance = Appearance28
         Me.lblTruckIsReady.AutoSize = True
         Me.lblTruckIsReady.BorderStyleOuter = Infragistics.Win.UIElementBorderStyle.Solid
-        Me.lblTruckIsReady.Location = New System.Drawing.Point(379, 14)
+        Me.lblTruckIsReady.Location = New System.Drawing.Point(474, 16)
+        Me.lblTruckIsReady.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblTruckIsReady.Name = "lblTruckIsReady"
-        Me.lblTruckIsReady.Size = New System.Drawing.Size(262, 45)
+        Me.lblTruckIsReady.Size = New System.Drawing.Size(326, 56)
         Me.lblTruckIsReady.TabIndex = 185
         Me.lblTruckIsReady.Text = "Truck Is Ready"
         Me.lblTruckIsReady.Visible = False
         '
         'btnSimulateScan
         '
-        Me.btnSimulateScan.Location = New System.Drawing.Point(939, 6)
+        Me.btnSimulateScan.Location = New System.Drawing.Point(1174, 7)
+        Me.btnSimulateScan.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnSimulateScan.Name = "btnSimulateScan"
-        Me.btnSimulateScan.Size = New System.Drawing.Size(142, 33)
+        Me.btnSimulateScan.Size = New System.Drawing.Size(178, 37)
         Me.btnSimulateScan.TabIndex = 184
         Me.btnSimulateScan.Text = "Simulate Scan"
         '
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(8, 46)
+        Me.UltraLabel2.Location = New System.Drawing.Point(10, 52)
+        Me.UltraLabel2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraLabel2.Name = "UltraLabel2"
-        Me.UltraLabel2.Size = New System.Drawing.Size(42, 18)
+        Me.UltraLabel2.Size = New System.Drawing.Size(53, 22)
         Me.UltraLabel2.TabIndex = 181
         Me.UltraLabel2.Text = "Truck"
         '
         'lblInstruction
         '
-        Appearance33.ForeColor = System.Drawing.Color.Blue
-        Me.lblInstruction.Appearance = Appearance33
+        Appearance29.ForeColor = System.Drawing.Color.Blue
+        Me.lblInstruction.Appearance = Appearance29
         Me.lblInstruction.AutoSize = True
-        Me.lblInstruction.Location = New System.Drawing.Point(98, 14)
+        Me.lblInstruction.Location = New System.Drawing.Point(122, 16)
+        Me.lblInstruction.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblInstruction.Name = "lblInstruction"
-        Me.lblInstruction.Size = New System.Drawing.Size(92, 18)
+        Me.lblInstruction.Size = New System.Drawing.Size(115, 22)
         Me.lblInstruction.TabIndex = 183
         Me.lblInstruction.Text = "Scan a Truck"
         '
@@ -594,45 +638,25 @@ Partial Class SOFPICKU
         Me.Absx1.SetABSBindToTable(Me.txtTRUCK, False)
         Me.Absx1.SetABSColumnName(Me.txtTRUCK, "TRUCK_NO")
         Me.Absx1.SetABSHasButton(Me.txtTRUCK, True)
-        Me.txtTRUCK.Location = New System.Drawing.Point(60, 42)
+        Me.txtTRUCK.Location = New System.Drawing.Point(75, 47)
+        Me.txtTRUCK.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.txtTRUCK.Name = "txtTRUCK"
         Me.txtTRUCK.ReadOnly = True
-        Me.txtTRUCK.Size = New System.Drawing.Size(100, 25)
+        Me.txtTRUCK.Size = New System.Drawing.Size(125, 29)
         Me.txtTRUCK.TabIndex = 180
-        '
-        'UltraLabel3
-        '
-        Me.UltraLabel3.AutoSize = True
-        Me.UltraLabel3.Location = New System.Drawing.Point(8, 87)
-        Me.UltraLabel3.Name = "UltraLabel3"
-        Me.UltraLabel3.Size = New System.Drawing.Size(120, 18)
-        Me.UltraLabel3.TabIndex = 190
-        Me.UltraLabel3.Text = "Available Trucks:"
-        '
-        'lblInstruction1
-        '
-        Appearance29.ForeColor = System.Drawing.Color.Blue
-        Me.lblInstruction1.Appearance = Appearance29
-        Me.lblInstruction1.AutoSize = True
-        Me.lblInstruction1.Location = New System.Drawing.Point(134, 87)
-        Me.lblInstruction1.Name = "lblInstruction1"
-        Me.lblInstruction1.Size = New System.Drawing.Size(81, 18)
-        Me.lblInstruction1.TabIndex = 191
-        Me.lblInstruction1.Text = "N999,N999"
         '
         'SOFPICKU
         '
         Me.Absx1.SetABSBindToTable(Me, False)
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1148, 405)
-        Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.ClientSize = New System.Drawing.Size(1435, 456)
+        Me.Margin = New System.Windows.Forms.Padding(5, 6, 5, 6)
         Me.Name = "SOFPICKU"
         Me.Text = "Build a Truck"
         Me.ASFBASE2_Fill_Panel.ResumeLayout(False)
         CType(Me.tlb, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASTOPST1, System.ComponentModel.ISupportInitialize).EndInit()
-        'CType(Me.tblASTLOGX1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()

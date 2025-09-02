@@ -8,7 +8,7 @@ Public Class SOTTRCK1
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         With dst
-            ASCMAIN1.sql = "Select SOTTOTE1.*, SOTTOTE0.TOTE_CLASS_CODE from SOTTOTE1,SOTTOTE0 where SOTTOTE0.TOTE_CLASS_CODE = SOTTOTE1.TOTE_CLASS_CODE and SOTTOTE1.TRUCK_NO = :PARM1"
+            ASCMAIN1.sql = "Select SOTTOTE1.* from SOTTOTE1 where SOTTOTE1.TRUCK_NO = :PARM1"
             Create_TDA(.Tables.Add, "SOTTOTE1", "**", 0, True, "V", 1)
             .Tables("SOTTOTE1").Columns.Add("SEL")
             .Tables("SOTTOTE1").Columns("SEL").DefaultValue = "0"
@@ -214,6 +214,7 @@ Public Class SOTTRCK1
         numTotes.Visible = isPreConfig AndAlso EntryMode = "New" AndAlso False
         lblTotes.Visible = isPreConfig AndAlso EntryMode = "New" AndAlso False
         cmd27.Visible = isPreConfig AndAlso EntryMode = "New"
+        optToteCount.Visible = isPreConfig AndAlso EntryMode = "New"
 
         ' tried to get this to work with View but grid did not permit ckecking Sel
         splTote1.Visible = isPreConfig
@@ -319,23 +320,39 @@ Public Class SOTTRCK1
         End If
     End Sub
 
-    Sub Setup_27_Totes()
+    Sub Setup_Totes()
+        If Absx1.txtFor("WHSE_CODE").Text = "" Or Absx1.txtFor("WHSE_DESC").Text = "" Then
+            MsgBox("You must first specify a valid Warehouse Code", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+            Exit Sub
+        End If
+
+        If optToteCount.CheckedIndex = -1 Then
+            MsgBox("You must select a Tote Count", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+            Exit Sub
+        End If
+
+        Dim tote_count As Int32 = Val(optToteCount.Value & "")
+
 
         dst.Tables("SOTTOTE1").Rows.Clear()
         Dim TRUCK_NO As String = Absx1.txtFor("TRUCK_NO").Text
-        Dim TOTE_CLASS_CODE As String = "A"
-        For T As Integer = 1 To 27
-            If T = 3 Then
-                TOTE_CLASS_CODE = "B"
-            ElseIf T = 13 Then
-                TOTE_CLASS_CODE = "C"
+        Dim TOTE_CLASS_CODE As String = "C"
+        For T As Integer = 1 To tote_count
+            If tote_count = 10 Then
+                ' all totes should be C
+            Else
+                If T = 3 Then
+                    TOTE_CLASS_CODE = "A"
+                ElseIf T = 18 Then
+                    TOTE_CLASS_CODE = "B"
+                End If
             End If
 
             Dim TOTE_NO As String = TRUCK_NO & Format(T, "00")
             Dim rowSOTTOTE1 As DataRow = dst.Tables("SOTTOTE1").NewRow
             With rowSOTTOTE1
                 .Item("TOTE_NO") = TOTE_NO
-                .Item("TOTE_CLASS_CODE") = "A"
+                .Item("TOTE_CLASS_CODE") = TOTE_CLASS_CODE
                 .Item("WHSE_CODE") = Absx1.txtFor("WHSE_CODE").Text
                 .Item("TRUCK_NO") = TRUCK_NO
                 .Item("SLOT_NO") = T
@@ -374,6 +391,6 @@ Public Class SOTTRCK1
     End Sub
 
     Private Sub cmd27_Click(sender As Object, e As EventArgs) Handles cmd27.Click
-        Setup_27_Totes()
+        Setup_Totes()
     End Sub
 End Class
