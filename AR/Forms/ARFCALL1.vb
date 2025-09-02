@@ -1154,21 +1154,24 @@ Public Class ARFCALL1
 
         Dim distinctCusts As DataTable = dst.Tables("ARTOPENX").DefaultView.ToTable(True, "CUST_CODE")
         Dim sbIn As New Text.StringBuilder()
+        Dim ids As New List(Of String)
         For Each r As DataRow In distinctCusts.Rows
             Dim c As String = CStr(r("CUST_CODE") & "")
             If c <> "" Then
+                ids.Add(c)
                 c = c.Replace("'", "''")
                 If sbIn.Length > 0 Then sbIn.Append(",")
                 sbIn.Append("'").Append(c).Append("'")
             End If
         Next
-        If sbIn.Length = 0 Then Exit Sub
+        If ids.Count = 0 Then Exit Sub
         Dim inList As String = sbIn.ToString()
 
         Dim sb As New Text.StringBuilder()
+        sb.Length = 0
         sb.AppendLine("SELECT C1.CUST_CODE, NVL(C1.CUST_CREDIT_LIMIT,0) CUST_CREDIT_LIMIT")
         sb.AppendLine("FROM ARTCUST1 C1")
-        sb.AppendLine("WHERE C1.CUST_CODE IN (" & inList & ")")
+        sb.AppendLine("WHERE " & BuildOracleInChunks("C1.CUST_CODE", ids))
         ASCMAIN1.sql = sb.ToString()
         Dim dtCL As DataTable = ASCDATA1.GetDataTable()
 
@@ -1184,7 +1187,7 @@ Public Class ARFCALL1
         sb.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
         sb.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
         sb.AppendLine("  AND S1.ORDR_STATUS IN ('O','P')")
-        sb.AppendLine("  AND S1.CUST_CODE IN (" & inList & ")")
+        sb.AppendLine("  AND " & BuildOracleInChunks("S1.CUST_CODE", ids))
         sb.AppendLine("GROUP BY S1.CUST_CODE")
         ASCMAIN1.sql = sb.ToString()
         Dim dtOO As DataTable = ASCDATA1.GetDataTable()
@@ -1196,21 +1199,36 @@ Public Class ARFCALL1
             REL(k) = Val(r("ORDS_RELD") & "")
             PEND(k) = Val(r("ORDS_PEND") & "")
         Next
+        sb.Length = 0
+        sb.AppendLine("SELECT O1.CUST_CODE,")
+        sb.AppendLine("       SUM(NVL(O1.INV_BALANCE,0)) AS TOTAL_DUE ")
+        sb.AppendLine("FROM ARTOPEN1 O1")
+        sb.AppendLine("WHERE " & BuildOracleInChunks("O1.CUST_CODE", ids))
+        sb.AppendLine("GROUP BY O1.CUST_CODE")
+        ASCMAIN1.sql = sb.ToString()
+        Dim dtDue As DataTable = ASCDATA1.GetDataTable()
+        Dim DUE As New Dictionary(Of String, Decimal)(StringComparer.OrdinalIgnoreCase)
+        For Each r As DataRow In dtDue.Rows
+            Dim k As String = CStr(r("CUST_CODE"))
+            DUE(k) = Val(r("TOTAL_DUE") & "")
+        Next
 
         For Each r As DataRow In dst.Tables("ARTOPENX").Rows
             Dim cust As String = CStr(r("CUST_CODE"))
             Dim limit As Decimal = If(CL.ContainsKey(cust), CL(cust), 0D)
-            Dim openAR As Decimal = Val(r("TOTAL_BAL") & "")
             Dim ordR As Decimal = If(REL.ContainsKey(cust), REL(cust), 0D)
             Dim ordP As Decimal = If(PEND.ContainsKey(cust), PEND(cust), 0D)
+
+            Dim totalDue As Decimal = If(DUE.ContainsKey(cust), DUE(cust), 0D)
 
             r("CUST_CREDIT_LIMIT") = limit
             r("ORDS_RELD") = ordR
             r("ORDS_PEND") = ordP
 
-            Dim avail As Decimal = limit - openAR - ordR
+            Dim avail As Decimal = limit - totalDue - ordR
             If avail < 0D Then avail = 0D
-            r("CREDIT_PCT") = If(limit > 0D, Math.Round(100D * avail / limit, 0), 0D)
+            r("CREDIT_PCT") = If(limit > 0D, Math.Round(100D * avail / limit, 0, MidpointRounding.AwayFromZero), 0D)
+
         Next
 
         With grdARTOPENX.DisplayLayout.Bands(0)
@@ -1223,8 +1241,28 @@ Public Class ARFCALL1
             Next
         End With
     End Sub
+    Private Function BuildOracleInChunks(columnName As String,
+                                     values As IEnumerable(Of String),
+                                     Optional chunkSize As Integer = 999) As String
+        'using batches of 999 to get around 1000 limit in Oracle
+        Dim list As New List(Of String)
+        For Each v As String In values
+            If Not String.IsNullOrEmpty(v) Then
+                list.Add("'" & v.Replace("'", "''") & "'")
+            End If
+        Next
+        If list.Count = 0 Then Return "1=0"
 
-
+        Dim sb As New Text.StringBuilder()
+        Dim i As Integer = 0
+        Do While i < list.Count
+            If sb.Length > 0 Then sb.Append(" OR ")
+            Dim take As Integer = Math.Min(chunkSize, list.Count - i)
+            sb.Append(columnName).Append(" IN (").Append(String.Join(",", list.GetRange(i, take))).Append(")")
+            i += take
+        Loop
+        Return "(" & sb.ToString() & ")"
+    End Function
 
 #End Region
 End Class
