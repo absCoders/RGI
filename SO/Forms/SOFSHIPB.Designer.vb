@@ -924,6 +924,7 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn779 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_QTY_CONF")
         Dim UltraGridColumn780 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT_LBS")
         Dim UltraGridColumn697 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT_KGS")
+        Dim UltraGridColumn773 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VALUE_PER_HTS_CODE")
         Dim Appearance325 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance326 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance327 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -4937,7 +4938,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.splSOTPICK2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1005, 243)
         '
@@ -7162,7 +7163,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl27
         '
         Me.UltraTabPageControl27.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl27.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
         Me.UltraTabPageControl27.Size = New System.Drawing.Size(1005, 243)
         '
@@ -7288,13 +7289,17 @@ Partial Class SOFSHIPB
         UltraGridColumn779.Width = 77
         UltraGridColumn780.Format = "#,##0.00"
         UltraGridColumn780.Header.Caption = "Wgt (Lbs)"
-        UltraGridColumn780.Header.VisiblePosition = 2
+        UltraGridColumn780.Header.VisiblePosition = 3
         UltraGridColumn780.Width = 97
         UltraGridColumn697.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn697.Format = "#,##0.00"
         UltraGridColumn697.Header.Caption = "Wgt (Kgs)"
-        UltraGridColumn697.Header.VisiblePosition = 3
-        UltraGridBand26.Columns.AddRange(New Object() {UltraGridColumn776, UltraGridColumn779, UltraGridColumn780, UltraGridColumn697})
+        UltraGridColumn697.Header.VisiblePosition = 4
+        UltraGridColumn773.Format = "#,##0.00"
+        UltraGridColumn773.Header.Caption = "$ Value"
+        UltraGridColumn773.Header.VisiblePosition = 2
+        UltraGridColumn773.Width = 85
+        UltraGridBand26.Columns.AddRange(New Object() {UltraGridColumn776, UltraGridColumn779, UltraGridColumn780, UltraGridColumn697, UltraGridColumn773})
         Me.grdSOTORDR2_DUTY_HTS.DisplayLayout.BandsSerializer.Add(UltraGridBand26)
         Me.grdSOTORDR2_DUTY_HTS.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance325.TextHAlignAsString = "Left"
