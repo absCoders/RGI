@@ -350,7 +350,8 @@ Public Class SOFSHIPB
 
             sqlDuty = "SELECT ICTSTYL1.DUTY_RATE_CODE, SOTORDR2.STYLE_CODE, ICTSTYL1.STYLE_DESC,
                             SUM(SOTPICK2.PICK_QTY_CONF) PICK_QTY_CONF, 
-                            MIN(NVL(ICTSTYLD.WEIGHT, 0)) WEIGHT_LBS
+                            MIN(NVL(ICTSTYLD.WEIGHT, 0)) WEIGHT_LBS,
+                            SUM(NVL(SOTORDR2.ORDR_UNIT_PRICE, 0) * NVL(SOTPICK2.PICK_QTY_CONF, 0)) VALUE_PER_HTS_CODE
                             FROM SOTORDR2, SOTPICK2, ICTSTYL1, 
                             (SELECT STYLE_CODE, WEIGHT FROM ICTSTYLD WHERE PACK_CODE = 'ITM') ICTSTYLD
                             WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO 
@@ -367,7 +368,8 @@ Public Class SOFSHIPB
             ASCMAIN1.sql = "SELECT ICTSTYL1.DUTY_RATE_CODE,
                             SOTPICK2.PICK_QTY_CONF, 
                             NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_LBS,
-                            NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_KGS
+                            NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_KGS,
+                            0 VALUE_PER_HTS_CODE
                             FROM SOTORDR2, SOTPICK2, ICTSTYL1, 
                             (SELECT STYLE_CODE, WEIGHT FROM ICTSTYLD WHERE PACK_CODE = 'ITM') ICTSTYLD
                             WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO 
@@ -945,6 +947,7 @@ Public Class SOFSHIPB
         Create_Summary(grdSOTORDR2_DUTY_HTS, "PICK_QTY_CONF", "Sum")
         Create_Summary(grdSOTORDR2_DUTY_HTS, "WEIGHT_LBS", "Sum")
         Create_Summary(grdSOTORDR2_DUTY_HTS, "WEIGHT_KGS", "Sum")
+        Create_Summary(grdSOTORDR2_DUTY_HTS, "VALUE_PER_HTS_CODE", "Sum")
 
         grdSOTPICK5.DataSource = dst.Tables("SOTPICK5")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
@@ -12424,8 +12427,9 @@ Public Class SOFSHIPB
             Dim PICK_QTY_CONF As Int64 = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(PICK_QTY_CONF)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
             Dim WEIGHT_LBS As Decimal = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(EXTENDED_WEIGHT)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
             Dim WEIGHT_KGS As Decimal = WEIGHT_LBS * 0.453592
+            Dim VALUE_PER_HTS_CODE As Decimal = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(VALUE_PER_HTS_CODE)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
 
-            dst.Tables("SOTORDR2_DUTY_HTS").Rows.Add(New Object() {DUTY_RATE_CODE, PICK_QTY_CONF, WEIGHT_LBS, WEIGHT_KGS})
+            dst.Tables("SOTORDR2_DUTY_HTS").Rows.Add(New Object() {DUTY_RATE_CODE, PICK_QTY_CONF, WEIGHT_LBS, WEIGHT_KGS, VALUE_PER_HTS_CODE})
         Next
 
     End Sub
@@ -15318,6 +15322,7 @@ Public Class SOFSHIPB
             Dim EDI_DOC_SEQ_NO As String
             Dim SHIP_BOL_NO As String = String.Empty
             Dim PICK_NO As String = String.Empty
+            Dim EDI_TP_ID As String = String.Empty
 
             If EDI_DOC_SEQ_NOs.Count = 0 Then
                 MessageBox.Show("No EDI 945s found.", "Load", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -15361,6 +15366,7 @@ Public Class SOFSHIPB
                 rowEDT945T1.Item("EDI_PROCESS_IND") = "1"
 
                 EDI_TOTAL_ORDR_WEIGHT = Val(rowEDT945T1.Item("EDI_TOTAL_ORDR_WEIGHT") & String.Empty)
+                EDI_TP_ID = rowEDT945T1.Item("EDI_TP_ID") & ""
 
                 'EDI_CARRIER_SCAC_CODE = String.Empty
                 EDI_DOC_SEQ_NO = rowEDT945T1.Item("EDI_DOC_SEQ_NO")
@@ -15706,8 +15712,10 @@ Public Class SOFSHIPB
 
             Load_3PL_Shipment_Details_EDT945T1 = True
 
-            Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = False
-            Absx1.dteFor("INV_DATE").Enabled = False
+            If ASCMAIN1.CLIENT <> "RGI" And Not String.IsNullOrEmpty(EDI_TP_ID) Then
+                Absx1.dteFor("SHIP_DATE_SHIPPED").Enabled = False
+                Absx1.dteFor("INV_DATE").Enabled = False
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Error processing EDI: " & ex.Message, "Import EDI", MessageBoxButtons.OK, MessageBoxIcon.Error)

@@ -136,7 +136,7 @@ Public Class TACMAIN1
 
         'This is causing me too many problems and should not be running at Regency in ABSolution lite.
         Dim stationID As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
-        Dim sql As String = "SELECT * FROM WHTLINE1 WHERE UPPER(STATION_ID) = :PARM1"
+        Dim sql As String = "SELECT * FROM WHTLINE1 WHERE UPPER(STATION_ID) = UPPER(:PARM1)"
         stationID = stationID.ToUpper
 
         If stationID.Contains("ZENKER") Then
@@ -159,7 +159,7 @@ Public Class TACMAIN1
             End If
         End If
 
-        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID <> "edz" AndAlso ASCMAIN1.USER_ID <> "wjz" Then
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID <> "edz" AndAlso ASCMAIN1.USER_ID <> "wjz" AndAlso ASCMAIN1.USER_ID <> "rick" Then
             rowWHTLINE1 = Nothing
         End If
 
