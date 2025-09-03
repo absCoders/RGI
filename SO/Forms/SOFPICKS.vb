@@ -1415,7 +1415,6 @@ Public Class SOFPICKS
                         Else
                             row0.Item("ORDR_CNT") = Val(row0.Item("ORDR_CNT") & "") + Val(row.Item("ORDR_CNT") & "")
                             row0.Item("ORDR_QTY_OPEN") = Val(row0.Item("ORDR_QTY_OPEN") & "") + Val(row.Item("ORDR_QTY_OPEN") & "")
-                            row0.Item("ORDR_QTY_BACK") = Val(row0.Item("ORDR_QTY_BACK") & "") + Val(row.Item("ORDR_QTY_BACK") & "")
                             row.Delete()
                         End If
                     End If
@@ -1820,9 +1819,14 @@ Public Class SOFPICKS
 
         ' DO WE ALLOW K?
 
+        'Return $"Select DECODE(X.ORDR_SOURCE,
+        '            'K','K' || TO_CHAR(GREATEST(X.ORDR_DATE,SYSDATE-7),'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
+        '            'W','W' || TO_CHAR(GREATEST(X.ORDR_DATE,SYSDATE-7),'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
+        '             '?' || NVL(X.ORDR_TYPE_CODE,'')) GROUP_KEY, X.* from ({sql}) X"
+
         Return $"Select DECODE(X.ORDR_SOURCE,
                     'K','K' || TO_CHAR(GREATEST(X.ORDR_DATE,SYSDATE-7),'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
-                    'W','W' || TO_CHAR(GREATEST(X.ORDR_DATE,SYSDATE-7),'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
+                    'W','W' || TO_CHAR(X.ORDR_DATE,'YYYYMMDD') || X.WHSE_CODE || X.ORDR_TYPE_CODE || X.SHIP_VIA_CODE || X.DESTINATION,
                      '?' || NVL(X.ORDR_TYPE_CODE,'')) GROUP_KEY, X.* from ({sql}) X"
     End Function
 
