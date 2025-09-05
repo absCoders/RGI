@@ -2066,7 +2066,7 @@ Public Class SOFPICKS
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'LOST' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
             & " from WHTLOCB1,ICTSTYD1" & vbCrLf _
-            & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}'" & vbCrLf _
+            & $" where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
             & "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
             & " group by WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE"
             ASCMAIN1.sql = $"Select X.*, Z.PRI, Z.OSL, Z.PAL, Z.CRT, Z.TRK, Z.LNF from ({ASCMAIN1.sql}) X, ({sqlLoc}) Z where Z.STYLE_CODE (+) = X.STYLE_CODE and Z.COLOR_CODE (+) = X.COLOR_CODE"
