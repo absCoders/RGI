@@ -1259,7 +1259,7 @@ Public Class SOFCORD1
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTPICK1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data", "Show EDI Invoice")
-        Load_Popup_Menu(grdSOTSHIP1, "SSSBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "Show EDI ASN")
+        Load_Popup_Menu(grdSOTSHIP1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "Show EDI ASN", "Show Shipments For Style")
         Load_Popup_Menu(grdSOTCORDY, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTORDRX, "BB", "Sales Order Inquiry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTCART1, "SS", "Show Filter", "Show Details")
@@ -1373,6 +1373,10 @@ Public Class SOFCORD1
                     tlb_btn.SharedProps.Visible = (SHIP_STATUS = "P")
                     tlb_btn = DirectCast(tlb_pop.Tools("Show EDI ASN"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (SHIP_STATUS = "F") And ASCMAIN1.CLIENT = "VAN"
+                    'Show Shipments For Style
+                    tlb_btn = DirectCast(tlb_pop.Tools("Show Shipments For Style"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = (SHIP_STATUS = "F") And ASCMAIN1.CLIENT = "VAN" And (Absx1.txtFor("CUST_CODE").Text = "WALMART" Or Absx1.txtFor("CUST_CODE").Text = "WALMARTCOM")
+
 
                 Case "grdSOTCART1"
                     tlb_sbt = DirectCast(tlb_pop.Tools("Show Details"), UltraWinToolbars.StateButtonTool)
@@ -1835,6 +1839,26 @@ Public Class SOFCORD1
                 Dim TBL As DataTable = ASCDATA1.GetDataTable
                 Using F As New ASFMSGBF
                     F.Show_grd(TBL, Me, "Style Details for Orders related to " & CUST_CODE & " PO " & ORDR_CUST_PO)
+                End Using
+
+            Case "Show Shipments For Style"
+                Dim PeriodDate As DateTime = grd.ActiveRow.Cells("SHIP_PICK_PRINTED").Value
+                Dim PeriodDate_Str As String = Format(PeriodDate, "dd-MMM-yyyy")
+                Dim CUST_CODE = Absx1.txtFor("CUST_CODE").Text
+                Dim Style As String = ""
+                Using F As New ASFMSGBF
+                    Style = F.Get_txt_from_User("Enter Style Prefix", "WALMART RECAP")
+                End Using
+                ASCMAIN1.sql = $"select o0.ORDR_CUST_PO, sum(i2.ORDR_QTY_SHIP) Shipped from SOTORDR0 O0
+                                join SOTINVH1 I1 on (O0.ORDR_CUST_PO = I1.ORDR_CUST_PO and O0.CUST_CODE = I1.CUST_CODE)
+                                join SOTINVH2 I2 on (I1.INV_TYPE = I2.INV_TYPE and I1.INV_NO = I2.INV_NO)
+                                where o0.CUST_CODE = '{CUST_CODE}'
+                                and O0.ORDR_DATE between TRUNC(TO_DATE('{PeriodDate_Str}', 'DD-MON-YYYY'), 'MM') and ADD_MONTHS(TRUNC(TO_DATE('{PeriodDate_Str}', 'DD-MON-YYYY'), 'MM'), 1)
+                                and I2.STYLE_CODE like '{Style}%'
+                                group by o0.ORDR_CUST_PO"
+                Dim TBL As DataTable = ASCDATA1.GetDataTable()
+                Using F As New ASFMSGBF
+                    F.Show_grd(TBL, Me, "Walmart summary for " & Style)
                 End Using
 
             Case "Convert CTF to Reservation"
