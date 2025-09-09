@@ -733,7 +733,7 @@ Public Class SOFPICKS
 
         For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("PICK_CNL_STATUS = '1'")
             Dim RESOLUTION As String = rowSOTPICK2.Item("RESOLUTION")
-            Dim WH_TRAN_NO As String = rowSOTPICK2.Item("WH_TRAN_NO")
+            Dim WH_TRAN_NO As String = rowSOTPICK2.Item("WH_TRAN_NO") & ""
             Dim PICK_NO As String = rowSOTPICK2.Item("PICK_NO")
 
             rowSOTPICK2.Item("PICK_CNL_STATUS") = "0"
@@ -745,20 +745,24 @@ Public Class SOFPICKS
                 ' Mark PT for review down below - we may need a Go-Back for the case
 
             ElseIf RESOLUTION = "P" Then ' Re-Pick
-                rowSOTPICK2.Item("PICK_QTY_BACK") = 0
+                rowSOTPICK2.Item("PICK_QTY_CANC") = 0
                 PICK_BATCH_STATUS = "P"
-                WH_TRAN_NOs.Add(WH_TRAN_NO)
+                If Not WH_TRAN_NOs.Contains(WH_TRAN_NO) Then
+                    WH_TRAN_NOs.Add(WH_TRAN_NO)
+                End If
                 rowSOTPICK2.Item("WH_TRAN_NO") = DBNull.Value
 
-            ElseIf RESOLUTION = "D" Then ' De-Release
-                WH_TRAN_NOs.Add(WH_TRAN_NO)
+                ElseIf RESOLUTION = "D" Then ' De-Release
+                If Not WH_TRAN_NOs.Contains(WH_TRAN_NO) Then
+                    WH_TRAN_NOs.Add(WH_TRAN_NO)
+                End If
                 ' WE MAY NEED TO PUT THE SLS BACK ON THE SHELF - PHYSICALLY AS WELL AS LOGICALLY
                 If Not PICK_NOsD.Contains(PICK_NO) Then PICK_NOsD.Add(PICK_NO)
 
-                rowSOTPICK2.Item("WH_TRAN_NO") = DBNull.Value
+                    rowSOTPICK2.Item("WH_TRAN_NO") = DBNull.Value
 
-            ElseIf RESOLUTION = "T" Then ' Triage
-                If Not PICK_NOsT.Contains(PICK_NO) Then PICK_NOsT.Add(PICK_NO)
+                ElseIf RESOLUTION = "T" Then ' Triage
+                    If Not PICK_NOsT.Contains(PICK_NO) Then PICK_NOsT.Add(PICK_NO)
 
             End If
 
@@ -853,9 +857,9 @@ Public Class SOFPICKS
         ' it is just a helpful count on the Release Screen
 
         For Each WH_TRAN_NO As String In WH_TRAN_NOs
-            ASCDATA1.ExecuteSP("REVERSE_ICTSTAT4", "VVVV",
-                               New String() {WHSE_CODE, "L", WH_TRAN_NO, ASCMAIN1.USER_ID},
-                               New String() {"P_WHSE_CODE", "P_TRAN_TYPE", "P_TRAN_REF", "P_OPER_ID"})
+            ASCDATA1.ExecuteSP("REVERSE_CNL", "VVVV",
+                               New String() {WHSE_CODE, PICK_BATCH_NO, WH_TRAN_NO, ASCMAIN1.USER_ID},
+                               New String() {"P_WHSE_CODE", "P_PICK_BATCH_NO", "P_WH_TRAN_NO", "P_OPER_ID"})
         Next
 
         If PICK_NOsD.Count > 0 Then
@@ -3047,7 +3051,7 @@ Public Class SOFPICKS
 
     Private Sub grdSOTPICK2_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTPICK2.AfterRowActivate
         If EntryMode = "R" Then
-            If Val(grdSOTPICK2.ActiveRow.Cells("PICK_QTY_BACK").Value & "") <> 0 Then
+            If Val(grdSOTPICK2.ActiveRow.Cells("PICK_QTY_BACK").Value & "") <> 0 Or Val(grdSOTPICK2.ActiveRow.Cells("PICK_QTY_CANC").Value & "") <> 0 Then
                 grdSOTPICK2.DisplayLayout.Bands(0).Columns("RESOLUTION").CellActivation = Activation.AllowEdit
             Else
                 grdSOTPICK2.DisplayLayout.Bands(0).Columns("RESOLUTION").CellActivation = Activation.NoEdit

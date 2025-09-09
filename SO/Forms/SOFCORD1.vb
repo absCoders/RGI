@@ -1852,7 +1852,7 @@ Public Class SOFCORD1
                 ASCMAIN1.sql = $"select o0.ORDR_CUST_PO, sum(i2.ORDR_QTY_SHIP) Shipped from SOTORDR0 O0
                                 join SOTINVH1 I1 on (O0.ORDR_CUST_PO = I1.ORDR_CUST_PO and O0.CUST_CODE = I1.CUST_CODE)
                                 join SOTINVH2 I2 on (I1.INV_TYPE = I2.INV_TYPE and I1.INV_NO = I2.INV_NO)
-                                where o0.CUST_CODE = '{CUST_CODE}'
+                                where o0.CUST_CODE = '{CUST_CODE}'  and I1.INV_NO_REV is null and I1.INV_NO_REV_BY is null
                                 and O0.ORDR_DATE between TRUNC(TO_DATE('{PeriodDate_Str}', 'DD-MON-YYYY'), 'MM') and ADD_MONTHS(TRUNC(TO_DATE('{PeriodDate_Str}', 'DD-MON-YYYY'), 'MM'), 1)
                                 and I2.STYLE_CODE like '{Style}%'
                                 group by o0.ORDR_CUST_PO"
