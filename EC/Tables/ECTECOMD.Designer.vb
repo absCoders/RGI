@@ -22,7 +22,6 @@ Partial Class ECTECOMD
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim Appearance67 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance68 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance69 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance70 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -31,7 +30,7 @@ Partial Class ECTECOMD
         Dim Appearance73 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance74 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance76 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -41,12 +40,13 @@ Partial Class ECTECOMD
         Dim Appearance60 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance64 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance65 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance66 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance67 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ECOM_CODE")
@@ -141,6 +141,7 @@ Partial Class ECTECOMD
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTextEditor10 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel10 = New Infragistics.Win.Misc.UltraLabel()
@@ -188,6 +189,8 @@ Partial Class ECTECOMD
         Me.UltraPanel1 = New Infragistics.Win.Misc.UltraPanel()
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.UltraTextEditor13 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -239,6 +242,7 @@ Partial Class ECTECOMD
         Me.UltraPanel1.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -263,45 +267,45 @@ Partial Class ECTECOMD
         '
         'grdASFBASEX
         '
-        Appearance67.BackColor = System.Drawing.SystemColors.Window
-        Appearance67.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance67
+        Appearance68.BackColor = System.Drawing.SystemColors.Window
+        Appearance68.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance68
         Me.grdASFBASEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdASFBASEX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.MaxColScrollRegions = 1
         Me.grdASFBASEX.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance68.BackColor = System.Drawing.SystemColors.Window
-        Appearance68.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance68
-        Appearance69.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance69.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance69
+        Appearance69.BackColor = System.Drawing.SystemColors.Window
+        Appearance69.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance69
+        Appearance70.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance70.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance70
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance70.BackColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance70
-        Appearance71.BorderColor = System.Drawing.Color.Silver
-        Appearance71.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance71
+        Appearance71.BackColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance71
+        Appearance72.BorderColor = System.Drawing.Color.Silver
+        Appearance72.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance72
         Me.grdASFBASEX.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdASFBASEX.DisplayLayout.Override.CellPadding = 0
-        Appearance72.BackColor = System.Drawing.SystemColors.Control
-        Appearance72.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance72.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance72.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance72.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance72
-        Appearance73.TextHAlignAsString = "Left"
-        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance73
+        Appearance73.BackColor = System.Drawing.SystemColors.Control
+        Appearance73.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance73.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance73.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance73.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance73
+        Appearance74.TextHAlignAsString = "Left"
+        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance74
         Me.grdASFBASEX.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdASFBASEX.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance74.BackColor = System.Drawing.SystemColors.Window
-        Appearance74.BorderColor = System.Drawing.Color.Silver
-        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance74
+        Appearance75.BackColor = System.Drawing.SystemColors.Window
+        Appearance75.BorderColor = System.Drawing.Color.Silver
+        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance75
         Me.grdASFBASEX.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance75.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance75
+        Appearance76.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance76
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -331,6 +335,8 @@ Partial Class ECTECOMD
         '
         'UltraTabPageControl3
         '
+        Me.UltraTabPageControl3.Controls.Add(Me.UltraTextEditor13)
+        Me.UltraTabPageControl3.Controls.Add(Me.UltraLabel13)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraTextEditor10)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraLabel10)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraTextEditor19)
@@ -363,14 +369,14 @@ Partial Class ECTECOMD
         Me.UltraTabPageControl3.Controls.Add(Me.UltraTextEditor2)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraLabel5)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraLabel4)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1160, 513)
         '
         'UltraTextEditor10
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "ECOM_DESC")
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(158, 45)
+        Me.UltraTextEditor10.Location = New System.Drawing.Point(171, 45)
         Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.Size = New System.Drawing.Size(257, 25)
@@ -378,8 +384,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel10
         '
-        Appearance53.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel10.Appearance = Appearance53
+        Appearance54.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel10.Appearance = Appearance54
         Me.UltraLabel10.AutoSize = True
         Me.UltraLabel10.Location = New System.Drawing.Point(10, 52)
         Me.UltraLabel10.Name = "UltraLabel10"
@@ -392,7 +398,7 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor19, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor19, "CUST_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor19, "ECOM_CUST_ADDR_CODE")
-        Me.UltraTextEditor19.Location = New System.Drawing.Point(506, 134)
+        Me.UltraTextEditor19.Location = New System.Drawing.Point(519, 134)
         Me.UltraTextEditor19.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor19.Name = "UltraTextEditor19"
         Me.UltraTextEditor19.ReadOnly = True
@@ -405,7 +411,7 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor17, "ECOM_WHSE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor17, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor17, "WHSE_CODE")
-        Me.UltraTextEditor17.Location = New System.Drawing.Point(506, 175)
+        Me.UltraTextEditor17.Location = New System.Drawing.Point(519, 175)
         Me.UltraTextEditor17.Name = "UltraTextEditor17"
         Me.UltraTextEditor17.Size = New System.Drawing.Size(104, 25)
         Me.UltraTextEditor17.TabIndex = 17
@@ -415,7 +421,7 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor18, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor18, "WHSE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor18, "ECOM_WHSE_CODE")
-        Me.UltraTextEditor18.Location = New System.Drawing.Point(506, 199)
+        Me.UltraTextEditor18.Location = New System.Drawing.Point(519, 199)
         Me.UltraTextEditor18.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor18.Name = "UltraTextEditor18"
         Me.UltraTextEditor18.ReadOnly = True
@@ -425,10 +431,10 @@ Partial Class ECTECOMD
         '
         'UltraLabel16
         '
-        Appearance54.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel16.Appearance = Appearance54
+        Appearance55.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel16.Appearance = Appearance55
         Me.UltraLabel16.AutoSize = True
-        Me.UltraLabel16.Location = New System.Drawing.Point(421, 183)
+        Me.UltraLabel16.Location = New System.Drawing.Point(434, 183)
         Me.UltraLabel16.Name = "UltraLabel16"
         Me.UltraLabel16.Size = New System.Drawing.Size(80, 18)
         Me.UltraLabel16.TabIndex = 336
@@ -439,17 +445,17 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor16, "ECOM_CUST_ADDR_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor16, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor16, "CUST_STORE_NO")
-        Me.UltraTextEditor16.Location = New System.Drawing.Point(506, 110)
+        Me.UltraTextEditor16.Location = New System.Drawing.Point(519, 110)
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
         Me.UltraTextEditor16.Size = New System.Drawing.Size(104, 25)
         Me.UltraTextEditor16.TabIndex = 15
         '
         'UltraLabel15
         '
-        Appearance55.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel15.Appearance = Appearance55
+        Appearance56.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel15.Appearance = Appearance56
         Me.UltraLabel15.AutoSize = True
-        Me.UltraLabel15.Location = New System.Drawing.Point(421, 117)
+        Me.UltraLabel15.Location = New System.Drawing.Point(434, 117)
         Me.UltraLabel15.Name = "UltraLabel15"
         Me.UltraLabel15.Size = New System.Drawing.Size(56, 18)
         Me.UltraLabel15.TabIndex = 333
@@ -460,7 +466,7 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSColumnName(Me.txtECOM_CUST_CODE, "ECOM_CUST_CODE")
         Me.Absx1.SetABSHasButton(Me.txtECOM_CUST_CODE, True)
         Me.Absx1.SetABSViewName(Me.txtECOM_CUST_CODE, "CUST_CODE")
-        Me.txtECOM_CUST_CODE.Location = New System.Drawing.Point(506, 45)
+        Me.txtECOM_CUST_CODE.Location = New System.Drawing.Point(519, 45)
         Me.txtECOM_CUST_CODE.Name = "txtECOM_CUST_CODE"
         Me.txtECOM_CUST_CODE.Size = New System.Drawing.Size(104, 25)
         Me.txtECOM_CUST_CODE.TabIndex = 13
@@ -470,7 +476,7 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor15, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor15, "CUST_NAME")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor15, "ECOM_CUST_CODE")
-        Me.UltraTextEditor15.Location = New System.Drawing.Point(506, 69)
+        Me.UltraTextEditor15.Location = New System.Drawing.Point(519, 69)
         Me.UltraTextEditor15.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor15.Name = "UltraTextEditor15"
         Me.UltraTextEditor15.ReadOnly = True
@@ -480,10 +486,10 @@ Partial Class ECTECOMD
         '
         'UltraLabel14
         '
-        Appearance56.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel14.Appearance = Appearance56
+        Appearance57.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel14.Appearance = Appearance57
         Me.UltraLabel14.AutoSize = True
-        Me.UltraLabel14.Location = New System.Drawing.Point(421, 52)
+        Me.UltraLabel14.Location = New System.Drawing.Point(434, 52)
         Me.UltraLabel14.Name = "UltraLabel14"
         Me.UltraLabel14.Size = New System.Drawing.Size(70, 18)
         Me.UltraLabel14.TabIndex = 331
@@ -492,7 +498,7 @@ Partial Class ECTECOMD
         'UltraTextEditor12
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor12, "ECOM_LOCATION_ID")
-        Me.UltraTextEditor12.Location = New System.Drawing.Point(157, 176)
+        Me.UltraTextEditor12.Location = New System.Drawing.Point(170, 176)
         Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
         Me.UltraTextEditor12.Size = New System.Drawing.Size(257, 25)
@@ -500,8 +506,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel12
         '
-        Appearance57.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel12.Appearance = Appearance57
+        Appearance58.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel12.Appearance = Appearance58
         Me.UltraLabel12.AutoSize = True
         Me.UltraLabel12.Location = New System.Drawing.Point(9, 183)
         Me.UltraLabel12.Name = "UltraLabel12"
@@ -512,7 +518,7 @@ Partial Class ECTECOMD
         'UltraTextEditor11
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor11, "ECOM_PRODUCT_LAST_EXTRACT")
-        Me.UltraTextEditor11.Location = New System.Drawing.Point(157, 242)
+        Me.UltraTextEditor11.Location = New System.Drawing.Point(170, 242)
         Me.UltraTextEditor11.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor11.Name = "UltraTextEditor11"
         Me.UltraTextEditor11.ReadOnly = True
@@ -522,8 +528,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel11
         '
-        Appearance58.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel11.Appearance = Appearance58
+        Appearance59.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel11.Appearance = Appearance59
         Me.UltraLabel11.AutoSize = True
         Me.UltraLabel11.Location = New System.Drawing.Point(9, 249)
         Me.UltraLabel11.Name = "UltraLabel11"
@@ -534,7 +540,7 @@ Partial Class ECTECOMD
         'UltraTextEditor9
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor9, "ECOM_URL")
-        Me.UltraTextEditor9.Location = New System.Drawing.Point(158, 340)
+        Me.UltraTextEditor9.Location = New System.Drawing.Point(171, 340)
         Me.UltraTextEditor9.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor9.Name = "UltraTextEditor9"
         Me.UltraTextEditor9.Size = New System.Drawing.Size(598, 25)
@@ -542,8 +548,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel9
         '
-        Appearance59.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel9.Appearance = Appearance59
+        Appearance60.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel9.Appearance = Appearance60
         Me.UltraLabel9.AutoSize = True
         Me.UltraLabel9.Location = New System.Drawing.Point(10, 347)
         Me.UltraLabel9.Name = "UltraLabel9"
@@ -554,7 +560,7 @@ Partial Class ECTECOMD
         'UltraTextEditor8
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "ECOM_SITE_SECRET_KEY")
-        Me.UltraTextEditor8.Location = New System.Drawing.Point(158, 307)
+        Me.UltraTextEditor8.Location = New System.Drawing.Point(171, 307)
         Me.UltraTextEditor8.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
         Me.UltraTextEditor8.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
@@ -563,8 +569,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel8
         '
-        Appearance60.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel8.Appearance = Appearance60
+        Appearance61.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel8.Appearance = Appearance61
         Me.UltraLabel8.AutoSize = True
         Me.UltraLabel8.Location = New System.Drawing.Point(10, 314)
         Me.UltraLabel8.Name = "UltraLabel8"
@@ -575,7 +581,7 @@ Partial Class ECTECOMD
         'UltraTextEditor7
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor7, "ECOM_LAST_SALES_ORDER")
-        Me.UltraTextEditor7.Location = New System.Drawing.Point(157, 209)
+        Me.UltraTextEditor7.Location = New System.Drawing.Point(170, 209)
         Me.UltraTextEditor7.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor7.Name = "UltraTextEditor7"
         Me.UltraTextEditor7.ReadOnly = True
@@ -585,8 +591,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel7
         '
-        Appearance61.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel7.Appearance = Appearance61
+        Appearance62.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel7.Appearance = Appearance62
         Me.UltraLabel7.AutoSize = True
         Me.UltraLabel7.Location = New System.Drawing.Point(9, 216)
         Me.UltraLabel7.Name = "UltraLabel7"
@@ -597,7 +603,7 @@ Partial Class ECTECOMD
         'UltraTextEditor6
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor6, "ECOM_SITE_PWD")
-        Me.UltraTextEditor6.Location = New System.Drawing.Point(158, 274)
+        Me.UltraTextEditor6.Location = New System.Drawing.Point(171, 274)
         Me.UltraTextEditor6.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor6.Name = "UltraTextEditor6"
         Me.UltraTextEditor6.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
@@ -607,7 +613,7 @@ Partial Class ECTECOMD
         'UltraTextEditor5
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "ECOM_SITE_USER")
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(158, 142)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(171, 142)
         Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.Size = New System.Drawing.Size(257, 25)
@@ -616,7 +622,7 @@ Partial Class ECTECOMD
         'UltraTextEditor4
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor4, "ECOM_SITE_IP")
-        Me.UltraTextEditor4.Location = New System.Drawing.Point(158, 109)
+        Me.UltraTextEditor4.Location = New System.Drawing.Point(171, 109)
         Me.UltraTextEditor4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
         Me.UltraTextEditor4.Size = New System.Drawing.Size(257, 25)
@@ -624,8 +630,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel6
         '
-        Appearance62.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel6.Appearance = Appearance62
+        Appearance63.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel6.Appearance = Appearance63
         Me.UltraLabel6.AutoSize = True
         Me.UltraLabel6.Location = New System.Drawing.Point(10, 116)
         Me.UltraLabel6.Name = "UltraLabel6"
@@ -644,15 +650,15 @@ Partial Class ECTECOMD
         ValueListItem2.DataValue = "I"
         ValueListItem2.DisplayText = "In-Active"
         Me.optECOM_STATUS.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2})
-        Me.optECOM_STATUS.Location = New System.Drawing.Point(158, 21)
+        Me.optECOM_STATUS.Location = New System.Drawing.Point(171, 21)
         Me.optECOM_STATUS.Name = "optECOM_STATUS"
         Me.optECOM_STATUS.Size = New System.Drawing.Size(150, 18)
         Me.optECOM_STATUS.TabIndex = 1
         '
         'UltraLabel3
         '
-        Appearance63.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel3.Appearance = Appearance63
+        Appearance64.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel3.Appearance = Appearance64
         Me.UltraLabel3.AutoSize = True
         Me.UltraLabel3.Location = New System.Drawing.Point(10, 149)
         Me.UltraLabel3.Name = "UltraLabel3"
@@ -665,15 +671,15 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor3, "ECOM_ORDR_SOURCE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor3, True)
         Me.Absx1.SetABSViewName(Me.UltraTextEditor3, "ORDR_SOURCE")
-        Me.UltraTextEditor3.Location = New System.Drawing.Point(158, 77)
+        Me.UltraTextEditor3.Location = New System.Drawing.Point(171, 77)
         Me.UltraTextEditor3.Name = "UltraTextEditor3"
         Me.UltraTextEditor3.Size = New System.Drawing.Size(59, 25)
         Me.UltraTextEditor3.TabIndex = 3
         '
         'UltraLabel2
         '
-        Appearance64.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel2.Appearance = Appearance64
+        Appearance65.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel2.Appearance = Appearance65
         Me.UltraLabel2.AutoSize = True
         Me.UltraLabel2.Location = New System.Drawing.Point(10, 281)
         Me.UltraLabel2.Name = "UltraLabel2"
@@ -686,7 +692,7 @@ Partial Class ECTECOMD
         Me.Absx1.SetABSBindToTable(Me.UltraTextEditor2, False)
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor2, "ORDR_SOURCE_DESC")
         Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor2, "ECOM_ORDR_SOURCE")
-        Me.UltraTextEditor2.Location = New System.Drawing.Point(216, 77)
+        Me.UltraTextEditor2.Location = New System.Drawing.Point(229, 77)
         Me.UltraTextEditor2.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.UltraTextEditor2.Name = "UltraTextEditor2"
         Me.UltraTextEditor2.ReadOnly = True
@@ -696,8 +702,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel5
         '
-        Appearance65.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel5.Appearance = Appearance65
+        Appearance66.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel5.Appearance = Appearance66
         Me.UltraLabel5.AutoSize = True
         Me.UltraLabel5.Location = New System.Drawing.Point(10, 84)
         Me.UltraLabel5.Name = "UltraLabel5"
@@ -707,8 +713,8 @@ Partial Class ECTECOMD
         '
         'UltraLabel4
         '
-        Appearance66.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel4.Appearance = Appearance66
+        Appearance67.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel4.Appearance = Appearance67
         Me.UltraLabel4.AutoSize = True
         Me.UltraLabel4.Location = New System.Drawing.Point(10, 21)
         Me.UltraLabel4.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -826,7 +832,7 @@ Partial Class ECTECOMD
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splPLM)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1160, 513)
         '
@@ -1291,6 +1297,28 @@ Partial Class ECTECOMD
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1160, 513)
         '
+        'UltraTextEditor13
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor13, "ECOM_LAST_INV_UPDATE")
+        Me.UltraTextEditor13.Location = New System.Drawing.Point(170, 373)
+        Me.UltraTextEditor13.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor13.Name = "UltraTextEditor13"
+        Me.UltraTextEditor13.ReadOnly = True
+        Me.UltraTextEditor13.Size = New System.Drawing.Size(257, 25)
+        Me.UltraTextEditor13.TabIndex = 12
+        Me.UltraTextEditor13.TabStop = False
+        '
+        'UltraLabel13
+        '
+        Appearance53.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel13.Appearance = Appearance53
+        Me.UltraLabel13.AutoSize = True
+        Me.UltraLabel13.Location = New System.Drawing.Point(9, 380)
+        Me.UltraLabel13.Name = "UltraLabel13"
+        Me.UltraLabel13.Size = New System.Drawing.Size(155, 18)
+        Me.UltraLabel13.TabIndex = 340
+        Me.UltraLabel13.Text = "Last Inventory Update"
+        '
         'ECTECOMD
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1351,6 +1379,7 @@ Partial Class ECTECOMD
         Me.UltraPanel1.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
+        CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1401,4 +1430,6 @@ Partial Class ECTECOMD
     Friend WithEvents WebBrowser1 As WebBrowser
     Friend WithEvents splPLM As SplitContainer
     Friend WithEvents grdICTSTYCW_PLM As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraTextEditor13 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel13 As Misc.UltraLabel
 End Class

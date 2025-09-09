@@ -30,6 +30,9 @@ Partial Class SOFSHIPE
         Dim UltraExplorerBarItem3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance97 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance98 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -318,6 +321,7 @@ Partial Class SOFSHIPE
         Me.grdSOTCART1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTCART2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grpHeader = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.numOrderFreight = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSHIP_VIA_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtSHIP_VIA_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -382,6 +386,7 @@ Partial Class SOFSHIPE
         CType(Me.grdSOTCART2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpHeader, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpHeader.SuspendLayout()
+        CType(Me.numOrderFreight, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSHIP_VIA_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSHIP_VIA_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtComPort, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -409,17 +414,21 @@ Partial Class SOFSHIPE
         UltraExplorerBarItem3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Separator
         UltraExplorerBarItem3.Text = ""
         UltraExplorerBarItem2.Key = "Request Rates"
-        UltraExplorerBarItem2.Text = "Request Rates"
+        UltraExplorerBarItem2.Text = "Request Rates (F6)"
         UltraExplorerBarItem6.Key = "Ship Order"
-        UltraExplorerBarItem6.Text = "Ship Order"
+        UltraExplorerBarItem6.Text = "Ship Order (F8)"
         UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem5, UltraExplorerBarItem3, UltraExplorerBarItem2, UltraExplorerBarItem6})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
+        UltraExplorerBarItem7.Text = "FedEx"
+        UltraExplorerBarItem8.Text = "UPS"
+        UltraExplorerBarGroup3.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem8})
+        UltraExplorerBarGroup3.Text = "Validate Address"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
         UltraExplorerBarGroup2.Settings.ContainerHeight = 179
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Devices"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2})
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -508,7 +517,7 @@ Partial Class SOFSHIPE
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 190)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 288)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 179)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -766,7 +775,7 @@ Partial Class SOFSHIPE
         '
         Me.splTotes.Panel2.Controls.Add(Me.splDetails)
         Me.splTotes.Size = New System.Drawing.Size(918, 575)
-        Me.splTotes.SplitterDistance = 304
+        Me.splTotes.SplitterDistance = 421
         Me.splTotes.TabIndex = 16
         '
         'splToteRecords
@@ -783,7 +792,7 @@ Partial Class SOFSHIPE
         'splToteRecords.Panel2
         '
         Me.splToteRecords.Panel2.Controls.Add(Me.grdSOTORDR5)
-        Me.splToteRecords.Size = New System.Drawing.Size(918, 304)
+        Me.splToteRecords.Size = New System.Drawing.Size(918, 421)
         Me.splToteRecords.SplitterDistance = 558
         Me.splToteRecords.TabIndex = 15
         '
@@ -969,7 +978,7 @@ Partial Class SOFSHIPE
         Me.grdSOTPICK1X.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK1X.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK1X.Name = "grdSOTPICK1X"
-        Me.grdSOTPICK1X.Size = New System.Drawing.Size(558, 304)
+        Me.grdSOTPICK1X.Size = New System.Drawing.Size(558, 421)
         Me.grdSOTPICK1X.TabIndex = 14
         Me.grdSOTPICK1X.Text = "Totes to be processed"
         '
@@ -1082,7 +1091,7 @@ Partial Class SOFSHIPE
         Me.grdSOTORDR5.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDR5.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR5.Name = "grdSOTORDR5"
-        Me.grdSOTORDR5.Size = New System.Drawing.Size(356, 304)
+        Me.grdSOTORDR5.Size = New System.Drawing.Size(356, 421)
         Me.grdSOTORDR5.TabIndex = 18
         '
         'splDetails
@@ -1099,8 +1108,8 @@ Partial Class SOFSHIPE
         'splDetails.Panel2
         '
         Me.splDetails.Panel2.Controls.Add(Me.splCartons)
-        Me.splDetails.Size = New System.Drawing.Size(918, 267)
-        Me.splDetails.SplitterDistance = 132
+        Me.splDetails.Size = New System.Drawing.Size(918, 150)
+        Me.splDetails.SplitterDistance = 74
         Me.splDetails.TabIndex = 1
         '
         'splDetailsRates
@@ -1117,7 +1126,7 @@ Partial Class SOFSHIPE
         'splDetailsRates.Panel2
         '
         Me.splDetailsRates.Panel2.Controls.Add(Me.grdWHTSHPC4)
-        Me.splDetailsRates.Size = New System.Drawing.Size(918, 132)
+        Me.splDetailsRates.Size = New System.Drawing.Size(918, 74)
         Me.splDetailsRates.SplitterDistance = 694
         Me.splDetailsRates.TabIndex = 0
         '
@@ -1251,7 +1260,7 @@ Partial Class SOFSHIPE
         Me.grdSOTPICK2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK2.Name = "grdSOTPICK2"
-        Me.grdSOTPICK2.Size = New System.Drawing.Size(694, 132)
+        Me.grdSOTPICK2.Size = New System.Drawing.Size(694, 74)
         Me.grdSOTPICK2.TabIndex = 13
         Me.grdSOTPICK2.Text = "Pick Ticket Details"
         '
@@ -1308,6 +1317,7 @@ Partial Class SOFSHIPE
         Me.grdWHTSHPC4.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance62.TextHAlignAsString = "Center"
         Me.grdWHTSHPC4.DisplayLayout.CaptionAppearance = Appearance62
+        Me.grdWHTSHPC4.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[True]
         Appearance63.BackColor = System.Drawing.SystemColors.ActiveBorder
         Appearance63.BackColor2 = System.Drawing.SystemColors.ControlDark
         Appearance63.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
@@ -1364,9 +1374,9 @@ Partial Class SOFSHIPE
         Me.grdWHTSHPC4.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHTSHPC4.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTSHPC4.Name = "grdWHTSHPC4"
-        Me.grdWHTSHPC4.Size = New System.Drawing.Size(220, 132)
+        Me.grdWHTSHPC4.Size = New System.Drawing.Size(220, 74)
         Me.grdWHTSHPC4.TabIndex = 17
-        Me.grdWHTSHPC4.Text = "Carrier Shipping Rates"
+        Me.grdWHTSHPC4.Text = "Double-Click a Carrier Shipping Rate to update the order's Shipping Method"
         '
         'splCartons
         '
@@ -1382,8 +1392,8 @@ Partial Class SOFSHIPE
         'splCartons.Panel2
         '
         Me.splCartons.Panel2.Controls.Add(Me.grdSOTCART2)
-        Me.splCartons.Size = New System.Drawing.Size(918, 131)
-        Me.splCartons.SplitterDistance = 694
+        Me.splCartons.Size = New System.Drawing.Size(918, 72)
+        Me.splCartons.SplitterDistance = 793
         Me.splCartons.TabIndex = 18
         '
         'grdSOTCART1
@@ -1554,7 +1564,7 @@ Partial Class SOFSHIPE
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(694, 131)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(793, 72)
         Me.grdSOTCART1.TabIndex = 17
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -1665,13 +1675,14 @@ Partial Class SOFSHIPE
         Me.grdSOTCART2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART2.Name = "grdSOTCART2"
-        Me.grdSOTCART2.Size = New System.Drawing.Size(220, 131)
+        Me.grdSOTCART2.Size = New System.Drawing.Size(121, 72)
         Me.grdSOTCART2.TabIndex = 18
         Me.grdSOTCART2.Text = "Cartons"
         '
         'grpHeader
         '
         Me.grpHeader.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rounded
+        Me.grpHeader.Controls.Add(Me.numOrderFreight)
         Me.grpHeader.Controls.Add(Me.UltraLabel6)
         Me.grpHeader.Controls.Add(Me.txtSHIP_VIA_DESC)
         Me.grpHeader.Controls.Add(Me.txtSHIP_VIA_CODE)
@@ -1692,6 +1703,21 @@ Partial Class SOFSHIPE
         Me.grpHeader.Size = New System.Drawing.Size(922, 109)
         Me.grpHeader.TabIndex = 14
         '
+        'numOrderFreight
+        '
+        Me.Absx1.SetABSBindToTable(Me.numOrderFreight, False)
+        Me.numOrderFreight.FormatString = "#,##0.00"
+        Me.numOrderFreight.Location = New System.Drawing.Point(728, 80)
+        Me.numOrderFreight.MaxValue = New Decimal(New Integer() {10000, 0, 0, 0})
+        Me.numOrderFreight.MinValue = New Decimal(New Integer() {0, 0, 0, 0})
+        Me.numOrderFreight.Name = "numOrderFreight"
+        Me.numOrderFreight.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.numOrderFreight.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numOrderFreight.ReadOnly = True
+        Me.numOrderFreight.Size = New System.Drawing.Size(72, 25)
+        Me.numOrderFreight.TabIndex = 8
+        Me.numOrderFreight.TabStop = False
+        '
         'UltraLabel6
         '
         Me.UltraLabel6.AutoSize = True
@@ -1710,7 +1736,7 @@ Partial Class SOFSHIPE
         Me.txtSHIP_VIA_DESC.Name = "txtSHIP_VIA_DESC"
         Me.txtSHIP_VIA_DESC.ReadOnly = True
         Me.txtSHIP_VIA_DESC.Size = New System.Drawing.Size(250, 25)
-        Me.txtSHIP_VIA_DESC.TabIndex = 165
+        Me.txtSHIP_VIA_DESC.TabIndex = 7
         Me.txtSHIP_VIA_DESC.TabStop = False
         '
         'txtSHIP_VIA_CODE
@@ -1722,7 +1748,7 @@ Partial Class SOFSHIPE
         Me.txtSHIP_VIA_CODE.Name = "txtSHIP_VIA_CODE"
         Me.txtSHIP_VIA_CODE.ReadOnly = True
         Me.txtSHIP_VIA_CODE.Size = New System.Drawing.Size(97, 25)
-        Me.txtSHIP_VIA_CODE.TabIndex = 164
+        Me.txtSHIP_VIA_CODE.TabIndex = 6
         Me.txtSHIP_VIA_CODE.TabStop = False
         '
         'txtComPort
@@ -1948,6 +1974,7 @@ Partial Class SOFSHIPE
         CType(Me.grpHeader, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpHeader.ResumeLayout(False)
         Me.grpHeader.PerformLayout()
+        CType(Me.numOrderFreight, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSHIP_VIA_DESC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSHIP_VIA_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtComPort, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2010,4 +2037,5 @@ Partial Class SOFSHIPE
     Friend WithEvents splToteRecords As SplitContainer
     Friend WithEvents splCartons As SplitContainer
     Friend WithEvents grdSOTCART2 As UltraWinGrid.UltraGrid
+    Friend WithEvents numOrderFreight As UltraWinEditors.UltraNumericEditor
 End Class

@@ -235,6 +235,12 @@
     <Compile Include="Forms\ICFATTR2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\TAFADDR1.Designer.vb">
+      <DependentUpon>TAFADDR1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TAFADDR1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\TAFIMAGX.Designer.vb">
       <DependentUpon>TAFIMAGX.vb</DependentUpon>
     </Compile>
@@ -346,6 +352,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\ICFATTR2.resx">
       <DependentUpon>ICFATTR2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TAFADDR1.resx">
+      <DependentUpon>TAFADDR1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TAFIMAGX.resx">
       <DependentUpon>TAFIMAGX.vb</DependentUpon>

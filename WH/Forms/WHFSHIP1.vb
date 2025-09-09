@@ -42,6 +42,7 @@ Public Class WHFSHIP1
     Private Const PKG_WEIGHT As Int16 = 1 * 16
     Private ReturnLabelsToSendToCustomers As New List(Of String)
 
+    Private clSTACZPLT1 As New TAC.TACZPLT1
 
     ' Valid values for WHTSHPC1.STATUS
     '   I - Initial Setup before calling request.
@@ -105,7 +106,7 @@ Public Class WHFSHIP1
                              & " SOTCARR1.PROVIDER_TYPE, SOTCARR1.CARRIER_CODE || ' - ' || SOTCARR3.SHIPPER_DIVISION_CODE CARRIER_DESC_DISP" _
                              & " From SOTCARR3, SOTCARR1" _
                              & " Where SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE" _
-                             & " AND SOTCARR3.SHIPPER_DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'")
+                             & " AND SOTCARR3.DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'")
 
             If ASCMAIN1.USER_SECURITY_CODEs.Contains("SY") AndAlso ASCMAIN1.CLIENT = "RGI" Then
                 Fill_Records("SOTCARR3", "", True, "Select SOTCARR3.*, SOTCARR1.CARRIER_DESC, SOTCARR1.CARRIER_SHIP_TYPE, " _
@@ -261,7 +262,6 @@ Public Class WHFSHIP1
         txtShipAccountZip.MaxLength = dst.Tables("WHTSHPCP_S").Columns("PAYOR_ACCT_ZIP").MaxLength
         txtDutiesAccountZip.MaxLength = dst.Tables("WHTSHPCP_D").Columns("PAYOR_ACCT_ZIP").MaxLength
 
-
         Dim ZebraPrinters As New List(Of String)
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
             Dim defaultprinter As String = ""
@@ -273,6 +273,11 @@ Public Class WHFSHIP1
                     End If
                 End If
             Next printerName
+
+            If ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
+                ZebraPrinters.Add(ASCMAIN1.LabelPrinterIPAddress)
+            End If
+
             If ZebraPrinters.Count >= 1 Then
                 cboZebraPrinter.DataSource = ZebraPrinters
                 cboZebraPrinter.SelectedItem = defaultprinter
@@ -1020,7 +1025,7 @@ Public Class WHFSHIP1
                     Exit Sub
 
                 Case "W"
-                    Dim rowSOTINVH1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE ORDR_NO_WEB = :PARM1", "V", New Object() {userSuppliedValue})
+                    Dim rowSOTINVH1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE ORDR_NO IN (SELECT ORDR_NO FROM SOTORDR1 WHERE ORDR_NO_WEB = :PARM1)", "V", New Object() {userSuppliedValue})
                     If rowSOTINVH1 Is Nothing Then
                         MessageBox.Show("Invalid Web Order Number", "", MessageBoxButtons.OK, MessageBoxIcon.Error)
                         Exit Sub
@@ -1031,11 +1036,11 @@ Public Class WHFSHIP1
                     Exit Sub
 
                 Case "T" ' Tracking No
-                    Dim tbl As DataTable = ASCDATA1.GetDataTable("select * from WHTSHPC1 where MASTER_TRACKING_NO = '" & userSuppliedValue & "'")
+                    Dim tbl As DataTable = ASCDATA1.GetDataTable("SELECT * FROM WHTSHPC1 where MASTER_TRACKING_NO = '" & userSuppliedValue & "'")
 
                     If tbl.Rows.Count = 0 Then
                         ' See if it is part of a Milti package
-                        tbl = ASCDATA1.GetDataTable("select * from WHTSHPC2 where TRACKING_NO = '" & userSuppliedValue & "'")
+                        tbl = ASCDATA1.GetDataTable("SELECT * FROM WHTSHPC2 where TRACKING_NO = '" & userSuppliedValue & "'")
                     End If
 
                     ' Done for fedex, the scan contains extra data
@@ -2236,6 +2241,22 @@ Public Class WHFSHIP1
     Public Function PrintShipingLabel(ByVal LabelData As String) As Boolean
 
         Try
+            If (optPrint_Type.Value = "Z" OrElse optPrint_Type.Value = "X") AndAlso Net.IPAddress.TryParse(txtlabelPrinter.Text, Nothing) Then
+                clSTACZPLT1.SendLabelToPrinter(txtlabelPrinter.Text, LabelData)
+                Return True
+            End If
+        Catch ex As Exception
+        End Try
+
+        Try
+            If (optPrint_Type.Value = "Z" OrElse optPrint_Type.Value = "X") AndAlso Net.IPAddress.TryParse(cboZebraPrinter.Text, Nothing) Then
+                clSTACZPLT1.SendLabelToPrinter(cboZebraPrinter.Text, LabelData)
+                Return True
+            End If
+        Catch ex As Exception
+        End Try
+
+        Try
             If (ASCMAIN1.USER_ID = "edz" OrElse ASCMAIN1.USER_ID = "wjz") AndAlso ASCMAIN1.Running_in_VS Then
                 ' Find Zebra printer
                 Dim zebraPrinter As String = FindZebraPrinter()
@@ -2501,10 +2522,18 @@ Public Class WHFSHIP1
                                 Case "N" ' Negotiated
                                     rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("ACCT_NET_CHARGE")
                                 Case "L" ' List
-                                    rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("LIST_NET_CHARGE")
+                                    If Val(rowWHTSHPC4.Item("LIST_NET_CHARGE") & String.Empty) > 0 Then
+                                        rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("LIST_NET_CHARGE")
+                                    Else
+                                        rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("ACCT_NET_CHARGE")
+                                    End If
                                 Case Else
                                     ' If not set then use  List
-                                    rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("LIST_NET_CHARGE")
+                                    If Val(rowWHTSHPC4.Item("LIST_NET_CHARGE") & String.Empty) > 0 Then
+                                        rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("LIST_NET_CHARGE")
+                                    Else
+                                        rowWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = rowWHTSHPC4.Item("ACCT_NET_CHARGE")
+                                    End If
                             End Select
 
                             ' Additional Surcharge based off List
@@ -2566,6 +2595,42 @@ Public Class WHFSHIP1
 
             Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'UPS'")(0)
             Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = 'UPS'")(0)
+
+            Dim CUST_CODE As String = String.Empty
+
+            If txtUserSuppliedValue.TextLength > 0 Then
+                Select Case optUserSuppliedValue.Value
+                    Case "C"
+                        CUST_CODE = txtUserSuppliedValue.Text
+
+                    Case "I"
+                        Dim rowSOTINVH1 As DataRow = LookUp("SOTINVH1", {"I", txtUserSuppliedValue.Text})
+                        If rowSOTINVH1 IsNot Nothing Then
+                            CUST_CODE = rowSOTINVH1.Item("CUST_CODE") & String.Empty
+                        End If
+
+                    Case "P"
+                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO IN (SELECT ORDR_NO FROM SOTPICK1 WHERE PICK_NO = :PARM1)"
+                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
+                        If rowSOTORDR1 IsNot Nothing Then
+                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
+                        End If
+
+                    Case "W"
+                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO_WEB  = :PARM1"
+                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
+                        If rowSOTORDR1 IsNot Nothing Then
+                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
+                        End If
+                End Select
+            End If
+
+            If CUST_CODE.Length > 0 Then
+                If dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'").Length > 0 Then
+                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'")(0)
+                End If
+            End If
+
 
             Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", cmbWarehouse.Text)
             If rowICTWHSE1 Is Nothing Then
@@ -2694,6 +2759,41 @@ Public Class WHFSHIP1
             Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'FEDEX'")(0)
             Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = 'FEDEX'")(0)
 
+            Dim CUST_CODE As String = String.Empty
+
+            If txtUserSuppliedValue.TextLength > 0 Then
+                Select Case optUserSuppliedValue.Value
+                    Case "C"
+                        CUST_CODE = txtUserSuppliedValue.Text
+
+                    Case "I"
+                        Dim rowSOTINVH1 As DataRow = LookUp("SOTINVH1", {"I", txtUserSuppliedValue.Text})
+                        If rowSOTINVH1 IsNot Nothing Then
+                            CUST_CODE = rowSOTINVH1.Item("CUST_CODE") & String.Empty
+                        End If
+
+                    Case "P"
+                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO IN (SELECT ORDR_NO FROM SOTPICK1 WHERE PICK_NO = :PARM1)"
+                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
+                        If rowSOTORDR1 IsNot Nothing Then
+                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
+                        End If
+
+                    Case "W"
+                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO_WEB  = :PARM1"
+                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
+                        If rowSOTORDR1 IsNot Nothing Then
+                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
+                        End If
+                End Select
+            End If
+
+            If CUST_CODE.Length > 0 Then
+                If dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'").Length > 0 Then
+                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'")(0)
+                End If
+            End If
+
             Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", cmbWarehouse.Text)
             If rowICTWHSE1 Is Nothing Then
                 Return Nothing
@@ -2793,6 +2893,28 @@ Public Class WHFSHIP1
 
             If rList Is Nothing Then
                 ReDim rList(1)
+            End If
+
+            ' Fedex Smart Post
+            If fedexRates.Recipient.CountryCode = "US" Then
+                Dim SmartPost As Boolean = True
+                For Each pkgDetail As PackageDetail In fedexRates.PackageDetailList
+                    If (pkgDetail.Weight / 16) > 9 Then
+                        SmartPost = False
+                        Exit For
+                    End If
+                    If SmartPost Then
+                        fedexRates.RequestedServiceType = ServiceTypes.stFedExSmartPost
+                        Dim spList(1) As WHCSHIP1.RateList
+                        spList = fedexRates.GetFedExRatesList()
+                        If spList IsNot Nothing Then
+                            For ictr As Integer = 0 To spList.Length - 1
+                                ReDim Preserve rList(rList.Length + 1)
+                                rList(rList.Length - 1) = spList(ictr)
+                            Next
+                        End If
+                    End If
+                Next
             End If
 
             Return rList

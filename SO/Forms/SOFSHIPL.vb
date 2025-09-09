@@ -1751,6 +1751,28 @@ Public Class SOFSHIPL
 
 #Region "Form Procedures"
 
+    Public Function GetCarrierCredentials(ByVal CARRIER_CODE As String) As DataRow
+
+        Dim rowSOTCARR3 As DataRow = Nothing
+        Dim sql As String = $"CARRIER_CODE = '{CARRIER_CODE}' AND DIVISION_CODE = '{ASCMAIN1.CLIENT}' AND SHIPPER_DIVISION_CODE = '{Absx1.txtFor("CUST_CODE").Text}'"
+
+        If dst.Tables("SOTCARR3").Select(sql).Length > 0 Then
+            rowSOTCARR3 = dst.Tables("SOTCARR3").Select(sql)(0)
+        Else
+            sql = $"CARRIER_CODE = '{CARRIER_CODE}' AND SHIPPER_DIVISION_CODE = DIVISION_CODE AND SHIPPER_DIVISION_CODE = '{ASCMAIN1.CLIENT}'"
+            If dst.Tables("SOTCARR3").Select(sql).Length > 0 Then
+                rowSOTCARR3 = dst.Tables("SOTCARR3").Select(sql)(0)
+            End If
+        End If
+
+        If rowSOTCARR3 Is Nothing AndAlso dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'").Length > 0 Then
+            rowSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
+        End If
+
+        Return rowSOTCARR3
+
+    End Function
+
     Private Sub RequestAndPrintShipingLabels()
         Try
             Me.Cursor = Cursors.WaitCursor
@@ -1909,7 +1931,7 @@ Public Class SOFSHIPL
             End If
 
             ' Credentials
-            Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
+            Dim rowSOTCARR3 As DataRow = GetCarrierCredentials(CARRIER_CODE) ' dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
             Dim ShippingLabelDirectory As String = (rowSOTCARR1.Item("CARRIER_ARCHIVE_DIR") & String.Empty).ToString.Trim
             Dim PROVIDER_TYPE As String = (rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty).ToString.Trim
 
@@ -2801,7 +2823,7 @@ Public Class SOFSHIPL
             End If
 
             Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
-            Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
+            Dim rowSOTCARR3 As DataRow = GetCarrierCredentials(CARRIER_CODE) ' dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "'")(0)
 
             Dim clsShip As New TAC.WHCSHIP1
 
@@ -2993,7 +3015,7 @@ Public Class SOFSHIPL
                 Exit Sub
             End If
 
-            Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty & "'")(0)
+            Dim rowSOTCARR3 As DataRow = GetCarrierCredentials(Carrier_Code) ' dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty & "'")(0)
             Dim ShippingLabelDirectory As String = (rowSOTCARR1.Item("CARRIER_ARCHIVE_DIR") & String.Empty).ToString.Trim
             Dim PROVIDER_TYPE As String = (rowSOTCARR1.Item("PROVIDER_TYPE") & String.Empty).ToString.Trim
 
