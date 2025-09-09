@@ -1033,7 +1033,7 @@ Public Class TACZPLT1
                 frm.zplPNGFilename = fn
                 If ResizeTo4by6 Then
                     frm.Rotate = RotateFlipType.Rotate180FlipNone
-                    frm.ResizsTo4by6 = True
+                    frm.ResizeTo4by6 = True
                 End If
                 frm.ShowDialog()
             End Using
