@@ -1427,7 +1427,10 @@ Public Class SOFCORD1
                 If ASCMAIN1.CLIENT = "RGI" Then
                     ORDR_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value
                 Else
-                    ORDR_NO = grd.ActiveRow.Cells("ORDR_NO").Value
+                    Dim ORDR_GROUP_NO = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value
+                    ORDR_NO = ASCDATA1.GetDataValue("Select Min (ORDR_NO) from SOTORDR1 where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'")
+
+                    'ORDR_NO = grd.ActiveRow.Cells("ORDR_NO").Value
                 End If
                 Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", ORDR_NO)
                 If rowSOTORDR1 IsNot Nothing Then
