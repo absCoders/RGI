@@ -1487,10 +1487,11 @@ Public Class SOFPICKS
             Case "Sales Order Inquiry"
 
                 Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Text
-                Dim KEYS As New Dictionary(Of String, Object)
-                KEYS.Add("ORDR_NO", ORDR_NO)
-                Context_Launch("Load", ORDR_NO, e.Tool.Key, "SOFORDSI")
+                'Dim KEYS As New Dictionary(Of String, Object)
+                'KEYS.Add("ORDR_NO", ORDR_NO)
+                'Context_Launch("Load", ORDR_NO, e.Tool.Key, "SOFORDSI")
                 ' Context_Launch("Load", KEYS, e.Tool.Key, "SOFORDFI")
+                Context_Launch("View", ORDR_NO, e.Tool.Key, "SOFORDRI")
 
             Case "Print Test Report"
                 Dim PICK_BATCH_NO As String = grd.ActiveRow.Cells("PICK_BATCH_NO").Text
