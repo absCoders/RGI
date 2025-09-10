@@ -65,7 +65,7 @@ Public Class ARCRGIDD
         Dim S As New Text.StringBuilder With {.Length = 0}
         S.AppendLine("SELECT OPS_YYYYPP, LEGEND")
         S.AppendLine("FROM GLTPARM2")
-        S.AppendLine("WHERE SUBSTR(OPS_YYYYPP,0,4) IN ('2023','2024','2025')")
+        S.AppendLine("WHERE SUBSTR(OPS_YYYYPP,0,4) IN ('2023','2024','2025', '2026')")
         S.AppendLine("ORDER BY OPS_YYYYPP")
         With ASCMAIN1.CodeSelector
             .SQL = S.ToString

@@ -3,6 +3,7 @@ Imports System.Net
 Imports System.Text
 Imports System.IO
 Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
 
 Public Class WHCSHIP1
 
@@ -27,6 +28,8 @@ Public Class WHCSHIP1
     Private objUspsShip As Uspsship
     Private objUspsRates As Uspsrates
     Private objUspsTrack As Uspstrack
+
+    Private objEzAddress As Ezaddress
 
     Public Enum ServiceProviders
         FederalExpress = EzshipProviders.pFedEx
@@ -3256,6 +3259,98 @@ Public Class WHCSHIP1
 
 #Region "Federal Express"
 
+    Public Class AddressMatchDetail
+        Public isSelected As Boolean
+        Public Address1 As String
+        Public Address2 As String
+        Public City As String
+        Public State As String
+        Public Country As String
+        Public ZipCode As String
+        Public ChangeType As String
+        Public Company As String
+        Public CustomerMessage As String
+        Public ResidentialStatus As String
+    End Class
+
+    Public Function ValidateAddress() As List(Of AddressMatchDetail)
+
+        Dim lstDetail As New List(Of AddressMatchDetail)
+
+        Try
+            LastError = String.Empty
+
+            objEzAddress = New Ezaddress
+
+            objEzAddress.RuntimeLicense = s4DPaymentsShippingSDK
+            objEzAddress.Reset()
+            objEzAddress.RuntimeLicense = s4DPaymentsShippingSDK
+
+            Dim bearertoken As String = ""
+
+            Select Case Service
+                Case ServiceProviders.FederalExpress
+                    objEzAddress.Provider = EzaddressProviders.pFedEx
+                    bearertoken = GetAuthorizationToken(Carriers.FedEx, cAccountNumber)
+                Case ServiceProviders.UPS
+                    objEzAddress.Provider = EzaddressProviders.pUPS
+                    bearertoken = GetAuthorizationToken(Carriers.UPS, cAccountNumber)
+            End Select
+
+            With objEzAddress.Account
+                .AccountNumber = cAccountNumber
+                .AuthorizationToken = bearertoken
+                .DeveloperKey = cFedexDeveloperKey
+                .MeterNumber = cFedexMeterNumber
+                .Password = cPassword
+                .Server = cServer
+                .UserId = cUserId
+            End With
+
+            With cRecipientContact
+                objEzAddress.Address.Address1 = .Address1
+                objEzAddress.Address.Address2 = .Address2
+                objEzAddress.Address.City = .City
+                objEzAddress.Address.CountryCode = .CountryCode
+                objEzAddress.Address.State = .State
+                objEzAddress.Address.ZipCode = .ZipCode
+            End With
+
+            objEzAddress.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
+
+            objEzAddress.ValidateAddress()
+
+            For ictr As Int16 = 0 To objEzAddress.Matches.Count - 1
+                Dim mDetail As New AddressMatchDetail
+                With mDetail
+                    .Address1 = objEzAddress.Matches(ictr).Address1
+                    .Address2 = objEzAddress.Matches(ictr).Address2
+                    .ChangeType = objEzAddress.Matches(ictr).ChangeType
+                    .City = objEzAddress.Matches(ictr).City
+                    .Company = objEzAddress.Matches(ictr).Company
+                    .ResidentialStatus = objEzAddress.Matches(ictr).ResidentialStatus
+                    .CustomerMessage = objEzAddress.Matches(ictr).CustomerMessage
+                    .State = objEzAddress.Matches(ictr).State
+                    .ZipCode = objEzAddress.Matches(ictr).ZipCode
+                    .Country = objEzAddress.Matches(ictr).CountryCode
+                End With
+                lstDetail.Add(mDetail)
+            Next
+        Catch ex As DShippingSDKFedexshipException
+            LastError = ex.Message
+        Catch exc As Exception
+            LastError = exc.Message
+        Finally
+            'cRawRequest = objEzAddress.Config("RawRequest")
+            'cRawResponse = objEzAddress.Config("RawResponse")
+            objEzAddress.Dispose()
+            objEzAddress = Nothing
+        End Try
+
+        Return lstDetail
+    End Function
+
     ''' <summary>
     ''' Request Fedex International Shipping label
     ''' </summary>
@@ -3560,7 +3655,7 @@ Public Class WHCSHIP1
 
             If inTestMode Then
                 ' FedEx does not have a full test environment
-                ' Need tyo hard code Label information.
+                ' Need to hard code Label information.
                 cAccountNumber = "740561073"
                 objFedexShip.Config("TESTMODE=true") ' no need To Set the server
 
@@ -3599,7 +3694,7 @@ Public Class WHCSHIP1
                         .Height = 5
                         .Length = 5
                         .Width = 5
-                        .Weight = "16" ' 16 OPUNCES
+                        .Weight = "16" ' 16 Ounces
                         .PackagingType = TPackagingTypes.ptYourPackaging
                     End With
                 Next
@@ -4253,7 +4348,7 @@ Public Class WHCSHIP1
 
                     .RecipientAddress.ZipCode = "10007" ' "07081"
                     .RecipientAddress.CountryCode = "US"
-                    .RequestedService = ServiceTypes.stUnspecified
+                    .RequestedService = cRequestedServiceType
 
                     Dim PackageDetail As New PackageDetail
                     With PackageDetail
@@ -6162,13 +6257,17 @@ Public Class WHCSHIP1
                 ShipmentListCharge.Add(SHIP_PACKAGE_NO, Val(package.NetCharge))
                 If package.RatingAggregate.Length > 0 Then
                     Try
-                        Dim packageRatingAggregate As String = "<?xml version=""1.0""?>" & vbCrLf & package.RatingAggregate.Replace("v9:", "").Replace("v12:", "")
-                        Dim fedexAggDoc As New System.Xml.XmlDocument
-                        fedexAggDoc.LoadXml(packageRatingAggregate)
-                        Dim root As XmlNode = fedexAggDoc.DocumentElement
-                        Dim PAYOR_LIST_PACKAGE As XmlNode = root.SelectSingleNode("descendant::PackageRateDetails[RateType=""PAYOR_LIST_PACKAGE""]")
-                        Dim listNetCharge As Double = Val(PAYOR_LIST_PACKAGE.SelectSingleNode("NetCharge/Amount").InnerText & String.Empty)
-                        ShipmentListCharge(SHIP_PACKAGE_NO) = listNetCharge
+                        Dim jObj As JObject = JObject.Parse(package.RatingAggregate) ' .Replace("v9:", "").Replace("v12:", "")
+                        Dim details As JArray = jObj.SelectToken("packageRateDetails")
+                        If details IsNot Nothing Then
+                            For Each detail As JObject In details
+                                If detail("rateType").ToString() = "PAYOR_LIST_PACKAGE" Then
+                                    Dim netCharge As Decimal = detail("netCharge").ToObject(Of Decimal)()
+                                    ShipmentListCharge(SHIP_PACKAGE_NO) = netCharge
+                                    Exit For
+                                End If
+                            Next
+                        End If
                     Catch ex As Exception
 
                     End Try
@@ -6189,7 +6288,6 @@ Public Class WHCSHIP1
                 ShipmentNetCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.Config("AccountTotalNetCharge") & String.Empty))
                 ShipmentListCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalNetCharge))
                 Exit Try
-
             Else
                 ShipmentBaseCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.BaseCharge))
                 ShipmentDiscountCharge.Add(SHIP_PACKAGE_NO, Val(shipObject.TotalDiscount))
@@ -6542,7 +6640,6 @@ Public Class WHCSHIP1
         'https://onlinetools.ups.com/security/v1/oauth/token
         'https://apis.fedex.com/oauth/token
 
-
         ' Going to use the Server Token URL to determine if we are in test mode.
         Select Case Carrier
             Case Carriers.FedEx
@@ -6594,7 +6691,6 @@ Public Class WHCSHIP1
 
                 bearerToken = oauth.GetAuthorization
                 tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(oauth.AccessTokenExp))
-
 
             Case Carriers.FedEx
                 With oauth

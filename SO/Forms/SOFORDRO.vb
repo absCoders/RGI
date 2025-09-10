@@ -474,23 +474,11 @@ Public Class SOFORDRO
                     End If
                 End If
             Case "Update"
-                Dim DUP_STYLE_LIST As System.Text.StringBuilder = CHECK_STYLE_COLOR_DUPS()
-                If DUP_STYLE_LIST.Length > 0 Then
-                    Dim iResult As MsgBoxResult
-                    Dim iTitle As String = "Duplicate Style/Colors Found"
-                    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-                    iMSG.AppendLine("The Following Duplicate Style / Colors")
-                    iMSG.AppendLine("Were Found On This Order.  You Should")
-                    iMSG.AppendLine("Fix Them Before Transmitting The Order.")
-                    iMSG.AppendLine("")
-                    iMSG.AppendLine(DUP_STYLE_LIST.ToString)
-                    iMSG.AppendLine("")
-                    iMSG.AppendLine("Update Anyway?")
-                    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-                    If iResult = MsgBoxResult.No Then
-                        EMsg &= vbCr & "Fix Duplicate Style/Colors."
-                    End If
-                End If
+                Dim ORDR_NOs As New List(Of String)
+                For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
+                    ORDR_NOs.Add(rowSOTORDR1.Item("ORDR_NO").ToString & String.Empty)
+                Next
+                Dim DUP_STYLES As Boolean = CHECK_STYLE_COLOR_DUPS(ORDR_NOs, "Transmitting The Order")
                 If shipToVerify(False) = False Then
                     EMsg &= vbCr & "You Must Verify Ship Tos."
                 End If
@@ -651,22 +639,58 @@ Public Class SOFORDRO
 
     End Sub
 
-    Private Function CHECK_STYLE_COLOR_DUPS() As System.Text.StringBuilder
-        Dim RET_VAL As New System.Text.StringBuilder With {.Length = 0}
-        For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select()
-            Dim STYLE_COLORS As New List(Of String)
-            Dim ORDR_NO As String = rowSOTORDR1.Item("ORDR_NO").ToString & String.Empty
-            Dim rowFilter As String = String.Format("ORDR_NO = '{0}'", ORDR_NO)
-            For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select(rowFilter)
-                Dim STYLE_COLOR As String = rowSOTORDR2.Item("STYLE_CODE").ToString & String.Empty & "-" & rowSOTORDR2.Item("COLOR_CODE").ToString
-                If STYLE_COLORS.Contains(STYLE_COLOR) Then
-                    RET_VAL.AppendLine(String.Format("Order:{0}: {1}", ORDR_NO, STYLE_COLOR))
-                Else
-                    STYLE_COLORS.Add(STYLE_COLOR)
+    Private Function CHECK_STYLE_COLOR_DUPS(ByVal ORDR_NOs As List(Of String), ByVal NextStep As String) As Boolean
+        '--This function is found in several places, Laptop order entry, Laptop Transfers & order imports.
+        '--If you make changes here you should make those changes there as well.  Someday we will move this
+        '--to a shared class or evne beter find the problem that allows duplicate style/colors.
+        Dim RETVAL As Boolean = False
+        Dim EMSG As String = ""
+        For Each ORDR_NO As String In ORDR_NOs
+            Dim filter As String = $"ORDR_NO = '{ORDR_NO}'"
+            Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Select(filter).FirstOrDefault
+            If Not IsNothing(rowSOTORDR1) Then
+                Dim STYLE_COLORS_CHK As New List(Of String)
+                Dim STYLE_COLORS_DUP As New List(Of String)
+                Dim CUST_NAME As String = rowSOTORDR1.Item("CUST_NAME").ToString & String.Empty
+                Dim rowFilter As String = String.Format("ORDR_NO = '{0}'", ORDR_NO)
+                For Each rowSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select(rowFilter, "STYLE_CODE, COLOR_CODE")
+                    Dim STYLE_COLOR As String = rowSOTORDR2.Item("STYLE_CODE").ToString & String.Empty & "-" & rowSOTORDR2.Item("COLOR_CODE").ToString
+                    If STYLE_COLORS_CHK.Contains(STYLE_COLOR) Then
+                        STYLE_COLORS_DUP.Add(STYLE_COLOR)
+                    Else
+                        STYLE_COLORS_CHK.Add(STYLE_COLOR)
+                    End If
+                Next
+                If STYLE_COLORS_DUP.Count > 0 Then
+                    If RETVAL = False Then
+                        RETVAL = True
+                        EMSG &= "The Following Duplicate Style / Colors <br>"
+                        EMSG &= "Were Found On These Orders.  You Should <br>"
+                        EMSG &= $"Fix Them Before {NextStep}. <br>"
+                        EMSG &= "<br><hr>"
+                        EMSG &= $"Order: {ORDR_NO} - {CUST_NAME} <br>"
+                        For Each STYLE_COLOR As String In STYLE_COLORS_DUP
+                            EMSG &= $"     - {STYLE_COLOR} <br>"
+                        Next
+                        EMSG &= "<br>"
+                    Else
+                        EMSG &= $"Order: {ORDR_NO} - {CUST_NAME} <br>"
+                        For Each STYLE_COLOR As String In STYLE_COLORS_DUP
+                            EMSG &= $"     - {STYLE_COLOR} <br>"
+                        Next
+                        EMSG &= "<br>"
+                    End If
                 End If
-            Next
+            End If
         Next
-        Return RET_VAL
+        If RETVAL Then
+            Using frmmsg As New ASFMSGBF
+                frmmsg.Show_Formatted_txt("You Must Fix This Before Transmitting The Order(s).", EMSG, Me)
+            End Using
+        End If
+
+        Return RETVAL
+
     End Function
 
     Private Function shipToVerify(ByVal showForm As Boolean) As Boolean

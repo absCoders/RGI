@@ -57,7 +57,12 @@ Public Class GLRSTMT1
         Get_PARM("GLTPARM1")
         Breakout_By()
         Breakout_By_Class()
-        Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
+        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+            'Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
+            Set_cmbYP("RYP", ASCMAIN1.CYP, -72, 0, 0)
+        Else
+            Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
+        End If
 
     End Sub
 

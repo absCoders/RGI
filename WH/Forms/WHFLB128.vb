@@ -349,6 +349,14 @@ Public Class WHFLB128
                 .PrimaryKey = New DataColumn() { .Columns("CART_NO")}
             End With
 
+            With .Tables.Add("SOTCARTX")
+                .Columns.Add("KEY")
+                .Columns.Add("CART_NO")
+                .Columns.Add("PKG_CODE")
+                .Columns.Add("PRINT_QTY", GetType(System.Int32))
+                .Columns.Add("LabelTemplateOverride")
+            End With
+
             With dst.Tables.Add("SOTRANG1")
                 .Columns.Add("EDI_SKU")
                 .Columns.Add("EDI_UPC")
@@ -2063,13 +2071,15 @@ Public Class WHFLB128
                 If ASCMAIN1.DBS_COMPANY = "VAN" Then
                     Dim LabelTemplateOverride As String = ""
                     Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-                    SQLS.AppendLine("SELECT MIN(SOTORDR1.CUST_CODE) AS CUST_CODE")
+                    SQLS.AppendLine("SELECT MIN(SOTORDR1.CUST_CODE) AS CUST_CODE, MIN(nvl(EDI_MERCH_TYPE,'?')) AS EDI_MERCH_TYPE")
                     SQLS.AppendLine("FROM SOTCART1, SOTPICK1, SOTORDR1")
                     SQLS.AppendLine("WHERE SOTCART1.PICK_NO = SOTPICK1.PICK_NO")
                     SQLS.AppendLine("AND SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO")
                     SQLS.AppendLine(String.Format("AND CART_NO = '{0}'", CART_NO))
                     ASCMAIN1.sql = SQLS.ToString()
-                    Dim CUST_CODE As String = ASCDATA1.GetDataValue
+                    Dim row As DataRow = ASCDATA1.GetDataRow
+                    Dim CUST_CODE As String = row("CUST_CODE")
+                    Dim EDI_MERCH_TYPE = row("EDI_MERCH_TYPE")
                     PrintQty = 1
                     Select Case CUST_CODE
                         Case = "WALMARTCOM"
@@ -2083,6 +2093,12 @@ Public Class WHFLB128
                             '    If iResult = MsgBoxResult.Yes Then
                             '        LabelTemplateOverride = "BURLING2"
                             '    End If
+                        Case = "WALMART"
+                            If EDI_MERCH_TYPE = "0033" Then
+                                PrintQty = 2
+                                LabelTemplateOverride = "WALMARTCOM"
+                            End If
+
                     End Select
                     If LabelTemplateOverride.Length > 0 Then
                         cartonLabel.PrintLabel(PrintQty, PrinterName, LabelTemplateOverride)
@@ -2132,7 +2148,8 @@ Public Class WHFLB128
                 PrinterName = cboZebraPrinter.Text
             End If
 
-
+            dst.Tables("SOTCARTX").Clear()
+            Dim rowNum As Int16 = 0
 
             If ASCMAIN1.DBS_COMPANY = "VAN" Then
                 dst.Tables("SOTCART4").Clear()
@@ -2163,7 +2180,7 @@ Public Class WHFLB128
                 For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("", SORT_ORDER)
                     Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
                     Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
-                    SQLS.AppendLine("SELECT MIN(CUST_CODE) AS CUST_CODE")
+                    SQLS.AppendLine("SELECT CUST_CODE, EDI_MERCH_TYPE")
                     SQLS.AppendLine("FROM SOTORDR1")
                     SQLS.AppendLine("WHERE ORDR_NO IN (")
                     SQLS.AppendLine("  SELECT ORDR_NO")
@@ -2171,7 +2188,9 @@ Public Class WHFLB128
                     SQLS.AppendLine(String.Format("  WHERE PICK_NO = '{0}'", PICK_NO))
                     SQLS.AppendLine(")")
                     ASCMAIN1.sql = SQLS.ToString()
-                    Dim CUST_CODE As String = ASCDATA1.GetDataValue
+                    Dim row As DataRow = ASCDATA1.GetDataRow()
+                    Dim CUST_CODE As String = row("CUST_CODE")
+                    Dim EDI_MERCH_TYPE As String = row("EDI_MERCH_TYPE") & ""
                     'HERE
                     'If CUST_CODE = "SAMSCLUB" Or CUST_CODE = "SAMSCLUBCOM" Then
                     '    Continue For
@@ -2194,6 +2213,10 @@ Public Class WHFLB128
                                 Dim row1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(New String() {rowSOTPICK1.Item("ORDR_NO")})
                                 If row1.Item("CUST_DC_NO") & "" = "" Then
                                     LabelTemplateOverride = "WAL_NODC"
+                                End If
+                                If EDI_MERCH_TYPE = "0033" Then
+                                    LabelTemplateOverride = "WALMARTCOM"
+                                    PrintQty = 2
                                 End If
                             Case = "WALMARTCOM"
                                 PrintQty = 2
@@ -2290,14 +2313,27 @@ Public Class WHFLB128
                             Next
                         Next
                     Else
-                        ASCMAIN1.sql = "Select CART_NO from SOTCART1 where PICK_NO = '" & PICK_NO & "'"
+                        ASCMAIN1.sql = "Select CART_NO, PKG_CODE from SOTCART1 where PICK_NO = '" & PICK_NO & "'"
                         For Each rowCART_NO As DataRow In ASCDATA1.GetDataTable.Select("", "CART_NO")
                             Dim CART_NO As String = rowCART_NO.Item("CART_NO")
-                            Dim cartonLabel As New TAC.CartonLabel(CART_NO)
-                            If LabelTemplateOverride.Length > 0 Then
-                                cartonLabel.PrintLabel(PrintQty, PrinterName, LabelTemplateOverride)
+                            If CUST_CODE = "WALMART" Or CUST_CODE = "KOHLS" Then
+                                rowNum += 1
+                                Dim rowCARTX As DataRow = dst.Tables("SOTCARTX").NewRow
+                                With rowCARTX
+                                    .Item("KEY") = IIf(rowCART_NO("PKG_CODE") & "" = "", String.Format("{0:D6}", rowNum), rowCART_NO("PKG_CODE") & "")
+                                    .Item("CART_NO") = rowCART_NO("CART_NO")
+                                    .Item("PKG_CODE") = rowCART_NO("PKG_CODE")
+                                    .Item("PRINT_QTY") = PrintQty
+                                    .Item("LabelTemplateOverride") = LabelTemplateOverride
+                                End With
+                                dst.Tables("SOTCARTX").Rows.Add(rowCARTX)
                             Else
-                                cartonLabel.PrintLabel(PrintQty, PrinterName)
+                                Dim cartonLabel As New TAC.CartonLabel(CART_NO)
+                                If LabelTemplateOverride.Length > 0 Then
+                                    cartonLabel.PrintLabel(PrintQty, PrinterName, LabelTemplateOverride)
+                                Else
+                                    cartonLabel.PrintLabel(PrintQty, PrinterName)
+                                End If
                             End If
                         Next
                     End If
@@ -2305,6 +2341,17 @@ Public Class WHFLB128
                 If dst.Tables("SOTCART4").Select("").Count > 0 Then
                     'Print_Report("SORCART4", "Walmart Export Carton Labels")
                 End If
+                For Each rowCARTX As DataRow In dst.Tables("SOTCARTX").Select("", "KEY")
+                    Dim cartonLabel As New TAC.CartonLabel(rowCARTX("CART_NO"))
+                    LabelTemplateOverride = rowCARTX("LabelTemplateOverride") & ""
+                    PrintQty = rowCARTX("PRINT_QTY")
+                    If LabelTemplateOverride.Length > 0 Then
+                        cartonLabel.PrintLabel(PrintQty, PrinterName, LabelTemplateOverride)
+                    Else
+                        cartonLabel.PrintLabel(PrintQty, PrinterName)
+                    End If
+                Next
+
                 'our code to print for samsclub
                 'For Each row As DataRow In dst.Tables("SOTPICKX").Select("SELECTED = '1' AND CUST_CODE IN ('SAMSCLUB', 'SAMSCLUBCOM')")
                 '    Dim QTY As Integer = Val(row.Item("PALLET_COUNT"))

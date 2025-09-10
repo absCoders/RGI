@@ -106,31 +106,36 @@ Public Class WBFFSR01
 
         grdWBFFSR01.DataSource = dst.Tables("WBFFSR01")
 
+        setGridGrouping()
+
         For Each COL As String In valueColsTY
             Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
-            With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,###,##0"
-                .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightBlue
-                .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
-                .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightBlue
-                .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
-            End With
+
+
+            'For Each grp As UltraWinGrid.UltraGridGroup In grdWBFFSR01.DisplayLayout.Bands(0).Groups
+
+            '    'For Each C1 As UltraWinGrid.UltraGridColumn In grp.Columns
+            '    '    grdWBFFSR01.DisplayLayout.Bands(0).Columns(C1.Key).Group = grp
+            '    'Next
+            'Next
+
+
         Next
 
         For Each COL As String In valueColsLY
             If COL = "PCT_TY_LY" Or COL = "PCT_TY_FY" Then
                 'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
-                grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0.00"
+                'grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0.00"
             Else
                 Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
-                grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0"
+                'grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Format = "###,###,##0"
             End If
-            With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightGreen
-                .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
-                .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
-                .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
-            End With
+            'With grdWBFFSR01.DisplayLayout.Bands(0)
+            '    .Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+            '    .Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
+            '    .Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
+            '    .Columns(COL).Header.Appearance.BackGradientStyle = Infragistics.Win.GradientStyle.ForwardDiagonal
+            'End With
             If COL.Substring(0, 5) = "LY_WK" Then
                 grdWBFFSR01.DisplayLayout.Bands(0).Columns(COL).Hidden = True
             End If
@@ -139,7 +144,7 @@ Public Class WBFFSR01
         For Each COL As String In valueColsYOY
             Create_Summary(grdWBFFSR01, COL, "Sum", "", "###,###,##0")
             With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,###,##0"
+                '.Columns(COL).Format = "###,###,##0"
                 '.Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightPink
                 '.Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
                 '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
@@ -150,7 +155,7 @@ Public Class WBFFSR01
         For Each COL As String In valueColsPCT
             'Create_Summary(grdWBFFSR01, COL, "Avg", "", "###,###,##0.00")
             With grdWBFFSR01.DisplayLayout.Bands(0)
-                .Columns(COL).Format = "###,##0.00"
+                '.Columns(COL).Format = "###,##0.00"
                 '.Columns(COL).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
                 '.Columns(COL).Header.Appearance.BackColor = Drawing.Color.White
                 '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightGreen
@@ -158,10 +163,10 @@ Public Class WBFFSR01
             End With
         Next
 
-        With grdWBFFSR01.DisplayLayout.Bands(0)
-            .Columns("CODE").Header.Fixed = True
-            .Columns("CODE_DESC").Header.Fixed = True
-        End With
+        'With grdWBFFSR01.DisplayLayout.Bands(0)
+        '    .Columns("CODE").Header.Fixed = True
+        '    .Columns("CODE_DESC").Header.Fixed = True
+        'End With
 
         With grdWBFFSR01.DisplayLayout.Override
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -183,6 +188,8 @@ Public Class WBFFSR01
         'grdWBFHORNT.Parent = tab.Parent
 
     End Sub
+
+
 
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
@@ -253,13 +260,13 @@ Public Class WBFFSR01
                     SEL_CODE = "WHSE_CODE"
                     SEL_DESC = "WHSE_DESC"
                     SEL_TABLE = "ICTWHSE1"
-                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "WHSE"
+                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "Whse"
                 End If
                 If rdoCUST_CODE.Checked Then
                     SEL_CODE = "CUST_CODE"
                     SEL_DESC = "CUST_NAME"
                     SEL_TABLE = "ARTCUST1"
-                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "CUST"
+                    grdWBFFSR01.DisplayLayout.Bands(0).Columns("CODE").Header.Caption = "Cust"
                 End If
                 For Each COL As String In valueColsLY
                     If COL.Substring(0, 5) = "LY_WK" Then
@@ -992,6 +999,212 @@ Public Class WBFFSR01
         Return CDate(endOfWeekSaturday.ToString("MM/dd/yyy"))
     End Function
 
+    Private Sub setGridGrouping()
+        grdWBFFSR01.DisplayLayout.Bands(0).Groups.Clear()
+        'grdWBFFSR01.DisplayLayout.Override.CellMultiLine = DefaultableBoolean.True
+        'With grdWBFFSR01.DisplayLayout.Override.GroupByRowAppearance
+        '    .TextTrimming = TextTrimming.None
+        '    .TextVAlign = VAlign.Top
+        '    .TextHAlign = HAlign.Center
+        'End With
+
+        With grdWBFFSR01.DisplayLayout.Bands(0)
+            Dim G As UltraWinGrid.UltraGridGroup
+
+            'Codes
+            Dim COLS As String() = {"CODE", "CODE_DESC"}
+            G = .Groups.Add("Codes", "")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            'G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                '.Columns(COL).Format = "###,##0"
+            Next
+
+            'This Week
+            COLS = {"TY_WK1", "TY_WK2", "TY_WK3", "TY_WK4", "TY_WK5", "TY_WK6", "TY_WK7"}
+            G = .Groups.Add("This Week", "This Week")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                .Columns(COL).Format = "###,##0"
+            Next
+
+            'Space00
+            COLS = {"Space00"}
+            G = .Groups.Add("Space00", "")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            'G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                '.Columns(COL).Format = "###,##0"
+            Next
+
+            ''Last Year Full Wk
+            'COLS = {"TOT_TY_WK", "TOT_LY_WK"}
+            'G = .Groups.Add("TOT_LY_WK", "")
+            'G.Header.Appearance.TextHAlign = HAlign.Center
+            ''G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            'G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            'For Each COL As String In COLS
+            '    .Columns(COL).Group = G
+            '    '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+            '    '.Columns(COL).Width = 80
+            '    '.Columns(COL).Format = "###,##0"
+            'Next
+
+            'Week To Date TYLY
+            COLS = {"TOT_TY_WK", "TOT_LY_WK", "MTD_YOY", "MTD_YOY_PCT"}
+            G = .Groups.Add("WTDTYLY", "Current Week-to-Date vs. Last Year FULL Week")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.LightGray
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                If COL.EndsWith("_PCT") Then
+                    .Columns(COL).Format = "###,##0.0"
+                Else
+                    .Columns(COL).Format = "###,##0"
+                End If
+            Next
+
+            'Space01
+            COLS = {"Space01"}
+            G = .Groups.Add("Space01", "")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            'G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                '.Columns(COL).Format = "###,##0"
+            Next
+
+            'MTD
+            COLS = {"TY_MTD", "LY_MTD", "WTD_FULL_WK_YOY", "WTD_FULL_WK_YOY_PCT"}
+            G = .Groups.Add("MTD", "Month-to-Date")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.LightPink
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                If COL.EndsWith("_PCT") Then
+                    .Columns(COL).Format = "###,##0.0"
+                Else
+                    .Columns(COL).Format = "###,##0"
+                End If
+            Next
+
+            'Space02
+            COLS = {"Space02"}
+            G = .Groups.Add("Space02", "")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            'G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                '.Columns(COL).Format = "###,##0"
+            Next
+
+            'YTD
+            COLS = {"TY_YTD", "LY_YTD", "YTD_YOY", "YTD_YOY_PCT"}
+            G = .Groups.Add("YTD", "Year-to-Date")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.LightSalmon
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                If COL.EndsWith("_PCT") Then
+                    .Columns(COL).Format = "###,##0.0"
+                Else
+                    .Columns(COL).Format = "###,##0"
+                End If
+            Next
+
+            'Space03
+            COLS = {"Space03"}
+            G = .Groups.Add("Space03", "")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            'G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                '.Columns(COL).Format = "###,##0"
+            Next
+
+            'Curr Month TYLY
+            COLS = {"LY_FULL_MO", "MTD_FULL_MO_YOY", "MTD_FULL_MO_YOY_PCT"}
+            G = .Groups.Add("CMTYLY", "Current Month-to-Date vs. Last Year FULL Month")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                If COL.EndsWith("_PCT") Then
+                    .Columns(COL).Format = "###,##0.0"
+                Else
+                    .Columns(COL).Format = "###,##0"
+                End If
+            Next
+
+            'Space04
+            COLS = {"Space04"}
+            G = .Groups.Add("Space04", "")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            'G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.Transparent
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                '.Columns(COL).Format = "###,##0"
+            Next
+
+            'Curr Year TYLY
+            COLS = {"LY_FULL_YR", "YTD_FULL_YR_YOY", "YTD_FULL_YR_YOY_PCT"}
+            G = .Groups.Add("CYTYLY", "Current Year-to-Date vs. Last Year FULL Year")
+            G.Header.Appearance.TextHAlign = HAlign.Center
+            G.Header.Appearance.TextTrimming = TextTrimming.None
+            G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
+            G.Header.Appearance.BackColor2 = Drawing.Color.LightGoldenrodYellow
+            For Each COL As String In COLS
+                .Columns(COL).Group = G
+                '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
+                '.Columns(COL).Width = 80
+                If COL.EndsWith("_PCT") Then
+                    .Columns(COL).Format = "###,##0.0"
+                Else
+                    .Columns(COL).Format = "###,##0"
+                End If
+            Next
+
+
+        End With
+    End Sub
+
     Private Sub setGridTitle()
         Dim titleRoot As String = "Flash Sales Report"
         Dim titleSelection As String = ""
@@ -1008,10 +1221,10 @@ Public Class WBFFSR01
             titlePeriod = titlePeriod & " (EOM Mode)"
         End If
         If rdoUnits.Checked Then
-            titleValues = "Showing Units"
+            titleValues = "** SHOWING UNITS ***"
         End If
         If rdoDollars.Checked Then
-            titleValues = "Showing Dollars"
+            titleValues = "** SHOWING DOLLARS **"
         End If
         grdWBFFSR01.Text = $"{titleSelection} {titleRoot} {titlePeriod} {titleValues}."
     End Sub

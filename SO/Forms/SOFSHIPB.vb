@@ -438,6 +438,9 @@ Public Class SOFSHIPB
             Create_TDA(.Tables.Add, "EDT850TC", "*", 1)
             Create_TDA(.Tables.Add, "EDT850TE", "*", 1)
 
+            Create_TDA(.Tables.Add, "SOTORDRW", "*")
+            Create_TDA(.Tables.Add, "SOTORDRT", "*")
+
             ASCMAIN1.sql = "SELECT T9.EDI_DOC_SEQ_NO, T9.CONTACT_COMM_NO_1" _
                 & " FROM EDT850T5 T5, EDT850T9 T9" _
                 & " WHERE T5.EDI_DOC_SEQ_NO = T9.EDI_DOC_SEQ_NO" _
@@ -3975,7 +3978,7 @@ Public Class SOFSHIPB
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5",
+            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5", "SOTORDRW", "SOTORDRT",
              "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1",
              "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP",
              "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR9", "SOTORDR5_BT", "SOTORDXR",
@@ -5452,11 +5455,11 @@ Public Class SOFSHIPB
             ASCMAIN1.Progress("Now Updating ...", "")
 
             Dim RFIXMSG As Boolean = False
-            Dim SOCINVH1 As New TAC.SOCINVH1(dst)
+            Dim clsSOCINVH1 As New TAC.SOCINVH1(dst)
             ' Update the Sales Order records with the Pick Ticket data
 
             If ASCMAIN1.CLIENT <> "VAN" Then
-                SOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(Absx1.dteFor("INV_DATE").Value)
+                clsSOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(Absx1.dteFor("INV_DATE").Value)
             End If
 
             ' Record event where the Ship via was changed
@@ -5542,7 +5545,7 @@ Public Class SOFSHIPB
                 If Not IsDate(rowSOTSHIP1.Item("SHIPPED_ACTUAL") & String.Empty) Then
                     rowSOTSHIP1.Item("SHIPPED_ACTUAL") = rowSOTSHIP1.Item("SHIP_DATE_SHIPPED")
                 End If
-                SOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
+                clsSOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
             Next
 
             Dim CreditCardProcessed As Boolean = True
