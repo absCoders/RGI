@@ -23,7 +23,7 @@ Public Class SOFSHIPE
     Private WHSE_CODE_TRUCK As String = String.Empty
     Private drSOTTRCK1 As DataRow = Nothing
 
-    Private allItemsOnBackOrder As Boolean = False
+    Private AllItemsCancelled As Boolean = False
     Private AutoCancel As Boolean = False
     Private dictAppearances As New Dictionary(Of String, Infragistics.Win.Appearance)
 
@@ -45,7 +45,6 @@ Public Class SOFSHIPE
 
     Private screenProcessingMode As ScreenProcessingModes = ScreenProcessingModes.DisplayAvailableTrucks
     Private WithEvents pd As New PrintDocument()
-
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -402,6 +401,17 @@ Public Class SOFSHIPE
                 End If
 
             Case "Ship Order"
+
+                Dim TOTE_NO As String = txtTOTE_NO.Text
+                Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{TOTE_NO}'")(0)
+                Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
+                Dim PICK_QTY_CONF As Int16 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
+
+                ' There may be Pick Tickets where nothing is getting shipped; therefore, no Validation is required
+                If PICK_QTY_CONF = 0 Then
+                    Exit Select
+                End If
+
                 If txtSHIP_VIA_CODE.TextLength = 0 Then
                     EMsg &= vbCr & "A shipping method must be selected before the order can be shipped."
                 End If
@@ -455,7 +465,6 @@ Public Class SOFSHIPE
                 If Not RequestShippingLabel("", ErrorMessage, True) Then
                     EMsg &= vbCr & ErrorMessage
                 End If
-
         End Select
 
         If MyBase.EMsg <> "" Then
@@ -501,14 +510,17 @@ Public Class SOFSHIPE
 
             Case "Ship Order"
                 Dim ErrorMessage As String = String.Empty
+                AllItemsCancelled = False
 
                 ' Create Invoice
                 Dim PICK_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("PICK_NO")
                 If CreateSalesOrderInvoice(PICK_NO, txtSHIP_VIA_CODE.Text) Then
                     dst.Tables("SOTPICK1X").Select($"PICK_NO = '{PICK_NO}'")(0).Item("SELECTED") = "1"
-                    Dim INV_NO As String = dst.Tables("SOTINVH1").Rows(0).Item("INV_NO")
-                    If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
-                        MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    If Not AllItemsCancelled Then
+                        Dim INV_NO As String = dst.Tables("SOTINVH1").Rows(0).Item("INV_NO")
+                        If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
+                            MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        End If
                     End If
 
                     numOrderFreight.Value = 0
@@ -609,6 +621,7 @@ Public Class SOFSHIPE
         numOrderFreight.Value = 0
 
         drSOTTRCK1 = Nothing
+        AllItemsCancelled = False
 
         screenProcessingMode = ScreenProcessingModes.DisplayAvailableTrucks
 
@@ -874,7 +887,7 @@ Public Class SOFSHIPE
             Dim drSOTPICK1X As DataRow = Nothing
             Me.Cursor = Cursors.WaitCursor
 
-            allItemsOnBackOrder = False
+            AllItemsCancelled = False
 
             Select Case ValidationType
                 Case ValidateTruckToteTypes.Truck
@@ -1103,6 +1116,30 @@ Public Class SOFSHIPE
         End If
     End Sub
 
+    Private Function ProcessAllItemsOnBackOrder(ByVal PICK_NO As String) As Boolean
+
+        Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
+        Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
+        Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+        Dim WHSE_CODE As String = rowSOTORDR1.Item("WHSE_CODE")
+
+        ' Remove items from ICTSTAT2
+        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}'")
+            Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowSOTPICK2.Item("COLOR_CODE")
+            Dim PICK_QTY As Int16 = Val(rowSOTPICK2.Item("PICK_QTY") & String.Empty)
+
+            If PICK_QTY > 0 Then
+                ASCMAIN1.sql = "UPDATE ICTSTAT2 
+                                    SET WHSE_QTY_PICK = NVL(WHSE_QTY_PICK, 0) - :PARM1
+                                    WHERE STYLE_CODE = :PARM2
+                                    AND COLOR_CODE = :PARM3
+                                    AND WHSE_CODE = :PARM4"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NVVV", {PICK_QTY, STYLE_CODE, COLOR_CODE, WHSE_CODE})
+            End If
+        Next
+    End Function
+
     Private Function CreateSalesOrderInvoice(ByVal PICK_NO As String, ByVal SelectedShipViaCode As String) As Boolean
 
         Dim drSOTPICK1 As DataRow = Nothing
@@ -1253,15 +1290,6 @@ Public Class SOFSHIPE
                 drSOTSHIP1 = dst.Tables("SOTSHIP1").Rows(0)
             End If
 
-            drSOTSHIP1.Item("SHIP_DATE_SHIPPED") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("INV_DATE") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("SHIP_DATE_RECEIVED") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("SHIPPED_ACTUAL") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("SHIP_TOTAL_WGT") = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
-            drSOTSHIP1.Item("SHIP_CNT_CARTONS") = dst.Tables("SOTCART1").Rows.Count
-            drSOTSHIP1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
-            drSOTSHIP1.Item("SHIP_STATUS") = "F"
-
             dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_PACKED") = DateTime.Now
             If dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_PRINTED") & String.Empty = String.Empty Then
                 dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_PRINTED") = DateTime.Now
@@ -1284,6 +1312,21 @@ Public Class SOFSHIPE
 
             SOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(DateTime.Now.ToShortDateString)
 
+            AllItemsCancelled = dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ISNULL(PICK_QTY_CONF, 0) > 0 ").Length = 0
+
+            If AllItemsCancelled Then
+                drSOTSHIP1.Item("SHIP_STATUS") = "C"
+            Else
+                drSOTSHIP1.Item("SHIP_DATE_SHIPPED") = DateTime.Now.ToShortDateString
+                drSOTSHIP1.Item("INV_DATE") = DateTime.Now.ToShortDateString
+                drSOTSHIP1.Item("SHIP_DATE_RECEIVED") = DateTime.Now.ToShortDateString
+                drSOTSHIP1.Item("SHIPPED_ACTUAL") = DateTime.Now.ToShortDateString
+                drSOTSHIP1.Item("SHIP_TOTAL_WGT") = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
+                drSOTSHIP1.Item("SHIP_CNT_CARTONS") = dst.Tables("SOTCART1").Rows.Count
+                drSOTSHIP1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
+                drSOTSHIP1.Item("SHIP_STATUS") = "F"
+            End If
+
             ' Currently there are no back_orders for Ecommerce Sales Orders
             For Each drSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_NO = '{ORDR_NO}'")
                 Dim ORDR_QTY_OPEN As Int16 = Val(drSOTORDR2.Item("ORDR_QTY_OPEN") & String.Empty)
@@ -1297,53 +1340,52 @@ Public Class SOFSHIPE
                 End If
             Next
 
-            ' Record event where the Ship via was changed
-            If drSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> SelectedShipViaCode Then
-                Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
-                drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
-                drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                drTATEVNT1.Item("EVENT_TYPE") = "SHPMTC"
-                drTATEVNT1.Item("EVENT_DESC") = $"Ship Via was changed from {drSOTORDR1.Item("SHIP_VIA_CODE")} to {SelectedShipViaCode}"
-                drTATEVNT1.Item("EVENT_KEY") = ""
-                drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
+            If Not AllItemsCancelled Then
+                ' Record event where the Ship via was changed
+                If drSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> SelectedShipViaCode Then
+                    Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
+                    drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                    drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
+                    drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                    drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    drTATEVNT1.Item("EVENT_TYPE") = "SHPMTC"
+                    drTATEVNT1.Item("EVENT_DESC") = $"Ship Via was changed from {drSOTORDR1.Item("SHIP_VIA_CODE")} to {SelectedShipViaCode}"
+                    drTATEVNT1.Item("EVENT_KEY") = ""
+                    drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
 
-                drSOTORDR1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
+                    drSOTORDR1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
+                End If
+
+                If dst.Tables("SOTPICK2").Select("PICK_QTY > 0 AND PICK_QTY_CONF < PICK_QTY", "").Length > 0 Then
+                    Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
+                    drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                    drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
+                    drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                    drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    drTATEVNT1.Item("EVENT_TYPE") = "SHSHP"
+                    drTATEVNT1.Item("EVENT_DESC") = "User chose to short ship Ecommerce order."
+                    drTATEVNT1.Item("EVENT_KEY") = ""
+                    drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
+                End If
+
+                Dim CUST_FACTOR_TRANS_IND As String = "0"
+
+                ' Log factoring change
+                If Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) <> Val(CUST_FACTOR_TRANS_IND) Then
+                    Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
+                    drTATEVNT1.Item("TABLE_NAME") = "SOTSHIP1"
+                    drTATEVNT1.Item("TABLE_KEY") = SHIP_BOL_NO
+                    drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                    drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    drTATEVNT1.Item("EVENT_TYPE") = "SHPFAC"
+                    drTATEVNT1.Item("EVENT_DESC") = "Factor Setting was changed from " _
+                        & IIf(Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) = 1, "True", "False") & " to " & IIf(Val(CUST_FACTOR_TRANS_IND) = 1, "True", "False")
+                    drTATEVNT1.Item("EVENT_KEY") = ""
+                    drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
+                End If
             End If
 
-            If dst.Tables("SOTPICK2").Select("PICK_QTY > 0 AND PICK_QTY_CONF < PICK_QTY", "").Length > 0 Then
-                Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
-                drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
-                drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                drTATEVNT1.Item("EVENT_TYPE") = "SHSHP"
-                drTATEVNT1.Item("EVENT_DESC") = "User chose to short ship Ecommerce order."
-                drTATEVNT1.Item("EVENT_KEY") = ""
-                drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
-            End If
-
-            Dim CUST_FACTOR_TRANS_IND As String = "0"
-
-            ' Log factoring change
-            If Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) <> Val(CUST_FACTOR_TRANS_IND) Then
-                Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
-                drTATEVNT1.Item("TABLE_NAME") = "SOTSHIP1"
-                drTATEVNT1.Item("TABLE_KEY") = SHIP_BOL_NO
-                drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                drTATEVNT1.Item("EVENT_TYPE") = "SHPFAC"
-                drTATEVNT1.Item("EVENT_DESC") = "Factor Setting was changed from " _
-                    & IIf(Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) = 1, "True", "False") & " to " & IIf(Val(CUST_FACTOR_TRANS_IND) = 1, "True", "False")
-                drTATEVNT1.Item("EVENT_KEY") = ""
-                drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
-            End If
-
-            ' If nothing to Invoice then get out of here. All items are back ordered.
-            allItemsOnBackOrder = dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ISNULL(PICK_QTY_CONF, 0) > 0 ").Length = 0
-
-            If allItemsOnBackOrder Then
+            If AllItemsCancelled Then
                 drSOTPICK1.Item("PICK_STATUS") = "C"
             Else
                 SOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
@@ -1355,7 +1397,9 @@ Public Class SOFSHIPE
 
             Dim PICK_BATCH_NO As String = drSOTTRCK1.Item("PICK_BATCH_NO") & String.Empty
             drSOTPICK1X.Item("SELECTED") = "1"
-            drSOTPICK1.Item("PICK_STATUS") = "F"
+            If Not AllItemsCancelled Then
+                drSOTPICK1.Item("PICK_STATUS") = "F"
+            End If
 
             Try
                 BeginTrans()
@@ -1418,6 +1462,10 @@ Public Class SOFSHIPE
                     ASCMAIN1.sql = $"BEGIN ARPCUST6_IC('{INV_TYPE}','{INV_NO}'); END;"
                     ASCDATA1.ExecuteSQL()
                 Next
+
+                If AllItemsCancelled Then
+                    ProcessAllItemsOnBackOrder(PICK_NO)
+                End If
 
                 'CHANGE SOTPICK0.PICK_STATUS FROM P -> K (IN PACK)
                 If dst.Tables("SOTPICK1X").Select("SELECTED = '1'").Length = 1 Then
