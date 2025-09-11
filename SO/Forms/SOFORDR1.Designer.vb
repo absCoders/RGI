@@ -1311,6 +1311,8 @@ Partial Class SOFORDR1
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor26 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grpSHIPTO = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraTextEditor97 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel97 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor92 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel83 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCUST_ADDR_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -1369,6 +1371,8 @@ Partial Class SOFORDR1
         Me.UltraLabel26 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor37 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grpBILLTO = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.UltraTextEditor98 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel98 = New Infragistics.Win.Misc.UltraLabel()
         Me.grpBILLTO_Attributes = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraLabel84 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel79 = New Infragistics.Win.Misc.UltraLabel()
@@ -1735,6 +1739,7 @@ Partial Class SOFORDR1
         CType(Me.UltraTextEditor26, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.grpSHIPTO, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpSHIPTO.SuspendLayout
+        CType(Me.UltraTextEditor97, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraTextEditor92, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.txtCUST_ADDR_CODE, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraTextEditor72, System.ComponentModel.ISupportInitialize).BeginInit
@@ -1778,6 +1783,7 @@ Partial Class SOFORDR1
         CType(Me.UltraTextEditor37, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.grpBILLTO, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpBILLTO.SuspendLayout
+        CType(Me.UltraTextEditor98, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.grpBILLTO_Attributes, System.ComponentModel.ISupportInitialize).BeginInit
         Me.grpBILLTO_Attributes.SuspendLayout
         CType(Me.txtCUST_ADDR_CODE_BT, System.ComponentModel.ISupportInitialize).BeginInit
@@ -2736,7 +2742,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.splComments)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1315, 385)
         '
@@ -3500,7 +3506,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl25
         '
         Me.UltraTabPageControl25.Controls.Add(Me.splWeb)
-        Me.UltraTabPageControl25.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl25.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl25.Name = "UltraTabPageControl25"
         Me.UltraTabPageControl25.Size = New System.Drawing.Size(1315, 385)
         '
@@ -5240,7 +5246,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer6)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1319, 649)
         '
@@ -5279,7 +5285,7 @@ Partial Class SOFORDR1
         '
         Me.SplitContainer1.Panel2.Controls.Add(Me.SplitContainer2)
         Me.SplitContainer1.Size = New System.Drawing.Size(1319, 359)
-        Me.SplitContainer1.SplitterDistance = 177
+        Me.SplitContainer1.SplitterDistance = 206
         Me.SplitContainer1.TabIndex = 162
         '
         'SplitContainer3
@@ -5296,7 +5302,7 @@ Partial Class SOFORDR1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grpSHIPTO)
-        Me.SplitContainer3.Size = New System.Drawing.Size(1319, 177)
+        Me.SplitContainer3.Size = New System.Drawing.Size(1319, 206)
         Me.SplitContainer3.SplitterDistance = 535
         Me.SplitContainer3.TabIndex = 0
         '
@@ -5327,7 +5333,7 @@ Partial Class SOFORDR1
         Me.grpSOLDTO.HeaderAppearance = Appearance50
         Me.grpSOLDTO.Location = New System.Drawing.Point(0, 0)
         Me.grpSOLDTO.Name = "grpSOLDTO"
-        Me.grpSOLDTO.Size = New System.Drawing.Size(535, 177)
+        Me.grpSOLDTO.Size = New System.Drawing.Size(535, 206)
         Me.grpSOLDTO.TabIndex = 174
         Me.grpSOLDTO.Text = "Sold-To"
         '
@@ -5582,6 +5588,8 @@ Partial Class SOFORDR1
         '
         Me.Absx1.SetABSTableName(Me.grpSHIPTO, "SOTORDR5")
         Me.grpSHIPTO.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpSHIPTO.Controls.Add(Me.UltraTextEditor97)
+        Me.grpSHIPTO.Controls.Add(Me.UltraLabel97)
         Me.grpSHIPTO.Controls.Add(Me.UltraTextEditor92)
         Me.grpSHIPTO.Controls.Add(Me.UltraLabel83)
         Me.grpSHIPTO.Controls.Add(Me.txtCUST_ADDR_CODE)
@@ -5604,9 +5612,26 @@ Partial Class SOFORDR1
         Me.grpSHIPTO.HeaderAppearance = Appearance51
         Me.grpSHIPTO.Location = New System.Drawing.Point(0, 0)
         Me.grpSHIPTO.Name = "grpSHIPTO"
-        Me.grpSHIPTO.Size = New System.Drawing.Size(780, 177)
+        Me.grpSHIPTO.Size = New System.Drawing.Size(780, 206)
         Me.grpSHIPTO.TabIndex = 177
         Me.grpSHIPTO.Text = "Ship-To"
+        '
+        'UltraTextEditor97
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor97, "CUST_EMAIL")
+        Me.UltraTextEditor97.Location = New System.Drawing.Point(65, 169)
+        Me.UltraTextEditor97.Name = "UltraTextEditor97"
+        Me.UltraTextEditor97.Size = New System.Drawing.Size(310, 25)
+        Me.UltraTextEditor97.TabIndex = 149
+        '
+        'UltraLabel97
+        '
+        Me.UltraLabel97.AutoSize = True
+        Me.UltraLabel97.Location = New System.Drawing.Point(8, 173)
+        Me.UltraLabel97.Name = "UltraLabel97"
+        Me.UltraLabel97.Size = New System.Drawing.Size(41, 18)
+        Me.UltraLabel97.TabIndex = 150
+        Me.UltraLabel97.Text = "email"
         '
         'UltraTextEditor92
         '
@@ -5771,7 +5796,7 @@ Partial Class SOFORDR1
         'SplitContainer2.Panel2
         '
         Me.SplitContainer2.Panel2.Controls.Add(Me.grpDC)
-        Me.SplitContainer2.Size = New System.Drawing.Size(1319, 178)
+        Me.SplitContainer2.Size = New System.Drawing.Size(1319, 149)
         Me.SplitContainer2.SplitterDistance = 535
         Me.SplitContainer2.TabIndex = 0
         '
@@ -5802,7 +5827,7 @@ Partial Class SOFORDR1
         Me.grpSTORE.HeaderAppearance = Appearance55
         Me.grpSTORE.Location = New System.Drawing.Point(0, 0)
         Me.grpSTORE.Name = "grpSTORE"
-        Me.grpSTORE.Size = New System.Drawing.Size(535, 178)
+        Me.grpSTORE.Size = New System.Drawing.Size(535, 149)
         Me.grpSTORE.TabIndex = 175
         Me.grpSTORE.Text = "Store"
         '
@@ -6028,7 +6053,7 @@ Partial Class SOFORDR1
         Me.grpDC.HeaderAppearance = Appearance57
         Me.grpDC.Location = New System.Drawing.Point(0, 0)
         Me.grpDC.Name = "grpDC"
-        Me.grpDC.Size = New System.Drawing.Size(780, 178)
+        Me.grpDC.Size = New System.Drawing.Size(780, 149)
         Me.grpDC.TabIndex = 175
         Me.grpDC.Text = "DC"
         '
@@ -6195,6 +6220,8 @@ Partial Class SOFORDR1
         '
         Me.Absx1.SetABSTableName(Me.grpBILLTO, "SOTORDR5")
         Me.grpBILLTO.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grpBILLTO.Controls.Add(Me.UltraTextEditor98)
+        Me.grpBILLTO.Controls.Add(Me.UltraLabel98)
         Me.grpBILLTO.Controls.Add(Me.grpBILLTO_Attributes)
         Me.grpBILLTO.Controls.Add(Me.UltraLabel79)
         Me.grpBILLTO.Controls.Add(Me.UltraMaskedEdit5)
@@ -6221,6 +6248,23 @@ Partial Class SOFORDR1
         Me.grpBILLTO.Size = New System.Drawing.Size(1319, 286)
         Me.grpBILLTO.TabIndex = 176
         Me.grpBILLTO.Text = "Bill-To"
+        '
+        'UltraTextEditor98
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor98, "CUST_EMAIL")
+        Me.UltraTextEditor98.Location = New System.Drawing.Point(65, 97)
+        Me.UltraTextEditor98.Name = "UltraTextEditor98"
+        Me.UltraTextEditor98.Size = New System.Drawing.Size(310, 25)
+        Me.UltraTextEditor98.TabIndex = 189
+        '
+        'UltraLabel98
+        '
+        Me.UltraLabel98.AutoSize = True
+        Me.UltraLabel98.Location = New System.Drawing.Point(8, 101)
+        Me.UltraLabel98.Name = "UltraLabel98"
+        Me.UltraLabel98.Size = New System.Drawing.Size(41, 18)
+        Me.UltraLabel98.TabIndex = 190
+        Me.UltraLabel98.Text = "email"
         '
         'grpBILLTO_Attributes
         '
@@ -6408,7 +6452,7 @@ Partial Class SOFORDR1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer9)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1319, 649)
         '
@@ -10114,6 +10158,7 @@ Partial Class SOFORDR1
         CType(Me.grpSHIPTO, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpSHIPTO.ResumeLayout(False)
         Me.grpSHIPTO.PerformLayout
+        CType(Me.UltraTextEditor97, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraTextEditor92, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.txtCUST_ADDR_CODE, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraTextEditor72, System.ComponentModel.ISupportInitialize).EndInit
@@ -10161,6 +10206,7 @@ Partial Class SOFORDR1
         CType(Me.grpBILLTO, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpBILLTO.ResumeLayout(False)
         Me.grpBILLTO.PerformLayout
+        CType(Me.UltraTextEditor98, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.grpBILLTO_Attributes, System.ComponentModel.ISupportInitialize).EndInit
         Me.grpBILLTO_Attributes.ResumeLayout(False)
         Me.grpBILLTO_Attributes.PerformLayout
@@ -10763,4 +10809,8 @@ Partial Class SOFORDR1
     Friend WithEvents splWeb As SplitContainer
     Friend WithEvents grdSOTORDRT As UltraWinGrid.UltraGrid
     Friend WithEvents grdSOTORDRW As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraTextEditor97 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel97 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor98 As UltraWinEditors.UltraTextEditor
+    Friend WithEvents UltraLabel98 As Misc.UltraLabel
 End Class
