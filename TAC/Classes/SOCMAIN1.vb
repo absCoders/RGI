@@ -801,6 +801,9 @@
                 '**************************** TEMPORARY WORKAROUND TO DEAL WITH WALMART GLUT
                 'ASCMAIN1.sql &= " and CUST_CODE <> 'WALMART'"
 
+                '**************************** AVOID B2C ORDERS OR ORDERS COMING IN FROM WEB
+                ASCMAIN1.sql &= " and SOTORDR1.ORDR_TYPE_CODE <> 'B2C' and NVL(SOTORDR1.ORDR_SOURCE,'E') <> 'W'"
+
                 ' THIS SECTION DEALS WITH SETTING UP THE CUSTOMERS EXCLUDED FROM THE ALLOCATION PROCESS (UNLESS FORCE PICKED)
                 ' maybe these should be presented in a grid in SOROREL1 and let the user uncheck?
                 ' and then passed in using sql_where
