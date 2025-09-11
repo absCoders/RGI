@@ -1023,6 +1023,7 @@ Public Class WBFFSR01
                 '.Columns(COL).Width = 80
                 '.Columns(COL).Format = "###,##0"
             Next
+            G.Header.Fixed = True
 
             'This Week
             COLS = {"TY_WK1", "TY_WK2", "TY_WK3", "TY_WK4", "TY_WK5", "TY_WK6", "TY_WK7"}
@@ -1189,7 +1190,7 @@ Public Class WBFFSR01
             G.Header.Appearance.TextHAlign = HAlign.Center
             G.Header.Appearance.TextTrimming = TextTrimming.None
             G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
-            G.Header.Appearance.BackColor2 = Drawing.Color.LightGoldenrodYellow
+            G.Header.Appearance.BackColor2 = Drawing.Color.Yellow
             For Each COL As String In COLS
                 .Columns(COL).Group = G
                 '.Columns(COL).CellAppearance.BackColor = Drawing.Color.LightYellow
