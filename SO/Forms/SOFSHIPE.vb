@@ -236,9 +236,6 @@ Public Class SOFSHIPE
             Create_TDA(.Tables.Add, "ASTUSER1", "*", -1, False)
             Fill_Records("ASTUSER1", String.Empty, True, "SELECT * FROM ASTUSER1")
 
-            Create_TDA(.Tables.Add, "WHTPKGM1", "*", -1, False)
-            Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
-
             Create_TDA(.Tables.Add, "SOTSVIA1", "*", -1, False)
             Fill_Records("SOTSVIA1", String.Empty, True, "SELECT * FROM SOTSVIA1 WHERE CARRIER_PROD_CODE IS NOT NULL")
 
@@ -331,15 +328,32 @@ Public Class SOFSHIPE
             .Columns("PKG_DESC").Header.Caption = "Desc"
             .Columns("PKG_DESC").Width = 75
 
-            .Columns.Add("PKG_D")
-            .Columns("PKG_D").Header.Caption = "L x W x H"
-            .Columns("PKG_D").Width = 200
+            .Columns.Add("PKG_L")
+            .Columns("PKG_L").Header.Caption = "Length"
+            .Columns("PKG_L").Width = 75
+            .Columns("PKG_L").Format = "#,##0.00"
+
+            .Columns.Add("PKG_W")
+            .Columns("PKG_W").Header.Caption = "Width"
+            .Columns("PKG_W").Width = 75
+            .Columns("PKG_W").Format = "#,##0.00"
+
+            .Columns.Add("PKG_H")
+            .Columns("PKG_H").Header.Caption = "Height"
+            .Columns("PKG_H").Width = 75
+            .Columns("PKG_H").Format = "#,##0.00"
+
         End With
 
-        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
+        ASCMAIN1.sql = $"SELECT PKG_CODE, PKG_DESC, PKG_L, PKG_W, PKG_H FROM WHTPKGMW WHERE ECOM_CODE = 'SHOPIFY'
+                        UNION
+                        SELECT '{defaultPKG_CODE}', '{defaultPKG_CODE}', NULL PKG_L, NULL PKG_W, NULL PKG_H FROM DUAL
+                        order by PKG_CODE"
+        ultraComboPackage.DataSource = ASCDATA1.GetDataTable(ASCMAIN1.sql)
         ultraComboPackage.ValueMember = "PKG_CODE"
         ultraComboPackage.DisplayMember = "PKG_DESC"
         grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
+        ultraComboPackage.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
         grdSOTCART1.DisplayLayout.UseFixedHeaders = True
         With grdSOTCART1.DisplayLayout.Bands(0)
@@ -2497,11 +2511,6 @@ Public Class SOFSHIPE
                     ErrorMessage &= vbCr & "Carton " & CART_NO & " does not have any assigned products."
                 End If
 
-                If PACKAGING_TYPE = defaultPACKAGING_TYPE Then
-                    If dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) Is Nothing Then
-                        ErrorMessage &= vbCr & "Carton " & CART_NO & " has an invalid package code."
-                    End If
-                End If
             Next
 
             If ErrorMessage.Length > 0 Then
@@ -2898,7 +2907,6 @@ Public Class SOFSHIPE
 
                     Dim PACKAGING_TYPE As String = drSOTCART1.Item("PACKAGING_TYPE") & String.Empty
                     Dim PKG_CODE As String = drSOTCART1.Item("PKG_CODE") & String.Empty
-                    Dim drWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) ' LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
                     Dim shipPackageDetail As New PackageDetail
@@ -4259,26 +4267,6 @@ Public Class SOFSHIPE
             e.Row.Cells("REFERENCE2").Value = e.Row.Cells("CART_NO").Value & String.Empty
         End If
 
-        Dim rowWHTPKGM1 As DataRow = Nothing
-        Dim PKG_CODE As String = e.Row.Cells("PKG_CODE").Value & String.Empty
-        Dim PACKAGING_TYPE As String = e.Row.Cells("PACKAGING_TYPE").Value & String.Empty
-
-        If PACKAGING_TYPE = defaultPACKAGING_TYPE Then
-            If dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) Is Nothing Then
-                MessageBox.Show("Invalid Package Code for Package Type ", "Update", MessageBoxButtons.OK)
-                e.Cancel = True
-                Exit Sub
-            End If
-        End If
-
-        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE & "' AND PKG_CODE <> 'OTHER'").Length > 0 Then
-            rowWHTPKGM1 = dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE & "'")(0)
-            e.Row.Cells("PKG_L").Value = rowWHTPKGM1.Item("PKG_L")
-            e.Row.Cells("PKG_W").Value = rowWHTPKGM1.Item("PKG_W")
-            e.Row.Cells("PKG_H").Value = rowWHTPKGM1.Item("PKG_H")
-            Exit Sub
-        End If
-
         ' Sort the values by length, width, height
         Dim PKG_L As Decimal = Val(e.Row.Cells("PKG_L").Value & String.Empty)
         Dim PKG_W As Decimal = Val(e.Row.Cells("PKG_W").Value & String.Empty)
@@ -4307,78 +4295,28 @@ Public Class SOFSHIPE
 
     Private Sub grdSOTCART1_AfterCellUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdSOTCART1.AfterCellUpdate
 
-        Dim displayBoxAttributes As Boolean = False
         Static UpdatingDimensions As Boolean = False
-
         If UpdatingDimensions = True Then Exit Sub
-
-        For Each row As Infragistics.Win.UltraWinGrid.UltraGridRow In grdSOTCART1.Rows
-            If row.Cells("PKG_CODE").Text = defaultPKG_CODE Then
-                displayBoxAttributes = True
-                Exit For
-            End If
-        Next
 
         UpdatingDimensions = True
 
-        If displayBoxAttributes OrElse ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" Then
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = False
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = False
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = False
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = False
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = False
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = False
 
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").CellActivation = UltraWinGrid.Activation.AllowEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").CellActivation = UltraWinGrid.Activation.AllowEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").CellActivation = UltraWinGrid.Activation.AllowEdit
-        Else
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = True
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = True
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = True
-
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").CellActivation = UltraWinGrid.Activation.NoEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").CellActivation = UltraWinGrid.Activation.NoEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").CellActivation = UltraWinGrid.Activation.NoEdit
-        End If
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").CellActivation = UltraWinGrid.Activation.AllowEdit
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").CellActivation = UltraWinGrid.Activation.AllowEdit
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").CellActivation = UltraWinGrid.Activation.AllowEdit
 
         If e.Cell.Column.Key = "PKG_CODE" Then
             Try
-                If dst.Tables("WHTPKGM1").Columns.Contains("PKG_CODE") Then
-                    Dim PKG_CODE As String = e.Cell.Value & String.Empty
-                    If PKG_CODE.Length > 0 Then
+                Dim PKG_L As Decimal = Val(ultraComboPackage.SelectedRow.Cells("PKG_L").Value & String.Empty)
+                Dim PKG_W As Decimal = Val(ultraComboPackage.SelectedRow.Cells("PKG_W").Value & String.Empty)
+                Dim PKG_H As Decimal = Val(ultraComboPackage.SelectedRow.Cells("PKG_H").Value & String.Empty)
 
-                        ' See if someone else create the package since opening the screen
-                        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'").Length = 0 Then
-                            Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
-                            ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
-                        End If
-
-                        ' Now look for it, if it does not exist then let the user create it
-                        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'").Length > 0 Then
-                            Dim rowWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'")(0)
-                            e.Cell.Row.Cells("PACKAGING_TYPE").Value = defaultPACKAGING_TYPE
-                            e.Cell.Row.Cells("PKG_CODE").Value = rowWHTPKGM1.Item("PKG_CODE")
-                            e.Cell.Row.Cells("PKG_L").Value = rowWHTPKGM1.Item("PKG_L")
-                            e.Cell.Row.Cells("PKG_W").Value = rowWHTPKGM1.Item("PKG_W")
-                            e.Cell.Row.Cells("PKG_H").Value = rowWHTPKGM1.Item("PKG_H")
-                        Else
-                            'Using frmWHFPKGM1 As New TAC.WHFPKGM1
-                            '    frmWHFPKGM1.PKG_BOX_UPC = PKG_CODE
-                            '    frmWHFPKGM1.ShowDialog()
-                            '    If frmWHFPKGM1.Updated Then
-                            '        Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
-                            '        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
-                            '        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'").Length > 0 Then
-                            '            Dim rowWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Select("PKG_BOX_UPC = '" & PKG_CODE.Replace("'", "''") & "'")(0)
-                            '            e.Cell.Row.Cells("PACKAGING_TYPE").Value = defaultPACKAGING_TYPE
-                            '            e.Cell.Row.Cells("PKG_CODE").Value = rowWHTPKGM1.Item("PKG_CODE")
-                            '            e.Cell.Row.Cells("PKG_L").Value = rowWHTPKGM1.Item("PKG_L")
-                            '            e.Cell.Row.Cells("PKG_W").Value = rowWHTPKGM1.Item("PKG_W")
-                            '            e.Cell.Row.Cells("PKG_H").Value = rowWHTPKGM1.Item("PKG_H")
-                            '        End If
-                            '    End If
-                            'End Using
-                        End If
-                    End If
-                End If
+                e.Cell.Row.Cells("PKG_L").Value = PKG_L
+                e.Cell.Row.Cells("PKG_W").Value = PKG_W
+                e.Cell.Row.Cells("PKG_H").Value = PKG_H
             Catch ex As Exception
             End Try
         End If

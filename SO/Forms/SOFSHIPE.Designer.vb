@@ -340,6 +340,7 @@ Partial Class SOFSHIPE
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -652,7 +653,7 @@ Partial Class SOFSHIPE
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTTRCK1X)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(918, 575)
         '
@@ -755,7 +756,7 @@ Partial Class SOFSHIPE
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splTotes)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(918, 575)
         '
@@ -1682,6 +1683,7 @@ Partial Class SOFSHIPE
         'grpHeader
         '
         Me.grpHeader.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rounded
+        Me.grpHeader.Controls.Add(Me.UltraLabel7)
         Me.grpHeader.Controls.Add(Me.numOrderFreight)
         Me.grpHeader.Controls.Add(Me.UltraLabel6)
         Me.grpHeader.Controls.Add(Me.txtSHIP_VIA_DESC)
@@ -1919,6 +1921,15 @@ Partial Class SOFSHIPE
         'Timer1
         '
         '
+        'UltraLabel7
+        '
+        Me.UltraLabel7.AutoSize = True
+        Me.UltraLabel7.Location = New System.Drawing.Point(728, 62)
+        Me.UltraLabel7.Name = "UltraLabel7"
+        Me.UltraLabel7.Size = New System.Drawing.Size(67, 18)
+        Me.UltraLabel7.TabIndex = 167
+        Me.UltraLabel7.Text = "Order Frt"
+        '
         'SOFSHIPE
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -2038,4 +2049,5 @@ Partial Class SOFSHIPE
     Friend WithEvents splCartons As SplitContainer
     Friend WithEvents grdSOTCART2 As UltraWinGrid.UltraGrid
     Friend WithEvents numOrderFreight As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraLabel7 As Misc.UltraLabel
 End Class
