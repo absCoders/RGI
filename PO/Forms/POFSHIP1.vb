@@ -72,6 +72,7 @@ Public Class POFSHIP1
     Dim eMsg_Booking As String
     Dim POTVBKG2_RECORDS As Boolean = False
     Dim Shipment_Invoiced As Boolean = False
+    Dim COST_CATGY_CODE_T As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -9447,33 +9448,81 @@ Public Class POFSHIP1
                         End If
 
                         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
-                            ' CHECK NEW FILE POTTRFF1 AND ADD TO Duty Rate 
-                            Dim POTTRFF1_DATE As String = ""
-                            ASCMAIN1.sql = "Select * from POTTRFF1" & vbCrLf _
-                                   & " WHERE COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'"
-                            Dim rowPOTTRFF1 As DataRow = ASCDATA1.GetDataRow
 
-                            If rowPOTTRFF1 Is Nothing Then
+                            ' USE NEW ROB FILE ICTTARF1 & ICTTARF2
+                            Dim POTTRFF1_DATE As String = ""
+                            Dim TARIFF_DATE_START_SHP_REC As String = ""
+                            ASCMAIN1.sql = "Select * from ICTTARF1" & vbCrLf _
+                                   & " WHERE COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'"
+                            Dim rowICTTARF1 As DataRow = ASCDATA1.GetDataRow
+                            If rowICTTARF1 IsNot Nothing Then
+                                If rowICTTARF1.Item("TARIFF_ACTIVE") & "" = "1" Then
+
+                                    ASCMAIN1.sql = "Select * from ICTTARF2" & vbCrLf _
+                                           & " WHERE COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'"
+                                    For Each rowICTTARF2 As DataRow In ASCDATA1.GetDataTable.Select("")
+                                        If rowICTTARF2.Item("TARIFF_DATE_TO_USE") & "" = "S" Then
+                                            TARIFF_DATE_START_SHP_REC = rowPOTSHIP1.Item("PO_DATE_SHIPPED") & ""
+                                        ElseIf rowICTTARF2.Item("TARIFF_DATE_TO_USE") & "" = "R" Then
+                                            TARIFF_DATE_START_SHP_REC = rowPOTSHIP2.Item("PO_DATE_RECEIVED") & ""
+                                        End If
+                                        ' CHECK START DATE AND END DATE TO SEE APPLICABLE TARIFF
+                                        If TARIFF_DATE_START_SHP_REC <> "" And rowICTTARF2.Item("TARIFF_START") & "" <> "" Then
+                                            If DateValue(rowICTTARF2.Item("TARIFF_START") & "") <= DateValue(TARIFF_DATE_START_SHP_REC) Then
+                                                Dim GOODT As String = ""
+                                                If rowICTTARF2.Item("TARIFF_END") & "" = "" Then
+                                                    GOODT = "Y"
+                                                ElseIf DateValue(rowICTTARF2.Item("TARIFF_END") & "") >= DateValue(TARIFF_DATE_START_SHP_REC) Then
+                                                    GOODT = "Y"
+                                                Else
+                                                    GOODT = ""
+                                                End If
+                                                If GOODT = "Y" Then
+                                                    Dim DUTY_RATE_ICTTARF2 As Decimal = Val(rowICTTARF2.Item("TARIFF_PCT") & "")
+                                                    DUTY_RATE += DUTY_RATE_ICTTARF2
+                                                    TARIFF_2 = DUTY_RATE_ICTTARF2
+                                                    Exit For
+                                                End If
+
+                                            End If
+                                        End If
+
+                                    Next
+
+                                End If
                                 '  Stop
                             Else
-                                If rowPOTTRFF1.Item("TARIFF_ACTIVE") & "" = "1" Then
-                                    ' check Dates 
-                                    Dim TARIFF_DATE_START_SHP_REC As String = ""
-                                    If rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "S" Then
-                                        TARIFF_DATE_START_SHP_REC = rowPOTSHIP1.Item("PO_DATE_SHIPPED") & ""
-                                    ElseIf rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "R" Then
-                                        TARIFF_DATE_START_SHP_REC = rowPOTSHIP2.Item("PO_DATE_RECEIVED") & ""
-                                    End If
-                                    If TARIFF_DATE_START_SHP_REC <> "" And rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <> "" Then
-                                        If rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <= DateValue(TARIFF_DATE_START_SHP_REC) Then
-                                            Dim DUTY_RATE_POTTRFF1 As Decimal = Val(rowPOTTRFF1.Item("TARIFF_PERC") & "")
-                                            DUTY_RATE += DUTY_RATE_POTTRFF1
-                                            TARIFF_2 = DUTY_RATE_POTTRFF1
-                                        End If
-                                    End If
-                                End If
-
+                                ' no record in ICTTARF1
                             End If
+
+                            ' OLD
+                            ' CHECK NEW FILE POTTRFF1 AND ADD TO Duty Rate 
+                            '''Dim POTTRFF1_DATE As String = ""
+                            '''ASCMAIN1.sql = "Select * from POTTRFF1" & vbCrLf _
+                            '''       & " WHERE COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'"
+                            '''Dim rowPOTTRFF1 As DataRow = ASCDATA1.GetDataRow
+
+                            '''If rowPOTTRFF1 Is Nothing Then
+                            '''    '  Stop
+                            '''Else
+                            '''    If rowPOTTRFF1.Item("TARIFF_ACTIVE") & "" = "1" Then
+                            '''        ' check Dates 
+                            '''        Dim TARIFF_DATE_START_SHP_REC As String = ""
+                            '''        If rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "S" Then
+                            '''            TARIFF_DATE_START_SHP_REC = rowPOTSHIP1.Item("PO_DATE_SHIPPED") & ""
+                            '''        ElseIf rowPOTTRFF1.Item("TARIFF_DATE_FIELD") & "" = "R" Then
+                            '''            TARIFF_DATE_START_SHP_REC = rowPOTSHIP2.Item("PO_DATE_RECEIVED") & ""
+                            '''        End If
+                            '''        If TARIFF_DATE_START_SHP_REC <> "" And rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <> "" Then
+                            '''            If rowPOTTRFF1.Item("TARIFF_DATE_START") & "" <= DateValue(TARIFF_DATE_START_SHP_REC) Then
+                            '''                Dim DUTY_RATE_POTTRFF1 As Decimal = Val(rowPOTTRFF1.Item("TARIFF_PERC") & "")
+                            '''                DUTY_RATE += DUTY_RATE_POTTRFF1
+                            '''                TARIFF_2 = DUTY_RATE_POTTRFF1
+                            '''            End If
+                            '''        End If
+                            '''    End If
+
+                            '''End If
                         End If
 
                         rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE
@@ -10731,6 +10780,17 @@ Public Class POFSHIP1
 
     Private Sub grdPOTSHIP5_AfterRowsDeleted(sender As Object, e As System.EventArgs) Handles grdPOTSHIP5.AfterRowsDeleted
         If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            If COST_CATGY_CODE_T = True Then
+                For Each rowPOTSHIP1 As DataRow In dst.Tables("POTSHIP1").Select("")
+                    rowPOTSHIP1.Item("TARIFF_PCT") = 0
+                    rowPOTSHIP1.Item("TARIFF_PCT_LAST_DATE") = DATETIME_STAMP
+                    rowPOTSHIP1.Item("TARIFF_PCT_LAST_OPER") = ASCMAIN1.USER_ID
+                Next
+                numPlusDuty.Value = 0
+
+            End If
+            Set_Landed_Cost_Needs_to_be_Calculated_Indicator(False)
+            COST_CATGY_CODE_T = False
         Else
             Calculate_Landed_Cost()
         End If
@@ -10745,9 +10805,20 @@ Public Class POFSHIP1
     End Sub
 
     Private Sub grdPOTSHIP5_BeforeRowsDeleted(sender As Object, e As Infragistics.Win.UltraWinGrid.BeforeRowsDeletedEventArgs) Handles grdPOTSHIP5.BeforeRowsDeleted
+        COST_CATGY_CODE_T = False
         For Each grow As UltraWinGrid.UltraGridRow In e.Rows
             If grow.Cells("CTL_NO").Value & "" <> "" Then
                 e.Cancel = True
+            End If
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                If Not grow.IsAddRow Then
+                    Dim COST_CATGY_CODE As String = grow.Cells(2).Text
+                    If COST_CATGY_CODE = "TARIFF" Then
+                        COST_CATGY_CODE_T = True
+                    Else
+                        COST_CATGY_CODE_T = False
+                    End If
+                End If
             End If
         Next
     End Sub
@@ -15466,6 +15537,11 @@ Public Class POFSHIP1
             rowPOTSHIP5.Item("PO_SHIPMENT_LNO") = Val(dst.Tables("POTSHIP5").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
             rowPOTSHIP5.Item("COST_CATGY_CODE") = "TARIFF"
             rowPOTSHIP5.Item("COST_CATGY_DESC") = "Tariff (Additional Duty)"
+            '''If chkNoDuty.Checked Then
+            '''    rowPOTSHIP5.Item("LANDING_COST_DIST") = "M"
+            '''Else
+            '''    rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
+            '''End If
             rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
             dst.Tables("POTSHIP5").Rows.Add(rowPOTSHIP5)
         Else
