@@ -34,6 +34,7 @@ Partial Class SOFSHIPE
         Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem8 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance97 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance98 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance99 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -184,6 +185,8 @@ Partial Class SOFSHIPE
         Dim UltraGridColumn128 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_UPC")
         Dim UltraGridColumn98 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_QTY_SCAN")
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_WEIGHT")
+        Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_WEIGHT_TOT")
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance51 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -297,6 +300,7 @@ Partial Class SOFSHIPE
         Dim UltraTab11 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkUseAverageDeliveryDays = New ABSCS.ABSCheckBox()
         Me.txtLaserPrinter = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.btnLaserPrinter = New Infragistics.Win.Misc.UltraButton()
         Me.UltraLabel18 = New Infragistics.Win.Misc.UltraLabel()
@@ -306,6 +310,8 @@ Partial Class SOFSHIPE
         Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtLabelPrinter = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.txtCUST_UPC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTTRCK1X = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -321,6 +327,10 @@ Partial Class SOFSHIPE
         Me.grdSOTCART1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTCART2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grpHeader = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.dteSHIP_DATE_SHIPPED = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.UltraLabel8 = New Infragistics.Win.Misc.UltraLabel()
+        Me.numAVG_DELIVERY_DAYS = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
         Me.numOrderFreight = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSHIP_VIA_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -340,7 +350,6 @@ Partial Class SOFSHIPE
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -353,9 +362,12 @@ Partial Class SOFSHIPE
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox2.SuspendLayout()
+        CType(Me.chkUseAverageDeliveryDays, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtLaserPrinter, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPickNo, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtLabelPrinter, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        CType(Me.txtCUST_UPC, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.grdSOTTRCK1X, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl2.SuspendLayout()
@@ -387,6 +399,8 @@ Partial Class SOFSHIPE
         CType(Me.grdSOTCART2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpHeader, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpHeader.SuspendLayout()
+        CType(Me.dteSHIP_DATE_SHIPPED, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.numAVG_DELIVERY_DAYS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.numOrderFreight, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSHIP_VIA_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSHIP_VIA_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -408,6 +422,7 @@ Partial Class SOFSHIPE
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         UltraExplorerBarItem1.Key = "Cancel"
         UltraExplorerBarItem1.Text = "Done"
         UltraExplorerBarItem5.Key = "Refresh"
@@ -426,10 +441,14 @@ Partial Class SOFSHIPE
         UltraExplorerBarGroup3.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem7, UltraExplorerBarItem8})
         UltraExplorerBarGroup3.Text = "Validate Address"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 179
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 206
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Devices"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
+        UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl2
+        UltraExplorerBarGroup4.Settings.ContainerHeight = 55
+        UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup4.Text = "Scan Item"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup2, UltraExplorerBarGroup4})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -520,11 +539,12 @@ Partial Class SOFSHIPE
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.UltraGroupBox2)
         Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 288)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 179)
+        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 206)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.chkUseAverageDeliveryDays)
         Me.UltraGroupBox2.Controls.Add(Me.txtLaserPrinter)
         Me.UltraGroupBox2.Controls.Add(Me.btnLaserPrinter)
         Me.UltraGroupBox2.Controls.Add(Me.UltraLabel18)
@@ -537,8 +557,20 @@ Partial Class SOFSHIPE
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 179)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(189, 206)
         Me.UltraGroupBox2.TabIndex = 0
+        '
+        'chkUseAverageDeliveryDays
+        '
+        Me.chkUseAverageDeliveryDays.ABSChecked = "1"
+        Me.chkUseAverageDeliveryDays.Checked = True
+        Me.chkUseAverageDeliveryDays.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkUseAverageDeliveryDays.Location = New System.Drawing.Point(7, 178)
+        Me.chkUseAverageDeliveryDays.Name = "chkUseAverageDeliveryDays"
+        Me.chkUseAverageDeliveryDays.Size = New System.Drawing.Size(182, 19)
+        Me.chkUseAverageDeliveryDays.TabIndex = 197
+        Me.chkUseAverageDeliveryDays.TabStop = False
+        Me.chkUseAverageDeliveryDays.Text = "Use Avg Delivery Days"
         '
         'txtLaserPrinter
         '
@@ -650,10 +682,28 @@ Partial Class SOFSHIPE
         Me.UltraLabel4.TabIndex = 154
         Me.UltraLabel4.Text = "Label Printer (4 x 6)"
         '
+        'UltraExplorerBarContainerControl2
+        '
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.txtCUST_UPC)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 538)
+        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 55)
+        Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        '
+        'txtCUST_UPC
+        '
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_UPC, False)
+        Me.Absx1.SetABSColumnName(Me.txtCUST_UPC, "CUST_UPC")
+        Me.txtCUST_UPC.Location = New System.Drawing.Point(7, 15)
+        Me.txtCUST_UPC.Name = "txtCUST_UPC"
+        Me.txtCUST_UPC.Size = New System.Drawing.Size(174, 25)
+        Me.txtCUST_UPC.TabIndex = 1
+        Me.txtCUST_UPC.TabStop = False
+        '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTTRCK1X)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(918, 575)
         '
@@ -756,7 +806,7 @@ Partial Class SOFSHIPE
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splTotes)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(918, 575)
         '
@@ -776,7 +826,7 @@ Partial Class SOFSHIPE
         '
         Me.splTotes.Panel2.Controls.Add(Me.splDetails)
         Me.splTotes.Size = New System.Drawing.Size(918, 575)
-        Me.splTotes.SplitterDistance = 421
+        Me.splTotes.SplitterDistance = 294
         Me.splTotes.TabIndex = 16
         '
         'splToteRecords
@@ -793,7 +843,7 @@ Partial Class SOFSHIPE
         'splToteRecords.Panel2
         '
         Me.splToteRecords.Panel2.Controls.Add(Me.grdSOTORDR5)
-        Me.splToteRecords.Size = New System.Drawing.Size(918, 421)
+        Me.splToteRecords.Size = New System.Drawing.Size(918, 294)
         Me.splToteRecords.SplitterDistance = 558
         Me.splToteRecords.TabIndex = 15
         '
@@ -979,7 +1029,7 @@ Partial Class SOFSHIPE
         Me.grdSOTPICK1X.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK1X.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK1X.Name = "grdSOTPICK1X"
-        Me.grdSOTPICK1X.Size = New System.Drawing.Size(558, 421)
+        Me.grdSOTPICK1X.Size = New System.Drawing.Size(558, 294)
         Me.grdSOTPICK1X.TabIndex = 14
         Me.grdSOTPICK1X.Text = "Totes to be processed"
         '
@@ -1092,7 +1142,7 @@ Partial Class SOFSHIPE
         Me.grdSOTORDR5.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTORDR5.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR5.Name = "grdSOTORDR5"
-        Me.grdSOTORDR5.Size = New System.Drawing.Size(356, 421)
+        Me.grdSOTORDR5.Size = New System.Drawing.Size(356, 294)
         Me.grdSOTORDR5.TabIndex = 18
         '
         'splDetails
@@ -1109,8 +1159,8 @@ Partial Class SOFSHIPE
         'splDetails.Panel2
         '
         Me.splDetails.Panel2.Controls.Add(Me.splCartons)
-        Me.splDetails.Size = New System.Drawing.Size(918, 150)
-        Me.splDetails.SplitterDistance = 74
+        Me.splDetails.Size = New System.Drawing.Size(918, 277)
+        Me.splDetails.SplitterDistance = 136
         Me.splDetails.TabIndex = 1
         '
         'splDetailsRates
@@ -1127,7 +1177,7 @@ Partial Class SOFSHIPE
         'splDetailsRates.Panel2
         '
         Me.splDetailsRates.Panel2.Controls.Add(Me.grdWHTSHPC4)
-        Me.splDetailsRates.Size = New System.Drawing.Size(918, 74)
+        Me.splDetailsRates.Size = New System.Drawing.Size(918, 136)
         Me.splDetailsRates.SplitterDistance = 694
         Me.splDetailsRates.TabIndex = 0
         '
@@ -1155,29 +1205,29 @@ Partial Class SOFSHIPE
         UltraGridColumn86.CellAppearance = Appearance45
         UltraGridColumn86.Format = "#,##0"
         UltraGridColumn86.Header.Caption = "Conf Qty"
-        UltraGridColumn86.Header.VisiblePosition = 6
+        UltraGridColumn86.Header.VisiblePosition = 7
         UltraGridColumn86.Width = 75
         Appearance46.BackColor = System.Drawing.Color.LightPink
         UltraGridColumn88.CellAppearance = Appearance46
         UltraGridColumn88.Format = "#,##0"
         UltraGridColumn88.Header.Caption = "Canc Qty"
-        UltraGridColumn88.Header.VisiblePosition = 12
+        UltraGridColumn88.Header.VisiblePosition = 13
         UltraGridColumn88.Width = 79
         Appearance47.BackColor = System.Drawing.Color.LightPink
         UltraGridColumn89.CellAppearance = Appearance47
         UltraGridColumn89.Format = "#,##0"
         UltraGridColumn89.Header.Caption = "Back Qty"
-        UltraGridColumn89.Header.VisiblePosition = 13
+        UltraGridColumn89.Header.VisiblePosition = 14
         UltraGridColumn89.Width = 85
-        UltraGridColumn90.Header.VisiblePosition = 7
+        UltraGridColumn90.Header.VisiblePosition = 8
         UltraGridColumn90.Hidden = True
-        UltraGridColumn91.Header.VisiblePosition = 8
+        UltraGridColumn91.Header.VisiblePosition = 9
         UltraGridColumn91.Hidden = True
-        UltraGridColumn92.Header.VisiblePosition = 9
+        UltraGridColumn92.Header.VisiblePosition = 10
         UltraGridColumn92.Hidden = True
-        UltraGridColumn93.Header.VisiblePosition = 10
+        UltraGridColumn93.Header.VisiblePosition = 11
         UltraGridColumn93.Hidden = True
-        UltraGridColumn94.Header.VisiblePosition = 11
+        UltraGridColumn94.Header.VisiblePosition = 12
         UltraGridColumn94.Hidden = True
         UltraGridColumn125.Header.Caption = "Style"
         UltraGridColumn125.Header.VisiblePosition = 15
@@ -1194,9 +1244,17 @@ Partial Class SOFSHIPE
         UltraGridColumn98.CellAppearance = Appearance48
         UltraGridColumn98.Format = "#,##0"
         UltraGridColumn98.Header.Caption = "Scan Qty"
-        UltraGridColumn98.Header.VisiblePosition = 14
+        UltraGridColumn98.Header.VisiblePosition = 6
         UltraGridColumn98.Width = 73
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn85, UltraGridColumn86, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn125, UltraGridColumn126, UltraGridColumn127, UltraGridColumn128, UltraGridColumn98})
+        UltraGridColumn4.Format = "###0.000"
+        UltraGridColumn4.Header.Caption = "Unit Wgt"
+        UltraGridColumn4.Header.VisiblePosition = 18
+        UltraGridColumn4.Width = 72
+        UltraGridColumn5.Format = "#,##0.000"
+        UltraGridColumn5.Header.Caption = "Line Wgt"
+        UltraGridColumn5.Header.VisiblePosition = 19
+        UltraGridColumn5.Width = 72
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn85, UltraGridColumn86, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn125, UltraGridColumn126, UltraGridColumn127, UltraGridColumn128, UltraGridColumn98, UltraGridColumn4, UltraGridColumn5})
         Me.grdSOTPICK2.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdSOTPICK2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance49.TextHAlignAsString = "Left"
@@ -1261,7 +1319,7 @@ Partial Class SOFSHIPE
         Me.grdSOTPICK2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTPICK2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTPICK2.Name = "grdSOTPICK2"
-        Me.grdSOTPICK2.Size = New System.Drawing.Size(694, 74)
+        Me.grdSOTPICK2.Size = New System.Drawing.Size(694, 136)
         Me.grdSOTPICK2.TabIndex = 13
         Me.grdSOTPICK2.Text = "Pick Ticket Details"
         '
@@ -1273,10 +1331,11 @@ Partial Class SOFSHIPE
         UltraGridColumn101.Header.Caption = "Service Type Desc"
         UltraGridColumn101.Header.VisiblePosition = 3
         UltraGridColumn101.Width = 171
-        UltraGridColumn106.Header.Caption = "Transit Time"
+        UltraGridColumn106.Header.Caption = "Est. Transit Days"
         UltraGridColumn106.Header.VisiblePosition = 5
         UltraGridColumn107.Header.Caption = "Delivery Time"
         UltraGridColumn107.Header.VisiblePosition = 6
+        UltraGridColumn107.Hidden = True
         UltraGridColumn108.Format = "#,##0.00"
         UltraGridColumn108.Header.Caption = "Surcharge"
         UltraGridColumn108.Header.VisiblePosition = 7
@@ -1284,6 +1343,7 @@ Partial Class SOFSHIPE
         UltraGridColumn109.Format = "#,##0.00"
         UltraGridColumn109.Header.Caption = "Negotiated Rate"
         UltraGridColumn109.Header.VisiblePosition = 2
+        UltraGridColumn109.Hidden = True
         UltraGridColumn110.Format = "#,##0.00"
         UltraGridColumn110.Header.Caption = "List Rate"
         UltraGridColumn110.Header.VisiblePosition = 8
@@ -1298,9 +1358,8 @@ Partial Class SOFSHIPE
         UltraGridColumn114.Header.VisiblePosition = 12
         UltraGridColumn114.Hidden = True
         UltraGridColumn115.Format = "#,##0.00"
-        UltraGridColumn115.Header.Caption = "Customer Freight"
+        UltraGridColumn115.Header.Caption = "Freight Cost"
         UltraGridColumn115.Header.VisiblePosition = 4
-        UltraGridColumn115.Hidden = True
         UltraGridColumn115.Width = 152
         UltraGridColumn116.Header.VisiblePosition = 13
         UltraGridColumn116.Hidden = True
@@ -1375,7 +1434,7 @@ Partial Class SOFSHIPE
         Me.grdWHTSHPC4.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdWHTSHPC4.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTSHPC4.Name = "grdWHTSHPC4"
-        Me.grdWHTSHPC4.Size = New System.Drawing.Size(220, 74)
+        Me.grdWHTSHPC4.Size = New System.Drawing.Size(220, 136)
         Me.grdWHTSHPC4.TabIndex = 17
         Me.grdWHTSHPC4.Text = "Double-Click a Carrier Shipping Rate to update the order's Shipping Method"
         '
@@ -1393,7 +1452,7 @@ Partial Class SOFSHIPE
         'splCartons.Panel2
         '
         Me.splCartons.Panel2.Controls.Add(Me.grdSOTCART2)
-        Me.splCartons.Size = New System.Drawing.Size(918, 72)
+        Me.splCartons.Size = New System.Drawing.Size(918, 137)
         Me.splCartons.SplitterDistance = 793
         Me.splCartons.TabIndex = 18
         '
@@ -1565,7 +1624,7 @@ Partial Class SOFSHIPE
         Me.grdSOTCART1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART1.Name = "grdSOTCART1"
-        Me.grdSOTCART1.Size = New System.Drawing.Size(793, 72)
+        Me.grdSOTCART1.Size = New System.Drawing.Size(793, 137)
         Me.grdSOTCART1.TabIndex = 17
         Me.grdSOTCART1.Text = "Cartons"
         '
@@ -1676,13 +1735,16 @@ Partial Class SOFSHIPE
         Me.grdSOTCART2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdSOTCART2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTCART2.Name = "grdSOTCART2"
-        Me.grdSOTCART2.Size = New System.Drawing.Size(121, 72)
+        Me.grdSOTCART2.Size = New System.Drawing.Size(121, 137)
         Me.grdSOTCART2.TabIndex = 18
         Me.grdSOTCART2.Text = "Cartons"
         '
         'grpHeader
         '
         Me.grpHeader.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rounded
+        Me.grpHeader.Controls.Add(Me.dteSHIP_DATE_SHIPPED)
+        Me.grpHeader.Controls.Add(Me.UltraLabel8)
+        Me.grpHeader.Controls.Add(Me.numAVG_DELIVERY_DAYS)
         Me.grpHeader.Controls.Add(Me.UltraLabel7)
         Me.grpHeader.Controls.Add(Me.numOrderFreight)
         Me.grpHeader.Controls.Add(Me.UltraLabel6)
@@ -1705,6 +1767,48 @@ Partial Class SOFSHIPE
         Me.grpHeader.Size = New System.Drawing.Size(922, 109)
         Me.grpHeader.TabIndex = 14
         '
+        'dteSHIP_DATE_SHIPPED
+        '
+        Me.dteSHIP_DATE_SHIPPED.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
+        Me.dteSHIP_DATE_SHIPPED.Location = New System.Drawing.Point(728, 33)
+        Me.dteSHIP_DATE_SHIPPED.Name = "dteSHIP_DATE_SHIPPED"
+        Me.dteSHIP_DATE_SHIPPED.Size = New System.Drawing.Size(114, 25)
+        Me.dteSHIP_DATE_SHIPPED.TabIndex = 8
+        Me.dteSHIP_DATE_SHIPPED.Value = New Date(2007, 1, 27, 0, 0, 0, 0)
+        '
+        'UltraLabel8
+        '
+        Me.UltraLabel8.AutoSize = True
+        Me.UltraLabel8.Location = New System.Drawing.Point(728, 16)
+        Me.UltraLabel8.Name = "UltraLabel8"
+        Me.UltraLabel8.Size = New System.Drawing.Size(71, 18)
+        Me.UltraLabel8.TabIndex = 170
+        Me.UltraLabel8.Text = "Ship Date"
+        '
+        'numAVG_DELIVERY_DAYS
+        '
+        Me.Absx1.SetABSBindToTable(Me.numAVG_DELIVERY_DAYS, False)
+        Me.numAVG_DELIVERY_DAYS.FormatString = "#,##0"
+        Me.numAVG_DELIVERY_DAYS.Location = New System.Drawing.Point(806, 80)
+        Me.numAVG_DELIVERY_DAYS.MaxValue = New Decimal(New Integer() {10000, 0, 0, 0})
+        Me.numAVG_DELIVERY_DAYS.MinValue = New Decimal(New Integer() {0, 0, 0, 0})
+        Me.numAVG_DELIVERY_DAYS.Name = "numAVG_DELIVERY_DAYS"
+        Me.numAVG_DELIVERY_DAYS.NumericType = Infragistics.Win.UltraWinEditors.NumericType.[Double]
+        Me.numAVG_DELIVERY_DAYS.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numAVG_DELIVERY_DAYS.ReadOnly = True
+        Me.numAVG_DELIVERY_DAYS.Size = New System.Drawing.Size(36, 25)
+        Me.numAVG_DELIVERY_DAYS.TabIndex = 10
+        Me.numAVG_DELIVERY_DAYS.TabStop = False
+        '
+        'UltraLabel7
+        '
+        Me.UltraLabel7.AutoSize = True
+        Me.UltraLabel7.Location = New System.Drawing.Point(728, 62)
+        Me.UltraLabel7.Name = "UltraLabel7"
+        Me.UltraLabel7.Size = New System.Drawing.Size(67, 18)
+        Me.UltraLabel7.TabIndex = 167
+        Me.UltraLabel7.Text = "Order Frt"
+        '
         'numOrderFreight
         '
         Me.Absx1.SetABSBindToTable(Me.numOrderFreight, False)
@@ -1717,7 +1821,7 @@ Partial Class SOFSHIPE
         Me.numOrderFreight.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.numOrderFreight.ReadOnly = True
         Me.numOrderFreight.Size = New System.Drawing.Size(72, 25)
-        Me.numOrderFreight.TabIndex = 8
+        Me.numOrderFreight.TabIndex = 9
         Me.numOrderFreight.TabStop = False
         '
         'UltraLabel6
@@ -1921,15 +2025,6 @@ Partial Class SOFSHIPE
         'Timer1
         '
         '
-        'UltraLabel7
-        '
-        Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(728, 62)
-        Me.UltraLabel7.Name = "UltraLabel7"
-        Me.UltraLabel7.Size = New System.Drawing.Size(67, 18)
-        Me.UltraLabel7.TabIndex = 167
-        Me.UltraLabel7.Text = "Order Frt"
-        '
         'SOFSHIPE
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1950,9 +2045,13 @@ Partial Class SOFSHIPE
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         Me.UltraGroupBox2.PerformLayout()
+        CType(Me.chkUseAverageDeliveryDays, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtLaserPrinter, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPickNo, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtLabelPrinter, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        Me.UltraExplorerBarContainerControl2.PerformLayout()
+        CType(Me.txtCUST_UPC, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         CType(Me.grdSOTTRCK1X, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -1985,6 +2084,8 @@ Partial Class SOFSHIPE
         CType(Me.grpHeader, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpHeader.ResumeLayout(False)
         Me.grpHeader.PerformLayout()
+        CType(Me.dteSHIP_DATE_SHIPPED, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.numAVG_DELIVERY_DAYS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.numOrderFreight, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSHIP_VIA_DESC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSHIP_VIA_CODE, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2050,4 +2151,10 @@ Partial Class SOFSHIPE
     Friend WithEvents grdSOTCART2 As UltraWinGrid.UltraGrid
     Friend WithEvents numOrderFreight As UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel7 As Misc.UltraLabel
+    Friend WithEvents numAVG_DELIVERY_DAYS As UltraWinEditors.UltraNumericEditor
+    Friend WithEvents UltraExplorerBarContainerControl2 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents txtCUST_UPC As UltraWinEditors.UltraTextEditor
+    Friend WithEvents chkUseAverageDeliveryDays As ABSCS.ABSCheckBox
+    Friend WithEvents dteSHIP_DATE_SHIPPED As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents UltraLabel8 As Misc.UltraLabel
 End Class

@@ -138,7 +138,9 @@
     <Compile Include="Forms\TAFDASH1.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\TAFZPLT1.Designer.vb" />
+    <Compile Include="Forms\TAFZPLT1.Designer.vb">
+      <DependentUpon>TAFZPLT1.vb</DependentUpon>
+    </Compile>
     <Compile Include="Forms\TAFZPLT1.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -217,13 +219,21 @@
     <Compile Include="Tables\TATDASH1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Tables\TATZPLT1.Designer.vb">
+      <DependentUpon>TATZPLT1.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Tables\TATZPLT1.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\TAFDASH1.resx">
       <DependentUpon>TAFDASH1.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TAFZPLT1.resx" />
+    <EmbeddedResource Include="Forms\TAFZPLT1.resx">
+      <DependentUpon>TAFZPLT1.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="Reports\TARPEND0.resx">
       <SubType>Designer</SubType>
@@ -270,6 +280,9 @@
     <EmbeddedResource Include="Tables\TATDASH1.resx">
       <DependentUpon>TATDASH1.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tables\TATZPLT1.resx">
+      <DependentUpon>TATZPLT1.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
