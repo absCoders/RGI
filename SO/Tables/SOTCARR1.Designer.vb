@@ -95,6 +95,7 @@ Partial Class SOTCARR1
         Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_PROD_DESC")
         Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SERVICE_CODE")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TRACKING_ID_TYPE")
+        Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AVG_DELIVERY_DAYS")
         Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -108,9 +109,9 @@ Partial Class SOTCARR1
         Dim Appearance71 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance72 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueList3 As Infragistics.Win.ValueList = New Infragistics.Win.ValueList(118864891)
-        Dim ValueListItem9 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem10 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem22 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem28 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem29 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARRIER_CODE")
@@ -409,7 +410,7 @@ Partial Class SOTCARR1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdSOTCARR3)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(768, 196)
         '
@@ -594,7 +595,7 @@ Partial Class SOTCARR1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdSOTCARR2)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(768, 196)
         '
@@ -607,16 +608,40 @@ Partial Class SOTCARR1
         UltraGridColumn25.Hidden = True
         UltraGridColumn26.Header.Caption = "Product Code"
         UltraGridColumn26.Header.VisiblePosition = 1
+        UltraGridColumn26.RowLayoutColumnInfo.OriginX = 0
+        UltraGridColumn26.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn26.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn26.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn26.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.DropDownList
         UltraGridColumn27.Header.Caption = "Description"
         UltraGridColumn27.Header.VisiblePosition = 2
+        UltraGridColumn27.RowLayoutColumnInfo.OriginX = 2
+        UltraGridColumn27.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn27.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(280, 0)
+        UltraGridColumn27.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn27.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn44.Header.Caption = "Service Code"
         UltraGridColumn44.Header.VisiblePosition = 3
+        UltraGridColumn44.RowLayoutColumnInfo.OriginX = 4
+        UltraGridColumn44.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn44.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(152, 0)
+        UltraGridColumn44.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn44.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn4.Header.Caption = "Tracking ID"
         UltraGridColumn4.Header.VisiblePosition = 4
-        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn44, UltraGridColumn4})
+        UltraGridColumn4.RowLayoutColumnInfo.OriginX = 8
+        UltraGridColumn4.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn4.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn4.RowLayoutColumnInfo.SpanY = 2
+        UltraGridColumn52.Format = "#,##0"
+        UltraGridColumn52.Header.Caption = "Avg Days"
+        UltraGridColumn52.Header.VisiblePosition = 5
+        UltraGridColumn52.RowLayoutColumnInfo.OriginX = 6
+        UltraGridColumn52.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn52.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(90, 0)
+        UltraGridColumn52.RowLayoutColumnInfo.SpanX = 2
+        UltraGridColumn52.RowLayoutColumnInfo.SpanY = 2
+        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn44, UltraGridColumn4, UltraGridColumn52})
         UltraGridBand6.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         Me.grdSOTCARR2.DisplayLayout.BandsSerializer.Add(UltraGridBand6)
         Me.grdSOTCARR2.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -678,13 +703,13 @@ Partial Class SOTCARR1
         Me.grdSOTCARR2.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdSOTCARR2.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         ValueList3.Key = "CUST_COMMENT_KEY"
-        ValueListItem9.DataValue = "DEL"
-        ValueListItem9.DisplayText = "Digital Eye Lab"
-        ValueListItem10.DataValue = "BILLING"
-        ValueListItem10.DisplayText = "Billing"
-        ValueListItem22.DataValue = "SOE"
-        ValueListItem22.DisplayText = "Sales Order Entry"
-        ValueList3.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem9, ValueListItem10, ValueListItem22})
+        ValueListItem1.DataValue = "DEL"
+        ValueListItem1.DisplayText = "Digital Eye Lab"
+        ValueListItem28.DataValue = "BILLING"
+        ValueListItem28.DisplayText = "Billing"
+        ValueListItem29.DataValue = "SOE"
+        ValueListItem29.DisplayText = "Sales Order Entry"
+        ValueList3.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem28, ValueListItem29})
         Me.grdSOTCARR2.DisplayLayout.ValueLists.AddRange(New Infragistics.Win.ValueList() {ValueList3})
         Me.grdSOTCARR2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdSOTCARR2.Dock = System.Windows.Forms.DockStyle.Fill
