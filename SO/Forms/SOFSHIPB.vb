@@ -723,6 +723,9 @@ Public Class SOFSHIPB
             If ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "NYA" Then
                 sqlSOTPICK2 &= ", SOTORDR2.ORDR_PRICE_SOURCE, SOTORDR2.COMM_RATE, SOTORDR2.SET_QTY " & vbCrLf
             End If
+            If ASCMAIN1.CLIENT = "VAN" Then
+                sqlSOTPICK2 &= ", SOTORDR1.ORDR_CUST_PO " & vbCrLf
+            End If
 
             sqlSOTPICK2 &= " from SOTPICK2, SOTPICK1, SOTORDR1, SOTORDR2, SOTSHIP1, ICTSTYL1, ICTCOLR1, ICTSTYC1" & vbCrLf
             ASCMAIN1.sql = sqlSOTPICK2 & " where ROWNUM < 1" & vbCrLf
@@ -7192,7 +7195,7 @@ Public Class SOFSHIPB
             Load_Popup_Menu(grdSOTSHIPX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Set Appointment")
         End If
 
-        Load_Popup_Menu(grdSOTPICK1, "BBBSBB", "Select All", "De-Select All", "Propagate Value", "Hide Details", "Sales Order Inquiry", "Cancel Pick Ticket", "Cancel Customer/Ship To Pick Tickets", "Restore Pick Ticket", "Restore Customer/Ship To Pick Tickets")
+        Load_Popup_Menu(grdSOTPICK1, "BBBBSBB", "Show Filter", "Select All", "De-Select All", "Propagate Value", "Hide Details", "Sales Order Inquiry", "Cancel Pick Ticket", "Cancel Customer/Ship To Pick Tickets", "Restore Pick Ticket", "Restore Customer/Ship To Pick Tickets")
         Load_Popup_Menu(grdSOTPICK2, "BBS", "Show Filter", "Style Status Inquiry", "Permit Price Change")
 
         Load_Popup_Menu(grdSOTPICK2_SC, "BBSPBBB", "Show Filter", "Style Status Inquiry", "Permit Price Change", "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty", "Back Order Qty")
