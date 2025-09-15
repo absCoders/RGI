@@ -23,8 +23,6 @@
     ' These can be set to tables in a forms dataset
     Public tblSOTORDR1 As DataTable = Nothing
     Public tblSOTORDR2 As DataTable = Nothing
-    Public tblSOTORDRT As DataTable = Nothing
-
     Public tblSOTCART1 As DataTable = Nothing
 
     Private rowGLTPARM1 As DataRow
@@ -62,10 +60,6 @@
 
         If dst.Tables.Contains("SOTORDR2") Then
             tblSOTORDR2 = dst.Tables("SOTORDR2")
-        End If
-
-        If dst.Tables.Contains("SOTORDRT") Then
-            tblSOTORDRT = dst.Tables("SOTORDRT")
         End If
 
         If dst.Tables.Contains("SOTCART1") Then
@@ -152,7 +146,6 @@
 
         tblSOTORDR1 = Nothing
         tblSOTORDR2 = Nothing
-        tblSOTORDRT = Nothing
         tblSOTCART1 = Nothing
 
         ' 06/03/2025 - Rich request for Discontinued Items
@@ -483,29 +476,6 @@
                 End If
             Next
 
-            Dim INV_MISC_CHG_WDISC As Decimal = 0
-            If tblSOTORDRT IsNot Nothing Then
-                INV_MISC_CHG_WDISC = Val(tblSOTORDRT.Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_CHARGE_CODE = 'TDISC'") & String.Empty)
-                If INV_MISC_CHG_WDISC > 0 Then
-                    Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
-                    rowSOTINVHM.Item("INV_TYPE") = INV_TYPE
-                    rowSOTINVHM.Item("INV_NO") = INV_NO
-                    rowSOTINVHM.Item("INV_MNO") = Val(tblSOTINVHM.Compute("MAX(INV_MNO)", $"INV_TYPE = '{INV_TYPE}' AND INV_NO = '{INV_NO}'") & String.Empty) + 1
-                    rowSOTINVHM.Item("MISC_CHG_CODE") = "TDISC"
-                    rowSOTINVHM.Item("MISC_CHG_DESC") = "Total Web Discount"
-                    rowSOTINVHM.Item("MISC_CHG_NOTE") = ""
-                    INV_MISC_CHG_WDISC *= -1
-                    rowSOTINVHM.Item("INV_MISC_CHG") = INV_MISC_CHG_WDISC
-                    'rowSOTINVHM.Item("CTL_NO ") = ""
-                    'rowSOTINVHM.Item("PO_ORDER_NO") = ""
-                    'rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
-                    'rowSOTINVHM.Item("COUNTRY_CODE") = COUNTRY_CODE
-                    'rowSOTINVHM.Item("SURCHARGE_PERC") = SURCHARGE_PERC
-                    rowSOTINVHM.Item("MISC_CHARGE_TYPE") = "W"
-                    tblSOTINVHM.Rows.Add(rowSOTINVHM)
-                End If
-            End If
-
             INV_SALES = Math.Round(INV_SALES, 2)
 
             Dim tblSOTORDR9 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTORDR9 WHERE ORDR_NO = :PARM1", "", "V", New Object() {ORDR_NO})
@@ -584,7 +554,7 @@
                 End If
 
                 ' Miscellaneous Charges
-                .Item("INV_MISC_CHG") = INV_MISC_CHG_TARIFF + INV_MISC_CHG_WDISC
+                .Item("INV_MISC_CHG") = INV_MISC_CHG_TARIFF
                 If rowSOTPICK1.Table.Columns.Contains("INV_MISC_CHG") Then
                     .Item("INV_MISC_CHG") += Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty)
                 End If
