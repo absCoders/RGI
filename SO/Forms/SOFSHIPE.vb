@@ -270,6 +270,8 @@ Public Class SOFSHIPE
 
             Create_TDA(.Tables.Add, "SOTCART2", "*")
             .Tables("SOTCART2").Columns.Add("STYLE_DESC", GetType(System.String))
+            .Tables("SOTCART2").Columns.Add("STYLE_WEIGHT", GetType(System.Decimal))
+            .Tables("SOTCART2").Columns.Add("STYLE_WEIGHT_TOT", GetType(System.Decimal), "ISNULL(QTY_PACKED, 0) * ISNULL(STYLE_WEIGHT, 0)")
 
             Create_Relation("SOTCART1", "SOTCART2", "CART_NO")
 
@@ -522,7 +524,7 @@ Public Class SOFSHIPE
 
             Case "Request Rates"
                 Dim PICK_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("PICK_NO")
-                        RequestRates(PICK_NO)
+                RequestRates(PICK_NO)
 
             Case "FedEx"
                 Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("ORDR_NO")
@@ -940,6 +942,7 @@ Public Class SOFSHIPE
                     'drSOTCART2.Item("QTY_REL") = ""
                     'drSOTCART2.Item("P2L_INIT") = ""
                     drSOTCART2.Item("STYLE_DESC") = drSOTPICK2.Item("STYLE_DESC")
+                    drSOTCART2.Item("STYLE_WEIGHT") = drSOTPICK2.Item("STYLE_WEIGHT")
                     dst.Tables("SOTCART2").Rows.Add(drSOTCART2)
                 Next
             End If
@@ -1720,30 +1723,24 @@ Public Class SOFSHIPE
         'drSOTCART1.Item("MULTIPO_IND") = ""
         dst.Tables("SOTCART1").Rows.Add(drSOTCART1)
 
+        ' When a user changes the values in the Cartons we must clear the Rates
+        dst.Tables("WHTSHPC4").Rows.Clear()
+        CalculateCartonWeight()
+
         Return CART_NO
     End Function
 
     Private Sub CalculateCartonWeight()
 
-        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("")
+
+        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select()
+            Dim CART_NO As String = drSOTCART1.Item("CART_NO")
+
             drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = 0
             drSOTCART1.Item("CART_TOTAL_WGT_CALC") = 0
 
-            Dim PICK_NO As String = drSOTCART1.Item("PICK_NO") & ""
-            Dim CART_NO As String = drSOTCART1.Item("CART_NO") & String.Empty
-            Dim CART_TOTAL_WGT_ACTUAL As Decimal = 0
-
-            For Each drSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}'")
-                Dim ORDR_NO As String = drSOTCART2.Item("ORDR_NO") & String.Empty
-                Dim ORDR_LNO As Int16 = Val(drSOTCART2.Item("ORDR_LNO") & String.Empty)
-                Dim QTY_PACKED As Int16 = Val(drSOTCART2.Item("QTY_PACKED") & String.Empty)
-
-                For Each drSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}")
-                    CART_TOTAL_WGT_ACTUAL += Val(drSOTPICK2.Item("STYLE_WEIGHT_TOT") & "")
-                Next
-            Next
-            drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = CART_TOTAL_WGT_ACTUAL
-            drSOTCART1.Item("CART_TOTAL_WGT_CALC") = CART_TOTAL_WGT_ACTUAL
+            drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = Val(dst.Tables("SOTCART2").Compute("SUM(STYLE_WEIGHT_TOT)", $"CART_NO = '{CART_NO}'") & String.Empty)
+            drSOTCART1.Item("CART_TOTAL_WGT_CALC") = drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL")
         Next
 
     End Sub
@@ -1902,7 +1899,9 @@ Public Class SOFSHIPE
 
             ASCMAIN1.Progress("Request Carrier Rates")
 
+            ' When a user changes the values in the Cartons we must clear the Rates
             dst.Tables("WHTSHPC4").Rows.Clear()
+            CalculateCartonWeight()
 
             Dim rUPSList(1) As WHCSHIP1.RateList
             Dim rFEDEXList(1) As WHCSHIP1.RateList
@@ -4426,9 +4425,8 @@ Public Class SOFSHIPE
 #Region "grdSOTCART1, grdSOTCART2"
 
     Private Sub grdSOTCART1_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowsDeleted
-        ' When a user changes the vales in the Cartons we must clear the Rates
+        ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
-
         CalculateCartonWeight()
     End Sub
 
@@ -4535,7 +4533,7 @@ Public Class SOFSHIPE
     End Sub
 
     Private Sub grdSOTCART1_AfterRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdSOTCART1.AfterRowUpdate
-        ' When a user changes the vales in the Cartons we must clear the Rates
+        ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
         CalculateCartonWeight()
     End Sub
@@ -4630,11 +4628,62 @@ Public Class SOFSHIPE
                     End If
 
                     EnforceConstraints(False)
+                    ' if the Pick Qty Conf is more than 0, we need to ask the user if the quantity needs to bw split overt multiple packages
                     Dim drSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find({CART_NO_SOURCE, CART_NO_LNO_SOURCE})
+                    Dim split As Boolean = False
+                    Dim splitQtyPacked As Int32 = 0
+                    Dim qtyPacked As Int32 = 0
+
                     If drSOTCART2 IsNot Nothing Then
-                        drSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
-                        drSOTCART2.Item("CART_NO") = CART_NO_TARGET
+                        Dim ORDR_NO As String = drSOTCART2.Item("ORDR_NO")
+                        Dim ORDR_LNO As String = Val(drSOTCART2.Item("ORDR_LNO") & String.Empty)
+                        qtyPacked = Val(drSOTCART2.Item("QTY_PACKED") & String.Empty)
+
+                        If qtyPacked > 1 Then
+                            splitQtyPacked = Val(InputBox("How many units do you want to transfer to the carton?", qtyPacked, qtyPacked) & String.Empty)
+                            Select Case splitQtyPacked
+                                Case <= 0
+                                    Exit Sub
+                                Case qtyPacked
+                                    ' Do nothing - everything is getting transfered
+                                Case > qtyPacked
+                                    Exit Sub
+                                Case Else
+                                    split = True
+                            End Select
+                        End If
+
+                        If Not split Then
+                            ' See if we already have this Ordr, ordrLno in the carton
+                            If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}").Length > 0 Then
+                                Dim row As DataRow = dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}")(0)
+                                row.Item("QTY_PACKED") = Val(row.Item("QTY_PACKED") & String.Empty) + qtyPacked
+                                drSOTCART2.Delete()
+                            Else
+                                drSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
+                                drSOTCART2.Item("CART_NO") = CART_NO_TARGET
+                            End If
+                        Else
+                            Dim leftInCarton As Int32 = qtyPacked - splitQtyPacked
+                            If leftInCarton > 0 Then
+                                If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}").Length > 0 Then
+                                    Dim row As DataRow = dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}")(0)
+                                    row.Item("QTY_PACKED") = Val(row.Item("QTY_PACKED") & String.Empty) + splitQtyPacked
+                                    'drSOTCART2.Delete()
+                                Else
+                                    drSOTCART2.Item("QTY_PACKED") = leftInCarton
+                                    Dim drdrSOTCART2new As DataRow = dst.Tables("SOTCART2").NewRow
+
+                                    drdrSOTCART2new.ItemArray = drSOTCART2.ItemArray
+                                    drdrSOTCART2new.Item("QTY_PACKED") = splitQtyPacked
+                                    drdrSOTCART2new.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
+                                    drdrSOTCART2new.Item("CART_NO") = CART_NO_TARGET
+                                    dst.Tables("SOTCART2").Rows.Add(drdrSOTCART2new)
+                                End If
+                            End If
+                        End If
                     End If
+
                     EnforceConstraints(True)
                 End If
             End If
