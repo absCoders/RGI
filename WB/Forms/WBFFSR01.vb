@@ -1185,7 +1185,8 @@ Public Class WBFFSR01
                 Next
 
                 'Week To Date TYLY
-                COLS = {"TOT_TY_WK", "TOT_LY_WK", "MTD_YOY", "MTD_YOY_PCT"}
+                'COLS = {"TOT_TY_WK", "TOT_LY_WK", "MTD_YOY", "MTD_YOY_PCT"}
+                COLS = {"TOT_TY_WK", "TOT_LY_WK", "WTD_FULL_WK_YOY", "WTD_FULL_WK_YOY_PCT"}
                 G = .Groups.Add("WTDTYLY", "Current Week-to-Date vs. Last Year FULL Week")
                 G.Header.Appearance.TextHAlign = HAlign.Center
                 G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
@@ -1209,7 +1210,7 @@ Public Class WBFFSR01
                 Next
 
                 'MTD
-                COLS = {"TY_MTD", "LY_MTD", "WTD_FULL_WK_YOY", "WTD_FULL_WK_YOY_PCT"}
+                COLS = {"TY_MTD", "LY_MTD", "MTD_YOY", "MTD_YOY_PCT"}
                 G = .Groups.Add("MTD", "Month-to-Date")
                 G.Header.Appearance.TextHAlign = HAlign.Center
                 G.Header.Appearance.BackGradientStyle = GradientStyle.GlassBottom20
