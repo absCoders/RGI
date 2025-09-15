@@ -630,6 +630,7 @@ Public Class TAFCARDF
         End If
 
         Try
+            objCCProcessor.CCPA_NO = CCPA_NO
 
             Select Case optType.Value
                 Case "A"

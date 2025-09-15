@@ -203,6 +203,7 @@ Public Class ARCCCARD
     Private MasterCardAuthDays As Int16 = 7
     Private DiscoveraAuthDays As Int16 = 7
     Private AmexAuthDays As Int16 = 7
+    Public CCPA_NO As String = String.Empty
 
 #End Region
 
@@ -757,6 +758,7 @@ Public Class ARCCCARD
         DetailAggregate = String.Empty
         BatchNumber = String.Empty
         BatchStatus = String.Empty
+        CCPA_NO = String.Empty
 
         ' IpCharge Objects
         clsIcharge = New Icharge
@@ -780,7 +782,9 @@ Public Class ARCCCARD
 
         tblARTCCPRC = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPRC", "ARTCCPRC")
 
-        Dim rowARTCCPRC As DataRow = tblARTCCPRC.Rows.Find({clsGateWay})
+        Dim CC_PROC_CODE As String = Val(clsGateWay).ToString
+
+        Dim rowARTCCPRC As DataRow = tblARTCCPRC.Rows.Find(CC_PROC_CODE)
         If rowARTCCPRC IsNot Nothing Then
             VisaAuthDays = Val(rowARTCCPRC.Item("VISA_AUTH_MAX_DAYS") & String.Empty)
             MasterCardAuthDays = Val(rowARTCCPRC.Item("MC_AUTH_MAX_DAYS") & String.Empty)
@@ -1996,8 +2000,14 @@ Public Class ARCCCARD
 
         If (Me.TransactionNumber & String.Empty).ToString.Trim.Length > 0 Then
             cXmlFileName = Me.TransactionNumber.Trim
+        ElseIf CCPA_NO.Length > 0 Then
+            cXmlFileName = CCPA_NO.Trim
         Else ' hopefully this will never fire
             cXmlFileName = "D_" & System.Guid.NewGuid.ToString()
+        End If
+
+        If CCPA_NO.Length > 0 Then
+            cXmlFileName = CCPA_NO.Trim
         End If
 
         ExportSerializedObject(cXmlFileName, cXmlDirectory)
@@ -2007,10 +2017,34 @@ Public Class ARCCCARD
 
         Try
             If cXmlDirectory.Length = 0 Then
+                If tblARTCCPRC IsNot Nothing Then
+                    Dim CC_PROC_CODE As String = Val(clsGateWay).ToString
+                    Dim rowARTCCPRC As DataRow = tblARTCCPRC.Rows.Find(CC_PROC_CODE)
+                    If rowARTCCPRC IsNot Nothing Then
+                        VisaAuthDays = Val(rowARTCCPRC.Item("VISA_AUTH_MAX_DAYS") & String.Empty)
+                        MasterCardAuthDays = Val(rowARTCCPRC.Item("MC_AUTH_MAX_DAYS") & String.Empty)
+                        DiscoveraAuthDays = Val(rowARTCCPRC.Item("DISC_AUTH_MAX_DAYS") & String.Empty)
+                        AmexAuthDays = Val(rowARTCCPRC.Item("AMEX_AUTH_MAX_DAYS") & String.Empty)
+
+                        cXmlDirectory = rowARTCCPRC.Item("CC_PROC_FOLDER") & String.Empty
+                        If Not My.Computer.FileSystem.DirectoryExists(cXmlDirectory) Then
+                            cXmlDirectory = String.Empty
+                        End If
+                        clsLogFileLocation = cXmlDirectory
+                    End If
+                End If
+            End If
+
+            If cXmlDirectory.Length = 0 Then
                 Exit Sub
             End If
 
             Dim filename As String = (TransactionNumber & String.Empty).ToString.Trim
+
+            If CCPA_NO.Length > 0 Then
+                filename = CCPA_NO
+            End If
+
             If filename.Length = 0 Then
                 filename = System.Guid.NewGuid.ToString()
             End If
@@ -2065,10 +2099,16 @@ Public Class ARCCCARD
                     filename = "C" & Me.CreditCardProcessingNo.Trim
                 ElseIf Me.TransactionNumber.Trim.Length > 0 Then
                     filename = "T" & Me.TransactionNumber.Trim
+                ElseIf CCPA_NO.Length > 0 Then
+                    filename = "C" & CCPA_NO.Trim
                 Else
                     RandomNumber = RandomClass.Next(25000)
                     filename = DateTime.Now.ToString("yyyyMMdd_hhmmss") & "_" & RandomNumber.ToString
                 End If
+            End If
+
+            If CCPA_NO.Length > 0 Then
+                filename = "C" & CCPA_NO.Trim
             End If
 
             filename = filename.ToUpper
