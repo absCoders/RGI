@@ -1332,19 +1332,22 @@ Public Class SOFPICKS
 
                 Dim GROUP_KEY As String = grdSOTORDQ0.ActiveRow.Cells("GROUP_KEY").Value
 
-                Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"GROUP_KEY = '{GROUP_KEY}' AND SEL='1'").Length
-                'Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"SEL='1'").Length
-                If ORDRs_Selected = 0 Then
-                    MsgBox("No Orders Selected", MsgBoxStyle.OkOnly, "Cannot Release")
-                    Exit Sub
-                ElseIf ORDRs_Selected > MAX_ORDERS_TO_RELEASE Then
-                    MsgBox($"Max number of Orders Permitted to be Released to a Truck is {MAX_ORDERS_TO_RELEASE}", MsgBoxStyle.OkOnly, "Cannot Release")
-                    Exit Sub
-                End If
+                Release_Selected_Orders(GROUP_KEY)
 
-                ORDR_NOs_Tried.Clear()
 
-                Release_Orders(New String() {GROUP_KEY})
+                'Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"GROUP_KEY = '{GROUP_KEY}' AND SEL='1'").Length
+                ''Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"SEL='1'").Length
+                'If ORDRs_Selected = 0 Then
+                '    MsgBox("No Orders Selected", MsgBoxStyle.OkOnly, "Cannot Release")
+                '    Exit Sub
+                'ElseIf ORDRs_Selected > MAX_ORDERS_TO_RELEASE Then
+                '    MsgBox($"Max number of Orders Permitted to be Released to a Truck is {MAX_ORDERS_TO_RELEASE}", MsgBoxStyle.OkOnly, "Cannot Release")
+                '    Exit Sub
+                'End If
+
+                'ORDR_NOs_Tried.Clear()
+
+                'Release_Orders(New String() {GROUP_KEY})
 
 
             Case "Release Selected Order Groups"
@@ -1361,9 +1364,20 @@ Public Class SOFPICKS
 
                 Dim GROUP_KEYs As New List(Of String)
 
-                If GROUP_KEYs.Count > 0 Then
-                    Release_Orders(GROUP_KEYs.ToArray, , True)
+                If grdSOTORDQ0.Selected.Rows.Count = 1 Then
+                    Dim GROUP_KEY As String = grdSOTORDQ0.Selected.Rows(0).Cells("GROUP_KEY").Value
+                    'GROUP_KEYs.Add(GROUP_KEY)
+                    'Release_Orders(GROUP_KEYs.ToArray, , True)
+                    Select_Orders(MAX_ORDERS_TO_RELEASE, True)
+                    Release_Selected_Orders(GROUP_KEY)
+
+                Else
+                    MsgBox("Select a Singe Order Group", MsgBoxStyle.OkOnly, "Cannot Release Multiple Order Groups - combine them first")
                 End If
+
+                'If GROUP_KEYs.Count > 0 Then
+                '    Release_Orders(GROUP_KEYs.ToArray, , True)
+                'End If
 
             Case "Print Resolution Report"
                 Print_Report()
@@ -3379,5 +3393,22 @@ Public Class SOFPICKS
         Else
             Me.tabMain.Tabs("Pick Tickets").Visible = True
         End If
+    End Sub
+
+    Sub Release_Selected_Orders(GROUP_KEY As String)
+
+        Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"GROUP_KEY = '{GROUP_KEY}' AND SEL='1'").Length
+        'Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"SEL='1'").Length
+        If ORDRs_Selected = 0 Then
+            MsgBox("No Orders Selected", MsgBoxStyle.OkOnly, "Cannot Release")
+            Exit Sub
+        ElseIf ORDRs_Selected > MAX_ORDERS_TO_RELEASE Then
+            MsgBox($"Max number of Orders Permitted to be Released to a Truck is {MAX_ORDERS_TO_RELEASE}", MsgBoxStyle.OkOnly, "Cannot Release")
+            Exit Sub
+        End If
+
+        ORDR_NOs_Tried.Clear()
+
+        Release_Orders(New String() {GROUP_KEY})
     End Sub
 End Class
