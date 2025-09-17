@@ -1725,16 +1725,20 @@ Public Class SOFSHIPE
 
         ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
-        CalculateCartonWeight()
+        CalculateCartonWeight(CART_NO)
 
         Return CART_NO
     End Function
 
-    Private Sub CalculateCartonWeight()
+    Private Sub CalculateCartonWeight(Optional CART_NO As String = "")
 
+        Dim sql As String = String.Empty
+        If CART_NO.Length > 0 Then
+            sql = $"CART_NO = '{CART_NO}'"
+        End If
 
-        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select()
-            Dim CART_NO As String = drSOTCART1.Item("CART_NO")
+        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select(sql)
+            CART_NO = drSOTCART1.Item("CART_NO")
 
             drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = 0
             drSOTCART1.Item("CART_TOTAL_WGT_CALC") = 0
@@ -1901,7 +1905,7 @@ Public Class SOFSHIPE
 
             ' When a user changes the values in the Cartons we must clear the Rates
             dst.Tables("WHTSHPC4").Rows.Clear()
-            CalculateCartonWeight()
+            'CalculateCartonWeight()
 
             Dim rUPSList(1) As WHCSHIP1.RateList
             Dim rFEDEXList(1) As WHCSHIP1.RateList
@@ -4415,7 +4419,7 @@ Public Class SOFSHIPE
     Private Sub grdSOTCART1_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowsDeleted
         ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
-        CalculateCartonWeight()
+        'CalculateCartonWeight()
     End Sub
 
     Private Sub grdSOTCART1_BeforeRowsDeleted(sender As Object, e As UltraWinGrid.BeforeRowsDeletedEventArgs) Handles grdSOTCART1.BeforeRowsDeleted
@@ -4523,7 +4527,7 @@ Public Class SOFSHIPE
     Private Sub grdSOTCART1_AfterRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdSOTCART1.AfterRowUpdate
         ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
-        CalculateCartonWeight()
+        'CalculateCartonWeight()
     End Sub
 
     Private Sub grdSOTCART1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowActivate
