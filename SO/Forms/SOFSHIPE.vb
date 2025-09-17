@@ -3564,29 +3564,16 @@ Public Class SOFSHIPE
                         PICK_NO = String.Empty
                         drSOTPICK1 = Nothing
 
-                        ' We may have multi pick tickets in a single carton. This stamps them with the same tracking number
-                        ' Spread the Customer Freight Cost and Our freight cost across the Pick Tickets
+                        ' Thes are web orders. The freight was charged on the Web.
+                        ' Freight is on the Pick Ticket Header. We will Update the Carton to have the real freight charges.
                         Dim numPickTickets As Int16 = dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO).Length
                         For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO)
-
                             If isPitneyBowes Then
                                 drSOTCART1.Item("CART_TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             Else
                                 drSOTCART1.Item("CART_TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                             End If
-
-                            PICK_NO = drSOTCART1.Item("PICK_NO") & String.Empty
-                            drSOTPICK1 = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
-
-                            'If Absx1.txtFor("FRT_TERMS").Text = "PPA" Then
-                            '    ' RGI charges freight for all Orders.
-                            '    If ASCMAIN1.CLIENT = "RGI" Then
-                            '        drSOTPICK1.Item("PICK_FREIGHT") = Val(drSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Math.Round(PPA_FREIGHT / numPickTickets, 2)
-                            '    ElseIf drSOTPICK1("ORDR_SOURCE") & String.Empty <> "W" Then
-                            '        drSOTPICK1.Item("PICK_FREIGHT") = Val(drSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Math.Round(PPA_FREIGHT / numPickTickets, 2)
-                            '    End If
-                            'End If
-                            drSOTPICK1.Item("PICK_FREIGHT") = Math.Round(OUR_FREIGHT / numPickTickets, 2)
+                            drSOTCART1.Item("CART_FREIGHT") = OUR_FREIGHT
                         Next
                         pitneyBowesshipdata = Nothing
                     End If
@@ -4069,13 +4056,13 @@ Public Class SOFSHIPE
                     txtCUST_UPC.Focus()
 
                     If CUST_UPC.Length = 0 Then
-                        txtCUST_UPC.Focus()
+                        Timer1.Start()
                         Exit Sub
                     End If
 
                     txtTOTE_NO.Text = txtTOTE_NO.Text.ToUpper.Trim
                     If txtTOTE_NO.TextLength = 0 Then
-                        txtCUST_UPC.Focus()
+                        Timer1.Start()
                         Exit Sub
                     End If
 
@@ -4108,8 +4095,7 @@ Public Class SOFSHIPE
                         MessageBox.Show($"Scanned UPC ({CUST_UPC}) not found or is fully scanned.", "Scan UPC", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     End If
 
-                    txtCUST_UPC.Clear()
-                    txtCUST_UPC.Focus()
+                    Timer1.Start()
                 End If
 
         End Select
@@ -4259,7 +4245,8 @@ Public Class SOFSHIPE
                     txtTOTE_NO.Clear()
                     txtTOTE_NO.Focus()
                 Case ScreenProcessingModes.ProcessingSelectedTruckTote
-                    ' Nothing
+                    txtCUST_UPC.Clear()
+                    txtCUST_UPC.Focus()
             End Select
         Else
             Select Case screenProcessingMode
@@ -4269,7 +4256,8 @@ Public Class SOFSHIPE
                 Case ScreenProcessingModes.TruckSelected
                     ' Nothing
                 Case ScreenProcessingModes.ProcessingSelectedTruckTote
-                    ' Nothing 
+                    'txtCUST_UPC.Clear()
+                    'txtCUST_UPC.Focus()
             End Select
         End If
 
