@@ -316,6 +316,7 @@ Public Class SOFSHIPE
         Create_Summary(grdSOTPICK2, "PICK_QTY_CONF", "Sum")
         Create_Summary(grdSOTPICK2, "PICK_QTY_CANC", "Sum")
         Create_Summary(grdSOTPICK2, "PICK_QTY_BACK", "Sum")
+        Create_Summary(grdSOTPICK2, "PICK_QTY_SCAN", "Sum")
 
         grdWHTSHPC4.DataSource = dst.Tables("WHTSHPC4")
 
