@@ -317,7 +317,7 @@ Public Class SOFORDR1
 
             ASCMAIN1.sql = "Select SOTPICK1.*, SOTSHIP1.SHIP_DATE_SHIPPED, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_TOTAL_AMOUNT" & vbCrLf _
                 & " from SOTPICK1,SOTSHIP1,SOTINVH1 " & vbCrLf _
-                & " where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
+                & " where SOTSHIP1.SHIP_BOL_NO (+) = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & "   and SOTINVH1.INV_TYPE (+) = 'I'" & vbCrLf _
                 & "   and SOTINVH1.INV_NO (+) = SOTPICK1.INV_NO" & vbCrLf _
                 & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'C'" & vbCrLf _
@@ -329,7 +329,6 @@ Public Class SOFORDR1
                 & " where SOTPICK2.PICK_NO = SOTPICK1.PICK_NO and SOTPICK1.ORDR_NO = :PARM1" _
                 & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'C'"
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, False, "V", 2)
-
 
             Create_Relation("SOTPICK1", "SOTPICK2", "PICK_NO")
             Create_Relation("SOTORDR2", "SOTPICK2", "ORDR_NO,ORDR_LNO")
@@ -3178,6 +3177,21 @@ Public Class SOFORDR1
                 If Absx1.optFor("ORDR_TYPE_CODE").Value = "B2C" Then
                     grdSOTORDR2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
                     grdSOTORDR2.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+                End If
+
+                If ASCMAIN1.CLIENT = "VAN" AndAlso (Absx1.optFor("ORDR_TYPE_CODE").Value = "B2C" OrElse Absx1.optFor("ORDR_SOURCE").Value = "W") Then
+                    grdSOTORDR2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+                    grdSOTORDR2.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+                    grdSOTORDR2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+                    If EntryMode = "E" Then
+                        Set_Read_Only(frmDates, True)
+                        Set_Read_Only(frmCodes, True)
+                        Set_Read_Only(grpSHIPTO, False)
+                        Set_Read_Only_for_ctl(Absx1.txtFor("SHIP_VIA_CODE"), False)
+                        Set_Read_Only_for_ctl(Absx1.chkFor("ORDR_HOLD"), False)
+                        Set_Read_Only_for_ctl(Absx1.txtFor("ORDR_HOLD_REASON"), False)
+                        Set_Read_Only_for_ctl(txtREASON_CODE, False)
+                    End If
                 End If
 
                 If Absx1.optFor("ORDR_SOURCE").Value = "E" Then
