@@ -2116,6 +2116,10 @@ Public Class SOFSHIPE
 
             Try
                 Sort_grdColumns(grdWHTSHPC4, "ACCT_NET_CHARGE")
+                ' 09/17/2025 - Auto select lowest cost shipping method
+                If grdWHTSHPC4.Rows.Count > 0 Then
+                    txtSHIP_VIA_CODE.Text = grdWHTSHPC4.Rows(0).Cells("SHIP_VIA_CODE").Value & String.Empty
+                End If
             Catch ex As Exception
             End Try
 
@@ -2749,7 +2753,7 @@ Public Class SOFSHIPE
 
             ' Sender Information
             With clsShip.Sender
-                ' Work around unti SKINCOM FedEx and UPS creedentials are in the system
+                ' Work around until SKINCOM FedEx and UPS creedentials are in the system
                 If ASCMAIN1.CLIENT = "VAN" Then
                     .Company = "SKINWORLDWIDE"
                 Else
