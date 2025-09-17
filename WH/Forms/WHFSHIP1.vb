@@ -918,6 +918,8 @@ Public Class WHFSHIP1
             ASCMAIN1.Add_Value_List(grdWHTSHPCC, "QUANTITY_UOM", "SELECT CARRIER_UOM, CARRIER_UOM_DESC FROM SOTCARRU WHERE CARRIER_CODE = ''")
         End If
 
+        dst.Tables("WHTSHPC4").Rows.Clear()
+
     End Sub
 
     Private Sub cmbShipMethod_ValueChanged(sender As Object, e As System.EventArgs) Handles cmbShipMethod.ValueChanged
@@ -2596,41 +2598,16 @@ Public Class WHFSHIP1
             Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'UPS'")(0)
             Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = 'UPS'")(0)
 
-            Dim CUST_CODE As String = String.Empty
+            If cmbProvider.SelectedRow IsNot Nothing Then
+                Dim CARRIER_ACCOUNT_NO As String = cmbProvider.SelectedRow.Cells("CARRIER_ACCOUNT_NO").Value
+                Dim SHIPPER_DIVISION_CODE As String = cmbProvider.SelectedRow.Cells("SHIPPER_DIVISION_CODE").Value
 
-            If txtUserSuppliedValue.TextLength > 0 Then
-                Select Case optUserSuppliedValue.Value
-                    Case "C"
-                        CUST_CODE = txtUserSuppliedValue.Text
-
-                    Case "I"
-                        Dim rowSOTINVH1 As DataRow = LookUp("SOTINVH1", {"I", txtUserSuppliedValue.Text})
-                        If rowSOTINVH1 IsNot Nothing Then
-                            CUST_CODE = rowSOTINVH1.Item("CUST_CODE") & String.Empty
-                        End If
-
-                    Case "P"
-                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO IN (SELECT ORDR_NO FROM SOTPICK1 WHERE PICK_NO = :PARM1)"
-                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
-                        If rowSOTORDR1 IsNot Nothing Then
-                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
-                        End If
-
-                    Case "W"
-                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO_WEB  = :PARM1"
-                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
-                        If rowSOTORDR1 IsNot Nothing Then
-                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
-                        End If
-                End Select
-            End If
-
-            If CUST_CODE.Length > 0 Then
-                If dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'").Length > 0 Then
-                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'")(0)
+                If CARRIER_ACCOUNT_NO.Length > 0 AndAlso dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'UPS' AND CARRIER_ACCOUNT_NO = '{CARRIER_ACCOUNT_NO}'").Length > 0 Then
+                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'UPS' AND CARRIER_ACCOUNT_NO = '{CARRIER_ACCOUNT_NO}'")(0)
+                ElseIf SHIPPER_DIVISION_CODE.Length > 0 AndAlso dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'UPS' AND SHIPPER_DIVISION_CODE = '{SHIPPER_DIVISION_CODE}'").Length > 0 Then
+                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'UPS' AND SHIPPER_DIVISION_CODE = '{SHIPPER_DIVISION_CODE}'")(0)
                 End If
             End If
-
 
             Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", cmbWarehouse.Text)
             If rowICTWHSE1 Is Nothing Then
@@ -2759,38 +2736,14 @@ Public Class WHFSHIP1
             Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'FEDEX'")(0)
             Dim rowSOTCARR3 As DataRow = dst.Tables("SOTCARR3").Select("CARRIER_CODE = 'FEDEX'")(0)
 
-            Dim CUST_CODE As String = String.Empty
+            If cmbProvider.SelectedRow IsNot Nothing Then
+                Dim CARRIER_ACCOUNT_NO As String = cmbProvider.SelectedRow.Cells("CARRIER_ACCOUNT_NO").Value
+                Dim SHIPPER_DIVISION_CODE As String = cmbProvider.SelectedRow.Cells("SHIPPER_DIVISION_CODE").Value
 
-            If txtUserSuppliedValue.TextLength > 0 Then
-                Select Case optUserSuppliedValue.Value
-                    Case "C"
-                        CUST_CODE = txtUserSuppliedValue.Text
-
-                    Case "I"
-                        Dim rowSOTINVH1 As DataRow = LookUp("SOTINVH1", {"I", txtUserSuppliedValue.Text})
-                        If rowSOTINVH1 IsNot Nothing Then
-                            CUST_CODE = rowSOTINVH1.Item("CUST_CODE") & String.Empty
-                        End If
-
-                    Case "P"
-                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO IN (SELECT ORDR_NO FROM SOTPICK1 WHERE PICK_NO = :PARM1)"
-                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
-                        If rowSOTORDR1 IsNot Nothing Then
-                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
-                        End If
-
-                    Case "W"
-                        ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE ORDR_NO_WEB  = :PARM1"
-                        Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {txtUserSuppliedValue.Text})
-                        If rowSOTORDR1 IsNot Nothing Then
-                            CUST_CODE = rowSOTORDR1.Item("CUST_CODE") & String.Empty
-                        End If
-                End Select
-            End If
-
-            If CUST_CODE.Length > 0 Then
-                If dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'").Length > 0 Then
-                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{CUST_CODE}'")(0)
+                If CARRIER_ACCOUNT_NO.Length > 0 AndAlso dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND CARRIER_ACCOUNT_NO = '{CARRIER_ACCOUNT_NO}'").Length > 0 Then
+                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND CARRIER_ACCOUNT_NO = '{CARRIER_ACCOUNT_NO}'")(0)
+                ElseIf SHIPPER_DIVISION_CODE.Length > 0 AndAlso dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{SHIPPER_DIVISION_CODE}'").Length > 0 Then
+                    rowSOTCARR3 = dst.Tables("SOTCARR3").Select($"CARRIER_CODE = 'FEDEX' AND SHIPPER_DIVISION_CODE = '{SHIPPER_DIVISION_CODE}'")(0)
                 End If
             End If
 
@@ -3362,6 +3315,10 @@ Public Class WHFSHIP1
         End Try
 
     End Function
+
+    Private Sub cmbProvider_AfterCloseUp(sender As Object, e As EventArgs) Handles cmbProvider.AfterCloseUp
+        dst.Tables("WHTSHPC4").Rows.Clear()
+    End Sub
 
 #End Region
 
