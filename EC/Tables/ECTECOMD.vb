@@ -167,6 +167,9 @@ Public Class ECTECOMD
             Case "ECOM_CUST_ADDR_CODE"
                 sql_where = $"CUST_CODE = '{txtECOM_CUST_CODE.Text}' AND CUST_ADDR_TYPE = 'MK'"
 
+            Case "ECOM_DEFAULT_SHIP_VIA "
+                sql_where = $"CARRIER_PROD_CODE IS NOT NULL"
+
         End Select
     End Sub
 
