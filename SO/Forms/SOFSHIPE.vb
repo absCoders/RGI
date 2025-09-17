@@ -2146,7 +2146,7 @@ Public Class SOFSHIPE
             Dim drSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'UPS'")(0)
             Dim drSOTCARR3 As DataRow = Nothing
             Dim CUST_CODE As String = dst.Tables("SOTORDR1").Rows(0).Item("CUST_CODE") & String.Empty
-            Dim ORDR_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_NO") & String.Empty
+            Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("ORDR_NO") & String.Empty
 
             If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "'").Length > 0 Then
                 drSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "'")(0)
@@ -2307,7 +2307,7 @@ Public Class SOFSHIPE
             Dim drSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'FEDEX'")(0)
             Dim drSOTCARR3 As DataRow = Nothing
             Dim CUST_CODE As String = dst.Tables("SOTORDR1").Rows(0).Item("CUST_CODE") & String.Empty
-            Dim ORDR_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_NO") & String.Empty
+            Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("ORDR_NO") & String.Empty
 
             If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL").Length > 0 Then
                 drSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL")(0)
