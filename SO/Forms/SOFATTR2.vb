@@ -153,6 +153,10 @@ Public Class SOFATTR2
                     .Columns.Add(String.Format("ATTR_CODE{0}", i), GetType(System.String))
                 Next
                 .Columns.Add("ATTR_CODE_ALL", GetType(System.String))
+                '--- PO Data ---
+                .Columns.Add("TARIFF_PCT", GetType(System.Double))
+                .Columns.Add("PO_COST", GetType(System.Double))
+                .Columns.Add("STYLE_PO_QTY_MIN", GetType(System.Int32))
             End With
 
             ASCMAIN1.sql = "SELECT * FROM ICTSTYL1 where STYLE_CODE = :PARM1"
@@ -313,6 +317,9 @@ Public Class SOFATTR2
                 ElseIf New String() {"THEME_DESC"}.Contains(gcol.Key) Then
                     gcol.Hidden = False
                     gcol.Width = 100
+                ElseIf New String() {"TARIFF_PCT", "PO_COST", "STYLE_PO_QTY_MIN"}.Contains(gcol.Key) Then
+                    gcol.Header.Appearance.BackColor2 = Color.Coral
+                    gcol.Hidden = True
                 End If
             Next
         End With
@@ -843,7 +850,7 @@ Public Class SOFATTR2
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdICTSTYL1, "SSSSBBBBSSSSBBSBSSS", "Show Filter", "Show GroupBox", "Show Pins", "Show All Status Qtys", "Select All", "De-Select All", "Select Selected", "De-Select Selected", "Calc Price Breaks", "Show Factory/Port", "Show Disc Date", "Show Extended Pack", "Print Ribbon Sheet", "Print Ribbon Combined", "Show All Attributes", "Style Masterfile", "Show E-Commerce", "Show Lighting", "Show PVC")
+        Load_Popup_Menu(grdICTSTYL1, "SSSSBBBBSSSSBBSBSSSSS", "Show Filter", "Show GroupBox", "Show Pins", "Show All Status Qtys", "Select All", "De-Select All", "Select Selected", "De-Select Selected", "Calc Price Breaks", "Show Factory/Port", "Show Disc Date", "Show Extended Pack", "Print Ribbon Sheet", "Print Ribbon Combined", "Show All Attributes", "Style Masterfile", "Show E-Commerce", "Show Lighting", "Show PVC", "Show Purch Notes", "Show PO Info")
         Load_Popup_Menu(grdICTATTR1_1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTATTR1_2, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTSIZE1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
@@ -1410,6 +1417,105 @@ Public Class SOFATTR2
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_LIGHT_COUNT").Hidden = True
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("PVC_COLORS").Hidden = True
                 End If
+            Case "Show Purch Notes"
+                tlb_sbt = DirectCast(tlb.Tools("Show Purch Notes"), UltraWinToolbars.StateButtonTool)
+                Me.Cursor = Cursors.WaitCursor
+                If tlb_sbt.Checked Then
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PURCH_NOTES").Hidden = False
+                Else
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PURCH_NOTES").Hidden = True
+                End If
+                Me.Cursor = Cursors.Default
+            Case "Show PO Info"
+                tlb_sbt = DirectCast(tlb.Tools("Show PO Info"), UltraWinToolbars.StateButtonTool)
+                Me.Cursor = Cursors.WaitCursor
+                If tlb_sbt.Checked Then
+                    Dim password As String
+                    password = InputBox("Enter password:", "Password Required")
+                    If password = "Holiday!" Then
+                        ASCMAIN1.Progress("Fetching PO Data", "")
+                        For Each rowICTSTYL1 As DataRow In dst.Tables("ICTSTYL1").Select("", "STYLE_CODE, COLOR_CODE")
+                            Dim THIS_STYLE_CODE As String = rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty
+                            Dim rowICTSTYLX As DataRow = LookUp("ICTSTYL1", THIS_STYLE_CODE)
+                            Dim COUNTRY_CODE As String = rowICTSTYL1.Item("COUNTRY_CODE").ToString & String.Empty
+
+                            Dim SQL As New System.Text.StringBuilder With {.Length = 0}
+                            SQL.AppendLine("SELECT NVL(MAX(TARIFF_PCT),0) AS TARIFF_PCT")
+                            SQL.AppendLine("FROM ICTTARF2")
+                            SQL.AppendLine("WHERE TARIFF_START = ")
+                            SQL.AppendLine("(")
+                            SQL.AppendLine("    SELECT MAX(TARIFF_START)")
+                            SQL.AppendLine("    FROM ICTTARF2 ")
+                            SQL.AppendLine("    WHERE NVL(TARIFF_START,'01-JAN-1900')<> '01-JAN-1900'")
+                            SQL.AppendLine($"    AND COUNTRY_CODE = '{COUNTRY_CODE}'")
+                            SQL.AppendLine(")")
+                            ASCMAIN1.sql = SQL.ToString()
+                            rowICTSTYL1.Item("TARIFF_PCT") = Val(ASCDATA1.GetDataValue)
+
+                            SQL.Length = 0
+                            SQL.AppendLine("SELECT PO_COST ")
+                            SQL.AppendLine("FROM ")
+                            SQL.AppendLine("(")
+                            SQL.AppendLine("    SELECT")
+                            SQL.AppendLine("    STYLE_CODE,")
+                            SQL.AppendLine("    NEW_PO_COST_DATE AS PO_COST_DATE,")
+                            SQL.AppendLine("    NEW_PO_COST AS PO_COST")
+                            SQL.AppendLine("    FROM ICTSTYV1")
+                            SQL.AppendLine("    WHERE NVL(NEW_PO_COST_DATE,'01-JAN-1900') <> '01-JAN-1900'")
+                            SQL.AppendLine("    AND NVL(NEW_PO_COST_DATE,'01-JAN-1900') <= SYSDATE")
+                            SQL.AppendLine("    UNION")
+                            SQL.AppendLine("    SELECT ")
+                            SQL.AppendLine("    STYLE_CODE,")
+                            SQL.AppendLine("    PO_COST_DATE AS PO_COST_DATE,")
+                            SQL.AppendLine("    PO_COST")
+                            SQL.AppendLine("    FROM ICTSTYV1")
+                            SQL.AppendLine("    WHERE NVL(PO_COST_DATE,'01-JAN-1900') <> '01-JAN-1900'")
+                            SQL.AppendLine("    AND NVL(PO_COST_DATE,'01-JAN-1900') <= SYSDATE")
+                            SQL.AppendLine(")")
+                            SQL.AppendLine($"WHERE STYLE_CODE = '{THIS_STYLE_CODE}'")
+                            SQL.AppendLine("AND PO_COST_DATE = ")
+                            SQL.AppendLine("(")
+                            SQL.AppendLine("    SELECT MAX(PO_COST_DATE) FROM")
+                            SQL.AppendLine("    (")
+                            SQL.AppendLine("        SELECT")
+                            SQL.AppendLine("        STYLE_CODE,")
+                            SQL.AppendLine("        NEW_PO_COST_DATE AS PO_COST_DATE,")
+                            SQL.AppendLine("        NEW_PO_COST AS PO_COST")
+                            SQL.AppendLine("        FROM ICTSTYV1")
+                            SQL.AppendLine("        WHERE NVL(NEW_PO_COST_DATE,'01-JAN-1900') <> '01-JAN-1900'")
+                            SQL.AppendLine("        AND NVL(NEW_PO_COST_DATE,'01-JAN-1900') <= SYSDATE")
+                            SQL.AppendLine("        UNION")
+                            SQL.AppendLine("        SELECT ")
+                            SQL.AppendLine("        STYLE_CODE,")
+                            SQL.AppendLine("        PO_COST_DATE AS PO_COST_DATE,")
+                            SQL.AppendLine("        PO_COST")
+                            SQL.AppendLine("        FROM ICTSTYV1")
+                            SQL.AppendLine("        WHERE NVL(PO_COST_DATE,'01-JAN-1900') <> '01-JAN-1900'")
+                            SQL.AppendLine("        AND NVL(PO_COST_DATE,'01-JAN-1900') <= SYSDATE")
+                            SQL.AppendLine("    )")
+                            SQL.AppendLine($"    WHERE STYLE_CODE = '{THIS_STYLE_CODE}'")
+                            SQL.AppendLine(")")
+                            ASCMAIN1.sql = SQL.ToString()
+                            rowICTSTYL1.Item("PO_COST") = Val(ASCDATA1.GetDataValue)
+
+                            rowICTSTYL1.Item("STYLE_PO_QTY_MIN") = Val(rowICTSTYLX.Item("STYLE_PO_QTY_MIN").ToString & String.Empty)
+                        Next
+                        grdICTSTYL1.DisplayLayout.Bands(0).Columns("TARIFF_PCT").Hidden = False
+                        grdICTSTYL1.DisplayLayout.Bands(0).Columns("PO_COST").Hidden = False
+                        grdICTSTYL1.DisplayLayout.Bands(0).Columns("STYLE_PO_QTY_MIN").Hidden = False
+                        ASCMAIN1.Progress("", "")
+                    Else
+                        grdICTSTYL1.DisplayLayout.Bands(0).Columns("TARIFF_PCT").Hidden = True
+                        grdICTSTYL1.DisplayLayout.Bands(0).Columns("PO_COST").Hidden = True
+                        grdICTSTYL1.DisplayLayout.Bands(0).Columns("STYLE_PO_QTY_MIN").Hidden = True
+                        MsgBox("Access Denied!", MsgBoxStyle.Critical, "Error")
+                    End If
+                Else
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("TARIFF_PCT").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("PO_COST").Hidden = True
+                    grdICTSTYL1.DisplayLayout.Bands(0).Columns("STYLE_PO_QTY_MIN").Hidden = True
+                End If
+                Me.Cursor = Cursors.Default
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -1650,7 +1756,8 @@ Public Class SOFATTR2
                     Optional AllDiscontinued As Boolean = False,
                     Optional ByVal Load_from_Excel As Boolean = False,
                     Optional Style_List As List(Of String) = Nothing,
-                    Optional Color_List As List(Of String) = Nothing)
+                    Optional Color_List As List(Of String) = Nothing,
+                    Optional AllActive As Boolean = False)
         Dim QD As String = ""
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
         'STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
@@ -1783,27 +1890,50 @@ Public Class SOFATTR2
                 & "   And Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
                 & "And (x.style_code, z.color_code) In (Select STYLE_CODE, COLOR_CODE From SOTORDR2 Where ordr_no In (" & SQLIN & "))"
             Else
-                If AllDiscontinued Then
-                    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1" & vbCrLf
-                    Dim sqlw As String = ""
-                    ASCMAIN1.sql = "Select X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, ICTSTYC1.THEME_CODE from ICTSTYC1, (" & vbCrLf _
-                    & ASCMAIN1.sql _
-                    & ") X," & vbCrLf _
-                    & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
-                    & "(SELECT S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
-                    & " from ICTSTAT2 S2  , ICTCOLR1 C1  WHERE S2.COLOR_CODE = C1.COLOR_CODE GROUP BY S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE) Z" & vbCrLf _
-                    & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
-                    & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
-                    & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
-                    & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
-                    & "and x.style_status in ('D','N')" & vbCrLf _
-                    & "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
-                    & "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
+                If AllDiscontinued Or AllActive Then
+                    If AllDiscontinued Then
+                        ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1" & vbCrLf
+                        Dim sqlw As String = ""
+                        ASCMAIN1.sql = "Select X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, ICTSTYC1.THEME_CODE from ICTSTYC1, (" & vbCrLf _
+                        & ASCMAIN1.sql _
+                        & ") X," & vbCrLf _
+                        & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
+                        & "(SELECT S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
+                        & " from ICTSTAT2 S2  , ICTCOLR1 C1  WHERE S2.COLOR_CODE = C1.COLOR_CODE GROUP BY S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE) Z" & vbCrLf _
+                        & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
+                        & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "and x.style_status in ('D','N')" & vbCrLf _
+                        & "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
+                        & "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
+                    Else
+                        ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1" & vbCrLf
+                        Dim sqlw As String = ""
+                        ASCMAIN1.sql = "Select X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, ICTSTYC1.THEME_CODE from ICTSTYC1, (" & vbCrLf _
+                        & ASCMAIN1.sql _
+                        & ") X," & vbCrLf _
+                        & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
+                        & "(SELECT S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
+                        & " from ICTSTAT2 S2  , ICTCOLR1 C1  WHERE S2.COLOR_CODE = C1.COLOR_CODE GROUP BY S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE) Z" & vbCrLf _
+                        & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
+                        & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "and x.style_status in ('A')" & vbCrLf _
+                        & "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
+                        & "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
+                    End If
                 Else
                     'If SCCs(0) = "ALL" Then
                     '    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE <> 'ALL'" & vbCrLf
@@ -2186,6 +2316,7 @@ Public Class SOFATTR2
         'lblClass.Visible = showSel
         'txtSTYLE_CLASS_CODE.Visible = showSel
         btnAllDiscontinued.Visible = showSel
+        btnAllActive.Visible = showSel
         btnSelectClass.Visible = showSel
         If showSel = True Then
             SCC_CLEAR(False)
@@ -3611,9 +3742,12 @@ Optional ByVal absolute As Boolean = False) As String
         iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
         If iResult = MsgBoxResult.Yes Then
             Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Fetching Styles", "")
             Find_Styles(False, True)
+            showSelectors(False)
             Call Mode_Settings(True)
             Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("", "")
         End If
 
     End Sub
@@ -4035,6 +4169,7 @@ Optional ByVal absolute As Boolean = False) As String
         BUILD_SCC()
         Initialize_tabAttributes()
         btnAllDiscontinued.Visible = False
+        btnAllActive.Visible = False
         btnSelectClass.Visible = False
     End Sub
 
@@ -4194,5 +4329,25 @@ Optional ByVal absolute As Boolean = False) As String
         Update_Record_TDA("ECTPRCG3", SQLD)
         Call CommitTrans("")
         MsgBox($"Your New Pricing Group {PRCG_NO} Has Been Created.", vbOKOnly, "ECom Pricing!")
+    End Sub
+
+    Private Sub btnAllActive_Click(sender As Object, e As EventArgs) Handles btnAllActive.Click
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Load All Active"
+        Dim iMSG As New System.Text.StringBuilder
+        iMSG.AppendLine("This Will Clear Any Existing Searches And")
+        iMSG.AppendLine("Load The Grid With All Active Items.")
+        iMSG.AppendLine("")
+        iMSG.AppendLine("Is That What You Want?")
+        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+        If iResult = MsgBoxResult.Yes Then
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Fetching Styles", "")
+            Find_Styles(False, False,,,, True)
+            showSelectors(False)
+            Call Mode_Settings(True)
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("", "")
+        End If
     End Sub
 End Class
