@@ -455,7 +455,7 @@ Public Class SOFPICKS
         'ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web", "L:Lab Order", "P:API Portal", "E:EDI", "K:Keyed", "C:Converted"})
         ASCMAIN1.Add_Value_List(grdSOTORDQ0, "ORDR_SOURCE",, New String() {":", "W:Web"})
 
-        ASCMAIN1.Add_Value_List(grdSOTPICK0, "PICK_BATCH_STATUS",, New String() {":", "O:Released", "P:Picking", "N:Picked", "R:ReqRes"})
+        ASCMAIN1.Add_Value_List(grdSOTPICK0, "PICK_BATCH_STATUS",, New String() {":", "O:Released", "P:Picking", "N:Picked", "R:ReqRes", "K:Shipping"})
         ASCMAIN1.Add_Value_List(grdSOTPICK0, "TRUCK_TYPE",, New String() {":", "P:Pre-Config", "X:Custom", "R:Regular"})
         ' NOTE HOW THESE CUSTOM LIST VALUES ARE IGNORED - WHEN THERE ARE VALUES DEFINED IN ASTCODE1 OR IN TABMAIN1
 
@@ -752,17 +752,17 @@ Public Class SOFPICKS
                 End If
                 rowSOTPICK2.Item("WH_TRAN_NO") = DBNull.Value
 
-                ElseIf RESOLUTION = "D" Then ' De-Release
+            ElseIf RESOLUTION = "D" Then ' De-Release
                 If Not WH_TRAN_NOs.Contains(WH_TRAN_NO) Then
                     WH_TRAN_NOs.Add(WH_TRAN_NO)
                 End If
                 ' WE MAY NEED TO PUT THE SLS BACK ON THE SHELF - PHYSICALLY AS WELL AS LOGICALLY
                 If Not PICK_NOsD.Contains(PICK_NO) Then PICK_NOsD.Add(PICK_NO)
 
-                    rowSOTPICK2.Item("WH_TRAN_NO") = DBNull.Value
+                rowSOTPICK2.Item("WH_TRAN_NO") = DBNull.Value
 
-                ElseIf RESOLUTION = "T" Then ' Triage
-                    If Not PICK_NOsT.Contains(PICK_NO) Then PICK_NOsT.Add(PICK_NO)
+            ElseIf RESOLUTION = "T" Then ' Triage
+                If Not PICK_NOsT.Contains(PICK_NO) Then PICK_NOsT.Add(PICK_NO)
 
             End If
 
@@ -1130,6 +1130,7 @@ Public Class SOFPICKS
 
                 Dim ORDR_NO As String = grdSOTPICK1.Selected.Rows(0).Cells("ORDR_NO").Value
                 Dim PICK_NO As String = grdSOTPICK1.Selected.Rows(0).Cells("PICK_NO").Value
+                Dim TOTE_NO As String = grdSOTPICK1.Selected.Rows(0).Cells("TOTE_NO").Value
 
                 If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO) Then Exit Sub
                 If Not ASCMAIN1.Logical_Lock("SOTPICK1", ORDR_NO) Then Exit Sub
@@ -1143,36 +1144,66 @@ Public Class SOFPICKS
 
                 Dim PICK_BATCH_NO As String = rowSOTPICK1.Item("PICK_BATCH_NO") & ""
                 Dim rowSOTPICK0 As DataRow = LookUp("SOTPICK0", PICK_BATCH_NO)
-                If Not "NKP".Contains(rowSOTPICK0.Item("PICK_BATCH_STATUS") & "") Then
+                If Not "NK".Contains(rowSOTPICK0.Item("PICK_BATCH_STATUS") & "") Then
                     ' note to ABS - is this a real requirement?
-                    MessageBox.Show($"Pick Status Of Pick Batch {PICK_BATCH_NO} Is Not 'Picked' - please call ABS", "De-Pick Pick Tickets", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show($"Pick Status Of Pick Batch {PICK_BATCH_NO} Is Not completely picked.", "De-Pick Pick Tickets", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     ASCMAIN1.MultiTask_Release()
                     Exit Sub
                 End If
 
-                ASCMAIN1.sql = $"SELECT PICK_NO, SUM (PICK_QTY) PICK_QTY, SUM (PICK_QTY_CONF) PICK_QTY_CONF, SUM (STAT4) STAT4 FROM (
-                    SELECT PICK_NO, SUM (PICK_QTY) PICK_QTY, SUM (PICK_QTY_CONF) PICK_QTY_CONF, 0 STAT4 FROM SOTPICK2 WHERE PICK_NO = '{PICK_NO}' GROUP BY PICK_NO
-                    UNION
-                    SELECT TRAN_REF PICK_NO, 0 PICK_QTY, 0 PICK_QTY_CONF, SUM (-1 * TRAN_QTY) STAT4 FROM WHTLOCB2 WHERE TRAN_REF = '{PICK_NO}' AND TRAN_TYPE = 'K' GROUP BY TRAN_REF
-                    ) GROUP BY PICK_NO"
+                ASCMAIN1.sql = "SELECT * FROM WHTMOVE4 WHERE WHSE_TRAN_TYPE = :PARM1 AND WHSE_TRAN_REF = :PARM2"
+                Dim tblWHTMOVE4 As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "WHTMOVE2", "VV", {"P", PICK_NO})
 
-                Dim ROW As DataRow = ASCDATA1.GetDataRow
-                If Val(ROW.Item("PICK_QTY") & "") <> Val(ROW.Item("PICK_QTY_CONF") & "") Or Val(ROW.Item("PICK_QTY") & "") <> Val(ROW.Item("STAT4") & "") Then
+                If tblWHTMOVE4.Rows.Count = 0 Then
+                    MessageBox.Show($"Cannot locate Move entries for Pick Ticket {PICK_NO}.", "De-Pick Pick Ticket", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    ASCMAIN1.MultiTask_Release()
+                    Exit Sub
+                End If
 
-                    ' 10/15/2024 This is a second check - did not want to replace the above original query just in case we break something.
-                    ASCMAIN1.sql = "SELECT PICK_NO, SUM (PICK_QTY) PICK_QTY, SUM (PICK_QTY_CONF) PICK_QTY_CONF, SUM (STAT4) STAT4 FROM (
-                        SELECT PICK_NO, SUM (PICK_QTY - NVL(PICK_QTY_BACK, 0) - NVL(PICK_QTY_CANC, 0)) PICK_QTY, SUM (PICK_QTY_CONF) PICK_QTY_CONF, 0 STAT4 FROM SOTPICK2 WHERE PICK_NO = :PARM1 GROUP BY PICK_NO
-                        UNION
-                        SELECT TRAN_REF PICK_NO, 0 PICK_QTY, 0 PICK_QTY_CONF, SUM ( CASE WHEN LOC_CODE = 'TRUCK' THEN TRAN_QTY ELSE -1 * TRAN_QTY END) STAT4 FROM WHTLOCB2 WHERE TRAN_REF = :PARM1 AND TRAN_TYPE = 'K' GROUP BY TRAN_REF
-                        ) GROUP BY PICK_NO"
+                ASCMAIN1.sql = "SELECT SOTORDR2.CUST_UPC, WHTMOVE2.LOCATION_CODE_FROM, SUM(WHTMOVE2.WHSE_TRAN_QTY) WHSE_TRAN_QTY
+                                        FROM WHTMOVE4, WHTMOVE2, SOTPICK2, SOTORDR2
+                                        WHERE WHTMOVE4.WHSE_TRAN_NO = WHTMOVE2.WHSE_TRAN_NO
+                                        AND WHTMOVE4.WHSE_TRAN_LNO = WHTMOVE2.WHSE_TRAN_LNO
+                                        AND WHTMOVE4.WHSE_TRAN_TYPE = 'P'
+                                        AND WHTMOVE4.WHSE_TRAN_REF = SOTPICK2.PICK_NO
+                                        AND WHTMOVE4.WHSE_TRAN_REF_LNO = SOTPICK2.PICK_LNO
+                                        AND SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO
+                                        AND SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                                        AND WHTMOVE4.WHSE_TRAN_REF = :PARM1
+                                        GROUP BY SOTORDR2.CUST_UPC, WHTMOVE2.LOCATION_CODE_FROM"
+                Dim tblLabel As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "", "V", {PICK_NO})
+                If tblLabel.Rows.Count = 0 Then
+                    MessageBox.Show($"Cannot locate Move entries for Pick Ticket {PICK_NO}.", "De-Pick Pick Ticket", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    ASCMAIN1.MultiTask_Release()
+                    Exit Sub
+                End If
 
-                    ROW = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {PICK_NO})
+                Dim label As String = $"^XA 
+                                ^CF0,50
+                                ^FO100,20^FDItems to be Returned^FS 
+                                ^CF0,35
+                                ^FO100,100^FDTote No: {TOTE_NO}^FS 
+                                ^FO100,150^FDOrder No: {ORDR_NO}^FS 
+                                ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
+                                ^FO100,250^FDDate: {DateTime.Now.ToShortDateString}^FS 
+                                ^FO100,350^FDUPC^FS 
+                                ^FO400,350^FDQty^FS 
+                                ^FO500,350^FDLocation^FS"
 
-                    If Val(ROW.Item("PICK_QTY") & "") <> Val(ROW.Item("PICK_QTY_CONF") & "") Or Val(ROW.Item("PICK_QTY") & "") <> Val(ROW.Item("STAT4") & "") Then
-                        MessageBox.Show($"Pick Qty ({Val(ROW.Item("PICK_QTY") & "")}, Confirm Qty {Val(ROW.Item("PICK_QTY_CONF") & "")} and Transaction Qty {Val(ROW.Item("STAT4") & "")}) are not equivalent for Pick Ticket {PICK_NO}", "De-Pick Pick Tickets", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                        ASCMAIN1.MultiTask_Release()
-                        Exit Sub
-                    End If
+                Dim line As Int32 = 400
+                For Each drLabel As DataRow In tblLabel.Select("", "LOCATION_CODE_FROM")
+                    label &= $" ^FO100,{line}^FD{drLabel.Item("CUST_UPC")}^FS 
+                                ^FO400,{line}^FD{drLabel.Item("WHSE_TRAN_QTY")}^FS 
+                                ^FO500,{line}^FD{drLabel.Item("LOCATION_CODE_FROM")}^FS"
+                    line += 50
+                Next
+
+                label &= $"^XZ"
+
+                zplPrint.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, label)
+                If MessageBox.Show("Did a label print that includes the return location for where the items should be placed?", "De-Pick Pick Ticket", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    ASCMAIN1.MultiTask_Release()
+                    Exit Sub
                 End If
 
                 If MsgBox($"OK to De-Pick Pick Ticket {PICK_NO}?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
@@ -1183,27 +1214,17 @@ Public Class SOFPICKS
                 Try
                     BeginTrans()
 
-                    ASCMAIN1.sql = $"BEGIN DECLARE CURSOR C0 IS
-                                    SELECT PICK_NO, PICK_BATCH_NO FROM SOTPICK1 WHERE PICK_NO = '{PICK_NO}';
-                                    BEGIN FOR R0 IN C0 LOOP
-                                    BEGIN DECLARE CURSOR C1 IS
-                                    SELECT SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, WHTLOCB2.WHSE_CODE, WHTLOCB2.LOCATION_CODE, WHTLOCB2.LOCATION_CODE_OTHER, WHTLOCB2.TRAN_QTY
-                                    , WHTLOCB2.TRAN_TYPE, SOTPICK2.PICK_NO, SOTPICK2.PICK_LNO, WHTLOCB2.INIT_OPER
-                                    FROM WHTLOCB2, SOTPICK2, SOTORDR2
-                                     WHERE SOTPICK2.PICK_NO = WHTLOCB2.TRAN_REF
-                                    AND SOTPICK2.PICK_LNO = WHTLOCB2.TRAN_REF_LNO
-                                    AND WHTLOCB2.TRAN_REF = R0.PICK_NO
-                                    AND SOTORDR2.ORDR_NO= SOTPICK2.ORDR_NO
-                                    AND SOTORDR2.ORDR_LNO= SOTPICK2.ORDR_LNO;
-                                    BEGIN FOR R1 IN C1 LOOP
-                                        ICPSTAT3
-                                        (R1.STYLE_CODE, R1.COLOR_CODE, R1.WHSE_CODE, NULL, NULL,  R1.LOC_CODE, R1.LOC_CODE_OTHER, R1.TRAN_QTY, R1.TRAN_TYPE, R1.PICK_NO, R1.PICK_LNO, R1.INIT_OPER);
-                                        UPDATE SOTPICK2 SET PICK_QTY_CONF = GREATEST(0, NVL(PICK_QTY_CONF,0) + NVL(R1.TRAN_QTY,0))
-                                        WHERE PICK_NO = R1.PICK_NO AND PICK_LNO = R1.PICK_LNO;
-                                        END LOOP; END;
-                                    END;
-                                    END LOOP; END; END;"
-                    ASCDATA1.ExecuteSQL()
+                    For Each drWHTMOVE4 As DataRow In tblWHTMOVE4.Select("")
+                        Dim WHSE_TRAN_NO As String = drWHTMOVE4.Item("WHSE_TRAN_NO")
+                        Dim WHSE_TRAN_LNO As Int16 = drWHTMOVE4.Item("WHSE_TRAN_LNO")
+
+                        Dim PICK_LNO As Int16 = drWHTMOVE4.Item("WHSE_TRAN_REF_LNO")
+
+                        ASCDATA1.ExecuteSP("WHPMOVE1", "VNN",
+                                               New Object() {WHSE_TRAN_NO, WHSE_TRAN_LNO, -1},
+                                               New String() {"WHSE_TRAN_NO_in", "WHSE_TRAN_LNO_in", "S"})
+                    Next
+                    ASCDATA1.ExecuteSQL("UPDATE SOTPICK2 SET PICK_QTY_CONF = 0 WHERE PICK_NO = :PARM1", "V", {PICK_NO})
 
                     Dim PICK_BATCH_STATUS_new As String = Get_PICK_BATCH_STATUS_new(PICK_BATCH_NO)
 
@@ -1224,7 +1245,7 @@ Public Class SOFPICKS
 
                 ASCMAIN1.MultiTask_Release()
 
-                MsgBox($"Pick Ticket {PICK_NO} has been De-Picked" & vbCrLf & vbCrLf & "IMPORTANT - Return the lenses and cloths to their original Pick Location", MsgBoxStyle.OkOnly, "Success")
+                MsgBox($"Pick Ticket {PICK_NO} has been De-Picked" & vbCrLf & vbCrLf & "IMPORTANT - Return the items to the Location", MsgBoxStyle.OkOnly, "Success")
 
                 refresh_next_time_we_look_at_orders = True
                 '   tabMain.SelectedTab = tabMain.Tabs("Orders")
@@ -3314,7 +3335,7 @@ Public Class SOFPICKS
                                 SUM(CASE WHEN S1.PICK_STATUS = 'P' THEN S2.PICK_QTY END)  AS PICK_QTY,
                                 SUM(CASE
                                         WHEN S1.PICK_STATUS = 'P' THEN NVL(S2.PICK_QTY, 0) - NVL(S2.PICK_QTY_CONF, 0) -
-                                                                       CASE WHEN NVL(S2.PICK_QTY,0) <> 0 THEN NVL(S2.PICK_QTY_BACK, 0) ELSE 0 END END)   AS PICK_QTY_NOTYET,
+                                                                       CASE WHEN NVL(S2.PICK_QTY,0) <> 0 THEN NVL(S2.PICK_QTY_CANC, 0) ELSE 0 END END)   AS PICK_QTY_NOTYET,
                                 COUNT(DISTINCT CASE WHEN S1.PICK_STATUS = 'F' THEN S1.PICK_NO END)                  AS FINALIZED_TICKETS,
                                 COUNT(DISTINCT CASE WHEN S1.PICK_STATUS = 'C' THEN S1.PICK_NO END)                  AS CANCELED_TICKETS,
                                 COUNT(DISTINCT CASE WHEN S1.PICK_STATUS = 'D' THEN S1.PICK_NO END)                  AS DEPICKED_TICKETS
@@ -3329,7 +3350,7 @@ Public Class SOFPICKS
                     SELECT * FROM (
                         SELECT
                             CASE
-                                WHEN PICK_BATCH_STATUS IN ('F','C','X') THEN PICK_BATCH_STATUS
+                                WHEN PICK_BATCH_STATUS IN ('F','C','X','K','N') THEN PICK_BATCH_STATUS
                                 WHEN TICKETS_IN_PICK = 0 THEN 'X'
                                 ELSE CASE
                                     WHEN PICK_QTY = PICK_QTY_NOTYET THEN
