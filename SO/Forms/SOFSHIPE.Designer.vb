@@ -350,6 +350,7 @@ Partial Class SOFSHIPE
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.UltraTextEditor1 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -417,6 +418,7 @@ Partial Class SOFSHIPE
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -703,7 +705,7 @@ Partial Class SOFSHIPE
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdSOTTRCK1X)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(918, 575)
         '
@@ -806,7 +808,7 @@ Partial Class SOFSHIPE
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splTotes)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(918, 575)
         '
@@ -1742,6 +1744,7 @@ Partial Class SOFSHIPE
         'grpHeader
         '
         Me.grpHeader.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rounded
+        Me.grpHeader.Controls.Add(Me.UltraTextEditor1)
         Me.grpHeader.Controls.Add(Me.dteSHIP_DATE_SHIPPED)
         Me.grpHeader.Controls.Add(Me.UltraLabel8)
         Me.grpHeader.Controls.Add(Me.numAVG_DELIVERY_DAYS)
@@ -1789,7 +1792,7 @@ Partial Class SOFSHIPE
         '
         Me.Absx1.SetABSBindToTable(Me.numAVG_DELIVERY_DAYS, False)
         Me.numAVG_DELIVERY_DAYS.FormatString = "#,##0"
-        Me.numAVG_DELIVERY_DAYS.Location = New System.Drawing.Point(806, 80)
+        Me.numAVG_DELIVERY_DAYS.Location = New System.Drawing.Point(313, 34)
         Me.numAVG_DELIVERY_DAYS.MaxValue = New Decimal(New Integer() {10000, 0, 0, 0})
         Me.numAVG_DELIVERY_DAYS.MinValue = New Decimal(New Integer() {0, 0, 0, 0})
         Me.numAVG_DELIVERY_DAYS.Name = "numAVG_DELIVERY_DAYS"
@@ -1803,7 +1806,7 @@ Partial Class SOFSHIPE
         'UltraLabel7
         '
         Me.UltraLabel7.AutoSize = True
-        Me.UltraLabel7.Location = New System.Drawing.Point(728, 62)
+        Me.UltraLabel7.Location = New System.Drawing.Point(235, 15)
         Me.UltraLabel7.Name = "UltraLabel7"
         Me.UltraLabel7.Size = New System.Drawing.Size(67, 18)
         Me.UltraLabel7.TabIndex = 167
@@ -1813,7 +1816,7 @@ Partial Class SOFSHIPE
         '
         Me.Absx1.SetABSBindToTable(Me.numOrderFreight, False)
         Me.numOrderFreight.FormatString = "#,##0.00"
-        Me.numOrderFreight.Location = New System.Drawing.Point(728, 80)
+        Me.numOrderFreight.Location = New System.Drawing.Point(235, 34)
         Me.numOrderFreight.MaxValue = New Decimal(New Integer() {10000, 0, 0, 0})
         Me.numOrderFreight.MinValue = New Decimal(New Integer() {0, 0, 0, 0})
         Me.numOrderFreight.Name = "numOrderFreight"
@@ -1945,7 +1948,7 @@ Partial Class SOFSHIPE
         'UltraLabel2
         '
         Me.UltraLabel2.AutoSize = True
-        Me.UltraLabel2.Location = New System.Drawing.Point(115, 12)
+        Me.UltraLabel2.Location = New System.Drawing.Point(115, 15)
         Me.UltraLabel2.Name = "UltraLabel2"
         Me.UltraLabel2.Size = New System.Drawing.Size(34, 18)
         Me.UltraLabel2.TabIndex = 1
@@ -1955,7 +1958,7 @@ Partial Class SOFSHIPE
         '
         Me.Absx1.SetABSBindToTable(Me.txtTOTE_NO, False)
         Me.Absx1.SetABSColumnName(Me.txtTOTE_NO, "TOTE_NO")
-        Me.txtTOTE_NO.Location = New System.Drawing.Point(115, 30)
+        Me.txtTOTE_NO.Location = New System.Drawing.Point(115, 34)
         Me.txtTOTE_NO.Name = "txtTOTE_NO"
         Me.txtTOTE_NO.Size = New System.Drawing.Size(97, 25)
         Me.txtTOTE_NO.TabIndex = 1
@@ -1964,7 +1967,7 @@ Partial Class SOFSHIPE
         'UltraLabel1
         '
         Me.UltraLabel1.AutoSize = True
-        Me.UltraLabel1.Location = New System.Drawing.Point(12, 12)
+        Me.UltraLabel1.Location = New System.Drawing.Point(12, 15)
         Me.UltraLabel1.Name = "UltraLabel1"
         Me.UltraLabel1.Size = New System.Drawing.Size(42, 18)
         Me.UltraLabel1.TabIndex = 0
@@ -1974,7 +1977,7 @@ Partial Class SOFSHIPE
         '
         Me.Absx1.SetABSBindToTable(Me.txtTRUCK_NO, False)
         Me.Absx1.SetABSColumnName(Me.txtTRUCK_NO, "TRUCK_NO")
-        Me.txtTRUCK_NO.Location = New System.Drawing.Point(12, 30)
+        Me.txtTRUCK_NO.Location = New System.Drawing.Point(12, 33)
         Me.txtTRUCK_NO.Name = "txtTRUCK_NO"
         Me.txtTRUCK_NO.Size = New System.Drawing.Size(97, 25)
         Me.txtTRUCK_NO.TabIndex = 0
@@ -2024,6 +2027,18 @@ Partial Class SOFSHIPE
         '
         'Timer1
         '
+        '
+        'UltraTextEditor1
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor1, False)
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor1, "CARRIER_CODE")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor1, "SHIP_VIA_CODE")
+        Me.UltraTextEditor1.Location = New System.Drawing.Point(728, 80)
+        Me.UltraTextEditor1.Name = "UltraTextEditor1"
+        Me.UltraTextEditor1.ReadOnly = True
+        Me.UltraTextEditor1.Size = New System.Drawing.Size(114, 25)
+        Me.UltraTextEditor1.TabIndex = 171
+        Me.UltraTextEditor1.TabStop = False
         '
         'SOFSHIPE
         '
@@ -2102,6 +2117,7 @@ Partial Class SOFSHIPE
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
+        CType(Me.UltraTextEditor1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -2157,4 +2173,5 @@ Partial Class SOFSHIPE
     Friend WithEvents chkUseAverageDeliveryDays As ABSCS.ABSCheckBox
     Friend WithEvents dteSHIP_DATE_SHIPPED As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents UltraLabel8 As Misc.UltraLabel
+    Friend WithEvents UltraTextEditor1 As UltraWinEditors.UltraTextEditor
 End Class

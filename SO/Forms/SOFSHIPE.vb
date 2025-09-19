@@ -424,6 +424,12 @@ Public Class SOFSHIPE
             Case "Refresh"
 
             Case "Request Rates"
+
+                If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                    EMsg &= vbCr & "Global E does not request Rates."
+                    Exit Select
+                End If
+
                 If dst.Tables("SOTCART1").Rows.Count = 0 Then
                     EMsg &= vbCr & "At least one carton must be added before shipping rates can be requested."
                 End If
@@ -444,8 +450,10 @@ Public Class SOFSHIPE
                     EMsg &= vbCr & "A shipping method must be selected before the order can be shipped."
                 End If
 
-                If dst.Tables("WHTSHPC4").Rows.Count = 0 Then
-                    EMsg &= vbCr & "You need to request shipping rates before the order can be shipped."
+                If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
+                    If dst.Tables("WHTSHPC4").Rows.Count = 0 Then
+                        EMsg &= vbCr & "You need to request shipping rates before the order can be shipped."
+                    End If
                 End If
 
                 Dim CART_SEQ As Int16 = 1
@@ -472,8 +480,10 @@ Public Class SOFSHIPE
 
                 'Dim cost As Decimal = 0
 
-                If dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'").Length = 0 Then
-                    EMsg &= vbCr & "You must select a Shipping Method that is listed in the Carrier Shipping Rates grid before the order can be shipped. Double-click a shipping method in the grid to select it for this order."
+                If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
+                    If dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'").Length = 0 Then
+                        EMsg &= vbCr & "You must select a Shipping Method that is listed in the Carrier Shipping Rates grid before the order can be shipped. Double-click a shipping method in the grid to select it for this order."
+                    End If
                 End If
 
                 If EMsg.Length > 0 Then
@@ -487,10 +497,12 @@ Public Class SOFSHIPE
                     End If
                 End If
 
-                Dim ErrorMessage As String = String.Empty
                 ' This is a prescreen for potential issues.
-                If Not RequestShippingLabel("", ErrorMessage, True) Then
-                    EMsg &= vbCr & ErrorMessage
+                If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
+                    Dim ErrorMessage As String = String.Empty
+                    If Not RequestShippingLabel("", ErrorMessage, True) Then
+                        EMsg &= vbCr & ErrorMessage
+                    End If
                 End If
         End Select
 
@@ -547,7 +559,10 @@ Public Class SOFSHIPE
                     dst.Tables("SOTPICK1X").Select($"PICK_NO = '{PICK_NO}'")(0).Item("SELECTED") = "1"
                     If Not AllItemsCancelled Then
                         Dim INV_NO As String = dst.Tables("SOTINVH1").Rows(0).Item("INV_NO")
-                        If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
+
+                        If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                            PrintGlobalLabel(txtTOTE_NO.Text)
+                        ElseIf Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
                             MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
                             If MessageBox.Show("Do you want to Validate the Address and retry requesting a shipping label?", "Ship Order", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = DialogResult.Yes Then
                                 AddressValidatedByUser = False
@@ -794,6 +809,60 @@ Public Class SOFSHIPE
 
     Private Delegate Sub ScannerDelegate(ByVal ScannedString As String)
     Private scannedDelegate As ScannerDelegate = Nothing
+
+    Private Sub PrintGlobalLabel(ByVal TOTE_NO As String)
+
+        Try
+            If TOTE_NO.Length = 0 Then
+                Exit Sub
+            End If
+
+            Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{TOTE_NO}'")(0)
+            Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
+            Dim drSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+            Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
+            Dim ORDR_NO_WEB As String = drSOTORDR1.Item("ORDR_NO_WEB") & String.Empty
+
+            Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+
+            Dim label As String = "^XA 
+                                ^CF0,50
+                                ^FO100,20^FDGlobal E Shipment^FS 
+                                ^CF0,35
+                                ^FO100,100^FDTote No: {TOTE_NO}^FS 
+                                ^FO100,150^FDOrder No: {ORDR_NO}^FS 
+                                ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
+                                ^FO100,250^FDInvoice: {INV_NO}^FS 
+                                ^FO100,300^FDShopify Order ID: {ORDR_WEB_ID}^FS 
+                                ^FO100,350^FDShopify #: {ORDR_NO_WEB}^FS 
+                                ^FO100,450^FDName: {CUST_NAME}^FS 
+                                ^FO100,500^FDContact: {CUST_CONTACT}^FS 
+                                ^FO100,550^FDAddr Line 1: {CUST_ADDR1}^FS 
+                                ^FO100,600^FDAddr Line 2: {CUST_ADDR2}^FS 
+                                ^FO100,650^FDAddr Line 3: {CUST_ADDR3}^FS 
+                                ^FO100,700^FDCity: {CUST_CITY}^FS 
+                                ^FO100,750^FDState: {CUST_STATE}^FS 
+                                ^FO100,800^FDZip Code: {CUST_ZIP_CODE}^FS 
+                                ^FO100,850^FDCountry: {CUST_COUNTRY}^FS 
+                                ^FO100,900^FDPhone: {CUST_PHONE}^FS 
+                                ^FO100,950^FDEmail: {CUST_EMAIL}^FS 
+                                ^XZ"
+            For Each dcol As DataColumn In dst.Tables("SOTORDR5").Columns
+                label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
+            Next
+
+            label = label.Replace("{TOTE_NO}", TOTE_NO)
+            label = label.Replace("{PICK_NO}", rowSOTPICK1.Item("PICK_NO") & String.Empty)
+            label = label.Replace("{INV_NO}", rowSOTPICK1.Item("INV_NO") & String.Empty)
+            label = label.Replace("{ORDR_WEB_ID}", ORDR_WEB_ID)
+            label = label.Replace("{ORDR_NO_WEB}", ORDR_NO_WEB)
+
+            clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, label)
+        Catch ex As Exception
+            MessageBox.Show(ex.Message & " - " & ex.InnerException.Message)
+        End Try
+    End Sub
+
 
     Private Sub PrintAddressLabel(ByVal TOTE_NO As String)
 
