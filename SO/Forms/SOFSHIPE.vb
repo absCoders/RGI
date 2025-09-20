@@ -220,6 +220,9 @@ Public Class SOFSHIPE
             .Tables("SOTORDR5").Columns("IS_PO_BOX").DefaultValue = "0"
             'dst.Tables("SOTORDR5").PrimaryKey = New DataColumn() {dst.Tables("SOTORDR5").Columns("ORDR_NO"), dst.Tables("SOTORDR5").Columns("CUST_ADDR_TYPE")}
 
+            ASCMAIN1.sql = "SELECT * FROM SOTORDR6 WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+            Create_TDA(.Tables.Add, "SOTORDR6", ASCMAIN1.sql, 0, True, "C")
+
             ASCMAIN1.sql = "SELECT * FROM SOTORDRT WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
             Create_TDA(.Tables.Add, "SOTORDRT", ASCMAIN1.sql, 0, True, "C")
 
@@ -425,10 +428,6 @@ Public Class SOFSHIPE
 
             Case "Request Rates"
 
-                If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
-                    EMsg &= vbCr & "Global E does not request Rates."
-                    Exit Select
-                End If
 
                 If dst.Tables("SOTCART1").Rows.Count = 0 Then
                     EMsg &= vbCr & "At least one carton must be added before shipping rates can be requested."
@@ -450,10 +449,8 @@ Public Class SOFSHIPE
                     EMsg &= vbCr & "A shipping method must be selected before the order can be shipped."
                 End If
 
-                If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
-                    If dst.Tables("WHTSHPC4").Rows.Count = 0 Then
-                        EMsg &= vbCr & "You need to request shipping rates before the order can be shipped."
-                    End If
+                If dst.Tables("WHTSHPC4").Rows.Count = 0 Then
+                    EMsg &= vbCr & "You need to request shipping rates before the order can be shipped."
                 End If
 
                 Dim CART_SEQ As Int16 = 1
@@ -480,10 +477,8 @@ Public Class SOFSHIPE
 
                 'Dim cost As Decimal = 0
 
-                If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
-                    If dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'").Length = 0 Then
-                        EMsg &= vbCr & "You must select a Shipping Method that is listed in the Carrier Shipping Rates grid before the order can be shipped. Double-click a shipping method in the grid to select it for this order."
-                    End If
+                If dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'").Length = 0 Then
+                    EMsg &= vbCr & "You must select a Shipping Method that is listed in the Carrier Shipping Rates grid before the order can be shipped. Double-click a shipping method in the grid to select it for this order."
                 End If
 
                 If EMsg.Length > 0 Then
@@ -498,11 +493,9 @@ Public Class SOFSHIPE
                 End If
 
                 ' This is a prescreen for potential issues.
-                If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
-                    Dim ErrorMessage As String = String.Empty
-                    If Not RequestShippingLabel("", ErrorMessage, True) Then
-                        EMsg &= vbCr & ErrorMessage
-                    End If
+                Dim ErrorMessage As String = String.Empty
+                If Not RequestShippingLabel("", ErrorMessage, True) Then
+                    EMsg &= vbCr & ErrorMessage
                 End If
         End Select
 
@@ -560,9 +553,7 @@ Public Class SOFSHIPE
                     If Not AllItemsCancelled Then
                         Dim INV_NO As String = dst.Tables("SOTINVH1").Rows(0).Item("INV_NO")
 
-                        If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
-                            PrintGlobalLabel(txtTOTE_NO.Text)
-                        ElseIf Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
+                        If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
                             MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
                             If MessageBox.Show("Do you want to Validate the Address and retry requesting a shipping label?", "Ship Order", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = DialogResult.Yes Then
                                 AddressValidatedByUser = False
@@ -652,7 +643,7 @@ Public Class SOFSHIPE
         For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", "SOTRNGA1",
             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5",
             "WHTSHPCG", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTSHPCA",
-            "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDRT", "TATEVNT1",
+            "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR6", "SOTORDRT", "TATEVNT1",
             "SOTSHIP1", "SOTCART1", "SOTCART2"}
             If dst.Tables.Contains(tableName) Then
                 dst.Tables(tableName).Rows.Clear()
@@ -862,7 +853,6 @@ Public Class SOFSHIPE
             MessageBox.Show(ex.Message & " - " & ex.InnerException.Message)
         End Try
     End Sub
-
 
     Private Sub PrintAddressLabel(ByVal TOTE_NO As String)
 
@@ -1204,6 +1194,7 @@ Public Class SOFSHIPE
                     Fill_Records("SOTORDR1", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("SOTORDR2", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("SOTORDR5", String.Join(",", lstORDR_NOs.ToArray))
+                    Fill_Records("SOTORDR6", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("SOTORDRT", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("ARTCUST2", String.Join(",", lstORDR_NOs.ToArray))
 
@@ -1979,8 +1970,8 @@ Public Class SOFSHIPE
 
             Dim rUPSList(1) As WHCSHIP1.RateList
             Dim rFEDEXList(1) As WHCSHIP1.RateList
-            Dim rUPSFreightList(1) As WHCSHIP1.RateList
             Dim rUSPSList(1) As WHCSHIP1.RateList
+            Dim rGlobalRates(1) As WHCSHIP1.RateList
 
             'Me.Cursor = Cursors.WaitCursor
             'ASCMAIN1.Progress("-", "USPS")
@@ -1993,6 +1984,10 @@ Public Class SOFSHIPE
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("-", "FedEx")
             rFEDEXList = GetFedExRates(PICK_NO)
+
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("-", "Global-e")
+            rGlobalRates = GetGlobalRates(PICK_NO)
 
             Me.Cursor = Cursors.WaitCursor
 
@@ -2008,8 +2003,8 @@ Public Class SOFSHIPE
                 ReDim rFEDEXList(1)
             End If
 
-            If rUPSFreightList Is Nothing Then
-                ReDim rUPSFreightList(1)
+            If rGlobalRates Is Nothing Then
+                ReDim rGlobalRates(1)
             End If
 
             Dim selected As Boolean = False
@@ -2031,10 +2026,9 @@ Public Class SOFSHIPE
                         ASCMAIN1.Progress("-", "FedEx")
 
                     Case 3
-                        rList = rUPSFreightList
-                        CARRIER_CODE = "UPS"
-                        ASCMAIN1.Progress("-", "UPS Freight")
-                        freightShipment = " and ISNULL(FREIGHT_SHIPMENT, '0') = '1'"
+                        rList = rGlobalRates
+                        CARRIER_CODE = "GLOBAL"
+                        ASCMAIN1.Progress("-", "Global-e")
 
                     Case 4
                         rList = rUSPSList
@@ -2103,6 +2097,8 @@ Public Class SOFSHIPE
                                     drWHTSHPC4.Item("SERVICE_INDEX") = iLoop + 200
                                 Case "USPS"
                                     drWHTSHPC4.Item("SERVICE_INDEX") = iLoop + 300
+                                Case "GLOBAL"
+                                    drWHTSHPC4.Item("SERVICE_INDEX") = iLoop + 400
                             End Select
 
                             drWHTSHPC4.Item("SERVICE_TYPE_DESC") = .ServiceTypeDescription
@@ -2207,10 +2203,59 @@ Public Class SOFSHIPE
 
     End Sub
 
+    Private Function GetGlobalRates(ByVal PICK_NO As String) As WHCSHIP1.RateList()
+        Try
+            Dim rList(1) As WHCSHIP1.RateList
+
+            If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
+                Return rList
+            End If
+
+            If dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'GLOBAL'").Length = 0 Then
+                Return Nothing
+            End If
+
+            If dst.Tables("SOTCARR3").Select("CARRIER_CODE = 'GLOBAL'").Length = 0 Then
+                Return Nothing
+            End If
+
+            ' 09/19/2025 - Global-e
+            Dim index As Int16 = 1
+            If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                Dim drSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
+                Dim ORDR_NO As String = drSOTPICK1.Item("ORDR_NO")
+
+                ReDim rList(dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length)
+
+                For Each drSOTORDR6 As DataRow In dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")
+                    Dim SHIP_VIA_CODE As String = drSOTORDR6.Item("SHIP_VIA_CODE")
+                    Dim drSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
+                    With rList(index)
+                        .AccountNetCharge = Val(drSOTORDR6.Item("SHIP_COST") & String.Empty)
+                        '.ServiceCode = drSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+                        .ServiceType = drSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+                        .ServiceTypeDescription = drSOTSVIA1.Item("SHIP_VIA_DESC") & String.Empty
+                    End With
+                    index += 1
+                Next
+            End If
+
+            Return rList
+        Catch ex As Exception
+            MessageBox.Show("The following error occurred getting FedEx Rates: " & ex.Message, "Get FedEx Rates", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return Nothing
+
+        End Try
+    End Function
+
     Private Function GetUpsRates(ByVal PICK_NO As String) As WHCSHIP1.RateList()
         Try
 
             Dim rList(1) As WHCSHIP1.RateList
+
+            If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                Return rList
+            End If
 
             If dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'UPS'").Length = 0 Then
                 Return Nothing
@@ -2372,6 +2417,10 @@ Public Class SOFSHIPE
         Try
 
             Dim rList(1) As WHCSHIP1.RateList
+
+            If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                Return rList
+            End If
 
             If dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'FEDEX'").Length = 0 Then
                 Return Nothing
@@ -2572,6 +2621,7 @@ Public Class SOFSHIPE
         Dim SHIP_PACKAGE_NO As Int64 = 0
         Dim pkgId As Int64 = 0
         Dim isPitneyBowes As Boolean = False
+        Dim isGlobale As Boolean = False
 
         Dim CARRIER_SURCHARGE_PERC As Int16 = 0
         Dim CARRIER_SURCHARGE_BASE As String = "L"
@@ -2746,6 +2796,20 @@ Public Class SOFSHIPE
 
             Next
 
+            Dim GlobaleOrderID As String = String.Empty
+            Select Case CARRIER_CODE
+                Case "GLOBAL"
+                    If dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length = 0 Then
+                        ErrorMessage &= vbCr & "Cannot determne the Global-e ID."
+                    Else
+                        GlobaleOrderID = dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")(0).Item("SHIP_REFERENCE") & String.Empty
+                    End If
+
+                    If GlobaleOrderID.Length = 0 Then
+                        ErrorMessage &= vbCr & "Cannot determne the Global-e ID."
+                    End If
+            End Select
+
             If ErrorMessage.Length > 0 Then
                 Return True
             End If
@@ -2781,6 +2845,8 @@ Public Class SOFSHIPE
             clsShip.FedexMeterNumber = drSOTCARR3.Item("METER_NUMBER") & String.Empty
             clsShip.FedexDeveloperKey = drSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
             clsShip.LabelStockType = (drSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
+
+            clsShip.GlobaleOrderID = GlobaleOrderID
 
             Dim drWHTSHPC1 As DataRow = Nothing
             Dim drWHTSHPC2 As DataRow = Nothing
@@ -3079,6 +3145,10 @@ Public Class SOFSHIPE
                 Case WHCSHIP1.ProviderTypeCanada
                     clsShip.Service = WHCSHIP1.ServiceProviders.CanadaPost
 
+                Case WHCSHIP1.ProviderTypeGlobale
+                    isGlobale = True
+                    clsShip.Service = WHCSHIP1.ServiceProviders.Global_e
+
                 Case Else
                     Return False
             End Select
@@ -3111,7 +3181,6 @@ Public Class SOFSHIPE
                         drSOTCART1.Item("REFERENCE1") = $"TN:{drSOTORDR1.Item("ORDR_NO_WEB")}"
                         drSOTCART1.Item("REFERENCE2") = $"IK:{INV_NO}"
                         drSOTCART1.Item("REFERENCE3") = ""
-
                 End Select
             Next
 
@@ -3568,6 +3637,8 @@ Public Class SOFSHIPE
 
                 If isPitneyBowes Then
                     drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
+                ElseIf isGlobale Then
+                    drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.GlobaleOrderID
                 Else
                     drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
                 End If
@@ -3575,7 +3646,11 @@ Public Class SOFSHIPE
                 ' Update Pro Number if it is blank
                 For Each dr As DataRow In dst.Tables("SOTSHIP1").Select("")
                     If dr.Item("SHIP_REF") & String.Empty = String.Empty Then
-                        dr.Item("SHIP_REF") = clsShip.MasterTrackingNumber & String.Empty
+                        If isGlobale Then
+                            dr.Item("SHIP_REF") = clsShip.GlobaleOrderID & String.Empty
+                        Else
+                            dr.Item("SHIP_REF") = clsShip.MasterTrackingNumber & String.Empty
+                        End If
                     End If
                 Next
 
@@ -3590,24 +3665,33 @@ Public Class SOFSHIPE
                             pitneyBowesshipdata = JsonConvert.DeserializeObject(Of TAC.WHCSHIP1.PitneyBowesPackageInformation)(shipPackageDetail.Reference)
                             drWHTSHPC2.Item("TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             drWHTSHPC2.Item("TRACKING_NUMBER") = pitneyBowesshipdata.ShipmentID & String.Empty
+                        ElseIf isGlobale Then
+                            drWHTSHPC2.Item("TRACKING_NO") = clsShip.sGlobalePackageInformation.ShipmentID & String.Empty
+                            drWHTSHPC2.Item("TRACKING_NUMBER") = clsShip.sGlobalePackageInformation.ShipmentID & String.Empty
                         Else
                             drWHTSHPC2.Item("TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                         End If
 
-                        drWHTSHPC2.Item("BASE_CHARGE") = Val(clsShip.ShipmentBaseCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        drWHTSHPC2.Item("NET_CHARGE") = Val(clsShip.ShipmentNetCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        drWHTSHPC2.Item("TOTAL_DISCOUNT") = Val(clsShip.ShipmentDiscountCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        drWHTSHPC2.Item("TOTAL_SURCHARGES") = Val(clsShip.ShipmentSurCharge(SHIP_PACKAGE_NO) & String.Empty)
+                        If Not isGlobale Then
+                            drWHTSHPC2.Item("BASE_CHARGE") = Val(clsShip.ShipmentBaseCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            drWHTSHPC2.Item("NET_CHARGE") = Val(clsShip.ShipmentNetCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            drWHTSHPC2.Item("TOTAL_DISCOUNT") = Val(clsShip.ShipmentDiscountCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            drWHTSHPC2.Item("TOTAL_SURCHARGES") = Val(clsShip.ShipmentSurCharge(SHIP_PACKAGE_NO) & String.Empty)
+
+                            If clsShip.ShipmentListCharge.ContainsKey(SHIP_PACKAGE_NO) Then
+                                drWHTSHPC2.Item("LIST_PRICE") = Val(clsShip.ShipmentListCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            Else
+                                drWHTSHPC2.Item("LIST_PRICE") = drWHTSHPC2.Item("NET_CHARGE")
+                            End If
+                        Else
+                            drWHTSHPC2.Item("BASE_CHARGE") = numOrderFreight.Value
+                            drWHTSHPC2.Item("NET_CHARGE") = numOrderFreight.Value
+                        End If
 
                         drWHTSHPC2.Item("LENGTH") = Val(shipPackageDetail.Length & String.Empty)
                         drWHTSHPC2.Item("WIDTH") = Val(shipPackageDetail.Width & String.Empty)
                         drWHTSHPC2.Item("HEIGHT") = Val(shipPackageDetail.Height & String.Empty)
 
-                        If clsShip.ShipmentListCharge.ContainsKey(SHIP_PACKAGE_NO) Then
-                            drWHTSHPC2.Item("LIST_PRICE") = Val(clsShip.ShipmentListCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        Else
-                            drWHTSHPC2.Item("LIST_PRICE") = drWHTSHPC2.Item("NET_CHARGE")
-                        End If
 
                         OUR_FREIGHT = Val(drWHTSHPC2.Item("NET_CHARGE") & String.Empty)
 
@@ -3648,6 +3732,8 @@ Public Class SOFSHIPE
                         For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO)
                             If isPitneyBowes Then
                                 drSOTCART1.Item("CART_TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
+                            ElseIf isGlobale Then
+                                drSOTCART1.Item("CART_TRACKING_NO") = clsShip.sGlobalePackageInformation.TrackingNumber & String.Empty
                             Else
                                 drSOTCART1.Item("CART_TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                             End If
@@ -3663,6 +3749,8 @@ Public Class SOFSHIPE
                             sr.Close()
                             sr.Dispose()
                         End Using
+                    ElseIf isGlobale Then
+                        ShippingLabels.Add(clsShip.sGlobalePackageInformation.ShippingLabel)
                     Else
                         ShippingLabels.Add(shipPackageDetail.ShippingLabel)
                         ShippingLabels.Add(shipPackageDetail.CODLabel)
