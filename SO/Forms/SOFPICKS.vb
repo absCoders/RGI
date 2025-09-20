@@ -1285,11 +1285,24 @@ Public Class SOFPICKS
                 Dim rowSOTPICK0 As DataRow = ASCDATA1.GetDataRow
 
                 Dim PICK_BATCH_STATUS As String = rowSOTPICK0.Item("PICK_BATCH_STATUS")
-                If Not (PICK_BATCH_STATUS = "O" Or PICK_BATCH_STATUS = "P") Then
-                    MsgBox($"Status for Pick Batch {PICK_BATCH_NO} is not 'Released' or 'Picking'", MsgBoxStyle.OkOnly, "Cannot Proceed with De-Release")
-                    ASCMAIN1.MultiTask_Release()
-                    Exit Sub
-                End If
+
+                Select Case e.Tool.Key
+                    Case "De-Release Pick Batch"
+                        If Not "OP".Contains(PICK_BATCH_STATUS) Then
+                            '  If Not (PICK_BATCH_STATUS = "O" Or PICK_BATCH_STATUS = "P") Then
+                            MsgBox($"Status for Pick Batch {PICK_BATCH_NO} is not 'Released' or 'Picking'", MsgBoxStyle.OkOnly, "Cannot Proceed with De-Release")
+                            ASCMAIN1.MultiTask_Release()
+                            Exit Sub
+                        End If
+
+                    Case "De-Release Pick Tickets"
+                        If Not "ONK".Contains(PICK_BATCH_STATUS) Then
+                            '  If Not (PICK_BATCH_STATUS = "O" Or PICK_BATCH_STATUS = "P") Then
+                            MsgBox($"Status for Pick Batch {PICK_BATCH_NO} is not 'Open', 'Picked' or 'Shipping'", MsgBoxStyle.OkOnly, "Cannot Proceed with De-Release")
+                            ASCMAIN1.MultiTask_Release()
+                            Exit Sub
+                        End If
+                End Select
 
                 For Each PICK_NO As String In PICK_NOsD
                     Dim rowSOTPICK1 As DataRow = LookUp("SOTPICK1", PICK_NO)
