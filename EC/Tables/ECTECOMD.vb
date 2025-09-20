@@ -16,7 +16,7 @@ Public Class ECTECOMD
             .Tables("ICTSTYCW").Columns.Add("SIZE_CODE", GetType(System.String))
 
             Create_TDA(.Tables.Add, "SOTSVIA1", "*")
-            ASCMAIN1.sql = "SELECT * FROM SOTSVIA1 WHERE CARRIER_CODE IN ('UPS', 'FEDEX') AND CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
+            ASCMAIN1.sql = "SELECT * FROM SOTSVIA1 WHERE CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
             Fill_Records("SOTSVIA1", String.Empty, True, ASCMAIN1.sql)
 
             .Tables.Add("ICTSTYCW_PLM")
@@ -90,7 +90,7 @@ Public Class ECTECOMD
         Next
 
         Update_Record_TDA("SOTSVIAW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
-        Update_Record_TDA("ICTSTYCW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
+        'Update_Record_TDA("ICTSTYCW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
         Update_Record_TDA("WHTPKGMW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
 
     End Sub
@@ -113,7 +113,7 @@ Public Class ECTECOMD
                             AND ICTSTYCW.STYLE_CODE = ICTSTYC3.STYLE_CODE (+)
                             AND ICTSTYCW.COLOR_CODE = ICTSTYC3.COLOR_CODE (+)
                             AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+)"
-        Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
+        'Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
 
         Dim tblPLM As DataTable = ASCDATA1.SelectDistinct(dst.Tables("ICTSTYCW"), {"ECOM_CODE", "STYLE_CODE_PLM"})
 
@@ -474,7 +474,6 @@ Public Class ECTECOMD
             Exit Sub
         End If
 
-        e.Row.Cells("SHIP_VIA_DESC").Value = drSOTSVIA1.Item("SHIP_VIA_DESC") & String.Empty
     End Sub
 
     Private Sub grdSOTSVIAW_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdSOTSVIAW.ClickCellButton
@@ -483,26 +482,9 @@ Public Class ECTECOMD
 
         Select Case e.Cell.Column.Key
             Case "SHIP_VIA_CODE"
-                sql_where = "CARRIER_CODE IN ('UPS', 'FEDEX') AND CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
+                sql_where = "CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
                 grdClickCellButton(grdSOTSVIAW, sql_where)
-
         End Select
-    End Sub
-
-    Private Sub grdSOTSVIAW_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdSOTSVIAW.AfterCellUpdate
-        Select Case e.Cell.Column.Key
-            Case "SHIP_VIA_CODE"
-                Dim SHIP_VIA_CODE As String = e.Cell.Row.Cells("SHIP_VIA_CODE").Value & String.Empty
-                If SHIP_VIA_CODE.Length > 0 Then
-                    Dim drSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
-                    If drSOTSVIA1 Is Nothing Then
-                        e.Cell.Row.Cells("SHIP_VIA_DESC").Value = String.Empty
-                    Else
-                        e.Cell.Row.Cells("SHIP_VIA_DESC").Value = drSOTSVIA1.Item("SHIP_VIA_DESC") & String.Empty
-                    End If
-                End If
-        End Select
-
     End Sub
 
 
