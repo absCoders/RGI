@@ -863,8 +863,15 @@ Public Class SOFSHIPE
 
             Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{TOTE_NO}'")(0)
             Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
-
             Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+            Dim drSOTORDR6 As DataRow = Nothing
+
+            Dim SHIP_REFERENCE As String = String.Empty
+
+            If dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length > 0 Then
+                drSOTORDR6 = dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+                SHIP_REFERENCE = drSOTORDR6.Item("SHIP_REFERENCE") & String.Empty
+            End If
 
             Dim label As String = "^XA 
                                 ^CF0,50
@@ -885,6 +892,8 @@ Public Class SOFSHIPE
                                 ^FO100,750^FDCountry: {CUST_COUNTRY}^FS 
                                 ^FO100,800^FDPhone: {CUST_PHONE}^FS 
                                 ^FO100,850^FDEmail: {CUST_EMAIL}^FS 
+                                ^CF0,50
+                                ^FO100,950^FDGlobal: {SHIP_REFERENCE}^FS 
                                 ^XZ"
             For Each dcol As DataColumn In dst.Tables("SOTORDR5").Columns
                 label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
@@ -893,6 +902,7 @@ Public Class SOFSHIPE
             label = label.Replace("{TOTE_NO}", TOTE_NO)
             label = label.Replace("{PICK_NO}", rowSOTPICK1.Item("PICK_NO") & String.Empty)
             label = label.Replace("{INV_NO}", rowSOTPICK1.Item("INV_NO") & String.Empty)
+            label = label.Replace("{SHIP_REFERENCE}", SHIP_REFERENCE)
 
             clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, label)
         Catch ex As Exception
@@ -2756,22 +2766,24 @@ Public Class SOFSHIPE
             Dim CUST_ZIP_CODE As String = (drSOTORDR5.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
             Dim CUST_PHONE As String = (drSOTORDR5.Item("CUST_PHONE") & String.Empty).ToString.Trim
 
-            If CUST_ADDR1.Length = 0 AndAlso CUST_ADDR2.Length = 0 Then
-                ErrorMessage = "Invalid or missing Ship To Street Address"
-                Return False
-            ElseIf Not CUST_COUNTRY.StartsWith("US") AndAlso (CUST_CITY.Length = 0 OrElse CUST_ZIP_CODE.Length = 0) Then
-                ErrorMessage = "Invalid or missing International Ship To City and/or Zip Code"
-                Return False
-            ElseIf CUST_CITY.Length = 0 OrElse CUST_STATE.Length = 0 OrElse CUST_ZIP_CODE.Length = 0 Then
-                ErrorMessage = "Invalid or missing Ship To City, State or Zip Code"
-                Return False
-            ElseIf CUST_COUNTRY.Length = 0 Then
-                Dim drTATSTATE As DataRow = dst.Tables("TATSTATE").Rows.Find(CUST_STATE)
-                If drTATSTATE IsNot Nothing Then
-                    CUST_COUNTRY = "US"
-                Else
-                    ErrorMessage = "Invalid or missing Country Code"
+            If CARRIER_CODE <> "GLOBAL" Then
+                If CUST_ADDR1.Length = 0 AndAlso CUST_ADDR2.Length = 0 Then
+                    ErrorMessage = "Invalid or missing Ship To Street Address"
                     Return False
+                ElseIf Not CUST_COUNTRY.StartsWith("US") AndAlso (CUST_CITY.Length = 0 OrElse CUST_ZIP_CODE.Length = 0) Then
+                    ErrorMessage = "Invalid or missing International Ship To City and/or Zip Code"
+                    Return False
+                ElseIf CUST_CITY.Length = 0 OrElse CUST_STATE.Length = 0 OrElse CUST_ZIP_CODE.Length = 0 Then
+                    ErrorMessage = "Invalid or missing Ship To City, State or Zip Code"
+                    Return False
+                ElseIf CUST_COUNTRY.Length = 0 Then
+                    Dim drTATSTATE As DataRow = dst.Tables("TATSTATE").Rows.Find(CUST_STATE)
+                    If drTATSTATE IsNot Nothing Then
+                        CUST_COUNTRY = "US"
+                    Else
+                        ErrorMessage = "Invalid or missing Country Code"
+                        Return False
+                    End If
                 End If
             End If
 
@@ -3414,7 +3426,7 @@ Public Class SOFSHIPE
                     dst.Tables("WHTSHPC2").Rows.Add(drWHTSHPC2)
                 Next
 
-                If isInternationalShipment Then
+                If isInternationalShipment AndAlso CARRIER_CODE <> "GLOBAL" Then
                     ' Set the Customs value
                     clsShip.TotalCustomsValue = Val(drSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
 
