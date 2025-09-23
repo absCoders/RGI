@@ -212,11 +212,11 @@ Partial Class SOROREL1
         Me.UltraLabel7 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraNumericEditor4 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.chkINTL = New ABSCS.ABSCheckBox()
-        Me.AbsCheckBox3 = New ABSCS.ABSCheckBox()
+        Me.chkCombineSales = New ABSCS.ABSCheckBox()
         Me.UltraNumericEditor1 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
-        Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
-        Me.AbsCheckBox1 = New ABSCS.ABSCheckBox()
+        Me.chkNUMCUBE = New ABSCS.ABSCheckBox()
+        Me.chkNoSpecialComments = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl17 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer8 = New System.Windows.Forms.SplitContainer()
         Me.grdARTCUST1_X = New Infragistics.Win.UltraWinGrid.UltraGrid()
@@ -300,10 +300,10 @@ Partial Class SOROREL1
         CType(Me.grdTATSHIPP, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkINTL, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkCombineSales, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkNUMCUBE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkNoSpecialComments, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl17.SuspendLayout()
         CType(Me.SplitContainer8, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer8.Panel1.SuspendLayout()
@@ -323,6 +323,7 @@ Partial Class SOROREL1
         '
         'UltraTabPageControl2
         '
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5)
         '
         'UltraTabControl1
@@ -748,11 +749,12 @@ Partial Class SOROREL1
         Me.grpCANCEL_LETTERS.Controls.Add(Me.UltraDateTimeEditor2)
         Me.grpCANCEL_LETTERS.Controls.Add(Me.chkCheck_CANCEL)
         Me.grpCANCEL_LETTERS.Controls.Add(Me.UltraDateTimeEditor1)
-        Me.grpCANCEL_LETTERS.Location = New System.Drawing.Point(629, 68)
+        Me.grpCANCEL_LETTERS.Location = New System.Drawing.Point(530, 8)
         Me.grpCANCEL_LETTERS.Name = "grpCANCEL_LETTERS"
         Me.grpCANCEL_LETTERS.Size = New System.Drawing.Size(171, 138)
         Me.grpCANCEL_LETTERS.TabIndex = 189
         Me.grpCANCEL_LETTERS.Text = "Cancellation Letters"
+        Me.grpCANCEL_LETTERS.Visible = False
         '
         'UltraLabel2
         '
@@ -967,11 +969,11 @@ Partial Class SOROREL1
         Me.UltraGroupBox2.Controls.Add(Me.UltraLabel7)
         Me.UltraGroupBox2.Controls.Add(Me.UltraNumericEditor4)
         Me.UltraGroupBox2.Controls.Add(Me.chkINTL)
-        Me.UltraGroupBox2.Controls.Add(Me.AbsCheckBox3)
+        Me.UltraGroupBox2.Controls.Add(Me.chkCombineSales)
         Me.UltraGroupBox2.Controls.Add(Me.UltraNumericEditor1)
         Me.UltraGroupBox2.Controls.Add(Me.UltraLabel3)
-        Me.UltraGroupBox2.Controls.Add(Me.AbsCheckBox2)
-        Me.UltraGroupBox2.Controls.Add(Me.AbsCheckBox1)
+        Me.UltraGroupBox2.Controls.Add(Me.chkNUMCUBE)
+        Me.UltraGroupBox2.Controls.Add(Me.chkNoSpecialComments)
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox2.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
@@ -1160,14 +1162,14 @@ Partial Class SOROREL1
         Me.chkINTL.TabIndex = 6
         Me.chkINTL.Text = "Do not release orders with an International Bill To or Ship To"
         '
-        'AbsCheckBox3
+        'chkCombineSales
         '
-        Me.Absx1.SetABSColumnName(Me.AbsCheckBox3, "CHKCOMBINE")
-        Me.AbsCheckBox3.Location = New System.Drawing.Point(23, 117)
-        Me.AbsCheckBox3.Name = "AbsCheckBox3"
-        Me.AbsCheckBox3.Size = New System.Drawing.Size(462, 20)
-        Me.AbsCheckBox3.TabIndex = 5
-        Me.AbsCheckBox3.Text = "Group Sales Orders by Customer, Ship To, Mark for"
+        Me.Absx1.SetABSColumnName(Me.chkCombineSales, "CHKCOMBINE")
+        Me.chkCombineSales.Location = New System.Drawing.Point(23, 117)
+        Me.chkCombineSales.Name = "chkCombineSales"
+        Me.chkCombineSales.Size = New System.Drawing.Size(462, 20)
+        Me.chkCombineSales.TabIndex = 5
+        Me.chkCombineSales.Text = "Group Sales Orders by Customer, Ship To, Mark for"
         '
         'UltraNumericEditor1
         '
@@ -1190,23 +1192,23 @@ Partial Class SOROREL1
         Me.UltraLabel3.TabIndex = 32
         Me.UltraLabel3.Text = "- This rule applies only to orders without special instructions."
         '
-        'AbsCheckBox2
+        'chkNUMCUBE
         '
-        Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "CHKNUM_CUBE")
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(23, 42)
-        Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(399, 20)
-        Me.AbsCheckBox2.TabIndex = 2
-        Me.AbsCheckBox2.Text = "If Cube over this number then release regardless of %"
+        Me.Absx1.SetABSColumnName(Me.chkNUMCUBE, "CHKNUM_CUBE")
+        Me.chkNUMCUBE.Location = New System.Drawing.Point(23, 42)
+        Me.chkNUMCUBE.Name = "chkNUMCUBE"
+        Me.chkNUMCUBE.Size = New System.Drawing.Size(399, 20)
+        Me.chkNUMCUBE.TabIndex = 2
+        Me.chkNUMCUBE.Text = "If Cube over this number then release regardless of %"
         '
-        'AbsCheckBox1
+        'chkNoSpecialComments
         '
-        Me.Absx1.SetABSColumnName(Me.AbsCheckBox1, "CHKNO_SPECIAL_COMMENTS")
-        Me.AbsCheckBox1.Location = New System.Drawing.Point(23, 91)
-        Me.AbsCheckBox1.Name = "AbsCheckBox1"
-        Me.AbsCheckBox1.Size = New System.Drawing.Size(301, 20)
-        Me.AbsCheckBox1.TabIndex = 4
-        Me.AbsCheckBox1.Text = "Only Orders without Special Instructions"
+        Me.Absx1.SetABSColumnName(Me.chkNoSpecialComments, "CHKNO_SPECIAL_COMMENTS")
+        Me.chkNoSpecialComments.Location = New System.Drawing.Point(23, 91)
+        Me.chkNoSpecialComments.Name = "chkNoSpecialComments"
+        Me.chkNoSpecialComments.Size = New System.Drawing.Size(301, 20)
+        Me.chkNoSpecialComments.TabIndex = 4
+        Me.chkNoSpecialComments.Text = "Only Orders without Special Instructions"
         '
         'UltraTabPageControl17
         '
@@ -1703,10 +1705,10 @@ Partial Class SOROREL1
         CType(Me.grdTATSHIPP, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkINTL, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkCombineSales, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraNumericEditor1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.AbsCheckBox1, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkNUMCUBE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkNoSpecialComments, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl17.ResumeLayout(False)
         Me.SplitContainer8.Panel1.ResumeLayout(False)
         Me.SplitContainer8.Panel2.ResumeLayout(False)
@@ -1755,11 +1757,11 @@ Partial Class SOROREL1
     Friend WithEvents UltraTabSharedControlsPage2 As Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage
     Friend WithEvents UltraGroupBox1 As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraGroupBox2 As Infragistics.Win.Misc.UltraGroupBox
-    Friend WithEvents AbsCheckBox2 As ABSCS.ABSCheckBox
+    Friend WithEvents chkNUMCUBE As ABSCS.ABSCheckBox
     Friend WithEvents UltraNumericEditor1 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
-    Friend WithEvents AbsCheckBox1 As ABSCS.ABSCheckBox
+    Friend WithEvents chkNoSpecialComments As ABSCS.ABSCheckBox
     Friend WithEvents UltraLabel3 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents AbsCheckBox3 As ABSCS.ABSCheckBox
+    Friend WithEvents chkCombineSales As ABSCS.ABSCheckBox
     Friend WithEvents chkINTL As ABSCS.ABSCheckBox
     Friend WithEvents UltraLabel7 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraNumericEditor4 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
