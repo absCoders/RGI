@@ -158,6 +158,9 @@ Public Class SOFSHIP0
             Create_TDA(.Tables.Add, "SOTINVH9", "*")
             Create_TDA(.Tables.Add, "SOTINVHM", "*")
 
+            Create_TDA(.Tables.Add, "SOTORDRW", "*")
+            Create_TDA(.Tables.Add, "SOTORDRT", "*")
+
             Create_TDA(.Tables.Add, "ARTOPEN1", "*")
             Create_TDA(.Tables.Add, "ICTWHSE1", "*")
             Create_TDA(.Tables.Add, "SOTSHIPB", "*")

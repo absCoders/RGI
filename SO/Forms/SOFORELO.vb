@@ -34,7 +34,7 @@ Public Class SOFORELO
                    & "   and SOTORDR0.ORDR_CNT_OPEN <> 0" & vbCrLf _
                    & "   and SOTORDR0.ORDR_GROUP_NO = SOTORDRM.ORDR_NO (+)" & vbCrLf _
                    & "   and SOTORDR0.WHSE_CODE = :PARM1" _
-                   & "   and SOTORDR1.ECOM_CODE IS NULL"
+                   & "   and SOTORDR1.ECOM_CODE IS NULL " & IIf(ASCMAIN1.CLIENT = "RGI", "", " and nvl(SOTORDR0.ORDR_SOURCE,'E') <> 'W'")
             'Else
             '    ASCMAIN1.sql = "Select SOTORDRG.*" & vbCrLf _
             '       & ",SOTORDR0.CUST_CODE,SOTORDR0.ORDR_CUST_PO,ARTCUST1.CUST_NAME" & vbCrLf _

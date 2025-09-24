@@ -57,7 +57,16 @@ Public Class GLRSTMT1
         Get_PARM("GLTPARM1")
         Breakout_By()
         Breakout_By_Class()
-        Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
+        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+            'Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
+            Dim startDate As Date = New Date(2018, 3, 1) ' March 1, 2018
+            Dim endDate As Date = Date.Today
+            Dim monthsBetween As Integer = DateDiff(DateInterval.Month, startDate, endDate)
+
+            Set_cmbYP("RYP", ASCMAIN1.CYP, monthsBetween * -1, 0, 0)
+        Else
+            Set_cmbYP("RYP", ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP") & "", -60, 24, 0)
+        End If
 
     End Sub
 

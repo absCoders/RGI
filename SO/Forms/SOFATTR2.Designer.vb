@@ -221,6 +221,9 @@ Partial Class SOFATTR2
         Dim UltraGridColumn104 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_LIGHT_COUNT")
         Dim UltraGridColumn105 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COUNTRY_CODE")
         Dim UltraGridColumn107 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PURCH_NOTES")
+        Dim UltraGridColumn109 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TARIFF_PCT")
+        Dim UltraGridColumn110 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_COST")
+        Dim UltraGridColumn111 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PO_QTY_MIN")
         Dim UltraGridColumn72 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IMAGE_LOC_API", 0)
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -371,6 +374,7 @@ Partial Class SOFATTR2
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnAllActive = New System.Windows.Forms.Button()
         Me.btnSelectClass = New System.Windows.Forms.Button()
         Me.btnAllDiscontinued = New System.Windows.Forms.Button()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
@@ -606,7 +610,7 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpInclude)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -144)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 319)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 375)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -913,10 +917,11 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 275)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 75)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'Panel6
         '
@@ -948,10 +953,11 @@ Partial Class SOFATTR2
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel7)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 394)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel7
         '
@@ -1735,10 +1741,20 @@ Partial Class SOFATTR2
         UltraGridColumn105.Width = 84
         UltraGridColumn107.Header.Caption = "Purch Notes"
         UltraGridColumn107.Header.VisiblePosition = 84
+        UltraGridColumn107.Hidden = True
         UltraGridColumn107.Width = 192
+        UltraGridColumn109.Header.Caption = "Tariff Pct"
+        UltraGridColumn109.Header.VisiblePosition = 85
+        UltraGridColumn109.Width = 102
+        UltraGridColumn110.Header.Caption = "PO Cost"
+        UltraGridColumn110.Header.VisiblePosition = 86
+        UltraGridColumn110.Width = 83
+        UltraGridColumn111.Header.Caption = "PO Min Qty"
+        UltraGridColumn111.Header.VisiblePosition = 87
+        UltraGridColumn111.Width = 98
         UltraGridColumn72.Header.Caption = "Image API"
         UltraGridColumn72.Header.VisiblePosition = 48
-        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn11, UltraGridColumn10, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn31, UltraGridColumn58, UltraGridColumn76, UltraGridColumn75, UltraGridColumn71, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn108, UltraGridColumn73, UltraGridColumn74, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn107, UltraGridColumn72})
+        UltraGridBand5.Columns.AddRange(New Object() {UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41, UltraGridColumn42, UltraGridColumn11, UltraGridColumn10, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51, UltraGridColumn52, UltraGridColumn53, UltraGridColumn54, UltraGridColumn55, UltraGridColumn56, UltraGridColumn57, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn24, UltraGridColumn25, UltraGridColumn26, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn31, UltraGridColumn58, UltraGridColumn76, UltraGridColumn75, UltraGridColumn71, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn92, UltraGridColumn93, UltraGridColumn94, UltraGridColumn95, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn83, UltraGridColumn108, UltraGridColumn73, UltraGridColumn74, UltraGridColumn96, UltraGridColumn97, UltraGridColumn98, UltraGridColumn99, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn104, UltraGridColumn105, UltraGridColumn107, UltraGridColumn109, UltraGridColumn110, UltraGridColumn111, UltraGridColumn72})
         Me.grdICTSTYL1.DisplayLayout.BandsSerializer.Add(UltraGridBand5)
         Me.grdICTSTYL1.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance62.TextHAlignAsString = "Left"
@@ -2449,6 +2465,7 @@ Partial Class SOFATTR2
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.btnAllActive)
         Me.UltraGroupBox2.Controls.Add(Me.btnSelectClass)
         Me.UltraGroupBox2.Controls.Add(Me.btnAllDiscontinued)
         Me.UltraGroupBox2.Dock = System.Windows.Forms.DockStyle.Fill
@@ -2456,6 +2473,15 @@ Partial Class SOFATTR2
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
         Me.UltraGroupBox2.Size = New System.Drawing.Size(1033, 78)
         Me.UltraGroupBox2.TabIndex = 1
+        '
+        'btnAllActive
+        '
+        Me.btnAllActive.Location = New System.Drawing.Point(357, 46)
+        Me.btnAllActive.Name = "btnAllActive"
+        Me.btnAllActive.Size = New System.Drawing.Size(170, 29)
+        Me.btnAllActive.TabIndex = 198
+        Me.btnAllActive.Text = "All Active"
+        Me.btnAllActive.UseVisualStyleBackColor = True
         '
         'btnSelectClass
         '
@@ -2737,4 +2763,5 @@ Partial Class SOFATTR2
     Friend WithEvents cboECOMPRICING As ComboBox
     Friend WithEvents txtPRCG_DESC As TextBox
     Friend WithEvents Label3 As Label
+    Friend WithEvents btnAllActive As Button
 End Class

@@ -870,6 +870,7 @@ Partial Class SOFSHIPB
         Dim Appearance288 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn695 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UPC_CODE")
         Dim UltraGridColumn50 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_STORE_NO")
+        Dim UltraGridColumn774 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_CUST_PO")
         Dim Appearance289 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance290 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance291 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -924,6 +925,7 @@ Partial Class SOFSHIPB
         Dim UltraGridColumn779 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PICK_QTY_CONF")
         Dim UltraGridColumn780 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT_LBS")
         Dim UltraGridColumn697 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WEIGHT_KGS")
+        Dim UltraGridColumn773 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VALUE_PER_HTS_CODE")
         Dim Appearance325 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance326 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance327 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -6884,12 +6886,13 @@ Partial Class SOFSHIPB
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdSOTPICK2_SC)
-        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
         Me.UltraTabPageControl24.Size = New System.Drawing.Size(1005, 243)
         '
         'grdSOTPICK2_SC
         '
+        Me.grdSOTPICK2_SC.DataMember = Nothing
         Appearance286.BackColor = System.Drawing.SystemColors.Window
         Appearance286.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTPICK2_SC.DisplayLayout.Appearance = Appearance286
@@ -6899,113 +6902,116 @@ Partial Class SOFSHIPB
         UltraGridColumn665.Width = 96
         UltraGridColumn666.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn666.Header.Caption = "Ln"
-        UltraGridColumn666.Header.VisiblePosition = 2
+        UltraGridColumn666.Header.VisiblePosition = 3
         UltraGridColumn666.Width = 33
         UltraGridColumn667.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn667.Header.Caption = "Order No"
-        UltraGridColumn667.Header.VisiblePosition = 25
+        UltraGridColumn667.Header.VisiblePosition = 26
         UltraGridColumn667.Width = 104
         UltraGridColumn668.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn668.Header.Caption = "Ln"
-        UltraGridColumn668.Header.VisiblePosition = 26
+        UltraGridColumn668.Header.VisiblePosition = 27
         UltraGridColumn668.Width = 33
         UltraGridColumn669.Header.Caption = "Reld"
-        UltraGridColumn669.Header.VisiblePosition = 11
+        UltraGridColumn669.Header.VisiblePosition = 12
         UltraGridColumn669.Width = 60
         UltraGridColumn670.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn670.Header.Caption = "Conf"
-        UltraGridColumn670.Header.VisiblePosition = 12
+        UltraGridColumn670.Header.VisiblePosition = 13
         UltraGridColumn670.Width = 73
         UltraGridColumn671.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn671.Header.Caption = "Canc"
-        UltraGridColumn671.Header.VisiblePosition = 13
+        UltraGridColumn671.Header.VisiblePosition = 14
         UltraGridColumn671.Width = 60
         UltraGridColumn672.Header.Caption = "Back"
-        UltraGridColumn672.Header.VisiblePosition = 14
+        UltraGridColumn672.Header.VisiblePosition = 15
         UltraGridColumn672.Width = 60
         UltraGridColumn673.Header.Caption = "Price"
-        UltraGridColumn673.Header.VisiblePosition = 15
+        UltraGridColumn673.Header.VisiblePosition = 16
         UltraGridColumn673.Width = 65
         UltraGridColumn674.Header.Caption = "Cxl Rel"
-        UltraGridColumn674.Header.VisiblePosition = 17
+        UltraGridColumn674.Header.VisiblePosition = 18
         UltraGridColumn674.Width = 60
         UltraGridColumn675.Header.Caption = "B/O Rel"
-        UltraGridColumn675.Header.VisiblePosition = 19
+        UltraGridColumn675.Header.VisiblePosition = 20
         UltraGridColumn675.Width = 67
-        UltraGridColumn676.Header.VisiblePosition = 21
+        UltraGridColumn676.Header.VisiblePosition = 22
         UltraGridColumn676.Hidden = True
-        UltraGridColumn677.Header.VisiblePosition = 18
+        UltraGridColumn677.Header.VisiblePosition = 19
         UltraGridColumn677.Hidden = True
-        UltraGridColumn678.Header.VisiblePosition = 20
+        UltraGridColumn678.Header.VisiblePosition = 21
         UltraGridColumn678.Hidden = True
-        UltraGridColumn679.Header.VisiblePosition = 22
+        UltraGridColumn679.Header.VisiblePosition = 23
         UltraGridColumn679.Hidden = True
-        UltraGridColumn680.Header.VisiblePosition = 23
+        UltraGridColumn680.Header.VisiblePosition = 24
         UltraGridColumn680.Hidden = True
         UltraGridColumn681.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn681.Header.Caption = "Style"
-        UltraGridColumn681.Header.VisiblePosition = 3
+        UltraGridColumn681.Header.VisiblePosition = 4
         UltraGridColumn681.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn681.Width = 124
         UltraGridColumn682.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn682.Header.Caption = "Color"
-        UltraGridColumn682.Header.VisiblePosition = 5
+        UltraGridColumn682.Header.VisiblePosition = 6
         UltraGridColumn682.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn682.Width = 77
         UltraGridColumn683.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn683.Header.Caption = "Description"
-        UltraGridColumn683.Header.VisiblePosition = 4
+        UltraGridColumn683.Header.VisiblePosition = 5
         UltraGridColumn683.Width = 228
         UltraGridColumn684.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn684.Header.Caption = "Price Ord"
-        UltraGridColumn684.Header.VisiblePosition = 16
+        UltraGridColumn684.Header.VisiblePosition = 17
         UltraGridColumn684.Width = 78
         UltraGridColumn685.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn685.Header.Caption = "Substitute"
-        UltraGridColumn685.Header.VisiblePosition = 24
+        UltraGridColumn685.Header.VisiblePosition = 25
         UltraGridColumn685.Width = 90
         UltraGridColumn686.Header.Caption = "Range Style"
-        UltraGridColumn686.Header.VisiblePosition = 27
+        UltraGridColumn686.Header.VisiblePosition = 28
         UltraGridColumn686.Width = 96
         UltraGridColumn687.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn687.Header.Caption = "Ln"
-        UltraGridColumn687.Header.VisiblePosition = 28
+        UltraGridColumn687.Header.VisiblePosition = 29
         UltraGridColumn687.Width = 37
         UltraGridColumn688.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn688.Header.Caption = "Qty/PP"
-        UltraGridColumn688.Header.VisiblePosition = 29
+        UltraGridColumn688.Header.VisiblePosition = 30
         UltraGridColumn688.Width = 59
         UltraGridColumn689.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn689.Format = "#,##0.000"
         UltraGridColumn689.Header.Caption = "Style Ctns"
-        UltraGridColumn689.Header.VisiblePosition = 9
+        UltraGridColumn689.Header.VisiblePosition = 10
         UltraGridColumn689.Width = 80
         UltraGridColumn690.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn690.Format = "#,##0.000"
         UltraGridColumn690.Header.Caption = "Style Cube"
-        UltraGridColumn690.Header.VisiblePosition = 10
+        UltraGridColumn690.Header.VisiblePosition = 11
         UltraGridColumn690.Width = 88
         UltraGridColumn691.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
-        UltraGridColumn691.Header.VisiblePosition = 30
+        UltraGridColumn691.Header.VisiblePosition = 31
         UltraGridColumn691.Hidden = True
         UltraGridColumn692.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
-        UltraGridColumn692.Header.VisiblePosition = 31
+        UltraGridColumn692.Header.VisiblePosition = 32
         UltraGridColumn692.Hidden = True
         Appearance287.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn693.CellAppearance = Appearance287
         UltraGridColumn693.Header.Caption = "Shortage Reason"
-        UltraGridColumn693.Header.VisiblePosition = 7
+        UltraGridColumn693.Header.VisiblePosition = 8
         Appearance288.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn694.CellAppearance = Appearance288
         UltraGridColumn694.Header.Caption = "Shortage Comment"
-        UltraGridColumn694.Header.VisiblePosition = 8
+        UltraGridColumn694.Header.VisiblePosition = 9
         UltraGridColumn695.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn695.Header.Caption = "UPC Code"
-        UltraGridColumn695.Header.VisiblePosition = 6
+        UltraGridColumn695.Header.VisiblePosition = 7
         UltraGridColumn50.Header.Caption = "Store No"
         UltraGridColumn50.Header.VisiblePosition = 1
         UltraGridColumn50.Width = 93
-        UltraGridBand23.Columns.AddRange(New Object() {UltraGridColumn665, UltraGridColumn666, UltraGridColumn667, UltraGridColumn668, UltraGridColumn669, UltraGridColumn670, UltraGridColumn671, UltraGridColumn672, UltraGridColumn673, UltraGridColumn674, UltraGridColumn675, UltraGridColumn676, UltraGridColumn677, UltraGridColumn678, UltraGridColumn679, UltraGridColumn680, UltraGridColumn681, UltraGridColumn682, UltraGridColumn683, UltraGridColumn684, UltraGridColumn685, UltraGridColumn686, UltraGridColumn687, UltraGridColumn688, UltraGridColumn689, UltraGridColumn690, UltraGridColumn691, UltraGridColumn692, UltraGridColumn693, UltraGridColumn694, UltraGridColumn695, UltraGridColumn50})
+        UltraGridColumn774.Header.Caption = "Customer PO"
+        UltraGridColumn774.Header.VisiblePosition = 2
+        UltraGridColumn774.Width = 111
+        UltraGridBand23.Columns.AddRange(New Object() {UltraGridColumn665, UltraGridColumn666, UltraGridColumn667, UltraGridColumn668, UltraGridColumn669, UltraGridColumn670, UltraGridColumn671, UltraGridColumn672, UltraGridColumn673, UltraGridColumn674, UltraGridColumn675, UltraGridColumn676, UltraGridColumn677, UltraGridColumn678, UltraGridColumn679, UltraGridColumn680, UltraGridColumn681, UltraGridColumn682, UltraGridColumn683, UltraGridColumn684, UltraGridColumn685, UltraGridColumn686, UltraGridColumn687, UltraGridColumn688, UltraGridColumn689, UltraGridColumn690, UltraGridColumn691, UltraGridColumn692, UltraGridColumn693, UltraGridColumn694, UltraGridColumn695, UltraGridColumn50, UltraGridColumn774})
         Me.grdSOTPICK2_SC.DisplayLayout.BandsSerializer.Add(UltraGridBand23)
         Me.grdSOTPICK2_SC.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance289.TextHAlignAsString = "Left"
@@ -7288,13 +7294,17 @@ Partial Class SOFSHIPB
         UltraGridColumn779.Width = 77
         UltraGridColumn780.Format = "#,##0.00"
         UltraGridColumn780.Header.Caption = "Wgt (Lbs)"
-        UltraGridColumn780.Header.VisiblePosition = 2
+        UltraGridColumn780.Header.VisiblePosition = 3
         UltraGridColumn780.Width = 97
         UltraGridColumn697.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn697.Format = "#,##0.00"
         UltraGridColumn697.Header.Caption = "Wgt (Kgs)"
-        UltraGridColumn697.Header.VisiblePosition = 3
-        UltraGridBand26.Columns.AddRange(New Object() {UltraGridColumn776, UltraGridColumn779, UltraGridColumn780, UltraGridColumn697})
+        UltraGridColumn697.Header.VisiblePosition = 4
+        UltraGridColumn773.Format = "#,##0.00"
+        UltraGridColumn773.Header.Caption = "$ Value"
+        UltraGridColumn773.Header.VisiblePosition = 2
+        UltraGridColumn773.Width = 85
+        UltraGridBand26.Columns.AddRange(New Object() {UltraGridColumn776, UltraGridColumn779, UltraGridColumn780, UltraGridColumn697, UltraGridColumn773})
         Me.grdSOTORDR2_DUTY_HTS.DisplayLayout.BandsSerializer.Add(UltraGridBand26)
         Me.grdSOTORDR2_DUTY_HTS.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance325.TextHAlignAsString = "Left"
@@ -8927,7 +8937,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1013, 570)
         '
@@ -8960,7 +8970,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1013, 570)
         '

@@ -296,6 +296,9 @@ Public Class SOFORDR1
             Create_TDA(.Tables.Add, "SOTORDR5", "*", 1)
             .Tables("SOTORDR5").Columns("CUST_ADDR_CODE").MaxLength = 10
 
+            Create_TDA(.Tables.Add, "SOTORDRW", "*", 1)
+            Create_TDA(.Tables.Add, "SOTORDRT", "*", 1)
+
             'T = .Tables.Add("SOTORDR5_BT") : T = .Tables("SOTORDR5").Clone
             'T = .Tables.Add("SOTORDR5_ST") : T = .Tables("SOTORDR5").Clone
             'T = .Tables.Add("SOTORDR5_MK") : T = .Tables("SOTORDR5").Clone
@@ -304,7 +307,7 @@ Public Class SOFORDR1
 
             Create_TDA(.Tables.Add, "SOTORDR9", "*", 1)
 
-            With .Tables.Add("SOTORDRT")
+            With .Tables.Add("SOTORDRTOT")
                 .Columns.Add("KEY", GetType(System.Int32))
                 .Columns.Add("STATUS")
                 .Columns.Add("QTY", GetType(System.Int32))
@@ -314,7 +317,7 @@ Public Class SOFORDR1
 
             ASCMAIN1.sql = "Select SOTPICK1.*, SOTSHIP1.SHIP_DATE_SHIPPED, SOTINVH1.INV_FREIGHT, SOTINVH1.INV_TOTAL_AMOUNT" & vbCrLf _
                 & " from SOTPICK1,SOTSHIP1,SOTINVH1 " & vbCrLf _
-                & " where SOTSHIP1.SHIP_BOL_NO = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
+                & " where SOTSHIP1.SHIP_BOL_NO (+) = SOTPICK1.SHIP_BOL_NO" & vbCrLf _
                 & "   and SOTINVH1.INV_TYPE (+) = 'I'" & vbCrLf _
                 & "   and SOTINVH1.INV_NO (+) = SOTPICK1.INV_NO" & vbCrLf _
                 & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'C'" & vbCrLf _
@@ -326,7 +329,6 @@ Public Class SOFORDR1
                 & " where SOTPICK2.PICK_NO = SOTPICK1.PICK_NO and SOTPICK1.ORDR_NO = :PARM1" _
                 & "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.PICK_STATUS <> 'C'"
             Create_TDA(.Tables.Add, "SOTPICK2", "**", 0, False, "V", 2)
-
 
             Create_Relation("SOTPICK1", "SOTPICK2", "PICK_NO")
             Create_Relation("SOTORDR2", "SOTPICK2", "ORDR_NO,ORDR_LNO")
@@ -670,10 +672,13 @@ Public Class SOFORDR1
         grdSOTORDRS.DataSource = dst.Tables("SOTORDRS")
         grdSOTINVH1.DataSource = dst.Tables("SOTINVH1")
 
+        grdSOTORDRW.DataSource = dst.Tables("SOTORDRW")
+        grdSOTORDRT.DataSource = dst.Tables("SOTORDRT")
+
         grdSOTPICK1.DataSource = dst.Tables("SOTPICK1")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
 
-        grdSOTORDRT.DataSource = dst.Tables("SOTORDRT")
+        grdSOTORDRTOT.DataSource = dst.Tables("SOTORDRTOT")
         grdSOTORDR1_HOLDS.DataSource = dst.Tables("SOTORDR1_HOLDS")
         grdPOTORDR1.DataSource = dst.Tables("POTORDR1")
 
@@ -1128,7 +1133,7 @@ Public Class SOFORDR1
         'Absx1.txtFor("ORDR_PRIORITY").Enabled = ASCMAIN1.USER_SECURITY_CODEs.Contains("X2")
         'Absx1.txtFor("ORDR_PRIORITY").ReadOnly = Not ASCMAIN1.USER_SECURITY_CODEs.Contains("X2")
 
-        With dst.Tables("SOTORDRT").Rows
+        With dst.Tables("SOTORDRTOT").Rows
             .Add(New Object() {1, "Order", 0, 0})
             .Add(New Object() {2, "Open", 0, 0})
             .Add(New Object() {3, "Allo", 0, 0})
@@ -1136,7 +1141,7 @@ Public Class SOFORDR1
             .Add(New Object() {5, "Ship", 0, 0})
             .Add(New Object() {6, "Canc", 0, 0})
         End With
-        Sort_grdColumns(grdSOTORDRT, "KEY", True)
+        Sort_grdColumns(grdSOTORDRTOT, "KEY", True)
 
         Show_Filter(grdSOTORDRX, True)
         grdSOTORDRX.DisplayLayout.GroupByBox.Hidden = False
@@ -1213,6 +1218,8 @@ Public Class SOFORDR1
         Else
             grpBuyerInfo.Visible = False
         End If
+
+        tabHeader.Tabs("Web").Visible = ASCMAIN1.CLIENT = "VAN"
 
         If subUPCSupport Then
             grdICTXLSPS.DataSource = dst.Tables("ICTXLSPS")
@@ -2227,10 +2234,10 @@ Public Class SOFORDR1
                                     ' NY IS OK FOR A BTB ORDER - PROBABLY NEED AN ATTRIBUTE IN ICTWHSE1 - WAITING ON WHR FOR DDL OK
                                 Else
                                     EMsg &= vbCr & "Invalid Warehouse Code (" & WHSE_CODE & ") for a Back-to-Back Order"
-                                    End If
                                 End If
+                            End If
 
-                                If dst.Tables("SOTORDP1").Select("INV_DATE IS NULL").Length <> 0 Then
+                            If dst.Tables("SOTORDP1").Select("INV_DATE IS NULL").Length <> 0 Then
                                 EMsg &= vbCr & "Invalid Invoice Date for a Pro-Forma Invoice on a Back-to-Back Order"
                             End If
 
@@ -2811,7 +2818,7 @@ Public Class SOFORDR1
                     Next
                 Next
 
-                For Each TABLE_NAME As String In New String() {"SOTORDR3", "SOTORDR4", "SOTORDR9", "SOTORDXR",
+                For Each TABLE_NAME As String In New String() {"SOTORDR3", "SOTORDR4", "SOTORDR9", "SOTORDXR", "SOTORDRW", "SOTORDRT",
                                                                "TATEVNT1", "SOTWORK1", "SOTWORK2", "SOTORDP1", "SOTORDP2"}
                     dst.Tables(TABLE_NAME).Rows.Clear()
                 Next
@@ -3172,6 +3179,21 @@ Public Class SOFORDR1
                     grdSOTORDR2.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
                 End If
 
+                If ASCMAIN1.CLIENT = "VAN" AndAlso (Absx1.optFor("ORDR_TYPE_CODE").Value = "B2C" OrElse Absx1.optFor("ORDR_SOURCE").Value = "W") Then
+                    grdSOTORDR2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+                    grdSOTORDR2.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
+                    grdSOTORDR2.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
+                    If EntryMode = "E" Then
+                        Set_Read_Only(frmDates, True)
+                        Set_Read_Only(frmCodes, True)
+                        Set_Read_Only(grpSHIPTO, False)
+                        Set_Read_Only_for_ctl(Absx1.txtFor("SHIP_VIA_CODE"), False)
+                        Set_Read_Only_for_ctl(Absx1.chkFor("ORDR_HOLD"), False)
+                        Set_Read_Only_for_ctl(Absx1.txtFor("ORDR_HOLD_REASON"), False)
+                        Set_Read_Only_for_ctl(txtREASON_CODE, False)
+                    End If
+                End If
+
                 If Absx1.optFor("ORDR_SOURCE").Value = "E" Then
                     grdSOTORDR2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
                 End If
@@ -3366,7 +3388,7 @@ Public Class SOFORDR1
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
             {"SOTORDR1", "SOTORDR2", "SOTORDR3", "SOTORDR4", "SOTORDR5", "TATEVNT1", "SOTORDXR",
-             "SOTORDRR", "SOTORDR9", "SOTPICK1", "SOTPICK2", "SOTORDRG",
+             "SOTORDRR", "SOTORDR9", "SOTPICK1", "SOTPICK2", "SOTORDRG", "SOTORDRW", "SOTORDRT",
              "SOTORDP1", "SOTORDP2", "SOTORDRB", "SOTORDRI", "SOTORDC1", "SOTORDC2",
              "SOTCART1", "SOTCART2", "SOTWORK1", "SOTWORK2", "SOTORDR1_HOLDS", "POTORDR1", "POTORDR2"}
             dst.Tables(TABLE_NAME).Rows.Clear()
@@ -3505,6 +3527,13 @@ Public Class SOFORDR1
             Fill_Records("SOTORDR4", ORDR_NO)
             Fill_Records("SOTORDR5", ORDR_NO)
             Fill_Records("SOTORDR9", ORDR_NO)
+            Fill_Records("SOTORDRW", ORDR_NO)
+            Fill_Records("SOTORDRT", ORDR_NO)
+
+            Sort_grdColumns(grdSOTORDRW, "CHARGE_DATE")
+            Sort_grdColumns(grdSOTORDRT, "ORDR_LNO,ORDR_CTL_NO")
+            grdSOTORDRW.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+            grdSOTORDRT.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
             ASCMAIN1.sql = "Select SOTORDC1.*, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCCPA1.CCPA_DATE_VOID" _
                  & " from SOTORDC1, ARTCCPA1 " _
@@ -4357,7 +4386,7 @@ Public Class SOFORDR1
         If EntryMode = "N" Then Exit Sub
         Dependent_Updates(-1, ORDR_NO)
         For Each TABLE_NAME As String In New String() _
-            {"SOTORDR1", "SOTORDR2", "SOTORDR3", "SOTORDR4", "SOTORDR5", "SOTORDR9"}
+            {"SOTORDR1", "SOTORDR2", "SOTORDR3", "SOTORDR4", "SOTORDR5", "SOTORDR9", "SOTORDRW", "SOTORDRT"}
             Delete_Records_1(TABLE_NAME)
         Next
     End Sub
@@ -4864,6 +4893,9 @@ Public Class SOFORDR1
         Update_Record_TDA("SOTORDR4", SQLD)
         Update_Record_TDA("SOTORDR5", SQLD)
         Update_Record_TDA("SOTORDR9", SQLD)
+
+        Update_Record_TDA("SOTORDRW", SQLD)
+        Update_Record_TDA("SOTORDRT", SQLD)
 
         Update_Record_TDA("SOTORDXR")
         Update_Record_TDA("TATEVNT1")
@@ -7915,9 +7947,9 @@ Public Class SOFORDR1
         For Each SFX As String In New String() {"", "OPEN", "ALLO", "PICK", "SHIP", "CANC"}
             If SFX <> "" Then SFX = "_" & SFX
             KEY += 1
-            Dim rowSOTORDRT As DataRow = dst.Tables("SOTORDRT").Rows.Find(KEY)
-            rowSOTORDRT.Item("QTY") = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_QTY" & SFX & ")", "") & "")
-            rowSOTORDRT.Item("AMT") = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT" & SFX & ")", "") & "")
+            Dim rowSOTORDRTOT As DataRow = dst.Tables("SOTORDRTOT").Rows.Find(KEY)
+            rowSOTORDRTOT.Item("QTY") = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_QTY" & SFX & ")", "") & "")
+            rowSOTORDRTOT.Item("AMT") = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT" & SFX & ")", "") & "")
         Next
 
         If multi_store_is_active Then
@@ -10905,9 +10937,9 @@ Public Class SOFORDR1
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
             Dim zmsg As String = String.Empty
             Dim authorizeFunds As Decimal = 0
-            Dim inPick As Decimal = Val(dst.Tables("SOTORDRT").Select("KEY = 4")(0).Item("AMT") & String.Empty)
+            Dim inPick As Decimal = Val(dst.Tables("SOTORDRTOT").Select("KEY = 4")(0).Item("AMT") & String.Empty)
             If inPick = 0 Then
-                inPick = Val(dst.Tables("SOTORDRT").Select("KEY = 2")(0).Item("AMT") & String.Empty)
+                inPick = Val(dst.Tables("SOTORDRTOT").Select("KEY = 2")(0).Item("AMT") & String.Empty)
             End If
             Dim inputValue As String = InputBox("Enter the amount of merchandise funds you want to authorize.", "Additional Funds", Format(inPick, "#,##0.00")) & String.Empty
             inputValue = inputValue.Trim

@@ -23,7 +23,6 @@
     ' These can be set to tables in a forms dataset
     Public tblSOTORDR1 As DataTable = Nothing
     Public tblSOTORDR2 As DataTable = Nothing
-
     Public tblSOTCART1 As DataTable = Nothing
 
     Private rowGLTPARM1 As DataRow
@@ -371,6 +370,8 @@
                         .Item("ORDR_UNIT_PRICE") = rowSOTORDR2.Item("ORDR_UNIT_PRICE")
                     End If
 
+                    .Item("PARTNER_LN_ID") = rowSOTORDR2.Item("PARTNER_LN_ID")
+
                     If (ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "NYA") Then
                         .Item("ORDR_PRICE_SOURCE") = rowSOTPICK2.Item("ORDR_PRICE_SOURCE")
                         .Item("COMM_RATE") = rowSOTPICK2.Item("COMM_RATE")
@@ -532,13 +533,20 @@
                 .Item("INV_SALES") = INV_SALES
                 .Item("INV_COGS") = INV_COGS
 
+                If tblSOTINVH1.Columns.Contains("INV_STAX") Then
+                    If rowSOTPICK1.Table.Columns.Contains("INV_STAX") Then
+                        .Item("INV_STAX") = rowSOTPICK1.Item("INV_STAX")
+                        .Item("INV_STAX_CURR") = .Item("INV_STAX")
+                    End If
+                End If
+
                 ' Freight
                 PPA_FREIGHT = 0
                 If rowSOTPICK1.Table.Columns.Contains("PPA_FREIGHT") Then
                     PPA_FREIGHT = Val(rowSOTPICK1.Item("PPA_FREIGHT") & String.Empty)
                 End If
 
-                .Item("INV_FREIGHT") = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty) + PPA_FREIGHT
+                .Item("INV_FREIGHT") = Val(rowSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + PPA_FREIGHT ' + Val(rowSOTPICK1.Item("ORDR_FOB") & String.Empty)
 
                 If foreignExchange Then
                     .Item("INV_FREIGHT_CURR") = .Item("INV_FREIGHT")
@@ -551,7 +559,7 @@
                     .Item("INV_MISC_CHG") += Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty)
                 End If
 
-                .Item("INV_TOTAL_AMOUNT") = INV_SALES + Val(.Item("INV_FREIGHT") & "") + Val(.Item("INV_MISC_CHG") & "")
+                .Item("INV_TOTAL_AMOUNT") = INV_SALES + Val(.Item("INV_FREIGHT") & "") + Val(.Item("INV_MISC_CHG") & "") + Val(.Item("INV_STAX") & "")
                 .Item("REASON_CODE") = "SHP"
 
                 If Not IsDate(rowSOTSHIP1.Item("INV_DATE") & String.Empty) Then
@@ -654,7 +662,7 @@
                 .Item("INV_MISC_CHG_CURR") = .Item("INV_MISC_CHG") / CURR_EXCH_RATE
 
                 ' These two fields are the same
-                .Item("INV_TOTAL_AMOUNT_CURR") = .Item("INV_SALES_CURR") + .Item("INV_FREIGHT_CURR") + .Item("INV_MISC_CHG_CURR")
+                .Item("INV_TOTAL_AMOUNT_CURR") = .Item("INV_SALES_CURR") + .Item("INV_FREIGHT_CURR") + .Item("INV_MISC_CHG_CURR") + Val(.Item("INV_STAX_CURR") & "")
                 .Item("INV_TOTAL_AMT_CURR") = .Item("INV_TOTAL_AMOUNT_CURR")
 
                 '.Item("GST_TAX") = ""

@@ -48,7 +48,8 @@ Public Class WHFPFLW1
                 & "SOTPICK1.PICK_SHIP_DATE, SOTPICK1.PICK_RELEASED, SOTPICK1.PICK_PRIORITY, SOTPICK1.PICK_COMPLEXITY, " & vbCrLf _
                 & "SOTORDR1.WHSE_CODE, SOTORDR1.ORDR_SHIP_DATE, SOTORDR1.ORDR_CANCEL_DATE, " & vbCrLf _
                 & "SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, SOTPICKP.PICK_COUNT, " & vbCrLf _
-                & "SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO, SOTPICK1.SHIP_BOL_NO,  SOTORDR1.ORDR_GROUP_NO, NVL(SOTORDR1.CUST_DC_NO, SOTORDR1.CUST_STORE_NO) CUST_DC_NO" & vbCrLf _
+                & "SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO, SOTPICK1.SHIP_BOL_NO,  SOTORDR1.ORDR_GROUP_NO, " & vbCrLf _
+                & "NVL(SOTORDR1.CUST_DC_NO, SOTORDR1.CUST_STORE_NO) CUST_DC_NO, SOTORDR1.TERM_CODE " & vbCrLf _
                 & "	FROM " & SOTPICKP & " SOTPICKP,SOTPICK1,SOTORDR1" & vbCrLf _
                 & " WHERE SOTPICK1.PICK_NO = SOTPICKP.PICK_NO" & vbCrLf _
                 & "  AND SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
@@ -63,12 +64,12 @@ Public Class WHFPFLW1
                 & "SOTPICK1.PICK_SHIP_DATE, SOTPICK1.PICK_RELEASED, nvl(SOTPICK1.PICK_PRIORITY, '3') PICK_PRIORITY, nvl(SOTPICK1.PICK_COMPLEXITY, 'C') PICK_COMPLEXITY, " & vbCrLf _
                 & "SOTORDR1.WHSE_CODE, SOTORDR1.ORDR_SHIP_DATE, SOTORDR1.ORDR_CANCEL_DATE, " & vbCrLf _
                 & "SOTORDR1.CUST_CODE, SOTORDR1.CUST_NAME, SOTPICKP.PICK_COUNT, " & vbCrLf _
-                & "SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO, SOTPICK1.SHIP_BOL_NO " & vbCrLf _
+                & "SOTORDR1.ORDR_NO, SOTORDR1.ORDR_CUST_PO, SOTPICK1.SHIP_BOL_NO, SOTORDR1.TERM_CODE " & vbCrLf _
                 & "	FROM " & SOTPICKP & " SOTPICKP,SOTPICK1,SOTORDR1" & vbCrLf _
                 & " WHERE SOTPICK1.PICK_NO = SOTPICKP.PICK_NO" & vbCrLf _
                 & "  AND SOTPICK1.PICK_STATUS = 'P'" & vbCrLf _
                 & "  AND SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
-                '& "  AND (SOTPICK1.PICK_SHIP_DATE > TRUNC(SYSDATE) or SOTPICK1.PICK_SHIP_DATE IS NULL)" & vbCrLf
+            '& "  AND (SOTPICK1.PICK_SHIP_DATE > TRUNC(SYSDATE) or SOTPICK1.PICK_SHIP_DATE IS NULL)" & vbCrLf
 
             Create_TDA(.Tables.Add, "WHTPICKP", "**", 0, False, "", 1)
             With .Tables("WHTPICKP")
@@ -90,6 +91,7 @@ Public Class WHFPFLW1
                 .Add("PICK_AMT", GetType(System.Decimal), "sum(child(WHTPICKW_WHTPICKP).PICK_AMT)")
                 .Add("PICK_TICKETS", GetType(System.Int16), "count(child(WHTPICKW_WHTPICKP).PICK_NO)")
                 .Add("PICK_PRINTED", GetType(System.Int16))
+                .Add("CREDIT_CARD", GetType(System.String))
             End With
 
             ASCMAIN1.sql = "SELECT SOTPICKP.PICK_NO, SOTPICK2.PICK_LNO, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, SOTORDR2.COLOR_CODE, " & vbCrLf _
@@ -725,6 +727,17 @@ Public Class WHFPFLW1
             dst.Tables("WHTPICKW").Rows.Add(row.ItemArray)
         Next
 
+        For Each parentRow As DataRow In dst.Tables("WHTPICKW").Rows
+            ' Get all the child rows for the current parent.
+            Dim childRows As DataRow() = parentRow.GetChildRows("WHTPICKW_WHTPICKP")
+
+            ' Use LINQ to check if any child row has the specific value.
+            Dim hasMatch As Boolean = childRows.Any(Function(childRow) childRow.Field(Of String)("TERM_CODE") = "CRED")
+
+            ' Set the value of the new column for this parent row.
+            parentRow("CREDIT_CARD") = IIf(hasMatch, "CC", "")
+        Next
+
         ASCMAIN1.sql = "SELECT SOTORDR1.CUST_CODE, SUM(1) PICK_PRINTED FROM SOTORDR1, SOTSHIP1 " & vbCrLf _
                 & " WHERE SOTSHIP1.ORDR_GROUP_NO = SOTORDR1.ORDR_NO " & vbCrLf _
                 & " AND SOTSHIP1.SHIP_STATUS = 'P' " & vbCrLf _
@@ -737,7 +750,8 @@ Public Class WHFPFLW1
             Next
         Next
 
-        Sort_grdColumns(grdWHTPICKP, "ORDR_CANCEL_DATE,pick_amt")
+        'temporary - it was as of 9/23/2025: Sort_grdColumns(grdWHTPICKP, "ORDR_CANCEL_DATE,pick_amt")
+        Sort_grdColumns(grdWHTPICKP, "credit_card,PICK_RELEASED,ORDR_CANCEL_DATE,pick_amt")
         EnforceConstraints(True)
 
         Me.Cursor = Cursors.Default

@@ -1,9 +1,15 @@
 ﻿Imports System.Text.RegularExpressions
 Imports System
 Imports System.IO
+Imports System.Net
+Imports System.Text
 
 Public MustInherit Class ShippingLabel
     Private Property lastPrintedData As String
+    Public Enum LabelSizes
+        label4x6
+        label225x125
+    End Enum
 
     Public Sub PrintLabel(Optional ByVal printQty As Integer = 1, Optional ByVal PrinterName As String = "", Optional ByVal labelTemplateOverride As String = "")
         Dim labelData As Dictionary(Of String, DataRow) = GetLabelData()
@@ -31,10 +37,78 @@ Public MustInherit Class ShippingLabel
         For i As Integer = 1 To printQty
             ChangeLabelData(labelData, i, printQty)
             Dim labeltoPrint As String = FillLabelTemplateWithData(labelTemplate, labelData)
+            If ASCMAIN1.Running_in_VS Then
+                ShowLabelDialog(LabelSizes.label4x6, labeltoPrint)
+                Dim result As DialogResult
+                result = MessageBox.Show("Do you want to print this label?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                If result = DialogResult.No Then
+                    Exit Sub
+                End If
+                Exit For
+            End If
             SendToLabelPrinter(labeltoPrint, PrinterName)
         Next
     End Sub
+    Public Sub ShowLabelDialog(ByVal labelSize As LabelSizes, ByVal LabelImage As String)
 
+        Try
+            ' "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/"
+            Dim requestUriString As String = "http://api.labelary.com/v1/printers/8dpmm/labels/"
+            Dim fn As String = ASCMAIN1.Folders("Temp") & ASCMAIN1.Next_Control_No("NOTEPAD") & ".pdf"
+
+            Select Case labelSize
+                Case LabelSizes.label225x125
+                    requestUriString &= "2.25x1.25/0/"
+
+                Case LabelSizes.label4x6
+                    requestUriString &= "4x6/0/"
+            End Select
+
+
+            Dim zpl() As Byte = Encoding.UTF8.GetBytes(LabelImage)
+
+            ' adjust print density (8dpmm), label width (4 inches), label height (6 inches), and label index (0) as necessary
+            Dim request As HttpWebRequest = WebRequest.Create(requestUriString)
+            request.Method = "POST"
+            request.Accept = "application/pdf" ' omit this line to get PNG images back
+            request.ContentType = "application/x-www-form-urlencoded"
+            request.ContentLength = zpl.Length
+
+            Dim requestStream As Stream = request.GetRequestStream()
+            requestStream.Write(zpl, 0, zpl.Length)
+            requestStream.Close()
+
+            Try
+                Dim response As HttpWebResponse = request.GetResponse()
+                Dim responseStream As Stream = response.GetResponseStream()
+                Dim fileStream As Stream = File.Create(fn)
+                responseStream.CopyTo(fileStream)
+                responseStream.Close()
+                fileStream.Close()
+
+            Catch e As WebException
+                MessageBox.Show(e.Message, "Display ZPL Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+
+            ''Using frm As New TAFZPLT1
+            ''    frm.zplPNGFilename = fn
+            ''    frm.ShowDialog()
+            ''End Using
+
+            'Dim frm As New TAFZPLT1
+            'frm.zplPNGFilename = fn
+            'frm.Show()
+
+            Process.Start(fn)
+            If DialogResult.No = MessageBox.Show("Do you want to save this label?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) Then
+                My.Computer.FileSystem.DeleteFile(fn)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Display ZPL Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+    End Sub
     Public Sub SaveLabelToFile(ByVal fileName As String, ByVal append As Boolean, Optional ByVal fromLastPrinted As Boolean = True)
         If fromLastPrinted AndAlso Not String.IsNullOrEmpty(lastPrintedData) Then
             If append Then
@@ -488,9 +562,10 @@ Public Class CartonLabel
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
         Dim CART_NO As String = rowSOTCART1.Item("CART_NO") & String.Empty
+        Dim EDI_MERCH_TYPE As String = rowSOTCART1.Item("EDI_MERCH_TYPE") & String.Empty
         Dim GTIN_CODE As String = ""
 
-        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" And CUST_CODE = "WALMARTCOM" Then
+        If rowSOTCART1("UPC_CODE_ONLY") & "" <> "" And ((CUST_CODE = "WALMART" And EDI_MERCH_TYPE = "0033") Or CUST_CODE = "WALMARTCOM") Then
             Select Case Val(rowSOTCART1("CART_TOTAL_UNITS") + 0)
                 Case 2
                     GTIN_CODE = "10"

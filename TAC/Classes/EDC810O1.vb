@@ -759,8 +759,15 @@
 
                     ' Regency Wayfair Set Quantity
                     If SET_QTY > 1 AndAlso ASCMAIN1.CLIENT = "RGI" Then
-                        rowEDT810O2.Item("EDI_UNIT_PRICE") = Math.Round(Val(rowEDT810O2.Item("EDI_UNIT_PRICE") & String.Empty) * SET_QTY, 2)
+                        rowEDT810O2.Item("EDI_UNIT_PRICE") = Math.Round(Val(rowSOTINVH2.Item("ORDR_UNIT_PRICE" & CURR_EXT) & String.Empty) * SET_QTY, 2)
                         rowEDT810O2.Item("EDI_QTY_INVOICED") = Val(rowEDT810O2.Item("EDI_QTY_INVOICED") & String.Empty) / SET_QTY
+
+                        'this is here as insurance to handle the rounding issue for EDI_UNIT_PRICE,
+                        'but we beleive we solved the problem by using ORDR_UNIT_PRICE and not previously rounded EDI_UNIT_PRICE 
+                        'on the invoice line
+                        'If Val(rowEDT810O2.Item("EDI_PRICE") & String.Empty) > 0 AndAlso rowEDT810O2.Item("EDI_UNIT_PRICE") <> Val(rowEDT810O2.Item("EDI_PRICE") & String.Empty) Then
+                        '    rowEDT810O2.Item("EDI_UNIT_PRICE") = Val(rowEDT810O2.Item("EDI_PRICE") & String.Empty)
+                        'End If
                     End If
 
                     ' Added 06/07/2018

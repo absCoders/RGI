@@ -6,6 +6,7 @@ Imports Infragistics.Win.UltraWinGrid
 Imports System.Text.RegularExpressions
 Imports System.Net.NetworkInformation
 Imports System.Drawing
+Imports System.Drawing.Printing
 
 ' 08/08/2025
 ' This form was created for Vandale when they purchased Skin.
@@ -22,7 +23,7 @@ Public Class SOFSHIPE
     Private WHSE_CODE_TRUCK As String = String.Empty
     Private drSOTTRCK1 As DataRow = Nothing
 
-    Private allItemsOnBackOrder As Boolean = False
+    Private AllItemsCancelled As Boolean = False
     Private AutoCancel As Boolean = False
     Private dictAppearances As New Dictionary(Of String, Infragistics.Win.Appearance)
 
@@ -34,7 +35,6 @@ Public Class SOFSHIPE
     Private sqlSOTPICK1 As String = String.Empty
     Private sqlSOTPICK2 As String = String.Empty
 
-
     Private WithEvents ultraComboPackage As Infragistics.Win.UltraWinGrid.UltraCombo = New Infragistics.Win.UltraWinGrid.UltraCombo
 
     Private Enum ScreenProcessingModes
@@ -44,8 +44,43 @@ Public Class SOFSHIPE
     End Enum
 
     Private screenProcessingMode As ScreenProcessingModes = ScreenProcessingModes.DisplayAvailableTrucks
+    Private WithEvents pd As New PrintDocument()
+    Private AddressValidatedByUser As Boolean = False
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
+
+    Private Sub SOFSHIPE_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
+
+        Select Case e.KeyCode
+            Case System.Windows.Forms.Keys.F6
+                ' Request Rates
+                Try
+                    With UltraExplorerBar1.Groups("Screen Control").Items("Request Rates")
+                        If .Visible And .Settings.Enabled = DefaultableBoolean.True Then
+                            UltraExplorerBar1.Focus()
+                            Click_Command("Request Rates")
+                            e.Handled = True
+                            Exit Sub
+                        End If
+                    End With
+                Catch ex As Exception
+                End Try
+
+            Case System.Windows.Forms.Keys.F8
+                ' Ship Order
+                Try
+                    With UltraExplorerBar1.Groups("Screen Control").Items("Ship Order")
+                        If .Visible And .Settings.Enabled = DefaultableBoolean.True Then
+                            UltraExplorerBar1.Focus()
+                            Click_Command("Ship Order")
+                            e.Handled = True
+                            Exit Sub
+                        End If
+                    End With
+                Catch ex As Exception
+                End Try
+        End Select
+    End Sub
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -134,20 +169,40 @@ Public Class SOFSHIPE
                 .Columns.Add("CURR_EXCH_RATE", GetType(Decimal))
                 .Columns.Add("ORDR_INV_COMMENT", GetType(String))
                 .Columns.Add("TRUCK_NO", GetType(System.String))
+                .Columns.Add("INV_STAX", GetType(System.Decimal))
+                .Columns.Add("INV_STAX_CURR", GetType(System.Decimal))
+                .Columns.Add("STAX_CODE", GetType(System.String))
+                .Columns.Add("STAX_RATE", GetType(System.Decimal))
             End With
 
-            'dst.Tables("SOTPICK1").PrimaryKey = New DataColumn() {dst.Tables("SOTPICK1").Columns("PICK_NO")}
-
-            ASCMAIN1.sql = "SELECT SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, ICTCOLR1.COLOR_DESC, SOTORDR2.ORDR_UNIT_PRICE, SOTORDR2.CUST_UPC, SOTORDR2.COLOR_CODE,
-                            SOTORDR2.RANGE_STYLE_CODE, SOTORDR2.RANGE_STYLE_LNO, SOTORDR2.CARTON_PACK_QTY, SOTORDR2.ORDR_QTY, SOTORDR2.STYLE_CODE_SUB, SOTORDR2.QTY_PER_PP
-                            FROM SOTPICK2, SOTORDR2, ICTCOLR1
+            sqlSOTPICK2 = "SELECT SOTPICK2.*, SOTORDR2.STYLE_CODE, SOTORDR2.STYLE_DESC, ICTCOLR1.COLOR_DESC, SOTORDR2.ORDR_UNIT_PRICE, SOTORDR2.CUST_UPC, SOTORDR2.COLOR_CODE,
+                            SOTORDR2.RANGE_STYLE_CODE, SOTORDR2.RANGE_STYLE_LNO, SOTORDR2.CARTON_PACK_QTY, SOTORDR2.ORDR_QTY, SOTORDR2.STYLE_CODE_SUB, SOTORDR2.QTY_PER_PP, ICTSTYL1.STYLE_WEIGHT
+                            FROM SOTPICK2, SOTORDR2, ICTCOLR1, ICTSTYL1
                             WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO
                             AND SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO
                             AND SOTORDR2.COLOR_CODE = ICTCOLR1.COLOR_CODE (+)
+                            AND SOTORDR2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
                             AND SOTPICK2.PICK_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
-            Create_TDA(.Tables.Add, "SOTPICK2", ASCMAIN1.sql, 0, True, "C", 2)
-            .Tables("SOTPICK2").Columns.Add("PICK_QTY_SCAN", GetType(System.Int32), "ISNULL(PICK_QTY_CONF, 0) + ISNULL(PICK_QTY_CANC, 0) + ISNULL(PICK_QTY_BACK, 0)")
-            dst.Tables("SOTPICK2").PrimaryKey = New DataColumn() {dst.Tables("SOTPICK2").Columns("PICK_NO"), dst.Tables("SOTPICK2").Columns("PICK_LNO")}
+
+            ASCMAIN1.sql = "SELECT * FROM SOTPICK2 WHERE PICK_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+            Create_TDA(.Tables.Add, "SOTPICK2", ASCMAIN1.sql, 0, True, "C")
+            With .Tables("SOTPICK2")
+                .Columns.Add("STYLE_CODE", GetType(String))
+                .Columns.Add("STYLE_DESC", GetType(String))
+                .Columns.Add("COLOR_DESC", GetType(String))
+                .Columns.Add("ORDR_UNIT_PRICE", GetType(Decimal))
+                .Columns.Add("CUST_UPC", GetType(String))
+                .Columns.Add("COLOR_CODE", GetType(String))
+                .Columns.Add("RANGE_STYLE_CODE", GetType(String))
+                .Columns.Add("RANGE_STYLE_LNO", GetType(Int16))
+                .Columns.Add("CARTON_PACK_QTY", GetType(Int16))
+                .Columns.Add("ORDR_QTY", GetType(Int16))
+                .Columns.Add("STYLE_CODE_SUB", GetType(String))
+                .Columns.Add("QTY_PER_PP", GetType(Int16))
+                .Columns.Add("PICK_QTY_SCAN", GetType(System.Int32))
+                .Columns.Add("STYLE_WEIGHT", GetType(System.Decimal))
+                .Columns.Add("STYLE_WEIGHT_TOT", GetType(System.Decimal), "ISNULL(PICK_QTY_CONF, 0) * ISNULL(STYLE_WEIGHT, 0)")
+            End With
 
             ASCMAIN1.sql = "SELECT * FROM SOTORDR1 WHERE SOTORDR1.ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
             Create_TDA(.Tables.Add, "SOTORDR1", ASCMAIN1.sql, 0, True, "C")
@@ -155,7 +210,7 @@ Public Class SOFSHIPE
 
             ASCMAIN1.sql = "SELECT * FROM SOTORDR2 WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
             Create_TDA(.Tables.Add, "SOTORDR2", ASCMAIN1.sql, 0, True, "C")
-            dst.Tables("SOTORDR2").PrimaryKey = New DataColumn() {dst.Tables("SOTORDR2").Columns("ORDR_NO"), dst.Tables("SOTORDR2").Columns("ORDR_LNO")}
+            'dst.Tables("SOTORDR2").PrimaryKey = New DataColumn() {dst.Tables("SOTORDR2").Columns("ORDR_NO"), dst.Tables("SOTORDR2").Columns("ORDR_LNO")}
 
             ASCMAIN1.sql = "SELECT * FROM SOTORDR5 WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1))) AND CUST_ADDR_TYPE = 'ST'"
             Create_TDA(.Tables.Add, "SOTORDR5", ASCMAIN1.sql, 0, True, "C")
@@ -164,6 +219,12 @@ Public Class SOFSHIPE
             .Tables("SOTORDR5").Columns.Add("IS_PO_BOX", GetType(System.String))
             .Tables("SOTORDR5").Columns("IS_PO_BOX").DefaultValue = "0"
             'dst.Tables("SOTORDR5").PrimaryKey = New DataColumn() {dst.Tables("SOTORDR5").Columns("ORDR_NO"), dst.Tables("SOTORDR5").Columns("CUST_ADDR_TYPE")}
+
+            ASCMAIN1.sql = "SELECT * FROM SOTORDR6 WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+            Create_TDA(.Tables.Add, "SOTORDR6", ASCMAIN1.sql, 0, True, "C")
+
+            ASCMAIN1.sql = "SELECT * FROM SOTORDRT WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+            Create_TDA(.Tables.Add, "SOTORDRT", ASCMAIN1.sql, 0, True, "C")
 
             Create_TDA(.Tables.Add, "TATEVNT1", "*")
 
@@ -182,9 +243,6 @@ Public Class SOFSHIPE
             Create_TDA(.Tables.Add, "ASTUSER1", "*", -1, False)
             Fill_Records("ASTUSER1", String.Empty, True, "SELECT * FROM ASTUSER1")
 
-            Create_TDA(.Tables.Add, "WHTPKGM1", "*", -1, False)
-            Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
-
             Create_TDA(.Tables.Add, "SOTSVIA1", "*", -1, False)
             Fill_Records("SOTSVIA1", String.Empty, True, "SELECT * FROM SOTSVIA1 WHERE CARRIER_PROD_CODE IS NOT NULL")
 
@@ -194,12 +252,18 @@ Public Class SOFSHIPE
             Create_TDA(.Tables.Add, "SOTCARR1", "*")
             Fill_Records("SOTCARR1", String.Empty, True, "SELECT * FROM SOTCARR1")
 
+            Create_TDA(.Tables.Add, "SOTCARR2", "*")
+            Fill_Records("SOTCARR2", String.Empty, True, "SELECT * FROM SOTCARR2")
+
             Create_TDA(.Tables.Add, "SOTCARR3", "*")
             .Tables("SOTCARR3").Columns.Add("CARRIER_REMOTE_HOST_IP", GetType(System.String))
             Fill_Records("SOTCARR3", "", True, "SELECT SOTCARR3.*, SOTCARR1.CARRIER_REMOTE_HOST_IP FROM SOTCARR3, SOTCARR1 WHERE SOTCARR3.CARRIER_CODE = SOTCARR1.CARRIER_CODE (+)")
 
             Create_TDA(.Tables.Add, "SOTCARR5", "*")
             Fill_Records("SOTCARR5", String.Empty, True, "SELECT * FROM SOTCARR5")
+
+            Create_TDA(.Tables.Add, "SOTCARRR", "*")
+            Fill_Records("SOTCARRR", String.Empty, True, "SELECT * FROM SOTCARRR")
 
             Create_TDA(.Tables.Add, "SOTCART1", "*")
             .Tables("SOTCART1").Columns.Add("REFERENCE1", GetType(System.String))
@@ -209,6 +273,8 @@ Public Class SOFSHIPE
 
             Create_TDA(.Tables.Add, "SOTCART2", "*")
             .Tables("SOTCART2").Columns.Add("STYLE_DESC", GetType(System.String))
+            .Tables("SOTCART2").Columns.Add("STYLE_WEIGHT", GetType(System.Decimal))
+            .Tables("SOTCART2").Columns.Add("STYLE_WEIGHT_TOT", GetType(System.Decimal), "ISNULL(QTY_PACKED, 0) * ISNULL(STYLE_WEIGHT, 0)")
 
             Create_Relation("SOTCART1", "SOTCART2", "CART_NO")
 
@@ -253,6 +319,7 @@ Public Class SOFSHIPE
         Create_Summary(grdSOTPICK2, "PICK_QTY_CONF", "Sum")
         Create_Summary(grdSOTPICK2, "PICK_QTY_CANC", "Sum")
         Create_Summary(grdSOTPICK2, "PICK_QTY_BACK", "Sum")
+        Create_Summary(grdSOTPICK2, "PICK_QTY_SCAN", "Sum")
 
         grdWHTSHPC4.DataSource = dst.Tables("WHTSHPC4")
 
@@ -274,15 +341,32 @@ Public Class SOFSHIPE
             .Columns("PKG_DESC").Header.Caption = "Desc"
             .Columns("PKG_DESC").Width = 75
 
-            .Columns.Add("PKG_D")
-            .Columns("PKG_D").Header.Caption = "L x W x H"
-            .Columns("PKG_D").Width = 200
+            .Columns.Add("PKG_L")
+            .Columns("PKG_L").Header.Caption = "Length"
+            .Columns("PKG_L").Width = 75
+            .Columns("PKG_L").Format = "#,##0.00"
+
+            .Columns.Add("PKG_W")
+            .Columns("PKG_W").Header.Caption = "Width"
+            .Columns("PKG_W").Width = 75
+            .Columns("PKG_W").Format = "#,##0.00"
+
+            .Columns.Add("PKG_H")
+            .Columns("PKG_H").Header.Caption = "Height"
+            .Columns("PKG_H").Width = 75
+            .Columns("PKG_H").Format = "#,##0.00"
+
         End With
 
-        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
+        ASCMAIN1.sql = $"SELECT PKG_CODE, PKG_DESC, PKG_L, PKG_W, PKG_H FROM WHTPKGMW WHERE ECOM_CODE = 'SHOPIFY'
+                        UNION
+                        SELECT '{defaultPKG_CODE}', '{defaultPKG_CODE}', NULL PKG_L, NULL PKG_W, NULL PKG_H FROM DUAL
+                        order by PKG_CODE"
+        ultraComboPackage.DataSource = ASCDATA1.GetDataTable(ASCMAIN1.sql)
         ultraComboPackage.ValueMember = "PKG_CODE"
         ultraComboPackage.DisplayMember = "PKG_DESC"
         grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
+        ultraComboPackage.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
         grdSOTCART1.DisplayLayout.UseFixedHeaders = True
         With grdSOTCART1.DisplayLayout.Bands(0)
@@ -320,6 +404,10 @@ Public Class SOFSHIPE
         txtUSER_ID.Text = ASCMAIN1.USER_ID
         clsTACZPLT1 = New TAC.TACZPLT1
 
+        dteSHIP_DATE_SHIPPED.MinDate = DateTime.Now.ToShortDateString
+        dteSHIP_DATE_SHIPPED.MaxDate = DateTime.Now.AddDays(5).ToShortDateString
+        dteSHIP_DATE_SHIPPED.DateTime = dteSHIP_DATE_SHIPPED.MinDate
+
         Timer1.Start()
     End Sub
 
@@ -339,11 +427,24 @@ Public Class SOFSHIPE
             Case "Refresh"
 
             Case "Request Rates"
+
+
                 If dst.Tables("SOTCART1").Rows.Count = 0 Then
                     EMsg &= vbCr & "At least one carton must be added before shipping rates can be requested."
                 End If
 
             Case "Ship Order"
+
+                Dim TOTE_NO As String = txtTOTE_NO.Text
+                Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{TOTE_NO}'")(0)
+                Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
+                Dim PICK_QTY_CONF As Int16 = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
+
+                ' There may be Pick Tickets where nothing is getting shipped; therefore, no Validation is required
+                If PICK_QTY_CONF = 0 Then
+                    Exit Select
+                End If
+
                 If txtSHIP_VIA_CODE.TextLength = 0 Then
                     EMsg &= vbCr & "A shipping method must be selected before the order can be shipped."
                 End If
@@ -374,30 +475,28 @@ Public Class SOFSHIPE
                     Next
                 Next
 
-                Dim cost As Decimal = 0
+                'Dim cost As Decimal = 0
 
                 If dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'").Length = 0 Then
                     EMsg &= vbCr & "You must select a Shipping Method that is listed in the Carrier Shipping Rates grid before the order can be shipped. Double-click a shipping method in the grid to select it for this order."
-                Else
-                    Dim drWHTSHPC4 As DataRow = dst.Tables("WHTSHPC4").Select($"SHIP_VIA_CODE = '{txtSHIP_VIA_CODE.Text}'")(0)
-                    cost = Val(drWHTSHPC4.Item("ACCT_NET_CHARGE") & String.Empty)
                 End If
 
                 If EMsg.Length > 0 Then
                     Exit Select
                 End If
 
-                Dim zMsg As String = $"Would you like to ship this order using the shipping method {txtSHIP_VIA_DESC.Text} which costs ${cost.ToString("#,##0.00")}?"
-                If MessageBox.Show(zMsg, "Ship Order", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
-                    Exit Sub
+                If dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ISNULL(PICK_QTY_CONF, 0) > ISNULL(PICK_QTY_SCAN, 0)").Length > 0 Then
+                    Dim zMsg As String = "Some items haven't been fully scanned. Would you like to proceed anyway?"
+                    If MessageBox.Show(zMsg, "Ship Order", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                        Exit Sub
+                    End If
                 End If
 
-                Dim ErrorMessage As String = String.Empty
                 ' This is a prescreen for potential issues.
+                Dim ErrorMessage As String = String.Empty
                 If Not RequestShippingLabel("", ErrorMessage, True) Then
                     EMsg &= vbCr & ErrorMessage
                 End If
-
         End Select
 
         If MyBase.EMsg <> "" Then
@@ -433,18 +532,59 @@ Public Class SOFSHIPE
                 Dim PICK_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("PICK_NO")
                 RequestRates(PICK_NO)
 
+            Case "FedEx"
+                Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("ORDR_NO")
+                ValidateAddress(ORDR_NO, "FEDEX")
+
+            Case "UPS"
+                Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("ORDR_NO")
+                ValidateAddress(ORDR_NO, "UPS")
+
             Case "Ship Order"
                 Dim ErrorMessage As String = String.Empty
+                AllItemsCancelled = False
 
                 ' Create Invoice
                 Dim PICK_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("PICK_NO")
+                Dim printToteAddresslabel As Boolean = False
+
                 If CreateSalesOrderInvoice(PICK_NO, txtSHIP_VIA_CODE.Text) Then
                     dst.Tables("SOTPICK1X").Select($"PICK_NO = '{PICK_NO}'")(0).Item("SELECTED") = "1"
-                    Dim INV_NO As String = dst.Tables("SOTINVH1").Rows(0).Item("INV_NO")
-                    If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
-                        MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    If Not AllItemsCancelled Then
+                        Dim INV_NO As String = dst.Tables("SOTINVH1").Rows(0).Item("INV_NO")
+
+                        If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
+                            MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                            If MessageBox.Show("Do you want to Validate the Address and retry requesting a shipping label?", "Ship Order", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = DialogResult.Yes Then
+                                AddressValidatedByUser = False
+                                Click_Command("FedEx")
+                                If AddressValidatedByUser Then
+                                    If Not RequestShippingLabel(INV_NO, ErrorMessage, False) Then
+                                        MessageBox.Show(ErrorMessage, "Generate Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                                        printToteAddresslabel = True
+                                    End If
+                                End If
+                            Else
+                                printToteAddresslabel = True
+                            End If
+                        End If
+                        If printToteAddresslabel Then
+                            PrintAddressLabel(txtTOTE_NO.Text)
+                        End If
                     End If
-                    Click_Command("Select")
+
+                    numOrderFreight.Value = 0
+                    numAVG_DELIVERY_DAYS.Value = 0
+                    txtSHIP_VIA_CODE.Clear()
+
+                    ' When all Totes are processed, automatically go back to the list of Trucks
+                    If dst.Tables("SOTPICK1X").Select("ISNULL(SELECTED, '0') = '0'").Length = 0 Then
+                        AutoCancel = True
+                        Click_Command("Cancel")
+                        AutoCancel = False
+                    Else
+                        Click_Command("Select")
+                    End If
                 Else
                     AutoCancel = True
                     Click_Command("Cancel")
@@ -468,6 +608,8 @@ Public Class SOFSHIPE
                 .Groups("Screen Control").Items("Refresh").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Request Rates").Settings.Enabled = DefaultableBoolean.False
                 .Groups("Screen Control").Items("Ship Order").Settings.Enabled = DefaultableBoolean.False
+                .Groups("Validate Address").Items("FedEx").Settings.Enabled = DefaultableBoolean.False
+                .Groups("Validate Address").Items("UPS").Settings.Enabled = DefaultableBoolean.False
             End With
         End If
 
@@ -487,6 +629,8 @@ Public Class SOFSHIPE
             AutoCancel = False
         End If
 
+        dteSHIP_DATE_SHIPPED.ReadOnly = False
+
         grdSOTPICK1X.DisplayLayout.Bands(0).Columns("TRUCK_NO").Hidden = True
 
         'Set_Read_Only(grpHeader, ScreenMode)
@@ -499,7 +643,7 @@ Public Class SOFSHIPE
         For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", "SOTRNGA1",
             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5",
             "WHTSHPCG", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTSHPCA",
-            "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTORDR1", "SOTORDR2", "SOTORDR5", "TATEVNT1",
+            "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR6", "SOTORDRT", "TATEVNT1",
             "SOTSHIP1", "SOTCART1", "SOTCART2"}
             If dst.Tables.Contains(tableName) Then
                 dst.Tables(tableName).Rows.Clear()
@@ -523,12 +667,16 @@ Public Class SOFSHIPE
 
         txtTRUCK_NO.ReadOnly = False
         txtTOTE_NO.ReadOnly = True
+        dteSHIP_DATE_SHIPPED.ReadOnly = False
 
         txtUSER_ID.Text = ASCMAIN1.USER_ID
         txtWHSE_CODE.Clear()
         txtSHIP_VIA_CODE.Clear()
+        numOrderFreight.Value = 0
+        numAVG_DELIVERY_DAYS.Value = 0
 
         drSOTTRCK1 = Nothing
+        AllItemsCancelled = False
 
         screenProcessingMode = ScreenProcessingModes.DisplayAvailableTrucks
 
@@ -550,7 +698,7 @@ Public Class SOFSHIPE
 
         grdSOTCART1.Text = ""
         grdSOTCART2.Text = ""
-        grdWHTSHPC4.Text = ""
+        'grdWHTSHPC4.Text = ""
 
         EnforceConstraints(False)
         For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", "SOTRNGA1",
@@ -576,7 +724,7 @@ Public Class SOFSHIPE
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTTRCK1X, "SS", "Show Filter", "Show GroupBox")
-        Load_Popup_Menu(grdSOTPICK1X, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdSOTPICK1X, "SSPB", "Show Filter", "Show GroupBox", "Print Address Label")
         Load_Popup_Menu(grdSOTPICK2, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdSOTCART1, "B", "Add Carton")
     End Sub
@@ -624,18 +772,22 @@ Public Class SOFSHIPE
 
         Dim grd As UltraWinGrid.UltraGrid = Nothing
 
-        If grdSOTCART1.ActiveRow Is Nothing Then
-            Exit Sub
-        End If
-
         Me.Cursor = Cursors.WaitCursor
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
             Case "Add Carton"
+                If grdSOTCART1.ActiveRow Is Nothing Then
+                    Exit Sub
+                End If
+
                 Dim PICK_NO As String = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0).Item("PICK_NO")
                 AddCarton(PICK_NO)
+
+            Case "Print Address Label"
+                Dim TOTE_NO As String = grdSOTPICK1X.ActiveRow.Cells("TOTE_NO").Value
+                PrintAddressLabel(TOTE_NO)
         End Select
 
         Me.Cursor = Cursors.Default
@@ -649,32 +801,113 @@ Public Class SOFSHIPE
     Private Delegate Sub ScannerDelegate(ByVal ScannedString As String)
     Private scannedDelegate As ScannerDelegate = Nothing
 
-    Private Sub BackOrderedAndCancelledItems(ByVal PICK_NO As String)
+    Private Sub PrintGlobalLabel(ByVal TOTE_NO As String)
 
-        ' All items in Back or Canc need to come out of Pick
-        Dim drSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
-        Dim WHSE_CODE As String = drSOTPICK1.Item("WHSE_CODE") & String.Empty
-        Dim ORDR_NO As String = drSOTPICK1.Item("ORDR_NO") & String.Empty
-        Dim drSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
-        Dim PARTNER_CODE As String = drSOTORDR1.Item("PARTNER_CODE") & String.Empty
-
-        For Each drSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}'")
-            Dim ITEM_CODE As String = drSOTPICK2.Item("ITEM_CODE") & String.Empty
-            Dim TakeOutOfPick As Int32 = Val(drSOTPICK2.Item("PICK_QTY_BACK") & String.Empty) + Val(drSOTPICK2.Item("PICK_QTY_CANC") & String.Empty)
-
-            If TakeOutOfPick > 0 Then
-                ASCMAIN1.sql = $"Update ICTSTAT2 SET WHSE_QTY_PICK = NVL(WHSE_QTY_PICK, 0) - :PARM1, 
-                                    WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN, 0) + :PARM2
-                                    WHERE ITEM_CODE = :PARM3 AND WHSE_CODE = :PARM4"
-                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NNVV", New Object() {TakeOutOfPick, Val(drSOTPICK2.Item("PICK_QTY_BACK") & String.Empty), ITEM_CODE, WHSE_CODE})
-
-                ASCMAIN1.sql = $"Update ICTSTAG2 SET WHSE_QTY_PICK = NVL(WHSE_QTY_PICK, 0) - :PARM1,
-                                    WHSE_QTY_OPEN = NVL(WHSE_QTY_OPEN, 0) + :PARM2
-                                    WHERE PARTNER_CODE = :PARM3 AND ITEM_CODE = :PARM4 AND WHSE_CODE = :PARM5"
-                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NNVVV", New Object() {TakeOutOfPick, Val(drSOTPICK2.Item("PICK_QTY_BACK") & String.Empty), PARTNER_CODE, ITEM_CODE, WHSE_CODE})
+        Try
+            If TOTE_NO.Length = 0 Then
+                Exit Sub
             End If
-        Next
 
+            Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{TOTE_NO}'")(0)
+            Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
+            Dim drSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+            Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
+            Dim ORDR_NO_WEB As String = drSOTORDR1.Item("ORDR_NO_WEB") & String.Empty
+
+            Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+
+            Dim label As String = "^XA 
+                                ^CF0,50
+                                ^FO100,20^FDGlobal E Shipment^FS 
+                                ^CF0,35
+                                ^FO100,100^FDTote No: {TOTE_NO}^FS 
+                                ^FO100,150^FDOrder No: {ORDR_NO}^FS 
+                                ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
+                                ^FO100,250^FDInvoice: {INV_NO}^FS 
+                                ^FO100,300^FDShopify Order ID: {ORDR_WEB_ID}^FS 
+                                ^FO100,350^FDShopify #: {ORDR_NO_WEB}^FS 
+                                ^FO100,450^FDName: {CUST_NAME}^FS 
+                                ^FO100,500^FDContact: {CUST_CONTACT}^FS 
+                                ^FO100,550^FDAddr Line 1: {CUST_ADDR1}^FS 
+                                ^FO100,600^FDAddr Line 2: {CUST_ADDR2}^FS 
+                                ^FO100,650^FDAddr Line 3: {CUST_ADDR3}^FS 
+                                ^FO100,700^FDCity: {CUST_CITY}^FS 
+                                ^FO100,750^FDState: {CUST_STATE}^FS 
+                                ^FO100,800^FDZip Code: {CUST_ZIP_CODE}^FS 
+                                ^FO100,850^FDCountry: {CUST_COUNTRY}^FS 
+                                ^FO100,900^FDPhone: {CUST_PHONE}^FS 
+                                ^FO100,950^FDEmail: {CUST_EMAIL}^FS 
+                                ^XZ"
+            For Each dcol As DataColumn In dst.Tables("SOTORDR5").Columns
+                label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
+            Next
+
+            label = label.Replace("{TOTE_NO}", TOTE_NO)
+            label = label.Replace("{PICK_NO}", rowSOTPICK1.Item("PICK_NO") & String.Empty)
+            label = label.Replace("{INV_NO}", rowSOTPICK1.Item("INV_NO") & String.Empty)
+            label = label.Replace("{ORDR_WEB_ID}", ORDR_WEB_ID)
+            label = label.Replace("{ORDR_NO_WEB}", ORDR_NO_WEB)
+
+            clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, label)
+        Catch ex As Exception
+            MessageBox.Show(ex.Message & " - " & ex.InnerException.Message)
+        End Try
+    End Sub
+
+    Private Sub PrintAddressLabel(ByVal TOTE_NO As String)
+
+        Try
+            If TOTE_NO.Length = 0 Then
+                Exit Sub
+            End If
+
+            Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{TOTE_NO}'")(0)
+            Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO") & String.Empty
+            Dim rowSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+            Dim drSOTORDR6 As DataRow = Nothing
+
+            Dim SHIP_REFERENCE As String = String.Empty
+
+            If dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length > 0 Then
+                drSOTORDR6 = dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+                SHIP_REFERENCE = drSOTORDR6.Item("SHIP_REFERENCE") & String.Empty
+            End If
+
+            Dim label As String = "^XA 
+                                ^CF0,50
+                                ^FO100,20^FDShipping Label Error^FS 
+                                ^CF0,35
+                                ^FO100,100^FDTote No: {TOTE_NO}^FS 
+                                ^FO100,150^FDOrder No: {ORDR_NO}^FS 
+                                ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
+                                ^FO100,250^FDInvoice: {INV_NO}^FS 
+                                ^FO100,350^FDName: {CUST_NAME}^FS 
+                                ^FO100,400^FDContact: {CUST_CONTACT}^FS 
+                                ^FO100,450^FDAddr Line 1: {CUST_ADDR1}^FS 
+                                ^FO100,500^FDAddr Line 2: {CUST_ADDR2}^FS 
+                                ^FO100,550^FDAddr Line 3: {CUST_ADDR3}^FS 
+                                ^FO100,600^FDCity: {CUST_CITY}^FS 
+                                ^FO100,650^FDState: {CUST_STATE}^FS 
+                                ^FO100,700^FDZip Code: {CUST_ZIP_CODE}^FS 
+                                ^FO100,750^FDCountry: {CUST_COUNTRY}^FS 
+                                ^FO100,800^FDPhone: {CUST_PHONE}^FS 
+                                ^FO100,850^FDEmail: {CUST_EMAIL}^FS 
+                                ^CF0,50
+                                ^FO100,950^FDGlobal: {SHIP_REFERENCE}^FS 
+                                ^XZ"
+            For Each dcol As DataColumn In dst.Tables("SOTORDR5").Columns
+                label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
+            Next
+
+            label = label.Replace("{TOTE_NO}", TOTE_NO)
+            label = label.Replace("{PICK_NO}", rowSOTPICK1.Item("PICK_NO") & String.Empty)
+            label = label.Replace("{INV_NO}", rowSOTPICK1.Item("INV_NO") & String.Empty)
+            label = label.Replace("{SHIP_REFERENCE}", SHIP_REFERENCE)
+
+            clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, label)
+        Catch ex As Exception
+            MessageBox.Show(ex.Message & " - " & ex.InnerException.Message)
+        End Try
     End Sub
 
     Private Function ProcessTote(ByVal TOTE_NO As String) As Boolean
@@ -726,8 +959,28 @@ Public Class SOFSHIPE
 
             UltraExplorerBar1.Groups("Screen Control").Items("Request Rates").Settings.Enabled = DefaultableBoolean.True
             UltraExplorerBar1.Groups("Screen Control").Items("Ship Order").Settings.Enabled = DefaultableBoolean.True
+            UltraExplorerBar1.Groups("Validate Address").Items("FedEx").Settings.Enabled = DefaultableBoolean.True
+            UltraExplorerBar1.Groups("Validate Address").Items("UPS").Settings.Enabled = DefaultableBoolean.True
 
             txtSHIP_VIA_CODE.Text = SHIP_VIA_CODE
+            numOrderFreight.Value = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_CHARGE_CODE = 'FRT'") & String.Empty)
+            numOrderFreight.Focus()
+            numAVG_DELIVERY_DAYS.Value = 0
+
+            Dim rowSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
+            If rowSOTSVIA1 IsNot Nothing Then
+                Dim CARRIER_CODE As String = rowSOTSVIA1.Item("CARRIER_CODE") & String.Empty
+                Dim CARRIER_PROD_CODE As String = rowSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+
+                Dim rowSOTCARR2 As DataRow = dst.Tables("SOTCARR2").Rows.Find({CARRIER_CODE, CARRIER_PROD_CODE})
+                If rowSOTCARR2 IsNot Nothing Then
+                    numAVG_DELIVERY_DAYS.Value = Val(rowSOTCARR2.Item("AVG_DELIVERY_DAYS") & String.Empty)
+                End If
+            End If
+
+            If numAVG_DELIVERY_DAYS.Value = 0 Then
+                numAVG_DELIVERY_DAYS.Value = 10
+            End If
 
             ASCMAIN1.sql = $"SELECT * FROM SOTCART1 WHERE PICK_NO = '{PICK_NO}'"
             Fill_Records("SOTCART1", String.Empty, True, ASCMAIN1.sql)
@@ -759,9 +1012,11 @@ Public Class SOFSHIPE
                     'drSOTCART2.Item("QTY_REL") = ""
                     'drSOTCART2.Item("P2L_INIT") = ""
                     drSOTCART2.Item("STYLE_DESC") = drSOTPICK2.Item("STYLE_DESC")
+                    drSOTCART2.Item("STYLE_WEIGHT") = drSOTPICK2.Item("STYLE_WEIGHT")
                     dst.Tables("SOTCART2").Rows.Add(drSOTCART2)
                 Next
             End If
+            CalculateCartonWeight()
 
             grdSOTCART1.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
             grdSOTCART2.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
@@ -772,14 +1027,18 @@ Public Class SOFSHIPE
                     .Groups("Screen Control").Items("Refresh").Settings.Enabled = DefaultableBoolean.False
                     .Groups("Screen Control").Items("Request Rates").Settings.Enabled = DefaultableBoolean.True
                     .Groups("Screen Control").Items("Ship Order").Settings.Enabled = DefaultableBoolean.True
+                    .Groups("Validate Address").Items("FedEx").Settings.Enabled = DefaultableBoolean.True
+                    .Groups("Validate Address").Items("UPS").Settings.Enabled = DefaultableBoolean.True
                 End With
             End If
 
             screenProcessingMode = ScreenProcessingModes.ProcessingSelectedTruckTote
             txtTOTE_NO.ReadOnly = True
+            dteSHIP_DATE_SHIPPED.ReadOnly = False
 
             HighLightSelectedTote()
 
+            txtCUST_UPC.Focus()
             Return True
 
         Catch ex As Exception
@@ -816,7 +1075,7 @@ Public Class SOFSHIPE
             Dim drSOTPICK1X As DataRow = Nothing
             Me.Cursor = Cursors.WaitCursor
 
-            allItemsOnBackOrder = False
+            AllItemsCancelled = False
 
             Select Case ValidationType
                 Case ValidateTruckToteTypes.Truck
@@ -941,10 +1200,12 @@ Public Class SOFSHIPE
 
                     ASCMAIN1.Progress("Load Pick Tickets and Sales Orders", "")
                     Fill_Records("SOTPICK1", String.Join(",", lstPICK_NOs.ToArray), True, sqlSOTPICK1)
-                    Fill_Records("SOTPICK2", String.Join(",", lstPICK_NOs.ToArray))
+                    Fill_Records("SOTPICK2", String.Join(",", lstPICK_NOs.ToArray), True, sqlSOTPICK2)
                     Fill_Records("SOTORDR1", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("SOTORDR2", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("SOTORDR5", String.Join(",", lstORDR_NOs.ToArray))
+                    Fill_Records("SOTORDR6", String.Join(",", lstORDR_NOs.ToArray))
+                    Fill_Records("SOTORDRT", String.Join(",", lstORDR_NOs.ToArray))
                     Fill_Records("ARTCUST2", String.Join(",", lstORDR_NOs.ToArray))
 
                     Dim numOrdertypes As Int16 = ASCDATA1.SelectDistinct(dst.Tables("SOTORDR1"), New String() {"ORDR_TYPE_CODE"}).Rows.Count
@@ -1044,16 +1305,42 @@ Public Class SOFSHIPE
         End If
     End Sub
 
+    Private Function ProcessAllItemsOnBackOrder(ByVal PICK_NO As String) As Boolean
+
+        Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
+        Dim ORDR_NO As String = rowSOTPICK1.Item("ORDR_NO")
+        Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+        Dim WHSE_CODE As String = rowSOTORDR1.Item("WHSE_CODE")
+
+        ' Remove items from ICTSTAT2
+        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}'")
+            Dim STYLE_CODE As String = rowSOTPICK2.Item("STYLE_CODE")
+            Dim COLOR_CODE As String = rowSOTPICK2.Item("COLOR_CODE")
+            Dim PICK_QTY As Int16 = Val(rowSOTPICK2.Item("PICK_QTY") & String.Empty)
+
+            If PICK_QTY > 0 Then
+                ASCMAIN1.sql = "UPDATE ICTSTAT2 
+                                    SET WHSE_QTY_PICK = NVL(WHSE_QTY_PICK, 0) - :PARM1
+                                    WHERE STYLE_CODE = :PARM2
+                                    AND COLOR_CODE = :PARM3
+                                    AND WHSE_CODE = :PARM4"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NVVV", {PICK_QTY, STYLE_CODE, COLOR_CODE, WHSE_CODE})
+            End If
+        Next
+    End Function
+
     Private Function CreateSalesOrderInvoice(ByVal PICK_NO As String, ByVal SelectedShipViaCode As String) As Boolean
 
         Dim drSOTPICK1 As DataRow = Nothing
         Dim drSOTPICK1X As DataRow = Nothing
+
         Try
             dst.Tables("SOTINVH1").Rows.Clear()
             dst.Tables("SOTINVH2").Rows.Clear()
             dst.Tables("SOTINVH9").Rows.Clear()
             dst.Tables("SOTINVHM").Rows.Clear()
             dst.Tables("SOTSHIP1").Rows.Clear()
+            dst.Tables("ARTOPEN1").Rows.Clear()
 
             Dim RFIXMSG As Boolean = False
             drSOTPICK1 = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
@@ -1061,6 +1348,41 @@ Public Class SOFSHIPE
             Dim drSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
             Dim drSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}' AND CUST_ADDR_TYPE = 'ST'")(0)
             drSOTPICK1X = dst.Tables("SOTPICK1X").Select($"PICK_NO = '{PICK_NO}'")(0)
+
+            drSOTPICK1.Item("PICK_FREIGHT") = 0
+
+            Dim PICK_FREIGHT As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = 0 AND ORDR_CHARGE_CODE = 'FRT'") & String.Empty)
+            drSOTPICK1.Item("PICK_FREIGHT") = PICK_FREIGHT
+
+            'STAX_CODE                      VARCHAR2(6)   
+            'STAX_RATE                      Number(8, 4)   
+            'INV_STAX                       Number(7, 2)   
+            'INV_STAX_CURR                  Number(7, 2)   
+
+            ' Tax needs to be calculted at the line level since we can short ship.
+            Dim frtTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = 0 AND ORDR_CHARGE_CODE = 'FTAX'") & String.Empty)
+            Dim INV_STAX As Decimal = frtTax
+
+            For Each drSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}'")
+                Dim ORDR_LNO As Int16 = drSOTPICK2.Item("ORDR_LNO")
+                Dim PICK_QTY As Int16 = Val(drSOTPICK2.Item("PICK_QTY") & String.Empty)
+                Dim PICK_QTY_CONF As Int16 = Val(drSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+
+                If PICK_QTY_CONF > 0 Then
+                    Dim sTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO} AND ORDR_CHARGE_CODE = 'DLTAX'") & String.Empty)
+                    If sTax > 0 Then
+                        INV_STAX += sTax * (PICK_QTY / PICK_QTY_CONF)
+                    End If
+                End If
+            Next
+
+            Dim FreightTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = 0 AND ORDR_CHARGE_CODE = 'TAX'") & String.Empty)
+            drSOTPICK1.Item("INV_STAX") = INV_STAX + FreightTax
+
+            Dim WHSE_CODE As String = drSOTORDR1.Item("WHSE_CODE") & String.Empty
+            Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(WHSE_CODE)
+            Dim WHSE_PHYS_STATUS As String = rowICTWHSE1.Item("WHSE_PHYS_STATUS") & ""
+            Dim WHSE_LOCATOR As Boolean = rowICTWHSE1.Item("WHSE_LOCATOR") & "" = "1"
 
             ' Currently, the Ecommerce records do not have a shipping record; therefore, we will make one
             Dim SHIP_BOL_NO As String = drSOTPICK1.Item("SHIP_BOL_NO") & String.Empty
@@ -1071,7 +1393,7 @@ Public Class SOFSHIPE
             End If
 
             If dst.Tables("SOTSHIP1").Rows.Count = 0 Then
-                If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                If ASCMAIN1.CLIENT = "VAN" Then
                     SHIP_BOL_NO = ASCMAIN1.Next_Control_No("SHIP_BOL_NO")
                 Else
                     SHIP_BOL_NO = ASCMAIN1.Next_Control_No("SOTSHIP1.SHIP_BOL_NO")
@@ -1082,13 +1404,13 @@ Public Class SOFSHIPE
                 drSOTSHIP1.Item("SHIP_ADDR_TYPE") = drSOTORDR5.Item("CUST_ADDR_TYPE")
                 drSOTSHIP1.Item("SHIP_ADDR_CODE") = drSOTORDR5.Item("CUST_ADDR_CODE")
                 drSOTSHIP1.Item("ORDR_GROUP_NO") = drSOTORDR1.Item("ORDR_GROUP_NO")
-                'drSOTSHIP1.ITEM("SHIP_PICK_PRINTED") = ""
+                'drSOTSHIP1.Item("SHIP_PICK_PRINTED") = "1"
                 drSOTSHIP1.Item("PICK_BATCH_NO") = drSOTPICK1.Item("PICK_BATCH_NO")
                 drSOTSHIP1.Item("SHIP_STATUS") = "P"
                 'drSOTSHIP1.ITEM("SHIP_PULL_BY_STYLE") = ""
                 'drSOTSHIP1.ITEM("SHIP_856_BATCH_NO") = ""
                 drSOTSHIP1.Item("FRT_TERMS") = drSOTORDR1.Item("FRT_TERMS")
-                drSOTSHIP1.Item("WHSE_CODE") = txtWHSE_CODE.Text
+                drSOTSHIP1.Item("WHSE_CODE") = WHSE_CODE
                 'drSOTSHIP1.ITEM("SHIP_MANIFEST_NO") = ""
                 'drSOTSHIP1.ITEM("SHIP_810_BATCH_NO") = ""
                 drSOTSHIP1.Item("INIT_DATE") = DateTime.Now
@@ -1125,7 +1447,7 @@ Public Class SOFSHIPE
                 'drSOTSHIP1.ITEM("THIRD_PARTY") = ""
                 'drSOTSHIP1.ITEM("OPT_LINE1") = ""
                 'drSOTSHIP1.ITEM("OPT_LINE2") = ""
-                'drSOTSHIP1.ITEM("SHIP_DATE_PACKED") = ""
+                drSOTSHIP1.Item("SHIP_DATE_PACKED") = DateTime.Now
                 'drSOTSHIP1.ITEM("LP_STATUS") = ""
                 'drSOTSHIP1.ITEM("LP_XNO") = ""
                 'drSOTSHIP1.ITEM("MASTER_BILL_OF_LADING_NO") = ""
@@ -1157,20 +1479,44 @@ Public Class SOFSHIPE
                 drSOTSHIP1 = dst.Tables("SOTSHIP1").Rows(0)
             End If
 
-            drSOTSHIP1.Item("SHIP_DATE_SHIPPED") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("INV_DATE") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("SHIP_DATE_RECEIVED") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("SHIPPED_ACTUAL") = DateTime.Now.ToShortDateString
-            drSOTSHIP1.Item("SHIP_TOTAL_WGT") = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
-            drSOTSHIP1.Item("SHIP_CNT_CARTONS") = dst.Tables("SOTCART1").Rows.Count
-            drSOTSHIP1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
-            drSOTSHIP1.Item("SHIP_STATUS") = "F"
+            dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_PACKED") = DateTime.Now
+            If dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_PRINTED") & String.Empty = String.Empty Then
+                dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_PRINTED") = DateTime.Now
+            End If
+            dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_CNT_CARTONS") = drSOTSHIP1.Item("SHIP_CNT_CARTONS")
+            dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("PICK_TOTAL_WGT") = drSOTSHIP1.Item("SHIP_TOTAL_WGT")
+
+            ' 09/09/2025
+            ' All missind items will be cancelled - No Back orders
+            For Each drSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}'")
+                drSOTPICK2.Item("PICK_QTY_BACK") = 0
+                drSOTPICK2.Item("PICK_QTY_CONF") = Val(drSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                drSOTPICK2.Item("PICK_QTY_CANC") = Val(drSOTPICK2.Item("PICK_QTY") & String.Empty) - Val(drSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                If drSOTPICK2.Item("PICK_QTY_CANC") < 0 Then
+                    drSOTPICK2.Item("PICK_QTY_CANC") = 0
+                End If
+            Next
 
             Dim SOCINVH1 As New TAC.SOCINVH1(dst)
 
             SOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(DateTime.Now.ToShortDateString)
 
-            ' Currently There are no back_orders for Ecommerce Sales Orders
+            AllItemsCancelled = dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ISNULL(PICK_QTY_CONF, 0) > 0 ").Length = 0
+
+            If AllItemsCancelled Then
+                drSOTSHIP1.Item("SHIP_STATUS") = "C"
+            Else
+                drSOTSHIP1.Item("SHIP_DATE_SHIPPED") = dteSHIP_DATE_SHIPPED.DateTime.ToShortDateString
+                drSOTSHIP1.Item("INV_DATE") = DateTime.Now.ToShortDateString
+                drSOTSHIP1.Item("SHIP_DATE_RECEIVED") = DateTime.Now.ToShortDateString
+                drSOTSHIP1.Item("SHIPPED_ACTUAL") = dteSHIP_DATE_SHIPPED.DateTime.ToShortDateString
+                drSOTSHIP1.Item("SHIP_TOTAL_WGT") = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
+                drSOTSHIP1.Item("SHIP_CNT_CARTONS") = dst.Tables("SOTCART1").Rows.Count
+                drSOTSHIP1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
+                drSOTSHIP1.Item("SHIP_STATUS") = "F"
+            End If
+
+            ' Currently there are no back_orders for Ecommerce Sales Orders
             For Each drSOTORDR2 As DataRow In dst.Tables("SOTORDR2").Select($"ORDR_NO = '{ORDR_NO}'")
                 Dim ORDR_QTY_OPEN As Int16 = Val(drSOTORDR2.Item("ORDR_QTY_OPEN") & String.Empty)
                 Dim ORDR_QTY_PICK As Int16 = Val(drSOTORDR2.Item("ORDR_QTY_PICK") & String.Empty)
@@ -1183,53 +1529,52 @@ Public Class SOFSHIPE
                 End If
             Next
 
-            ' Record event where the Ship via was changed
-            If drSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> SelectedShipViaCode Then
-                Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
-                drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
-                drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                drTATEVNT1.Item("EVENT_TYPE") = "SHPMTC"
-                drTATEVNT1.Item("EVENT_DESC") = $"Ship Via was changed from {drSOTORDR1.Item("SHIP_VIA_CODE")} to {SelectedShipViaCode}"
-                drTATEVNT1.Item("EVENT_KEY") = ""
-                drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
+            If Not AllItemsCancelled Then
+                ' Record event where the Ship via was changed
+                If drSOTORDR1.Item("SHIP_VIA_CODE") & String.Empty <> SelectedShipViaCode Then
+                    Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
+                    drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                    drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
+                    drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                    drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    drTATEVNT1.Item("EVENT_TYPE") = "SHPMTC"
+                    drTATEVNT1.Item("EVENT_DESC") = $"Ship Via was changed from {drSOTORDR1.Item("SHIP_VIA_CODE")} to {SelectedShipViaCode}"
+                    drTATEVNT1.Item("EVENT_KEY") = ""
+                    drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
 
-                drSOTORDR1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
+                    drSOTORDR1.Item("SHIP_VIA_CODE") = SelectedShipViaCode
+                End If
+
+                If dst.Tables("SOTPICK2").Select("PICK_QTY > 0 AND PICK_QTY_CONF < PICK_QTY", "").Length > 0 Then
+                    Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
+                    drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
+                    drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
+                    drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                    drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    drTATEVNT1.Item("EVENT_TYPE") = "SHSHP"
+                    drTATEVNT1.Item("EVENT_DESC") = "User chose to short ship Ecommerce order."
+                    drTATEVNT1.Item("EVENT_KEY") = ""
+                    drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
+                End If
+
+                Dim CUST_FACTOR_TRANS_IND As String = "0"
+
+                ' Log factoring change
+                If Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) <> Val(CUST_FACTOR_TRANS_IND) Then
+                    Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
+                    drTATEVNT1.Item("TABLE_NAME") = "SOTSHIP1"
+                    drTATEVNT1.Item("TABLE_KEY") = SHIP_BOL_NO
+                    drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
+                    drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    drTATEVNT1.Item("EVENT_TYPE") = "SHPFAC"
+                    drTATEVNT1.Item("EVENT_DESC") = "Factor Setting was changed from " _
+                        & IIf(Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) = 1, "True", "False") & " to " & IIf(Val(CUST_FACTOR_TRANS_IND) = 1, "True", "False")
+                    drTATEVNT1.Item("EVENT_KEY") = ""
+                    drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
+                End If
             End If
 
-            If dst.Tables("SOTPICK2").Select("PICK_QTY > 0 AND PICK_QTY_CONF < PICK_QTY", "").Length > 0 Then
-                Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
-                drTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
-                drTATEVNT1.Item("TABLE_KEY") = ORDR_NO
-                drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                drTATEVNT1.Item("EVENT_TYPE") = "SHSHP"
-                drTATEVNT1.Item("EVENT_DESC") = "User chose to short ship Ecommerce order."
-                drTATEVNT1.Item("EVENT_KEY") = ""
-                drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
-            End If
-
-            Dim CUST_FACTOR_TRANS_IND As String = "0"
-
-            ' Log factoring change
-            If Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) <> Val(CUST_FACTOR_TRANS_IND) Then
-                Dim drTATEVNT1 As DataRow = dst.Tables("TATEVNT1").Rows.Add
-                drTATEVNT1.Item("TABLE_NAME") = "SOTSHIP1"
-                drTATEVNT1.Item("TABLE_KEY") = SHIP_BOL_NO
-                drTATEVNT1.Item("INIT_DATE") = DATETIME_STAMP
-                drTATEVNT1.Item("INIT_OPER") = ASCMAIN1.USER_ID
-                drTATEVNT1.Item("EVENT_TYPE") = "SHPFAC"
-                drTATEVNT1.Item("EVENT_DESC") = "Factor Setting was changed from " _
-                    & IIf(Val(drSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") & String.Empty) = 1, "True", "False") & " to " & IIf(Val(CUST_FACTOR_TRANS_IND) = 1, "True", "False")
-                drTATEVNT1.Item("EVENT_KEY") = ""
-                drTATEVNT1.Item("FORM_NAME") = "SOFSHIPE"
-            End If
-
-            ' If nothing to Invoice then get out of here. All items are back ordered.
-            allItemsOnBackOrder = dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND ISNULL(PICK_QTY_CONF, 0) > 0 ").Length = 0
-
-            If allItemsOnBackOrder Then
+            If AllItemsCancelled Then
                 drSOTPICK1.Item("PICK_STATUS") = "C"
             Else
                 SOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
@@ -1241,10 +1586,13 @@ Public Class SOFSHIPE
 
             Dim PICK_BATCH_NO As String = drSOTTRCK1.Item("PICK_BATCH_NO") & String.Empty
             drSOTPICK1X.Item("SELECTED") = "1"
-            drSOTPICK1.Item("PICK_STATUS") = "F"
+            If Not AllItemsCancelled Then
+                drSOTPICK1.Item("PICK_STATUS") = "F"
+            End If
 
             Try
                 BeginTrans()
+
                 Update_Record_TDA("SOTORDR1")
                 Update_Record_TDA("SOTORDR2")
                 Update_Record_TDA("SOTORDR5")
@@ -1284,6 +1632,29 @@ Public Class SOFSHIPE
                                 End;"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {ORDR_NO})
 
+                ' 6/18/2019 - Vandale uses SORUPDT1 for the code that does Invoice Update at Vandale
+                For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Rows
+                    Dim INV_TYPE As String = rowSOTINVH1.Item("INV_TYPE")
+                    Dim INV_NO As String = rowSOTINVH1.Item("INV_NO")
+
+                    ASCMAIN1.sql = $"BEGIN SOPSTAT1('{INV_TYPE}','{INV_NO}'); END;"
+                    ASCDATA1.ExecuteSQL()
+
+                    ASCMAIN1.sql = $"BEGIN SOPSTAT2('{INV_TYPE}','{INV_NO}'); END;"
+                    ASCDATA1.ExecuteSQL()
+
+                    If WHSE_LOCATOR Then
+                        TAC.ICCMAIN1.Update_WHTLOCBX("S", INV_NO)
+                    End If
+
+                    'ASCDATA1.ExecuteSP("ARPCUST6_IC", "VV", New Object() {INV_TYPE, INV_NO}, New String() {"INV_TYPE_IN", "INV_NO_IN"})
+                    ASCMAIN1.sql = $"BEGIN ARPCUST6_IC('{INV_TYPE}','{INV_NO}'); END;"
+                    ASCDATA1.ExecuteSQL()
+                Next
+
+                If AllItemsCancelled Then
+                    ProcessAllItemsOnBackOrder(PICK_NO)
+                End If
 
                 'CHANGE SOTPICK0.PICK_STATUS FROM P -> K (IN PACK)
                 If dst.Tables("SOTPICK1X").Select("SELECTED = '1'").Length = 1 Then
@@ -1320,14 +1691,14 @@ Public Class SOFSHIPE
                     'IF TRUCK IS A CUSTOM TRUCK, CHANGE TRUCK TYPE FROM X -> R
                     ASCMAIN1.Progress("Finalizing Truck", "SOTTRCK1")
                     If drSOTTRCK1.Item("TRUCK_TYPE") = "X" Then
-                        ASCMAIN1.sql = "UPDATE SOTTRCK1 SET TRUCK_TYPE = 'R' WHERE TRUCK_TYPE = 'X' AND TRUCK_NO = :PARM1 AND DC_CODE = :PARM2"
-                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {HFs("TRUCK_NO"), HFs("DC_CODE")})
+                        ASCMAIN1.sql = "UPDATE SOTTRCK1 SET TRUCK_TYPE = 'R' WHERE TRUCK_TYPE = 'X' AND TRUCK_NO = :PARM1"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {HFs("TRUCK_NO")})
                     End If
 
                     'DELETE CUSTOM TOTES THAT BELONG TO THE CUSTOM TRUCK
                     ASCMAIN1.Progress("Finalizing Truck", "SOTTOTE1")
-                    ASCMAIN1.sql = "DELETE FROM SOTTOTE1 WHERE TRUCK_NO = :PARM1 AND DC_CODE = :PARM2 AND TOTE_TYPE = 'X'"
-                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New Object() {HFs("TRUCK_NO"), HFs("DC_CODE")})
+                    ASCMAIN1.sql = "DELETE FROM SOTTOTE1 WHERE TRUCK_NO = :PARM1 AND TOTE_TYPE = 'X'"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {HFs("TRUCK_NO")})
                 End If
 
                 CommitTrans()
@@ -1393,7 +1764,7 @@ Public Class SOFSHIPE
         Dim drSOTCART1 As DataRow = dst.Tables("SOTCART1").NewRow
 
         Dim CART_NO_ctl As String = ""
-        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+        If ASCMAIN1.CLIENT = "VAN" Then
             CART_NO_ctl = ASCMAIN1.Next_Control_No("CART_NO")
         Else
             CART_NO_ctl = ASCMAIN1.Next_Control_No("SOTCART1.CART_NO")
@@ -1404,10 +1775,10 @@ Public Class SOFSHIPE
         'drSOTCART1.Item("CART_FREIGHT") = ""
         drSOTCART1.Item("CART_PACKER") = ASCMAIN1.USER_ID
         drSOTCART1.Item("CART_PACKED") = DateTime.Now
-        drSOTCART1.Item("CART_SHIPPED") = DateTime.Now.ToShortDateString
+        drSOTCART1.Item("CART_SHIPPED") = dteSHIP_DATE_SHIPPED.DateTime.ToShortDateString
         drSOTCART1.Item("PICK_NO") = PICK_NO
         drSOTCART1.Item("CART_TOTAL_UNITS") = Val(dst.Tables("SOTPICK2").Compute("SUM(PICK_QTY_CONF)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
-        'drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = ""
+        'drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = Val(dst.Tables("SOTPICK2").Compute("SUM(STYLE_WEIGHT_TOT)", $"PICK_NO = '{PICK_NO}'") & String.Empty)
         'drSOTCART1.Item("CART_TOTAL_WGT_CALC") = ""
         'drSOTCART1.Item("CART_TRACKING_NO") = ""
         drSOTCART1.Item("CART_SEQ") = Val(dst.Tables("SOTCART1").Compute("MAX(CART_SEQ)", $"PICK_NO = '{PICK_NO}'") & String.Empty) + 1
@@ -1423,12 +1794,160 @@ Public Class SOFSHIPE
         'drSOTCART1.Item("MULTIPO_IND") = ""
         dst.Tables("SOTCART1").Rows.Add(drSOTCART1)
 
+        ' When a user changes the values in the Cartons we must clear the Rates
+        dst.Tables("WHTSHPC4").Rows.Clear()
+        CalculateCartonWeight(CART_NO)
+
         Return CART_NO
     End Function
+
+    Private Sub CalculateCartonWeight(Optional CART_NO As String = "")
+
+        Dim sql As String = String.Empty
+        If CART_NO.Length > 0 Then
+            sql = $"CART_NO = '{CART_NO}'"
+        End If
+
+        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select(sql)
+            CART_NO = drSOTCART1.Item("CART_NO")
+
+            drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = 0
+            drSOTCART1.Item("CART_TOTAL_WGT_CALC") = 0
+
+            drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") = Val(dst.Tables("SOTCART2").Compute("SUM(STYLE_WEIGHT_TOT)", $"CART_NO = '{CART_NO}'") & String.Empty)
+            drSOTCART1.Item("CART_TOTAL_WGT_CALC") = drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL")
+        Next
+
+    End Sub
 
 #End Region
 
 #Region "Carrier Procedures"
+
+    Private Sub ValidateAddress(ByVal ORDR_NO As String, ByVal CARRIER_CODE As String)
+
+        Try
+
+            If dst.Tables("SOTCARR1").Select($"CARRIER_CODE = '{CARRIER_CODE}'").Length = 0 Then
+                Exit Sub
+            End If
+
+            If dst.Tables("SOTCARR3").Select($"CARRIER_CODE = '{CARRIER_CODE}'").Length = 0 Then
+                Exit Sub
+            End If
+
+            Dim drSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select($"CARRIER_CODE = '{CARRIER_CODE}'")(0)
+            Dim drSOTCARR3 As DataRow = Nothing
+
+            Dim rowSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(ORDR_NO)
+            If rowSOTORDR1 Is Nothing Then
+                Exit Sub
+            End If
+
+            Dim CUST_CODE As String = rowSOTORDR1.Item("CUST_CODE") & String.Empty
+
+            If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL").Length > 0 Then
+                drSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL")(0)
+            ElseIf dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = DIVISION_CODE AND DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'").Length > 0 Then
+                drSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = DIVISION_CODE AND DIVISION_CODE = '" & ASCMAIN1.CLIENT & "'")(0)
+            Else
+                Exit Sub
+            End If
+
+            clsShip.Reset()
+
+            Select Case CARRIER_CODE
+                Case "FEDEX"
+                    clsShip.Service = WHCSHIP1.ServiceProviders.FederalExpress
+                Case "UPS"
+                    clsShip.Service = WHCSHIP1.ServiceProviders.UPS
+            End Select
+
+            ' Credentials
+            With clsShip
+                .Server = drSOTCARR1.Item("CARRIER_REMOTE_HOST_IP") & String.Empty
+                .UserId = drSOTCARR3.Item("SHIPPER_ID") & String.Empty
+                .Password = drSOTCARR3.Item("SHIPPER_PASSWORD") & String.Empty
+                .AccountNumber = drSOTCARR3.Item("CARRIER_ACCOUNT_NO") & String.Empty
+                .UPSAccessKey = drSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
+                .FedexMeterNumber = drSOTCARR3.Item("METER_NUMBER") & String.Empty
+                .FedexDeveloperKey = drSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
+                .LabelStockType = (drSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
+            End With
+
+            Dim drSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0)
+
+            With clsShip.Recipient
+                If drSOTORDR5.Item("CUST_CONTACT") & String.Empty <> String.Empty Then
+                    .FirstName = drSOTORDR5.Item("CUST_CONTACT") & String.Empty
+                Else
+                    .FirstName = drSOTORDR5.Item("CUST_NAME") & String.Empty
+                End If
+
+                .MiddleInitial = String.Empty
+                .LastName = String.Empty
+
+                .Address1 = drSOTORDR5.Item("CUST_ADDR1") & String.Empty
+                .Address2 = drSOTORDR5.Item("CUST_ADDR2") & String.Empty
+                .City = drSOTORDR5.Item("CUST_CITY") & String.Empty
+                .State = drSOTORDR5.Item("CUST_STATE") & String.Empty
+                .ZipCode = drSOTORDR5.Item("CUST_ZIP_CODE") & String.Empty
+                .CountryCode = (drSOTORDR5.Item("CUST_COUNTRY") & String.Empty).ToUpper.Replace(".", "")
+                If .CountryCode.Trim.Length = 0 Then .CountryCode = "US"
+                If .CountryCode = "USA" Then .CountryCode = "US"
+                If .CountryCode = "CAN" Then .CountryCode = "CA"
+
+                .Company = .FirstName
+                .Phone = drSOTORDR5.Item("CUST_PHONE") & String.Empty
+
+                If .Phone.Trim.Length = 0 Then
+                    .Phone = clsShip.Sender.Phone
+                End If
+
+                If .Phone.Trim.Length = 0 Then
+                    .Phone = "1234567890"
+                End If
+
+                .IsResidental = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0).Item("IS_RESIDENTAL") & String.Empty = "1"
+                .IsPOBox = dst.Tables("SOTORDR5").Select($"ORDR_NO = '{ORDR_NO}'")(0).Item("IS_PO_BOX") & String.Empty = "1"
+            End With
+
+            Dim result As New List(Of TAC.WHCSHIP1.AddressMatchDetail)
+            result = clsShip.ValidateAddress()
+
+            If result.Count = 0 Then
+                MessageBox.Show("No Matches found", "Validate Address", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            AddressValidatedByUser = False
+            Using frmTACADDR1 As New TAC.TAFADDR1(result)
+                frmTACADDR1.ShowDialog()
+
+                For Each addressSel As TAC.WHCSHIP1.AddressMatchDetail In result
+                    If addressSel.isSelected = True Then
+                        drSOTORDR5.Item("CUST_ADDR1") = addressSel.Address1 & String.Empty
+                        drSOTORDR5.Item("CUST_ADDR2") = addressSel.Address2 & String.Empty
+                        drSOTORDR5.Item("CUST_CITY") = addressSel.City & String.Empty
+                        drSOTORDR5.Item("CUST_STATE") = addressSel.State & String.Empty
+                        drSOTORDR5.Item("CUST_ZIP_CODE") = addressSel.ZipCode & String.Empty
+                        drSOTORDR5.Item("CUST_COUNTRY") = addressSel.Country & String.Empty
+                        If addressSel.ResidentialStatus & String.Empty = "RESIDENTAL" Then
+                            drSOTORDR5.Item("IS_RESIDENTAL") = "1"
+                        End If
+                        AddressValidatedByUser = True
+                        Exit For
+                    End If
+                Next
+                frmTACADDR1.Close()
+                frmTACADDR1.Dispose()
+            End Using
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Validate Address", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+    End Sub
 
     Private Sub RequestRates(ByVal PICK_NO As String)
 
@@ -1455,12 +1974,14 @@ Public Class SOFSHIPE
 
             ASCMAIN1.Progress("Request Carrier Rates")
 
+            ' When a user changes the values in the Cartons we must clear the Rates
             dst.Tables("WHTSHPC4").Rows.Clear()
+            'CalculateCartonWeight()
 
             Dim rUPSList(1) As WHCSHIP1.RateList
             Dim rFEDEXList(1) As WHCSHIP1.RateList
-            Dim rUPSFreightList(1) As WHCSHIP1.RateList
             Dim rUSPSList(1) As WHCSHIP1.RateList
+            Dim rGlobalRates(1) As WHCSHIP1.RateList
 
             'Me.Cursor = Cursors.WaitCursor
             'ASCMAIN1.Progress("-", "USPS")
@@ -1473,6 +1994,10 @@ Public Class SOFSHIPE
             Me.Cursor = Cursors.WaitCursor
             ASCMAIN1.Progress("-", "FedEx")
             rFEDEXList = GetFedExRates(PICK_NO)
+
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("-", "Global-e")
+            rGlobalRates = GetGlobalRates(PICK_NO)
 
             Me.Cursor = Cursors.WaitCursor
 
@@ -1488,8 +2013,8 @@ Public Class SOFSHIPE
                 ReDim rFEDEXList(1)
             End If
 
-            If rUPSFreightList Is Nothing Then
-                ReDim rUPSFreightList(1)
+            If rGlobalRates Is Nothing Then
+                ReDim rGlobalRates(1)
             End If
 
             Dim selected As Boolean = False
@@ -1511,10 +2036,9 @@ Public Class SOFSHIPE
                         ASCMAIN1.Progress("-", "FedEx")
 
                     Case 3
-                        rList = rUPSFreightList
-                        CARRIER_CODE = "UPS"
-                        ASCMAIN1.Progress("-", "UPS Freight")
-                        freightShipment = " and ISNULL(FREIGHT_SHIPMENT, '0') = '1'"
+                        rList = rGlobalRates
+                        CARRIER_CODE = "GLOBAL"
+                        ASCMAIN1.Progress("-", "Global-e")
 
                     Case 4
                         rList = rUSPSList
@@ -1533,6 +2057,17 @@ Public Class SOFSHIPE
                             ' Display only those services that are mapped to ship vias
                             If dst.Tables("SOTSVIA1").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND CARRIER_PROD_CODE = '" & .ServiceType & "' AND SHIP_VIA_STATUS = 'A'" & freightShipment).Length = 0 Then
                                 Continue For
+                            End If
+
+                            ' 09/11/2025 - As per Melvin never let the user select a shipping method with avg ddelivery days less than what they paid for
+                            Dim drSOTCARR2 As DataRow = dst.Tables("SOTCARR2").Rows.Find({CARRIER_CODE, .ServiceType})
+                            If chkUseAverageDeliveryDays.Checked Then
+                                If drSOTCARR2 IsNot Nothing AndAlso numAVG_DELIVERY_DAYS.Value > 0 Then
+                                    Dim AVG_DELIVERY_DAYS As Int16 = Val(drSOTCARR2.Item("AVG_DELIVERY_DAYS") & String.Empty)
+                                    If AVG_DELIVERY_DAYS > numAVG_DELIVERY_DAYS.Value Then
+                                        Continue For
+                                    End If
+                                End If
                             End If
 
                             'CARRIER_SURCHARGE_PERC
@@ -1572,6 +2107,8 @@ Public Class SOFSHIPE
                                     drWHTSHPC4.Item("SERVICE_INDEX") = iLoop + 200
                                 Case "USPS"
                                     drWHTSHPC4.Item("SERVICE_INDEX") = iLoop + 300
+                                Case "GLOBAL"
+                                    drWHTSHPC4.Item("SERVICE_INDEX") = iLoop + 400
                             End Select
 
                             drWHTSHPC4.Item("SERVICE_TYPE_DESC") = .ServiceTypeDescription
@@ -1595,36 +2132,52 @@ Public Class SOFSHIPE
                             drWHTSHPC4.Item("SURCHARGE") = 0
                             drWHTSHPC4.Item("DELIVERY_TIME") = .DeliveryTime
                             drWHTSHPC4.Item("LIST_NET_CHARGE") = .ListNetCharge
-                            If .TransitTime <> "" Then
+
+                            If .TransitTime <> "" AndAlso .TransitTime <> "0" Then
                                 drWHTSHPC4.Item("TRANSIT_TIME") = .TransitTime
+                            ElseIf drSOTCARR2 IsNot Nothing Then
+                                Dim AVG_DELIVERY_DAYS As Int16 = Val(drSOTCARR2.Item("AVG_DELIVERY_DAYS") & String.Empty)
+                                If AVG_DELIVERY_DAYS > 0 Then
+                                    drWHTSHPC4.Item("TRANSIT_TIME") = AVG_DELIVERY_DAYS
+                                End If
                             End If
 
                             drWHTSHPC4.Item("CARRIER_CODE") = CARRIER_CODE
 
-                            Select Case CARRIER_PPA_TYPE
-                                Case "F" ' None
-                                    drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = 0
-                                Case "N" ' Negotiated
-                                    drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("ACCT_NET_CHARGE")
-                                Case "L" ' List
-                                    drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("LIST_NET_CHARGE")
-                                Case Else
-                                    ' If not set then use  List
-                                    drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("LIST_NET_CHARGE")
-                            End Select
+                            ' These are web orders, the freight is predeteremkned on the Web
+                            ' Ndew code below the commented out code
+
+                            'Select Case CARRIER_PPA_TYPE
+                            '    Case "F" ' None
+                            '        drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = 0
+                            '    Case "N" ' Negotiated
+                            '        drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("ACCT_NET_CHARGE")
+                            '    Case "L" ' List
+                            '        drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("LIST_NET_CHARGE")
+                            '    Case Else
+                            '        ' If not set then use  List
+                            '        drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("LIST_NET_CHARGE")
+                            'End Select
 
                             ' Additional Surcharge based off List
-                            If CARRIER_SURCHARGE_PERC > 0 Then
-                                Select Case CARRIER_SURCHARGE_BASE
-                                    Case "N" ' Negotiated
-                                        drWHTSHPC4.Item("SURCHARGE") = Val(drWHTSHPC4.Item("ACCT_NET_CHARGE") & String.Empty) * (CARRIER_SURCHARGE_PERC / 100)
-                                    Case "L" ' List
-                                        drWHTSHPC4.Item("SURCHARGE") = Val(drWHTSHPC4.Item("LIST_NET_CHARGE") & String.Empty) * (CARRIER_SURCHARGE_PERC / 100)
-                                    Case Else
-                                        ' If not set then use  List
-                                        drWHTSHPC4.Item("SURCHARGE") = Val(drWHTSHPC4.Item("LIST_NET_CHARGE") & String.Empty) * (CARRIER_SURCHARGE_PERC / 100)
-                                End Select
+                            'If CARRIER_SURCHARGE_PERC > 0 Then
+                            '    Select Case CARRIER_SURCHARGE_BASE
+                            '        Case "N" ' Negotiated
+                            '            drWHTSHPC4.Item("SURCHARGE") = Val(drWHTSHPC4.Item("ACCT_NET_CHARGE") & String.Empty) * (CARRIER_SURCHARGE_PERC / 100)
+                            '        Case "L" ' List
+                            '            drWHTSHPC4.Item("SURCHARGE") = Val(drWHTSHPC4.Item("LIST_NET_CHARGE") & String.Empty) * (CARRIER_SURCHARGE_PERC / 100)
+                            '        Case Else
+                            '            ' If not set then use  List
+                            '            drWHTSHPC4.Item("SURCHARGE") = Val(drWHTSHPC4.Item("LIST_NET_CHARGE") & String.Empty) * (CARRIER_SURCHARGE_PERC / 100)
+                            '    End Select
+                            'End If
+
+                            If Val(drWHTSHPC4.Item("ACCT_NET_CHARGE") & String.Empty) > 0 Then
+                                drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("ACCT_NET_CHARGE")
+                            Else
+                                drWHTSHPC4.Item("CUSTOMER_BASE_CHARGE") = drWHTSHPC4.Item("LIST_NET_CHARGE")
                             End If
+                            drWHTSHPC4.Item("SURCHARGE") = 0
 
                             dst.Tables("WHTSHPC4").Rows.Add(drWHTSHPC4)
 
@@ -1637,7 +2190,11 @@ Public Class SOFSHIPE
             grdWHTSHPC4.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
 
             Try
-                Sort_grdColumns(grdWHTSHPC4, "TOTAL_CHARGE")
+                Sort_grdColumns(grdWHTSHPC4, "ACCT_NET_CHARGE")
+                ' 09/17/2025 - Auto select lowest cost shipping method
+                If grdWHTSHPC4.Rows.Count > 0 Then
+                    txtSHIP_VIA_CODE.Text = grdWHTSHPC4.Rows(0).Cells("SHIP_VIA_CODE").Value & String.Empty
+                End If
             Catch ex As Exception
             End Try
 
@@ -1656,10 +2213,59 @@ Public Class SOFSHIPE
 
     End Sub
 
+    Private Function GetGlobalRates(ByVal PICK_NO As String) As WHCSHIP1.RateList()
+        Try
+            Dim rList(1) As WHCSHIP1.RateList
+
+            If Absx1.txtFor("CARRIER_CODE").Text <> "GLOBAL" Then
+                Return rList
+            End If
+
+            If dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'GLOBAL'").Length = 0 Then
+                Return Nothing
+            End If
+
+            If dst.Tables("SOTCARR3").Select("CARRIER_CODE = 'GLOBAL'").Length = 0 Then
+                Return Nothing
+            End If
+
+            ' 09/19/2025 - Global-e
+            Dim index As Int16 = 1
+            If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                Dim drSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
+                Dim ORDR_NO As String = drSOTPICK1.Item("ORDR_NO")
+
+                ReDim rList(dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length)
+
+                For Each drSOTORDR6 As DataRow In dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")
+                    Dim SHIP_VIA_CODE As String = drSOTORDR6.Item("SHIP_VIA_CODE")
+                    Dim drSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
+                    With rList(index)
+                        .AccountNetCharge = Val(drSOTORDR6.Item("SHIP_COST") & String.Empty)
+                        '.ServiceCode = drSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+                        .ServiceType = drSOTSVIA1.Item("CARRIER_PROD_CODE") & String.Empty
+                        .ServiceTypeDescription = drSOTSVIA1.Item("SHIP_VIA_DESC") & String.Empty
+                    End With
+                    index += 1
+                Next
+            End If
+
+            Return rList
+        Catch ex As Exception
+            MessageBox.Show("The following error occurred getting FedEx Rates: " & ex.Message, "Get FedEx Rates", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return Nothing
+
+        End Try
+    End Function
+
     Private Function GetUpsRates(ByVal PICK_NO As String) As WHCSHIP1.RateList()
         Try
 
             Dim rList(1) As WHCSHIP1.RateList
+
+            If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                Return rList
+            End If
 
             If dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'UPS'").Length = 0 Then
                 Return Nothing
@@ -1673,7 +2279,7 @@ Public Class SOFSHIPE
             Dim drSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'UPS'")(0)
             Dim drSOTCARR3 As DataRow = Nothing
             Dim CUST_CODE As String = dst.Tables("SOTORDR1").Rows(0).Item("CUST_CODE") & String.Empty
-            Dim ORDR_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_NO") & String.Empty
+            Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("ORDR_NO") & String.Empty
 
             If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "'").Length > 0 Then
                 drSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "'")(0)
@@ -1706,7 +2312,7 @@ Public Class SOFSHIPE
             clsShip.RequestedServiceType = ServiceTypes.stUnspecified
             clsShip.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
             clsShip.CustomerType = UpsratesCustomerTypes.ccRetail
-            clsShip.ShipDate = DateTime.Now.ToShortDateString
+            clsShip.ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToShortDateString
 
             Dim listSeqNo As New List(Of Int16)
 
@@ -1822,6 +2428,10 @@ Public Class SOFSHIPE
 
             Dim rList(1) As WHCSHIP1.RateList
 
+            If Absx1.txtFor("CARRIER_CODE").Text = "GLOBAL" Then
+                Return rList
+            End If
+
             If dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'FEDEX'").Length = 0 Then
                 Return Nothing
             End If
@@ -1834,7 +2444,7 @@ Public Class SOFSHIPE
             Dim drSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Select("CARRIER_CODE = 'FEDEX'")(0)
             Dim drSOTCARR3 As DataRow = Nothing
             Dim CUST_CODE As String = dst.Tables("SOTORDR1").Rows(0).Item("CUST_CODE") & String.Empty
-            Dim ORDR_NO As String = dst.Tables("SOTORDR1").Rows(0).Item("ORDR_NO") & String.Empty
+            Dim ORDR_NO As String = dst.Tables("SOTPICK1").Select($"PICK_NO = '{PICK_NO}'")(0).Item("ORDR_NO") & String.Empty
 
             If dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL").Length > 0 Then
                 drSOTCARR3 = dst.Tables("SOTCARR3").Select("CARRIER_CODE = '" & CARRIER_CODE & "' AND SHIPPER_DIVISION_CODE = '" & CUST_CODE & "' AND CARRIER_PROD_CODE IS NULL")(0)
@@ -1867,7 +2477,7 @@ Public Class SOFSHIPE
             clsShip.RequestedServiceType = ServiceTypes.stUnspecified
             clsShip.UPSPickupType = UpsratesPickupTypes.ptDailyPickup
             clsShip.CustomerType = UpsratesCustomerTypes.ccRetail
-            clsShip.ShipDate = DateTime.Now.ToShortDateString
+            clsShip.ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToShortDateString
 
             Dim listSeqNo As New List(Of Int16)
 
@@ -1967,6 +2577,27 @@ Public Class SOFSHIPE
                 ReDim rList(1)
             End If
 
+            ' Fedex Smart Post
+            'If clsShip.Recipient.CountryCode = "US" Then
+            '    Dim SmartPost As Boolean = True
+            '    For Each pkgDetail As PackageDetail In clsShip.PackageDetailList
+            '        If (pkgDetail.Weight / 16) > 9 Then
+            '            SmartPost = False
+            '            Exit For
+            '        End If
+            '        If SmartPost Then
+            '            clsShip.RequestedServiceType = ServiceTypes.stFedExSmartPost
+            '            Dim spList(1) As WHCSHIP1.RateList
+            '            spList = clsShip.GetFedExRatesList()
+            '            If spList IsNot Nothing Then
+            '                For ictr As Integer = 0 To spList.Length - 1
+            '                    ReDim Preserve rList(rList.Length + 1)
+            '                    rList(rList.Length - 1) = spList(ictr)
+            '                Next
+            '            End If
+            '        End If
+            '    Next
+            'End If
             Return rList
 
         Catch ex As Exception
@@ -2000,6 +2631,7 @@ Public Class SOFSHIPE
         Dim SHIP_PACKAGE_NO As Int64 = 0
         Dim pkgId As Int64 = 0
         Dim isPitneyBowes As Boolean = False
+        Dim isGlobale As Boolean = False
 
         Dim CARRIER_SURCHARGE_PERC As Int16 = 0
         Dim CARRIER_SURCHARGE_BASE As String = "L"
@@ -2134,22 +2766,24 @@ Public Class SOFSHIPE
             Dim CUST_ZIP_CODE As String = (drSOTORDR5.Item("CUST_ZIP_CODE") & String.Empty).ToString.Trim
             Dim CUST_PHONE As String = (drSOTORDR5.Item("CUST_PHONE") & String.Empty).ToString.Trim
 
-            If CUST_ADDR1.Length = 0 AndAlso CUST_ADDR2.Length = 0 Then
-                ErrorMessage = "Invalid or missing Ship To Street Address"
-                Return False
-            ElseIf Not CUST_COUNTRY.StartsWith("US") AndAlso (CUST_CITY.Length = 0 OrElse CUST_ZIP_CODE.Length = 0) Then
-                ErrorMessage = "Invalid or missing International Ship To City and/or Zip Code"
-                Return False
-            ElseIf CUST_CITY.Length = 0 OrElse CUST_STATE.Length = 0 OrElse CUST_ZIP_CODE.Length = 0 Then
-                ErrorMessage = "Invalid or missing Ship To City, State or Zip Code"
-                Return False
-            ElseIf CUST_COUNTRY.Length = 0 Then
-                Dim drTATSTATE As DataRow = dst.Tables("TATSTATE").Rows.Find(CUST_STATE)
-                If drTATSTATE IsNot Nothing Then
-                    CUST_COUNTRY = "US"
-                Else
-                    ErrorMessage = "Invalid or missing Country Code"
+            If CARRIER_CODE <> "GLOBAL" Then
+                If CUST_ADDR1.Length = 0 AndAlso CUST_ADDR2.Length = 0 Then
+                    ErrorMessage = "Invalid or missing Ship To Street Address"
                     Return False
+                ElseIf Not CUST_COUNTRY.StartsWith("US") AndAlso (CUST_CITY.Length = 0 OrElse CUST_ZIP_CODE.Length = 0) Then
+                    ErrorMessage = "Invalid or missing International Ship To City and/or Zip Code"
+                    Return False
+                ElseIf CUST_CITY.Length = 0 OrElse CUST_STATE.Length = 0 OrElse CUST_ZIP_CODE.Length = 0 Then
+                    ErrorMessage = "Invalid or missing Ship To City, State or Zip Code"
+                    Return False
+                ElseIf CUST_COUNTRY.Length = 0 Then
+                    Dim drTATSTATE As DataRow = dst.Tables("TATSTATE").Rows.Find(CUST_STATE)
+                    If drTATSTATE IsNot Nothing Then
+                        CUST_COUNTRY = "US"
+                    Else
+                        ErrorMessage = "Invalid or missing Country Code"
+                        Return False
+                    End If
                 End If
             End If
 
@@ -2172,12 +2806,21 @@ Public Class SOFSHIPE
                     ErrorMessage &= vbCr & "Carton " & CART_NO & " does not have any assigned products."
                 End If
 
-                If PACKAGING_TYPE = defaultPACKAGING_TYPE Then
-                    If dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) Is Nothing Then
-                        ErrorMessage &= vbCr & "Carton " & CART_NO & " has an invalid package code."
-                    End If
-                End If
             Next
+
+            Dim GlobaleOrderID As String = String.Empty
+            Select Case CARRIER_CODE
+                Case "GLOBAL"
+                    If dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length = 0 Then
+                        ErrorMessage &= vbCr & "Cannot determne the Global-e ID."
+                    Else
+                        GlobaleOrderID = dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")(0).Item("SHIP_REFERENCE") & String.Empty
+                    End If
+
+                    If GlobaleOrderID.Length = 0 Then
+                        ErrorMessage &= vbCr & "Cannot determne the Global-e ID."
+                    End If
+            End Select
 
             If ErrorMessage.Length > 0 Then
                 Return True
@@ -2215,6 +2858,8 @@ Public Class SOFSHIPE
             clsShip.FedexDeveloperKey = drSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
             clsShip.LabelStockType = (drSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
 
+            clsShip.GlobaleOrderID = GlobaleOrderID
+
             Dim drWHTSHPC1 As DataRow = Nothing
             Dim drWHTSHPC2 As DataRow = Nothing
             Dim drWHTSHPC5 As DataRow = Nothing
@@ -2230,7 +2875,7 @@ Public Class SOFSHIPE
 
             drWHTSHPC1.Item("STATUS") = "I"
             drWHTSHPC1.Item("ERROR_MSG") = String.Empty
-            drWHTSHPC1.Item("SHIP_DATE") = DateTime.Now.ToString("MM/dd/yyyy")
+            drWHTSHPC1.Item("SHIP_DATE") = dteSHIP_DATE_SHIPPED.DateTime.ToString("MM/dd/yyyy")
             drWHTSHPC1.Item("OPS_YYYYPP") = ASCMAIN1.CYP
             drWHTSHPC1.Item("OPS_YYYYWW") = ASCMAIN1.CYW
             drWHTSHPC1.Item("CUST_CODE") = CUST_CODE
@@ -2255,7 +2900,12 @@ Public Class SOFSHIPE
 
             ' Sender Information
             With clsShip.Sender
-                .Company = (drICTWHSE1.Item("WHSE_DESC") & String.Empty).ToString.Trim
+                ' Work around until SKINCOM FedEx and UPS creedentials are in the system
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    .Company = "SKINWORLDWIDE"
+                Else
+                    .Company = (drICTWHSE1.Item("WHSE_DESC") & String.Empty).ToString.Trim
+                End If
                 .Phone = (drICTWHSE1.Item("WHSE_PHONE") & String.Empty).ToString.Trim
                 .FirstName = (drICTWHSE1.Item("WHSE_CONTACT") & String.Empty).ToString.Trim
                 .MiddleInitial = String.Empty
@@ -2507,6 +3157,10 @@ Public Class SOFSHIPE
                 Case WHCSHIP1.ProviderTypeCanada
                     clsShip.Service = WHCSHIP1.ServiceProviders.CanadaPost
 
+                Case WHCSHIP1.ProviderTypeGlobale
+                    isGlobale = True
+                    clsShip.Service = WHCSHIP1.ServiceProviders.Global_e
+
                 Case Else
                     Return False
             End Select
@@ -2539,7 +3193,6 @@ Public Class SOFSHIPE
                         drSOTCART1.Item("REFERENCE1") = $"TN:{drSOTORDR1.Item("ORDR_NO_WEB")}"
                         drSOTCART1.Item("REFERENCE2") = $"IK:{INV_NO}"
                         drSOTCART1.Item("REFERENCE3") = ""
-
                 End Select
             Next
 
@@ -2555,15 +3208,6 @@ Public Class SOFSHIPE
                 OUR_FREIGHT = 0
                 itemList.Clear()
 
-                '' Get the Invoice Number now so we can put it on the label
-                'Dim INV_NO As String = String.Empty
-
-                'If ASCMAIN1.CLIENT = "VAN" Then
-                '    INV_NO = ASCMAIN1.Next_Control_No("INV_NO_01")
-                'Else
-                '    INV_NO = ASCMAIN1.Next_Control_No("SOTINVH1.INV_NO")
-                'End If
-
                 drSOTPICK1.Item("INV_NO") = INV_NO
                 drSOTPICK1.Item("SHIP_CNTL_NO") = SHIP_CNTL_NO
 
@@ -2577,7 +3221,6 @@ Public Class SOFSHIPE
 
                     Dim PACKAGING_TYPE As String = drSOTCART1.Item("PACKAGING_TYPE") & String.Empty
                     Dim PKG_CODE As String = drSOTCART1.Item("PKG_CODE") & String.Empty
-                    Dim drWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) ' LookUp("WHTPKGM1", PKG_CODE)
                     pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
                     Dim shipPackageDetail As New PackageDetail
@@ -2651,7 +3294,6 @@ Public Class SOFSHIPE
                                 If reference.Length > 0 Then
                                     refCount = 5
                                 End If
-
 
                                 ' Fedex allows up to 3 References
                                 If (drSOTCART1.Item("REFERENCE1") & String.Empty).ToString.Trim.Length > 0 AndAlso refCount < 3 Then
@@ -2784,7 +3426,7 @@ Public Class SOFSHIPE
                     dst.Tables("WHTSHPC2").Rows.Add(drWHTSHPC2)
                 Next
 
-                If isInternationalShipment Then
+                If isInternationalShipment AndAlso CARRIER_CODE <> "GLOBAL" Then
                     ' Set the Customs value
                     clsShip.TotalCustomsValue = Val(drSOTPICK1.Item("PICK_AMT_CONF") & String.Empty)
 
@@ -2900,7 +3542,7 @@ Public Class SOFSHIPE
                 .EzshipLabelImage = EzshipLabelImageTypes.itZPL
                 .ShippingLabelDirectory = ShippingLabelDirectory
                 .ShippingLabelPrefix = SHIP_CNTL_NO
-                .ShipDate = DateTime.Now.ToString("yyyy-MM-dd")
+                .ShipDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyy-MM-dd")
             End With
 
             Try
@@ -2982,7 +3624,7 @@ Public Class SOFSHIPE
                     .ShippersTaxID = String.Empty
                     .TransPortType = String.Empty
                     .ExportingCarrier = CARRIER_CODE
-                    .ExportingDate = System.DateTime.Now.ToString("yyyyMMdd")
+                    .ExportingDate = dteSHIP_DATE_SHIPPED.DateTime.ToString("yyyyMMdd")
                 End With
 
                 clsShip.RequestedUPSInternationalForms.CommercialInvoice = True
@@ -3007,6 +3649,8 @@ Public Class SOFSHIPE
 
                 If isPitneyBowes Then
                     drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
+                ElseIf isGlobale Then
+                    drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.GlobaleOrderID
                 Else
                     drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
                 End If
@@ -3014,7 +3658,11 @@ Public Class SOFSHIPE
                 ' Update Pro Number if it is blank
                 For Each dr As DataRow In dst.Tables("SOTSHIP1").Select("")
                     If dr.Item("SHIP_REF") & String.Empty = String.Empty Then
-                        dr.Item("SHIP_REF") = clsShip.MasterTrackingNumber & String.Empty
+                        If isGlobale Then
+                            dr.Item("SHIP_REF") = clsShip.GlobaleOrderID & String.Empty
+                        Else
+                            dr.Item("SHIP_REF") = clsShip.MasterTrackingNumber & String.Empty
+                        End If
                     End If
                 Next
 
@@ -3029,24 +3677,33 @@ Public Class SOFSHIPE
                             pitneyBowesshipdata = JsonConvert.DeserializeObject(Of TAC.WHCSHIP1.PitneyBowesPackageInformation)(shipPackageDetail.Reference)
                             drWHTSHPC2.Item("TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             drWHTSHPC2.Item("TRACKING_NUMBER") = pitneyBowesshipdata.ShipmentID & String.Empty
+                        ElseIf isGlobale Then
+                            drWHTSHPC2.Item("TRACKING_NO") = clsShip.sGlobalePackageInformation.ShipmentID & String.Empty
+                            drWHTSHPC2.Item("TRACKING_NUMBER") = clsShip.sGlobalePackageInformation.ShipmentID & String.Empty
                         Else
                             drWHTSHPC2.Item("TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                         End If
 
-                        drWHTSHPC2.Item("BASE_CHARGE") = Val(clsShip.ShipmentBaseCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        drWHTSHPC2.Item("NET_CHARGE") = Val(clsShip.ShipmentNetCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        drWHTSHPC2.Item("TOTAL_DISCOUNT") = Val(clsShip.ShipmentDiscountCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        drWHTSHPC2.Item("TOTAL_SURCHARGES") = Val(clsShip.ShipmentSurCharge(SHIP_PACKAGE_NO) & String.Empty)
+                        If Not isGlobale Then
+                            drWHTSHPC2.Item("BASE_CHARGE") = Val(clsShip.ShipmentBaseCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            drWHTSHPC2.Item("NET_CHARGE") = Val(clsShip.ShipmentNetCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            drWHTSHPC2.Item("TOTAL_DISCOUNT") = Val(clsShip.ShipmentDiscountCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            drWHTSHPC2.Item("TOTAL_SURCHARGES") = Val(clsShip.ShipmentSurCharge(SHIP_PACKAGE_NO) & String.Empty)
+
+                            If clsShip.ShipmentListCharge.ContainsKey(SHIP_PACKAGE_NO) Then
+                                drWHTSHPC2.Item("LIST_PRICE") = Val(clsShip.ShipmentListCharge(SHIP_PACKAGE_NO) & String.Empty)
+                            Else
+                                drWHTSHPC2.Item("LIST_PRICE") = drWHTSHPC2.Item("NET_CHARGE")
+                            End If
+                        Else
+                            drWHTSHPC2.Item("BASE_CHARGE") = numOrderFreight.Value
+                            drWHTSHPC2.Item("NET_CHARGE") = numOrderFreight.Value
+                        End If
 
                         drWHTSHPC2.Item("LENGTH") = Val(shipPackageDetail.Length & String.Empty)
                         drWHTSHPC2.Item("WIDTH") = Val(shipPackageDetail.Width & String.Empty)
                         drWHTSHPC2.Item("HEIGHT") = Val(shipPackageDetail.Height & String.Empty)
 
-                        If clsShip.ShipmentListCharge.ContainsKey(SHIP_PACKAGE_NO) Then
-                            drWHTSHPC2.Item("LIST_PRICE") = Val(clsShip.ShipmentListCharge(SHIP_PACKAGE_NO) & String.Empty)
-                        Else
-                            drWHTSHPC2.Item("LIST_PRICE") = drWHTSHPC2.Item("NET_CHARGE")
-                        End If
 
                         OUR_FREIGHT = Val(drWHTSHPC2.Item("NET_CHARGE") & String.Empty)
 
@@ -3081,29 +3738,18 @@ Public Class SOFSHIPE
                         PICK_NO = String.Empty
                         drSOTPICK1 = Nothing
 
-                        ' We may have multi pick tickets in a single carton. This stamps them with the same tracking number
-                        ' Spread the Customer Freight Cost and Our freight cost across the Pick Tickets
+                        ' Thes are web orders. The freight was charged on the Web.
+                        ' Freight is on the Pick Ticket Header. We will Update the Carton to have the real freight charges.
                         Dim numPickTickets As Int16 = dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO).Length
                         For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO)
-
                             If isPitneyBowes Then
                                 drSOTCART1.Item("CART_TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
+                            ElseIf isGlobale Then
+                                drSOTCART1.Item("CART_TRACKING_NO") = clsShip.sGlobalePackageInformation.TrackingNumber & String.Empty
                             Else
                                 drSOTCART1.Item("CART_TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                             End If
-
-                            PICK_NO = drSOTCART1.Item("PICK_NO") & String.Empty
-                            drSOTPICK1 = dst.Tables("SOTPICK1").Rows.Find(PICK_NO)
-
-                            'If Absx1.txtFor("FRT_TERMS").Text = "PPA" Then
-                            '    ' RGI charges freight for all Orders.
-                            '    If ASCMAIN1.CLIENT = "RGI" Then
-                            '        drSOTPICK1.Item("PICK_FREIGHT") = Val(drSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Math.Round(PPA_FREIGHT / numPickTickets, 2)
-                            '    ElseIf drSOTPICK1("ORDR_SOURCE") & String.Empty <> "W" Then
-                            '        drSOTPICK1.Item("PICK_FREIGHT") = Val(drSOTPICK1.Item("PICK_FREIGHT") & String.Empty) + Math.Round(PPA_FREIGHT / numPickTickets, 2)
-                            '    End If
-                            'End If
-                            drSOTPICK1.Item("PICK_FREIGHT") = Math.Round(OUR_FREIGHT / numPickTickets, 2)
+                            drSOTCART1.Item("CART_FREIGHT") = OUR_FREIGHT
                         Next
                         pitneyBowesshipdata = Nothing
                     End If
@@ -3115,6 +3761,8 @@ Public Class SOFSHIPE
                             sr.Close()
                             sr.Dispose()
                         End Using
+                    ElseIf isGlobale Then
+                        ShippingLabels.Add(clsShip.sGlobalePackageInformation.ShippingLabel)
                     Else
                         ShippingLabels.Add(shipPackageDetail.ShippingLabel)
                         ShippingLabels.Add(shipPackageDetail.CODLabel)
@@ -3458,55 +4106,11 @@ Public Class SOFSHIPE
     Public Function PrintShippingLabels(ByVal LabelData As String) As Boolean
 
         Try
-            If LabelData.ToUpper.EndsWith(".PDF") Then
-                If My.Computer.FileSystem.FileExists(LabelData) Then
-                    Dim waitAmount As Int16 = 0
-                    Dim requestedIpAddress As String = txtLaserPrinter.Text
-                    If LabelData.ToUpper.EndsWith(".ZPL") Then
-                        requestedIpAddress = txtLabelPrinter.Text
-                    End If
-                    Dim requestedStreamPort As String = "9100"
-
-                    If requestedIpAddress.Contains(":") Then
-                        requestedStreamPort = requestedIpAddress.Split(":")(1)
-                        requestedIpAddress = requestedIpAddress.Split(":")(0)
-                    End If
-
-                    Using ipp As New nsoftware.IPWorks.Ipport
-                        ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
-                        'ipp.Config("SSLEnabledProtocols=" & TAC.TACMAIN1.SSLEnabledProtocols)
-                        ipp.Connect(requestedIpAddress, Val(requestedStreamPort))
-                        Using binaryReader As New System.IO.BinaryReader(System.IO.File.Open(LabelData, System.IO.FileMode.Open))
-                            waitAmount = 0
-                            Do
-                                'ErrorMessage = "If Not ipp.Connected Then"
-                                If Not ipp.Connected Then
-                                    System.Threading.Thread.Sleep(1000)
-                                    waitAmount += 1
-                                End If
-                            Loop While Not ipp.Connected And waitAmount < 15
-
-                            'ErrorMessage = "ipp.Send(binaryReader.ReadBytes(binaryReader.BaseStream.Length))"
-                            ipp.Send(binaryReader.ReadBytes(binaryReader.BaseStream.Length))
-                            System.Threading.Thread.Sleep(1000)
-                            binaryReader.Close()
-                            binaryReader.Dispose()
-                        End Using
-
-                        'ErrorMessage = "ipp.Disconnect()"
-                        ipp.Disconnect()
-                        ipp.Dispose()
-                    End Using
-                End If
-                Return True
-            End If
-
             If IsIPAddress(txtLabelPrinter.Text) Then
                 clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
             Else
                 ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
             End If
-
 
         Catch ex As Exception
             MessageBox.Show("Print Shipping Label Error: " & ex.Message)
@@ -3622,6 +4226,56 @@ Public Class SOFSHIPE
                     End If
                 End If
 
+            Case "CUST_UPC"
+                If e.KeyCode = Windows.Forms.Keys.Enter Then
+                    Dim CUST_UPC As String = txtCUST_UPC.Text
+                    CUST_UPC = CUST_UPC.Trim
+                    txtCUST_UPC.Clear()
+                    txtCUST_UPC.Focus()
+
+                    If CUST_UPC.Length = 0 Then
+                        Timer1.Start()
+                        Exit Sub
+                    End If
+
+                    txtTOTE_NO.Text = txtTOTE_NO.Text.ToUpper.Trim
+                    If txtTOTE_NO.TextLength = 0 Then
+                        Timer1.Start()
+                        Exit Sub
+                    End If
+
+                    Dim rowSOTPICK1 As DataRow = dst.Tables("SOTPICK1").Select($"TOTE_NO = '{txtTOTE_NO.Text}'")(0)
+                    Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO")
+
+                    Dim scanApplied As Boolean = False
+
+                    Try
+                        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND CUST_UPC = '{CUST_UPC}' AND ISNULL(PICK_QTY_SCAN, 0) < ISNULL(PICK_QTY_CONF, 0)")
+                            Dim PICK_QTY_SCAN As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty)
+                            Dim PICK_QTY_CONF As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                            If PICK_QTY_CONF = 0 Then
+                                Continue For
+                            End If
+
+                            If PICK_QTY_SCAN >= PICK_QTY_CONF Then
+                                Continue For
+                            End If
+
+                            rowSOTPICK2.Item("PICK_QTY_SCAN") = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty) + 1
+                            scanApplied = True
+                            Exit For
+                        Next
+                    Catch ex As Exception
+
+                    End Try
+
+                    If Not scanApplied Then
+                        MessageBox.Show($"Scanned UPC ({CUST_UPC}) not found or is fully scanned.", "Scan UPC", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    End If
+
+                    Timer1.Start()
+                End If
+
         End Select
     End Sub
 
@@ -3644,9 +4298,62 @@ Public Class SOFSHIPE
 
     End Sub
 
+
 #End Region
 
 #Region "Devices"
+
+    Private Sub SetUpPortsAndPrinters()
+        Dim prtdoc As New System.Drawing.Printing.PrintDocument
+        txtLaserPrinter.Text = prtdoc.PrinterSettings.PrinterName
+        'ASCMAIN1.InvoicePrinterIpAddress = txtInvoicePrinter.Text
+
+        txtLabelPrinter.Appearance.BackColor = Drawing.Color.LightGreen
+        If ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
+            txtLabelPrinter.Text = ASCMAIN1.LabelPrinterIPAddress
+
+            Dim status As Boolean = False
+            Dim pattern As String = "^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\." &
+                        "(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\." &
+                        "(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\." &
+                        "(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$"
+
+            If Regex.IsMatch(ASCMAIN1.LabelPrinterIPAddress, pattern) Then
+                status = True
+                'Try
+                '    Dim pingSender As New Ping()
+                '    Dim buffer As New Byte()
+                '    Dim pr As PingReply = pingSender.Send(ASCMAIN1.LabelPrinterIPAddress, 4000, buffer)
+                '    status = pr.Status = IPStatus.Success
+                'Catch
+                '    status = False
+                'End Try
+            End If
+
+            If Not status Then
+                txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
+                txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
+            End If
+
+        ElseIf ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
+            txtLabelPrinter.Text = "Serial " & ASCMAIN1.LabelPrinterSerialPort.PortName
+            Try
+                If Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    ASCMAIN1.LabelPrinterSerialPort.Open()
+                End If
+            Catch ex As Exception
+                txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
+                txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
+            End Try
+        ElseIf ASCMAIN1.LabelPrinterName.Length Then
+            txtLabelPrinter.Text = ASCMAIN1.LabelPrinterName
+        Else
+            txtLabelPrinter.Text = "No Port"
+            txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
+            txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
+        End If
+
+    End Sub
 
     ''' <summary>
     ''' Sets up and Initializes the Scanner Control
@@ -3667,52 +4374,6 @@ Public Class SOFSHIPE
         Catch ex As Exception
 
         End Try
-    End Sub
-
-    Private Sub SetUpPortsAndPrinters()
-
-        Dim prtdoc As New System.Drawing.Printing.PrintDocument
-        txtLaserPrinter.Text = prtdoc.PrinterSettings.PrinterName
-        'ASCMAIN1.InvoicePrinterIpAddress = txtInvoicePrinter.Text
-
-        txtLabelPrinter.Appearance.BackColor = Drawing.Color.LightGreen
-        If ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
-            txtLabelPrinter.Text = ASCMAIN1.LabelPrinterIPAddress
-
-            Dim pingSender As New Ping()
-            Dim status As Boolean = False
-            Try
-                Dim reply As PingReply = pingSender.SendPingAsync(ASCMAIN1.LabelPrinterIPAddress, 1000).Result
-                status = (reply.Status = IPStatus.Success)
-            Catch
-                status = False
-            End Try
-
-            If Not status Then
-                txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
-                txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
-            End If
-
-        ElseIf ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
-            txtLabelPrinter.Text = "Serial " & ASCMAIN1.LabelPrinterSerialPort.PortName
-            Try
-                If Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
-                    ASCMAIN1.LabelPrinterSerialPort.Open()
-                End If
-            Catch ex As Exception
-                txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
-                txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
-            End Try
-        ElseIf ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
-            txtLabelPrinter.Text = ASCMAIN1.LabelPrinterIPAddress
-        ElseIf ASCMAIN1.LabelPrinterName.Length Then
-            txtLabelPrinter.Text = ASCMAIN1.LabelPrinterName
-        Else
-            txtLabelPrinter.Text = "No Port"
-            txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
-            txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
-        End If
-
     End Sub
 
     Private Sub CreateAppearances()
@@ -3762,7 +4423,8 @@ Public Class SOFSHIPE
                     txtTOTE_NO.Clear()
                     txtTOTE_NO.Focus()
                 Case ScreenProcessingModes.ProcessingSelectedTruckTote
-                    ' Nothing
+                    txtCUST_UPC.Clear()
+                    txtCUST_UPC.Focus()
             End Select
         Else
             Select Case screenProcessingMode
@@ -3772,7 +4434,8 @@ Public Class SOFSHIPE
                 Case ScreenProcessingModes.TruckSelected
                     ' Nothing
                 Case ScreenProcessingModes.ProcessingSelectedTruckTote
-                    ' Nothing 
+                    'txtCUST_UPC.Clear()
+                    'txtCUST_UPC.Focus()
             End Select
         End If
 
@@ -3794,6 +4457,13 @@ Public Class SOFSHIPE
 
     End Sub
 
+    Private Sub pd_PrintPage(sender As Object, e As PrintPageEventArgs) Handles pd.PrintPage
+        e.Graphics.DrawString("Test Page",
+                              New Font("Arial", 26, FontStyle.Regular),
+                              Brushes.Black,
+                              100, 100)
+    End Sub
+
     Private Sub btnLaserPrinter_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnLaserPrinter.Click
         Try
             If txtLaserPrinter.Text.Trim.Length = 0 Then
@@ -3801,16 +4471,13 @@ Public Class SOFSHIPE
                 Exit Sub
             End If
 
-            'PrintInvoice("", True)
-
+            pd.Print()
         Catch ex As Exception
             MessageBox.Show($"Test Invoice Printer Error: {ex.Message}", "Test Print", MessageBoxButtons.OK, MessageBoxIcon.Error)
-
         Finally
             ASCMAIN1.Progress("", "")
             Me.Cursor = Cursors.Default
         End Try
-
     End Sub
 
     Protected Overrides Sub OnKeyDown(ByVal e As System.Windows.Forms.KeyEventArgs)
@@ -3851,13 +4518,82 @@ Public Class SOFSHIPE
 
     End Sub
 
+    Private Sub btnReprintShipLabel_Click(sender As Object, e As EventArgs) Handles btnReprintShipLabel.Click
+
+        Try
+            txtPickNo.Text = txtPickNo.Text.Trim
+            If txtPickNo.TextLength = 0 Then
+                Exit Sub
+            End If
+
+            Dim rowSOTPICK1 As DataRow = LookUp("SOTPICK1", txtPickNo.Text)
+            If rowSOTPICK1 Is Nothing Then
+                MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text}.", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim SHIP_BOL_NO As String = rowSOTPICK1.Item("SHIP_BOL_NO") & String.Empty
+            If SHIP_BOL_NO = "" Then
+                MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text} shipping record (SOTSHIP1).", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim rowWHTSHPC1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM WHTSHPC1 WHERE SHIP_BOL_NO = :PARM1", "V", {SHIP_BOL_NO})
+            If rowWHTSHPC1 Is Nothing Then
+                MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text} Shipping Label record. (WHTSHPC1)", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim SHIP_CNTL_NO As String = rowWHTSHPC1.Item("SHIP_CNTL_NO") & String.Empty
+            Dim CARRIER_CODE As String = rowWHTSHPC1.Item("CARRIER_CODE") & String.Empty
+
+            Dim rowSOTCARR1 As DataRow = dst.Tables("SOTCARR1").Rows.Find(CARRIER_CODE)
+            If rowSOTCARR1 Is Nothing Then
+                MessageBox.Show($"Cannot locate Carrier Master record for {CARRIER_CODE}. (SOTCARR1)", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim CARRIER_ARCHIVE_DIR As String = rowSOTCARR1.Item("CARRIER_ARCHIVE_DIR") & String.Empty
+            If CARRIER_ARCHIVE_DIR = "" Then
+                MessageBox.Show($"Carrier {CARRIER_CODE} does not have an assigned CARRIER_ARCHIVE_DIR. (SOTCARR1)", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            If Not My.Computer.FileSystem.DirectoryExists(CARRIER_ARCHIVE_DIR) Then
+                MessageBox.Show($"Carrier {CARRIER_CODE} has an invalid CARRIER_ARCHIVE_DIR. (SOTCARR1)", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim NumLabels As Int16 = 0
+            For Each file As String In My.Computer.FileSystem.GetFiles(CARRIER_ARCHIVE_DIR, FileIO.SearchOption.SearchTopLevelOnly, SHIP_CNTL_NO & "_*.*")
+                Using sr As New StreamReader(file)
+                    Dim LabelData As String = sr.ReadToEnd
+                    If IsIPAddress(txtLabelPrinter.Text) Then
+                        clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
+                    Else
+                        ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+                    End If
+                    NumLabels += 1
+                    sr.Close()
+                    sr.Dispose()
+                End Using
+            Next
+
+            MessageBox.Show($"{NumLabels} shipping label(s) sent to the printer.", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+        Catch ex As Exception
+            MessageBox.Show($"{ex.Message}", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
 #End Region
 
-#Region "grdSOTCART1"
+#Region "grdSOTCART1, grdSOTCART2"
 
     Private Sub grdSOTCART1_AfterRowsDeleted(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowsDeleted
-        ' When a user changes the vales in the Cartons we must clear the Rates
+        ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
+        'CalculateCartonWeight()
     End Sub
 
     Private Sub grdSOTCART1_BeforeRowsDeleted(sender As Object, e As UltraWinGrid.BeforeRowsDeletedEventArgs) Handles grdSOTCART1.BeforeRowsDeleted
@@ -3904,31 +4640,6 @@ Public Class SOFSHIPE
             e.Row.Cells("REFERENCE2").Value = e.Row.Cells("CART_NO").Value & String.Empty
         End If
 
-        Dim rowWHTPKGM1 As DataRow = Nothing
-        Dim PKG_CODE As String = e.Row.Cells("PKG_CODE").Value & String.Empty
-        Dim PACKAGING_TYPE As String = e.Row.Cells("PACKAGING_TYPE").Value & String.Empty
-
-        If PACKAGING_TYPE = defaultPACKAGING_TYPE Then
-            If dst.Tables("WHTPKGM1").Rows.Find(PKG_CODE) Is Nothing Then
-                MessageBox.Show("Invalid Package Code for Package Type ", "Update", MessageBoxButtons.OK)
-                e.Cancel = True
-                Exit Sub
-            End If
-        End If
-
-        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE & "' AND PKG_CODE <> 'OTHER'").Length > 0 Then
-            rowWHTPKGM1 = dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE & "'")(0)
-            e.Row.Cells("PKG_L").Value = rowWHTPKGM1.Item("PKG_L")
-            e.Row.Cells("PKG_W").Value = rowWHTPKGM1.Item("PKG_W")
-            e.Row.Cells("PKG_H").Value = rowWHTPKGM1.Item("PKG_H")
-            Exit Sub
-        End If
-
-        'If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Then
-        '    Exit Sub
-        '    'do not add logic below unless that logic is related to sorting the dimensions
-        'End If
-
         ' Sort the values by length, width, height
         Dim PKG_L As Decimal = Val(e.Row.Cells("PKG_L").Value & String.Empty)
         Dim PKG_W As Decimal = Val(e.Row.Cells("PKG_W").Value & String.Empty)
@@ -3957,78 +4668,28 @@ Public Class SOFSHIPE
 
     Private Sub grdSOTCART1_AfterCellUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdSOTCART1.AfterCellUpdate
 
-        Dim displayBoxAttributes As Boolean = False
         Static UpdatingDimensions As Boolean = False
-
         If UpdatingDimensions = True Then Exit Sub
-
-        For Each row As Infragistics.Win.UltraWinGrid.UltraGridRow In grdSOTCART1.Rows
-            If row.Cells("PKG_CODE").Text = defaultPKG_CODE Then
-                displayBoxAttributes = True
-                Exit For
-            End If
-        Next
 
         UpdatingDimensions = True
 
-        If displayBoxAttributes OrElse ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "VAN" Then
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = False
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = False
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = False
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = False
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = False
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = False
 
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").CellActivation = UltraWinGrid.Activation.AllowEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").CellActivation = UltraWinGrid.Activation.AllowEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").CellActivation = UltraWinGrid.Activation.AllowEdit
-        Else
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").Hidden = True
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").Hidden = True
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").Hidden = True
-
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").CellActivation = UltraWinGrid.Activation.NoEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").CellActivation = UltraWinGrid.Activation.NoEdit
-            grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").CellActivation = UltraWinGrid.Activation.NoEdit
-        End If
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_W").CellActivation = UltraWinGrid.Activation.AllowEdit
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_L").CellActivation = UltraWinGrid.Activation.AllowEdit
+        grdSOTCART1.DisplayLayout.Bands(0).Columns("PKG_H").CellActivation = UltraWinGrid.Activation.AllowEdit
 
         If e.Cell.Column.Key = "PKG_CODE" Then
             Try
-                If dst.Tables("WHTPKGM1").Columns.Contains("PKG_CODE") Then
-                    Dim PKG_CODE As String = e.Cell.Value & String.Empty
-                    If PKG_CODE.Length > 0 Then
+                Dim PKG_L As Decimal = Val(ultraComboPackage.SelectedRow.Cells("PKG_L").Value & String.Empty)
+                Dim PKG_W As Decimal = Val(ultraComboPackage.SelectedRow.Cells("PKG_W").Value & String.Empty)
+                Dim PKG_H As Decimal = Val(ultraComboPackage.SelectedRow.Cells("PKG_H").Value & String.Empty)
 
-                        ' See if someone else create the package since opening the screen
-                        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'").Length = 0 Then
-                            Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
-                            ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
-                        End If
-
-                        ' Now look for it, if it does not exist then let the user create it
-                        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'").Length > 0 Then
-                            Dim rowWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'")(0)
-                            e.Cell.Row.Cells("PACKAGING_TYPE").Value = defaultPACKAGING_TYPE
-                            e.Cell.Row.Cells("PKG_CODE").Value = rowWHTPKGM1.Item("PKG_CODE")
-                            e.Cell.Row.Cells("PKG_L").Value = rowWHTPKGM1.Item("PKG_L")
-                            e.Cell.Row.Cells("PKG_W").Value = rowWHTPKGM1.Item("PKG_W")
-                            e.Cell.Row.Cells("PKG_H").Value = rowWHTPKGM1.Item("PKG_H")
-                        Else
-                            'Using frmWHFPKGM1 As New TAC.WHFPKGM1
-                            '    frmWHFPKGM1.PKG_BOX_UPC = PKG_CODE
-                            '    frmWHFPKGM1.ShowDialog()
-                            '    If frmWHFPKGM1.Updated Then
-                            '        Fill_Records("WHTPKGM1", String.Empty, True, "SELECT * FROM WHTPKGM1")
-                            '        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 order by PKG_CODE")
-                            '        If dst.Tables("WHTPKGM1").Select("PKG_CODE = '" & PKG_CODE.Replace("'", "''") & "'").Length > 0 Then
-                            '            Dim rowWHTPKGM1 As DataRow = dst.Tables("WHTPKGM1").Select("PKG_BOX_UPC = '" & PKG_CODE.Replace("'", "''") & "'")(0)
-                            '            e.Cell.Row.Cells("PACKAGING_TYPE").Value = defaultPACKAGING_TYPE
-                            '            e.Cell.Row.Cells("PKG_CODE").Value = rowWHTPKGM1.Item("PKG_CODE")
-                            '            e.Cell.Row.Cells("PKG_L").Value = rowWHTPKGM1.Item("PKG_L")
-                            '            e.Cell.Row.Cells("PKG_W").Value = rowWHTPKGM1.Item("PKG_W")
-                            '            e.Cell.Row.Cells("PKG_H").Value = rowWHTPKGM1.Item("PKG_H")
-                            '        End If
-                            '    End If
-                            'End Using
-                        End If
-                    End If
-                End If
+                e.Cell.Row.Cells("PKG_L").Value = PKG_L
+                e.Cell.Row.Cells("PKG_W").Value = PKG_W
+                e.Cell.Row.Cells("PKG_H").Value = PKG_H
             Catch ex As Exception
             End Try
         End If
@@ -4038,8 +4699,9 @@ Public Class SOFSHIPE
     End Sub
 
     Private Sub grdSOTCART1_AfterRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdSOTCART1.AfterRowUpdate
-        ' When a user changes the vales in the Cartons we must clear the Rates
+        ' When a user changes the values in the Cartons we must clear the Rates
         dst.Tables("WHTSHPC4").Rows.Clear()
+        'CalculateCartonWeight()
     End Sub
 
     Private Sub grdSOTCART1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdSOTCART1.AfterRowActivate
@@ -4050,10 +4712,6 @@ Public Class SOFSHIPE
         dv.Sort = "CART_LNO"
 
         grdSOTCART2.Text = $"Details for Carton {CART_NO}"
-    End Sub
-
-    Private Sub grdSOTPICK1X_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdSOTPICK1X.InitializeLayout
-
     End Sub
 
     Private dragRow As UltraGridRow = Nothing
@@ -4136,17 +4794,91 @@ Public Class SOFSHIPE
                     End If
 
                     EnforceConstraints(False)
+                    ' if the Pick Qty Conf is more than 0, we need to ask the user if the quantity needs to bw split overt multiple packages
                     Dim drSOTCART2 As DataRow = dst.Tables("SOTCART2").Rows.Find({CART_NO_SOURCE, CART_NO_LNO_SOURCE})
+                    Dim split As Boolean = False
+                    Dim splitQtyPacked As Int32 = 0
+                    Dim qtyPacked As Int32 = 0
+
                     If drSOTCART2 IsNot Nothing Then
-                        drSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
-                        drSOTCART2.Item("CART_NO") = CART_NO_TARGET
+                        Dim ORDR_NO As String = drSOTCART2.Item("ORDR_NO")
+                        Dim ORDR_LNO As String = Val(drSOTCART2.Item("ORDR_LNO") & String.Empty)
+                        qtyPacked = Val(drSOTCART2.Item("QTY_PACKED") & String.Empty)
+
+                        If qtyPacked > 1 Then
+                            splitQtyPacked = Val(InputBox("How many units do you want to transfer to the carton?", qtyPacked, qtyPacked) & String.Empty)
+                            Select Case splitQtyPacked
+                                Case <= 0
+                                    Exit Sub
+                                Case qtyPacked
+                                    ' Do nothing - everything is getting transfered
+                                Case > qtyPacked
+                                    Exit Sub
+                                Case Else
+                                    split = True
+                            End Select
+                        End If
+
+                        If Not split Then
+                            ' See if we already have this Ordr, ordrLno in the carton
+                            If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}").Length > 0 Then
+                                Dim row As DataRow = dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}")(0)
+                                row.Item("QTY_PACKED") = Val(row.Item("QTY_PACKED") & String.Empty) + qtyPacked
+                                drSOTCART2.Delete()
+                            Else
+                                drSOTCART2.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
+                                drSOTCART2.Item("CART_NO") = CART_NO_TARGET
+                            End If
+                        Else
+                            Dim leftInCarton As Int32 = qtyPacked - splitQtyPacked
+                            If leftInCarton > 0 Then
+                                If dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}").Length > 0 Then
+                                    Dim row As DataRow = dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO_TARGET}' AND ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO}")(0)
+                                    row.Item("QTY_PACKED") = Val(row.Item("QTY_PACKED") & String.Empty) + splitQtyPacked
+                                    'drSOTCART2.Delete()
+                                Else
+                                    drSOTCART2.Item("QTY_PACKED") = leftInCarton
+                                    Dim drdrSOTCART2new As DataRow = dst.Tables("SOTCART2").NewRow
+
+                                    drdrSOTCART2new.ItemArray = drSOTCART2.ItemArray
+                                    drdrSOTCART2new.Item("QTY_PACKED") = splitQtyPacked
+                                    drdrSOTCART2new.Item("CART_LNO") = Val(dst.Tables("SOTCART2").Compute("MAX(CART_LNO)", $"CART_NO = '{CART_NO_TARGET}'") & String.Empty) + 1
+                                    drdrSOTCART2new.Item("CART_NO") = CART_NO_TARGET
+                                    dst.Tables("SOTCART2").Rows.Add(drdrSOTCART2new)
+                                End If
+                            End If
+                        End If
                     End If
+
                     EnforceConstraints(True)
                 End If
             End If
         Catch ex As Exception
 
+        Finally
+            CalculateCartonWeight()
         End Try
+    End Sub
+
+    Private Sub grdSOTPICK2_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdSOTPICK2.DoubleClickRow
+
+        If ASCMAIN1.Running_in_VS Then
+            If grdSOTPICK2.ActiveRow Is Nothing Then
+                Exit Sub
+            End If
+
+            If grdSOTPICK2.ActiveRow.IsFilterRow OrElse grdSOTPICK2.ActiveRow.IsAddRow Then
+                Exit Sub
+            End If
+
+            Dim CUST_UPC As String = grdSOTPICK2.ActiveRow.Cells("CUST_UPC").Value & String.Empty
+            If CUST_UPC.Length = 0 Then
+                Exit Sub
+            End If
+
+            txtCUST_UPC.Text = CUST_UPC
+            txt_KeyDown(txtCUST_UPC, New KeyEventArgs(Keys.Enter))
+        End If
     End Sub
 
 #End Region

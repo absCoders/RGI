@@ -387,7 +387,7 @@ Public Class WBFCUST1
         For i As Integer = 0 To grdWBTCUST1.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBTCUST1.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
-        Dim editColumns As String() = New String() {"CUST_CODE_PROVIDED", "DATEREGISTERED", "FAMILYNAME", "GIVENNAME", "GROUPNAME", "GROUPNOTE", "COMPANY", "STREET", "CITY", "STATE", "ZIP_CODE", "TELEPHONE", "TAX_ID", "TAX_ID_DOC", "SREP_CODE", "SREP_NOTIFY", "IS_CUST_NEW"}
+        Dim editColumns As String() = New String() {"CUST_CODE_PROVIDED", "DATEREGISTERED", "FAMILYNAME", "GIVENNAME", "GROUPNAME", "GROUPNOTE", "COMPANY", "STREET", "CITY", "STATE", "ZIP_CODE", "TELEPHONE", "TAX_ID", "TAX_ID_DOC", "SREP_CODE", "SREP_NOTIFY", "IS_CUST_NEW", "SHP_ADDR_1", "SHP_ADDR_2", "SHP_ADDR_3", "SHP_CITY", "SHP_CNTRY", "SHP_STATE", "SHP_ZIP_CODE"}
         For Each COLNAME As String In editColumns
             grdWBTCUST1.DisplayLayout.Bands(0).Columns(COLNAME).CellActivation = UltraWinGrid.Activation.AllowEdit
         Next

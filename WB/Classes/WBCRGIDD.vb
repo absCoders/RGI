@@ -84,6 +84,7 @@ Public Class WBCRGIDD
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0) * NVL(O2.ORDR_UNIT_PRICE,0)) ORDR_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_OPEN,0) * NVL(O2.ORDR_UNIT_PRICE,0)) OPEN_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_CANC,0) * NVL(O2.ORDR_UNIT_PRICE,0)) CANC_AMT,")
+            S.AppendLine("SUM(NVL(O2.ORDR_QTY_PICK,0) * NVL(O2.ORDR_UNIT_PRICE,0)) PICK_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_SHIP,0) * NVL(O2.ORDR_UNIT_PRICE,0)) SHIP_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0)) ORDR_QTY,")
             S.AppendLine("O1.ORDR_SHIP_DATE,")
@@ -188,6 +189,7 @@ Public Class WBCRGIDD
             S.AppendLine("SYSDATE AS FIRST_ORDR,")
             S.AppendLine("10000000 AS ORDERS,")
             S.AppendLine("10000000 AS OPEN,")
+            S.AppendLine("10000000 AS PICK,")
             S.AppendLine("10000000 AS CANCELED,")
             S.AppendLine("10000000 AS SHIPPED")
             S.AppendLine("FROM ARTCUST1")
@@ -214,6 +216,7 @@ Public Class WBCRGIDD
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0) * NVL(O2.ORDR_UNIT_PRICE,0)) ORDR_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_OPEN,0) * NVL(O2.ORDR_UNIT_PRICE,0)) OPEN_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_CANC,0) * NVL(O2.ORDR_UNIT_PRICE,0)) CANC_AMT,")
+            S.AppendLine("SUM(NVL(O2.ORDR_QTY_PICK,0) * NVL(O2.ORDR_UNIT_PRICE,0)) PICK_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_SHIP,0) * NVL(O2.ORDR_UNIT_PRICE,0)) SHIP_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0)) ORDR_QTY,")
             S.AppendLine("O1.ORDR_SHIP_DATE,")
@@ -319,6 +322,7 @@ Public Class WBCRGIDD
             S.AppendLine("SUM(NVL(O2.ORDR_QTY,0) * NVL(O2.ORDR_UNIT_PRICE,0)) ORDR_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_OPEN,0) * NVL(O2.ORDR_UNIT_PRICE,0)) OPEN_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_CANC,0) * NVL(O2.ORDR_UNIT_PRICE,0)) CANC_AMT,")
+            S.AppendLine("SUM(NVL(O2.ORDR_QTY_PICK,0) * NVL(O2.ORDR_UNIT_PRICE,0)) PICK_AMT,")
             S.AppendLine("SUM(NVL(O2.ORDR_QTY_SHIP,0) * NVL(O2.ORDR_UNIT_PRICE,0)) SHIP_AMT")
             S.AppendLine("FROM SOTORDR1 O1, SOTORDR2 O2")
             S.AppendLine("WHERE O1.ORDR_NO = O2.ORDR_NO")
@@ -347,6 +351,7 @@ Public Class WBCRGIDD
                 Dim ORDR_AMT As Double = 0
                 Dim OPEN_AMT As Double = 0
                 Dim CANC_AMT As Double = 0
+                Dim PICK_AMT As Double = 0
                 Dim SHIP_AMT As Double = 0
                 Dim FIRST_ORDR As String = ""
                 Dim CUST_CODE As String = rowARTCUST1.Item("CUST_CODE").ToString & String.Empty
@@ -357,6 +362,7 @@ Public Class WBCRGIDD
                     ORDR_AMT = Val(rowCUSTSLS.Item("ORDR_AMT").ToString & String.Empty)
                     OPEN_AMT = Val(rowCUSTSLS.Item("OPEN_AMT").ToString & String.Empty)
                     CANC_AMT = Val(rowCUSTSLS.Item("CANC_AMT").ToString & String.Empty)
+                    PICK_AMT = Val(rowCUSTSLS.Item("PICK_AMT").ToString & String.Empty)
                     SHIP_AMT = Val(rowCUSTSLS.Item("SHIP_AMT").ToString & String.Empty)
                 End If
                 If Not IsNothing(rowCUSTFST) Then
@@ -365,6 +371,7 @@ Public Class WBCRGIDD
                 rowARTCUST1.Item("ORDERS") = ORDR_AMT
                 rowARTCUST1.Item("OPEN") = OPEN_AMT
                 rowARTCUST1.Item("CANCELED") = CANC_AMT
+                rowARTCUST1.Item("PICK") = PICK_AMT
                 rowARTCUST1.Item("SHIPPED") = SHIP_AMT
                 If IsDate(FIRST_ORDR) Then
                     rowARTCUST1.Item("FIRST_ORDR") = CDate(FIRST_ORDR)
@@ -493,12 +500,13 @@ Public Class WBCRGIDD
             tblEXCEL.Rows.Add({"Orders", 9, "ORDR_AMT", "2", 10, "Amount", ""})
             tblEXCEL.Rows.Add({"Orders", 10, "OPEN_AMT", "2", 10, "Open", ""})
             tblEXCEL.Rows.Add({"Orders", 11, "CANC_AMT", "2", 10, "Cancelled", ""})
-            tblEXCEL.Rows.Add({"Orders", 12, "SHIP_AMT", "2", 10, "Shipped", ""})
-            tblEXCEL.Rows.Add({"Orders", 13, "ORDR_QTY", "2", 10, "Order Qty", ""})
-            tblEXCEL.Rows.Add({"Orders", 14, "ORDR_SHIP_DATE", "D", 10, "Ship Date", ""})
-            tblEXCEL.Rows.Add({"Orders", 15, "ORDR_CANCEL_DATE", "D", 10, "Cancel Date", ""})
-            tblEXCEL.Rows.Add({"Orders", 16, "WHSE_CODE", "S", 10, "Whs", ""})
-            tblEXCEL.Rows.Add({"Orders", 17, "SREP_CODE", "S", 10, "Sales Rep", ""})
+            tblEXCEL.Rows.Add({"Orders", 12, "PICK_AMT", "2", 10, "Pick", ""})
+            tblEXCEL.Rows.Add({"Orders", 13, "SHIP_AMT", "2", 10, "Shipped", ""})
+            tblEXCEL.Rows.Add({"Orders", 14, "ORDR_QTY", "2", 10, "Order Qty", ""})
+            tblEXCEL.Rows.Add({"Orders", 15, "ORDR_SHIP_DATE", "D", 10, "Ship Date", ""})
+            tblEXCEL.Rows.Add({"Orders", 16, "ORDR_CANCEL_DATE", "D", 10, "Cancel Date", ""})
+            tblEXCEL.Rows.Add({"Orders", 17, "WHSE_CODE", "S", 10, "Whs", ""})
+            tblEXCEL.Rows.Add({"Orders", 18, "SREP_CODE", "S", 10, "Sales Rep", ""})
         Else
             tblEXCEL.Rows.Add({"Invoices", 0, "ORDR_YYYYPP_UPDATED", "S", 10, "Period", ""})
             tblEXCEL.Rows.Add({"Invoices", 1, "INV_TYPE_D", "S", 10, "Type", ""})
@@ -548,12 +556,13 @@ Public Class WBCRGIDD
             tblEXCEL.Rows.Add({"Orders", 5, "ORDR_AMT", "2", 10, "Amount", ""})
             tblEXCEL.Rows.Add({"Orders", 6, "OPEN_AMT", "2", 10, "Open", ""})
             tblEXCEL.Rows.Add({"Orders", 7, "CANC_AMT", "2", 10, "Cancelled", ""})
-            tblEXCEL.Rows.Add({"Orders", 8, "SHIP_AMT", "2", 10, "Shipped", ""})
-            tblEXCEL.Rows.Add({"Orders", 9, "ORDR_QTY", "2", 10, "Order Qty", ""})
-            tblEXCEL.Rows.Add({"Orders", 10, "ORDR_SHIP_DATE", "D", 10, "Ship Date", ""})
-            tblEXCEL.Rows.Add({"Orders", 11, "ORDR_CANCEL_DATE", "D", 10, "Cancel Date", ""})
-            tblEXCEL.Rows.Add({"Orders", 12, "ORDR_SOURDE", "D", 10, "Source", ""})
-            tblEXCEL.Rows.Add({"Orders", 13, "SREP_CODE", "S", 10, "Sales Rep", ""})
+            tblEXCEL.Rows.Add({"Orders", 8, "PICK_AMT", "2", 10, "Pick", ""})
+            tblEXCEL.Rows.Add({"Orders", 9, "SHIP_AMT", "2", 10, "Shipped", ""})
+            tblEXCEL.Rows.Add({"Orders", 10, "ORDR_QTY", "2", 10, "Order Qty", ""})
+            tblEXCEL.Rows.Add({"Orders", 11, "ORDR_SHIP_DATE", "D", 10, "Ship Date", ""})
+            tblEXCEL.Rows.Add({"Orders", 12, "ORDR_CANCEL_DATE", "D", 10, "Cancel Date", ""})
+            tblEXCEL.Rows.Add({"Orders", 13, "ORDR_SOURDE", "D", 10, "Source", ""})
+            tblEXCEL.Rows.Add({"Orders", 14, "SREP_CODE", "S", 10, "Sales Rep", ""})
 
             tblEXCEL.Rows.Add({"Customers", 0, "CUST_CODE", "S", 10, "Cust Code", ""})
             tblEXCEL.Rows.Add({"Customers", 1, "CUST_NAME", "S", 40, "Name", ""})
@@ -569,7 +578,8 @@ Public Class WBCRGIDD
             tblEXCEL.Rows.Add({"Customers", 11, "ORDERS", "0", 15, "Ordered", ""})
             tblEXCEL.Rows.Add({"Customers", 12, "OPEN", "0", 15, "Open", ""})
             tblEXCEL.Rows.Add({"Customers", 13, "CANCELED", "0", 15, "Cancelled", ""})
-            tblEXCEL.Rows.Add({"Customers", 14, "SHIPPED", "0", 15, "Shipped", ""})
+            tblEXCEL.Rows.Add({"Customers", 14, "PICK", "0", 15, "Pick", ""})
+            tblEXCEL.Rows.Add({"Customers", 15, "SHIPPED", "0", 15, "Shipped", ""})
         End If
         tblEXCEL.AcceptChanges()
     End Sub

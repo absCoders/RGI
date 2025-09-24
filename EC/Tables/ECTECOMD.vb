@@ -16,7 +16,7 @@ Public Class ECTECOMD
             .Tables("ICTSTYCW").Columns.Add("SIZE_CODE", GetType(System.String))
 
             Create_TDA(.Tables.Add, "SOTSVIA1", "*")
-            ASCMAIN1.sql = "SELECT * FROM SOTSVIA1 WHERE CARRIER_CODE IN ('UPS', 'FEDEX') AND CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
+            ASCMAIN1.sql = "SELECT * FROM SOTSVIA1 WHERE CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
             Fill_Records("SOTSVIA1", String.Empty, True, ASCMAIN1.sql)
 
             .Tables.Add("ICTSTYCW_PLM")
@@ -29,6 +29,8 @@ Public Class ECTECOMD
 
                 .PrimaryKey = New DataColumn() { .Columns("ECOM_CODE"), .Columns("STYLE_CODE_PLM")}
             End With
+
+            Create_TDA(.Tables.Add, "WHTPKGMW", "*", 1)
         End With
 
         grdSOTSVIAW.DataSource = dst.Tables("SOTSVIAW")
@@ -42,6 +44,8 @@ Public Class ECTECOMD
         grdICTSTYCW_PLM.DataSource = dst.Tables("ICTSTYCW_PLM")
         Create_Summary(grdICTSTYCW_PLM, "STYLE_CODE_PLM", "Count")
 
+        grdWHTPKGMW.DataSource = dst.Tables("WHTPKGMW")
+
     End Sub
 
 #Region "Overrides"
@@ -52,6 +56,7 @@ Public Class ECTECOMD
             Case "Update"
                 grdSOTSVIAW.PerformAction(UltraWinGrid.UltraGridAction.CommitRow)
                 grdICTSTYCW.PerformAction(UltraWinGrid.UltraGridAction.CommitRow)
+                grdWHTPKGMW.PerformAction(UltraWinGrid.UltraGridAction.CommitRow)
 
                 Dim lstPLMs As New List(Of String)
                 For Each drICTSTYCW As DataRow In dst.Tables("ICTSTYCW").Select
@@ -85,7 +90,9 @@ Public Class ECTECOMD
         Next
 
         Update_Record_TDA("SOTSVIAW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
-        Update_Record_TDA("ICTSTYCW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
+        'Update_Record_TDA("ICTSTYCW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
+        Update_Record_TDA("WHTPKGMW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
+
     End Sub
 
     Overrides Sub Proceed_Update_Special_Post()
@@ -96,6 +103,7 @@ Public Class ECTECOMD
         EnforceConstraints(False)
 
         Fill_Records("SOTSVIAW", Absx1.txtFor("ECOM_CODE").Text)
+        Fill_Records("WHTPKGMW", Absx1.txtFor("ECOM_CODE").Text)
 
         ASCMAIN1.sql = $"SELECT ICTSTYCW.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM
                             FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3
@@ -105,7 +113,7 @@ Public Class ECTECOMD
                             AND ICTSTYCW.STYLE_CODE = ICTSTYC3.STYLE_CODE (+)
                             AND ICTSTYCW.COLOR_CODE = ICTSTYC3.COLOR_CODE (+)
                             AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+)"
-        Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
+        'Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
 
         Dim tblPLM As DataTable = ASCDATA1.SelectDistinct(dst.Tables("ICTSTYCW"), {"ECOM_CODE", "STYLE_CODE_PLM"})
 
@@ -139,6 +147,7 @@ Public Class ECTECOMD
             dst.Tables("SOTSVIAW").Rows.Clear()
             dst.Tables("ICTSTYCW_PLM").Rows.Clear()
             dst.Tables("ICTSTYCW").Rows.Clear()
+            dst.Tables("WHTPKGMW").Rows.Clear()
             EnforceConstraints(True)
         End If
     End Sub
@@ -157,6 +166,9 @@ Public Class ECTECOMD
         Select Case COLUMN_NAME
             Case "ECOM_CUST_ADDR_CODE"
                 sql_where = $"CUST_CODE = '{txtECOM_CUST_CODE.Text}' AND CUST_ADDR_TYPE = 'MK'"
+
+            Case "ECOM_DEFAULT_SHIP_VIA "
+                sql_where = $"CARRIER_PROD_CODE IS NOT NULL"
 
         End Select
     End Sub
@@ -462,7 +474,6 @@ Public Class ECTECOMD
             Exit Sub
         End If
 
-        e.Row.Cells("SHIP_VIA_DESC").Value = drSOTSVIA1.Item("SHIP_VIA_DESC") & String.Empty
     End Sub
 
     Private Sub grdSOTSVIAW_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdSOTSVIAW.ClickCellButton
@@ -471,28 +482,38 @@ Public Class ECTECOMD
 
         Select Case e.Cell.Column.Key
             Case "SHIP_VIA_CODE"
-                sql_where = "CARRIER_CODE IN ('UPS', 'FEDEX') AND CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
+                sql_where = "CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
                 grdClickCellButton(grdSOTSVIAW, sql_where)
-
         End Select
     End Sub
 
-    Private Sub grdSOTSVIAW_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdSOTSVIAW.AfterCellUpdate
-        Select Case e.Cell.Column.Key
-            Case "SHIP_VIA_CODE"
-                Dim SHIP_VIA_CODE As String = e.Cell.Row.Cells("SHIP_VIA_CODE").Value & String.Empty
-                If SHIP_VIA_CODE.Length > 0 Then
-                    Dim drSOTSVIA1 As DataRow = dst.Tables("SOTSVIA1").Rows.Find(SHIP_VIA_CODE)
-                    If drSOTSVIA1 Is Nothing Then
-                        e.Cell.Row.Cells("SHIP_VIA_DESC").Value = String.Empty
-                    Else
-                        e.Cell.Row.Cells("SHIP_VIA_DESC").Value = drSOTSVIA1.Item("SHIP_VIA_DESC") & String.Empty
-                    End If
-                End If
-        End Select
 
+    Private Sub grdWHTPKGMW_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdWHTPKGMW.BeforeRowUpdate
+        e.Row.Cells("ECOM_CODE").Value = Absx1.txtFor("ECOM_CODE").Text
+        Dim PKG_L As Decimal = Val(e.Row.Cells("PKG_L").Value & "")
+        Dim PKG_W As Decimal = Val(e.Row.Cells("PKG_W").Value & "")
+        Dim PKG_H As Decimal = Val(e.Row.Cells("PKG_H").Value & "")
+
+        ' Sort the values by length, width, height
+        If PKG_L <= 0 OrElse PKG_W <= 0 OrElse PKG_H < 0 Then
+            MessageBox.Show("All dimensions must be greater than 0", "Update", MessageBoxButtons.OK)
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim dimList As New List(Of Decimal)
+        dimList.Add(PKG_L)
+        dimList.Add(PKG_W)
+        dimList.Add(PKG_H)
+        dimList.Sort()
+        PKG_L = dimList(2)
+        PKG_W = dimList(1)
+        PKG_H = dimList(0)
+
+        e.Row.Cells("PKG_L").Value = PKG_L
+        e.Row.Cells("PKG_W").Value = PKG_W
+        e.Row.Cells("PKG_H").Value = PKG_H
     End Sub
-
 
 #End Region
 

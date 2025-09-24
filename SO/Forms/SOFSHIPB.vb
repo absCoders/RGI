@@ -350,7 +350,8 @@ Public Class SOFSHIPB
 
             sqlDuty = "SELECT ICTSTYL1.DUTY_RATE_CODE, SOTORDR2.STYLE_CODE, ICTSTYL1.STYLE_DESC,
                             SUM(SOTPICK2.PICK_QTY_CONF) PICK_QTY_CONF, 
-                            MIN(NVL(ICTSTYLD.WEIGHT, 0)) WEIGHT_LBS
+                            MIN(NVL(ICTSTYLD.WEIGHT, 0)) WEIGHT_LBS,
+                            SUM(NVL(SOTORDR2.ORDR_UNIT_PRICE, 0) * NVL(SOTPICK2.PICK_QTY_CONF, 0)) VALUE_PER_HTS_CODE
                             FROM SOTORDR2, SOTPICK2, ICTSTYL1, 
                             (SELECT STYLE_CODE, WEIGHT FROM ICTSTYLD WHERE PACK_CODE = 'ITM') ICTSTYLD
                             WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO 
@@ -367,7 +368,8 @@ Public Class SOFSHIPB
             ASCMAIN1.sql = "SELECT ICTSTYL1.DUTY_RATE_CODE,
                             SOTPICK2.PICK_QTY_CONF, 
                             NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_LBS,
-                            NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_KGS
+                            NVL(ICTSTYLD.WEIGHT, 0) WEIGHT_KGS,
+                            0 VALUE_PER_HTS_CODE
                             FROM SOTORDR2, SOTPICK2, ICTSTYL1, 
                             (SELECT STYLE_CODE, WEIGHT FROM ICTSTYLD WHERE PACK_CODE = 'ITM') ICTSTYLD
                             WHERE SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO 
@@ -435,6 +437,9 @@ Public Class SOFSHIPB
             Create_TDA(.Tables.Add, "EDT850T9", "*", 1)
             Create_TDA(.Tables.Add, "EDT850TC", "*", 1)
             Create_TDA(.Tables.Add, "EDT850TE", "*", 1)
+
+            Create_TDA(.Tables.Add, "SOTORDRW", "*")
+            Create_TDA(.Tables.Add, "SOTORDRT", "*")
 
             ASCMAIN1.sql = "SELECT T9.EDI_DOC_SEQ_NO, T9.CONTACT_COMM_NO_1" _
                 & " FROM EDT850T5 T5, EDT850T9 T9" _
@@ -718,6 +723,9 @@ Public Class SOFSHIPB
             If ASCMAIN1.CLIENT = "RGI" OrElse ASCMAIN1.CLIENT = "NYA" Then
                 sqlSOTPICK2 &= ", SOTORDR2.ORDR_PRICE_SOURCE, SOTORDR2.COMM_RATE, SOTORDR2.SET_QTY " & vbCrLf
             End If
+            If ASCMAIN1.CLIENT = "VAN" Then
+                sqlSOTPICK2 &= ", SOTORDR1.ORDR_CUST_PO " & vbCrLf
+            End If
 
             sqlSOTPICK2 &= " from SOTPICK2, SOTPICK1, SOTORDR1, SOTORDR2, SOTSHIP1, ICTSTYL1, ICTCOLR1, ICTSTYC1" & vbCrLf
             ASCMAIN1.sql = sqlSOTPICK2 & " where ROWNUM < 1" & vbCrLf
@@ -945,6 +953,7 @@ Public Class SOFSHIPB
         Create_Summary(grdSOTORDR2_DUTY_HTS, "PICK_QTY_CONF", "Sum")
         Create_Summary(grdSOTORDR2_DUTY_HTS, "WEIGHT_LBS", "Sum")
         Create_Summary(grdSOTORDR2_DUTY_HTS, "WEIGHT_KGS", "Sum")
+        Create_Summary(grdSOTORDR2_DUTY_HTS, "VALUE_PER_HTS_CODE", "Sum")
 
         grdSOTPICK5.DataSource = dst.Tables("SOTPICK5")
         grdSOTCART1.DataSource = dst.Tables("SOTCART1")
@@ -3972,7 +3981,7 @@ Public Class SOFSHIPB
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5",
+            {"SOTPICK1", "SOTPICK2", "SOTPICK4", "SOTPICK1_X", "SOTPICK5", "SOTORDRW", "SOTORDRT",
              "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1",
              "SOTCART1", "SOTCART2", "SOTCART3", "SOTCARTX", "SOTCART1_SHIP",
              "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR9", "SOTORDR5_BT", "SOTORDXR",
@@ -5449,11 +5458,11 @@ Public Class SOFSHIPB
             ASCMAIN1.Progress("Now Updating ...", "")
 
             Dim RFIXMSG As Boolean = False
-            Dim SOCINVH1 As New TAC.SOCINVH1(dst)
+            Dim clsSOCINVH1 As New TAC.SOCINVH1(dst)
             ' Update the Sales Order records with the Pick Ticket data
 
             If ASCMAIN1.CLIENT <> "VAN" Then
-                SOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(Absx1.dteFor("INV_DATE").Value)
+                clsSOCINVH1.ProcessPickTicketsAndUpdateSalesDetails(Absx1.dteFor("INV_DATE").Value)
             End If
 
             ' Record event where the Ship via was changed
@@ -5539,7 +5548,7 @@ Public Class SOFSHIPB
                 If Not IsDate(rowSOTSHIP1.Item("SHIPPED_ACTUAL") & String.Empty) Then
                     rowSOTSHIP1.Item("SHIPPED_ACTUAL") = rowSOTSHIP1.Item("SHIP_DATE_SHIPPED")
                 End If
-                SOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
+                clsSOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
             Next
 
             Dim CreditCardProcessed As Boolean = True
@@ -7186,7 +7195,7 @@ Public Class SOFSHIPB
             Load_Popup_Menu(grdSOTSHIPX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Set Appointment")
         End If
 
-        Load_Popup_Menu(grdSOTPICK1, "BBBSBB", "Select All", "De-Select All", "Propagate Value", "Hide Details", "Sales Order Inquiry", "Cancel Pick Ticket", "Cancel Customer/Ship To Pick Tickets", "Restore Pick Ticket", "Restore Customer/Ship To Pick Tickets")
+        Load_Popup_Menu(grdSOTPICK1, "BBBBSBB", "Show Filter", "Select All", "De-Select All", "Propagate Value", "Hide Details", "Sales Order Inquiry", "Cancel Pick Ticket", "Cancel Customer/Ship To Pick Tickets", "Restore Pick Ticket", "Restore Customer/Ship To Pick Tickets")
         Load_Popup_Menu(grdSOTPICK2, "BBS", "Show Filter", "Style Status Inquiry", "Permit Price Change")
 
         Load_Popup_Menu(grdSOTPICK2_SC, "BBSPBBB", "Show Filter", "Style Status Inquiry", "Permit Price Change", "Copy Qty Confirmed to all Pick Tickets", "Cancel Qty", "Restore Qty", "Back Order Qty")
@@ -12424,8 +12433,9 @@ Public Class SOFSHIPB
             Dim PICK_QTY_CONF As Int64 = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(PICK_QTY_CONF)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
             Dim WEIGHT_LBS As Decimal = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(EXTENDED_WEIGHT)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
             Dim WEIGHT_KGS As Decimal = WEIGHT_LBS * 0.453592
+            Dim VALUE_PER_HTS_CODE As Decimal = Val(dst.Tables("SOTORDR2_DUTY").Compute("SUM(VALUE_PER_HTS_CODE)", $"ISNULL(DUTY_RATE_CODE, '*') = '{DUTY_RATE_CODE}'") & String.Empty)
 
-            dst.Tables("SOTORDR2_DUTY_HTS").Rows.Add(New Object() {DUTY_RATE_CODE, PICK_QTY_CONF, WEIGHT_LBS, WEIGHT_KGS})
+            dst.Tables("SOTORDR2_DUTY_HTS").Rows.Add(New Object() {DUTY_RATE_CODE, PICK_QTY_CONF, WEIGHT_LBS, WEIGHT_KGS, VALUE_PER_HTS_CODE})
         Next
 
     End Sub

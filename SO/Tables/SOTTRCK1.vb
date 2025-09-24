@@ -321,6 +321,13 @@ Public Class SOTTRCK1
     End Sub
 
     Sub Setup_Totes()
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            If Absx1.txtFor("WHSE_CODE").Text = "" Then
+                Absx1.txtFor("WHSE_CODE").Text = "NJC"
+            End If
+        End If
+
         If Absx1.txtFor("WHSE_CODE").Text = "" Or Absx1.txtFor("WHSE_DESC").Text = "" Then
             MsgBox("You must first specify a valid Warehouse Code", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
             Exit Sub

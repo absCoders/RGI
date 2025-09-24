@@ -356,6 +356,8 @@ Partial Class WHFSHIP1
         Me.lblSmartPost = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpDevices = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
+        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
         Me.optPrint_Type = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
@@ -487,8 +489,6 @@ Partial Class WHFSHIP1
         Me.cmbDivision = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
         Me.grdWHTSHIP2 = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.cboZebraPrinter = New System.Windows.Forms.ComboBox()
-        Me.lblLabelPrinter = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -748,7 +748,7 @@ Partial Class WHFSHIP1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpLoadAddress)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 173)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 244)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 170)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -999,7 +999,7 @@ Partial Class WHFSHIP1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpDevices)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 412)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 483)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 242)
         Me.UltraExplorerBarContainerControl2.TabIndex = 3
@@ -1019,6 +1019,23 @@ Partial Class WHFSHIP1
         Me.grpDevices.Name = "grpDevices"
         Me.grpDevices.Size = New System.Drawing.Size(172, 242)
         Me.grpDevices.TabIndex = 0
+        '
+        'cboZebraPrinter
+        '
+        Me.cboZebraPrinter.FormattingEnabled = True
+        Me.cboZebraPrinter.Location = New System.Drawing.Point(3, 200)
+        Me.cboZebraPrinter.Name = "cboZebraPrinter"
+        Me.cboZebraPrinter.Size = New System.Drawing.Size(169, 24)
+        Me.cboZebraPrinter.TabIndex = 203
+        '
+        'lblLabelPrinter
+        '
+        Me.lblLabelPrinter.AutoSize = True
+        Me.lblLabelPrinter.Location = New System.Drawing.Point(3, 177)
+        Me.lblLabelPrinter.Name = "lblLabelPrinter"
+        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
+        Me.lblLabelPrinter.TabIndex = 202
+        Me.lblLabelPrinter.Text = "Label Printer"
         '
         'UltraLabel6
         '
@@ -1086,7 +1103,7 @@ Partial Class WHFSHIP1
         Me.UltraTabPageControl1.Controls.Add(Me.grdWHTSHPC2)
         Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(985, 219)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(985, 234)
         '
         'grdWHTSHPC2
         '
@@ -1272,7 +1289,7 @@ Partial Class WHFSHIP1
         Me.grdWHTSHPC2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWHTSHPC2.Location = New System.Drawing.Point(0, 0)
         Me.grdWHTSHPC2.Name = "grdWHTSHPC2"
-        Me.grdWHTSHPC2.Size = New System.Drawing.Size(985, 219)
+        Me.grdWHTSHPC2.Size = New System.Drawing.Size(985, 234)
         Me.grdWHTSHPC2.TabIndex = 0
         '
         'UltraTabPageControl5
@@ -2356,6 +2373,7 @@ Partial Class WHFSHIP1
         'splDetails1
         '
         Me.splDetails1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.splDetails1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.splDetails1.Location = New System.Drawing.Point(0, 0)
         Me.splDetails1.Name = "splDetails1"
         Me.splDetails1.Orientation = System.Windows.Forms.Orientation.Horizontal
@@ -2368,7 +2386,7 @@ Partial Class WHFSHIP1
         '
         Me.splDetails1.Panel2.Controls.Add(Me.grpPackageSettings)
         Me.splDetails1.Size = New System.Drawing.Size(995, 615)
-        Me.splDetails1.SplitterDistance = 358
+        Me.splDetails1.SplitterDistance = 343
         Me.splDetails1.TabIndex = 0
         '
         'splDetails2
@@ -2385,7 +2403,7 @@ Partial Class WHFSHIP1
         'splDetails2.Panel2
         '
         Me.splDetails2.Panel2.Controls.Add(Me.grpShipTo)
-        Me.splDetails2.Size = New System.Drawing.Size(995, 358)
+        Me.splDetails2.Size = New System.Drawing.Size(995, 343)
         Me.splDetails2.SplitterDistance = 495
         Me.splDetails2.TabIndex = 0
         '
@@ -2415,7 +2433,7 @@ Partial Class WHFSHIP1
         Me.grpShipFrom.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpShipFrom.Location = New System.Drawing.Point(0, 0)
         Me.grpShipFrom.Name = "grpShipFrom"
-        Me.grpShipFrom.Size = New System.Drawing.Size(495, 358)
+        Me.grpShipFrom.Size = New System.Drawing.Size(495, 343)
         Me.grpShipFrom.TabIndex = 3
         Me.grpShipFrom.Text = "Ship From"
         '
@@ -2652,7 +2670,7 @@ Partial Class WHFSHIP1
         Me.grpShipTo.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpShipTo.Location = New System.Drawing.Point(0, 0)
         Me.grpShipTo.Name = "grpShipTo"
-        Me.grpShipTo.Size = New System.Drawing.Size(496, 358)
+        Me.grpShipTo.Size = New System.Drawing.Size(496, 343)
         Me.grpShipTo.TabIndex = 14
         Me.grpShipTo.Text = "Ship To"
         '
@@ -2891,7 +2909,7 @@ Partial Class WHFSHIP1
         Me.grpPackageSettings.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpPackageSettings.Location = New System.Drawing.Point(0, 0)
         Me.grpPackageSettings.Name = "grpPackageSettings"
-        Me.grpPackageSettings.Size = New System.Drawing.Size(995, 253)
+        Me.grpPackageSettings.Size = New System.Drawing.Size(995, 268)
         Me.grpPackageSettings.TabIndex = 0
         '
         'tabChoices
@@ -2909,7 +2927,7 @@ Partial Class WHFSHIP1
         Me.tabChoices.Location = New System.Drawing.Point(3, 3)
         Me.tabChoices.Name = "tabChoices"
         Me.tabChoices.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tabChoices.Size = New System.Drawing.Size(989, 247)
+        Me.tabChoices.Size = New System.Drawing.Size(989, 262)
         Me.tabChoices.TabIndex = 1
         UltraTab1.Key = "Package Settings"
         UltraTab1.TabPage = Me.UltraTabPageControl1
@@ -2941,7 +2959,7 @@ Partial Class WHFSHIP1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(985, 219)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(985, 234)
         '
         'splMain
         '
@@ -3466,23 +3484,6 @@ Partial Class WHFSHIP1
         Me.grdWHTSHIP2.Name = "grdWHTSHIP2"
         Me.grdWHTSHIP2.Size = New System.Drawing.Size(769, 229)
         Me.grdWHTSHIP2.TabIndex = 0
-        '
-        'cboZebraPrinter
-        '
-        Me.cboZebraPrinter.FormattingEnabled = True
-        Me.cboZebraPrinter.Location = New System.Drawing.Point(3, 200)
-        Me.cboZebraPrinter.Name = "cboZebraPrinter"
-        Me.cboZebraPrinter.Size = New System.Drawing.Size(169, 24)
-        Me.cboZebraPrinter.TabIndex = 203
-        '
-        'lblLabelPrinter
-        '
-        Me.lblLabelPrinter.AutoSize = True
-        Me.lblLabelPrinter.Location = New System.Drawing.Point(3, 177)
-        Me.lblLabelPrinter.Name = "lblLabelPrinter"
-        Me.lblLabelPrinter.Size = New System.Drawing.Size(90, 18)
-        Me.lblLabelPrinter.TabIndex = 202
-        Me.lblLabelPrinter.Text = "Label Printer"
         '
         'WHFSHIP1
         '

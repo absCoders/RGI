@@ -694,6 +694,8 @@ Public Class SOFOXFR1
                         .Item("ALLO") = -1 * NET_SHORT
                         .Item("SHORT") = NET_SHORT
                         .Item("OXFR_STATUS") = "0"
+                        .Item("COMING") = Val(grow.Cells("US_PICK").Value & "") + Val(grow.Cells("US_PICK").Value & "")
+                        .Item("NEEDED") = -1 * NET_SHORT
 
                         .Item("INIT_DATE") = DATETIME_STAMP
                         .Item("INIT_OPER") = ASCMAIN1.USER_ID
