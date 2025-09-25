@@ -3666,9 +3666,11 @@ Public Class SOFSHIPE
                     End If
                 Next
 
+                Dim globalIndex As Int16 = -1
                 For Each shipPackageDetail As PackageDetail In clsShip.PackageDetailList
                     SHIP_PACKAGE_NO = Val(shipPackageDetail.Id)
                     If dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO, "").Length > 0 Then
+                        globalIndex += 1
                         drWHTSHPC2 = dst.Tables("WHTSHPC2").Select("SHIP_PACKAGE_NO = " & SHIP_PACKAGE_NO)(0)
 
                         Dim pitneyBowesshipdata As New TAC.WHCSHIP1.PitneyBowesPackageInformation
@@ -3678,8 +3680,8 @@ Public Class SOFSHIPE
                             drWHTSHPC2.Item("TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             drWHTSHPC2.Item("TRACKING_NUMBER") = pitneyBowesshipdata.ShipmentID & String.Empty
                         ElseIf isGlobale Then
-                            drWHTSHPC2.Item("TRACKING_NO") = clsShip.sGlobalePackageInformation.ShipmentID & String.Empty
-                            drWHTSHPC2.Item("TRACKING_NUMBER") = clsShip.sGlobalePackageInformation.ShipmentID & String.Empty
+                            drWHTSHPC2.Item("TRACKING_NO") = clsShip.lstGlobalePackageInformation(globalIndex).ShipmentID & String.Empty
+                            drWHTSHPC2.Item("TRACKING_NUMBER") = clsShip.lstGlobalePackageInformation(globalIndex).ShipmentID & String.Empty
                         Else
                             drWHTSHPC2.Item("TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                         End If
@@ -3745,7 +3747,7 @@ Public Class SOFSHIPE
                             If isPitneyBowes Then
                                 drSOTCART1.Item("CART_TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             ElseIf isGlobale Then
-                                drSOTCART1.Item("CART_TRACKING_NO") = clsShip.sGlobalePackageInformation.TrackingNumber & String.Empty
+                                drSOTCART1.Item("CART_TRACKING_NO") = clsShip.lstGlobalePackageInformation(globalIndex).TrackingNumber & String.Empty
                             Else
                                 drSOTCART1.Item("CART_TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                             End If
@@ -3762,7 +3764,7 @@ Public Class SOFSHIPE
                             sr.Dispose()
                         End Using
                     ElseIf isGlobale Then
-                        ShippingLabels.Add(clsShip.sGlobalePackageInformation.ShippingLabel)
+                        ShippingLabels.Add(clsShip.lstGlobalePackageInformation(globalIndex).ShippingLabel)
                     Else
                         ShippingLabels.Add(shipPackageDetail.ShippingLabel)
                         ShippingLabels.Add(shipPackageDetail.CODLabel)
