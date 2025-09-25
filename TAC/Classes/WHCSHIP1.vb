@@ -6405,6 +6405,8 @@ Public Class WHCSHIP1
 
     Private Function RequestGlobalELabelGeneric() As Boolean
         Try
+            lstGlobalePackageInformation.Clear()
+
             If GlobaleOrderID.Length = 0 Then
                 LastError = "No Global Order ID provided"
                 Return False
