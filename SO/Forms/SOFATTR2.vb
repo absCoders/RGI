@@ -876,6 +876,10 @@ Public Class SOFATTR2
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
+        'tlb_sbt = DirectCast(tlb.Tools("Show PO Info"), UltraWinToolbars.StateButtonTool)
+        tlb_sbt = DirectCast(tlb_pop.Tools("Show PO Info"), UltraWinToolbars.StateButtonTool)
+        tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "RGI"
+
         If grd.Name = "grd" Then
             Exit Sub
         End If
