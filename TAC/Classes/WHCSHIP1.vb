@@ -1696,7 +1696,7 @@ Public Class WHCSHIP1
         Public ReturnReceipt As String = String.Empty
     End Class
 
-    Public sGlobalePackageInformation As New GlobalePackageInformation
+    Public lstGlobalePackageInformation As New List(Of GlobalePackageInformation)
 
     Private Class PitneyBowesServices
         Public ServiceCode As String = String.Empty
@@ -6405,6 +6405,8 @@ Public Class WHCSHIP1
 
     Private Function RequestGlobalELabelGeneric() As Boolean
         Try
+            lstGlobalePackageInformation.Clear()
+
             If GlobaleOrderID.Length = 0 Then
                 LastError = "No Global Order ID provided"
                 Return False
@@ -6422,14 +6424,28 @@ Public Class WHCSHIP1
             Dim rowSOTORDR5 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR5 WHERE ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = 'ST'", "V", {ORDR_NO})
 
             Dim TOTE_NO As String = String.Empty
+            If drSOTPICK1 IsNot Nothing Then
+                TOTE_NO = drSOTPICK1.Item("TOTE_NO") & String.Empty
+            End If
 
             Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
             Dim ORDR_NO_WEB As String = drSOTORDR1.Item("ORDR_NO_WEB") & String.Empty
 
-            Dim label As String = "^XA 
-                                ^CF0,50
+            Dim numPackages As Int16 = PackageDetailList.Count
+            Dim labelNum As Int32 = 1
+
+            For Each shippingPackageDetail In PackageDetailList
+
+                Dim WEIGHT As Decimal = CInt(Math.Ceiling(shippingPackageDetail.Weight / 16))
+                Dim LENGTH As Decimal = shippingPackageDetail.Length
+                Dim WIDTH As Decimal = shippingPackageDetail.Width
+                Dim HEIGHT As Decimal = shippingPackageDetail.Height
+                Dim SHIPDATE As String = DateTime.Now.ToString("ddMMMyy").ToUpper
+
+                Dim label As String = "^XA 
+                                ^CF0,50,30
                                 ^FO100,20^FDGlobal E Shipment^FS 
-                                ^CF0,35
+                                ^CF0,35,30
                                 ^FO100,100^FDTote No: {TOTE_NO}^FS 
                                 ^FO100,150^FDOrder No: {ORDR_NO}^FS 
                                 ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
@@ -6449,24 +6465,44 @@ Public Class WHCSHIP1
                                 ^FO100,950^FDEmail: {CUST_EMAIL}^FS 
                                 ^CF0,50
                                 ^FO100,1100^FDGlobal-e ID: {GlobaleOrderID}^FS 
+                                ^CF0,10
+                                ^FO488,3^AdN,0,0^FWN^FH^FDSHIP DATE: {SHIPDATE}^FS
+                                ^FO488,19^AdN,0,0^FWN^FH^FDACTWGT: {WEIGHT} LB^FS
+                                ^FO488,35^AdN,0,0^FWN^FH^FDDIMMED: {LENGTH} X {WIDTH} X {HEIGHT} IN^FS
+                                ^FO488,51^AdN,0,0^FWN^FH^FDLABEL: {N} of {M}^FS
+                                ^FO480,3^GB2,65,2^FS
+                                ^FO480,68^GB300,1,2^FS
                                ^XZ"
-            For Each dcol As DataColumn In rowSOTORDR5.Table.Columns
-                label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
+                For Each dcol As DataColumn In rowSOTORDR5.Table.Columns
+                    label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
+                Next
+
+                label = label.Replace("{TOTE_NO}", TOTE_NO)
+                label = label.Replace("{PICK_NO}", drSOTPICK1.Item("PICK_NO") & String.Empty)
+                label = label.Replace("{INV_NO}", drSOTPICK1.Item("INV_NO") & String.Empty)
+                label = label.Replace("{ORDR_WEB_ID}", ORDR_WEB_ID)
+                label = label.Replace("{ORDR_NO_WEB}", ORDR_NO_WEB)
+                label = label.Replace("{GlobaleOrderID}", GlobaleOrderID)
+
+                label = label.Replace("{SHIPDATE}", SHIPDATE)
+                label = label.Replace("{WEIGHT}", Val(WEIGHT & String.Empty).ToString("#0.00"))
+                label = label.Replace("{LENGTH}", Val(LENGTH & String.Empty).ToString("#0"))
+                label = label.Replace("{WIDTH}", Val(WIDTH & String.Empty).ToString("#0"))
+                label = label.Replace("{HEIGHT}", Val(HEIGHT & String.Empty).ToString("#0"))
+
+                label = label.Replace("{N}", labelNum.ToString("#0"))
+                label = label.Replace("{M}", numPackages.ToString("#0"))
+
+                Dim GlobalePackageInformation = New GlobalePackageInformation
+                With GlobalePackageInformation
+                    .ShippingLabel = label
+                    .ShipmentID = GlobaleOrderID
+                    .TrackingNumber = GlobaleOrderID
+                End With
+                lstGlobalePackageInformation.Add(GlobalePackageInformation)
+
+                labelNum += 1
             Next
-
-            label = label.Replace("{TOTE_NO}", TOTE_NO)
-            label = label.Replace("{PICK_NO}", drSOTPICK1.Item("PICK_NO") & String.Empty)
-            label = label.Replace("{INV_NO}", drSOTPICK1.Item("INV_NO") & String.Empty)
-            label = label.Replace("{ORDR_WEB_ID}", ORDR_WEB_ID)
-            label = label.Replace("{ORDR_NO_WEB}", ORDR_NO_WEB)
-            label = label.Replace("{GlobaleOrderID}", GlobaleOrderID)
-
-            sGlobalePackageInformation = New GlobalePackageInformation
-            With sGlobalePackageInformation
-                .ShippingLabel = label
-                .ShipmentID = GlobaleOrderID
-                .TrackingNumber = GlobaleOrderID
-            End With
 
             Return True
         Catch ex As Exception
