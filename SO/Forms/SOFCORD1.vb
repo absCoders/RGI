@@ -101,6 +101,10 @@ Public Class SOFCORD1
             For Each A As String In New String() {"CUR", "FUT", "CXL"}
                 .Tables("SOTORDR0").Columns.Add("PCT_ALLO_" & A, GetType(System.Decimal), "IIF(ORDR_AMT=0,0,100*ORDR_AMT_ALLO_" & A & "/ORDR_AMT)")
             Next
+            For i As Int64 = 1 To 10
+                Dim COLN As String = Format(i, "00")
+                .Tables("SOTORDR0").Columns.Add($"COMMENT{COLN}", GetType(System.String))
+            Next
 
             Create_TDA(.Tables.Add, "SOTORDRG", "*")
 
@@ -566,6 +570,11 @@ Public Class SOFCORD1
                 '    .Columns.Add("NET_POS", GetType(System.Int64), "ISNULL(OTS_WIP,0) - ISNULL(OPEN,0) - ISNULL(COMM,0) - ISNULL(PROD,0)")
                 'End With
             End If
+
+            ASCMAIN1.sql = "Select *" & vbCrLf _
+                & " from SOTORDR4 " & vbCrLf _
+                & " where ORDR_NO = :PARM1"
+            Create_TDA(.Tables.Add("SOTORDRC"), "SOTORDR4", "**", 0, False, "V", 2)
         End With
 
         grdSOTORDR0.DataSource = dst.Tables("SOTORDR0")
@@ -1252,10 +1261,10 @@ Public Class SOFCORD1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
+        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBBBBBS", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
                         "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel",
                         "Sales Order Entry", "Sales Order Inquiry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
-                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary", "Customer Order Inquiry")
+                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary", "Customer Order Inquiry", "Show Comments")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTPICK1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data", "Show EDI Invoice")
@@ -1339,6 +1348,9 @@ Public Class SOFCORD1
                     tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
 
                     tlb_sbt = DirectCast(tlb_pop.Tools("Short View"), UltraWinToolbars.StateButtonTool)
+                    tlb_sbt.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
+
+                    tlb_sbt = DirectCast(tlb_pop.Tools("Show Comments"), UltraWinToolbars.StateButtonTool)
                     tlb_sbt.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
 
                     tlb_btn = DirectCast(tlb_pop.Tools("Summary by DC"), UltraWinToolbars.ButtonTool)
@@ -2136,6 +2148,75 @@ Public Class SOFCORD1
                     'gcol.Format = "#,##0"
                 Next
 
+            Case "Show Comments"
+                tlb_sbt = DirectCast(e.Tool, UltraWinToolbars.StateButtonTool)
+                If tlb_sbt.Checked Then
+                    Dim frmASFMSGBF As New ASFMSGBF
+                    Dim SepChar As String = frmASFMSGBF.Get_txtblock_from_User("Char to Seperate Date Or Blank For No Date", "Change Notes", ":", False, 5)
+
+                    Me.Cursor = Cursors.WaitCursor
+                    ASCMAIN1.Progress("Fetching Comments", "")
+                    Application.DoEvents()
+
+                    For Each rowSOTORDR0 As DataRow In dst.Tables("SOTORDR0").Select()
+                        For c As Int64 = 1 To 10
+                            Dim COLN As String = Format(c, "00")
+                            rowSOTORDR0.Item($"COMMENT{COLN}") = ""
+                        Next
+
+                        Dim ORDR_GROUP_NO As String = rowSOTORDR0.Item("ORDR_GROUP_NO").ToString & String.Empty
+                        'dst.Tables("SOTORDRC").Clear()
+                        Dim sql As New Text.StringBuilder With {.Length = 0}
+                        sql.AppendLine("SELECT ORDR_NO")
+                        sql.AppendLine("FROM SOTORDR1")
+                        sql.AppendLine($"WHERE ORDR_GROUP_NO = '{ORDR_GROUP_NO}'")
+                        Dim tblORDR_NO As DataTable = ASCDATA1.GetDataTable(sql.ToString(), String.Empty)
+
+                        Dim maxc As Int64 = 0
+                        For Each rowORDR_NO As DataRow In tblORDR_NO.Rows
+                            If maxc > 10 Then Exit For
+                            Fill_Records("SOTORDRC", rowORDR_NO.Item("ORDR_NO").ToString & String.Empty)
+                            For Each rowSOTORDRC As DataRow In dst.Tables("SOTORDRC").Select("", "ORDR_CLNO DESC")
+                                maxc += 1
+                                If maxc > 10 Then Exit For
+                                Dim ORDR_COMMENT As String = rowSOTORDRC.Item("ORDR_COMMENT").ToString & String.Empty
+                                Dim INIT_D As String = ""
+                                If IsDate(rowSOTORDRC.Item("INIT_DATE").ToString & String.Empty) Then
+                                    INIT_D = Format(CDate(rowSOTORDRC.Item("INIT_DATE").ToString & String.Empty), "MM/dd/yy")
+                                End If
+                                Dim DT_CMT As String = ""
+                                If INIT_D.Length > 0 Then
+                                    If SepChar.Length > 0 Then
+                                        DT_CMT = $"{INIT_D}{SepChar} {ORDR_COMMENT}"
+                                    Else
+                                        DT_CMT = ORDR_COMMENT
+                                    End If
+                                Else
+                                    DT_CMT = ORDR_COMMENT
+                                End If
+                                Dim COLN As String = Format(maxc, "00")
+                                rowSOTORDR0.Item($"COMMENT{COLN}") = DT_CMT
+                            Next
+                        Next
+                    Next
+                    For i As Int64 = 1 To 10
+                        Dim COLN As String = Format(i, "00")
+                        With grdSOTORDR0.DisplayLayout.Bands(0).Columns
+                            .Item($"COMMENT{COLN}").Hidden = False
+                            .Item($"COMMENT{COLN}").Width = 350
+                        End With
+                    Next
+                    Me.Cursor = Cursors.Default
+                    ASCMAIN1.Progress("")
+                    Application.DoEvents()
+                Else
+                    For i As Int64 = 1 To 10
+                        Dim COLN As String = Format(i, "00")
+                        With grdSOTORDR0.DisplayLayout.Bands(0).Columns
+                            .Item($"COMMENT{COLN}").Hidden = True
+                        End With
+                    Next
+                End If
             Case "Export With Stats"
 
                 Dim SHIP_LOAD_NO As String = ""

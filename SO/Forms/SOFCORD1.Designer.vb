@@ -712,6 +712,16 @@ Partial Class SOFCORD1
         Dim UltraGridColumn507 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EDI_PO_TYPE")
         Dim UltraGridColumn508 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_QTY_ALLO_3PL")
         Dim UltraGridColumn509 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDR_AMT_ALLO_3PL")
+        Dim UltraGridColumn266 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT01")
+        Dim UltraGridColumn273 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT02")
+        Dim UltraGridColumn296 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT03")
+        Dim UltraGridColumn320 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT04")
+        Dim UltraGridColumn322 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT05")
+        Dim UltraGridColumn323 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT06")
+        Dim UltraGridColumn324 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT07")
+        Dim UltraGridColumn325 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT08")
+        Dim UltraGridColumn326 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT09")
+        Dim UltraGridColumn327 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COMMENT10")
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -913,6 +923,7 @@ Partial Class SOFCORD1
         Me.UltraTabPageControl19 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTCARTX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.grdSOTCARTP = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.UltraTabPageControl23 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl8 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTCORDD = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -961,7 +972,6 @@ Partial Class SOFCORD1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.UltraTabPageControl23 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -2306,7 +2316,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl17
         '
         Me.UltraTabPageControl17.Controls.Add(Me.grdSOTORDRT)
-        Me.UltraTabPageControl17.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl17.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl17.Name = "UltraTabPageControl17"
         Me.UltraTabPageControl17.Size = New System.Drawing.Size(1301, 420)
         '
@@ -2463,7 +2473,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl18
         '
         Me.UltraTabPageControl18.Controls.Add(Me.splComments)
-        Me.UltraTabPageControl18.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl18.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
         Me.UltraTabPageControl18.Size = New System.Drawing.Size(1301, 420)
         '
@@ -2648,7 +2658,7 @@ Partial Class SOFCORD1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.grdSOTORDR1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1307, 332)
         '
@@ -3863,6 +3873,12 @@ Partial Class SOFCORD1
         Me.grdSOTCARTP.TabIndex = 14
         Me.grdSOTCARTP.Text = "Open Orders"
         '
+        'UltraTabPageControl23
+        '
+        Me.UltraTabPageControl23.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
+        Me.UltraTabPageControl23.Size = New System.Drawing.Size(1307, 332)
+        '
         'UltraTabPageControl8
         '
         Me.UltraTabPageControl8.Controls.Add(Me.grdSOTCORDD)
@@ -4550,7 +4566,37 @@ Partial Class SOFCORD1
         UltraGridColumn509.Header.Caption = "$3PL"
         UltraGridColumn509.Header.VisiblePosition = 60
         UltraGridColumn509.Width = 75
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn436, UltraGridColumn437, UltraGridColumn438, UltraGridColumn439, UltraGridColumn440, UltraGridColumn441, UltraGridColumn442, UltraGridColumn443, UltraGridColumn444, UltraGridColumn445, UltraGridColumn446, UltraGridColumn447, UltraGridColumn448, UltraGridColumn449, UltraGridColumn450, UltraGridColumn451, UltraGridColumn452, UltraGridColumn453, UltraGridColumn454, UltraGridColumn455, UltraGridColumn456, UltraGridColumn457, UltraGridColumn458, UltraGridColumn459, UltraGridColumn460, UltraGridColumn461, UltraGridColumn462, UltraGridColumn463, UltraGridColumn464, UltraGridColumn465, UltraGridColumn466, UltraGridColumn467, UltraGridColumn468, UltraGridColumn469, UltraGridColumn470, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn476, UltraGridColumn484, UltraGridColumn485, UltraGridColumn486, UltraGridColumn487, UltraGridColumn488, UltraGridColumn489, UltraGridColumn490, UltraGridColumn491, UltraGridColumn492, UltraGridColumn493, UltraGridColumn494, UltraGridColumn495, UltraGridColumn496, UltraGridColumn497, UltraGridColumn498, UltraGridColumn499, UltraGridColumn500, UltraGridColumn501, UltraGridColumn502, UltraGridColumn503, UltraGridColumn504, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509})
+        UltraGridColumn266.Header.Caption = "Comment1"
+        UltraGridColumn266.Header.VisiblePosition = 66
+        UltraGridColumn266.Hidden = True
+        UltraGridColumn273.Header.Caption = "Comment2"
+        UltraGridColumn273.Header.VisiblePosition = 67
+        UltraGridColumn273.Hidden = True
+        UltraGridColumn296.Header.Caption = "Comment3"
+        UltraGridColumn296.Header.VisiblePosition = 68
+        UltraGridColumn296.Hidden = True
+        UltraGridColumn320.Header.Caption = "Comment4"
+        UltraGridColumn320.Header.VisiblePosition = 69
+        UltraGridColumn320.Hidden = True
+        UltraGridColumn322.Header.Caption = "Comment5"
+        UltraGridColumn322.Header.VisiblePosition = 70
+        UltraGridColumn322.Hidden = True
+        UltraGridColumn323.Header.Caption = "Comment6"
+        UltraGridColumn323.Header.VisiblePosition = 71
+        UltraGridColumn323.Hidden = True
+        UltraGridColumn324.Header.Caption = "Comment7"
+        UltraGridColumn324.Header.VisiblePosition = 72
+        UltraGridColumn324.Hidden = True
+        UltraGridColumn325.Header.Caption = "Comment8"
+        UltraGridColumn325.Header.VisiblePosition = 73
+        UltraGridColumn325.Hidden = True
+        UltraGridColumn326.Header.Caption = "Comment9"
+        UltraGridColumn326.Header.VisiblePosition = 74
+        UltraGridColumn326.Hidden = True
+        UltraGridColumn327.Header.Caption = "Comment10"
+        UltraGridColumn327.Header.VisiblePosition = 75
+        UltraGridColumn327.Hidden = True
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn436, UltraGridColumn437, UltraGridColumn438, UltraGridColumn439, UltraGridColumn440, UltraGridColumn441, UltraGridColumn442, UltraGridColumn443, UltraGridColumn444, UltraGridColumn445, UltraGridColumn446, UltraGridColumn447, UltraGridColumn448, UltraGridColumn449, UltraGridColumn450, UltraGridColumn451, UltraGridColumn452, UltraGridColumn453, UltraGridColumn454, UltraGridColumn455, UltraGridColumn456, UltraGridColumn457, UltraGridColumn458, UltraGridColumn459, UltraGridColumn460, UltraGridColumn461, UltraGridColumn462, UltraGridColumn463, UltraGridColumn464, UltraGridColumn465, UltraGridColumn466, UltraGridColumn467, UltraGridColumn468, UltraGridColumn469, UltraGridColumn470, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn476, UltraGridColumn484, UltraGridColumn485, UltraGridColumn486, UltraGridColumn487, UltraGridColumn488, UltraGridColumn489, UltraGridColumn490, UltraGridColumn491, UltraGridColumn492, UltraGridColumn493, UltraGridColumn494, UltraGridColumn495, UltraGridColumn496, UltraGridColumn497, UltraGridColumn498, UltraGridColumn499, UltraGridColumn500, UltraGridColumn501, UltraGridColumn502, UltraGridColumn503, UltraGridColumn504, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509, UltraGridColumn266, UltraGridColumn273, UltraGridColumn296, UltraGridColumn320, UltraGridColumn322, UltraGridColumn323, UltraGridColumn324, UltraGridColumn325, UltraGridColumn326, UltraGridColumn327})
         Me.grdSOTORDR0.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdSOTORDR0.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
@@ -5382,12 +5428,6 @@ Partial Class SOFCORD1
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1315, 927)
-        '
-        'UltraTabPageControl23
-        '
-        Me.UltraTabPageControl23.Location = New System.Drawing.Point(1, 1)
-        Me.UltraTabPageControl23.Name = "UltraTabPageControl23"
-        Me.UltraTabPageControl23.Size = New System.Drawing.Size(1307, 332)
         '
         'SOFCORD1
         '

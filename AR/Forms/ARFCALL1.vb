@@ -25,6 +25,7 @@ Public Class ARFCALL1
             SQLSB.AppendLine("C1.CUST_NAME,")
             SQLSB.AppendLine("C1.SREP_CODE,")
             SQLSB.AppendLine("C1.CUST_STATE,")
+            SQLSB.AppendLine("C1.CUST_CREDIT_HOLD,")
             SQLSB.AppendLine("N1.NOTIFY_ACTION,")
             SQLSB.AppendLine("N1.NOTIFY_DATE,")
             SQLSB.AppendLine("NVL(C1.POST_CODE,'REG') AS POST_CODE,")
@@ -73,7 +74,7 @@ Public Class ARFCALL1
             SQLSB.AppendLine("WHERE O1.CUST_CODE = C1.CUST_CODE")
             SQLSB.AppendLine("AND C1.CUST_CODE = N1.CUST_CODE (+)")
             SQLSB.AppendLine("AND O1.INV_BALANCE > 0")
-            SQLSB.AppendLine("GROUP BY O1.CUST_CODE, C1.CUST_NAME, C1.SREP_CODE, C1.CUST_STATE, N1.NOTIFY_ACTION, N1.NOTIFY_DATE, NVL(C1.POST_CODE,'REG')")
+            SQLSB.AppendLine("GROUP BY O1.CUST_CODE, C1.CUST_NAME, C1.SREP_CODE, C1.CUST_CREDIT_HOLD, C1.CUST_STATE, N1.NOTIFY_ACTION, N1.NOTIFY_DATE, NVL(C1.POST_CODE,'REG')")
             ASCMAIN1.sql = SQLSB.ToString
             Create_TDA(.Tables.Add, "ARTOPENX", "**", 0, False)
             .Tables("ARTOPENX").Columns.Add("UPDATED")
@@ -264,6 +265,10 @@ Public Class ARFCALL1
         With grdARTOPENX.DisplayLayout.Bands(0).Columns("INVOICE_CNT")
             '.MaskInput = "####"
             .Format = "#,##0"
+        End With
+
+        With grdARTOPENX.DisplayLayout.Bands(0).Columns("CUST_CREDIT_HOLD")
+            .CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         End With
 
         Sort_grdColumns(grdTATCONV1, "CONV_DATE".ToLower(), False)

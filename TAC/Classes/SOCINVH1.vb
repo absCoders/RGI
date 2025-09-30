@@ -535,7 +535,7 @@
 
                 If tblSOTINVH1.Columns.Contains("INV_STAX") Then
                     If rowSOTPICK1.Table.Columns.Contains("INV_STAX") Then
-                        .Item("INV_STAX") = rowSOTPICK1.Item("INV_STAX")
+                        .Item("INV_STAX") = Math.Round(Val(rowSOTPICK1.Item("INV_STAX") & String.Empty), 2)
                         .Item("INV_STAX_CURR") = .Item("INV_STAX")
                     End If
                 End If
