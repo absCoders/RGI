@@ -3466,7 +3466,7 @@ Public Class SOFSHIPB
 
                 ' Special EDI Processing
                 If Not InquiryMode AndAlso select_from_3PL_list AndAlso EntryMode = "E" Then
-                    If ASCMAIN1.CLIENT = "NYA" Then
+                    If ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "RGI" Then
                         If Not Load_3PL_Shipment_Details_EDT945T1() Then
                             select_from_3PL_list = False
                             Mode_Settings(False)
