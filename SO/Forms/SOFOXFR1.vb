@@ -867,6 +867,8 @@ Public Class SOFOXFR1
         Fill_Records("ICTXFRBL")
         Sort_grdColumns(grdICTXFRBL, "STYLE_CODE, COLOR_CODE")
 
+        Calculate_Selected_Cube()
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("", "")
     End Sub
@@ -1209,8 +1211,10 @@ Public Class SOFOXFR1
     End Sub
     Sub Calculate_Selected_Cube()
         Try
-            Dim cubeTotal As Integer = 0
+            Dim cubeTotal As Double = 0
             Dim cubeTotalRick As Integer = 0
+            grdICTXFRBL.SuspendRowSynchronization()
+
             For Each grow As UltraWinGrid.UltraGridRow In grdICTXFRBL.Rows
                 Dim SEL As String = grow.Cells("SEL").Value & ""
                 If SEL = "1" Then
@@ -1221,13 +1225,11 @@ Public Class SOFOXFR1
                     Dim CARTON_PACK_QTY As Integer = rowICTSTYL1("CARTON_PACK_QTY")
                     If CARTON_PACK_QTY > 0 Then
                         ' Find remainder
-                        'Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
                         Dim remainder As Integer = CInt(NET_SHORT) Mod CARTON_PACK_QTY
-
                         If remainder <> 0 Then
                             ' Round up to next multiple
-                            NET_SHORT = CInt(((NET_SHORT / CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY)
-                            grow.Cells("NET_SHORT").Value = NET_SHORT
+                            'NET_SHORT = CInt(((NET_SHORT / CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY)
+                            grow.Cells("NET_SHORT").Value = Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
                         End If
                         cc = NET_SHORT / CARTON_PACK_QTY
                     Else
@@ -1237,6 +1239,13 @@ Public Class SOFOXFR1
                     cubeTotal += ccc
                 End If
             Next
+            grdICTXFRBL.ResumeRowSynchronization()
+
+            For Each grow As UltraWinGrid.UltraGridRow In grdSOTOXFRX.Rows
+                Dim ccc As Double = Val(grow.Cells("NEEDED").Value & "") / Val(grow.Cells("CARTON_PACK_QTY").Value & "") * Val(grow.Cells("CASE_CUBE").Value & "")
+                cubeTotal += ccc
+            Next
+
             numCASE_CUBE.Value = cubeTotal
         Catch ex As Exception
             MsgBox(ex.Message, vbOK, "Error")
