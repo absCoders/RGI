@@ -10,6 +10,7 @@ Public Class SOFOXFR1
     Dim one_and_done As Boolean = False
     Dim sqlICTSTATQ As String = ""
     Dim bulk_transfer As Boolean = False
+    Dim updateNetShort As Boolean = False
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -91,14 +92,16 @@ Public Class SOFOXFR1
 
             ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY" & vbCrLf _
                 & ", MS.ONHD MS_ONHD, MS.PICK MS_PICK, NVL(MS.ONHD,0) - NVL(MS.PICK,0) MS_OTS" & vbCrLf _
-                & ", US.ONHD US_ONHD, US.PICK US_PICK, NVL(US.ONHD,0) - NVL(US.PICK,0) US_OTS, (NVL(MS.ONHD,0) - NVL(MS.PICK,0)) + US.PICK MS_OTS_US_PICK" & vbCrLf _
+                & ", US.ONHD US_ONHD, (NVL(US.PICK,0) + NVL(SOTOXFR1.PICK_QUEUE,0)) US_PICK" & vbCrLf _
+                & ", NVL(US.ONHD,0) - NVL(US.PICK,0) - NVL(SOTOXFR1.PICK_QUEUE,0) US_OTS, (NVL(MS.ONHD,0) - NVL(MS.PICK,0)) + US.PICK MS_OTS_US_PICK" & vbCrLf _
                 & "" & vbCrLf _
-                & " from ICTSTYC1, ICTSTYL1" & vbCrLf _
+                & " from ICTSTYC1, ICTSTYL1, (select STYLE_CODE, COLOR_CODE, SUM(NEEDED) PICK_QUEUE FROM SOTOXFR1 WHERE OXFR_STATUS = '0' GROUP BY STYLE_CODE, COLOR_CODE) SOTOXFR1" & vbCrLf _
                 & ",(SELECT STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND ONHD, WHSE_QTY_PICK PICK FROM ICTSTAT2 WHERE WHSE_CODE = 'MS') MS" & vbCrLf _
                 & ",(SELECT STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND ONHD, WHSE_QTY_PICK PICK FROM ICTSTAT2 WHERE WHSE_CODE = 'US') US" & vbCrLf _
                 & "where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & vbCrLf _
                 & "  and MS.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND MS.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf _
-                & "  and US.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND US.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf
+                & "  and US.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND US.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf _
+                & "  and SOTOXFR1.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND SOTOXFR1.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf
             ASCMAIN1.sql = $"Select * from ({ASCMAIN1.sql }) X where X.US_OTS > 0"
             Create_TDA(.Tables.Add, "ICTXFRBL", "**", 0, False, "", 2)
             With .Tables("ICTXFRBL")
@@ -701,7 +704,7 @@ Public Class SOFOXFR1
                 End If
 
                 dst.Tables("SOTOXFR1").Rows.Clear()
-
+                optAction.Value = "B"
                 For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
                     Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value
                     Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Value
@@ -1041,8 +1044,12 @@ Public Class SOFOXFR1
                             AND TATCNTRY.COUNTRY_CODE3(+) = SOTORDR5.CUST_COUNTRY
                             And SOTPICK1.SHIP_BOL_NO = '{SHIP_BOL_NO}'"
 
-
         Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+        If bulk_transfer Then
+            For Each rowExport As DataRow In tblEXPORT.Select
+                rowExport.Item(1) = $"T{rowExport.Item(1).ToString.Substring(1)}"
+            Next
+        End If
 
         'this is USL specific so add USL to dir plus outbound dir and find a filename
         Dim csvFileName = $"Order_Standard{SHIP_BOL_NO}_" & DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") & ".txt"
@@ -1162,6 +1169,28 @@ Public Class SOFOXFR1
 
     Private Sub tab1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles tab1.SelectedTabChanged
 
+        'If tab1.SelectedTab.Key = "Bulk Transfer" Then
+        '    Dim transferQueue As Integer = dst.Tables("SOTOXFR1").Rows.Count
+        '    If transferQueue > 0 Then
+        '        MsgBox("Please process the current transfer queue before creating a new bulk transfer.", vbOKOnly, "Warning")
+        '        With grdICTXFRBL.DisplayLayout
+        '            .Override.AllowUpdate = DefaultableBoolean.False
+        '        End With
+        '    Else
+        '        With grdICTXFRBL.DisplayLayout
+        '            .Override.AllowUpdate = DefaultableBoolean.True
+        '            With .Bands(0)
+        '                For Each c As UltraWinGrid.UltraGridColumn In .Columns
+        '                    If c.Key = "SEL" Or c.Key = "NET_SHORT" Then
+        '                        .Columns(c.Key).CellActivation = Activation.AllowEdit
+        '                    Else
+        '                        .Columns(c.Key).CellActivation = Activation.NoEdit
+        '                    End If
+        '                Next
+        '            End With
+        '        End With
+        '    End If
+        'End If
     End Sub
 
     Private Sub grdICTXFRBL_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdICTXFRBL.ClickCellButton
@@ -1179,19 +1208,74 @@ Public Class SOFOXFR1
         End If
     End Sub
     Sub Calculate_Selected_Cube()
+        Try
+            Dim cubeTotal As Integer = 0
+            Dim cubeTotalRick As Integer = 0
+            For Each grow As UltraWinGrid.UltraGridRow In grdICTXFRBL.Rows
+                Dim SEL As String = grow.Cells("SEL").Value & ""
+                If SEL = "1" Then
+                    Dim cc As Integer = 0
+                    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value & ""
+                    Dim NET_SHORT As Decimal = Val(grow.Cells("NET_SHORT").Value & "")
+                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                    Dim CARTON_PACK_QTY As Integer = rowICTSTYL1("CARTON_PACK_QTY")
+                    If CARTON_PACK_QTY > 0 Then
+                        ' Find remainder
+                        'Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
+                        Dim remainder As Integer = CInt(NET_SHORT) Mod CARTON_PACK_QTY
+
+                        If remainder <> 0 Then
+                            ' Round up to next multiple
+                            NET_SHORT = CInt(((NET_SHORT / CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY)
+                            grow.Cells("NET_SHORT").Value = NET_SHORT
+                        End If
+                        cc = NET_SHORT / CARTON_PACK_QTY
+                    Else
+                        cc = NET_SHORT
+                    End If
+                    Dim ccc = cc * Val(rowICTSTYL1("CASE_CUBE") & "")
+                    cubeTotal += ccc
+                End If
+            Next
+            numCASE_CUBE.Value = cubeTotal
+        Catch ex As Exception
+            MsgBox(ex.Message, vbOK, "Error")
+        End Try
 
     End Sub
 
     Private Sub grdICTXFRBL_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdICTXFRBL.ClickCell
         Dim COLUMN_NAME As String = e.Cell.Column.Key
-        Dim SEL As String = e.Cell.Row.Cells("SEL").Text
+        updateNetShort = False
+        Select Case COLUMN_NAME
+            Case "SEL"
+                updateNetShort = True
+        End Select
+    End Sub
+
+    Private Sub grdICTXFRBL_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdICTXFRBL.AfterCellUpdate
+        Dim COLUMN_NAME As String = e.Cell.Column.Key
+        If Not e.Cell.Row.IsDataRow Then Exit Sub
+
+        Dim SEL As String = e.Cell.Row.Cells("SEL").Value
 
         Select Case COLUMN_NAME
             Case "SEL"
                 Dim US_ONHD As Decimal = Val(e.Cell.Row.Cells("US_ONHD").Value & "")
                 Dim US_PICK As Decimal = Val(e.Cell.Row.Cells("US_PICK").Value & "")
-                e.Cell.Row.Cells("NET_SHORT").Value = If(SEL = "1", US_ONHD - US_PICK, 0)
-                Calculate_Selected_Cube()
+                Dim NET_SHORT As Decimal = Val(e.Cell.Row.Cells("NET_SHORT").Value & "")
+                If updateNetShort Then
+                    e.Cell.Row.Cells("NET_SHORT").Value = If(SEL = "1", US_ONHD - US_PICK, 0)
+                    e.Cell.Row.Update()
+                End If
+            Case "NET_SHORT"
+                Dim NET_SHORT As Decimal = Val(e.Cell.Row.Cells("NET_SHORT").Value & "")
+                'If SEL = "1" And NET_SHORT = 0 Then
+                '    e.Cell.Row.Cells("SEL").Value = 0
+                'End If
+                e.Cell.Row.Cells("SEL").Value = If(NET_SHORT = 0, "0", "1")
+                e.Cell.Row.Update()
         End Select
+        Calculate_Selected_Cube()
     End Sub
 End Class

@@ -286,6 +286,10 @@ Partial Class SOFOXFR1
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.grpAction = New Infragistics.Win.Misc.UltraGroupBox()
         Me.optAction = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.grdBulkTransfer = New System.Windows.Forms.GroupBox()
+        Me.numCASE_CUBE = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdSOTORDR0 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -313,10 +317,6 @@ Partial Class SOFOXFR1
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.spl = New System.Windows.Forms.SplitContainer()
-        Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.grdBulkTransfer = New System.Windows.Forms.GroupBox()
-        Me.numCASE_CUBE = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -330,6 +330,9 @@ Partial Class SOFOXFR1
         CType(Me.grpAction, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpAction.SuspendLayout()
         CType(Me.optAction, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        Me.grdBulkTransfer.SuspendLayout()
+        CType(Me.numCASE_CUBE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl5.SuspendLayout()
         CType(Me.grdSOTORDR0, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl6.SuspendLayout()
@@ -364,9 +367,6 @@ Partial Class SOFOXFR1
         Me.spl.Panel1.SuspendLayout()
         Me.spl.Panel2.SuspendLayout()
         Me.spl.SuspendLayout()
-        Me.UltraExplorerBarContainerControl2.SuspendLayout()
-        Me.grdBulkTransfer.SuspendLayout()
-        CType(Me.numCASE_CUBE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -515,6 +515,46 @@ Partial Class SOFOXFR1
         Me.optAction.Size = New System.Drawing.Size(177, 58)
         Me.optAction.TabIndex = 127
         Me.optAction.Text = "Create New Transfer"
+        '
+        'UltraExplorerBarContainerControl2
+        '
+        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grdBulkTransfer)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 298)
+        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 57)
+        Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        '
+        'grdBulkTransfer
+        '
+        Me.grdBulkTransfer.Controls.Add(Me.numCASE_CUBE)
+        Me.grdBulkTransfer.Controls.Add(Me.UltraLabel17)
+        Me.grdBulkTransfer.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdBulkTransfer.Location = New System.Drawing.Point(0, 0)
+        Me.grdBulkTransfer.Name = "grdBulkTransfer"
+        Me.grdBulkTransfer.Size = New System.Drawing.Size(189, 57)
+        Me.grdBulkTransfer.TabIndex = 0
+        Me.grdBulkTransfer.TabStop = False
+        '
+        'numCASE_CUBE
+        '
+        Me.Absx1.SetABSBindToTable(Me.numCASE_CUBE, False)
+        Me.Absx1.SetABSColumnName(Me.numCASE_CUBE, "CASE_CUBE")
+        Me.numCASE_CUBE.Location = New System.Drawing.Point(76, 22)
+        Me.numCASE_CUBE.MaxValue = 1000000
+        Me.numCASE_CUBE.MinValue = 0
+        Me.numCASE_CUBE.Name = "numCASE_CUBE"
+        Me.numCASE_CUBE.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.numCASE_CUBE.Size = New System.Drawing.Size(107, 25)
+        Me.numCASE_CUBE.TabIndex = 215
+        '
+        'UltraLabel17
+        '
+        Me.UltraLabel17.AutoSize = True
+        Me.UltraLabel17.Location = New System.Drawing.Point(6, 3)
+        Me.UltraLabel17.Name = "UltraLabel17"
+        Me.UltraLabel17.Size = New System.Drawing.Size(189, 18)
+        Me.UltraLabel17.TabIndex = 216
+        Me.UltraLabel17.Text = "Calculated Total Case Cube"
         '
         'UltraTabPageControl5
         '
@@ -916,7 +956,6 @@ Partial Class SOFOXFR1
         '
         'grdICTXFRBL
         '
-        Me.grdICTXFRBL.DataMember = Nothing
         Appearance37.BackColor = System.Drawing.SystemColors.Window
         Appearance37.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdICTXFRBL.DisplayLayout.Appearance = Appearance37
@@ -1703,46 +1742,6 @@ Partial Class SOFOXFR1
         Me.spl.SplitterDistance = 75
         Me.spl.TabIndex = 166
         '
-        'UltraExplorerBarContainerControl2
-        '
-        Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grdBulkTransfer)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 298)
-        Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 57)
-        Me.UltraExplorerBarContainerControl2.TabIndex = 1
-        '
-        'grdBulkTransfer
-        '
-        Me.grdBulkTransfer.Controls.Add(Me.numCASE_CUBE)
-        Me.grdBulkTransfer.Controls.Add(Me.UltraLabel17)
-        Me.grdBulkTransfer.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.grdBulkTransfer.Location = New System.Drawing.Point(0, 0)
-        Me.grdBulkTransfer.Name = "grdBulkTransfer"
-        Me.grdBulkTransfer.Size = New System.Drawing.Size(189, 57)
-        Me.grdBulkTransfer.TabIndex = 0
-        Me.grdBulkTransfer.TabStop = False
-        '
-        'numCASE_CUBE
-        '
-        Me.Absx1.SetABSBindToTable(Me.numCASE_CUBE, False)
-        Me.Absx1.SetABSColumnName(Me.numCASE_CUBE, "CASE_CUBE")
-        Me.numCASE_CUBE.Location = New System.Drawing.Point(76, 22)
-        Me.numCASE_CUBE.MaxValue = 1000000
-        Me.numCASE_CUBE.MinValue = 0
-        Me.numCASE_CUBE.Name = "numCASE_CUBE"
-        Me.numCASE_CUBE.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.numCASE_CUBE.Size = New System.Drawing.Size(107, 25)
-        Me.numCASE_CUBE.TabIndex = 215
-        '
-        'UltraLabel17
-        '
-        Me.UltraLabel17.AutoSize = True
-        Me.UltraLabel17.Location = New System.Drawing.Point(6, 3)
-        Me.UltraLabel17.Name = "UltraLabel17"
-        Me.UltraLabel17.Size = New System.Drawing.Size(189, 18)
-        Me.UltraLabel17.TabIndex = 216
-        Me.UltraLabel17.Text = "Calculated Total Case Cube"
-        '
         'SOFOXFR1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1764,6 +1763,10 @@ Partial Class SOFOXFR1
         CType(Me.grpAction, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpAction.ResumeLayout(False)
         CType(Me.optAction, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        Me.grdBulkTransfer.ResumeLayout(False)
+        Me.grdBulkTransfer.PerformLayout()
+        CType(Me.numCASE_CUBE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl5.ResumeLayout(False)
         CType(Me.grdSOTORDR0, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl6.ResumeLayout(False)
@@ -1798,10 +1801,6 @@ Partial Class SOFOXFR1
         Me.spl.Panel2.ResumeLayout(False)
         CType(Me.spl, System.ComponentModel.ISupportInitialize).EndInit()
         Me.spl.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
-        Me.grdBulkTransfer.ResumeLayout(False)
-        Me.grdBulkTransfer.PerformLayout()
-        CType(Me.numCASE_CUBE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
