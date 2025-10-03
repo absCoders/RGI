@@ -930,7 +930,7 @@ Public Class SOFOXFR1
                 Dim QTY_TO_XFR_sql As String = "CASE WHEN MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(NEEDED,0)" & vbCrLf _
                     & "       ELSE NVL(NEEDED,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END"
                 If bulk_transfer Then
-                    QTY_TO_XFR_sql = " NVL(US_ONHD,0) "
+                    QTY_TO_XFR_sql = " NVL(NEEDED,0) "
                 End If
                 SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
                     & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
