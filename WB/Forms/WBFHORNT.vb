@@ -15,7 +15,9 @@ Public Class WBFHORNT
             SQLs.Length = 0
             SQLs.AppendLine("SELECT 'ALL' AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
             SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-            SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+            SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+            SQLs.AppendLine("0.00 AS SALES_LY,")
+            SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
             SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
             SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
             SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
@@ -77,12 +79,17 @@ Public Class WBFHORNT
 
         Create_Summary(grdWBFHORNT, "ORDER_QTY", "Sum", "", "###,##0")
         Create_Summary(grdWBFHORNT, "SALES", "Sum", "", "###,##0.00")
+        Create_Summary(grdWBFHORNT, "SALES_LY", "Sum", "", "###,##0.00")
+        Create_Summary(grdWBFHORNT, "ORDER_QTY_LY", "Sum", "", "###,##0")
+
 
         Create_Summary(grdWBFHORND, "ORDER_QTY", "Sum", "", "###,##0")
         Create_Summary(grdWBFHORND, "SALES", "Sum", "", "###,##0.00")
 
         grdWBFHORNT.DisplayLayout.Bands(0).Columns("ORDER_QTY").Format = "###,##0"
         grdWBFHORNT.DisplayLayout.Bands(0).Columns("SALES").Format = "###,##0.00"
+        grdWBFHORNT.DisplayLayout.Bands(0).Columns("SALES_LY").Format = "###,##0.00"
+        grdWBFHORNT.DisplayLayout.Bands(0).Columns("ORDER_QTY_LY").Format = "###,##0"
 
         grdWBFHORND.DisplayLayout.Bands(0).Columns("ORDER_QTY").Format = "###,##0"
         grdWBFHORND.DisplayLayout.Bands(0).Columns("SALES").Format = "###,##0.00"
@@ -156,6 +163,13 @@ Public Class WBFHORNT
         Select Case eItemKey
             Case "Refresh"
                 Load_Record(True)
+                If chkSALES_LY.Checked Then
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("SALES_LY").Hidden = False
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("ORDER_QTY_LY").Hidden = False
+                Else
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("SALES_LY").Hidden = True
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("ORDER_QTY_LY").Hidden = True
+                End If
             Case "Exit"
                 Call Mode_Settings(False)
         End Select
@@ -206,14 +220,31 @@ Public Class WBFHORNT
                 RANK_CODE = "Rep Code"
                 RANK_NAME = "Sales Rep Name"
                 SQLs.Length = 0
+                SQLs.AppendLine("SELECT")
+                SQLs.AppendLine("RANK_CODE,")
+                SQLs.AppendLine("RANK_NAME,")
+                SQLs.AppendLine("EXTRA1,")
+                SQLs.AppendLine("EXTRA2,")
+                SQLs.AppendLine("EXTRA3,")
+                SQLs.AppendLine("SUM(ORDER_QTY) AS ORDER_QTY,")
+                SQLs.AppendLine("SUM(SALES) AS SALES,")
+                SQLs.AppendLine("SUM(SALES_LY) AS SALES_LY,")
+                SQLs.AppendLine("SUM(ORDER_QTY_LY) AS ORDER_QTY_LY")
+                SQLs.AppendLine("FROM")
+                SQLs.AppendLine("(")
+
                 SQLs.AppendLine("SELECT S1.SREP_CODE AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
                 SQLs.AppendLine("NULL AS EXTRA1, NULL AS EXTRA2, NULL AS EXTRA3,")
                 If chkRemoveCancelled.Checked Then
                     SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                    SQLs.AppendLine("0.00 AS SALES_LY,")
+                    SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                 Else
                     SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                    SQLs.AppendLine("0.00 AS SALES_LY,")
+                    SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                 End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
@@ -223,6 +254,39 @@ Public Class WBFHORNT
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
+
+                If chkSALES_LY.Checked Then
+                    SQLs.AppendLine("UNION")
+                    SQLs.AppendLine("SELECT S1.SREP_CODE AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
+                    SQLs.AppendLine("NULL AS EXTRA1, NULL AS EXTRA2, NULL AS EXTRA3,")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                        SQLs.AppendLine("0.00 AS SALES,")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY_LY")
+                    Else
+                        SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                        SQLs.AppendLine("0.00 AS SALES,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY_LY")
+                    End If
+                    SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
+                    SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                    SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                    SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
+                End If
+
+                SQLs.AppendLine(")")
+                SQLs.AppendLine("GROUP BY")
+                SQLs.AppendLine("RANK_CODE,")
+                SQLs.AppendLine("RANK_NAME,")
+                SQLs.AppendLine("EXTRA1,")
+                SQLs.AppendLine("EXTRA2,")
+                SQLs.AppendLine("EXTRA3")
             Case "C"
                 RANKING = "Ranking Customers"
                 RANK_CODE = "Cust Code"
@@ -231,14 +295,31 @@ Public Class WBFHORNT
                 EXTRA2 = "State"
                 EXTRA3 = "Country"
                 SQLs.Length = 0
+                SQLs.AppendLine("SELECT")
+                SQLs.AppendLine("RANK_CODE,")
+                SQLs.AppendLine("RANK_NAME,")
+                SQLs.AppendLine("EXTRA1,")
+                SQLs.AppendLine("EXTRA2,")
+                SQLs.AppendLine("EXTRA3,")
+                SQLs.AppendLine("SUM(ORDER_QTY) AS ORDER_QTY,")
+                SQLs.AppendLine("SUM(SALES) AS SALES,")
+                SQLs.AppendLine("SUM(SALES_LY) AS SALES_LY,")
+                SQLs.AppendLine("SUM(ORDER_QTY_LY) AS ORDER_QTY_LY")
+                SQLs.AppendLine("FROM")
+                SQLs.AppendLine("(")
+
                 SQLs.AppendLine("SELECT S1.CUST_CODE AS RANK_CODE, S1.CUST_NAME AS RANK_NAME,")
                 SQLs.AppendLine("C1.CUST_CITY AS EXTRA1, NVL(C1.CUST_STATE,'XX') AS EXTRA2, NVL(C1.CUST_COUNTRY,'USA') AS EXTRA3,")
                 If chkRemoveCancelled.Checked Then
                     SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                    SQLs.AppendLine("0.00 AS SALES_LY,")
+                    SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                 Else
                     SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                    SQLs.AppendLine("0.00 AS SALES_LY,")
+                    SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                 End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ARTCUST1 C1")
                 SQLs.AppendLine("WHERE S1.CUST_CODE = C1.CUST_CODE")
@@ -249,6 +330,41 @@ Public Class WBFHORNT
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.CUST_CODE, S1.CUST_NAME,  C1.CUST_CITY,  C1.CUST_STATE,  C1.CUST_COUNTRY")
+
+                If chkSALES_LY.Checked Then
+                    SQLs.AppendLine("UNION")
+                    SQLs.AppendLine("SELECT S1.CUST_CODE AS RANK_CODE, S1.CUST_NAME AS RANK_NAME,")
+                    SQLs.AppendLine("C1.CUST_CITY AS EXTRA1, NVL(C1.CUST_STATE,'XX') AS EXTRA2, NVL(C1.CUST_COUNTRY,'USA') AS EXTRA3,")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                        SQLs.AppendLine("0.00 AS SALES,")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY_LY")
+                    Else
+                        SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                        SQLs.AppendLine("0.00 AS SALES,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY_LY")
+                    End If
+                    SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ARTCUST1 C1")
+                    SQLs.AppendLine("WHERE S1.CUST_CODE = C1.CUST_CODE")
+                    SQLs.AppendLine("AND S1.ORDR_NO = S2.ORDR_NO")
+                    SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                    SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine("GROUP BY S1.CUST_CODE, S1.CUST_NAME,  C1.CUST_CITY,  C1.CUST_STATE,  C1.CUST_COUNTRY")
+
+                End If
+
+                SQLs.AppendLine(")")
+                SQLs.AppendLine("GROUP BY")
+                SQLs.AppendLine("RANK_CODE,")
+                SQLs.AppendLine("RANK_NAME,")
+                SQLs.AppendLine("EXTRA1,")
+                SQLs.AppendLine("EXTRA2,")
+                SQLs.AppendLine("EXTRA3")
             Case "S"
                 RANKING = "Ranking Styles"
                 RANK_NAME = "Style Description"
@@ -280,14 +396,31 @@ Public Class WBFHORNT
                     RANK_CODE = "Style-Color Code"
                     EXTRA3 = "Theme"
                     SQLs.Length = 0
+                    SQLs.AppendLine("SELECT")
+                    SQLs.AppendLine("RANK_CODE,")
+                    SQLs.AppendLine("RANK_NAME,")
+                    SQLs.AppendLine("EXTRA1,")
+                    SQLs.AppendLine("EXTRA2,")
+                    SQLs.AppendLine("EXTRA3,")
+                    SQLs.AppendLine("SUM(ORDER_QTY) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM(SALES) AS SALES,")
+                    SQLs.AppendLine("SUM(SALES_LY) AS SALES_LY,")
+                    SQLs.AppendLine("SUM(ORDER_QTY) AS ORDER_QTY_LY")
+                    SQLs.AppendLine("FROM")
+                    SQLs.AppendLine("(")
+
                     SQLs.AppendLine("SELECT S2.STYLE_CODE || '-' || S2.COLOR_CODE AS RANK_CODE, I1.STYLE_DESC AS RANK_NAME,")
                     SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, T1.THEME_DESC AS EXTRA3,")
                     If chkRemoveCancelled.Checked Then
                         SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
-                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                        SQLs.AppendLine("0.00 AS SALES_LY,")
+                        SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                     Else
                         SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                        SQLs.AppendLine("0.00 AS SALES_LY,")
+                        SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                     End If
                     SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1, ICTSTYC1 C1, ICTTHEME T1")
                     SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
@@ -314,18 +447,85 @@ Public Class WBFHORNT
                     End If
                     SQLs.AppendLine(SQLE.ToString)
                     SQLs.AppendLine("GROUP BY S2.STYLE_CODE || '-' || S2.COLOR_CODE, I1.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID, T1.THEME_DESC")
+
+                    If chkSALES_LY.Checked Then
+                        SQLs.AppendLine("UNION")
+                        SQLs.AppendLine("SELECT S2.STYLE_CODE || '-' || S2.COLOR_CODE AS RANK_CODE, I1.STYLE_DESC AS RANK_NAME,")
+                        SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, T1.THEME_DESC AS EXTRA3,")
+                        If chkRemoveCancelled.Checked Then
+                            SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                            SQLs.AppendLine("0.00 AS SALES,")
+                            SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                            SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY_LY")
+                        Else
+                            SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                            SQLs.AppendLine("0.00 AS SALES,")
+                            SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                            SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY_LY")
+                        End If
+                        SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1, ICTSTYC1 C1, ICTTHEME T1")
+                        SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                        SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
+                        SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
+                        SQLs.AppendLine("AND S2.STYLE_CODE = C1.STYLE_CODE (+)")
+                        SQLs.AppendLine("AND S2.COLOR_CODE = C1.COLOR_CODE (+)")
+                        SQLs.AppendLine("AND C1.THEME_CODE = T1.THEME_CODE (+)")
+                        SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                        SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                        SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                        If chkStylesInventory.Checked Then
+                            SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
+                            SQLs.AppendLine("(SELECT")
+                            SQLs.AppendLine("STYLE_CODE,")
+                            SQLs.AppendLine("COLOR_CODE")
+                            SQLs.AppendLine("FROM ICTSTAT2")
+                            SQLs.AppendLine("WHERE (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) > 0")
+                            SQLs.AppendLine("GROUP BY STYLE_CODE,")
+                            SQLs.AppendLine("COLOR_CODE")
+                            SQLs.AppendLine(")")
+                        End If
+                        SQLs.AppendLine(SQLE.ToString)
+                        SQLs.AppendLine("GROUP BY S2.STYLE_CODE || '-' || S2.COLOR_CODE, I1.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID, T1.THEME_DESC")
+                    End If
+
+                    SQLs.AppendLine(")")
+                    SQLs.AppendLine("GROUP BY")
+                    SQLs.AppendLine("RANK_CODE,")
+                    SQLs.AppendLine("RANK_NAME,")
+                    SQLs.AppendLine("EXTRA1,")
+                    SQLs.AppendLine("EXTRA2,")
+                    SQLs.AppendLine("EXTRA3")
                 Else
                     RANK_CODE = "Style Code"
                     EXTRA3 = ""
                     SQLs.Length = 0
+                    SQLs.AppendLine("SELECT")
+                    SQLs.AppendLine("RANK_CODE,")
+                    SQLs.AppendLine("RANK_NAME,")
+                    SQLs.AppendLine("EXTRA1,")
+                    SQLs.AppendLine("EXTRA2,")
+                    SQLs.AppendLine("EXTRA3,")
+                    SQLs.AppendLine("SUM(ORDER_QTY) AS ORDER_QTY,")
+                    SQLs.AppendLine("SUM(SALES) AS SALES,")
+                    SQLs.AppendLine("SUM(SALES_LY) AS SALES_LY,")
+                    SQLs.AppendLine("SUM(ORDER_QTY_LY) AS ORDER_QTY_LY")
+                    SQLs.AppendLine("FROM")
+                    SQLs.AppendLine("(")
+
                     SQLs.AppendLine("SELECT S2.STYLE_CODE AS RANK_CODE, I1.STYLE_DESC AS RANK_NAME,")
                     SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, NULL AS EXTRA3,")
                     If chkRemoveCancelled.Checked Then
                         SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
-                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                        SQLs.AppendLine("0.00 AS SALES_LY,")
+                        SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                     Else
                         SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                        SQLs.AppendLine("0.00 AS SALES_LY,")
+                        SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                     End If
                     SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1")
                     SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
@@ -349,20 +549,84 @@ Public Class WBFHORNT
                     End If
                     SQLs.AppendLine(SQLE.ToString)
                     SQLs.AppendLine("GROUP BY S2.STYLE_CODE, I1.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID")
+
+                    If chkSALES_LY.Checked Then
+                        SQLs.AppendLine("UNION")
+                        SQLs.AppendLine("SELECT S2.STYLE_CODE AS RANK_CODE, I1.STYLE_DESC AS RANK_NAME,")
+                        SQLs.AppendLine("I1.STYLE_CLASS_CODE AS EXTRA1, V1.VEND_SUPPLIER_ID AS EXTRA2, NULL AS EXTRA3,")
+                        If chkRemoveCancelled.Checked Then
+                            SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                            SQLs.AppendLine("0.00 AS SALES,")
+                            SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                            SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY")
+                        Else
+                            SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
+                            SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                            SQLs.AppendLine("0.00 AS SALES_LY,")
+                            SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
+                        End If
+                        SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1, ICTSTYL1 I1, APTVEND1 V1")
+                        SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                        SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
+                        SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
+                        SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                        SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                        SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                        If chkStylesInventory.Checked Then
+                            SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
+                            SQLs.AppendLine("(SELECT")
+                            SQLs.AppendLine("STYLE_CODE,")
+                            SQLs.AppendLine("COLOR_CODE")
+                            SQLs.AppendLine("FROM ICTSTAT2")
+                            SQLs.AppendLine("WHERE (NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0) + NVL(WHSE_QTY_TRAN,0) + NVL(WHSE_QTY_ON_ORDER,0) - NVL(WHSE_QTY_OPEN,0)) > 0")
+                            SQLs.AppendLine("GROUP BY STYLE_CODE,")
+                            SQLs.AppendLine("COLOR_CODE")
+                            SQLs.AppendLine(")")
+                        End If
+                        SQLs.AppendLine(SQLE.ToString)
+                        SQLs.AppendLine("GROUP BY S2.STYLE_CODE, I1.STYLE_DESC, I1.STYLE_CLASS_CODE, V1.VEND_SUPPLIER_ID")
+                    End If
+
+                    SQLs.AppendLine(")")
+                    SQLs.AppendLine("GROUP BY")
+                    SQLs.AppendLine("RANK_CODE,")
+                    SQLs.AppendLine("RANK_NAME,")
+                    SQLs.AppendLine("EXTRA1,")
+                    SQLs.AppendLine("EXTRA2,")
+                    SQLs.AppendLine("EXTRA3")
                 End If
             Case Else
                 RANKING = "Ranking Sales Reps"
                 RANK_CODE = "Rep Code"
                 RANK_NAME = "Sales Rep Name"
                 SQLs.Length = 0
-                SQLs.AppendLine("SELECT 'ALL' AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
+                SQLs.AppendLine("SELECT")
+                SQLs.AppendLine("RANK_CODE,")
+                SQLs.AppendLine("RANK_NAME,")
+                SQLs.AppendLine("EXTRA1,")
+                SQLs.AppendLine("EXTRA2,")
+                SQLs.AppendLine("EXTRA3,")
+                SQLs.AppendLine("SUM(ORDER_QTY) AS ORDER_QTY,")
+                SQLs.AppendLine("SUM(SALES) AS SALES,")
+                SQLs.AppendLine("SUM(SALES_LY) AS SALES_LY,")
+                SQLs.AppendLine("SUM(ORDER_QTY_LY) AS ORDER_QTY_LY")
+                SQLs.AppendLine("FROM")
+                SQLs.AppendLine("(")
+
+                SQLs.AppendLine("SELECT S1.SREP_CODE AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
                 SQLs.AppendLine("NULL AS EXTRA1, NULL AS EXTRA2, NULL AS EXTRA3,")
                 If chkRemoveCancelled.Checked Then
                     SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                    SQLs.AppendLine("0.00 AS SALES_LY,")
+                    SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                 Else
                     SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY,")
-                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES")
+                    SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES,")
+                    SQLs.AppendLine("0.00 AS SALES_LY,")
+                    SQLs.AppendLine("0.00 AS ORDER_QTY_LY")
                 End If
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
@@ -371,7 +635,40 @@ Public Class WBFHORNT
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
-                SQLs.AppendLine("GROUP BY R1.SREP_NAME")
+                SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
+
+                If chkSALES_LY.Checked Then
+                    SQLs.AppendLine("UNION")
+                    SQLs.AppendLine("SELECT S1.SREP_CODE AS RANK_CODE, R1.SREP_NAME AS RANK_NAME,")
+                    SQLs.AppendLine("NULL AS EXTRA1, NULL AS EXTRA2, NULL AS EXTRA3,")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("0.00 AS ORDER_QTY,")
+                        SQLs.AppendLine("0.00 AS SALES,")
+                        SQLs.AppendLine("SUM((NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) - NVL(S2.ORDR_QTY_CANC,0)) AS ORDER_QTY_LY")
+                    Else
+                        SQLs.AppendLine("0.00 AS ORDER_QTY")
+                        SQLs.AppendLine("0.00 AS SALES,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0) * NVL(S2.ORDR_UNIT_PRICE,0)) AS SALES_LY,")
+                        SQLs.AppendLine("SUM(NVL(S2.ORDR_QTY,0)) AS ORDER_QTY_LY")
+                    End If
+                    SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
+                    SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                    SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                    SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                    SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
+                End If
+
+                SQLs.AppendLine(")")
+                SQLs.AppendLine("GROUP BY")
+                SQLs.AppendLine("RANK_CODE,")
+                SQLs.AppendLine("RANK_NAME,")
+                SQLs.AppendLine("EXTRA1,")
+                SQLs.AppendLine("EXTRA2,")
+                SQLs.AppendLine("EXTRA3")
         End Select
 
         Fill_Records("WBTHORNT", , , SQLs.ToString)
@@ -738,8 +1035,13 @@ Public Class WBFHORNT
                         S.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
                         S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                         S.AppendLine(String.Format("AND S1.SREP_CODE = '{0}'", SREP_CODE))
-                        S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
-                        S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        If chkDETAILSLY.Checked Then
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                        Else
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        End If
                         S.AppendLine(filterORDR_SOURCE("S1"))
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
@@ -782,8 +1084,13 @@ Public Class WBFHORNT
                         S.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
                         S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                         S.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
-                        S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
-                        S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        If chkDETAILSLY.Checked Then
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                        Else
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        End If
                         S.AppendLine(filterORDR_SOURCE("S1"))
                         If chkSHIP_ECOM.Checked Then
                             Dim SEL_LIST As New List(Of String)
@@ -847,8 +1154,13 @@ Public Class WBFHORNT
                         S.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
                         S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
                         S.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", CUST_CODE))
-                        S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
-                        S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        If chkDETAILSLY.Checked Then
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
+                        Else
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
+                            S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
+                        End If
                         S.AppendLine(filterORDR_SOURCE("S1"))
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
@@ -890,6 +1202,20 @@ Public Class WBFHORNT
             chkOTYPE_W.Checked = True
             chkOTYPE_W.Visible = True
         End If
+    End Sub
+
+    Private Sub chkSALES_LY_CheckedChanged(sender As Object, e As EventArgs) Handles chkSALES_LY.CheckedChanged
+        If chkSALES_LY.Checked Then
+            chkDETAILSLY.Checked = False
+            chkDETAILSLY.Visible = True
+        Else
+            chkDETAILSLY.Checked = False
+            chkDETAILSLY.Visible = False
+        End If
+    End Sub
+
+    Private Sub chkDETAILSLY_CheckedChanged(sender As Object, e As EventArgs) Handles chkDETAILSLY.CheckedChanged
+        FillDetails()
     End Sub
 #End Region
 End Class

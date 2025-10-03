@@ -67,6 +67,8 @@ Partial Class WBFHORNT
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EXTRA1")
         Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EXTRA2")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EXTRA3")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SALES_LY")
+        Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDER_QTY_LY")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -107,6 +109,7 @@ Partial Class WBFHORNT
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.chkSALES_LY = New System.Windows.Forms.CheckBox()
         Me.chkStyleColors = New System.Windows.Forms.CheckBox()
         Me.chkRemoveCancelled = New System.Windows.Forms.CheckBox()
         Me.chkStylesInventory = New System.Windows.Forms.CheckBox()
@@ -118,6 +121,13 @@ Partial Class WBFHORNT
         Me.dtTO = New System.Windows.Forms.DateTimePicker()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.dtFROM = New System.Windows.Forms.DateTimePicker()
+        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.chkOTYPE_W = New System.Windows.Forms.CheckBox()
+        Me.chkOTYPE_L = New System.Windows.Forms.CheckBox()
+        Me.chkOTYPE_E = New System.Windows.Forms.CheckBox()
+        Me.chkOTYPE_K = New System.Windows.Forms.CheckBox()
+        Me.chkOTYPE_A = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.chkEStrict = New System.Windows.Forms.CheckBox()
@@ -136,13 +146,7 @@ Partial Class WBFHORNT
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel5 = New System.Windows.Forms.Panel()
-        Me.chkOTYPE_A = New System.Windows.Forms.CheckBox()
-        Me.chkOTYPE_K = New System.Windows.Forms.CheckBox()
-        Me.chkOTYPE_E = New System.Windows.Forms.CheckBox()
-        Me.chkOTYPE_L = New System.Windows.Forms.CheckBox()
-        Me.chkOTYPE_W = New System.Windows.Forms.CheckBox()
+        Me.chkDETAILSLY = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -154,6 +158,8 @@ Partial Class WBFHORNT
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel4.SuspendLayout()
+        Me.UltraExplorerBarContainerControl3.SuspendLayout()
+        Me.Panel5.SuspendLayout()
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         Me.Panel3.SuspendLayout()
         CType(Me.grdECTECOM1_FILTER, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -176,8 +182,6 @@ Partial Class WBFHORNT
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        Me.UltraExplorerBarContainerControl3.SuspendLayout()
-        Me.Panel5.SuspendLayout()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -194,7 +198,7 @@ Partial Class WBFHORNT
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup3.Key = "Options"
-        UltraExplorerBarGroup3.Settings.ContainerHeight = 250
+        UltraExplorerBarGroup3.Settings.ContainerHeight = 275
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Options"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
@@ -295,11 +299,13 @@ Partial Class WBFHORNT
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 130)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 250)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 275)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.chkDETAILSLY)
+        Me.Panel4.Controls.Add(Me.chkSALES_LY)
         Me.Panel4.Controls.Add(Me.chkStyleColors)
         Me.Panel4.Controls.Add(Me.chkRemoveCancelled)
         Me.Panel4.Controls.Add(Me.chkStylesInventory)
@@ -314,13 +320,23 @@ Partial Class WBFHORNT
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel4.Location = New System.Drawing.Point(0, 0)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(172, 250)
+        Me.Panel4.Size = New System.Drawing.Size(172, 275)
         Me.Panel4.TabIndex = 0
+        '
+        'chkSALES_LY
+        '
+        Me.chkSALES_LY.AutoSize = True
+        Me.chkSALES_LY.Location = New System.Drawing.Point(9, 202)
+        Me.chkSALES_LY.Name = "chkSALES_LY"
+        Me.chkSALES_LY.Size = New System.Drawing.Size(130, 20)
+        Me.chkSALES_LY.TabIndex = 11
+        Me.chkSALES_LY.Text = "Show Last Year"
+        Me.chkSALES_LY.UseVisualStyleBackColor = True
         '
         'chkStyleColors
         '
         Me.chkStyleColors.AutoSize = True
-        Me.chkStyleColors.Location = New System.Drawing.Point(28, 166)
+        Me.chkStyleColors.Location = New System.Drawing.Point(22, 165)
         Me.chkStyleColors.Name = "chkStyleColors"
         Me.chkStyleColors.Size = New System.Drawing.Size(108, 20)
         Me.chkStyleColors.TabIndex = 10
@@ -333,7 +349,7 @@ Partial Class WBFHORNT
         Me.chkRemoveCancelled.AutoSize = True
         Me.chkRemoveCancelled.Checked = True
         Me.chkRemoveCancelled.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkRemoveCancelled.Location = New System.Drawing.Point(9, 210)
+        Me.chkRemoveCancelled.Location = New System.Drawing.Point(9, 183)
         Me.chkRemoveCancelled.Name = "chkRemoveCancelled"
         Me.chkRemoveCancelled.Size = New System.Drawing.Size(146, 20)
         Me.chkRemoveCancelled.TabIndex = 9
@@ -343,7 +359,7 @@ Partial Class WBFHORNT
         'chkStylesInventory
         '
         Me.chkStylesInventory.AutoSize = True
-        Me.chkStylesInventory.Location = New System.Drawing.Point(28, 147)
+        Me.chkStylesInventory.Location = New System.Drawing.Point(22, 147)
         Me.chkStylesInventory.Name = "chkStylesInventory"
         Me.chkStylesInventory.Size = New System.Drawing.Size(147, 20)
         Me.chkStylesInventory.TabIndex = 8
@@ -354,7 +370,7 @@ Partial Class WBFHORNT
         'chkShowDetails
         '
         Me.chkShowDetails.AutoSize = True
-        Me.chkShowDetails.Location = New System.Drawing.Point(9, 191)
+        Me.chkShowDetails.Location = New System.Drawing.Point(9, 221)
         Me.chkShowDetails.Name = "chkShowDetails"
         Me.chkShowDetails.Size = New System.Drawing.Size(112, 20)
         Me.chkShowDetails.TabIndex = 7
@@ -427,10 +443,87 @@ Partial Class WBFHORNT
         Me.dtFROM.Size = New System.Drawing.Size(149, 23)
         Me.dtFROM.TabIndex = 0
         '
+        'UltraExplorerBarContainerControl3
+        '
+        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 449)
+        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
+        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl3.TabIndex = 3
+        '
+        'Panel5
+        '
+        Me.Panel5.Controls.Add(Me.chkOTYPE_W)
+        Me.Panel5.Controls.Add(Me.chkOTYPE_L)
+        Me.Panel5.Controls.Add(Me.chkOTYPE_E)
+        Me.Panel5.Controls.Add(Me.chkOTYPE_K)
+        Me.Panel5.Controls.Add(Me.chkOTYPE_A)
+        Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel5.Location = New System.Drawing.Point(0, 0)
+        Me.Panel5.Name = "Panel5"
+        Me.Panel5.Size = New System.Drawing.Size(172, 150)
+        Me.Panel5.TabIndex = 0
+        '
+        'chkOTYPE_W
+        '
+        Me.chkOTYPE_W.AutoSize = True
+        Me.chkOTYPE_W.Location = New System.Drawing.Point(29, 88)
+        Me.chkOTYPE_W.Name = "chkOTYPE_W"
+        Me.chkOTYPE_W.Size = New System.Drawing.Size(79, 20)
+        Me.chkOTYPE_W.TabIndex = 12
+        Me.chkOTYPE_W.Text = "Website"
+        Me.chkOTYPE_W.UseVisualStyleBackColor = True
+        Me.chkOTYPE_W.Visible = False
+        '
+        'chkOTYPE_L
+        '
+        Me.chkOTYPE_L.AutoSize = True
+        Me.chkOTYPE_L.Location = New System.Drawing.Point(29, 68)
+        Me.chkOTYPE_L.Name = "chkOTYPE_L"
+        Me.chkOTYPE_L.Size = New System.Drawing.Size(72, 20)
+        Me.chkOTYPE_L.TabIndex = 11
+        Me.chkOTYPE_L.Text = "Laptop"
+        Me.chkOTYPE_L.UseVisualStyleBackColor = True
+        Me.chkOTYPE_L.Visible = False
+        '
+        'chkOTYPE_E
+        '
+        Me.chkOTYPE_E.AutoSize = True
+        Me.chkOTYPE_E.Location = New System.Drawing.Point(28, 48)
+        Me.chkOTYPE_E.Name = "chkOTYPE_E"
+        Me.chkOTYPE_E.Size = New System.Drawing.Size(49, 20)
+        Me.chkOTYPE_E.TabIndex = 10
+        Me.chkOTYPE_E.Text = "EDI"
+        Me.chkOTYPE_E.UseVisualStyleBackColor = True
+        Me.chkOTYPE_E.Visible = False
+        '
+        'chkOTYPE_K
+        '
+        Me.chkOTYPE_K.AutoSize = True
+        Me.chkOTYPE_K.Location = New System.Drawing.Point(28, 27)
+        Me.chkOTYPE_K.Name = "chkOTYPE_K"
+        Me.chkOTYPE_K.Size = New System.Drawing.Size(88, 20)
+        Me.chkOTYPE_K.TabIndex = 9
+        Me.chkOTYPE_K.Text = "Keyboard"
+        Me.chkOTYPE_K.UseVisualStyleBackColor = True
+        Me.chkOTYPE_K.Visible = False
+        '
+        'chkOTYPE_A
+        '
+        Me.chkOTYPE_A.AutoSize = True
+        Me.chkOTYPE_A.Checked = True
+        Me.chkOTYPE_A.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkOTYPE_A.Location = New System.Drawing.Point(9, 8)
+        Me.chkOTYPE_A.Name = "chkOTYPE_A"
+        Me.chkOTYPE_A.Size = New System.Drawing.Size(127, 20)
+        Me.chkOTYPE_A.TabIndex = 8
+        Me.chkOTYPE_A.Text = "All Order Types"
+        Me.chkOTYPE_A.UseVisualStyleBackColor = True
+        '
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 618)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 643)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 250)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
@@ -594,7 +687,13 @@ Partial Class WBFHORNT
         UltraGridColumn12.Header.VisiblePosition = 2
         UltraGridColumn13.Header.VisiblePosition = 3
         UltraGridColumn6.Header.VisiblePosition = 4
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn6})
+        UltraGridColumn27.Header.Caption = "LY Sales"
+        UltraGridColumn27.Header.VisiblePosition = 8
+        UltraGridColumn27.Hidden = True
+        UltraGridColumn28.Header.Caption = "LY Quantity"
+        UltraGridColumn28.Header.VisiblePosition = 7
+        UltraGridColumn28.Hidden = True
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn6, UltraGridColumn27, UltraGridColumn28})
         Me.grdWBFHORNT.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWBFHORNT.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
@@ -858,82 +957,16 @@ Partial Class WBFHORNT
         '
         Me.Timer1.Interval = 1000
         '
-        'UltraExplorerBarContainerControl3
+        'chkDETAILSLY
         '
-        Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 424)
-        Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
-        Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
-        Me.UltraExplorerBarContainerControl3.TabIndex = 3
-        '
-        'Panel5
-        '
-        Me.Panel5.Controls.Add(Me.chkOTYPE_W)
-        Me.Panel5.Controls.Add(Me.chkOTYPE_L)
-        Me.Panel5.Controls.Add(Me.chkOTYPE_E)
-        Me.Panel5.Controls.Add(Me.chkOTYPE_K)
-        Me.Panel5.Controls.Add(Me.chkOTYPE_A)
-        Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel5.Location = New System.Drawing.Point(0, 0)
-        Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(172, 150)
-        Me.Panel5.TabIndex = 0
-        '
-        'chkOTYPE_A
-        '
-        Me.chkOTYPE_A.AutoSize = True
-        Me.chkOTYPE_A.Checked = True
-        Me.chkOTYPE_A.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkOTYPE_A.Location = New System.Drawing.Point(9, 8)
-        Me.chkOTYPE_A.Name = "chkOTYPE_A"
-        Me.chkOTYPE_A.Size = New System.Drawing.Size(127, 20)
-        Me.chkOTYPE_A.TabIndex = 8
-        Me.chkOTYPE_A.Text = "All Order Types"
-        Me.chkOTYPE_A.UseVisualStyleBackColor = True
-        '
-        'chkOTYPE_K
-        '
-        Me.chkOTYPE_K.AutoSize = True
-        Me.chkOTYPE_K.Location = New System.Drawing.Point(28, 27)
-        Me.chkOTYPE_K.Name = "chkOTYPE_K"
-        Me.chkOTYPE_K.Size = New System.Drawing.Size(88, 20)
-        Me.chkOTYPE_K.TabIndex = 9
-        Me.chkOTYPE_K.Text = "Keyboard"
-        Me.chkOTYPE_K.UseVisualStyleBackColor = True
-        Me.chkOTYPE_K.Visible = False
-        '
-        'chkOTYPE_E
-        '
-        Me.chkOTYPE_E.AutoSize = True
-        Me.chkOTYPE_E.Location = New System.Drawing.Point(28, 48)
-        Me.chkOTYPE_E.Name = "chkOTYPE_E"
-        Me.chkOTYPE_E.Size = New System.Drawing.Size(49, 20)
-        Me.chkOTYPE_E.TabIndex = 10
-        Me.chkOTYPE_E.Text = "EDI"
-        Me.chkOTYPE_E.UseVisualStyleBackColor = True
-        Me.chkOTYPE_E.Visible = False
-        '
-        'chkOTYPE_L
-        '
-        Me.chkOTYPE_L.AutoSize = True
-        Me.chkOTYPE_L.Location = New System.Drawing.Point(29, 68)
-        Me.chkOTYPE_L.Name = "chkOTYPE_L"
-        Me.chkOTYPE_L.Size = New System.Drawing.Size(72, 20)
-        Me.chkOTYPE_L.TabIndex = 11
-        Me.chkOTYPE_L.Text = "Laptop"
-        Me.chkOTYPE_L.UseVisualStyleBackColor = True
-        Me.chkOTYPE_L.Visible = False
-        '
-        'chkOTYPE_W
-        '
-        Me.chkOTYPE_W.AutoSize = True
-        Me.chkOTYPE_W.Location = New System.Drawing.Point(29, 88)
-        Me.chkOTYPE_W.Name = "chkOTYPE_W"
-        Me.chkOTYPE_W.Size = New System.Drawing.Size(79, 20)
-        Me.chkOTYPE_W.TabIndex = 12
-        Me.chkOTYPE_W.Text = "Website"
-        Me.chkOTYPE_W.UseVisualStyleBackColor = True
-        Me.chkOTYPE_W.Visible = False
+        Me.chkDETAILSLY.AutoSize = True
+        Me.chkDETAILSLY.Location = New System.Drawing.Point(22, 240)
+        Me.chkDETAILSLY.Name = "chkDETAILSLY"
+        Me.chkDETAILSLY.Size = New System.Drawing.Size(91, 20)
+        Me.chkDETAILSLY.TabIndex = 12
+        Me.chkDETAILSLY.Text = "LY Details"
+        Me.chkDETAILSLY.UseVisualStyleBackColor = True
+        Me.chkDETAILSLY.Visible = False
         '
         'WBFHORNT
         '
@@ -955,6 +988,9 @@ Partial Class WBFHORNT
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
+        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
+        Me.Panel5.ResumeLayout(False)
+        Me.Panel5.PerformLayout()
         Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel3.PerformLayout()
@@ -978,9 +1014,6 @@ Partial Class WBFHORNT
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
-        Me.Panel5.ResumeLayout(False)
-        Me.Panel5.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1022,4 +1055,6 @@ Partial Class WBFHORNT
     Friend WithEvents chkOTYPE_E As CheckBox
     Friend WithEvents chkOTYPE_K As CheckBox
     Friend WithEvents chkOTYPE_A As CheckBox
+    Friend WithEvents chkSALES_LY As CheckBox
+    Friend WithEvents chkDETAILSLY As CheckBox
 End Class

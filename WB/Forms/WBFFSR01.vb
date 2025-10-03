@@ -958,9 +958,19 @@ Public Class WBFFSR01
                 If Not IsNothing(rowGLTPARM3TY) Then
                     DATES("EOW_TY") = dteSaturday.DateTime
                     DATES("EOW_LY") = CDate(rowGLTPARM3LY.Item("WEEK_END_DATE").ToString)
-                    DATES("BOY_TY") = DateSerial(DATES("EOW_TY").Year, 4, 1)
+                    If DATES("EOW_TY").Month > 3 Then
+                        DATES("BOY_TY") = DateSerial(DATES("EOW_TY").Year, 4, 1)
+                    Else
+                        DATES("BOY_TY") = DateSerial(DATES("EOW_TY").Year - 1, 4, 1)
+                    End If
+
                     DATES("BOM_TY") = DateSerial(DATES("EOW_TY").Year, DATES("EOW_TY").Month, 1)
-                    DATES("BOY_LY") = DateSerial(DATES("EOW_LY").Year, 4, 1)
+                    If DATES("EOW_LY").Month > 3 Then
+                        DATES("BOY_LY") = DateSerial(DATES("EOW_LY").Year, 4, 1)
+                    Else
+                        DATES("BOY_LY") = DateSerial(DATES("EOW_LY").Year - 1, 4, 1)
+                    End If
+
                     DATES("BOM_LY") = DateSerial(DATES("EOW_LY").Year, DATES("EOW_TY").Month, 1)
                     DATES("EOM_TY") = DateSerial(DATES("BOM_TY").Year, DATES("BOM_TY").Month, DATES("BOM_TY").AddMonths(1).AddDays(-1).Day)
                     DATES("EOM_LY") = DateSerial(DATES("BOM_LY").Year, DATES("BOM_TY").Month, DATES("BOM_LY").AddMonths(1).AddDays(-1).Day)
