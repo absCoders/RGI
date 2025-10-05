@@ -69,6 +69,8 @@ Partial Class WBFHORNT
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("EXTRA3")
         Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SALES_LY")
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ORDER_QTY_LY")
+        Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VAR_SALES")
+        Dim UltraGridColumn30 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VAR_QTY")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -109,6 +111,7 @@ Partial Class WBFHORNT
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.chkDETAILSLY = New System.Windows.Forms.CheckBox()
         Me.chkSALES_LY = New System.Windows.Forms.CheckBox()
         Me.chkStyleColors = New System.Windows.Forms.CheckBox()
         Me.chkRemoveCancelled = New System.Windows.Forms.CheckBox()
@@ -146,7 +149,6 @@ Partial Class WBFHORNT
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkDETAILSLY = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -322,6 +324,17 @@ Partial Class WBFHORNT
         Me.Panel4.Name = "Panel4"
         Me.Panel4.Size = New System.Drawing.Size(172, 275)
         Me.Panel4.TabIndex = 0
+        '
+        'chkDETAILSLY
+        '
+        Me.chkDETAILSLY.AutoSize = True
+        Me.chkDETAILSLY.Location = New System.Drawing.Point(22, 240)
+        Me.chkDETAILSLY.Name = "chkDETAILSLY"
+        Me.chkDETAILSLY.Size = New System.Drawing.Size(91, 20)
+        Me.chkDETAILSLY.TabIndex = 12
+        Me.chkDETAILSLY.Text = "LY Details"
+        Me.chkDETAILSLY.UseVisualStyleBackColor = True
+        Me.chkDETAILSLY.Visible = False
         '
         'chkSALES_LY
         '
@@ -693,7 +706,13 @@ Partial Class WBFHORNT
         UltraGridColumn28.Header.Caption = "LY Quantity"
         UltraGridColumn28.Header.VisiblePosition = 7
         UltraGridColumn28.Hidden = True
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn6, UltraGridColumn27, UltraGridColumn28})
+        UltraGridColumn29.Header.Caption = "VAR Sales"
+        UltraGridColumn29.Header.VisiblePosition = 10
+        UltraGridColumn29.Hidden = True
+        UltraGridColumn30.Header.Caption = "VAR Quantity"
+        UltraGridColumn30.Header.VisiblePosition = 9
+        UltraGridColumn30.Hidden = True
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn6, UltraGridColumn27, UltraGridColumn28, UltraGridColumn29, UltraGridColumn30})
         Me.grdWBFHORNT.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWBFHORNT.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
@@ -956,17 +975,6 @@ Partial Class WBFHORNT
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'chkDETAILSLY
-        '
-        Me.chkDETAILSLY.AutoSize = True
-        Me.chkDETAILSLY.Location = New System.Drawing.Point(22, 240)
-        Me.chkDETAILSLY.Name = "chkDETAILSLY"
-        Me.chkDETAILSLY.Size = New System.Drawing.Size(91, 20)
-        Me.chkDETAILSLY.TabIndex = 12
-        Me.chkDETAILSLY.Text = "LY Details"
-        Me.chkDETAILSLY.UseVisualStyleBackColor = True
-        Me.chkDETAILSLY.Visible = False
         '
         'WBFHORNT
         '

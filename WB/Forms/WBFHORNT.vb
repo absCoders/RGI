@@ -26,6 +26,10 @@ Public Class WBFHORNT
             SQLs.AppendLine("GROUP BY R1.SREP_NAME")
             ASCMAIN1.sql = SQLs.ToString()
             Create_TDA(.Tables.Add, "WBTHORNT", "**", 0, False, "", 2)
+            With .Tables("WBTHORNT")
+                .Columns.Add("VAR_SALES", GetType(System.Decimal), "SALES - SALES_LY")
+                .Columns.Add("VAR_QTY", GetType(System.Decimal), "ORDER_QTY - ORDER_QTY_LY")
+            End With
 
             SQLs.Length = 0
             SQLs.AppendLine("SELECT")
@@ -60,14 +64,14 @@ Public Class WBFHORNT
             Create_TDA(.Tables.Add, "WBTHORND", "**", 0, False)
 
             SQLs.Length = 0
-            SQLs.AppendLine("SELECT *")
-            SQLs.AppendLine("FROM ECTECOM1")
-            ASCMAIN1.sql = SQLs.ToString()
-            Create_TDA(.Tables.Add, "ECTECOM1_FILTER", "**", 0, False)
-            .Tables("ECTECOM1_FILTER").Columns.Add("SEL", GetType(System.String))
-        End With
+                SQLs.AppendLine("SELECT *")
+                SQLs.AppendLine("FROM ECTECOM1")
+                ASCMAIN1.sql = SQLs.ToString()
+                Create_TDA(.Tables.Add, "ECTECOM1_FILTER", "**", 0, False)
+                .Tables("ECTECOM1_FILTER").Columns.Add("SEL", GetType(System.String))
+            End With
 
-        Fill_Records("ECTECOM1_FILTER")
+            Fill_Records("ECTECOM1_FILTER")
 
         For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
             rowECTECOM1_FILTER.Item("SEL") = "1"
@@ -81,6 +85,8 @@ Public Class WBFHORNT
         Create_Summary(grdWBFHORNT, "SALES", "Sum", "", "###,##0.00")
         Create_Summary(grdWBFHORNT, "SALES_LY", "Sum", "", "###,##0.00")
         Create_Summary(grdWBFHORNT, "ORDER_QTY_LY", "Sum", "", "###,##0")
+        Create_Summary(grdWBFHORNT, "VAR_SALES", "Sum", "", "###,##0.00")
+        Create_Summary(grdWBFHORNT, "VAR_QTY", "Sum", "", "###,##0")
 
 
         Create_Summary(grdWBFHORND, "ORDER_QTY", "Sum", "", "###,##0")
@@ -90,6 +96,8 @@ Public Class WBFHORNT
         grdWBFHORNT.DisplayLayout.Bands(0).Columns("SALES").Format = "###,##0.00"
         grdWBFHORNT.DisplayLayout.Bands(0).Columns("SALES_LY").Format = "###,##0.00"
         grdWBFHORNT.DisplayLayout.Bands(0).Columns("ORDER_QTY_LY").Format = "###,##0"
+        grdWBFHORNT.DisplayLayout.Bands(0).Columns("VAR_SALES").Format = "###,##0.00"
+        grdWBFHORNT.DisplayLayout.Bands(0).Columns("VAR_QTY").Format = "###,##0"
 
         grdWBFHORND.DisplayLayout.Bands(0).Columns("ORDER_QTY").Format = "###,##0"
         grdWBFHORND.DisplayLayout.Bands(0).Columns("SALES").Format = "###,##0.00"
@@ -102,6 +110,18 @@ Public Class WBFHORNT
         For i As Integer = 0 To grdWBFHORNT.DisplayLayout.Bands(0).Columns.Count - 1
             grdWBFHORNT.DisplayLayout.Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
         Next i
+
+        With grdWBFHORNT.DisplayLayout.Bands(0)
+            For Each COLUMN_NAME As String In New String() {"SALES_LY", "ORDER_QTY_LY"}
+                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.LightSalmon
+                .Columns(COLUMN_NAME).Header.Appearance.BackColor = Drawing.Color.White
+            Next
+            For Each COLUMN_NAME As String In New String() {"VAR_SALES", "VAR_QTY"}
+                .Columns(COLUMN_NAME).Header.Appearance.BackColor2 = Drawing.Color.LightYellow
+                .Columns(COLUMN_NAME).Header.Appearance.BackColor = Drawing.Color.White
+            Next
+
+        End With
 
         With grdWBFHORND.DisplayLayout.Override
             .AllowAddNew = UltraWinGrid.AllowAddNew.No
@@ -166,9 +186,13 @@ Public Class WBFHORNT
                 If chkSALES_LY.Checked Then
                     grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("SALES_LY").Hidden = False
                     grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("ORDER_QTY_LY").Hidden = False
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("VAR_SALES").Hidden = False
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("VAR_QTY").Hidden = False
                 Else
                     grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("SALES_LY").Hidden = True
                     grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("ORDER_QTY_LY").Hidden = True
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("VAR_SALES").Hidden = True
+                    grdWBFHORNT.DisplayLayout.Bands(0).Columns.Item("VAR_QTY").Hidden = True
                 End If
             Case "Exit"
                 Call Mode_Settings(False)
