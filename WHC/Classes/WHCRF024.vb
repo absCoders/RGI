@@ -113,7 +113,7 @@
                             End If
                         End If
 
-                        Dim PICK_NO As String = SCANTEXT.Substring(0, 10)
+                        Dim PICK_NO As String = "0" & SCANTEXT.Substring(1, 9)
                         Dim PALLET_SEQ_NO As Integer = CInt(SCANTEXT.Substring(10, 3))
                         Dim PICK_NO_USL As String = SCANTEXT.Substring(13)
                         Dim SCAN_DATE As DateTime = Now
