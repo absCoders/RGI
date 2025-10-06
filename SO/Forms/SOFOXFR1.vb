@@ -90,7 +90,7 @@ Public Class SOFOXFR1
                 .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(ISNULL(MS_OTS,0) + ISNULL(US_PICK,0) >= 0, NULL, ISNULL(MS_OTS,0) + ISNULL(US_PICK,0))")
             End With
 
-            ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY" & vbCrLf _
+            ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY, NVL(ICTSTYL1.CASE_CUBE,0) CASE_CUBE" & vbCrLf _
                 & ", MS.ONHD MS_ONHD, MS.PICK MS_PICK, NVL(MS.ONHD,0) - NVL(MS.PICK,0) MS_OTS" & vbCrLf _
                 & ", US.ONHD US_ONHD, (NVL(US.PICK,0) + NVL(SOTOXFR1.PICK_QUEUE,0)) US_PICK" & vbCrLf _
                 & ", NVL(US.ONHD,0) - NVL(US.PICK,0) - NVL(SOTOXFR1.PICK_QUEUE,0) US_OTS, (NVL(MS.ONHD,0) - NVL(MS.PICK,0)) + US.PICK MS_OTS_US_PICK" & vbCrLf _
@@ -930,7 +930,7 @@ Public Class SOFOXFR1
                 Dim QTY_TO_XFR_sql As String = "CASE WHEN MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(NEEDED,0)" & vbCrLf _
                     & "       ELSE NVL(NEEDED,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END"
                 If bulk_transfer Then
-                    QTY_TO_XFR_sql = " NVL(US_ONHD,0) "
+                    QTY_TO_XFR_sql = " NVL(NEEDED,0) "
                 End If
                 SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
                     & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
@@ -1170,7 +1170,14 @@ Public Class SOFOXFR1
     End Sub
 
     Private Sub tab1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles tab1.SelectedTabChanged
-
+        Select Case tab1.SelectedTab.Key
+            Case "Bulk Transfer"
+                optAction.Value = "B"
+            Case "Negative OTS in MS"
+                optAction.Value = "X"
+            Case "Transfer Orders Not Received"
+                optAction.Value = "X"
+        End Select
         'If tab1.SelectedTab.Key = "Bulk Transfer" Then
         '    Dim transferQueue As Integer = dst.Tables("SOTOXFR1").Rows.Count
         '    If transferQueue > 0 Then
@@ -1221,21 +1228,26 @@ Public Class SOFOXFR1
                     Dim cc As Integer = 0
                     Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value & ""
                     Dim NET_SHORT As Decimal = Val(grow.Cells("NET_SHORT").Value & "")
-                    Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
-                    Dim CARTON_PACK_QTY As Integer = rowICTSTYL1("CARTON_PACK_QTY")
+                    'Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                    Dim CARTON_PACK_QTY As Integer = grow.Cells("CARTON_PACK_QTY").Value
                     If CARTON_PACK_QTY > 0 Then
                         ' Find remainder
                         Dim remainder As Integer = CInt(NET_SHORT) Mod CARTON_PACK_QTY
                         If remainder <> 0 Then
                             ' Round up to next multiple
                             'NET_SHORT = CInt(((NET_SHORT / CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY)
-                            grow.Cells("NET_SHORT").Value = Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
+                            Dim US_OTS As Integer = grow.Cells("US_OTS").Value
+                            Dim NET_SHORT_calc As Integer = Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
+                            If NET_SHORT_calc > US_OTS Then
+                                NET_SHORT_calc = US_OTS
+                            End If
+                            grow.Cells("NET_SHORT").Value = NET_SHORT_calc
                         End If
                         cc = NET_SHORT / CARTON_PACK_QTY
                     Else
                         cc = NET_SHORT
                     End If
-                    Dim ccc = cc * Val(rowICTSTYL1("CASE_CUBE") & "")
+                    Dim ccc = cc * Val(grow.Cells("CASE_CUBE").Value & "")
                     cubeTotal += ccc
                 End If
             Next
