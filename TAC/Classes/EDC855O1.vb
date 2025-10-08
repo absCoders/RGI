@@ -64,6 +64,7 @@
             clsASCBASE1.dst.Tables("EDT855O2").Rows.Clear()
             clsASCBASE1.dst.Tables("EDT855O3").Rows.Clear()
             clsASCBASE1.dst.Tables("EDT855O5").Rows.Clear()
+            clsASCBASE1.dst.Tables("EDT855O6").Rows.Clear()
             clsASCBASE1.dst.Tables("EDT855O7").Rows.Clear()
             clsASCBASE1.dst.Tables("EDTSYSIH").Rows.Clear()
         Else
@@ -71,6 +72,7 @@
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O2", "*")
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O3", "*")
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O5", "*")
+            clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O6", "*")
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O7", "*")
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDTSYSIH", "*")
         End If
@@ -176,6 +178,7 @@
                 For Each rowEDT850T2 As DataRow In ASCDATA1.GetDataTable.Rows
                     Add_EDT855O2(clsASCBASE1, rowEDT850T2, ORDR_GROUP_NO, EDI_Outbound_Doc_No, EDI_TP_ID, Ack_Type)
                     Add_EDT855O3(clsASCBASE1, rowEDT850T2, ORDR_GROUP_NO, EDI_Outbound_Doc_No)
+                    Add_EDT855O6(clsASCBASE1, rowEDT850T2, EDI_Outbound_Doc_No)
                 Next
 
                 ASCMAIN1.sql = "Select * from EDT850T5 " & vbCrLf _
@@ -229,6 +232,7 @@
                 clsASCBASE1.Update_Record_TDA("EDT855O2")
                 clsASCBASE1.Update_Record_TDA("EDT855O3")
                 clsASCBASE1.Update_Record_TDA("EDT855O5")
+                clsASCBASE1.Update_Record_TDA("EDT855O6")
                 clsASCBASE1.Update_Record_TDA("EDT855O7")
 
                 EDI_Outbound_Doc_No = CreateEDTSYSIH(clsASCBASE1.dst, EDI_Outbound_Doc_No, EDI_OUR_ID, EDI_TP_ID, "PR", rowEDTTRPM1.Item("EDI_STATUS") & String.Empty)
@@ -335,6 +339,9 @@
         Dim STYLE_CODE As String = String.Empty
         Dim COLOR_CODE As String = String.Empty
 
+        Dim tblSOTORDR1 As DataTable = ASCDATA1.GetDataTable($"Select * from SOTORDR1 where ORDR_GROUP_NO = '{ORDR_GROUP_NO}'", "SOTORDR1")
+        Dim tblSOTORDR2 As DataTable = ASCDATA1.GetDataTable($"SELECT * FROM SOTORDR2 Where ORDR_NO in (Select ORDR_NO from SOTORDR1 where ORDR_GROUP_NO = '{ORDR_GROUP_NO}')", "SOTORDR2")
+
         If UPC_CODE.Length > 0 Then
             If tblICTSTYC1.Select("UPC_CODE = '" & UPC_CODE & "'").Length > 0 Then
                 STYLE_CODE = tblICTSTYC1.Select("UPC_CODE = '" & UPC_CODE & "'")(0).Item("STYLE_CODE") & String.Empty
@@ -342,12 +349,12 @@
             End If
         End If
 
-        If clsASCBASE1.dst.Tables("SOTORDR2").Select("CUST_UPC = '" & UPC_CODE & "'").Length > 0 Then
-            STYLE_CODE = clsASCBASE1.dst.Tables("SOTORDR2").Select("CUST_UPC = '" & UPC_CODE & "'")(0).Item("STYLE_CODE") & String.Empty
-            COLOR_CODE = clsASCBASE1.dst.Tables("SOTORDR2").Select("CUST_UPC = '" & UPC_CODE & "'")(0).Item("COLOR_CODE") & String.Empty
+        If tblSOTORDR2.Select("CUST_UPC = '" & UPC_CODE & "'").Length > 0 Then
+            STYLE_CODE = tblSOTORDR2.Select("CUST_UPC = '" & UPC_CODE & "'")(0).Item("STYLE_CODE") & String.Empty
+            COLOR_CODE = tblSOTORDR2.Select("CUST_UPC = '" & UPC_CODE & "'")(0).Item("COLOR_CODE") & String.Empty
         End If
 
-        For Each rowSOTORDR1 As DataRow In clsASCBASE1.dst.Tables("SOTORDR1").Select("ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'")
+        For Each rowSOTORDR1 As DataRow In tblSOTORDR1.Select("ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'")
 
             Dim CUST_CODE As String = rowSOTORDR1.Item("CUST_CODE")
             ASCMAIN1.sql = "SELECT * FROM EDTSLSP1 WHERE CUST_CODE = '" & CUST_CODE & "'"
@@ -363,7 +370,7 @@
             '  & " AND ORDR_QTY_PICK > 0" _
 
 
-            If Not clsASCBASE1.dst.Tables("SOTORDR2").Columns.Contains("ORDR_GROUP_NO") Then
+            If Not tblSOTORDR2.Columns.Contains("ORDR_GROUP_NO") Then
                 sql = "ORDR_NO = '" & ORDR_NO & "'" _
                     & " AND STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "'" _
                     & " AND EDI_DOC_SEQ_NO = '" & rowEDT850T2.Item("EDI_DOC_SEQ_NO") & "'" _
@@ -372,7 +379,7 @@
 
             End If
 
-            For Each rowSOTORDR2 As DataRow In clsASCBASE1.dst.Tables("SOTORDR2").Select(sql, "")
+            For Each rowSOTORDR2 As DataRow In tblSOTORDR2.Select(sql, "")
 
                 Dim EDI_STORE As String = rowSOTORDR1.Item("CUST_STORE_NO") & String.Empty
 
@@ -413,6 +420,36 @@
                 End If
             Next
         Next
+
+    End Sub
+    Public Shared Sub Add_EDT855O6(ByVal clsASCBASE1 As ASCBASE1,
+           ByVal rowEDT850T2 As DataRow,
+           ByVal EDI_OUTBOUND_DOC_NO As String)
+
+        Dim rowEDT855O6 As DataRow = Nothing
+        Dim fieldNum As Int16 = 0
+
+        Dim sql As String = $"Select * from EDT850T6
+                            Where EDT850T6.EDI_DOC_SEQ_NO = '{rowEDT850T2("EDI_DOC_SEQ_NO")}'
+                            and EDT850T6.EDI_DTL_SEQ = {rowEDT850T2("EDI_DTL_SEQ")}"
+        Dim tblEDT850T6 As DataTable = ASCDATA1.GetDataTable(sql)
+
+        For Each rowEDT850T6 As DataRow In tblEDT850T6.Select("")
+            rowEDT855O6 = clsASCBASE1.dst.Tables("EDT855O6").NewRow
+            rowEDT855O6.Item("COMPANY_CODE") = ASCMAIN1.DBS_COMPANY
+            rowEDT855O6.Item("EDI_OUTBOUND_DOC_NO") = EDI_OUTBOUND_DOC_NO
+            'Technically handled in column copy section below - but wanted to set the table key for clarity
+            rowEDT855O6.Item("EDI_DTL_SEQ") = rowEDT850T6.Item("EDI_DTL_SEQ")
+            rowEDT855O6.Item("EDI_SLN_SEQ") = rowEDT850T6.Item("EDI_SLN_SEQ")
+
+            For Each col As DataColumn In clsASCBASE1.dst.Tables("EDT855O6").Columns
+                If tblEDT850T6.Columns.Contains(col.ColumnName) Then
+                    rowEDT855O6(col.ColumnName) = rowEDT850T6(col.ColumnName)
+                End If
+            Next
+            clsASCBASE1.dst.Tables("EDT855O6").Rows.Add(rowEDT855O6)
+        Next
+
 
     End Sub
 

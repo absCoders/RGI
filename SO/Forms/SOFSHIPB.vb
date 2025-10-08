@@ -3466,7 +3466,7 @@ Public Class SOFSHIPB
 
                 ' Special EDI Processing
                 If Not InquiryMode AndAlso select_from_3PL_list AndAlso EntryMode = "E" Then
-                    If ASCMAIN1.CLIENT = "NYA" Then
+                    If ASCMAIN1.CLIENT = "NYA" OrElse ASCMAIN1.CLIENT = "RGI" Then
                         If Not Load_3PL_Shipment_Details_EDT945T1() Then
                             select_from_3PL_list = False
                             Mode_Settings(False)
@@ -13909,7 +13909,11 @@ Public Class SOFSHIPB
         grdSOTSHIPX_BOL.Visible = False
 
         Dim view As DataView = DirectCast(grdSOTSHIPS.DataSource, DataTable).DefaultView
-        view.RowFilter = "CUST_CODE = '" & dst.Tables("SOTSHIPB").Rows(0).Item("CUST_CODE") & "' and MASTER_BOL <> '1'"
+        If CUST_CODE = "WALMART" AndAlso ASCMAIN1.CLIENT = "VAN" Then  'Needed to allow both cust codes on same BOL
+            view.RowFilter = "(CUST_CODE = 'WALMART' or CUST_CODE = 'WALMARTCOM') and MASTER_BOL <> '1'"
+        Else
+            view.RowFilter = "CUST_CODE = '" & dst.Tables("SOTSHIPB").Rows(0).Item("CUST_CODE") & "' and MASTER_BOL <> '1'"
+        End If
         grdSOTSHIPS.DisplayLayout.Override.AllowUpdate = DefaultableBoolean.False
 
         Show_Filter(grdSOTSHIPS, True)
@@ -14283,7 +14287,11 @@ Public Class SOFSHIPB
         End If
 
         If CUST_CODE <> "" Then
-            sqlw &= " and ARTCUST1.CUST_CODE = '" & CUST_CODE & "'"
+            If CUST_CODE = "WALMART" AndAlso ASCMAIN1.CLIENT = "VAN" Then  'Needed to allow both cust codes on same BOL
+                sqlw &= " and ARTCUST1.CUST_CODE in ('" & CUST_CODE & "', 'WALMARTCOM')"
+            Else
+                sqlw &= " and ARTCUST1.CUST_CODE = '" & CUST_CODE & "'"
+            End If
             caption = " and Customer " & CUST_CODE
         End If
 

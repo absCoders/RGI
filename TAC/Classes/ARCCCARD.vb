@@ -1044,6 +1044,7 @@ Public Class ARCCCARD
         End Try
 
         ExportSerializedObject()
+        ExportRequestResponse()
     End Function
 
     ''' <summary>
@@ -1194,6 +1195,7 @@ Public Class ARCCCARD
         End Try
 
         ExportSerializedObject()
+        ExportRequestResponse()
     End Function
 
     Public Function DateCheckPassed() As Boolean
@@ -1275,6 +1277,7 @@ Public Class ARCCCARD
         End Try
 
         ExportSerializedObject()
+        ExportRequestResponse()
     End Function
 
     ''' <summary>
@@ -1292,7 +1295,6 @@ Public Class ARCCCARD
     ''' <remarks></remarks>
     Public Sub Sale()
         AuthOnlySale("SALE")
-        ExportSerializedObject()
     End Sub
 
     'Public Function ValidateAdrress(ByVal inAddress As Address) As Address
@@ -1431,6 +1433,7 @@ Public Class ARCCCARD
         End Try
 
         ExportSerializedObject()
+        ExportRequestResponse()
     End Function
 
 #End Region
@@ -1698,6 +1701,7 @@ Public Class ARCCCARD
                 clsLastError = "AuthOnlySale: " & rawResponse
             End If
 
+            ExportSerializedObject()
             ExportRequestResponse()
         End Try
     End Function
@@ -2050,14 +2054,14 @@ Public Class ARCCCARD
             End If
 
             If rawRequest.Length > 0 Then
-                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Request.xml"), True)
+                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Request.xml"), False)
                     writer.WriteLine(rawRequest)
                     writer.Close()
                 End Using
             End If
 
             If rawResponse.Length > 0 Then
-                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Response.xml"), True)
+                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Response.xml"), False)
                     writer.WriteLine(rawResponse)
                     writer.Close()
                 End Using
