@@ -1175,6 +1175,8 @@ Public Class SOFOXFR1
                 optAction.Value = "B"
             Case "Negative OTS in MS"
                 optAction.Value = "X"
+            Case "Transfer Orders Not Received"
+                optAction.Value = "X"
         End Select
         'If tab1.SelectedTab.Key = "Bulk Transfer" Then
         '    Dim transferQueue As Integer = dst.Tables("SOTOXFR1").Rows.Count
@@ -1234,7 +1236,12 @@ Public Class SOFOXFR1
                         If remainder <> 0 Then
                             ' Round up to next multiple
                             'NET_SHORT = CInt(((NET_SHORT / CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY)
-                            grow.Cells("NET_SHORT").Value = Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
+                            Dim US_OTS As Integer = grow.Cells("US_OTS").Value
+                            Dim NET_SHORT_calc As Integer = Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
+                            If NET_SHORT_calc > US_OTS Then
+                                NET_SHORT_calc = US_OTS
+                            End If
+                            grow.Cells("NET_SHORT").Value = NET_SHORT_calc
                         End If
                         cc = NET_SHORT / CARTON_PACK_QTY
                     Else

@@ -372,7 +372,7 @@
         Else
             Dim sqlPallet As String = $"SELECT * FROM EDT945T3 WHERE EDI_PALLET_NO = '{SCANTEXT}'"
             Dim tblEDT945T3 As DataTable = clsWHCRF000.ASCDATA1.GetDataTable(sqlPallet)
-            Dim PICK_NO As String = SCANTEXT.Substring(0, 10)
+            Dim PICK_NO As String = "0" & SCANTEXT.Substring(1, 9)
             Dim PALLET_SEQ_NO As Integer = CInt(SCANTEXT.Substring(10, 3))
             Dim PICK_NO_USL As String = SCANTEXT.Substring(13)
             Dim sqlSOTPICK1 As String = $"SELECT * FROM SOTPICK1 WHERE PICK_NO = '{PICK_NO}'"
