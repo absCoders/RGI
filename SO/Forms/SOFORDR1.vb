@@ -2873,7 +2873,8 @@ Public Class SOFORDR1
                 If Absx1.txtFor("CUST_STORE_NO").Text = "COMCAN" Then
                     Import_XFR_File_COMCAN()
                 ElseIf Absx1.txtFor("CUST_STORE_NO").Text = "" Then
-                    Import_XFR_File()
+                    ' Import_XFR_File()
+                    Import_XFR_File_COMCAN()
                 ElseIf Absx1.txtFor("CUST_STORE_NO").Text & "" <> "" Then
                     MsgBox("No Auto Transfer Setup for Store " & Absx1.txtFor("CUST_STORE_NO").Text, MsgBoxStyle.OkOnly, "Invalid Store")
 
@@ -12726,6 +12727,12 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                 Dim ORDR_NO As String = ASCMAIN1.Next_Control_No("ORDR_NO")
                 Dim CUST_CODE As String = "TRANSFERS"
                 Dim CUST_STORE_NO As String = "COMCAN"
+                If Absx1.txtFor("CUST_STORE_NO").Text <> "COMCAN" Then
+                    CUST_STORE_NO = "LUKY21"
+
+                End If
+
+
                 Dim CUST_STORE_NAME As String = "Commerce Canal"
                 Dim STYLE_COLORs As New Dictionary(Of String, Decimal)
                 Dim STYLE_COLOR As String = ""
@@ -12822,9 +12829,12 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                         ''    ORDR_CUST_PO = xws.Cells(i, 1).value.ToString
                         ''End If
 
+                        Dim CUSTSEARCH As String = "AMAZFBA03"
+                        If Absx1.txtFor("CUST_STORE_NO").Text <> "COMCAN" Then
+                            CUSTSEARCH = "AMAZONFBA"
+                        End If
 
-
-                        Dim rowSOTCSTY1 As DataRow = LookUp("SOTCSTY1", New String() {"AMAZFBA03", UPCSEARCH})
+                        Dim rowSOTCSTY1 As DataRow = LookUp("SOTCSTY1", New String() {CUSTSEARCH, UPCSEARCH})
                         If rowSOTCSTY1 Is Nothing Then
 
 
@@ -12989,6 +12999,10 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     ElseIf RR = 2 Then
                         CUST_ADDR_TYPE = "ST"
                         CUST_ADDR_CODE = "COMCAN"
+                        If Absx1.txtFor("CUST_STORE_NO").Text <> "COMCAN" Then
+                            CUST_ADDR_TYPE = "ST"
+                            CUST_ADDR_CODE = "LUKY21"
+                        End If
                     End If
                     ADD_SOTORDR5(ORDR_NO, CUST_CODE, CUST_ADDR_TYPE, CUST_ADDR_CODE)
                 Next
@@ -13014,6 +13028,9 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                     .Item("SREP2_CODE") = "045"
                     .Item("WHSE_CODE") = "NJC"
                     .Item("WHSE_CODE_TO") = "AMAZ03"
+                    If Absx1.txtFor("CUST_STORE_NO").Text <> "COMCAN" Then
+                        .Item("WHSE_CODE_TO") = "AMAZ02"
+                    End If
                     .Item("SALES_DIVISION_CODE") = "15"
                     .Item("INIT_OPER") = ASCMAIN1.USER_ID
                     .Item("LAST_OPER") = ASCMAIN1.USER_ID
