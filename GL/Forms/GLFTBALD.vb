@@ -1,238 +1,94 @@
 Public Class GLFTBALD
-    Dim GLTTBAL1 As String = ""
-    Dim sqlGLTSUMJ2 As String = ""
-
+    Dim SQL As New Text.StringBuilder With {.Length = 0}
+    'Dim ACCT_CODE As String = "1000"
+    'Dim SEG2_CODE As String = "000"
+    'Dim SEG3_CODE As String = "00"
+    Dim CURR_PERIOD As String = ""
+    Dim CURR_YEAR As String = ""
+    Dim CURR_MO As String = ""
+    Dim SEL_PERIOD As String = ""
+    Dim SEL_PERIOD_BEG As Date = Now()
+    Dim SEL_PERIOD_END As Date = Now()
+    Dim SEL_YEAR As String = ""
+    Dim SEL_MO As String = ""
+    Dim DAY_COLS As New Dictionary(Of String, Date)
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
-
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Get_PARM("GLTPARM1")
 
         With dst
-            With .Tables.Add("GLTTBAL0")
-                With .Columns
-                    .Add("ACCT_TYPE", GetType(System.String))
-                    .Add("ACCT_TYPE_DESC", GetType(System.String))
-                    .Add("ACCT_BEG_BAL", GetType(System.Decimal))
-                    .Add("ACCT_DR", GetType(System.Decimal))
-                    .Add("ACCT_CR", GetType(System.Decimal))
-                    .Add("ACCT_END_BAL", GetType(System.Decimal))
-                    .Add("ACCT_TRANS", GetType(System.Int32))
-                    .Add("ACCT_TYPE_SEQ", GetType(System.Int32))
-                    For P As Integer = 1 To 12
-                        .Add("P" & Format(P, "00"), GetType(System.Decimal))
-                    Next
-                End With
-                .PrimaryKey = New DataColumn() { .Columns("ACCT_TYPE")}
-            End With
-
-            Dim sqlP12 As String = ""
-            For P As Integer = 1 To 12
-                sqlP12 &= ", GLTACCT3.ACCT_ACT_P" & Format(P, "00") & " " & "P" & Format(P, "00") & vbCrLf
-            Next
-
-            ASCMAIN1.sql = "Select GLTACCT3.ACCT_CODE" & vbCrLf _
-                & ", GLTACCT3.SEG2_CODE, GLTACCT3.SEG3_CODE, GLTACCT3.SEG4_CODE" & vbCrLf _
-                & ", GLTACCT1.ACCT_TYPE, GLTACCT1.ACCT_DESC" & vbCrLf _
-                & ", GLTACCT3.ACCT_BEG_BAL" & vbCrLf _
-                & ", ACCT_BEG_BAL ACCT_END_BAL " & vbCrLf _
-                & sqlP12 _
-                & " from GLTACCT3,GLTACCT1 " & vbCrLf _
-                & " where GLTACCT1.ACCT_CODE (+)= GLTACCT3.ACCT_CODE "
-            Create_TDA(.Tables.Add, "GLTTBAL1", "**", 0, False, "", 4)
-            With .Tables("GLTTBAL1").Columns
-                .Add("ACCT_DR", GetType(System.Decimal))
-                .Add("ACCT_CR", GetType(System.Decimal))
-                .Add("ACCT_TRANS", GetType(System.Int32))
-                'For P As Integer = 1 To 12
-                '    .Add("P" & Format(P, "00"), GetType(System.Decimal))
-                'Next
-            End With
-
-            Create_Relation("GLTTBAL0", "GLTTBAL1", "ACCT_TYPE")
-
-            With .Tables("GLTTBAL0")
-                .Columns("ACCT_BEG_BAL").Expression = "SUM(Child(GLTTBAL0_GLTTBAL1).ACCT_BEG_BAL)"
-                .Columns("ACCT_DR").Expression = "SUM(Child(GLTTBAL0_GLTTBAL1).ACCT_DR)"
-                .Columns("ACCT_CR").Expression = "SUM(Child(GLTTBAL0_GLTTBAL1).ACCT_CR)"
-                .Columns("ACCT_END_BAL").Expression = "SUM(Child(GLTTBAL0_GLTTBAL1).ACCT_END_BAL)"
-                .Columns("ACCT_TRANS").Expression = "SUM(Child(GLTTBAL0_GLTTBAL1).ACCT_TRANS)"
-                For P As Integer = 1 To 12
-                    .Columns("P" & Format(P, "00")).Expression = "SUM(Child(GLTTBAL0_GLTTBAL1).P" & Format(P, "00") & ")"
+            SQL.Length = 0
+            SQL.AppendLine("SELECT")
+            SQL.AppendLine("G1.ACCT_CODE,")
+            SQL.AppendLine("G3.SEG2_CODE,")
+            SQL.AppendLine("G3.SEG3_CODE,")
+            SQL.AppendLine("G1.ACCT_TYPE,")
+            SQL.AppendLine("G1.ACCT_DESC,")
+            SQL.AppendLine("0.00 ACCT_BEG_BAL")
+            SQL.AppendLine("FROM GLTACCT1 G1, GLTACCT3 G3")
+            SQL.AppendLine("WHERE G1.ACCT_CODE = G3.ACCT_CODE")
+            ASCMAIN1.sql = SQL.ToString
+            Create_TDA(.Tables.Add, "GLTTBALX", "**", 0, False)
+            With .Tables("GLTTBALX").Columns
+                For i As Int64 = 1 To 31
+                    Dim DAY_COL As String = $"DAY{Format(i, "00")}"
+                    .Add(DAY_COL, GetType(System.Double))
                 Next
             End With
 
+            SQL.Length = 0
+            SQL.AppendLine("SELECT *")
+            SQL.AppendLine(" from GLTTBALD")
+            ASCMAIN1.sql = SQL.ToString
+            Create_TDA(.Tables.Add, "GLTTBALD", "**", 0, True)
 
-            ASCMAIN1.sql = "Select Distinct GLTJRNL1.JOURNAL_TYPE, GLTTYPE1.JOURNAL_TYPE_DESC" & vbCrLf _
-                & " from GLTDETL1,GLTJRNL1,GLTTYPE1" & vbCrLf _
-                & " where GLTTYPE1.JOURNAL_TYPE = GLTJRNL1.JOURNAL_TYPE" & vbCrLf _
-                & "   and GLTJRNL1.JOURNAL_NO = GLTDETL1.JOURNAL_NO" & vbCrLf _
-                & "   and GLTDETL1.OPS_YYYYPP >= :PARM1 and GLTDETL1.OPS_YYYYPP <= :PARM2" & vbCrLf _
-                & " group by GLTJRNL1.JOURNAL_TYPE, GLTTYPE1.JOURNAL_TYPE_DESC"
-            Create_TDA(.Tables.Add, "GLTSUMJ1", "**", 0, False, "VV", 1)
-            With .Tables("GLTSUMJ1")
-                With .Columns
-                    .Add("ACCT_DR", GetType(System.Decimal))
-                    .Add("ACCT_CR", GetType(System.Decimal))
-                    .Add("ACCT_TRANS", GetType(System.Int32))
-                    For P As Integer = 1 To 12
-                        .Add("P" & Format(P, "00"), GetType(System.Decimal))
-                    Next
-                End With
-                .PrimaryKey = New DataColumn() { .Columns("JOURNAL_TYPE")}
-            End With
-
-
-            Dim sqlP12j As String = ""
-            Dim sqlP12j0 As String = ", Sum(DECODE(SUBSTR(GLTDETL1.OPS_YYYYPP,5,2),'??',GLTDETL1.DETL_POSTING_AMT,0)) P??"
-            For P As Integer = 1 To 12
-                sqlP12j &= Replace(sqlP12j0, "??", Format(P, "00")) & vbCrLf
-            Next
-
-            ASCMAIN1.sql = "Select GLTJRNL1.JOURNAL_TYPE, GLTDETL1.ACCT_CODE" & vbCrLf _
-                & ", GLTDETL1.SEG2_CODE, GLTDETL1.SEG3_CODE, GLTDETL1.SEG4_CODE" & vbCrLf _
-                & ", GLTACCT1.ACCT_DESC" & vbCrLf _
-                & ", Sum (DECODE(GLTDETL1.OPS_YYYYPP,'000000',CASE WHEN DETL_POSTING_AMT > 0 THEN DETL_POSTING_AMT ELSE 0 END,0)) ACCT_DR" & vbCrLf _
-                & ", Sum (DECODE(GLTDETL1.OPS_YYYYPP,'000000',CASE WHEN DETL_POSTING_AMT < 0 THEN -1 * DETL_POSTING_AMT ELSE 0 END,0)) ACCT_CR" & vbCrLf _
-                & ", Sum (DECODE(GLTDETL1.OPS_YYYYPP,'000000',1,0)) ACCT_TRANS" & vbCrLf _
-                & sqlP12j _
-                & " from GLTDETL1,GLTJRNL1,GLTACCT1 " & vbCrLf _
-                & " where GLTACCT1.ACCT_CODE = GLTDETL1.ACCT_CODE " & vbCrLf _
-                & "   and GLTJRNL1.JOURNAL_NO = GLTDETL1.JOURNAL_NO" & vbCrLf _
-                & "   and GLTDETL1.OPS_YYYYPP >= '000001' and GLTDETL1.OPS_YYYYPP <= '000000'" & vbCrLf _
-                & " group by GLTJRNL1.JOURNAL_TYPE, GLTDETL1.ACCT_CODE" & vbCrLf _
-                & ", GLTDETL1.SEG2_CODE, GLTDETL1.SEG3_CODE, GLTDETL1.SEG4_CODE" & vbCrLf _
-                & ", GLTACCT1.ACCT_DESC"
-            sqlGLTSUMJ2 = ASCMAIN1.sql
-            Create_TDA(.Tables.Add, "GLTSUMJ2", "**", 0, False, "VVVVV", 5)
-
-            With .Tables("GLTSUMJ2")
-                .Columns("ACCT_TRANS").DataType = GetType(System.Int32)
-            End With
-
-            Create_Relation("GLTSUMJ1", "GLTSUMJ2", "JOURNAL_TYPE")
-
-            With .Tables("GLTSUMJ1")
-                .Columns("ACCT_DR").Expression = "SUM(Child(GLTSUMJ1_GLTSUMJ2).ACCT_DR)"
-                .Columns("ACCT_CR").Expression = "SUM(Child(GLTSUMJ1_GLTSUMJ2).ACCT_CR)"
-                .Columns("ACCT_TRANS").Expression = "SUM(Child(GLTSUMJ1_GLTSUMJ2).ACCT_TRANS)"
-                For P As Integer = 1 To 12
-                    .Columns("P" & Format(P, "00")).Expression = "SUM(Child(GLTSUMJ1_GLTSUMJ2).P" & Format(P, "00") & ")"
-                Next
-            End With
+            SQL.Length = 0
+            SQL.AppendLine("SELECT")
+            SQL.AppendLine("OPS_YYYYPP,")
+            SQL.AppendLine("ACCT_CODE,")
+            SQL.AppendLine("SEG2_CODE,")
+            SQL.AppendLine("SEG3_CODE,")
+            SQL.AppendLine("DETL_CTL_DATE,")
+            SQL.AppendLine("DETL_POSTING_AMT")
+            SQL.AppendLine(" from GLTDETL1")
+            SQL.AppendLine("WHERE OPS_YYYYPP = :PARM1")
+            SQL.AppendLine("AND ACCT_CODE = :PARM2")
+            SQL.AppendLine("AND SEG2_CODE = :PARM3")
+            SQL.AppendLine("AND SEG3_CODE = :PARM4")
+            ASCMAIN1.sql = SQL.ToString
+            Create_TDA(.Tables.Add, "GLTDETL1", "**", 0, False, "VVVV")
 
         End With
 
-        grdGLTTBAL1.DataSource = dst.Tables("GLTTBAL0")
-        grdGLTSUMJ1.DataSource = dst.Tables("GLTSUMJ1")
+        grdGLTTBALX.DataSource = dst.Tables("GLTTBALX")
+        grdGLFTBALD.DataSource = dst.Tables("GLTTBALD")
 
-        Add_ACCT_TYPEs("GLTTBAL0", True)
+        Fill_Records("GLTTBALD")
 
-        Set_SEGS(grdGLTTBAL1, "GLTTBAL0_GLTTBAL1")
-        Set_SEGS(grdGLTSUMJ1, "GLTSUMJ1_GLTSUMJ2")
+        'Create_Summary(grdGLTTBALX, New String() {"ACCT_BEG_BAL", "ACCT_DR", "ACCT_CR", "ACCT_END_BAL", "ACCT_TRANS", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12"})
 
-        grdGLTSUMJ1.DisplayLayout.Bands("GLTSUMJ1_GLTSUMJ2").SummaryFooterCaption = "Totals for Journal Type: [JOURNAL_TYPE] [JOURNAL_TYPE_DESC]"
-
-        Create_Summary(grdGLTTBAL1, New String() {"ACCT_BEG_BAL", "ACCT_DR", "ACCT_CR", "ACCT_END_BAL", "ACCT_TRANS", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12"})
-        Create_Summary(grdGLTTBAL1, New String() {"ACCT_BEG_BAL", "ACCT_DR", "ACCT_CR", "ACCT_END_BAL", "ACCT_TRANS", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12"}, , "GLTTBAL0_GLTTBAL1")
-        Create_Summary(grdGLTTBAL1, "ACCT_CODE", "Count", "GLTTBAL0_GLTTBAL1")
-
-        Create_Summary(grdGLTSUMJ1, New String() {"ACCT_DR", "ACCT_CR", "ACCT_TRANS", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12"})
-        Create_Summary(grdGLTSUMJ1, New String() {"ACCT_DR", "ACCT_CR", "ACCT_TRANS", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09", "P10", "P11", "P12"}, , "GLTSUMJ1_GLTSUMJ2")
-        Create_Summary(grdGLTSUMJ1, "ACCT_CODE", "Count", "GLTSUMJ1_GLTSUMJ2")
-
-        With grdGLTTBAL1.DisplayLayout
-            For B As Integer = 0 To 1
-                With .Bands(B)
-                    If B = 0 Then
-                        For Each COLUMN_NAME As String In New String() _
-                            {"ACCT_TYPE", "ACCT_TYPE_DESC"}
-                            With .Columns(COLUMN_NAME)
-                                .Header.Appearance.BackColor = Drawing.Color.White
-                                .Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                                .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                            End With
-                        Next
-                    Else
-                        For Each COLUMN_NAME As String In New String() _
-                            {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", "ACCT_DESC"}
-                            With .Columns(COLUMN_NAME)
-                                .Width = IIf(COLUMN_NAME = "ACCT_DESC", 250, 60)
-                                .Header.Appearance.BackColor = Drawing.Color.White
-                                .Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                                .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                            End With
-                        Next
-                    End If
-                    For Each COLUMN_NAME As String In New String() _
-                        {"ACCT_BEG_BAL", "ACCT_DR", "ACCT_CR", "ACCT_END_BAL", "ACCT_TRANS"}
-                        With .Columns(COLUMN_NAME)
-                            .Width = IIf(COLUMN_NAME = "ACCT_TRANS", 60, 110)
-                            .Header.Appearance.BackColor = Drawing.Color.White
-                            .Header.Appearance.BackColor2 = Drawing.Color.LightGreen
-                            .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                        End With
-                    Next
-                    For P As Integer = 1 To 12
-                        With .Columns("P" & Format(P, "00"))
-                            .Width = 110
-                            .Header.Appearance.BackColor = Drawing.Color.White
-                            .Header.Appearance.BackColor2 = Drawing.Color.LightBlue
-                            .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                        End With
-                    Next
-                End With
-            Next
-        End With
-
-        With grdGLTSUMJ1.DisplayLayout
-            For B As Integer = 0 To 1
-                With .Bands(B)
-                    If B = 0 Then
-                        For Each COLUMN_NAME As String In New String() _
-                            {"JOURNAL_TYPE", "JOURNAL_TYPE_DESC"}
-                            With .Columns(COLUMN_NAME)
-                                .Header.Appearance.BackColor = Drawing.Color.White
-                                .Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                                .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                            End With
-                        Next
-                    Else
-                        For Each COLUMN_NAME As String In New String() _
-                            {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", "ACCT_DESC"}
-                            With .Columns(COLUMN_NAME)
-                                .Width = IIf(COLUMN_NAME = "ACCT_DESC", 250, 60)
-                                .Header.Appearance.BackColor = Drawing.Color.White
-                                .Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                                .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                            End With
-                        Next
-                    End If
-                    For Each COLUMN_NAME As String In New String() _
-                        {"ACCT_DR", "ACCT_CR", "ACCT_TRANS"}
-                        With .Columns(COLUMN_NAME)
-                            .Width = IIf(COLUMN_NAME = "ACCT_TRANS", 60, 110)
-                            .Header.Appearance.BackColor = Drawing.Color.White
-                            .Header.Appearance.BackColor2 = Drawing.Color.LightGreen
-                            .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                        End With
-                    Next
-                    For P As Integer = 1 To 12
-                        With .Columns("P" & Format(P, "00"))
-                            .Width = 110
-                            .Header.Appearance.BackColor = Drawing.Color.White
-                            .Header.Appearance.BackColor2 = Drawing.Color.LightBlue
-                            .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-                        End With
-                    Next
-                End With
-            Next
-        End With
-
-        Breakout_By()
+        'With grdGLTTBALX.DisplayLayout
+        'For Each COLUMN_NAME As String In New String() _
+        '    {"ACCT_BEG_BAL", "ACCT_DR", "ACCT_CR", "ACCT_END_BAL", "ACCT_TRANS"}
+        '    With .Columns(COLUMN_NAME)
+        '        .Width = IIf(COLUMN_NAME = "ACCT_TRANS", 60, 110)
+        '        .Header.Appearance.BackColor = Drawing.Color.White
+        '        .Header.Appearance.BackColor2 = Drawing.Color.LightGreen
+        '        .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+        '    End With
+        'Next
+        'For P As Integer = 1 To 12
+        '    With .Columns("P" & Format(P, "00"))
+        '        .Width = 110
+        '        .Header.Appearance.BackColor = Drawing.Color.White
+        '        .Header.Appearance.BackColor2 = Drawing.Color.LightBlue
+        '        .Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+        '    End With
+        'Next
+        'End With
 
     End Sub
-
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
         EMsg = ""
@@ -251,41 +107,29 @@ Public Class GLFTBALD
         Call Proceed(eItemKey)
 
     End Sub
-
     Sub Proceed(ByVal eItemKey As String)
 
         Select Case eItemKey
 
-            Case "View"
+            Case "Refresh"
                 EntryMode = "E"
                 Call Load_Record()
                 Call Mode_Settings(True)
 
             Case "Done"
+                Call Update_Record()
                 Call Mode_Settings(False)
-
-            Case "Report"
-                Call Print_Report_Begin()
-                CR_params.Add("SEG2_DESC", ROWs("GLTPARM1").Item("GL_PARM_SEG2_DESC") & "")
-                CR_params.Add("SEG3_DESC", ROWs("GLTPARM1").Item("GL_PARM_SEG3_DESC") & "")
-                CR_params.Add("SEG4_DESC", ROWs("GLTPARM1").Item("GL_PARM_SEG4_DESC") & "")
-                CR_params.Add("CHKSEG2", "1")
-                CR_params.Add("CHKSEG3", "1")
-                CR_params.Add("CHKSEG4", "1")
-                CR_params.Add("GYPLEGEND", "???")
-                Generate_Report("GLRTBAL1")
-                Call Print_Report_End()
+                Me.Close()
         End Select
 
     End Sub
-
     Overrides Sub Mode_Settings(ByVal tf As Boolean, Optional ByVal MODE_description As String = "")
 
         Call Set_ScreenMode_Base(tf)
 
         If UltraExplorerBar1.Groups.Count > 0 Then
             With UltraExplorerBar1
-                .Groups("Screen Control").Items("View").Settings.Enabled = not_iScreenMode
+                .Groups("Screen Control").Items("Refresh").Settings.Enabled = not_iScreenMode
                 .Groups("Screen Control").Items("Done").Settings.Enabled = iScreenMode
             End With
         End If
@@ -300,23 +144,28 @@ Public Class GLFTBALD
         End If
 
     End Sub
-
     Sub Clear_Record()
 
         EnforceConstraints(False)
-        For Each TABLE_NAME As String In New String() {"GLTTBAL1", "GLTSUMJ1", "GLTSUMJ2"}
+        For Each TABLE_NAME As String In New String() {"GLTTBALX"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
 
-        Absx1.txtFor("OPS_YYYYPP").Text = ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP")
-    End Sub
+        'Absx1.txtFor("OPS_YYYYPP").Text = ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP")
 
+        Dim CYP As String = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1)
+        ASCMAIN1.Period_Calc(CYP, 1)
+        Absx1.txtFor("OPS_YYYYPP").Text = ASCMAIN1.Period_Calc(CYP, 1)
+    End Sub
     Sub Load_Record()
 
-        ASCMAIN1.Progress("Now Loading Account Summary Data")
+        CalcPeriods()
 
-        grdGLTTBAL1.DisplayLayout.Override.SummaryDisplayArea = UltraWinGrid.SummaryDisplayAreas.BottomFixed
+        ASCMAIN1.Progress("Now Loading Summary Data")
+
+        setDAY_COLS()
+        'grdGLTTBALX.DisplayLayout.Override.SummaryDisplayArea = UltraWinGrid.SummaryDisplayAreas.BottomFixed
 
         Save_Header_Fields(UltraGroupBox1)
 
@@ -325,139 +174,106 @@ Public Class GLFTBALD
         Dim ACCT_YEAR As String = Mid$(HFs("OPS_YYYYPP"), 1, 4)
         Dim P As Integer = Val(Mid$(HFs("OPS_YYYYPP"), 5, 2))
 
-        Dim sql_BEG_BAL As String = ""
-        Dim sql_END_BAL As String = ""
-        For i As Integer = 1 To P
-            Dim z As String = " + NVL(GLTACCT3.ACCT_ACT_P" & Format(i, "00") & ",0)"
-            If i < P Then
-                sql_BEG_BAL = sql_BEG_BAL & z
-            End If
-            sql_END_BAL = sql_END_BAL & z
+        dst.Tables.Item("GLTTBALX").Clear()
+        For Each rowGLTTBALD As DataRow In dst.Tables("GLTTBALD").Select()
+            Dim ACCT_CODE As String = rowGLTTBALD.Item("ACCT_CODE").ToString & String.Empty
+            Dim SEG2_CODE As String = rowGLTTBALD.Item("SEG2_CODE").ToString & String.Empty
+            Dim SEG3_CODE As String = rowGLTTBALD.Item("SEG3_CODE").ToString & String.Empty
+            SQL.Length = 0
+            SQL.AppendLine("SELECT")
+            SQL.AppendLine("G1.ACCT_CODE,")
+            SQL.AppendLine("G3.SEG2_CODE,")
+            SQL.AppendLine("G3.SEG3_CODE,")
+            SQL.AppendLine("G1.ACCT_TYPE,")
+            SQL.AppendLine("G1.ACCT_DESC,")
+            SQL.AppendLine("0.00 ACCT_BEG_BAL,")
+            For i As Int64 = 1 To 31
+                Dim DAY_COL As String = $"DAY{Format(i, "00")}"
+                If i = 31 Then
+                    SQL.AppendLine($"0.00 {DAY_COL}")
+                Else
+                    SQL.AppendLine($"0.00 {DAY_COL},")
+                End If
+            Next
+            SQL.AppendLine("FROM GLTACCT1 G1, GLTACCT3 G3")
+            SQL.AppendLine("WHERE G1.ACCT_CODE = G3.ACCT_CODE")
+            SQL.AppendLine($"AND G1.ACCT_CODE = '{ACCT_CODE}'")
+            SQL.AppendLine($"AND G3.SEG2_CODE = '{SEG2_CODE}'")
+            SQL.AppendLine($"AND G3.SEG3_CODE = '{SEG3_CODE}'")
+            SQL.AppendLine($"AND G3.ACCT_YEAR = '{ACCT_YEAR}'")
+            Fill_Records("GLTTBALX",, False, SQL.ToString)
         Next
 
-        Dim GLTACCT3 As String = GL_Prep(ACCT_YEAR, ACCT_YEAR)
-
-        Dim sql As String = ""
-        sql = "Select ACCT_CODE, SEG2_CODE, SEG3_CODE, SEG4_CODE " _
-            & ", Sum (CASE WHEN DETL_POSTING_AMT > 0 THEN DETL_POSTING_AMT ELSE 0 END) ACCT_DR" _
-            & ", Sum (CASE WHEN DETL_POSTING_AMT < 0 THEN -1 * DETL_POSTING_AMT ELSE 0 END) ACCT_CR" _
-            & ", Count (*) ACCT_TRANS" _
-            & " from GLTDETL1 where OPS_YYYYPP = '" & HFs("OPS_YYYYPP") & "'" _
-            & " group by ACCT_CODE, SEG2_CODE, SEG3_CODE, SEG4_CODE"
-        Dim GLTACCT3x As String = ASCMAIN1.Temp_Table(sql)
-        ASCDATA1.ExecuteSQL("Alter Table " & GLTACCT3x & " Add Primary Key (ACCT_CODE, SEG2_CODE, SEG3_CODE, SEG4_CODE)")
-        ASCMAIN1.AnalyzeTable(GLTACCT3x)
-
-        Dim sqlP12 As String = ""
-        For PX As Integer = 1 To 12
-            sqlP12 &= ", sum (GLTACCT3.ACCT_ACT_P" & Format(PX, "00") & ") " & "P" & Format(PX, "00") & vbCrLf
+        For Each rowGLTTBALX As DataRow In dst.Tables("GLTTBALX").Select()
+            calcBegBal(rowGLTTBALX)
+            calcDays(rowGLTTBALX)
+            hideDays()
         Next
-
-        sql = "Select GLTACCT3.ACCT_CODE" & vbCrLf _
-            & ", " & IIf(chkSEG2_CODE.Checked, "GLTACCT3.SEG2_CODE", "'000'") & " SEG2_CODE" & vbCrLf _
-            & ", " & IIf(chkSEG3_CODE.Checked, "GLTACCT3.SEG3_CODE", "'000'") & " SEG3_CODE" & vbCrLf _
-            & ", GLTACCT1.ACCT_TYPE, GLTACCT1.ACCT_DESC" _
-            & ", Sum (GLTACCT3.ACCT_BEG_BAL" & sql_BEG_BAL & ") ACCT_BEG_BAL" & vbCrLf _
-            & ", Sum (GLTACCT3.ACCT_BEG_BAL" & sql_END_BAL & ") ACCT_END_BAL" & vbCrLf _
-            & sqlP12 _
-            & ", Sum (GLTACCT3X.ACCT_DR) ACCT_DR" & vbCrLf _
-            & ", Sum (GLTACCT3X.ACCT_CR) ACCT_CR" & vbCrLf _
-            & ", Sum (GLTACCT3X.ACCT_TRANS) ACCT_TRANS" & vbCrLf _
-            & " from " & GLTACCT3 & " GLTACCT3,GLTACCT1," & GLTACCT3x & " GLTACCT3X" & vbCrLf _
-            & " where GLTACCT1.ACCT_CODE (+)= GLTACCT3.ACCT_CODE " & vbCrLf _
-            & "   and GLTACCT3.ACCT_YEAR = '" & ACCT_YEAR & "'" & vbCrLf _
-            & " and GLTACCT3.ACCT_CODE = GLTACCT3X.ACCT_CODE (+)" & vbCrLf _
-            & " and GLTACCT3.SEG2_CODE = GLTACCT3X.SEG2_CODE (+)" & vbCrLf _
-            & " and GLTACCT3.SEG3_CODE = GLTACCT3X.SEG3_CODE (+)" & vbCrLf _
-            & " and GLTACCT3.SEG4_CODE = GLTACCT3X.SEG4_CODE (+)" & vbCrLf _
-            & " group by GLTACCT3.ACCT_CODE" & vbCrLf _
-            & IIf(chkSEG2_CODE.Checked, ", GLTACCT3.SEG2_CODE", "") & vbCrLf _
-            & IIf(chkSEG3_CODE.Checked, ", GLTACCT3.SEG3_CODE", "") & vbCrLf _
-            & ", GLTACCT1.ACCT_TYPE, GLTACCT1.ACCT_DESC"
-
-        GLTTBAL1 = ASCMAIN1.Temp_Table(sql)
-
-
-        Set_SelectCommand("GLTTBAL1", sql)
-
-        Fill_Records("GLTTBAL1")
-
-        Fill_Records("GLTSUMJ1", New String() {ACCT_YEAR & "01", HFs("OPS_YYYYPP")})
-
-        ASCMAIN1.sql = Replace(Replace(sqlGLTSUMJ2, "000000", HFs("OPS_YYYYPP")), "000001", ACCT_YEAR & "01")
-        If Not chkSEG2_CODE.Checked Then ASCMAIN1.sql = Replace(ASCMAIN1.sql, ", GLTDETL1.SEG2_CODE", ", '000' SEG2_CODE", , 1)
-        If Not chkSEG3_CODE.Checked Then ASCMAIN1.sql = Replace(ASCMAIN1.sql, ", GLTDETL1.SEG3_CODE", ", '000' SEG3_CODE", , 1)
-        If Not chkSEG2_CODE.Checked Then ASCMAIN1.sql = Replace(ASCMAIN1.sql, ", GLTDETL1.SEG2_CODE", "", , 1)
-        If Not chkSEG3_CODE.Checked Then ASCMAIN1.sql = Replace(ASCMAIN1.sql, ", GLTDETL1.SEG3_CODE", "", , 1)
-
-        grdGLTSUMJ1.DisplayLayout.Bands(1).Columns("SEG2_CODE").Hidden = Not chkSEG2_CODE.Checked
-        grdGLTSUMJ1.DisplayLayout.Bands(1).Columns("SEG3_CODE").Hidden = Not chkSEG3_CODE.Checked
-
-        Fill_Records("GLTSUMJ2", "", True, ASCMAIN1.sql)
-
-
-        grdGLTTBAL1.DisplayLayout.Bands(1).Columns("SEG2_CODE").Hidden = Not chkSEG2_CODE.Checked
-        grdGLTTBAL1.DisplayLayout.Bands(1).Columns("SEG3_CODE").Hidden = Not chkSEG3_CODE.Checked
-
 
         EnforceConstraints(True)
 
-        Sort_grdColumns(grdGLTTBAL1, "ACCT_TYPE_SEQ", False, 0)
-        Sort_grdColumns(grdGLTTBAL1, "ACCT_CODE,SEG2_CODE,SEG3_CODE,SEG4_CODE", False, 1)
-        Sort_grdColumns(grdGLTSUMJ1, "JOURNAL_TYPE", False, 0)
-        Sort_grdColumns(grdGLTSUMJ1, "ACCT_CODE,SEG2_CODE,SEG3_CODE,SEG4_CODE", False, 1)
+        With grdGLTTBALX.DisplayLayout.Bands(0)
+            For i As Integer = 1 To 31
+                Dim DAY_COL As String = $"DAY{Format(i, "00")}"
+                .Columns(DAY_COL).Format = "###,###,###,##0"
+                Create_Summary(grdGLTTBALX, DAY_COL,,, "###,###,###,##0")
+            Next
+            .Columns("ACCT_BEG_BAL").Format = "###,###,###,##0"
+            Create_Summary(grdGLTTBALX, "ACCT_BEG_BAL",,, "###,###,###,##0")
+        End With
 
-        For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdGLTTBAL1, grdGLTSUMJ1}
-            With grd.DisplayLayout
-                For B As Integer = 0 To 1
-                    With .Bands(B)
-                        For PX As Integer = 1 To 12
-                            With .Columns("P" & Format(PX, "00"))
-                                Dim LEGEND As String = ASCMAIN1.Get_Legend(ACCT_YEAR & Format(PX, "00"))
-                                .Header.Caption = Mid(LEGEND, 10, 6)
-                                .Hidden = (PX > P)
-                            End With
-                        Next
-                    End With
-                Next
+        'Sort_grdColumns(grdGLTTBALX, "ACCT_TYPE_SEQ", False, 0)
+        'Sort_grdColumns(grdGLFTBALD, "JOURNAL_TYPE", False, 0)
 
-                Dim X As Integer = 1
-                If chkSEG2_CODE.Checked Then X += 1
-                If chkSEG3_CODE.Checked Then X += 1
+        'For Each grd As UltraWinGrid.UltraGrid In New UltraWinGrid.UltraGrid() {grdGLTTBALX, grdGLFTBALD}
+        '    With grd.DisplayLayout
+        '        For B As Integer = 0 To 1
+        '            With .Bands(B)
+        '                For PX As Integer = 1 To 12
+        '                    With .Columns("P" & Format(PX, "00"))
+        '                        Dim LEGEND As String = ASCMAIN1.Get_Legend(ACCT_YEAR & Format(PX, "00"))
+        '                        .Header.Caption = Mid(LEGEND, 10, 6)
+        '                        .Hidden = (PX > P)
+        '                    End With
+        '                Next
+        '            End With
+        '        Next
 
-                Dim COLUMN_NAME_cs As String = "ACCT_TYPE"
-                If grd.Name = "grdGLTSUMJ1" Then
-                    COLUMN_NAME_cs = "JOURNAL_TYPE"
-                End If
-                .Bands(0).Columns(COLUMN_NAME_cs).ColSpan = X
-                .Bands(0).Columns(COLUMN_NAME_cs).Width = X * 60 + 10
+        '        Dim X As Integer = 1
+        '        If chkSEG2_CODE.Checked Then X += 1
+        '        If chkSEG3_CODE.Checked Then X += 1
 
-                With .Bands(1)
-                    For Each COLUMN_NAME As String In New String() _
-                                {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE"}
-                        With .Columns(COLUMN_NAME)
-                            .Width = 60
-                        End With
-                    Next
-                End With
-            End With
-        Next
+        '        Dim COLUMN_NAME_cs As String = "ACCT_TYPE"
+        '        If grd.Name = "grdGLTSUMJ1" Then
+        '            COLUMN_NAME_cs = "JOURNAL_TYPE"
+        '        End If
+        '        .Bands(0).Columns(COLUMN_NAME_cs).ColSpan = X
+        '        .Bands(0).Columns(COLUMN_NAME_cs).Width = X * 60 + 10
+
+        '        With .Bands(1)
+        '            For Each COLUMN_NAME As String In New String() _
+        '                        {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE"}
+        '                With .Columns(COLUMN_NAME)
+        '                    .Width = 60
+        '                End With
+        '            Next
+        '        End With
+        '    End With
+        'Next
         ASCMAIN1.Progress("")
     End Sub
 
     Sub Update_Record()
         BeginTrans()
+        Call Update_Record_TDA("GLTTBALD")
         CommitTrans("Update Complete")
     End Sub
 #End Region
-
 #Region "Popup_Menus"
-
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdGLTTBAL1, "B", "Account Inquiry")
-        Load_Popup_Menu(grdGLTSUMJ1, "B", "Account Inquiry")
+        Load_Popup_Menu(grdGLTTBALX, "SSB", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdGLFTBALD, "SSBBB", "Show Filter", "Show GroupBox", "Add Account", "Remove Account")
     End Sub
-
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
         MyBase.tlb_BeforeToolDropdown(sender, e)
 
@@ -476,7 +292,7 @@ Public Class GLFTBALD
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
-        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+        If (grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow) And e.Tool.Key <> "grdGLFTBALD" Then
             e.Cancel = True
         Else
             'If grd.Selected.Rows.Count = 0 Then
@@ -485,14 +301,31 @@ Public Class GLFTBALD
 
             Select Case e.SourceControl.Name
 
-                Case "grdX"
+                Case "grdGLFTBALD"
+                    If (grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow) Then
+                        If tlb_pop.Tools.Exists("Show Filter") Then
+                            tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
+                            tlb_sbt.SharedProps.Visible = False
+                        End If
+                        If tlb_pop.Tools.Exists("Show GroupBox") Then
+                            tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
+                            tlb_sbt.SharedProps.Visible = False
+                        End If
+                        If tlb_pop.Tools.Exists("Remove Account") Then
+                            tlb_btn = DirectCast(tlb_pop.Tools("Remove Account"), UltraWinToolbars.ButtonTool)
+                            tlb_btn.SharedProps.Visible = False
+                        End If
+                        If tlb_pop.Tools.Exists("Add Account") Then
+                            tlb_btn = DirectCast(tlb_pop.Tools("Add Account"), UltraWinToolbars.ButtonTool)
+                            tlb_btn.SharedProps.Visible = True
+                        End If
 
+                    End If
 
             End Select
 
         End If
     End Sub
-
     Public Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
         MyBase.tlb_ToolClick(sender, e)
 
@@ -502,11 +335,9 @@ Public Class GLFTBALD
 
         Select Case e.Tool.Key
             Case ""
-
-
         End Select
 
-        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow Then
+        If (grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow OrElse Not grd.ActiveRow.IsDataRow) And e.Tool.Key <> "Add Account" Then
             Exit Sub
         End If
 
@@ -519,28 +350,190 @@ Public Class GLFTBALD
                         Context_Launch("Load", ACCT_CODE, e.Tool.Key, "GLFACTI1")
                     End If
                 End If
-
+            Case "Add Account"
+                Dim S As New Text.StringBuilder With {.Length = 0}
+                S.AppendLine("SELECT")
+                S.AppendLine("G1.ACCT_CODE,")
+                S.AppendLine("G1.ACCT_DESC,")
+                S.AppendLine("G3.SEG2_CODE,")
+                S.AppendLine("G3.SEG3_CODE")
+                S.AppendLine("FROM GLTACCT1 G1, GLTACCT3 G3")
+                S.AppendLine("WHERE G1.ACCT_CODE = G3.ACCT_CODE")
+                S.AppendLine("AND G1.ACCT_STATUS = 'A'")
+                S.AppendLine("AND G1.ACCT_TYPE IN ('A','L')")
+                S.AppendLine("AND G3.ACCT_YEAR = TO_CHAR(SYSDATE, 'YYYY')")
+                S.AppendLine("GROUP BY")
+                S.AppendLine("G1.ACCT_CODE,")
+                S.AppendLine("G1.ACCT_DESC,")
+                S.AppendLine("G3.SEG2_CODE,")
+                S.AppendLine("G3.SEG3_CODE")
+                S.AppendLine("ORDER BY")
+                S.AppendLine("G1.ACCT_CODE,")
+                S.AppendLine("G1.ACCT_DESC,")
+                S.AppendLine("G3.SEG2_CODE,")
+                S.AppendLine("G3.SEG3_CODE")
+                With ASCMAIN1.CodeSelector
+                    .SQL = S.ToString
+                    .MultipleSelections = False
+                    .PreviouslySelectedCodes0 = ""
+                    .Caption = "SELECT ACCOUNT"
+                    .TABLE_NAME = ""
+                    .VIEW_NAME = ""
+                    .VIEW_DESC = ""
+                    .COLUMN_NAME = ""
+                    .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                    '.Custom_sql_where = ""
+                    .tblASTVIEW1 = New DataTable
+                End With
+                Dim F As New ASFCODE1
+                F.ShowDialog()
+                If ASCMAIN1.CodeSelector.Selections <> 0 Then
+                    Dim ACCT_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("ACCT_CODE") & ""
+                    Dim ACCT_DESC As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("ACCT_DESC") & ""
+                    Dim SEG2_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("SEG2_CODE") & ""
+                    Dim SEG3_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("SEG3_CODE") & ""
+                    Dim fltr As String = $"ACCT_CODE = '{ACCT_CODE}' AND SEG2_CODE = '{SEG2_CODE}' AND SEG3_CODE = '{SEG3_CODE}'"
+                    If dst.Tables.Item("GLTTBALD").Select(fltr).Count > 0 Then
+                        MsgBox("Account Already Selected", vbCritical, "Huh?")
+                    Else
+                        Dim rowGLTTBALD As DataRow = dst.Tables.Item("GLTTBALD").NewRow
+                        rowGLTTBALD.Item("ACCT_CODE") = ACCT_CODE
+                        rowGLTTBALD.Item("ACCT_DESC") = ACCT_DESC
+                        rowGLTTBALD.Item("SEG2_CODE") = SEG2_CODE
+                        rowGLTTBALD.Item("SEG3_CODE") = SEG3_CODE
+                        rowGLTTBALD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+                        rowGLTTBALD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+                        rowGLTTBALD.Item("INIT_DATE") = DATETIME_STAMP
+                        rowGLTTBALD.Item("LAST_DATE") = DATETIME_STAMP
+                        dst.Tables.Item("GLTTBALD").Rows.Add(rowGLTTBALD)
+                        Call Update_Record_TDA("GLTTBALD")
+                    End If
+                End If
+            Case "Remove Account"
+                Dim ACCT_CODE As String = grd.ActiveRow.Cells("ACCT_CODE").Value
+                Dim SEG2_CODE As String = grd.ActiveRow.Cells("SEG2_CODE").Value
+                Dim SEG3_CODE As String = grd.ActiveRow.Cells("SEG3_CODE").Value
+                Dim fltr As String = $"ACCT_CODE = '{ACCT_CODE}' AND SEG2_CODE = '{SEG2_CODE}' AND SEG3_CODE = '{SEG3_CODE}'"
+                Dim rowGLTTBALD As DataRow = dst.Tables.Item("GLTTBALD").Select(fltr).FirstOrDefault
+                If Not IsNothing(rowGLTTBALD) Then
+                    rowGLTTBALD.Delete()
+                    Call Update_Record_TDA("GLTTBALD")
+                End If
         End Select
     End Sub
+#End Region
+#Region "Form Controls"
 
 #End Region
-
-    Private Sub chkSEG2_CODE_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkSEG2_CODE.CheckedChanged
-        RECYCLE_VIEW()
+#Region "Custom Methods"
+    Private Sub CalcPeriods()
+        CURR_PERIOD = ROWs("GLTPARM1").Item("GL_PARM_CURRENT_YYYYPP")
+        CURR_YEAR = CURR_PERIOD.Substring(0, 4)
+        CURR_MO = CURR_PERIOD.Substring(4, 2)
+        SEL_PERIOD = Absx1.txtFor("OPS_YYYYPP").Text
+        SEL_YEAR = SEL_PERIOD.Substring(0, 4)
+        SEL_MO = SEL_PERIOD.Substring(4, 2)
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT")
+        SQLS.AppendLine("PRD_END_DATE")
+        SQLS.AppendLine("FROM GLTPARM2")
+        SQLS.AppendLine($"WHERE OPS_YYYYPP = '{SEL_PERIOD}'")
+        ASCMAIN1.sql = SQLS.ToString()
+        SEL_PERIOD_END = CDate(ASCDATA1.GetDataValue)
+        SEL_PERIOD_BEG = DateSerial(SEL_PERIOD_END.Year, SEL_PERIOD_END.Month, 1)
     End Sub
-
-    Private Sub chkSEG3_CODE_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkSEG3_CODE.CheckedChanged
-        RECYCLE_VIEW()
+    Private Sub calcDays(ByRef rowGLTTBALX As DataRow)
+        Dim ACCT_CODE As String = rowGLTTBALX.Item("ACCT_CODE").ToString & String.Empty
+        Dim SEG2_CODE As String = rowGLTTBALX.Item("SEG2_CODE").ToString & String.Empty
+        Dim SEG3_CODE As String = rowGLTTBALX.Item("SEG3_CODE").ToString & String.Empty
+        Fill_Records("GLTDETL1", {SEL_PERIOD, ACCT_CODE, SEG2_CODE, SEG3_CODE})
+        For Each DAYP As KeyValuePair(Of String, Date) In DAY_COLS
+            Dim THIS_COL As String = DAYP.Key
+            Dim THIS_DAY As Date = DAYP.Value
+            Dim BEG_BAL As Double = Val(rowGLTTBALX.Item("ACCT_BEG_BAL").ToString & String.Empty)
+            Dim TOT_DAY As Double = BEG_BAL
+            Dim fltr As String = $"DETL_CTL_DATE <= '{Format(CDate(THIS_DAY), "MM/dd/yyy")}'"
+            For Each rowGLTDETL1 As DataRow In dst.Tables("GLTDETL1").Select(fltr, "DETL_CTL_DATE")
+                TOT_DAY = TOT_DAY + Val(rowGLTDETL1.Item("DETL_POSTING_AMT").ToString & String.Empty)
+            Next
+            rowGLTTBALX.Item(THIS_COL) = TOT_DAY
+        Next
     End Sub
-
-    Private Sub chkSEG4_CODE_CheckedChanged(sender As System.Object, e As System.EventArgs)
-        RECYCLE_VIEW()
+    Private Sub calcBegBal(ByRef rowGLTTBALX As DataRow)
+        Dim ACCT_CODE As String = rowGLTTBALX.Item("ACCT_CODE").ToString & String.Empty
+        Dim SEG2_CODE As String = rowGLTTBALX.Item("SEG2_CODE").ToString & String.Empty
+        Dim SEG3_CODE As String = rowGLTTBALX.Item("SEG3_CODE").ToString & String.Empty
+        Dim SQL As New System.Text.StringBuilder With {.Length = 0}
+        SQL.AppendLine("SELECT ACCT_BEG_BAL")
+        SQL.AppendLine("FROM GLTACCT3")
+        SQL.AppendLine($"WHERE ACCT_YEAR = '{CURR_YEAR}'")
+        SQL.AppendLine($"AND ACCT_CODE = '{ACCT_CODE}'")
+        SQL.AppendLine($"AND SEG2_CODE = '{SEG2_CODE}'")
+        SQL.AppendLine($"AND SEG3_CODE = '{SEG3_CODE}'")
+        ASCMAIN1.sql = SQL.ToString()
+        Dim ACCT_BEG_BAL As Double = Val(ASCDATA1.GetDataValue)
+        'rowGLTTBALX.Item("ACCT_BEG_BAL") = ACCT_BEG_BAL
+        Dim ACCT_ACTIVITY As Double = 0
+        For YR As Int64 = Val(CURR_YEAR) To Val(SEL_YEAR)
+            If YR <> Val(SEL_YEAR) Then
+                SQL.Length = 0
+                SQL.AppendLine("SELECT")
+                SQL.AppendLine("SUM(")
+                For i As Int64 = 1 To 13
+                    If i <> 13 Then
+                        SQL.AppendLine($"ACCT_ACT_P{Format(i, "00")} + ")
+                    Else
+                        SQL.AppendLine($"ACCT_ACT_P{Format(i, "00")}) As YR_ACT")
+                    End If
+                Next
+                SQL.AppendLine(" FROM GLTACCT3")
+                SQL.AppendLine($"WHERE ACCT_YEAR = '{YR.ToString}'")
+                SQL.AppendLine($"AND ACCT_CODE = '{ACCT_CODE}'")
+                SQL.AppendLine($"AND SEG2_CODE = '{SEG2_CODE}'")
+                SQL.AppendLine($"AND SEG3_CODE = '{SEG3_CODE}'")
+                ASCMAIN1.sql = SQL.ToString()
+                Dim ACCT_YR_ACT As Double = Val(ASCDATA1.GetDataValue)
+                ACCT_ACTIVITY = ACCT_ACTIVITY + ACCT_YR_ACT
+            Else
+                SQL.Length = 0
+                SQL.AppendLine("SELECT")
+                SQL.AppendLine("SUM(")
+                For i As Int64 = 1 To Val(SEL_MO) - 1
+                    If i <> Val(SEL_MO) - 1 Then
+                        SQL.AppendLine($"ACCT_ACT_P{Format(i, "00")} + ")
+                    Else
+                        SQL.AppendLine($"ACCT_ACT_P{Format(i, "00")}) As YR_ACT")
+                    End If
+                Next
+                SQL.AppendLine(" FROM GLTACCT3")
+                SQL.AppendLine($"WHERE ACCT_YEAR = '{YR.ToString}'")
+                SQL.AppendLine($"AND ACCT_CODE = '{ACCT_CODE}'")
+                SQL.AppendLine($"AND SEG2_CODE = '{SEG2_CODE}'")
+                SQL.AppendLine($"AND SEG3_CODE = '{SEG3_CODE}'")
+                ASCMAIN1.sql = SQL.ToString()
+                Dim ACCT_YR_ACT As Double = Val(ASCDATA1.GetDataValue)
+                ACCT_ACTIVITY = ACCT_ACTIVITY + ACCT_YR_ACT
+            End If
+        Next
+        rowGLTTBALX.Item("ACCT_BEG_BAL") = ACCT_BEG_BAL + ACCT_ACTIVITY
     End Sub
-
-    Sub RECYCLE_VIEW()
-        If Me.SELECTION_NO = 0 Then Exit Sub
-        If Not ScreenMode Then Exit Sub
-        Click_Command("Done")
-        Click_Command("View")
+    Private Sub hideDays()
+        For Each DAYP As KeyValuePair(Of String, Date) In DAY_COLS
+            If DAYP.Value > SEL_PERIOD_END Then
+                grdGLTTBALX.DisplayLayout.Bands(0).Columns.Item(DAYP.Key).Hidden = True
+            End If
+        Next
     End Sub
+    Private Sub setDAY_COLS()
+        For i As Int64 = 1 To 31
+            Dim DY As Date = DateSerial(SEL_PERIOD_BEG.Year, SEL_PERIOD_BEG.Month, i)
+            DAY_COLS.Add($"DAY{Format(i, "00")}", DY)
+        Next
+        For Each grdCol As UltraWinGrid.UltraGridColumn In grdGLTTBALX.DisplayLayout.Bands(0).Columns
+            If DAY_COLS.ContainsKey(grdCol.Key) Then
+                grdCol.Header.Caption = $"{Format(DAY_COLS(grdCol.Key), "MM/dd")}"
+            End If
+        Next
+    End Sub
+#End Region
 End Class
