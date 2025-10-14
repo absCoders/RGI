@@ -1019,7 +1019,8 @@ Public Class WBFDISC1
             .AppendLine("AND ST.COLOR_CODE = CL.COLOR_CODE")
             .AppendLine("AND SC.THEME_CODE = TH.THEME_CODE (+)")
             If chkInvMSOnly.Checked Then
-                .AppendLine("AND ST.WHSE_CODE = 'MS'")
+                '.AppendLine("AND ST.WHSE_CODE = 'MS'")
+                .AppendLine("AND ST.WHSE_CODE IN ('MS','US')")
             End If
             .AppendLine("GROUP BY ST.STYLE_CODE,")
             .AppendLine("ST.COLOR_CODE,")
