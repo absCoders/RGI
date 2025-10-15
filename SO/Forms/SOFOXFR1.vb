@@ -1241,9 +1241,11 @@ Public Class SOFOXFR1
                             If NET_SHORT_calc > US_OTS Then
                                 NET_SHORT_calc = US_OTS
                             End If
-                            grow.Cells("NET_SHORT").Value = NET_SHORT_calc
+                            If NET_SHORT_calc <> grow.Cells("NET_SHORT").Value Then
+                                grow.Cells("NET_SHORT").Value = NET_SHORT_calc
+                            End If
                         End If
-                        cc = NET_SHORT / CARTON_PACK_QTY
+                            cc = NET_SHORT / CARTON_PACK_QTY
                     Else
                         cc = NET_SHORT
                     End If
