@@ -127,6 +127,7 @@ Partial Class SOTTYPE1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 20)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
@@ -285,7 +286,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor3.ReadOnly = True
         Me.UltraTextEditor3.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor3.TabIndex = 53
-        Me.UltraTextEditor3.Visible = False
         '
         'UltraLabel3
         '
@@ -295,7 +295,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel3.Size = New System.Drawing.Size(85, 18)
         Me.UltraLabel3.TabIndex = 51
         Me.UltraLabel3.Text = "Terms Code"
-        Me.UltraLabel3.Visible = False
         '
         'UltraTextEditor4
         '
@@ -305,7 +304,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor4.Name = "UltraTextEditor4"
         Me.UltraTextEditor4.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor4.TabIndex = 52
-        Me.UltraTextEditor4.Visible = False
         '
         'UltraTextEditor7
         '
@@ -316,7 +314,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor7.ReadOnly = True
         Me.UltraTextEditor7.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor7.TabIndex = 56
-        Me.UltraTextEditor7.Visible = False
         '
         'UltraLabel5
         '
@@ -326,7 +323,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel5.Size = New System.Drawing.Size(92, 18)
         Me.UltraLabel5.TabIndex = 54
         Me.UltraLabel5.Text = "Reason Code"
-        Me.UltraLabel5.Visible = False
         '
         'UltraTextEditor8
         '
@@ -336,7 +332,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
         Me.UltraTextEditor8.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor8.TabIndex = 55
-        Me.UltraTextEditor8.Visible = False
         '
         'UltraTextEditor9
         '
@@ -347,7 +342,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor9.ReadOnly = True
         Me.UltraTextEditor9.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor9.TabIndex = 59
-        Me.UltraTextEditor9.Visible = False
         '
         'UltraLabel7
         '
@@ -357,7 +351,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel7.Size = New System.Drawing.Size(103, 18)
         Me.UltraLabel7.TabIndex = 57
         Me.UltraLabel7.Text = "Misc Chg Code"
-        Me.UltraLabel7.Visible = False
         '
         'UltraTextEditor10
         '
@@ -367,7 +360,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
         Me.UltraTextEditor10.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor10.TabIndex = 58
-        Me.UltraTextEditor10.Visible = False
         '
         'UltraTextEditor11
         '
@@ -378,7 +370,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor11.ReadOnly = True
         Me.UltraTextEditor11.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor11.TabIndex = 62
-        Me.UltraTextEditor11.Visible = False
         '
         'UltraLabel6
         '
@@ -388,7 +379,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel6.Size = New System.Drawing.Size(91, 18)
         Me.UltraLabel6.TabIndex = 60
         Me.UltraLabel6.Text = "Journal Type"
-        Me.UltraLabel6.Visible = False
         '
         'UltraTextEditor12
         '
@@ -398,7 +388,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor12.Name = "UltraTextEditor12"
         Me.UltraTextEditor12.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor12.TabIndex = 61
-        Me.UltraTextEditor12.Visible = False
         '
         'UltraTextEditor22
         '
@@ -409,7 +398,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor22.ReadOnly = True
         Me.UltraTextEditor22.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor22.TabIndex = 105
-        Me.UltraTextEditor22.Visible = False
         '
         'UltraLabel13
         '
@@ -419,7 +407,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel13.Size = New System.Drawing.Size(78, 18)
         Me.UltraLabel13.TabIndex = 103
         Me.UltraLabel13.Text = "Segment 2"
-        Me.UltraLabel13.Visible = False
         '
         'UltraTextEditor23
         '
@@ -430,7 +417,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor23.Name = "UltraTextEditor23"
         Me.UltraTextEditor23.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor23.TabIndex = 104
-        Me.UltraTextEditor23.Visible = False
         '
         'UltraTextEditor13
         '
@@ -441,7 +427,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor13.ReadOnly = True
         Me.UltraTextEditor13.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor13.TabIndex = 108
-        Me.UltraTextEditor13.Visible = False
         '
         'UltraLabel8
         '
@@ -451,7 +436,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel8.Size = New System.Drawing.Size(78, 18)
         Me.UltraLabel8.TabIndex = 106
         Me.UltraLabel8.Text = "Segment 3"
-        Me.UltraLabel8.Visible = False
         '
         'UltraTextEditor14
         '
@@ -462,7 +446,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor14.Name = "UltraTextEditor14"
         Me.UltraTextEditor14.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor14.TabIndex = 107
-        Me.UltraTextEditor14.Visible = False
         '
         'UltraTextEditor15
         '
@@ -473,7 +456,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor15.ReadOnly = True
         Me.UltraTextEditor15.Size = New System.Drawing.Size(289, 25)
         Me.UltraTextEditor15.TabIndex = 111
-        Me.UltraTextEditor15.Visible = False
         '
         'UltraLabel9
         '
@@ -483,7 +465,6 @@ Partial Class SOTTYPE1
         Me.UltraLabel9.Size = New System.Drawing.Size(78, 18)
         Me.UltraLabel9.TabIndex = 109
         Me.UltraLabel9.Text = "Segment 4"
-        Me.UltraLabel9.Visible = False
         '
         'UltraTextEditor16
         '
@@ -494,7 +475,6 @@ Partial Class SOTTYPE1
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
         Me.UltraTextEditor16.Size = New System.Drawing.Size(96, 25)
         Me.UltraTextEditor16.TabIndex = 110
-        Me.UltraTextEditor16.Visible = False
         '
         'SOTTYPE1
         '

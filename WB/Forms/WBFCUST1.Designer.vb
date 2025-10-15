@@ -35,6 +35,7 @@ Partial Class WBFCUST1
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance61 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance62 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance63 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -251,6 +252,13 @@ Partial Class WBFCUST1
         Me.lblExportCustomers = New System.Windows.Forms.Label()
         Me.btnImportCustomers = New System.Windows.Forms.Button()
         Me.lblImportCustomers = New System.Windows.Forms.Label()
+        Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.txtImgEmail = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.btnSendOrderImages = New System.Windows.Forms.Button()
+        Me.txtImgOrderNo = New System.Windows.Forms.TextBox()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.grdARTCUSTX = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -293,6 +301,8 @@ Partial Class WBFCUST1
         Me.GroupBox1.SuspendLayout()
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
         Me.Panel3.SuspendLayout()
+        Me.UltraExplorerBarContainerControl4.SuspendLayout()
+        Me.Panel6.SuspendLayout()
         Me.UltraTabPageControl4.SuspendLayout()
         CType(Me.grdARTCUSTX, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl5.SuspendLayout()
@@ -331,6 +341,7 @@ Partial Class WBFCUST1
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
         UltraExplorerBarItem6.Key = "Done"
         UltraExplorerBarItem6.Text = "Done"
         UltraExplorerBarItem3.Key = "Update"
@@ -361,7 +372,10 @@ Partial Class WBFCUST1
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "ShopSite"
         UltraExplorerBarGroup2.Visible = False
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup4, UltraExplorerBarGroup3, UltraExplorerBarGroup2})
+        UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl4
+        UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup5.Text = "Order Images"
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup4, UltraExplorerBarGroup3, UltraExplorerBarGroup2, UltraExplorerBarGroup5})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -789,6 +803,69 @@ Partial Class WBFCUST1
         Me.lblImportCustomers.Size = New System.Drawing.Size(119, 16)
         Me.lblImportCustomers.TabIndex = 0
         Me.lblImportCustomers.Text = "Imports Required"
+        '
+        'UltraExplorerBarContainerControl4
+        '
+        Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel6)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Visible = False
+        '
+        'Panel6
+        '
+        Me.Panel6.Controls.Add(Me.txtImgEmail)
+        Me.Panel6.Controls.Add(Me.Label3)
+        Me.Panel6.Controls.Add(Me.btnSendOrderImages)
+        Me.Panel6.Controls.Add(Me.txtImgOrderNo)
+        Me.Panel6.Controls.Add(Me.Label1)
+        Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel6.Location = New System.Drawing.Point(0, 0)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(172, 150)
+        Me.Panel6.TabIndex = 0
+        '
+        'txtImgEmail
+        '
+        Me.txtImgEmail.Location = New System.Drawing.Point(11, 78)
+        Me.txtImgEmail.Name = "txtImgEmail"
+        Me.txtImgEmail.Size = New System.Drawing.Size(153, 23)
+        Me.txtImgEmail.TabIndex = 4
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(8, 59)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(105, 16)
+        Me.Label3.TabIndex = 3
+        Me.Label3.Text = "E-mail Address"
+        '
+        'btnSendOrderImages
+        '
+        Me.btnSendOrderImages.Location = New System.Drawing.Point(11, 113)
+        Me.btnSendOrderImages.Name = "btnSendOrderImages"
+        Me.btnSendOrderImages.Size = New System.Drawing.Size(152, 23)
+        Me.btnSendOrderImages.TabIndex = 2
+        Me.btnSendOrderImages.Text = "Send Images"
+        Me.btnSendOrderImages.UseVisualStyleBackColor = True
+        '
+        'txtImgOrderNo
+        '
+        Me.txtImgOrderNo.Location = New System.Drawing.Point(10, 31)
+        Me.txtImgOrderNo.Name = "txtImgOrderNo"
+        Me.txtImgOrderNo.Size = New System.Drawing.Size(153, 23)
+        Me.txtImgOrderNo.TabIndex = 1
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(7, 12)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(98, 16)
+        Me.Label1.TabIndex = 0
+        Me.Label1.Text = "Order Number"
         '
         'UltraTabPageControl4
         '
@@ -1651,6 +1728,9 @@ Partial Class WBFCUST1
         Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel3.PerformLayout()
+        Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
+        Me.Panel6.ResumeLayout(False)
+        Me.Panel6.PerformLayout()
         Me.UltraTabPageControl4.ResumeLayout(False)
         CType(Me.grdARTCUSTX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl5.ResumeLayout(False)
@@ -1743,4 +1823,11 @@ Partial Class WBFCUST1
     Friend WithEvents grdARTCUSTX As UltraWinGrid.UltraGrid
     Friend WithEvents UltraTabPageControl5 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdWBTCUST2 As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraExplorerBarContainerControl4 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents Panel6 As Panel
+    Friend WithEvents txtImgEmail As TextBox
+    Friend WithEvents Label3 As Label
+    Friend WithEvents btnSendOrderImages As Button
+    Friend WithEvents txtImgOrderNo As TextBox
+    Friend WithEvents Label1 As Label
 End Class
