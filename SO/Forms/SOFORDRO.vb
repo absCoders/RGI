@@ -430,6 +430,9 @@ Public Class SOFORDRO
                     If Not CheckForSalesHold() Then
                         MsgBox("Selected Customer Is On Sales Hold.", MsgBoxStyle.Information, "Please Note")
                     End If
+                    If Not CheckForCreditHold() Then
+                        MsgBox("Selected Customer Is On Credit Hold.", MsgBoxStyle.Information, "Please Note")
+                    End If
                 End If
                 'If Absx1.txtFor("ORDR_CUST_PO").Text.Length = 0 Then
                 '    EMsg &= vbCr & "You Must First Specify a Customer PO"
@@ -2240,6 +2243,16 @@ Public Class SOFORDRO
         ASCMAIN1.sql = String.Format("Select MIN(CUST_SALES_HOLD) as CUST_SALES_HOLD from ARTCUST1 where CUST_CODE = '{0}'", Absx1.txtFor("CUST_CODE").Text)
         Dim CUST_SALES_HOLD As String = ASCDATA1.GetDataValue
         If CUST_SALES_HOLD <> "1" Then
+            RetVal = True
+        End If
+        Return RetVal
+    End Function
+
+    Private Function CheckForCreditHold() As Boolean
+        Dim RetVal As Boolean = False
+        ASCMAIN1.sql = String.Format("Select MIN(CUST_CREDIT_HOLD) as CUST_CREDIT_HOLD from ARTCUST1 where CUST_CODE = '{0}'", Absx1.txtFor("CUST_CODE").Text)
+        Dim CUST_CREDIT_HOLD As String = ASCDATA1.GetDataValue
+        If CUST_CREDIT_HOLD <> "1" Then
             RetVal = True
         End If
         Return RetVal
