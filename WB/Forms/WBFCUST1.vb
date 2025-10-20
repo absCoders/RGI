@@ -185,6 +185,12 @@ Public Class WBFCUST1
             SQLs.AppendLine("FROM WBTCUST1 WC1")
             ASCMAIN1.sql = SQLs.ToString()
             Create_TDA(.Tables.Add, "WBTCUSTE", "**", 0, False)
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT * FROM WBTIMGR1")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "WBTIMGR1", "**", 0, True, , 1)
+
         End With
 
         grdWBTCUST1.DataSource = dst.Tables("WBTCUST1")
@@ -3276,6 +3282,53 @@ Public Class WBFCUST1
 
     Private Sub grdWBTCUST1_AfterRowActivate(sender As Object, e As EventArgs) Handles grdWBTCUST1.AfterRowActivate
         Setup_WBTCUST2()
+    End Sub
+
+    Private Sub btnSendOrderImages_Click(sender As Object, e As EventArgs) Handles btnSendOrderImages.Click
+        Dim eMsg As New StringBuilder With {.Length = 0}
+        If txtImgEmail.Text.Length = 0 Or txtImgOrderNo.Text.Length = 0 Then
+            eMsg.AppendLine("Order Number Or Email Is Blank.")
+        End If
+        Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+        SQLS.AppendLine("SELECT COUNT(*) AS RECS")
+        SQLS.AppendLine("FROM SOTORDR1")
+        SQLS.AppendLine($"WHERE ORDR_NO = '{txtImgOrderNo.Text}'")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim RECSO As Int16 = Val(ASCDATA1.GetDataValue)
+        If RECSO = 0 Then
+            eMsg.AppendLine("Invalid Order Number.")
+        End If
+
+        SQLS.Length = 0
+        SQLS.AppendLine("SELECT COUNT(*) AS RECS")
+        SQLS.AppendLine("FROM WBTCUST1")
+        SQLS.AppendLine($"WHERE UPPER(EMAIL) = UPPER('{txtImgEmail.Text}')")
+        ASCMAIN1.sql = SQLS.ToString()
+        Dim RECSE As Int16 = Val(ASCDATA1.GetDataValue)
+        If RECSE = 0 Then
+            eMsg.AppendLine("Invalid Order Number.")
+        End If
+        If eMsg.Length > 0 Then
+            MsgBox(eMsg.ToString, vbCritical, "Please Fix And Try Again.")
+        Else
+            Dim TXT_FOLDER As String = "\\192.168.110.233\ShopsiteService\Data\Files\"
+            Dim FileText As String = $"{txtImgEmail.Text.ToUpper}|{txtImgOrderNo.Text}"
+            Dim FileName As String = $"{txtImgOrderNo.Text}.txt"
+            If System.IO.File.Exists($"{TXT_FOLDER}{FileName}") Then
+                System.IO.File.Delete($"{TXT_FOLDER}{FileName}")
+            End If
+            System.IO.File.WriteAllText($"{TXT_FOLDER}{FileName}", FileText)
+            '
+            'Dim newWBTIMGR1 As DataRow = dst.Tables("WBTIMGR1").NewRow
+            'newWBTIMGR1.Item("ORDR_NO") = txtImgOrderNo.Text
+            'newWBTIMGR1.Item("REQ_DATE") = Now()
+            'newWBTIMGR1.Item("REQ_EMAIL") = txtImgEmail.Text.ToUpper
+            'newWBTIMGR1.Item("REQ_STATUS") = "A"
+            'dst.Tables("WBTIMGR1").Rows.Add(newWBTIMGR1)
+            'Update_Record_TDA("WBTIMGR1")
+            MsgBox("File Sent.", vbOKOnly, "Complete")
+        End If
+
     End Sub
 #End Region
 

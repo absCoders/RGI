@@ -850,7 +850,7 @@ Public Class SOFATTR2
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdICTSTYL1, "SSSSBBBBSSSSBBSBSSSSS", "Show Filter", "Show GroupBox", "Show Pins", "Show All Status Qtys", "Select All", "De-Select All", "Select Selected", "De-Select Selected", "Calc Price Breaks", "Show Factory/Port", "Show Disc Date", "Show Extended Pack", "Print Ribbon Sheet", "Print Ribbon Combined", "Show All Attributes", "Style Masterfile", "Show E-Commerce", "Show Lighting", "Show PVC", "Show Purch Notes", "Show PO Info")
+        Load_Popup_Menu(grdICTSTYL1, "SSSSBBBBSSSSBBSBSSSSSB", "Show Filter", "Show GroupBox", "Show Pins", "Show All Status Qtys", "Select All", "De-Select All", "Select Selected", "De-Select Selected", "Calc Price Breaks", "Show Factory/Port", "Show Disc Date", "Show Extended Pack", "Print Ribbon Sheet", "Print Ribbon Combined", "Show All Attributes", "Style Masterfile", "Show E-Commerce", "Show Lighting", "Show PVC", "Show Purch Notes", "Show PO Info", "Dump Data To Excel")
         Load_Popup_Menu(grdICTATTR1_1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTATTR1_2, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
         Load_Popup_Menu(grdICTSIZE1, "BBBB", "Select All", "De-Select All", "Select Selected", "De-Select Selected")
@@ -877,8 +877,10 @@ Public Class SOFATTR2
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         'tlb_sbt = DirectCast(tlb.Tools("Show PO Info"), UltraWinToolbars.StateButtonTool)
-        tlb_sbt = DirectCast(tlb_pop.Tools("Show PO Info"), UltraWinToolbars.StateButtonTool)
-        tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "RGI"
+        If e.SourceControl.Name = "grdICTSTYL1" Then
+            tlb_sbt = DirectCast(tlb_pop.Tools("Show PO Info"), UltraWinToolbars.StateButtonTool)
+            tlb_sbt.SharedProps.Visible = ASCMAIN1.CLIENT = "RGI"
+        End If
 
         If grd.Name = "grd" Then
             Exit Sub
@@ -1520,6 +1522,74 @@ Public Class SOFATTR2
                     grdICTSTYL1.DisplayLayout.Bands(0).Columns("STYLE_PO_QTY_MIN").Hidden = True
                 End If
                 Me.Cursor = Cursors.Default
+            Case "Dump Data To Excel"
+                Dim oWB As SpreadsheetGear.IWorkbook
+                Dim oSheet As SpreadsheetGear.IWorksheet = Nothing
+
+                Dim xls_file_name As String = "Attributes.xlsx"
+                Dim fDialog As New FolderBrowserDialog
+                fDialog.Description = "Please Select The Folder To Save File"
+                fDialog.ShowDialog()
+                xls_file_name = $"{fDialog.SelectedPath}\{xls_file_name}"
+                If System.IO.File.Exists(xls_file_name) Then
+                    Dim iResult As MsgBoxResult = MsgBox("Delete it?", vbYesNo, $"{xls_file_name} Exists!")
+                    If iResult <> vbYes Then
+                        Exit Sub
+                    Else
+                        System.IO.File.Delete(xls_file_name)
+                    End If
+                End If
+
+                Me.Cursor = Cursors.WaitCursor
+                ASCMAIN1.Progress("Creating File...", "")
+                Application.DoEvents()
+
+                oWB = SpreadsheetGear.Factory.GetWorkbook()
+                For i As Integer = oWB.Worksheets.Count To 2 Step -1
+                    oWB.Worksheets(i).Delete()
+                Next i
+                oSheet = oWB.Worksheets.Add()
+                oSheet.Name = "Search Results"
+
+                If oWB.Worksheets.Count = 2 Then
+                    oWB.Worksheets(0).Delete()
+                End If
+
+                ASCMAIN1.Progress("-", oSheet.Name)
+
+                Load_DataTable_into_SGXLS(1, 1, dst.Tables.Item("ICTSTYL1"), oSheet, Nothing, Nothing, "", "")
+
+                'Set heading to Grid Heading
+                Dim colCnt As Int64 = dst.Tables.Item("ICTSTYL1").Columns.Count
+                Dim rowCnt As Int64 = dst.Tables.Item("ICTSTYL1").Rows.Count
+                For i As Int64 = 0 To colCnt
+                    oSheet.Range(0, i).Select()
+                    Dim colTitle As String = oSheet.Range(0, i).Text
+                    If grdICTSTYL1.DisplayLayout.Bands(0).Columns.IndexOf(colTitle) <> -1 Then
+                        Dim grdTitle As String = grdICTSTYL1.DisplayLayout.Bands(0).Columns(colTitle).Header.Caption
+                        oSheet.Range(0, i).Value = grdTitle
+                    End If
+                Next
+
+                'Set Columns to Auto
+                oSheet.Range($"A1:ZZ1").EntireColumn.AutoFit()
+
+                'Set Rows to 15
+                oSheet.Range($"A1:A{rowCnt + 10}").RowHeight = 15
+
+                oSheet.Range("A1:A1").Select()
+                oSheet.WindowInfo.FreezePanes = True
+                oSheet.Range("A1:A1").Select()
+
+                oWB.Worksheets(0).Select()
+
+                oWB.SaveAs(xls_file_name, SpreadsheetGear.FileFormat.OpenXMLWorkbook)
+                'Show_Document(xls_file_name)
+                oWB = Nothing
+
+                Cursor = Cursors.Default
+                ASCMAIN1.Progress("", "")
+                MsgBox("File Created", vbOKOnly, "Done")
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then

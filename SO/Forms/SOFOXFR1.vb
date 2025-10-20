@@ -543,13 +543,16 @@ Public Class SOFOXFR1
             Dim SHIP_BOL_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("SHIP_BOL_NO")
             Dim ORDR_GROUP_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("ORDR_GROUP_NO")
             ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
+            Dim S As Integer = -1 'If(bulk_transfer, 1, -1)
 
             For Each rowSOTOXFRX As DataRow In dst.Tables("SOTOXFRX").Select("SEL = '1'")
                 Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
                 'Dim QTY As Int32 = Val(rowSOTOXFRX.Item("SHORT"))
-                Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("NEEDED"))
-                TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
+                If Not bulk_transfer Then
+                    Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("NEEDED"))
+                    TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
+                End If
 
                 ' Update Status of Transfer Queue Records
                 ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}', LAST_DATE = SYSDATE, LAST_OPER = '{ASCMAIN1.USER_ID}'" & vbCrLf _
@@ -1241,9 +1244,11 @@ Public Class SOFOXFR1
                             If NET_SHORT_calc > US_OTS Then
                                 NET_SHORT_calc = US_OTS
                             End If
-                            grow.Cells("NET_SHORT").Value = NET_SHORT_calc
+                            If NET_SHORT_calc <> grow.Cells("NET_SHORT").Value Then
+                                grow.Cells("NET_SHORT").Value = NET_SHORT_calc
+                            End If
                         End If
-                        cc = NET_SHORT / CARTON_PACK_QTY
+                            cc = NET_SHORT / CARTON_PACK_QTY
                     Else
                         cc = NET_SHORT
                     End If

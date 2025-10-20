@@ -894,10 +894,21 @@ Public Class WHFSHIP1
         cmbProvider.DataSource = providerView
         If cmbDivision.SelectedRow IsNot Nothing Then
             providerView.RowFilter = "DIVISION_CODE = '" & cmbDivision.SelectedRow.Cells("DIVISION_CODE").Value & "'"
-            cmbProvider.SelectedRow = cmbProvider.Rows(0)
+            If ASCMAIN1.CLIENT = "VAN" AndAlso cmbDivision.SelectedRow.Cells("DIVISION_CODE").Value = "VAN" Then
+                For Each row As Infragistics.Win.UltraWinGrid.UltraGridRow In cmbProvider.Rows
+                    If row.Cells("SHIPPER_DIVISION_CODE").Value = cmbDivision.SelectedRow.Cells("DIVISION_CODE").Value Then
+                        cmbProvider.SelectedRow = row
+                        If row.Cells("CARRIER_CODE").Value = "FEDEX" Then
+                            Exit For
+                        End If
+                    End If
+                Next
+            Else
+                cmbProvider.SelectedRow = cmbProvider.Rows(0)
+            End If
             cmbProvider.Text = cmbProvider.SelectedRow.Cells("CARRIER_DESC_DISP").Value
         End If
-        cmbProvider_ValueChanged(Nothing, Nothing)
+            cmbProvider_ValueChanged(Nothing, Nothing)
     End Sub
 
     Private Sub cmbProvider_ValueChanged(sender As Object, e As System.EventArgs) Handles cmbProvider.ValueChanged

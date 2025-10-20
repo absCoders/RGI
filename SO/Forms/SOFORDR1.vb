@@ -5588,7 +5588,7 @@ Public Class SOFORDR1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDRX, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status")
+        Load_Popup_Menu(grdSOTORDRX, "SSSBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Refresh", "Create POs", "Copy Order", "Customer Order Status", "Acknowledge EDI Ord")
         Load_Popup_Menu(grdSOTORDR2, "BBBBSBBSBBBB", "Style Status Inquiry", "Style Master File", "Get PO Cost if 0", "Style Multi-Color", "Show UPC/SKU", "Copy from Reservation", "Sub Style", "Show Disc/Comm", "Clone Line", "Group as Pre-Pack", "Customer Order Status", "Import Details From Excel", "Show Import Template")
         Load_Popup_Menu(grdSOTORDR3, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTORDRS, "BB", "Set Customer PO to Value in Header", "Update Qty to All Stores")
@@ -5643,6 +5643,8 @@ Public Class SOFORDR1
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And Not InquiryMode And (ASCMAIN1.CLIENT = "VAN")
                 tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
+                tlb_btn = DirectCast(tlb_pop.Tools("Acknowledge EDI Ord"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count = 1) And (ASCMAIN1.CLIENT = "RGI") And Can_Acknowledge(grdSOTORDRX.ActiveRow)
 
 
             Case "grdSOTORDRI"
@@ -6672,6 +6674,10 @@ Public Class SOFORDR1
                 Dim PO_ORDER_NO As String = grd.ActiveRow.Cells("PO_ORDER_NO").Value
                 Context_Launch("View", PO_ORDER_NO, e.Tool.Key, "POFORDRI", "F", "POE")
 
+            Case "Acknowledge EDI Ord"
+                Dim ORDR_GROUP_NO As String = grd.ActiveRow.Cells("ORDR_GROUP_NO").Value
+                TAC.EDC855O1.Generate_855(Me.clsASCBASE1, ORDR_GROUP_NO)
+                MsgBox("A Confirmation (855) has been queued up for Transmission to the Customer", MsgBoxStyle.OkOnly, "Verification")
 
         End Select
     End Sub
@@ -11702,6 +11708,27 @@ Public Class SOFORDR1
             End If
         End If
         Return ORDR_FOB
+    End Function
+
+    Private Function Can_Acknowledge(grow As Infragistics.Win.UltraWinGrid.UltraGridRow) As Boolean
+        Dim ORDR_GROUP_NO As String = grow.Cells("ORDR_GROUP_NO").Value
+        If grow.Cells("ORDR_STATUS").Value <> "O" OrElse grow.Cells("ORDR_SOURCE").Value <> "E" Then Return False
+        ASCMAIN1.sql = "Select * from EDTTRPM1 where EDI_DOC_NO = '855' and CUST_CODE = '" & grow.Cells("CUST_CODE").Value & "'"
+        Dim rowEDTTRPM1 As DataRow = ASCDATA1.GetDataRow
+        If rowEDTTRPM1 IsNot Nothing Then
+            ASCMAIN1.sql = "Select EDT855O1.* from EDT855O1,EDTSYSIH" _
+                & " where EDT855O1.COMPANY_CODE = '" & ASCMAIN1.DBS_COMPANY & "'" _
+                & "   and EDT855O1.ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" _
+                & "   and EDTSYSIH.COMPANY_CODE = EDT855O1.COMPANY_CODE" _
+                & "   and EDTSYSIH.EDI_OUTBOUND_DOC_NO = EDT855O1.EDI_OUTBOUND_DOC_NO" _
+                & "   and TRIM(EDTSYSIH.EDI_TP_ID) = '" & Trim(rowEDTTRPM1.Item("EDI_TP_ID")) & "'"
+            Dim rowEDT855O1 As DataRow = ASCDATA1.GetDataRow
+            If rowEDT855O1 Is Nothing Then
+                Return True
+            End If
+        End If
+        Return False
+
     End Function
 
     Private Sub ProcessCreditCardDeposit(ByVal processType As String, ByVal TRANS_NO As String)

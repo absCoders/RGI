@@ -2471,6 +2471,12 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Prevent Transferring Orders that Have Dups.")
 
+        VersionNo = "25.10.16.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Update To Transfer Process To Sync Pricing Tiers.")
+        VersionInfo.AppendLine("* Warn When Starting Order If Customer Is On Credit Hold.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class
