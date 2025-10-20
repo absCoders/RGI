@@ -2454,6 +2454,7 @@ Public Class ICCMAIN1
             If ASCMAIN1.CLIENT = "RGI" And Not IsDBNull(rowSOTRTRN2("MISC_CHG_CODE")) Then
                 DTL_MISC_CHG_CODE = rowSOTRTRN2("MISC_CHG_CODE")
                 Dim rowSOTINVHM As DataRow = frm.dst.Tables("SOTINVHM").NewRow
+                Dim S As Integer = If(rowSOTRTRN1.Item("RTRN_SALES_CURR") & "" = "", -1, 1)
                 With rowSOTINVHM
                     .Item("INV_TYPE") = "C"
                     .Item("INV_NO") = INV_NO
@@ -2462,8 +2463,8 @@ Public Class ICCMAIN1
                     .Item("MISC_CHG_CODE") = DTL_MISC_CHG_CODE
                     .Item("MISC_CHG_DESC") = DTL_MISC_CHG_CODE
                     .Item("MISC_CHG_NOTE") = "Returns Handling"
-                    .Item("INV_MISC_CHG") = -1 * Val(rowSOTRTRN2("LINE_TARIFF") & "")
-                    .Item("INV_MISC_CHG_CURR") = -1 * Val(rowSOTRTRN2("LINE_TARIFF") & "")
+                    .Item("INV_MISC_CHG") = S * Val(rowSOTRTRN2("LINE_TARIFF") & "")
+                    .Item("INV_MISC_CHG_CURR") = S * Val(rowSOTRTRN2("LINE_TARIFF") & "")
                     .Item("SURCHARGE_PERC") = rowSOTRTRN2("SURCHARGE_PERC")
                     .Item("MISC_CHARGE_TYPE") = "T"
                     .Item("COUNTRY_CODE") = rowSOTRTRN2("COUNTRY_CODE")
