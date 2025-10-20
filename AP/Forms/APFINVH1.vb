@@ -273,8 +273,15 @@ Public Class APFINVH1
             Create_TDA(.Tables.Add, "APTINVHR", "**", 0, False, "V", 1)
 
             Create_TDA(.Tables.Add, "POTCATG1", "*", 0)
-        End With
 
+            With .Tables.Add("ERROR_TBL")
+                .Columns.Add("Invoice No", GetType(System.String))
+                .Columns.Add("Voucher No", GetType(System.String))
+                .Columns.Add("Invoice Date", GetType(System.String))
+                .Columns.Add("Invoice Amt", GetType(System.String))
+            End With
+
+        End With
         Fill_Records("POTCATG1")
 
         grdAPTINVHB.Dock = DockStyle.Fill
@@ -1144,7 +1151,7 @@ Public Class APFINVH1
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
             {"APTINVH1", "APTINVH2", "APTINVH5", "APTINVH5_SUM", "APTINVH7", "APTINVH8", "ICTIREC1", "ICTIREC2", "POTLCST1", "APTCHCK1", "APTCHCK2",
-             "TATEVNT1", "APTINVHX", "ASTAUDTX"}
+             "TATEVNT1", "APTINVHX", "ASTAUDTX", "ERROR_TBL"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -3762,6 +3769,8 @@ Public Class APFINVH1
 
     Sub Import_XBatch_from_Excel()
         Dim FILENAME As String = ""
+        Dim ERROR_CODEs As List(Of String) = New List(Of String)
+        Dim rowCHECKDUP As DataRow = Nothing
 
         Using openFileDialog1 As New OpenFileDialog
             openFileDialog1.InitialDirectory = "c:\"
@@ -3882,6 +3891,33 @@ Public Class APFINVH1
                         Else
                             BAL = Val((XWS.Cells(row, BAL_POS).text.ToString & String.Empty).ToString.Replace("$", "").Replace(",", ""))
                         End If
+
+                        ' CHECK FOR DUPLICATES
+                        ASCMAIN1.sql = "Select * from APTINVH1 " _
+                            & " where VEND_CODE = :PARM1" _
+                            & "   and INV_NUM = :PARM2" _
+                            & "   and INV_TYPE = :PARM3" _
+                            & "   and INV_STATUS IN ('O','H','P')"
+                        rowCHECKDUP = ASCDATA1.GetDataRow(ASCMAIN1.sql, "VVV", New Object() {VEND_CODE, PRO, "I"})
+
+                        If rowCHECKDUP IsNot Nothing Then
+                            Write_Row = False
+
+                            ERROR_CODEs.Add("I# " & PRO & " V#: " & rowCHECKDUP.Item("VOUCHER_NO") & " Dt: " & rowCHECKDUP.Item("INV_DATE") & " Amt: " & rowCHECKDUP.Item("INV_AMT"))
+
+                            Dim rowERROR_TBL As DataRow = Nothing
+                            rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                            With rowERROR_TBL
+                                .Item("Invoice No") = PRO
+                                .Item("Voucher No") = rowCHECKDUP.Item("VOUCHER_NO") & ""
+                                .Item("Invoice Date") = rowCHECKDUP.Item("INV_DATE") & ""
+                                .Item("Invoice Amt") = rowCHECKDUP.Item("INV_AMT") & ""
+
+                            End With
+                            dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+
+                        End If
+
                         If Write_Row Then
 
                             Dim rowAPTINVHB As DataRow = dst.Tables("APTINVHB").NewRow
@@ -4012,7 +4048,7 @@ Public Class APFINVH1
         '            End If
         '        Next
         '        If heading_row = 0 Then
-        '            MsgBox("Cannot Find Heading Row", MsgBoxStyle.OkOnly, "Problem with Workbook Selected")
+        '            MsgBox("Cannot Find Heading Row", MsgBoxStyle.OkOnly, "Problem With Workbook Selected")
         '        Else
         '            ASCMAIN1.Progress("Now Importing Data")
         '            dst.Tables("APTINVHB").Rows.Clear()
@@ -4082,6 +4118,22 @@ Public Class APFINVH1
         '    grdAPTINVHB.Refresh()
 
         'End If
+        If ERROR_CODEs.Count <> 0 Then
+
+            MsgBox("The following Invoices are already In the system: " & vbCrLf & Join(ERROR_CODEs.ToArray, vbCrLf), MsgBoxStyle.OkOnly, "Duplicate Invoices Excluded in Import")
+
+            'dst.Tables("ERROR_TBL").Columns(0).ColumnName = "Invoice No"
+            'dst.Tables("ERROR_TBL").Columns(1).ColumnName = "Voucher No"
+            'dst.Tables("ERROR_TBL").Columns(2).ColumnName = "Invoice Date"
+            'dst.Tables("ERROR_TBL").Columns(3).ColumnName = "Invoice Amt"
+
+            If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                Using F As New ASFMSGBF
+                    F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Import Errors have been identified", "Duplicate Invoices")
+                End Using
+            End If
+        End If
+
         MsgBox("Import Complete", vbOKOnly, "Done")
     End Sub
 
