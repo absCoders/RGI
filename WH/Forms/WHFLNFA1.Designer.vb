@@ -298,6 +298,7 @@ Partial Class WHFLNFA1
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkSkinOnly = New ABSCS.ABSCheckBox()
         Me.chkShowLocs = New ABSCS.ABSCheckBox()
         Me.optLOC = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkPastDueCountsOnly = New ABSCS.ABSCheckBox()
@@ -368,6 +369,7 @@ Partial Class WHFLNFA1
         Me.UltraTabControl2.SuspendLayout()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.chkSkinOnly, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowLocs, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optLOC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkPastDueCountsOnly, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1131,7 +1133,6 @@ Partial Class WHFLNFA1
         '
         'grdWHTLOCBX
         '
-        Me.grdWHTLOCBX.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCBX.DisplayLayout.Appearance = Appearance13
@@ -1598,7 +1599,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1267, 509)
         '
@@ -1626,7 +1627,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1267, 509)
         '
@@ -1665,6 +1666,7 @@ Partial Class WHFLNFA1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.chkSkinOnly)
         Me.UltraGroupBox1.Controls.Add(Me.chkShowLocs)
         Me.UltraGroupBox1.Controls.Add(Me.optLOC)
         Me.UltraGroupBox1.Controls.Add(Me.chkPastDueCountsOnly)
@@ -1678,6 +1680,14 @@ Partial Class WHFLNFA1
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1271, 75)
         Me.UltraGroupBox1.TabIndex = 2
+        '
+        'chkSkinOnly
+        '
+        Me.chkSkinOnly.Location = New System.Drawing.Point(900, 49)
+        Me.chkSkinOnly.Name = "chkSkinOnly"
+        Me.chkSkinOnly.Size = New System.Drawing.Size(173, 20)
+        Me.chkSkinOnly.TabIndex = 226
+        Me.chkSkinOnly.Text = "Skin Only"
         '
         'chkShowLocs
         '
@@ -1941,6 +1951,7 @@ Partial Class WHFLNFA1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.chkSkinOnly, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowLocs, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optLOC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkPastDueCountsOnly, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2011,4 +2022,5 @@ Partial Class WHFLNFA1
     Friend WithEvents cmdRefreshAdj As Misc.UltraButton
     Friend WithEvents optLOC As UltraWinEditors.UltraOptionSet
     Friend WithEvents chkShowLocs As ABSCS.ABSCheckBox
+    Friend WithEvents chkSkinOnly As ABSCS.ABSCheckBox
 End Class
