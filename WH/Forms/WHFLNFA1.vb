@@ -262,8 +262,8 @@ Public Class WHFLNFA1
         chkShowLocs.Visible = ScreenMode
         Set_Read_Only_for_ctl(chkShowLocs, False)
 
-        chkSkinOnly.Visible = ScreenMode
-        Set_Read_Only_for_ctl(chkSkinOnly, False)
+        optSkinVan.Visible = ScreenMode
+        Set_Read_Only_for_ctl(optSkinVan, False)
 
         optLNF.Visible = ScreenMode
         Set_Read_Only_for_ctl(optLNF, False)
@@ -590,7 +590,7 @@ Public Class WHFLNFA1
         Set_WHTLOCBX()
     End Sub
 
-    Private Sub chkSkinOnly_CheckedValueChanged(sender As Object, e As EventArgs) Handles chkSkinOnly.CheckedValueChanged
+    Private Sub optSkinVan_ValueChanged(sender As Object, e As EventArgs) Handles optSkinVan.ValueChanged
         If Me.SELECTION_NO = 0 Then Exit Sub
         Set_WHTLOCBX()
     End Sub
@@ -670,9 +670,13 @@ Public Class WHFLNFA1
             sqlwhere &= " and LNF <> 0"
         End If
 
-        If chkSkinOnly.Checked Then
-            sqlwhere &= " and SALES_DIVISION_CODE = '30'"
-        End If
+        Select Case optSkinVan.Value
+            Case "SKIN"
+                sqlwhere &= " and SALES_DIVISION_CODE = '30'"
+            Case "VAN"
+                sqlwhere &= " and SALES_DIVISION_CODE <> '30'"
+        End Select
+
         If chkPastDueCountsOnly.Checked Then
             Dim DATE_LAST_CYCLE_COUNT_cutoff As Date = Now.Date.AddDays(-1 * Val(numDays.Value & ""))
             sqlwhere &= $" and DATE_LAST_CYCLE_COUNT is Null or DATE_LAST_CYCLE_COUNT < '{Format(DATE_LAST_CYCLE_COUNT_cutoff, "MM/dd/yyyy")}'"
@@ -1087,6 +1091,5 @@ Public Class WHFLNFA1
         Sort_grdColumns(grdICTIADJX, "ADJ_NO")
         grdICTIADJX.Text = $"{WHSE_CODE} Locator Adjustment History from {DT_FROM} TO {DT_TO}"
     End Sub
-
 
 End Class
