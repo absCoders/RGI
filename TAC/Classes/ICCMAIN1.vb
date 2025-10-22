@@ -2454,7 +2454,7 @@ Public Class ICCMAIN1
             If ASCMAIN1.CLIENT = "RGI" And Not IsDBNull(rowSOTRTRN2("MISC_CHG_CODE")) Then
                 DTL_MISC_CHG_CODE = rowSOTRTRN2("MISC_CHG_CODE")
                 Dim rowSOTINVHM As DataRow = frm.dst.Tables("SOTINVHM").NewRow
-                Dim S As Integer = If(rowSOTRTRN1.Item("RTRN_SALES_CURR") & "" = "", -1, 1)
+                Dim S As Integer = If(rowSOTRTRN1.Item("REVERSES_RTRN_NO") & "" = "", -1, 1)
                 With rowSOTINVHM
                     .Item("INV_TYPE") = "C"
                     .Item("INV_NO") = INV_NO
