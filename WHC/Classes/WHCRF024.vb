@@ -91,8 +91,18 @@
         Else
             Select Case AppState
                 Case "SCAN_PALLET"
+                    If SCANTEXT.Length = 18 Then
+                        Dim temp As String = "T" & SCANTEXT & "%"
+                        Dim sqlPallet As String = $"SELECT * FROM EDT945T3 WHERE EDI_PALLET_NO like '{temp}'"
+                        Dim tblEDT945T3 As DataTable = ASCDATA1.GetDataTable(sqlPallet)
+                        Dim rows() As DataRow = tblEDT945T3.Select("")
+                        If rows.Length = 1 Then
+                            SCANTEXT = rows(0)("EDI_PALLET_NO")
+                        End If
+                    End If
                     If SCANTEXT.Length <> 20 Then
-                        CreateResponse("", "R", "Invalid Pallet Barcode")
+                        CreateResponse("", "R", $"Invalid Pallet Barcode: {SCANTEXT}: {SCANTEXT.Length}")
+                        Exit Select
                     Else
 
                         Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.VerifyTransferPallet(Me, SCANTEXT)

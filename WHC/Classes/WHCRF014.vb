@@ -18,6 +18,8 @@
     Dim TICKET_NO1 As String
     Dim BAR_CODE_LOCATION As String
     Dim colors As String = ""
+    Dim page As Int16 = 0
+    Dim tblPage As DataTable = Nothing
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -25,7 +27,7 @@
         Me.MENU_ITEM_TYPE = "C"
         Me.MENU_ITEM_OBJECT = "WHCRF014"
 
-        AppStates.Add("SCAN_LOC", "Scan Location |SHW GUN|EXIT|") ' YELLOW
+        AppStates.Add("SCAN_LOC", "Scan Location |SHW GUN|EXIT|<<|>>|") ' YELLOW
         'AppStates.Add("VERIFY", "Update (Y/N)|Y|N|CANCEL|")
 
         AppState = "SCAN_LOC"
@@ -50,18 +52,37 @@
             Select Case AppState
 
                 Case "SCAN_LOC"
-                    LOCATION_CODE = SCANTEXT
-                    If SCANTEXT = "SHW GUN" Then
-                        LOCATION_CODE = G.GUN_LOC
-                        SCANTEXT = G.GUN_LOC
-                    End If
-
-                    Dim Styles As String = TACMAIN1.LookupLocation(Me, SCANTEXT)
-                    If Styles.Length = 0 Then
-                        CreateResponse("", "YELLOW", "No Styles found for location " & SCANTEXT)
+                    If SCANTEXT = "<<" Or SCANTEXT = ">>" Then
+                        Dim output As String = TACMAIN1.PaginateDataTable(tblPage, page, 6, "STYLE, LOCATION_QTY", SCANTEXT)
+                        Dim msg As String = "Location " & LOCATION_CODE & vbCrLf & output
+                        CreateResponse("", "YELLOW", msg)
                         Exit Select
+                    Else
+                        LOCATION_CODE = SCANTEXT
+                        If SCANTEXT = "SHW GUN" Then
+                            LOCATION_CODE = G.GUN_LOC
+                            SCANTEXT = G.GUN_LOC
+                        End If
+
+                        ASCMAIN1.sql = "Select STYLE_CODE || ',' || COLOR_CODE || ' >' || LAST_OPER || ' #' STYLE, LOCATION_QTY
+                            from WHTLOCB1
+                            where WHTLOCB1.LOCATION_CODE = '" & SCANTEXT.ToUpper & "'
+                            and WHTLOCB1.WHSE_CODE = '" & G.WHSE_CODE & "' 
+                            and WHTLOCB1.LOCATION_QTY <> 0 
+                            order by 
+                                    case 
+                                        when LOCATION_QTY > 0 then 1
+                                        when LOCATION_QTY < 0 then 2
+                                        else 3
+                                    end,
+                                    LOCATION_QTY desc, LOCATION_CODE"
+                        tblPage = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                        Dim output As String = TACMAIN1.PaginateDataTable(tblPage, page, 6, "STYLE, LOCATION_QTY", ">>")
+                        Dim msg As String = "Location " & LOCATION_CODE & vbCrLf & output
+                        CreateResponse("", "YELLOW", msg)
+                        Exit Select
+
                     End If
-                    CreateResponse("", "YELLOW", "Location " & SCANTEXT & ", Styles" & Styles)
 
                 Case "VERIFY"
                     If SCANTEXT = "Y" Then

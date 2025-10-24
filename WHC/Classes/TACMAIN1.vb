@@ -442,4 +442,50 @@ ByVal LOCATION_CODE As String) As Dictionary(Of String, String)
         End If
         Return RtnDict
     End Function
+
+    Public Shared Function PaginateDataTable(dt As DataTable, ByRef pageNumber As Integer, rowsPerPage As Integer, columnNames As String, direction As String) As String
+        If dt Is Nothing OrElse dt.Rows.Count = 0 Then Return "<< No data >>" & vbCrLf
+
+        Dim totalRows As Integer = dt.Rows.Count
+        Dim totalPages As Integer = Math.Ceiling(totalRows / rowsPerPage)
+
+        ' Adjust page number based on direction
+        If direction = ">>" AndAlso pageNumber < totalPages Then
+            pageNumber += 1
+        ElseIf direction = "<<" AndAlso pageNumber > 1 Then
+            pageNumber -= 1
+        End If
+
+        ' Calculate start and end index
+        Dim startIndex As Integer = Math.Max(0, (pageNumber - 1)) * rowsPerPage
+        If startIndex >= dt.Rows.Count Then Return "<< End of data >>" & vbCrLf
+
+        Dim endIndex As Integer = Math.Min(startIndex + rowsPerPage, dt.Rows.Count)
+        Dim columns As String() = columnNames.Split(","c)
+        Dim result As New System.Text.StringBuilder()
+
+        ' Build output string
+        For i As Integer = startIndex To endIndex - 1
+            Dim row As DataRow = dt.Rows(i)
+            For Each col As String In columns
+                result.Append(row(col.Trim()).ToString() & " ")
+            Next
+            result.AppendLine()
+        Next
+        ' Pad with empty rows if needed
+        Dim emptyRowsNeeded As Integer = rowsPerPage - (endIndex - startIndex)
+        For i As Integer = 1 To emptyRowsNeeded
+            For Each col As String In columns
+                result.Append(" ") ' Empty column value
+            Next
+            result.AppendLine()
+        Next
+
+        ' Add navigation indicators
+        'If pageNumber > 1 Then result.Insert(0, "<< " & vbCrLf)
+        'If endIndex < dt.Rows.Count Then result.Append(">>" & vbCrLf)
+
+        Return result.ToString()
+    End Function
+
 End Class
