@@ -1585,7 +1585,7 @@ Public Class EDF850I1
                 End If
 
                 If ASCMAIN1.CLIENT = "RGI" Then
-                    If Not New String() {"007942915", "NORDJWN"}.Contains(EDI_TP_ID) Then ' skip nordstrom and others
+                    If Not New String() {"007942915", "NORDJWN", "NEFURNMART"}.Contains(EDI_TP_ID) Then ' skip nordstrom and others
                         If EDI_TP_ID = "KOHLS" Then EDI_SUPPLIER_NO = "1293528"
                         If Not String.IsNullOrEmpty(EDI_SUPPLIER_NO) Then
                             'EDTXREF4
@@ -4815,6 +4815,7 @@ Public Class EDF850I1
                 .Item("INIT_DATE") = DATETIME_STAMP
                 .Item("SHIP_BOL_NO") = SHIP_BOL_NO
                 .Item("CCPA_NO_STATUS") = "0"
+                .Item("WHSE_CODE") = rowSOTORDR1_rel.Item("WHSE_CODE") & ""
             End With
             dst.Tables("SOTPICK1").Rows.Add(rowSOTPICK1)
 

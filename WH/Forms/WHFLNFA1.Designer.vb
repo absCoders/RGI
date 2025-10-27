@@ -242,6 +242,9 @@ Partial Class WHFLNFA1
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
@@ -298,6 +301,7 @@ Partial Class WHFLNFA1
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl5 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.optSkinVan = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkShowLocs = New ABSCS.ABSCheckBox()
         Me.optLOC = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkPastDueCountsOnly = New ABSCS.ABSCheckBox()
@@ -368,6 +372,7 @@ Partial Class WHFLNFA1
         Me.UltraTabControl2.SuspendLayout()
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox1.SuspendLayout()
+        CType(Me.optSkinVan, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkShowLocs, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optLOC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkPastDueCountsOnly, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1131,7 +1136,6 @@ Partial Class WHFLNFA1
         '
         'grdWHTLOCBX
         '
-        Me.grdWHTLOCBX.DataMember = Nothing
         Appearance13.BackColor = System.Drawing.SystemColors.Window
         Appearance13.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdWHTLOCBX.DisplayLayout.Appearance = Appearance13
@@ -1598,7 +1602,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1267, 509)
         '
@@ -1626,7 +1630,7 @@ Partial Class WHFLNFA1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1267, 509)
         '
@@ -1665,6 +1669,7 @@ Partial Class WHFLNFA1
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.optSkinVan)
         Me.UltraGroupBox1.Controls.Add(Me.chkShowLocs)
         Me.UltraGroupBox1.Controls.Add(Me.optLOC)
         Me.UltraGroupBox1.Controls.Add(Me.chkPastDueCountsOnly)
@@ -1679,6 +1684,24 @@ Partial Class WHFLNFA1
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1271, 75)
         Me.UltraGroupBox1.TabIndex = 2
         '
+        'optSkinVan
+        '
+        Me.optSkinVan.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
+        Me.optSkinVan.CheckedIndex = 0
+        ValueListItem1.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem1.DataValue = "ALL"
+        ValueListItem1.DisplayText = "All"
+        ValueListItem3.DataValue = "SKIN"
+        ValueListItem3.DisplayText = "Skin Only"
+        ValueListItem5.DataValue = "VAN"
+        ValueListItem5.DisplayText = "Van Only"
+        Me.optSkinVan.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem3, ValueListItem5})
+        Me.optSkinVan.Location = New System.Drawing.Point(900, 48)
+        Me.optSkinVan.Name = "optSkinVan"
+        Me.optSkinVan.Size = New System.Drawing.Size(241, 21)
+        Me.optSkinVan.TabIndex = 227
+        Me.optSkinVan.Text = "All"
+        '
         'chkShowLocs
         '
         Me.chkShowLocs.Location = New System.Drawing.Point(900, 22)
@@ -1691,12 +1714,12 @@ Partial Class WHFLNFA1
         '
         Me.optLOC.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         Me.optLOC.CheckedIndex = 1
-        ValueListItem1.DataValue = "ALL"
-        ValueListItem1.DisplayText = "All Locations"
-        ValueListItem3.CheckState = System.Windows.Forms.CheckState.Checked
-        ValueListItem3.DataValue = "INV"
-        ValueListItem3.DisplayText = "w/Invty Only"
-        Me.optLOC.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem3})
+        ValueListItem6.DataValue = "ALL"
+        ValueListItem6.DisplayText = "All Locations"
+        ValueListItem7.CheckState = System.Windows.Forms.CheckState.Checked
+        ValueListItem7.DataValue = "INV"
+        ValueListItem7.DisplayText = "w/Invty Only"
+        Me.optLOC.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem6, ValueListItem7})
         Me.optLOC.Location = New System.Drawing.Point(551, 20)
         Me.optLOC.Name = "optLOC"
         Me.optLOC.Size = New System.Drawing.Size(122, 39)
@@ -1713,9 +1736,9 @@ Partial Class WHFLNFA1
         '
         'chkEnableAdjustment
         '
-        Me.chkEnableAdjustment.Location = New System.Drawing.Point(707, 49)
+        Me.chkEnableAdjustment.Location = New System.Drawing.Point(707, 48)
         Me.chkEnableAdjustment.Name = "chkEnableAdjustment"
-        Me.chkEnableAdjustment.Size = New System.Drawing.Size(173, 20)
+        Me.chkEnableAdjustment.Size = New System.Drawing.Size(173, 21)
         Me.chkEnableAdjustment.TabIndex = 222
         Me.chkEnableAdjustment.Text = "Enable Adjustment"
         '
@@ -1941,6 +1964,7 @@ Partial Class WHFLNFA1
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox1.ResumeLayout(False)
         Me.UltraGroupBox1.PerformLayout()
+        CType(Me.optSkinVan, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkShowLocs, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optLOC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkPastDueCountsOnly, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2011,4 +2035,5 @@ Partial Class WHFLNFA1
     Friend WithEvents cmdRefreshAdj As Misc.UltraButton
     Friend WithEvents optLOC As UltraWinEditors.UltraOptionSet
     Friend WithEvents chkShowLocs As ABSCS.ABSCheckBox
+    Friend WithEvents optSkinVan As UltraWinEditors.UltraOptionSet
 End Class

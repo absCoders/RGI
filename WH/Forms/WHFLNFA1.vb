@@ -135,6 +135,7 @@ Public Class WHFLNFA1
         With grdWHTLOCBX.DisplayLayout.Bands("WHTLOCBX")
             .Columns("STYLE_CODE").Header.Fixed = True
             .Columns("COLOR_CODE").Header.Fixed = True
+            .Columns("SALES_DIVISION_CODE").Hidden = True
 
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 With gcol.Header.Appearance
@@ -260,6 +261,9 @@ Public Class WHFLNFA1
 
         chkShowLocs.Visible = ScreenMode
         Set_Read_Only_for_ctl(chkShowLocs, False)
+
+        optSkinVan.Visible = ScreenMode
+        Set_Read_Only_for_ctl(optSkinVan, False)
 
         optLNF.Visible = ScreenMode
         Set_Read_Only_for_ctl(optLNF, False)
@@ -586,6 +590,11 @@ Public Class WHFLNFA1
         Set_WHTLOCBX()
     End Sub
 
+    Private Sub optSkinVan_ValueChanged(sender As Object, e As EventArgs) Handles optSkinVan.ValueChanged
+        If Me.SELECTION_NO = 0 Then Exit Sub
+        Set_WHTLOCBX()
+    End Sub
+
     Private Sub chkShowLocs_CheckedValueChanged(sender As Object, e As EventArgs) Handles chkShowLocs.CheckedValueChanged
         ChangeGridColumView()
     End Sub
@@ -660,6 +669,13 @@ Public Class WHFLNFA1
         Else
             sqlwhere &= " and LNF <> 0"
         End If
+
+        Select Case optSkinVan.Value
+            Case "SKIN"
+                sqlwhere &= " and SALES_DIVISION_CODE = '30'"
+            Case "VAN"
+                sqlwhere &= " and SALES_DIVISION_CODE <> '30'"
+        End Select
 
         If chkPastDueCountsOnly.Checked Then
             Dim DATE_LAST_CYCLE_COUNT_cutoff As Date = Now.Date.AddDays(-1 * Val(numDays.Value & ""))
@@ -897,7 +913,7 @@ Public Class WHFLNFA1
 
         Dim locations_to_avoid As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
 
-        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, 0 OPEN, ' ' STYLE_DESC, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (
+        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, 0 OPEN, ' ' STYLE_DESC, '  ' SALES_DIVISION_CODE, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (
              Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE
              , SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV
              , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA
@@ -936,8 +952,9 @@ Public Class WHFLNFA1
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
             ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBX & " " & sqlWHTLOCBX)
         End If
-        ASCMAIN1.sql = $"Update {WHTLOCBX} x set STYLE_DESC = (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)" & vbCrLf _
-            & " where exists (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)"
+        ASCMAIN1.sql = $"Update {WHTLOCBX} x set STYLE_DESC = (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE),
+                        SALES_DIVISION_CODE = (SELECT SALES_DIVISION_CODE FROM ICTSTYL1 WHERE STYLE_CODE = x.STYLE_CODE)
+                        where exists (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         ASCMAIN1.sql = $"Update {WHTLOCBX} x set PICK = (
@@ -1074,6 +1091,5 @@ Public Class WHFLNFA1
         Sort_grdColumns(grdICTIADJX, "ADJ_NO")
         grdICTIADJX.Text = $"{WHSE_CODE} Locator Adjustment History from {DT_FROM} TO {DT_TO}"
     End Sub
-
 
 End Class

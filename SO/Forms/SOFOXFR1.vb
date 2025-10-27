@@ -9,6 +9,9 @@ Public Class SOFOXFR1
     Dim sqlSOTORDR0 As String
     Dim one_and_done As Boolean = False
     Dim sqlICTSTATQ As String = ""
+    Dim bulk_transfer As Boolean = False
+    Dim updateNetShort As Boolean = False
+
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -87,6 +90,26 @@ Public Class SOFOXFR1
                 .Columns.Add("NET_SHORT", GetType(System.Decimal), "IIF(ISNULL(MS_OTS,0) + ISNULL(US_PICK,0) >= 0, NULL, ISNULL(MS_OTS,0) + ISNULL(US_PICK,0))")
             End With
 
+            ASCMAIN1.sql = "Select ICTSTYC1.STYLE_CODE, ICTSTYC1.COLOR_CODE, ICTSTYL1.STYLE_DESC, ICTSTYL1.CARTON_PACK_QTY, NVL(ICTSTYL1.CASE_CUBE,0) CASE_CUBE" & vbCrLf _
+                & ", MS.ONHD MS_ONHD, MS.PICK MS_PICK, NVL(MS.ONHD,0) - NVL(MS.PICK,0) MS_OTS" & vbCrLf _
+                & ", US.ONHD US_ONHD, (NVL(US.PICK,0) + NVL(SOTOXFR1.PICK_QUEUE,0)) US_PICK" & vbCrLf _
+                & ", NVL(US.ONHD,0) - NVL(US.PICK,0) - NVL(SOTOXFR1.PICK_QUEUE,0) US_OTS, (NVL(MS.ONHD,0) - NVL(MS.PICK,0)) + US.PICK MS_OTS_US_PICK" & vbCrLf _
+                & "" & vbCrLf _
+                & " from ICTSTYC1, ICTSTYL1, (select STYLE_CODE, COLOR_CODE, SUM(NEEDED) PICK_QUEUE FROM SOTOXFR1 WHERE OXFR_STATUS = '0' GROUP BY STYLE_CODE, COLOR_CODE) SOTOXFR1" & vbCrLf _
+                & ",(SELECT STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND ONHD, WHSE_QTY_PICK PICK FROM ICTSTAT2 WHERE WHSE_CODE = 'MS') MS" & vbCrLf _
+                & ",(SELECT STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND ONHD, WHSE_QTY_PICK PICK FROM ICTSTAT2 WHERE WHSE_CODE = 'US') US" & vbCrLf _
+                & "where ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE" & vbCrLf _
+                & "  and MS.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND MS.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf _
+                & "  and US.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND US.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf _
+                & "  and SOTOXFR1.STYLE_CODE (+) = ICTSTYC1.STYLE_CODE AND SOTOXFR1.COLOR_CODE (+) = ICTSTYC1.COLOR_CODE" & vbCrLf
+            ASCMAIN1.sql = $"Select * from ({ASCMAIN1.sql }) X where X.US_OTS > 0"
+            Create_TDA(.Tables.Add, "ICTXFRBL", "**", 0, False, "", 2)
+            With .Tables("ICTXFRBL")
+                .Columns.Add("SEL")
+                .Columns("SEL").DefaultValue = "0"
+                '.Columns.Add("NET_SHORT", GetType(System.Decimal), "ISNULL(US_ONHD,0) - ISNULL(US_PICK,0)")
+                .Columns.Add("NET_SHORT", GetType(System.Decimal))
+            End With
 
             ASCMAIN1.sql = "SELECT * FROM (" & vbCrLf _
                 & "SELECT STYLE_CODE, COLOR_CODE" & vbCrLf _
@@ -112,6 +135,7 @@ Public Class SOFOXFR1
         grdSOTOXFR1.DataSource = dst.Tables("SOTOXFR1")
         grdICTSTATS.DataSource = dst.Tables("ICTSTATS")
         grdICTSTATQ.DataSource = dst.Tables("ICTSTATQ")
+        grdICTXFRBL.DataSource = dst.Tables("ICTXFRBL")
 
         For Each gcol As UltraWinGrid.UltraGridColumn In grdSOTOXFRX.DisplayLayout.Bands(0).Columns
             gcol.Header.Appearance.BackColor = System.Drawing.Color.White
@@ -134,21 +158,41 @@ Public Class SOFOXFR1
             End If
         Next
 
-
-        For Each gcol As UltraWinGrid.UltraGridColumn In grdICTSTATS.DisplayLayout.Bands(0).Columns
-            gcol.Header.Appearance.BackColor = System.Drawing.Color.White
-            gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightGray
-            gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-            gcol.CellActivation = UltraWinGrid.Activation.NoEdit
-            If gcol.Key.StartsWith("US_") Then
-                gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightBlue
-            ElseIf gcol.Key.StartsWith("MS_") Then
-                gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightGreen
-            ElseIf gcol.Key = "NET_SHORT" Then
-                gcol.Header.Appearance.BackColor2 = System.Drawing.Color.PaleVioletRed
-            End If
+        For Each grd As UltraGrid In New UltraGrid() {grdICTSTATS, grdICTXFRBL}
+            For Each gcol As UltraWinGrid.UltraGridColumn In grd.DisplayLayout.Bands(0).Columns
+                gcol.Header.Appearance.BackColor = System.Drawing.Color.White
+                gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightGray
+                gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+                gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                If gcol.Key.StartsWith("US_") Then
+                    gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightBlue
+                ElseIf gcol.Key.StartsWith("MS_") Then
+                    gcol.Header.Appearance.BackColor2 = System.Drawing.Color.LightGreen
+                ElseIf gcol.Key = "NET_SHORT" Then
+                    If grd.Name = "grdICTSTATS" Then
+                        gcol.Header.Appearance.BackColor2 = System.Drawing.Color.PaleVioletRed
+                    Else
+                        gcol.Header.Appearance.BackColor2 = System.Drawing.Color.Lavender
+                        gcol.Header.Caption = "XFR Qty"
+                    End If
+                End If
+            Next
+            Show_Filter(grd, True)
+            Create_Summary(grd, "STYLE_CODE", "Count")
         Next
 
+        With grdICTXFRBL.DisplayLayout
+            .Override.AllowUpdate = DefaultableBoolean.True
+            With .Bands(0)
+                For Each c As UltraWinGrid.UltraGridColumn In .Columns
+                    If c.Key = "SEL" Or c.Key = "NET_SHORT" Then
+                        .Columns(c.Key).CellActivation = Activation.AllowEdit
+                    Else
+                        .Columns(c.Key).CellActivation = Activation.NoEdit
+                    End If
+                Next
+            End With
+        End With
 
         For Each gcol As UltraWinGrid.UltraGridColumn In grdICTSTATQ.DisplayLayout.Bands(0).Columns
             gcol.Header.Appearance.BackColor = System.Drawing.Color.White
@@ -161,9 +205,6 @@ Public Class SOFOXFR1
                 gcol.Header.Appearance.BackColor2 = System.Drawing.Color.PaleVioletRed
             End If
         Next
-
-        Show_Filter(grdICTSTATS, True)
-        Create_Summary(grdICTSTATS, "STYLE_CODE", "Count")
 
         Show_Filter(grdICTSTATQ, True)
         Create_Summary(grdICTSTATQ, "STYLE_CODE", "Count")
@@ -258,13 +299,18 @@ Public Class SOFOXFR1
 
         Select Case eItemKey
             Case "Load"
+                Select Case optAction.Value
+                    Case "B"
+                        'If dst.Tables("ICTXFRBL").Select("SEL = '1'").Length = 0 Then
+                        '    EMsg &= vbCr & "You must select 1 or more Style/Colors"
+                        'End If
+                    Case "D"
+                    Case Else
+                        If one_and_done Then
+                            EMsg &= vbCr & "Please exit and re-enter this screen to start another Transfer"
+                        End If
+                End Select
 
-                If optAction.Value = "D" Then
-                Else
-                    If one_and_done Then
-                        EMsg &= vbCr & "Please exit and ree-enter this screen to start another Transfer"
-                    End If
-                End If
 
 
             Case "Update"
@@ -386,6 +432,7 @@ Public Class SOFOXFR1
             Clear_Record()
             grdSOTOXFRX.Parent = SplitContainer2.Panel1
             grdSOTOXFRX.DisplayLayout.Bands(0).Columns("SEL").Hidden = True
+            bulk_transfer = False
         End If
 
     End Sub
@@ -394,7 +441,7 @@ Public Class SOFOXFR1
 
         EnforceConstraints(False)
 
-        For Each TABLE_NAME As String In New String() {"SOTOXFRX", "SOTORDRX", "SOTOXFR1", "ICTSTATS"}
+        For Each TABLE_NAME As String In New String() {"SOTOXFRX", "SOTORDRX", "SOTOXFR1", "ICTSTATS", "ICTXFRBL"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         For Each TABLE_NAME As String In TABLES_OXFR
@@ -417,35 +464,36 @@ Public Class SOFOXFR1
         Fill_Records("SOTOXFRX")
         Sort_grdColumns(grdSOTOXFRX, "STYLE_CODE, COLOR_CODE")
 
+        bulk_transfer = (optAction.Value = "B")
+
         'Dim sqlOTS As String = "ISNULL(MS_AVA,0) >= ISNULL(SHORT,0)"
-        Dim sqlOTS As String = "ISNULL(MS_AVA,0) >= ISNULL(ALLO,0)"
-        'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
-        '    sqlOTS &= " and STYLE_CODE = 'MTX71886' and COLOR_CODE = 'BURG'"
-        'End If
-        Dim rowsWithNewOTS() As DataRow = dst.Tables("SOTOXFRX").Select(sqlOTS)
-        If rowsWithNewOTS.Length > 0 Then
-            If MsgBox($"There are {CStr(rowsWithNewOTS.Length)} Style/Color(s) with new OTS positions in MS that satisfy the Shortage" & vbCrLf & vbCrLf & "OK to clear those shortages?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.Yes Then
-                BeginTrans()
-                For Each rowSOTOXFRX As DataRow In rowsWithNewOTS
-                    Dim US_OPEN As Int32 = Val(rowSOTOXFRX.Item("US_OPEN") & "")
-                    Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
-                    Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
+        If Not bulk_transfer Then
+            Dim sqlOTS As String = "ISNULL(MS_AVA,0) >= ISNULL(ALLO,0)"
 
-                    TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, "US", "WHSE_QTY_OPEN", -1 * US_OPEN)
+            Dim rowsWithNewOTS() As DataRow = dst.Tables("SOTOXFRX").Select(sqlOTS)
+            If rowsWithNewOTS.Length > 0 Then
+                If MsgBox($"There are {CStr(rowsWithNewOTS.Length)} Style/Color(s) with new OTS positions in MS that satisfy the Shortage" & vbCrLf & vbCrLf & "OK to clear those shortages?", MsgBoxStyle.Question + MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.Yes Then
+                    BeginTrans()
+                    For Each rowSOTOXFRX As DataRow In rowsWithNewOTS
+                        Dim US_OPEN As Int32 = Val(rowSOTOXFRX.Item("US_OPEN") & "")
+                        Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
+                        Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
 
-                    ' Update Status of Transfer Queue Records
-                    ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = 'M', LAST_DATE = SYSDATE, LAST_OPER = '{ASCMAIN1.USER_ID}'" & vbCrLf _
-                    & " where STYLE_CODE = :PARM1 and COLOR_CODE = :PARM2 and OXFR_STATUS = '0'"
-                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {STYLE_CODE, COLOR_CODE})
+                        TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, "US", "WHSE_QTY_OPEN", -1 * US_OPEN)
 
-                    rowSOTOXFRX.Delete()
-                Next
-                dst.Tables("SOTOXFRX").AcceptChanges()
+                        ' Update Status of Transfer Queue Records
+                        ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = 'M', LAST_DATE = SYSDATE, LAST_OPER = '{ASCMAIN1.USER_ID}'" & vbCrLf _
+                        & " where STYLE_CODE = :PARM1 and COLOR_CODE = :PARM2 and OXFR_STATUS = '0'"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {STYLE_CODE, COLOR_CODE})
 
-                CommitTrans()
+                        rowSOTOXFRX.Delete()
+                    Next
+                    dst.Tables("SOTOXFRX").AcceptChanges()
+
+                    CommitTrans()
+                End If
             End If
         End If
-
         dst.Tables("SOTOXFR1").Rows.Clear()
         For Each rowSOTOXFRX As DataRow In dst.Tables("SOTOXFRX").Select("")
             Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
@@ -495,13 +543,16 @@ Public Class SOFOXFR1
             Dim SHIP_BOL_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("SHIP_BOL_NO")
             Dim ORDR_GROUP_NO As String = dst.Tables("SOTSHIP1").Rows(0).Item("ORDR_GROUP_NO")
             ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
+            Dim S As Integer = -1 'If(bulk_transfer, 1, -1)
 
             For Each rowSOTOXFRX As DataRow In dst.Tables("SOTOXFRX").Select("SEL = '1'")
                 Dim STYLE_CODE As String = rowSOTOXFRX.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowSOTOXFRX.Item("COLOR_CODE")
                 'Dim QTY As Int32 = Val(rowSOTOXFRX.Item("SHORT"))
-                Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("NEEDED"))
-                TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
+                If Not bulk_transfer Then
+                    Dim QTY As Int32 = -1 * Val(rowSOTOXFRX.Item("NEEDED"))
+                    TAC.ICCMAIN1.Update_ICTSTAT2(STYLE_CODE, COLOR_CODE, WHSE_CODE, "WHSE_QTY_OPEN", QTY)
+                End If
 
                 ' Update Status of Transfer Queue Records
                 ASCMAIN1.sql = $"Update SOTOXFR1 SET OXFR_STATUS = '1', SHIP_BOL_NO = '{SHIP_BOL_NO}', LAST_DATE = SYSDATE, LAST_OPER = '{ASCMAIN1.USER_ID}'" & vbCrLf _
@@ -546,6 +597,7 @@ Public Class SOFOXFR1
         Load_Popup_Menu(grdSOTORDRX, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdSOTORDR0, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry")
         Load_Popup_Menu(grdICTSTATS, "SSBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Add to Transfer Queue")
+        Load_Popup_Menu(grdICTXFRBL, "SSBB", "Show Filter", "Show GroupBox", "Style Status Inquiry", "Bulk Transfer Selected")
 
     End Sub
 
@@ -578,7 +630,8 @@ Public Class SOFOXFR1
 
                 Case "grdICTSTATS"
                     tlb_pop.Tools("Add to Transfer Queue").SharedProps.Visible = chkShowOnlyNetShort.Checked
-
+                Case "grdICTXFRBL"
+                    tlb_pop.Tools("Bulk Transfer Selected").SharedProps.Visible = (dst.Tables("ICTXFRBL").Select("SEL = '1'").Length > 0)
             End Select
         End If
     End Sub
@@ -631,7 +684,74 @@ Public Class SOFOXFR1
                     grow.Cells("SEL").Value = IIf(e.Tool.Key = "Select Selected", "1", "0")
                     grow.Update()
                 Next
+            Case "Bulk Transfer Selected"
+                bulk_transfer = True
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Rows
+                    Dim SEL As String = grow.Cells("SEL").Value & ""
+                    grow.Selected = (SEL = "1")
+                Next
 
+                'If grd.Selected.Rows.Count = 0 Then
+                '    If grd.ActiveRow IsNot Nothing Then
+                '        grd.ActiveRow.Selected = True
+                '    End If
+                'End If
+
+                If grd.Selected.Rows.Count = 0 Then
+                    MsgBox("No Rows Selected", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+                    Exit Sub
+                End If
+
+                If MsgBox($"OK to Queue up {grd.Selected.Rows.Count} Style / Colors selected?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
+
+                dst.Tables("SOTOXFR1").Rows.Clear()
+                optAction.Value = "B"
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value
+                    Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Value
+                    Dim US_ONHD As Int32 = Val(grow.Cells("US_ONHD").Value & "")
+                    Dim NET_SHORT As Int32 = Val(grow.Cells("NET_SHORT").Value & "")
+
+                    If dst.Tables("SOTOXFRX").Rows.Find(New String() {STYLE_CODE, COLOR_CODE}) Is Nothing Then
+                    Else
+                        MsgBox($"Style / Color {STYLE_CODE} / {COLOR_CODE} is already in the Transfer Queue", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
+                        Exit Sub
+                    End If
+
+                    Dim rowSOTOXFR1 As DataRow = dst.Tables("SOTOXFR1").NewRow
+                    With rowSOTOXFR1
+                        Dim PICK_BATCH_NO As String = ""
+                        .Item("PICK_BATCH_NO") = "Q" & Mid(ASCMAIN1.Next_Control_No("SOTOXFR1.PICK_BATCH_NO_Q"), 6, 5)
+                        .Item("STYLE_CODE") = STYLE_CODE
+                        .Item("COLOR_CODE") = COLOR_CODE
+
+                        .Item("US_ONHD") = US_ONHD
+                        .Item("US_PICK") = grow.Cells("US_PICK").Value
+                        .Item("US_AVA") = grow.Cells("US_OTS").Value
+
+                        .Item("MS_ONHD") = grow.Cells("MS_ONHD").Value
+                        .Item("MS_PICK") = grow.Cells("MS_PICK").Value
+                        .Item("MS_AVA") = grow.Cells("MS_OTS").Value
+
+                        .Item("ALLO") = NET_SHORT
+                        .Item("SHORT") = 0
+                        .Item("OXFR_STATUS") = "0"
+                        .Item("COMING") = Val(grow.Cells("US_PICK").Value & "") + Val(grow.Cells("US_PICK").Value & "")
+                        .Item("NEEDED") = NET_SHORT
+
+                        .Item("INIT_DATE") = DATETIME_STAMP
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                    End With
+                    dst.Tables("SOTOXFR1").Rows.Add(rowSOTOXFR1)
+                Next
+
+                Update_Record_TDA("SOTOXFR1")
+
+                MsgBox("Transfer Queue Record(s) Added - Transfer Queue will be Refreshed")
+
+                Refresh_Documents()
             Case "Add to Transfer Queue"
 
                 If grd.Selected.Rows.Count = 0 Then
@@ -644,19 +764,6 @@ Public Class SOFOXFR1
                     MsgBox("No Rows Selected", MsgBoxStyle.OkOnly, "Cannot Perform Requested Action")
                     Exit Sub
                 End If
-
-                'For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
-                '    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value
-                '    Dim COLOR_CODE As String = grow.Cells("COLOR_CODE").Value
-                '    Dim US_ONHD As Int32 = Val(grow.Cells("US_ONHD").Value & "")
-                '    Dim NET_SHORT As Int32 = Val(grow.Cells("NET_SHORT").Value & "")
-
-                '    If US_ONHD > 0 And NET_SHORT < 0 Then
-                '    Else
-                '        MsgBox($"Invalid Selection - {STYLE_CODE} / {COLOR_CODE}", MsgBoxStyle.OkOnly, "Re-Queue Candidates: US On Hand > 0 and Net Short < 0")
-                '        Exit Sub
-                '    End If
-                'Next
 
                 If MsgBox($"OK to Queue up {grd.Selected.Rows.Count} Style / Colors selected?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                     Exit Sub
@@ -760,6 +867,11 @@ Public Class SOFOXFR1
         Fill_Records("ICTSTATQ")
         Sort_grdColumns(grdICTSTATQ, "STYLE_CODE,COLOR_CODE")
 
+        Fill_Records("ICTXFRBL")
+        Sort_grdColumns(grdICTXFRBL, "STYLE_CODE, COLOR_CODE")
+
+        Calculate_Selected_Cube()
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("", "")
     End Sub
@@ -818,12 +930,15 @@ Public Class SOFOXFR1
         Select Case TABLE_NAME
 
             Case "SOTOXFRX"
-
+                Dim QTY_TO_XFR_sql As String = "CASE WHEN MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(NEEDED,0)" & vbCrLf _
+                    & "       ELSE NVL(NEEDED,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END"
+                If bulk_transfer Then
+                    QTY_TO_XFR_sql = " NVL(NEEDED,0) "
+                End If
                 SQL = "Select X.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYL1.CARTON_PACK_QTY, ICTSTYL1.INNER_PACK_QTY, ICTSTYL1.CASE_CUBE" & vbCrLf _
                     & ", US_TRAN, US_ONHD, US_PICK, US_OPEN, NVL(US_ONHD,0) - NVL(US_PICK,0) US_AVA" & vbCrLf _
                     & ", MS_ONHD, MS_PICK, NVL(MS_ONHD,0) - NVL(MS_PICK,0) MS_AVA" & vbCrLf _
-                    & ", CASE WHEN MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) = 0 THEN NVL(NEEDED,0)" & vbCrLf _
-                    & "       ELSE NVL(NEEDED,0) +  NVL(ICTSTYL1.CARTON_PACK_QTY,0) - MOD(NVL(NEEDED,0), NVL(ICTSTYL1.CARTON_PACK_QTY,0)) END QTY_TO_XFR" & vbCrLf _
+                    & $", {QTY_TO_XFR_sql} QTY_TO_XFR" & vbCrLf _
                     & "from ICTSTYL1,ICTCOLR1, (" & vbCrLf _
                     & "Select SOTOXFR1.STYLE_CODE, SOTOXFR1.COLOR_CODE" & vbCrLf _
                     & ", Sum (ALLO) ALLO" & vbCrLf _
@@ -934,8 +1049,12 @@ Public Class SOFOXFR1
                             AND TATCNTRY.COUNTRY_CODE3(+) = SOTORDR5.CUST_COUNTRY
                             And SOTPICK1.SHIP_BOL_NO = '{SHIP_BOL_NO}'"
 
-
         Dim tblEXPORT As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+        If bulk_transfer Then
+            For Each rowExport As DataRow In tblEXPORT.Select
+                rowExport.Item(1) = $"T{rowExport.Item(1).ToString.Substring(1)}"
+            Next
+        End If
 
         'this is USL specific so add USL to dir plus outbound dir and find a filename
         Dim csvFileName = $"Order_Standard{SHIP_BOL_NO}_" & DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") & ".txt"
@@ -1051,5 +1170,138 @@ Public Class SOFOXFR1
 
         Fill_Records("ICTSTATQ")
         Sort_grdColumns(grdICTSTATQ, "STYLE_CODE,COLOR_CODE")
+    End Sub
+
+    Private Sub tab1_SelectedTabChanged(sender As Object, e As UltraWinTabControl.SelectedTabChangedEventArgs) Handles tab1.SelectedTabChanged
+        Select Case tab1.SelectedTab.Key
+            Case "Bulk Transfer"
+                optAction.Value = "B"
+            Case "Negative OTS in MS"
+                optAction.Value = "X"
+            Case "Transfer Orders Not Received"
+                optAction.Value = "X"
+        End Select
+        'If tab1.SelectedTab.Key = "Bulk Transfer" Then
+        '    Dim transferQueue As Integer = dst.Tables("SOTOXFR1").Rows.Count
+        '    If transferQueue > 0 Then
+        '        MsgBox("Please process the current transfer queue before creating a new bulk transfer.", vbOKOnly, "Warning")
+        '        With grdICTXFRBL.DisplayLayout
+        '            .Override.AllowUpdate = DefaultableBoolean.False
+        '        End With
+        '    Else
+        '        With grdICTXFRBL.DisplayLayout
+        '            .Override.AllowUpdate = DefaultableBoolean.True
+        '            With .Bands(0)
+        '                For Each c As UltraWinGrid.UltraGridColumn In .Columns
+        '                    If c.Key = "SEL" Or c.Key = "NET_SHORT" Then
+        '                        .Columns(c.Key).CellActivation = Activation.AllowEdit
+        '                    Else
+        '                        .Columns(c.Key).CellActivation = Activation.NoEdit
+        '                    End If
+        '                Next
+        '            End With
+        '        End With
+        '    End If
+        'End If
+    End Sub
+
+    Private Sub grdICTXFRBL_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdICTXFRBL.ClickCellButton
+
+    End Sub
+
+    Private Sub grdICTXFRBL_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdICTXFRBL.BeforeRowUpdate
+        Dim NET_SHORT As Decimal = Val(e.Row.Cells("NET_SHORT").Value & "")
+        Dim US_ONHD As Decimal = Val(e.Row.Cells("US_ONHD").Value & "")
+        Dim US_PICK As Decimal = Val(e.Row.Cells("US_PICK").Value & "")
+        Dim XFR_AVAILABLE As Decimal = US_ONHD - US_PICK
+
+        If NET_SHORT > XFR_AVAILABLE Or NET_SHORT < 0 Then
+            e.Cancel = True
+        End If
+    End Sub
+    Sub Calculate_Selected_Cube()
+        Try
+            Dim cubeTotal As Double = 0
+            Dim cubeTotalRick As Integer = 0
+            grdICTXFRBL.SuspendRowSynchronization()
+
+            For Each grow As UltraWinGrid.UltraGridRow In grdICTXFRBL.Rows
+                Dim SEL As String = grow.Cells("SEL").Value & ""
+                If SEL = "1" Then
+                    Dim cc As Integer = 0
+                    Dim STYLE_CODE As String = grow.Cells("STYLE_CODE").Value & ""
+                    Dim NET_SHORT As Decimal = Val(grow.Cells("NET_SHORT").Value & "")
+                    'Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                    Dim CARTON_PACK_QTY As Integer = grow.Cells("CARTON_PACK_QTY").Value
+                    If CARTON_PACK_QTY > 0 Then
+                        ' Find remainder
+                        Dim remainder As Integer = CInt(NET_SHORT) Mod CARTON_PACK_QTY
+                        If remainder <> 0 Then
+                            ' Round up to next multiple
+                            'NET_SHORT = CInt(((NET_SHORT / CARTON_PACK_QTY) + 1) * CARTON_PACK_QTY)
+                            Dim US_OTS As Integer = grow.Cells("US_OTS").Value
+                            Dim NET_SHORT_calc As Integer = Math.Ceiling(NET_SHORT / CARTON_PACK_QTY) * CARTON_PACK_QTY
+                            If NET_SHORT_calc > US_OTS Then
+                                NET_SHORT_calc = US_OTS
+                            End If
+                            If NET_SHORT_calc <> grow.Cells("NET_SHORT").Value Then
+                                grow.Cells("NET_SHORT").Value = NET_SHORT_calc
+                            End If
+                        End If
+                            cc = NET_SHORT / CARTON_PACK_QTY
+                    Else
+                        cc = NET_SHORT
+                    End If
+                    Dim ccc = cc * Val(grow.Cells("CASE_CUBE").Value & "")
+                    cubeTotal += ccc
+                End If
+            Next
+            grdICTXFRBL.ResumeRowSynchronization()
+
+            For Each grow As UltraWinGrid.UltraGridRow In grdSOTOXFRX.Rows
+                Dim ccc As Double = Val(grow.Cells("NEEDED").Value & "") / Val(grow.Cells("CARTON_PACK_QTY").Value & "") * Val(grow.Cells("CASE_CUBE").Value & "")
+                cubeTotal += ccc
+            Next
+
+            numCASE_CUBE.Value = cubeTotal
+        Catch ex As Exception
+            MsgBox(ex.Message, vbOK, "Error")
+        End Try
+
+    End Sub
+
+    Private Sub grdICTXFRBL_ClickCell(sender As Object, e As ClickCellEventArgs) Handles grdICTXFRBL.ClickCell
+        Dim COLUMN_NAME As String = e.Cell.Column.Key
+        updateNetShort = False
+        Select Case COLUMN_NAME
+            Case "SEL"
+                updateNetShort = True
+        End Select
+    End Sub
+
+    Private Sub grdICTXFRBL_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdICTXFRBL.AfterCellUpdate
+        Dim COLUMN_NAME As String = e.Cell.Column.Key
+        If Not e.Cell.Row.IsDataRow Then Exit Sub
+
+        Dim SEL As String = e.Cell.Row.Cells("SEL").Value
+
+        Select Case COLUMN_NAME
+            Case "SEL"
+                Dim US_ONHD As Decimal = Val(e.Cell.Row.Cells("US_ONHD").Value & "")
+                Dim US_PICK As Decimal = Val(e.Cell.Row.Cells("US_PICK").Value & "")
+                Dim NET_SHORT As Decimal = Val(e.Cell.Row.Cells("NET_SHORT").Value & "")
+                If updateNetShort Then
+                    e.Cell.Row.Cells("NET_SHORT").Value = If(SEL = "1", US_ONHD - US_PICK, 0)
+                    e.Cell.Row.Update()
+                End If
+            Case "NET_SHORT"
+                Dim NET_SHORT As Decimal = Val(e.Cell.Row.Cells("NET_SHORT").Value & "")
+                'If SEL = "1" And NET_SHORT = 0 Then
+                '    e.Cell.Row.Cells("SEL").Value = 0
+                'End If
+                e.Cell.Row.Cells("SEL").Value = If(NET_SHORT = 0, "0", "1")
+                e.Cell.Row.Update()
+        End Select
+        Calculate_Selected_Cube()
     End Sub
 End Class

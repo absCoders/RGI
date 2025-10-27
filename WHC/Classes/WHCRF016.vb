@@ -41,6 +41,8 @@
     Dim LockWarning As Boolean
     Dim WHSE_CODE As String
     Dim Automated As Boolean = False
+    Dim page As Int16 = 0
+    Dim tblPage As DataTable = Nothing
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -49,7 +51,7 @@
         Me.MENU_ITEM_OBJECT = "WHCRF016"
 
         AppStates.Add("SCAN_PTCKT", "Scan Pick Ticket |EXIT|") 'Green
-        AppStates.Add("SCAN_LOC", "Scan Loc, 00:'{0}', V:Void|NEXT UPC|PREV UPC|SHW LOC|DONE|") 'Yellow
+        AppStates.Add("SCAN_LOC", "Scan Loc, 00:'{0}', V:Void|NEXT UPC|PREV UPC|<<|>>|DONE|") 'Yellow
         AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style|CANCEL|") 'Blue
         AppStates.Add("SCAN_COLOR", "Enter Color code|CANCEL|")
         AppStates.Add("SCAN_CASES", "How many cases picked, (0 for units)|CANCEL|")
@@ -309,18 +311,40 @@
                         CreateResponse("", "YELLOW", PickMessage())
                         holdScan = ""
                         Exit Select
-                    ElseIf SCANTEXT = "SHW LOC" Then
-                        CreateResponse("", "YELLOW", Show_Locations())
+                    ElseIf SCANTEXT = "<<" Or SCANTEXT = ">>" Then
+                        'CreateResponse("", "YELLOW", Show_Locations())
+                        If page = 0 Then
+                            ASCMAIN1.sql = $"select b1.LOCATION_QTY, ' #' F1, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE
+                                        from WHTLOCB1 b1
+                                        join WHTLOCM1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE
+                                        where b1.STYLE_CODE = '{STYLE_CODE}' 
+                                            and b1.COLOR_CODE = '{COLOR_CODE}' 
+                                            and nvl(m1.LOCATION_USE,'A') in ('A','E') 
+                                            and m1.WHSE_CODE = '{G.WHSE_CODE}'
+                                        order by 
+                                            case 
+                                                when b1.LOCATION_QTY > 0 then 1
+                                                when b1.LOCATION_QTY < 0 then 2
+                                                else 3
+                                            end,
+                                            b1.LOCATION_QTY desc, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
+                            tblPage = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                        End If
+
+                        Dim output As String = TACMAIN1.PaginateDataTable(tblPage, page, 4, "LOCATION_CODE,F1, LOCATION_QTY", SCANTEXT)
+                        Dim msg As String = "Style " & STYLE_CODE & " Color " & COLOR_CODE & vbCrLf & output
+                        CreateResponse("", "YELLOW", msg)
                         Exit Select
+
                     ElseIf SCANTEXT = "NEXT UPC" Or SCANTEXT = "PREV UPC" Then
-                        Change_Style(SCANTEXT)
-                        CreateResponse("", "YELLOW", PickMessage())
-                        Exit Select
-                    ElseIf SCANTEXT.ToUpper = "V" Then
-                        showPicked("")
-                        Exit Select
-                    Else
-                        If holdScan <> "" Then
+                            Change_Style(SCANTEXT)
+                            CreateResponse("", "YELLOW", PickMessage())
+                            Exit Select
+                        ElseIf SCANTEXT.ToUpper = "V" Then
+                            showPicked("")
+                            Exit Select
+                        Else
+                            If holdScan <> "" Then
                             Dim hold As String = AppStates(AppState)
                             AppStates(AppState) = "Continue With New Location " & holdScan & "|YES|NO|"
                             CreateResponse("", "R", "This is not the original location: " & ORIGINAL_LOCATION)
@@ -699,6 +723,10 @@
     Sub Change_Style(ByVal SCANTEXT)
         Dim SortOrder As String = "ROWNUM " & If(SCANTEXT = "NEXT UPC", "asc", "desc")
         Dim AutomatedClause = ""
+
+        'clear paging table
+        tblPage = Nothing
+        page = 0
 
         If Automated Then
             AutomatedClause = "LOCATION_QTY > 0 AND "

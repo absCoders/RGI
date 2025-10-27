@@ -410,13 +410,13 @@ Public Class SOROREL1
 
 
             If ASCMAIN1.CLIENT = "VAN" Then
-                    SOTCARM1 = Create_Temporary_Table("SOTCARM1", "CART_NO")
-                    SOTCARM2 = Create_Temporary_Table("SOTCARM2", "CART_NO,CART_LNO")
-                    '      ASCDATA1.ExecuteSQL("Alter Table " & SOTPICK2 & " Add ORDR_AMT_PICK NUMBER (13,2)")
-                End If
+                SOTCARM1 = Create_Temporary_Table("SOTCARM1", "CART_NO")
+                SOTCARM2 = Create_Temporary_Table("SOTCARM2", "CART_NO,CART_LNO")
+                '      ASCDATA1.ExecuteSQL("Alter Table " & SOTPICK2 & " Add ORDR_AMT_PICK NUMBER (13,2)")
+            End If
 
-            Else
-                For Each TABLE_NAME As String In New String() {SOTPICK1, SOTPICK2, SOTSHIP1, SOTCART1, SOTCART2}
+        Else
+            For Each TABLE_NAME As String In New String() {SOTPICK1, SOTPICK2, SOTSHIP1, SOTCART1, SOTCART2}
                 ASCDATA1.ExecuteSQL("Delete from " & TABLE_NAME)
             Next
             If ASCMAIN1.CLIENT = "VAN" Then
@@ -437,11 +437,11 @@ Public Class SOROREL1
             'Next
 
             dst.Tables("SOTSUPP0").Rows.Clear()
-                dst.Tables("SOTSUPPI").Rows.Clear()
-                dst.Tables("SOTORDR7").Rows.Clear()
-                dst.Tables("ICTSTDQ1").Rows.Clear()
-                dst.Tables("ICTSTDQ2").Rows.Clear()
-            End If
+            dst.Tables("SOTSUPPI").Rows.Clear()
+            dst.Tables("SOTORDR7").Rows.Clear()
+            dst.Tables("ICTSTDQ1").Rows.Clear()
+            dst.Tables("ICTSTDQ2").Rows.Clear()
+        End If
 
         SOTORDR0 = TABLE_NAMEs("SOTORDR0")
         SOTORDR1 = TABLE_NAMEs("SOTORDR1")
@@ -521,14 +521,14 @@ Public Class SOROREL1
         With dst.Tables.Add("SOTSHIP3")
             .Columns.Add("SHIP_BOL_NO")
             .Columns.Add("STYLE_CODE")
-            .PrimaryKey = New DataColumn() {.Columns("SHIP_BOL_NO"), .Columns("STYLE_CODE")}
+            .PrimaryKey = New DataColumn() { .Columns("SHIP_BOL_NO"), .Columns("STYLE_CODE")}
         End With
 
         With dst.Tables.Add("SOTSHIP2")
             .Columns.Add("SHIP_BOL_NO")
             .Columns.Add("STYLE_CODE")
             .Columns.Add("COLOR_CODE")
-            .PrimaryKey = New DataColumn() {.Columns("SHIP_BOL_NO"), .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
+            .PrimaryKey = New DataColumn() { .Columns("SHIP_BOL_NO"), .Columns("STYLE_CODE"), .Columns("COLOR_CODE")}
         End With
 
         ' Main Process
@@ -543,11 +543,11 @@ Public Class SOROREL1
                 Dim STYLE_CODE As String = rowSC.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowSC.Item("COLOR_CODE")
 
-                TAC.SOCMAIN1.Allocation(Me, _
-                    blnFORCE_PICK, _
-                    blnALLOCATION_ONLY, _
-                     IIf(selWHSE = "A", "", WHSE_CODE), _
-                     ORDR_GROUP_NO_sql, edi850cust, _
+                TAC.SOCMAIN1.Allocation(Me,
+                    blnFORCE_PICK,
+                    blnALLOCATION_ONLY,
+                     IIf(selWHSE = "A", "", WHSE_CODE),
+                     ORDR_GROUP_NO_sql, edi850cust,
                      SOTSUPP1, SOTDEMD1, TABLE_NAMEs, , , STYLE_CODE, COLOR_CODE, manual_release)
             Next
         Else
@@ -733,7 +733,7 @@ Public Class SOROREL1
             & ", Max (SOTORDR2.RANGE_STYLE_CODE) as RANGE_STYLE_CODE" & vbCrLf _
             & " from " & SOTORDR1 & " SOTORDR1," & SOTORDR2 & " SOTORDR2" & vbCrLf _
             & " where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
-            & "   and SOTORDR1.ORDR_REL_HOLD_CODES is Not Null " & vbCrLf
+            & IIf(ASCMAIN1.CLIENT = "RGI", "", "   and SOTORDR1.ORDR_REL_HOLD_CODES is Not Null " & vbCrLf)
         ASCMAIN1.sql &= "" _
             & " group by SOTORDR1.ORDR_GROUP_NO, SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE"
 
@@ -746,6 +746,11 @@ Public Class SOROREL1
 
         ' note - at RGI the line below did not clear out all groups when the from was SOTORDRG
         ASCDATA1.ExecuteSQL("Delete from SOTORDRS where ORDR_GROUP_NO in (Select Distinct ORDR_GROUP_NO from " & SOTORDRS & ")")
+
+        If ASCMAIN1.CLIENT = "RGI" And chkAllocateNoRelease.Checked Then
+            ASCMAIN1.sql = "Update SOTORDRS Set ORDR_QTY_ALLO_CUR = NULL, ORDR_QTY_ALLO_FUT = NULL, ORDR_QTY_ALLO_CXL = NULL, ORDR_AMT_ALLO_CUR = NULL, ORDR_AMT_ALLO_FUT = NULL, ORDR_AMT_ALLO_CXL = NULL"
+            ASCDATA1.ExecuteSQL()
+        End If
 
         ' note - at NYA the line below did not clear out all groups when the from was SOTORDRS either, so opening it up to all groups in SOTORDR1.  
         ' Probably need to open this up to all companies.
@@ -841,7 +846,7 @@ Public Class SOROREL1
                 & "  and SOTSHIP1.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _
                 & "  and SOTSHIP1.SHIP_STATUS = 'P'"
 
-            SOTSHIP1W = ASCMAIN1.Temp_Table(sqlSOTSHIP1W.Replace("and SOTSHIP1.SHIP_STATUS = 'P'", _
+            SOTSHIP1W = ASCMAIN1.Temp_Table(sqlSOTSHIP1W.Replace("and SOTSHIP1.SHIP_STATUS = 'P'",
                                                                  "and SOTSHIP1.SHIP_STATUS = 'P' and ROWNUM <1"))
 
             ASCDATA1.ExecuteSQL("Alter Table " & SOTSHIP1W & " Add Primary Key (SHIP_BOL_NO)")
@@ -855,7 +860,7 @@ Public Class SOROREL1
                 & "  and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
                 & "  and SOTPICK1.PICK_STATUS = 'P'"
 
-            SOTPICK1W = ASCMAIN1.Temp_Table(sqlSOTPICK1W.Replace("and SOTPICK1.PICK_STATUS = 'P'", _
+            SOTPICK1W = ASCMAIN1.Temp_Table(sqlSOTPICK1W.Replace("and SOTPICK1.PICK_STATUS = 'P'",
                                                                  "and SOTPICK1.PICK_STATUS = 'P' and ROWNUM <1"))
 
             ASCDATA1.ExecuteSQL("Alter Table " & SOTPICK1W & " Add Primary Key (PICK_NO)")
@@ -873,7 +878,7 @@ Public Class SOROREL1
                 & "  and SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
                 & "  and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO"
 
-            SOTPICK2W = ASCMAIN1.Temp_Table(sqlSOTPICK2W.Replace("and SOTPICK1.PICK_STATUS = 'P'", _
+            SOTPICK2W = ASCMAIN1.Temp_Table(sqlSOTPICK2W.Replace("and SOTPICK1.PICK_STATUS = 'P'",
                                                                  "and SOTPICK1.PICK_STATUS = 'P' and ROWNUM <1"))
             ASCDATA1.ExecuteSQL("Alter Table " & SOTPICK2W & " Add Primary Key (PICK_NO,PICK_LNO)")
         End If
@@ -1560,7 +1565,7 @@ Public Class SOROREL1
             ASCDATA1.ExecuteSQL()
         Else
             ASCMAIN1.sql = "Update " & SOTORDR1 & " SOTORDR1 set ORDR_REL_BATCH_NO = '" & XNO & "'" _
-                        '& "   and ORDR_REL_HOLD_CODES is Null " ' THIS WAY WE MARK ALL ORDERS THAT WERE ATTEMPTED TO BE RELEASED, WHETHER SUCCESSFUL OR NOT
+            '& "   and ORDR_REL_HOLD_CODES is Null " ' THIS WAY WE MARK ALL ORDERS THAT WERE ATTEMPTED TO BE RELEASED, WHETHER SUCCESSFUL OR NOT
             RELEASE_SQL = " where ORDR_SHIP_DATE <= '" & Format(SHIP_BY_DATE, "dd-MMM-yyyy") & "'"
 
 
@@ -2716,7 +2721,7 @@ Public Class SOROREL1
             Dim sqlBOL As String = "SHIP_BOL_NO = '" & SHIP_BOL_NO & "'"
 
             For Each rowSC As DataRow In ASCDATA1.SelectDistinct _
-                (dst.Tables("SOTPICK2").Select(sqlBOL), _
+                (dst.Tables("SOTPICK2").Select(sqlBOL),
                  New String() {"STYLE_CODE", "COLOR_CODE"}).Rows
 
                 Dim STYLE_CODE As String = rowSC.Item("STYLE_CODE")
@@ -3589,8 +3594,8 @@ Public Class SOROREL1
             CR_params.Add("RELEASE_DATE", Format$(SHIP_BY_DATE, "yyyyMMdd"))
             CR_params.Add("CHKALLOCATION_ONLY", "1")
             Dim FILENAME_body As String = RPT & "_" & SREP_CODE
-            Dim REPORT_NO As String = Generate_Report(RPT, RPT_TITLE, SUBT, _
-                                                      "{SOTORDRS.SREP_CODE} = '" & SREP_CODE & "'", _
+            Dim REPORT_NO As String = Generate_Report(RPT, RPT_TITLE, SUBT,
+                                                      "{SOTORDRS.SREP_CODE} = '" & SREP_CODE & "'",
                                                       "PDF", FILENAME_body, False)
 
             Dim ATTACHMENTs As New Dictionary(Of String, String)
@@ -3604,7 +3609,7 @@ Public Class SOROREL1
             EMAIL_ADDRESSs.Add(EMAIL_ADDRESS, rowSOTSREP1.Item("SREP_NAME") & "")
 
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
+                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                     SUBJECT, "SORORELA", True, True, SREP_CODE, rowSOTSREP1.Item("SREP_NAME") & "", "Sales Rep")
         Next
 
@@ -3669,67 +3674,67 @@ Public Class SOROREL1
             '    End If
             'Else
             If tblASTDSQLA.Select("COLUMN_NAME <> 'ORDR_GROUP_NO' and EXCLUDE = '1'").Length <> 0 Then
-                        EMsg &= vbCr & "You may not use Exclusion on any Filter except Order Group"
+                EMsg &= vbCr & "You may not use Exclusion on any Filter except Order Group"
+            End If
+            'End If
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Dim row As DataRow
+                For Each row In tblASTDSQLA.Select("EXCLUDE='1'")
+                    Dim CODE_VALUES As String = row.Item("CODE_VALUES") & ""
+                    '  CODE_VALUES = Mid(CODE_VALUES, 2, CODE_VALUES.Length - 2)
+                    Dim CODE_VALUE_LIST() As String = CODE_VALUES.Split(",")
+                    If CODE_VALUE_LIST.Length > 25 Then
+                        EMsg &= vbCr & "You may not use Exclusion for more than 25 items"
                     End If
+                Next
+
+
+                Dim WALMART_customer_selected As Boolean = False
+
+                row = tblASTDSQLA.Rows.Find("CUST_CODE")
+                ' remember - you cannot exclude customers, so this is always a list of customers to include
+                Dim CUST_CODEs() As String = Split(row.Item("CODE_VALUES") & "", ",")
+                If CUST_CODEs.Contains("WALMART") Then
+                    WALMART_customer_selected = True
+                    If CUST_CODEs.Length > 1 Then
+                        EMsg &= vbCr & "You must select WALMART all by itself (no other customers)"
+                    End If
+                End If
+
+                row = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
+                Dim OG As String = row.Item("CODE_VALUES") & ""
+                Dim sqlOG As String = "'" & Replace(OG, ",", "','") & "" & "'"
+                Dim EXCLUDE As String = row.Item("EXCLUDE") & ""
+
+                Dim WALMART_groups_selected As Boolean = False
+
+                If OG <> "" Then
+                    'If EXCLUDE = "1" Then
+                    Dim ORDR_GROUP_NOs() As String = Split(OG, ",")
+
+                    ASCMAIN1.sql = "Select Distinct CUST_CODE from SOTORDR0 where ORDR_GROUP_NO in (" & sqlOG & ")"
+                    Dim OG_CUSTs As New List(Of String)
+                    For Each row In ASCDATA1.GetDataTable.Select("")
+                        OG_CUSTs.Add(row.Item("CUST_CODE"))
+                    Next
+
+                    If OG_CUSTs.Contains("WALMART") Then
+                        WALMART_groups_selected = True
+                        If OG_CUSTs.Count > 1 Then
+                            EMsg &= vbCr & "You must select WALMART orders without mixing other customers"
+                        End If
+                    End If
+                    'Else
                     'End If
 
-                    If ASCMAIN1.CLIENT = "VAN" Then
-                        Dim row As DataRow
-                        For Each row In tblASTDSQLA.Select("EXCLUDE='1'")
-                            Dim CODE_VALUES As String = row.Item("CODE_VALUES") & ""
-                            '  CODE_VALUES = Mid(CODE_VALUES, 2, CODE_VALUES.Length - 2)
-                            Dim CODE_VALUE_LIST() As String = CODE_VALUES.Split(",")
-                            If CODE_VALUE_LIST.Length > 25 Then
-                                EMsg &= vbCr & "You may not use Exclusion for more than 25 items"
-                            End If
-                        Next
+                    ''ASCMAIN1.sql = "Select Distinct EDI_CONS_NO from EDT850T1 where ORDR_GROUP_NO in (" & sqlOG & ")"
+                    ''Dim EDI_CONS_NOs As New List(Of String)
+                    ''For Each row In ASCDATA1.GetDataTable.Select("")
+                    ''    EDI_CONS_NOs.Add(row.Item("EDI_CONS_NO"))
+                    ''Next
 
-
-                        Dim WALMART_customer_selected As Boolean = False
-
-                        row = tblASTDSQLA.Rows.Find("CUST_CODE")
-                        ' remember - you cannot exclude customers, so this is always a list of customers to include
-                        Dim CUST_CODEs() As String = Split(row.Item("CODE_VALUES") & "", ",")
-                        If CUST_CODEs.Contains("WALMART") Then
-                            WALMART_customer_selected = True
-                            If CUST_CODEs.Length > 1 Then
-                                EMsg &= vbCr & "You must select WALMART all by itself (no other customers)"
-                            End If
-                        End If
-
-                        row = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
-                        Dim OG As String = row.Item("CODE_VALUES") & ""
-                        Dim sqlOG As String = "'" & Replace(OG, ",", "','") & "" & "'"
-                        Dim EXCLUDE As String = row.Item("EXCLUDE") & ""
-
-                        Dim WALMART_groups_selected As Boolean = False
-
-                        If OG <> "" Then
-                            'If EXCLUDE = "1" Then
-                            Dim ORDR_GROUP_NOs() As String = Split(OG, ",")
-
-                            ASCMAIN1.sql = "Select Distinct CUST_CODE from SOTORDR0 where ORDR_GROUP_NO in (" & sqlOG & ")"
-                            Dim OG_CUSTs As New List(Of String)
-                            For Each row In ASCDATA1.GetDataTable.Select("")
-                                OG_CUSTs.Add(row.Item("CUST_CODE"))
-                            Next
-
-                            If OG_CUSTs.Contains("WALMART") Then
-                                WALMART_groups_selected = True
-                                If OG_CUSTs.Count > 1 Then
-                                    EMsg &= vbCr & "You must select WALMART orders without mixing other customers"
-                                End If
-                            End If
-                            'Else
-                            'End If
-
-                            ''ASCMAIN1.sql = "Select Distinct EDI_CONS_NO from EDT850T1 where ORDR_GROUP_NO in (" & sqlOG & ")"
-                            ''Dim EDI_CONS_NOs As New List(Of String)
-                            ''For Each row In ASCDATA1.GetDataTable.Select("")
-                            ''    EDI_CONS_NOs.Add(row.Item("EDI_CONS_NO"))
-                            ''Next
-
-                            ASCMAIN1.sql = "SELECT DISTINCT SOTORDR0.ORDR_GROUP_NO,EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO FROM SOTORDR0,EDT850T1" _
+                    ASCMAIN1.sql = "SELECT DISTINCT SOTORDR0.ORDR_GROUP_NO,EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO FROM SOTORDR0,EDT850T1" _
                              & " WHERE EDT850T1.EDI_DOC_SEQ_NO(+) = SOTORDR0.EDI_DOC_SEQ_NO" _
                              & " AND (EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO) IN (" _
                              & " SELECT DISTINCT EDT850T1.EDI_CONS_NO,SOTORDR0.CUST_DC_NO FROM SOTORDR0,EDT850T1" _
@@ -3738,154 +3743,154 @@ Public Class SOROREL1
                              & " AND ORDR_GROUP_NO NOT in (" & sqlOG & ")"
 
 
-                            'Dim EDI_CONS_NOs As New List(Of String)
-                            For Each row In ASCDATA1.GetDataTable.Select("")
-                                EMsg &= vbCr & $"Missing Order Group No {row.Item("ORDR_GROUP_NO")} For DC {row.Item("CUST_DC_NO")} When Releasing Multi-PO"
-                            Next
+                    'Dim EDI_CONS_NOs As New List(Of String)
+                    For Each row In ASCDATA1.GetDataTable.Select("")
+                        EMsg &= vbCr & $"Missing Order Group No {row.Item("ORDR_GROUP_NO")} For DC {row.Item("CUST_DC_NO")} When Releasing Multi-PO"
+                    Next
 
 
-                            If OG_CUSTs.Contains("WALMART") Then
-                                dst.Tables("ERROR_TBL").Rows.Clear()
+                    If OG_CUSTs.Contains("WALMART") Then
+                        dst.Tables("ERROR_TBL").Rows.Clear()
 
-                                ASCMAIN1.sql = "Select STYLE_CODE,STYLE_DESC,SUB_BODY_CODE,CARTON_PACK_QTY,CASE_CUBE,CUST_CODE FROM ICTSTYL1 WHERE (CASE_CUBE Is NULL or case_cube = 0 OR CARTON_PACK_qty = 0 OR CARTON_PACK_qty IS NULL)  And STYLE_CODE In (" _
+                        ASCMAIN1.sql = "Select STYLE_CODE,STYLE_DESC,SUB_BODY_CODE,CARTON_PACK_QTY,CASE_CUBE,CUST_CODE FROM ICTSTYL1 WHERE (CASE_CUBE Is NULL or case_cube = 0 OR CARTON_PACK_qty = 0 OR CARTON_PACK_qty IS NULL)  And STYLE_CODE In (" _
                                 & " Select  DISTINCT STYLE_CODE FROM SOTORDR2 WHERE ORDR_NO In (" _
                                 & " Select  ORDR_NO  FROM SOTORDR1 WHERE ORDR_GROUP_NO in (" & sqlOG & ")))"
 
-                                ''Dim OG_CUSTs As New List(Of String)
-                                For Each row In ASCDATA1.GetDataTable.Select("")
-                                    ''    OG_CUSTs.Add(row.Item("CUST_CODE"))
-                                    Dim rowERROR_TBL As DataRow = Nothing
-                                    rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
-                                    With rowERROR_TBL
-                                        .Item("STYLE_CODE") = row.Item("STYLE_CODE")
-                                        .Item("SUB_BODY_CODE") = row.Item("SUB_BODY_CODE")
-                                        .Item("CARTON_PACK_QTY") = row.Item("CARTON_PACK_QTY")
-                                        .Item("CUST_CODE") = row.Item("CUST_CODE")
-                                        .Item("CASE_CUBE") = row.Item("CASE_CUBE")
-                                        .Item("STYLE_DESC") = row.Item("STYLE_DESC")
-                                    End With
-                                    dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
+                        ''Dim OG_CUSTs As New List(Of String)
+                        For Each row In ASCDATA1.GetDataTable.Select("")
+                            ''    OG_CUSTs.Add(row.Item("CUST_CODE"))
+                            Dim rowERROR_TBL As DataRow = Nothing
+                            rowERROR_TBL = dst.Tables("ERROR_TBL").NewRow
+                            With rowERROR_TBL
+                                .Item("STYLE_CODE") = row.Item("STYLE_CODE")
+                                .Item("SUB_BODY_CODE") = row.Item("SUB_BODY_CODE")
+                                .Item("CARTON_PACK_QTY") = row.Item("CARTON_PACK_QTY")
+                                .Item("CUST_CODE") = row.Item("CUST_CODE")
+                                .Item("CASE_CUBE") = row.Item("CASE_CUBE")
+                                .Item("STYLE_DESC") = row.Item("STYLE_DESC")
+                            End With
+                            dst.Tables("ERROR_TBL").Rows.Add(rowERROR_TBL)
 
-                                Next
+                        Next
 
-                                If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
-                                    Using F As New ASFMSGBF
-                                        F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Styles have been identified as missing case cube values", "")
-                                    End Using
-                                    EMsg &= vbCr & "You must correct the Style Case Cube and Carton Pack Qty in the Styles Listed previously before releasing"
-                                End If
-                            End If
-
-
-                        End If
-
-                        If WALMART_customer_selected And Not chkForcePick.Checked Then
-                            EMsg &= vbCr & "You must Force Pick WALMART orders"
-                        End If
-
-                    End If
-
-
-                    Dim rowASTDSQLA As DataRow = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
-
-                    If Absx1.chkFor("CHKFORCE_PICK").Checked Then
-                        If rowASTDSQLA.Item("CODE_VALUES") & "" = "" Then
-                            EMsg &= vbCr & "You Must Select Specific Order Groups To Force Pick"
-                        ElseIf rowASTDSQLA.Item("EXCLUDE") & "" = "1" Then
-                            EMsg &= vbCr & "When Force Picking, you must Select (Not Exclude) Order Groups"
-                        End If
-                    End If
-
-                    If ASCMAIN1.CLIENT = "RGI" Then
-                        If Absx1.chkFor("CHKMANUAL_ONLY").Checked Then
-                            If DirectCast(grdSOTORDRU.DataSource, DataTable).Select("SEL='1'").Length = 0 Then
-                                EMsg &= vbCr & "You Must Select Specific Users when choosing Manually Selected only"
-                            End If
-                            If Absx1.txtFor("WHSE_CODE").Text <> "MS" Then
-                                EMsg &= vbCr & "You Must Select Whse Code MS when choosing Manually Selected only in order to enable USL Transfer Option"
-                            End If
-                        Else
-                            If chkAllocateNoRelease.Checked Then
-                                ' this is ok
-                            ElseIf chkECommerce.Checked Then
-                                ' this is ok
-                            ElseIf chkForcePick.Checked Then
-                                ' this is ok
-                            ElseIf Absx1.txtFor("WHSE_CODE").Text = "MS" Then
-                                EMsg &= vbCr & "MS Sales Order Release must be done by choosing Manually Selected only"
-                            ElseIf Absx1.txtFor("WHSE_CODE").Text = "" Then
-                                EMsg &= vbCr & "Sales Order Release must be done by choosing a specific Whse"
-                            End If
+                        If dst.Tables("ERROR_TBL").Rows.Count <> 0 Then
+                            Using F As New ASFMSGBF
+                                F.Show_grd(dst.Tables("ERROR_TBL"), Me, "The following Styles have been identified as missing case cube values", "")
+                            End Using
+                            EMsg &= vbCr & "You must correct the Style Case Cube and Carton Pack Qty in the Styles Listed previously before releasing"
                         End If
                     End If
 
 
-                    If Absx1.chkFor("CHKREL_PAST_CANCEL").Checked Then
-                        If rowASTDSQLA.Item("CODE_VALUES") & "" = "" Then
-                            If ASCMAIN1.CLIENT = "RGI" And Absx1.chkFor("CHKMANUAL_ONLY").Checked Then
-                                If EMsg = "" Then
-                                    MsgBox("Please be aware that there may be many Orders Past Cancel in your batch of orders", MsgBoxStyle.OkOnly, "Verification")
-                                End If
-                            Else
-                                EMsg &= vbCr & "You Must Select Specific Order Groups to Release Past Cancel"
-                            End If
+                End If
 
-                        ElseIf rowASTDSQLA.Item("EXCLUDE") & "" = "1" Then
-                            EMsg &= vbCr & "When Releasing Past Cancel, you must Select (not Exclude) Order Groups"
-                        End If
+                If WALMART_customer_selected And Not chkForcePick.Checked Then
+                    EMsg &= vbCr & "You must Force Pick WALMART orders"
+                End If
+
+            End If
+
+
+            Dim rowASTDSQLA As DataRow = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
+
+            If Absx1.chkFor("CHKFORCE_PICK").Checked Then
+                If rowASTDSQLA.Item("CODE_VALUES") & "" = "" Then
+                    EMsg &= vbCr & "You Must Select Specific Order Groups To Force Pick"
+                ElseIf rowASTDSQLA.Item("EXCLUDE") & "" = "1" Then
+                    EMsg &= vbCr & "When Force Picking, you must Select (Not Exclude) Order Groups"
+                End If
+            End If
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                If Absx1.chkFor("CHKMANUAL_ONLY").Checked Then
+                    If DirectCast(grdSOTORDRU.DataSource, DataTable).Select("SEL='1'").Length = 0 Then
+                        EMsg &= vbCr & "You Must Select Specific Users when choosing Manually Selected only"
                     End If
-
-                    If optWHSE.Value = "S" Then
-                        Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
-                        If rowICTWHSE1 Is Nothing Then
-                            EMsg &= vbCr & "Invalid Ship-From Warehouse Specified"
-                        End If
+                    If Absx1.txtFor("WHSE_CODE").Text <> "MS" Then
+                        EMsg &= vbCr & "You Must Select Whse Code MS when choosing Manually Selected only in order to enable USL Transfer Option"
                     End If
-
-                    If chkECommerce.Checked Then
-                        If optWHSE.Value = "A" Then
-                            EMsg &= vbCr & "e-Commerce Release must specify a single Warehouse"
-                        End If
-
-                        If Absx1.txtFor("ECOM_CODE").Text = "" Then
-                            ' 03/21/2019 - Allow to release for Ecom Sales Orders
-                            ' EMsg &= vbCr & "e-Commerce Release must specify a single e-Commerce Partner (non specified)"
-                        Else
-                            If LookUp("ECTECOM1", Absx1.txtFor("ECOM_CODE").Text) Is Nothing Then
-                                EMsg &= vbCr & "e-Commerce Release must specify a valid e-Commerce Partner"
-                            End If
-                        End If
-                    End If
-                    If chk846Update.Checked Then
-                        If Not chkAllocateNoRelease.Checked Then
-                            EMsg &= vbCr & "EDI Allocations cannot be preserved when releasing orders"
-                        End If
-                        rowASTDSQLA = tblASTDSQLA.Rows.Find("CUST_CODE")
-                        If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                            EMsg &= vbCr & "EDI Allocations cannot be preserved when Customers are selected"
-                        End If
-                        rowASTDSQLA = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
-                        If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                            EMsg &= vbCr & "EDI Allocations cannot be preserved when Order Groups are selected"
-                        End If
-                        rowASTDSQLA = tblASTDSQLA.Rows.Find("SALES_DIVISION_CODE")
-                        If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                            EMsg &= vbCr & "EDI Allocations cannot be preserved when Sales Divisions are selected"
-                        End If
-                        rowASTDSQLA = tblASTDSQLA.Rows.Find("TERM_CODE")
-                        If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
-                            EMsg &= vbCr & "EDI Allocations cannot be preserved when Terms are selected"
-                        End If
+                Else
+                    If chkAllocateNoRelease.Checked Then
+                        ' this is ok
+                    ElseIf chkECommerce.Checked Then
+                        ' this is ok
+                    ElseIf chkForcePick.Checked Then
+                        ' this is ok
+                    ElseIf Absx1.txtFor("WHSE_CODE").Text = "MS" Then
+                        EMsg &= vbCr & "MS Sales Order Release must be done by choosing Manually Selected only"
+                    ElseIf Absx1.txtFor("WHSE_CODE").Text = "" Then
+                        EMsg &= vbCr & "Sales Order Release must be done by choosing a specific Whse"
                     End If
                 End If
+            End If
+
+
+            If Absx1.chkFor("CHKREL_PAST_CANCEL").Checked Then
+                If rowASTDSQLA.Item("CODE_VALUES") & "" = "" Then
+                    If ASCMAIN1.CLIENT = "RGI" And Absx1.chkFor("CHKMANUAL_ONLY").Checked Then
+                        If EMsg = "" Then
+                            MsgBox("Please be aware that there may be many Orders Past Cancel in your batch of orders", MsgBoxStyle.OkOnly, "Verification")
+                        End If
+                    Else
+                        EMsg &= vbCr & "You Must Select Specific Order Groups to Release Past Cancel"
+                    End If
+
+                ElseIf rowASTDSQLA.Item("EXCLUDE") & "" = "1" Then
+                    EMsg &= vbCr & "When Releasing Past Cancel, you must Select (not Exclude) Order Groups"
+                End If
+            End If
+
+            If optWHSE.Value = "S" Then
+                Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
+                If rowICTWHSE1 Is Nothing Then
+                    EMsg &= vbCr & "Invalid Ship-From Warehouse Specified"
+                End If
+            End If
+
+            If chkECommerce.Checked Then
+                If optWHSE.Value = "A" Then
+                    EMsg &= vbCr & "e-Commerce Release must specify a single Warehouse"
+                End If
+
+                If Absx1.txtFor("ECOM_CODE").Text = "" Then
+                    ' 03/21/2019 - Allow to release for Ecom Sales Orders
+                    ' EMsg &= vbCr & "e-Commerce Release must specify a single e-Commerce Partner (non specified)"
+                Else
+                    If LookUp("ECTECOM1", Absx1.txtFor("ECOM_CODE").Text) Is Nothing Then
+                        EMsg &= vbCr & "e-Commerce Release must specify a valid e-Commerce Partner"
+                    End If
+                End If
+            End If
+            If chk846Update.Checked Then
+                If Not chkAllocateNoRelease.Checked Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when releasing orders"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("CUST_CODE")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Customers are selected"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("ORDR_GROUP_NO")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Order Groups are selected"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("SALES_DIVISION_CODE")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Sales Divisions are selected"
+                End If
+                rowASTDSQLA = tblASTDSQLA.Rows.Find("TERM_CODE")
+                If rowASTDSQLA.Item("CODE_VALUES") & "" <> "" Then
+                    EMsg &= vbCr & "EDI Allocations cannot be preserved when Terms are selected"
+                End If
+            End If
+        End If
     End Sub
 
     Overrides Sub Update_Record()
 
     End Sub
 
-    Overrides Function Prepare_dst( _
-    ByVal perform_fill As Boolean, _
+    Overrides Function Prepare_dst(
+    ByVal perform_fill As Boolean,
     ByVal ParamArray parms() As Object) As ASCBASE1
 
         If Not Me.Visible Then Clear_dst()
@@ -4200,30 +4205,30 @@ Public Class SOROREL1
 
             ASCDATA1.ExecuteSQL("Insert into SOTPICK1 Select * from " & SOTPICK1)
             ASCDATA1.ExecuteSQL("Insert into SOTPICK2 Select * from " & SOTPICK2)
-                ASCDATA1.ExecuteSQL("Insert into SOTSHIP1 Select * from " & SOTSHIP1)
-                ASCDATA1.ExecuteSQL("Insert into SOTCART1 Select * from " & SOTCART1)
-                ASCDATA1.ExecuteSQL("Insert into SOTCART2 Select * from " & SOTCART2)
+            ASCDATA1.ExecuteSQL("Insert into SOTSHIP1 Select * from " & SOTSHIP1)
+            ASCDATA1.ExecuteSQL("Insert into SOTCART1 Select * from " & SOTCART1)
+            ASCDATA1.ExecuteSQL("Insert into SOTCART2 Select * from " & SOTCART2)
 
-                Dim rowSOTPICK0 As DataRow = dst.Tables("SOTPICK0").NewRow
-                With rowSOTPICK0
-                    .Item("PICK_BATCH_NO") = PICK_BATCH_NO
-                    .Item("PICK_SHPS") = SHIP_BOL_NO_seq
-                    .Item("PICK_CTNS") = CART_NO_seq
-                    .Item("PICK_PKTS") = PICK_NO_seq
-                    .Item("PICK_BATCH_STATUS") = "O"
-                    .Item("WHSE_CODE") = WHSE_CODE
-                    .Item("INIT_OPER") = ASCMAIN1.USER_ID
-                    .Item("INIT_DATE") = DATETIME_STAMP
-                    .Item("PICK_SHIP_REL_DATE") = SHIP_BY_DATE
-                    If blnFORCE_PICK Then
-                        .Item("PICK_FORCED") = "1"
-                    End If
-                End With
-                dst.Tables("SOTPICK0").Rows.Add(rowSOTPICK0)
-                Update_Record_TDA("SOTPICK0")
-            End If
+            Dim rowSOTPICK0 As DataRow = dst.Tables("SOTPICK0").NewRow
+            With rowSOTPICK0
+                .Item("PICK_BATCH_NO") = PICK_BATCH_NO
+                .Item("PICK_SHPS") = SHIP_BOL_NO_seq
+                .Item("PICK_CTNS") = CART_NO_seq
+                .Item("PICK_PKTS") = PICK_NO_seq
+                .Item("PICK_BATCH_STATUS") = "O"
+                .Item("WHSE_CODE") = WHSE_CODE
+                .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                .Item("INIT_DATE") = DATETIME_STAMP
+                .Item("PICK_SHIP_REL_DATE") = SHIP_BY_DATE
+                If blnFORCE_PICK Then
+                    .Item("PICK_FORCED") = "1"
+                End If
+            End With
+            dst.Tables("SOTPICK0").Rows.Add(rowSOTPICK0)
+            Update_Record_TDA("SOTPICK0")
+        End If
 
-            ASCMAIN1.Progress("Updating Order Tables", "")
+        ASCMAIN1.Progress("Updating Order Tables", "")
 
         'ASCMAIN1.sql = "Update " & SOTORDR2 & " SOTORDR2 Set ORDR_STATUS = " _
         '    & " (Select ORDR_STATUS from " & SOTORDR1 & " SOTORDR1 where SOTORDR1.ORDR_NO = SOTORDR2.ORDR_NO)"
@@ -4487,7 +4492,7 @@ Public Class SOROREL1
             MsgBox("You must select more than 1 order in order to Consolidate", MsgBoxStyle.OkOnly, "Nothing to Consolidate")
             Exit Sub
         End If
-         
+
         Dim r As Integer = 0
         Dim ORDR_DATE As Date
         Dim ORDR_SHIP_DATE_MIN As Date
@@ -4535,7 +4540,7 @@ Public Class SOROREL1
                 Exit Sub
             End If
         End If
- 
+
         For Each row As DataRow In tblEDT850TM.Select("SEL = '1'")
             ORDR_DATE = row.Item("ORDR_DATE")
             EDI_PROMOTION = row.Item("EDI_PROMOTION") & ""
