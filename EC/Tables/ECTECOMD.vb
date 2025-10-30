@@ -127,6 +127,23 @@ Public Class ECTECOMD
         Fill_Records("SOTSVIAW", Absx1.txtFor("ECOM_CODE").Text)
         Fill_Records("WHTPKGMW", Absx1.txtFor("ECOM_CODE").Text)
 
+        Try
+            ASCMAIN1.sql = "INSERT INTO ICTSTYCW
+                                SELECT 'SHOPIFY' ECOM_CODE, STYLE_CODE, COLOR_CODE, SIZE_INDEX, NULL ECOM_PRODUCT_ID, NULL ECOM_VARIANT_ID, 
+                                NULL ECOM_INV_VARIANT_ID, 'A' ECOM_PRODUCT_STATUS, SYSDATE ECOM_PRODUCT_STATUS_DATE, NULL ECOM_PRODUCT_LAST_UPDATED,
+                                NULL WEB_DESCRIPTION, NULL BODY_HTML
+                                FROM ICTSTYC4 WHERE UPC_CODE IS NOT NULL
+                                AND STYLE_CODE IN (SELECT STYLE_CODE FROM ICTSTYL1 WHERE SALES_DIVISION_CODE = '30')
+                                AND STYLE_CODE NOT IN (select STYLE_CODE from ICTSTYCW)"
+
+            Dim numRows As Int32 = ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            If numRows > 0 Then
+                'MessageBox.Show($"{numRows} styles were added to the list of styles for the web. You must click Update to save these styles.", "Show Record", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Catch ex As Exception
+
+        End Try
+
         ASCMAIN1.sql = $"SELECT ICTSTYCW.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM
                             FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3
                             WHERE ICTSTYCW.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
@@ -195,6 +212,61 @@ Public Class ECTECOMD
                 sql_where = $"CARRIER_PROD_CODE IS NOT NULL"
 
         End Select
+    End Sub
+
+#End Region
+
+#Region "Popup Menus"
+
+    Overrides Sub Load_Popup_Menus()
+        Load_Popup_Menu(grdICTSTYCW_PLM, "S", "Show Filter")
+    End Sub
+
+    Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
+        MyBase.tlb_BeforeToolDropdown(sender, e)
+
+        If e.Tool.OwnerIsMenu Or e.SourceControl Is Nothing OrElse e.SourceControl.Name = "" Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.SourceControl.Name, 4))
+        If grd Is Nothing Then
+            e.Cancel = True
+            Exit Sub
+        End If
+
+        Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
+        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            e.Cancel = True
+        Else
+            Select Case e.SourceControl.Name
+                Case = "grdECTECOM1_PARTNER"
+
+            End Select
+
+        End If
+    End Sub
+
+    Overrides Sub tlb_ToolClick(ByVal sender As System.Object, ByVal e As Infragistics.Win.UltraWinToolbars.ToolClickEventArgs)
+        MyBase.tlb_ToolClick(sender, e)
+        Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
+
+        Select Case e.Tool.Key
+
+        End Select
+
+        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+            Exit Sub
+        End If
+
+        Select Case e.Tool.Key
+            Case ""
+        End Select
+
     End Sub
 
 #End Region
