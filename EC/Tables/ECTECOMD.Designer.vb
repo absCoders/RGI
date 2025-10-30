@@ -31,6 +31,10 @@ Partial Class ECTECOMD
         Dim Appearance91 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance92 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance93 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance57 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance58 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance59 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -167,11 +171,16 @@ Partial Class ECTECOMD
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab4 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance56 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance55 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance54 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraTabPageControl3 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.UltraTextEditor21 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraTextEditor22 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel20 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraNumericEditor5 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
+        Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor20 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel18 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraTextEditor14 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor13 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor10 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -222,15 +231,6 @@ Partial Class ECTECOMD
         Me.UltraPanel1 = New Infragistics.Win.Misc.UltraPanel()
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.UltraTextEditor14 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor20 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel18 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraNumericEditor5 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
-        Me.UltraTextEditor21 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor22 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel20 = New Infragistics.Win.Misc.UltraLabel()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -242,6 +242,11 @@ Partial Class ECTECOMD
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl3.SuspendLayout()
+        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -285,11 +290,6 @@ Partial Class ECTECOMD
         Me.UltraPanel1.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
-        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Panel1
@@ -428,6 +428,105 @@ Partial Class ECTECOMD
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1160, 513)
+        '
+        'UltraTextEditor21
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor21, "ECOM_DEFAULT_SHIP_VIA")
+        Me.Absx1.SetABSHasButton(Me.UltraTextEditor21, True)
+        Me.Absx1.SetABSViewName(Me.UltraTextEditor21, "SHIP_VIA_CODE")
+        Me.UltraTextEditor21.Location = New System.Drawing.Point(519, 402)
+        Me.UltraTextEditor21.Name = "UltraTextEditor21"
+        Me.UltraTextEditor21.Size = New System.Drawing.Size(104, 25)
+        Me.UltraTextEditor21.TabIndex = 23
+        '
+        'UltraTextEditor22
+        '
+        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor22, False)
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "SHIP_VIA_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor22, "ECOM_DEFAULT_SHIP_VIA")
+        Me.UltraTextEditor22.Location = New System.Drawing.Point(519, 426)
+        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor22.Name = "UltraTextEditor22"
+        Me.UltraTextEditor22.ReadOnly = True
+        Me.UltraTextEditor22.Size = New System.Drawing.Size(250, 25)
+        Me.UltraTextEditor22.TabIndex = 24
+        Me.UltraTextEditor22.TabStop = False
+        '
+        'UltraLabel20
+        '
+        Appearance53.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel20.Appearance = Appearance53
+        Me.UltraLabel20.Location = New System.Drawing.Point(443, 402)
+        Me.UltraLabel20.Name = "UltraLabel20"
+        Me.UltraLabel20.Size = New System.Drawing.Size(81, 42)
+        Me.UltraLabel20.TabIndex = 349
+        Me.UltraLabel20.Text = "Default Ship-Via"
+        '
+        'UltraNumericEditor5
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor5, "ECOM_MAX_ORDERS_IMPORT")
+        Me.UltraNumericEditor5.FormatString = "#,##0"
+        Me.UltraNumericEditor5.Location = New System.Drawing.Point(171, 466)
+        Me.UltraNumericEditor5.MaxValue = New Decimal(New Integer() {100, 0, 0, 0})
+        Me.UltraNumericEditor5.MinValue = 0
+        Me.UltraNumericEditor5.Name = "UltraNumericEditor5"
+        Me.UltraNumericEditor5.NullText = "0"
+        Me.UltraNumericEditor5.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.UltraNumericEditor5.Size = New System.Drawing.Size(85, 25)
+        Me.UltraNumericEditor5.TabIndex = 16
+        '
+        'UltraLabel19
+        '
+        Appearance54.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel19.Appearance = Appearance54
+        Me.UltraLabel19.AutoSize = True
+        Me.UltraLabel19.Location = New System.Drawing.Point(8, 473)
+        Me.UltraLabel19.Name = "UltraLabel19"
+        Me.UltraLabel19.Size = New System.Drawing.Size(142, 18)
+        Me.UltraLabel19.TabIndex = 345
+        Me.UltraLabel19.Text = "Max order to Import"
+        '
+        'UltraTextEditor20
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor20, "ECOM_ORDERS_ARCHIVE_DIR")
+        Me.UltraTextEditor20.Location = New System.Drawing.Point(171, 370)
+        Me.UltraTextEditor20.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor20.Name = "UltraTextEditor20"
+        Me.UltraTextEditor20.Size = New System.Drawing.Size(598, 25)
+        Me.UltraTextEditor20.TabIndex = 13
+        '
+        'UltraLabel18
+        '
+        Appearance55.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel18.Appearance = Appearance55
+        Me.UltraLabel18.AutoSize = True
+        Me.UltraLabel18.Location = New System.Drawing.Point(10, 374)
+        Me.UltraLabel18.Name = "UltraLabel18"
+        Me.UltraLabel18.Size = New System.Drawing.Size(129, 18)
+        Me.UltraLabel18.TabIndex = 344
+        Me.UltraLabel18.Text = "Orders Archive Dir"
+        '
+        'UltraTextEditor14
+        '
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor14, "ECOM_LAST_SALES_ORDER_EXTRACT")
+        Me.UltraTextEditor14.Location = New System.Drawing.Point(171, 434)
+        Me.UltraTextEditor14.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraTextEditor14.Name = "UltraTextEditor14"
+        Me.UltraTextEditor14.ReadOnly = True
+        Me.UltraTextEditor14.Size = New System.Drawing.Size(257, 25)
+        Me.UltraTextEditor14.TabIndex = 15
+        Me.UltraTextEditor14.TabStop = False
+        '
+        'UltraLabel17
+        '
+        Appearance56.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel17.Appearance = Appearance56
+        Me.UltraLabel17.AutoSize = True
+        Me.UltraLabel17.Location = New System.Drawing.Point(9, 441)
+        Me.UltraLabel17.Name = "UltraLabel17"
+        Me.UltraLabel17.Size = New System.Drawing.Size(128, 18)
+        Me.UltraLabel17.TabIndex = 342
+        Me.UltraLabel17.Text = "Last Order Extract"
         '
         'UltraTextEditor13
         '
@@ -1479,7 +1578,7 @@ Partial Class ECTECOMD
         UltraTab2.TabPage = Me.UltraTabPageControl2
         UltraTab2.Text = "Items"
         UltraTab4.TabPage = Me.UltraTabPageControl4
-        UltraTab4.Text = "Packages"
+        UltraTab4.Text = "Shipping Packages"
         Me.UltraTabControl1.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab3, UltraTab1, UltraTab2, UltraTab4})
         '
         'UltraTabSharedControlsPage1
@@ -1487,105 +1586,6 @@ Partial Class ECTECOMD
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1160, 513)
-        '
-        'UltraTextEditor14
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor14, "ECOM_LAST_SALES_ORDER_EXTRACT")
-        Me.UltraTextEditor14.Location = New System.Drawing.Point(171, 434)
-        Me.UltraTextEditor14.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraTextEditor14.Name = "UltraTextEditor14"
-        Me.UltraTextEditor14.ReadOnly = True
-        Me.UltraTextEditor14.Size = New System.Drawing.Size(257, 25)
-        Me.UltraTextEditor14.TabIndex = 15
-        Me.UltraTextEditor14.TabStop = False
-        '
-        'UltraLabel17
-        '
-        Appearance56.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel17.Appearance = Appearance56
-        Me.UltraLabel17.AutoSize = True
-        Me.UltraLabel17.Location = New System.Drawing.Point(9, 441)
-        Me.UltraLabel17.Name = "UltraLabel17"
-        Me.UltraLabel17.Size = New System.Drawing.Size(128, 18)
-        Me.UltraLabel17.TabIndex = 342
-        Me.UltraLabel17.Text = "Last Order Extract"
-        '
-        'UltraTextEditor20
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor20, "ECOM_ORDERS_ARCHIVE_DIR")
-        Me.UltraTextEditor20.Location = New System.Drawing.Point(171, 370)
-        Me.UltraTextEditor20.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraTextEditor20.Name = "UltraTextEditor20"
-        Me.UltraTextEditor20.Size = New System.Drawing.Size(598, 25)
-        Me.UltraTextEditor20.TabIndex = 13
-        '
-        'UltraLabel18
-        '
-        Appearance55.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel18.Appearance = Appearance55
-        Me.UltraLabel18.AutoSize = True
-        Me.UltraLabel18.Location = New System.Drawing.Point(10, 374)
-        Me.UltraLabel18.Name = "UltraLabel18"
-        Me.UltraLabel18.Size = New System.Drawing.Size(129, 18)
-        Me.UltraLabel18.TabIndex = 344
-        Me.UltraLabel18.Text = "Orders Archive Dir"
-        '
-        'UltraLabel19
-        '
-        Appearance54.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel19.Appearance = Appearance54
-        Me.UltraLabel19.AutoSize = True
-        Me.UltraLabel19.Location = New System.Drawing.Point(8, 473)
-        Me.UltraLabel19.Name = "UltraLabel19"
-        Me.UltraLabel19.Size = New System.Drawing.Size(142, 18)
-        Me.UltraLabel19.TabIndex = 345
-        Me.UltraLabel19.Text = "Max order to Import"
-        '
-        'UltraNumericEditor5
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraNumericEditor5, "ECOM_MAX_ORDERS_IMPORT")
-        Me.UltraNumericEditor5.FormatString = "#,##0"
-        Me.UltraNumericEditor5.Location = New System.Drawing.Point(171, 466)
-        Me.UltraNumericEditor5.MaxValue = New Decimal(New Integer() {100, 0, 0, 0})
-        Me.UltraNumericEditor5.MinValue = 0
-        Me.UltraNumericEditor5.Name = "UltraNumericEditor5"
-        Me.UltraNumericEditor5.NullText = "0"
-        Me.UltraNumericEditor5.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
-        Me.UltraNumericEditor5.Size = New System.Drawing.Size(85, 25)
-        Me.UltraNumericEditor5.TabIndex = 16
-        '
-        'UltraTextEditor21
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor21, "ECOM_DEFAULT_SHIP_VIA")
-        Me.Absx1.SetABSHasButton(Me.UltraTextEditor21, True)
-        Me.Absx1.SetABSViewName(Me.UltraTextEditor21, "SHIP_VIA_CODE")
-        Me.UltraTextEditor21.Location = New System.Drawing.Point(519, 402)
-        Me.UltraTextEditor21.Name = "UltraTextEditor21"
-        Me.UltraTextEditor21.Size = New System.Drawing.Size(104, 25)
-        Me.UltraTextEditor21.TabIndex = 23
-        '
-        'UltraTextEditor22
-        '
-        Me.Absx1.SetABSBindToTable(Me.UltraTextEditor22, False)
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor22, "SHIP_VIA_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor22, "ECOM_DEFAULT_SHIP_VIA")
-        Me.UltraTextEditor22.Location = New System.Drawing.Point(519, 426)
-        Me.UltraTextEditor22.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraTextEditor22.Name = "UltraTextEditor22"
-        Me.UltraTextEditor22.ReadOnly = True
-        Me.UltraTextEditor22.Size = New System.Drawing.Size(250, 25)
-        Me.UltraTextEditor22.TabIndex = 24
-        Me.UltraTextEditor22.TabStop = False
-        '
-        'UltraLabel20
-        '
-        Appearance53.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel20.Appearance = Appearance53
-        Me.UltraLabel20.Location = New System.Drawing.Point(443, 402)
-        Me.UltraLabel20.Name = "UltraLabel20"
-        Me.UltraLabel20.Size = New System.Drawing.Size(81, 42)
-        Me.UltraLabel20.TabIndex = 349
-        Me.UltraLabel20.Text = "Default Ship-Via"
         '
         'ECTECOMD
         '
@@ -1606,6 +1606,11 @@ Partial Class ECTECOMD
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl3.ResumeLayout(False)
         Me.UltraTabPageControl3.PerformLayout()
+        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1650,11 +1655,6 @@ Partial Class ECTECOMD
         Me.UltraPanel1.ResumeLayout(False)
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabControl1.ResumeLayout(False)
-        CType(Me.UltraTextEditor14, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor20, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraNumericEditor5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor21, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor22, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

@@ -3,6 +3,28 @@ Imports Infragistics.Win.UltraWinEditors
 
 Public Class ECTECOMD
 
+    'BEGIN DECLARE CURSOR C1 IS
+    'SELECT ICTSTYCW.STYLE_CODE, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM,
+    'SUBSTR(ICTSTYCW.STYLE_CODE, 1, LENGTH(ICTSTYCW.STYLE_CODE) - LENGTH(ICTSTYC3.SIZE_CODE)) AS STYLE_CODE_PLM_NEW
+    'FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3
+    'WHERE ICTSTYCW.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
+    'AND ICTSTYCW.COLOR_CODE = ICTCOLR1.COLOR_CODE (+)
+    'AND ICTSTYCW.ECOM_CODE = 'SHOPIFY'
+    'AND ICTSTYCW.STYLE_CODE = ICTSTYC3.STYLE_CODE (+)
+    'AND ICTSTYCW.COLOR_CODE = ICTSTYC3.COLOR_CODE (+)
+    'AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+);
+    'BEGIN FOR R1 IN C1 LOOP
+    '    UPDATE ICTSTYL1 SET STYLE_CODE_PLM = R1.STYLE_CODE_PLM_NEW WHERE STYLE_CODE = R1.STYLE_CODE AND STYLE_CODE_PLM IS NULL;
+    'END LOOP; END; END;
+
+    'INSERT INTO ICTSTYCW
+    'SELECT 'SHOPIFY' ECOM_CODE, STYLE_CODE, COLOR_CODE, SIZE_INDEX, NULL ECOM_PRODUCT_ID, NULL ECOM_VARIANT_ID, 
+    'NULL ECOM_INV_VARIANT_ID, 'A' ECOM_PRODUCT_STATUS, SYSDATE ECOM_PRODUCT_STATUS_DATE, NULL ECOM_PRODUCT_LAST_UPDATED,
+    'NULL WEB_DESCRIPTION, NULL BODY_HTML
+    'FROM ICTSTYC4 WHERE UPC_CODE IS NOT NULL
+    'AND STYLE_CODE IN (SELECT STYLE_CODE FROM ICTSTYL1 WHERE SALES_DIVISION_CODE = '30')
+    'and STYLE_CODE not in (select STYLE_CODE from ICTSTYCW)
+
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         With dst
@@ -90,7 +112,7 @@ Public Class ECTECOMD
         Next
 
         Update_Record_TDA("SOTSVIAW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
-        'Update_Record_TDA("ICTSTYCW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
+        Update_Record_TDA("ICTSTYCW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
         Update_Record_TDA("WHTPKGMW", "ECOM_CODE = '" & Absx1.txtFor("ECOM_CODE").Text & "'")
 
     End Sub
@@ -113,7 +135,7 @@ Public Class ECTECOMD
                             AND ICTSTYCW.STYLE_CODE = ICTSTYC3.STYLE_CODE (+)
                             AND ICTSTYCW.COLOR_CODE = ICTSTYC3.COLOR_CODE (+)
                             AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+)"
-        'Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
+        Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
 
         Dim tblPLM As DataTable = ASCDATA1.SelectDistinct(dst.Tables("ICTSTYCW"), {"ECOM_CODE", "STYLE_CODE_PLM"})
 
@@ -122,10 +144,12 @@ Public Class ECTECOMD
             Dim ECOM_CODE As String = drPLM.Item("ECOM_CODE") & String.Empty
             Dim STYLE_CODE_PLM As String = drPLM.Item("STYLE_CODE_PLM") & String.Empty
 
-            Dim drLookup As DataRow = dst.Tables("ICTSTYCW").Select($"ECOM_CODE = '{ECOM_CODE}' and STYLE_CODE_PLM = '{STYLE_CODE_PLM}'")(0)
-            Dim WEB_DESCRIPTION As String = drLookup.Item("WEB_DESCRIPTION") & String.Empty
-            Dim BODY_HTML As String = drLookup.Item("BODY_HTML") & String.Empty
-            dst.Tables("ICTSTYCW_PLM").Rows.Add({ECOM_CODE, STYLE_CODE_PLM, WEB_DESCRIPTION, BODY_HTML, "1"})
+            If dst.Tables("ICTSTYCW").Select($"ECOM_CODE = '{ECOM_CODE}' and STYLE_CODE_PLM = '{STYLE_CODE_PLM}'").Length > 0 Then
+                Dim drLookup As DataRow = dst.Tables("ICTSTYCW").Select($"ECOM_CODE = '{ECOM_CODE}' and STYLE_CODE_PLM = '{STYLE_CODE_PLM}'")(0)
+                Dim WEB_DESCRIPTION As String = drLookup.Item("WEB_DESCRIPTION") & String.Empty
+                Dim BODY_HTML As String = drLookup.Item("BODY_HTML") & String.Empty
+                dst.Tables("ICTSTYCW_PLM").Rows.Add({ECOM_CODE, STYLE_CODE_PLM, WEB_DESCRIPTION, BODY_HTML, "1"})
+            End If
         Next
         dst.Tables("ICTSTYCW_PLM").AcceptChanges()
 
@@ -311,9 +335,9 @@ Public Class ECTECOMD
     Private Sub grdICTSTYCW_BeforeRowActivate(sender As Object, e As RowEventArgs) Handles grdICTSTYCW.BeforeRowActivate
         ' Existing rows cannot be modified. They can only be Updated
 
-        If 1 = 1 Then
-            Exit Sub
-        End If
+        'If 1 = 1 Then
+        '    Exit Sub
+        'End If
 
         If e.Row.IsAddRow Then
             grdICTSTYCW.DisplayLayout.Bands(0).Columns("STYLE_CODE").CellActivation = Activation.AllowEdit
@@ -340,9 +364,9 @@ Public Class ECTECOMD
 
     Private Sub grdICTSTYCW_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdICTSTYCW.BeforeRowUpdate
 
-        If 1 = 1 Then
-            Exit Sub
-        End If
+        'If 1 = 1 Then
+        '    Exit Sub
+        'End If
 
         e.Row.Cells("ECOM_CODE").Value = Absx1.txtFor("ECOM_CODE").Text
 
@@ -362,9 +386,9 @@ Public Class ECTECOMD
 
     Private Sub grdICTSTYCW_ClickCellButton(sender As Object, e As CellEventArgs) Handles grdICTSTYCW.ClickCellButton
 
-        If 1 = 1 Then
-            Exit Sub
-        End If
+        'If 1 = 1 Then
+        '    Exit Sub
+        'End If
 
 
         Dim sql_where As String = String.Empty
@@ -415,9 +439,9 @@ Public Class ECTECOMD
 
     Private Sub grdICTSTYCW_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdICTSTYCW.AfterCellUpdate
 
-        If 1 = 1 Then
-            Exit Sub
-        End If
+        'If 1 = 1 Then
+        '    Exit Sub
+        'End If
 
         Select Case e.Cell.Column.Key
             Case "STYLE_CODE"
