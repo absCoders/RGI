@@ -74,6 +74,16 @@ Public Class SOFPICKS
         lblORDR_NO.Visible = InquiryMode
         txtORDR_NO.Visible = InquiryMode
 
+        ' Added by Ed on 10/31/2025
+        Dim drECTECOMD As DataRow = LookUp("ECTECOMD", "SHOPIFY")
+        If drECTECOMD IsNot Nothing AndAlso drECTECOMD.Item("ECOM_WHSE_CODE") & String.Empty <> String.Empty Then
+            Dim ECOM_WHSE_CODE As String = drECTECOMD.Item("ECOM_WHSE_CODE") & String.Empty
+            Dim drICTWHSE1 As DataRow = LookUp("ICTWHSE1", ECOM_WHSE_CODE)
+            If drICTWHSE1 IsNot Nothing Then
+                WHSE_CODE_SKIN = ECOM_WHSE_CODE
+            End If
+        End If
+
         With dst
 
             ASCMAIN1.sql = $"Select SOTORDQ1.* from {SOTORDQ1} SOTORDQ1"
@@ -2374,6 +2384,14 @@ Public Class SOFPICKS
         Dim tbl As DataTable = ASCDATA1.GetDataTable
         If tbl.Rows.Count > 0 Then
             ErrorMessage &= vbCrLf & $"Some Orders have Changed - {tbl.Rows(0).Item("ORDR_NO")} - Refresh Required"
+        End If
+
+        ASCMAIN1.sql = $"SELECT * FROM SOTORDR1 
+                            WHERE (ORDR_STATUS <> 'O' OR NVL(ORDR_HOLD, '0') = '1')
+                            AND ORDR_NO IN (SELECT ORDR_NO FROM {SOTORDR0})"
+        tbl = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+        If tbl.Rows.Count > 0 Then
+            ErrorMessage &= vbCrLf & $"Some Orders or no longer Open or are on Hold. Refresh Required"
         End If
 
         ASCMAIN1.Progress("")
