@@ -95,6 +95,9 @@ Partial Class ECFPRC01
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FINAL_PARTNER_SET_PRICE")
         Dim UltraGridColumn29 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("IS_ECOM")
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_ETA")
+        Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("USE_TARIFF")
+        Dim UltraGridColumn40 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TARIFF_PRICE")
+        Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PO_DATE_SHIPPED")
         Dim Appearance14 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -420,6 +423,8 @@ Partial Class ECFPRC01
         'chkShowCalcs
         '
         Me.chkShowCalcs.AutoSize = True
+        Me.chkShowCalcs.Checked = True
+        Me.chkShowCalcs.CheckState = System.Windows.Forms.CheckState.Checked
         Me.chkShowCalcs.Location = New System.Drawing.Point(14, 14)
         Me.chkShowCalcs.Name = "chkShowCalcs"
         Me.chkShowCalcs.Size = New System.Drawing.Size(147, 20)
@@ -466,7 +471,7 @@ Partial Class ECFPRC01
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.Panel3)
         Me.SplitContainer3.Size = New System.Drawing.Size(970, 210)
-        Me.SplitContainer3.SplitterDistance = 471
+        Me.SplitContainer3.SplitterDistance = 548
         Me.SplitContainer3.TabIndex = 0
         '
         'grdECTPRCG2
@@ -562,7 +567,7 @@ Partial Class ECFPRC01
         Me.grdECTPRCG2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdECTPRCG2.Location = New System.Drawing.Point(0, 0)
         Me.grdECTPRCG2.Name = "grdECTPRCG2"
-        Me.grdECTPRCG2.Size = New System.Drawing.Size(471, 210)
+        Me.grdECTPRCG2.Size = New System.Drawing.Size(548, 210)
         Me.grdECTPRCG2.TabIndex = 21
         Me.grdECTPRCG2.Text = "Partners"
         '
@@ -572,7 +577,7 @@ Partial Class ECFPRC01
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(495, 210)
+        Me.Panel3.Size = New System.Drawing.Size(418, 210)
         Me.Panel3.TabIndex = 0
         '
         'grpECOM_PRICE_NOTES
@@ -581,7 +586,7 @@ Partial Class ECFPRC01
         Me.grpECOM_PRICE_NOTES.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpECOM_PRICE_NOTES.Location = New System.Drawing.Point(0, 0)
         Me.grpECOM_PRICE_NOTES.Name = "grpECOM_PRICE_NOTES"
-        Me.grpECOM_PRICE_NOTES.Size = New System.Drawing.Size(495, 210)
+        Me.grpECOM_PRICE_NOTES.Size = New System.Drawing.Size(418, 210)
         Me.grpECOM_PRICE_NOTES.TabIndex = 0
         Me.grpECOM_PRICE_NOTES.TabStop = False
         Me.grpECOM_PRICE_NOTES.Text = "Contract / Pricing Notes"
@@ -596,7 +601,7 @@ Partial Class ECFPRC01
         Me.txtECOM_PRICE_NOTES.Multiline = True
         Me.txtECOM_PRICE_NOTES.Name = "txtECOM_PRICE_NOTES"
         Me.txtECOM_PRICE_NOTES.ReadOnly = True
-        Me.txtECOM_PRICE_NOTES.Size = New System.Drawing.Size(489, 188)
+        Me.txtECOM_PRICE_NOTES.Size = New System.Drawing.Size(412, 188)
         Me.txtECOM_PRICE_NOTES.TabIndex = 340
         '
         'grdECTPRCG3
@@ -612,16 +617,16 @@ Partial Class ECFPRC01
         UltraGridColumn3.Header.VisiblePosition = 1
         UltraGridColumn3.Width = 75
         UltraGridColumn4.Header.Caption = "Status"
-        UltraGridColumn4.Header.VisiblePosition = 9
+        UltraGridColumn4.Header.VisiblePosition = 11
         UltraGridColumn4.Width = 102
         UltraGridColumn5.Header.Caption = "Available"
-        UltraGridColumn5.Header.VisiblePosition = 13
+        UltraGridColumn5.Header.VisiblePosition = 15
         UltraGridColumn5.Width = 79
         UltraGridColumn6.Header.Caption = "Future"
-        UltraGridColumn6.Header.VisiblePosition = 14
+        UltraGridColumn6.Header.VisiblePosition = 16
         UltraGridColumn6.Width = 83
         UltraGridColumn7.Header.Caption = "Set Qty"
-        UltraGridColumn7.Header.VisiblePosition = 15
+        UltraGridColumn7.Header.VisiblePosition = 17
         UltraGridColumn7.Width = 68
         UltraGridColumn8.Header.Caption = "Description"
         UltraGridColumn8.Header.VisiblePosition = 5
@@ -630,59 +635,67 @@ Partial Class ECFPRC01
         UltraGridColumn9.Header.VisiblePosition = 3
         UltraGridColumn9.Width = 93
         UltraGridColumn10.Header.Caption = "List Price"
-        UltraGridColumn10.Header.VisiblePosition = 17
+        UltraGridColumn10.Header.VisiblePosition = 19
         UltraGridColumn10.Width = 84
         UltraGridColumn11.Header.Caption = "Case Qty"
-        UltraGridColumn11.Header.VisiblePosition = 16
+        UltraGridColumn11.Header.VisiblePosition = 18
         UltraGridColumn11.Width = 83
-        UltraGridColumn12.Header.VisiblePosition = 10
+        UltraGridColumn12.Header.VisiblePosition = 12
         UltraGridColumn12.Width = 62
         UltraGridColumn13.Header.Caption = "Class"
-        UltraGridColumn13.Header.VisiblePosition = 11
+        UltraGridColumn13.Header.VisiblePosition = 13
         UltraGridColumn21.Header.Caption = "Attribute"
-        UltraGridColumn21.Header.VisiblePosition = 12
+        UltraGridColumn21.Header.VisiblePosition = 14
         UltraGridColumn22.Header.Caption = "Drop"
-        UltraGridColumn22.Header.VisiblePosition = 7
+        UltraGridColumn22.Header.VisiblePosition = 8
         UltraGridColumn22.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn22.Width = 50
         UltraGridColumn23.Header.Caption = "Ecom Code"
         UltraGridColumn23.Header.VisiblePosition = 2
         UltraGridColumn27.Header.Caption = "Ecom Price"
-        UltraGridColumn27.Header.VisiblePosition = 18
+        UltraGridColumn27.Header.VisiblePosition = 20
         UltraGridColumn27.Width = 103
         UltraGridColumn30.Header.Caption = "Current Ecom Cost"
-        UltraGridColumn30.Header.VisiblePosition = 19
+        UltraGridColumn30.Header.VisiblePosition = 21
         UltraGridColumn30.Width = 144
         UltraGridColumn31.Header.Caption = "Current Ecom Set Price"
-        UltraGridColumn31.Header.VisiblePosition = 20
+        UltraGridColumn31.Header.VisiblePosition = 22
         UltraGridColumn31.Width = 100
         UltraGridColumn32.Header.Caption = "Base Price"
-        UltraGridColumn32.Header.VisiblePosition = 21
+        UltraGridColumn32.Header.VisiblePosition = 23
         UltraGridColumn33.Header.Caption = "Base Set Price"
-        UltraGridColumn33.Header.VisiblePosition = 22
+        UltraGridColumn33.Header.VisiblePosition = 24
         UltraGridColumn33.Width = 139
         UltraGridColumn34.Header.Caption = "Carton + Labor"
-        UltraGridColumn34.Header.VisiblePosition = 23
+        UltraGridColumn34.Header.VisiblePosition = 26
         UltraGridColumn34.Width = 126
         UltraGridColumn35.Header.Caption = "Partner Addl Charge"
-        UltraGridColumn35.Header.VisiblePosition = 24
+        UltraGridColumn35.Header.VisiblePosition = 27
         UltraGridColumn35.Width = 173
         UltraGridColumn36.Header.Caption = "Final Cost"
-        UltraGridColumn36.Header.VisiblePosition = 26
+        UltraGridColumn36.Header.VisiblePosition = 29
         UltraGridColumn26.Header.Caption = "Manual Adj"
-        UltraGridColumn26.Header.VisiblePosition = 25
+        UltraGridColumn26.Header.VisiblePosition = 28
         UltraGridColumn26.Width = 113
         UltraGridColumn28.Header.Caption = "Final Cost / Set"
-        UltraGridColumn28.Header.VisiblePosition = 27
+        UltraGridColumn28.Header.VisiblePosition = 30
         UltraGridColumn28.Width = 124
         UltraGridColumn29.Header.Caption = "ECOM?"
-        UltraGridColumn29.Header.VisiblePosition = 8
+        UltraGridColumn29.Header.VisiblePosition = 9
         UltraGridColumn29.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn29.Width = 59
         UltraGridColumn38.Header.Caption = "Next ETA"
         UltraGridColumn38.Header.VisiblePosition = 6
-        UltraGridColumn38.Width = 121
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn27, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn26, UltraGridColumn28, UltraGridColumn29, UltraGridColumn38})
+        UltraGridColumn38.Width = 128
+        UltraGridColumn39.Header.Caption = "Tariff"
+        UltraGridColumn39.Header.VisiblePosition = 10
+        UltraGridColumn39.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn39.Width = 60
+        UltraGridColumn40.Header.Caption = "Tariff Price"
+        UltraGridColumn40.Header.VisiblePosition = 25
+        UltraGridColumn41.Header.Caption = "Dt Shipped"
+        UltraGridColumn41.Header.VisiblePosition = 7
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn27, UltraGridColumn30, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn26, UltraGridColumn28, UltraGridColumn29, UltraGridColumn38, UltraGridColumn39, UltraGridColumn40, UltraGridColumn41})
         Me.grdECTPRCG3.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdECTPRCG3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance14.TextHAlignAsString = "Left"
