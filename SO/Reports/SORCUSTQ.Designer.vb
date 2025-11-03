@@ -160,6 +160,7 @@ Partial Class SORCUSTQ
         Me.grdSOTRSRV1 = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.grdWEBLINKS = New Infragistics.Win.UltraWinGrid.UltraGrid()
+        Me.chkStyleStatsO = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -244,11 +245,12 @@ Partial Class SORCUSTQ
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage1.SuspendLayout()
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkStyleStatsO, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
@@ -473,6 +475,7 @@ Partial Class SORCUSTQ
         '
         'SplitContainer8.Panel1
         '
+        Me.SplitContainer8.Panel1.Controls.Add(Me.chkStyleStatsO)
         Me.SplitContainer8.Panel1.Controls.Add(Me.UltraGroupBox6)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkSortStyle)
         Me.SplitContainer8.Panel1.Controls.Add(Me.chkShowLastRcd)
@@ -496,7 +499,7 @@ Partial Class SORCUSTQ
         '
         Me.SplitContainer8.Panel2.Controls.Add(Me.TabControl1)
         Me.SplitContainer8.Size = New System.Drawing.Size(1021, 402)
-        Me.SplitContainer8.SplitterDistance = 186
+        Me.SplitContainer8.SplitterDistance = 197
         Me.SplitContainer8.TabIndex = 265
         '
         'UltraGroupBox6
@@ -929,7 +932,7 @@ Partial Class SORCUSTQ
         Me.TabControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(1021, 212)
+        Me.TabControl1.Size = New System.Drawing.Size(1021, 201)
         Me.TabControl1.TabIndex = 0
         '
         'Orders
@@ -939,7 +942,7 @@ Partial Class SORCUSTQ
         Me.Orders.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Orders.Name = "Orders"
         Me.Orders.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.Orders.Size = New System.Drawing.Size(1013, 181)
+        Me.Orders.Size = New System.Drawing.Size(1013, 170)
         Me.Orders.TabIndex = 0
         Me.Orders.Text = "Orders"
         Me.Orders.UseVisualStyleBackColor = True
@@ -1032,7 +1035,7 @@ Partial Class SORCUSTQ
         Me.grdSOTORDR0.Location = New System.Drawing.Point(4, 3)
         Me.grdSOTORDR0.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTORDR0.Name = "grdSOTORDR0"
-        Me.grdSOTORDR0.Size = New System.Drawing.Size(1005, 175)
+        Me.grdSOTORDR0.Size = New System.Drawing.Size(1005, 164)
         Me.grdSOTORDR0.TabIndex = 14
         '
         'Reservations
@@ -1042,7 +1045,7 @@ Partial Class SORCUSTQ
         Me.Reservations.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Reservations.Name = "Reservations"
         Me.Reservations.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.Reservations.Size = New System.Drawing.Size(1013, 181)
+        Me.Reservations.Size = New System.Drawing.Size(1013, 147)
         Me.Reservations.TabIndex = 1
         Me.Reservations.Text = "Reservations"
         Me.Reservations.UseVisualStyleBackColor = True
@@ -1132,7 +1135,7 @@ Partial Class SORCUSTQ
         Me.grdSOTRSRV1.Location = New System.Drawing.Point(4, 3)
         Me.grdSOTRSRV1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdSOTRSRV1.Name = "grdSOTRSRV1"
-        Me.grdSOTRSRV1.Size = New System.Drawing.Size(1005, 175)
+        Me.grdSOTRSRV1.Size = New System.Drawing.Size(1005, 141)
         Me.grdSOTRSRV1.TabIndex = 14
         '
         'TabPage1
@@ -1141,7 +1144,7 @@ Partial Class SORCUSTQ
         Me.TabPage1.Location = New System.Drawing.Point(4, 27)
         Me.TabPage1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Size = New System.Drawing.Size(1013, 181)
+        Me.TabPage1.Size = New System.Drawing.Size(1013, 147)
         Me.TabPage1.TabIndex = 2
         Me.TabPage1.Text = "Web Links"
         Me.TabPage1.UseVisualStyleBackColor = True
@@ -1233,8 +1236,19 @@ Partial Class SORCUSTQ
         Me.grdWEBLINKS.Location = New System.Drawing.Point(0, 0)
         Me.grdWEBLINKS.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grdWEBLINKS.Name = "grdWEBLINKS"
-        Me.grdWEBLINKS.Size = New System.Drawing.Size(1013, 181)
+        Me.grdWEBLINKS.Size = New System.Drawing.Size(1013, 147)
         Me.grdWEBLINKS.TabIndex = 15
+        '
+        'chkStyleStatsO
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkStyleStatsO, False)
+        Me.chkStyleStatsO.CausesValidation = False
+        Me.chkStyleStatsO.Location = New System.Drawing.Point(415, 196)
+        Me.chkStyleStatsO.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkStyleStatsO.Name = "chkStyleStatsO"
+        Me.chkStyleStatsO.Size = New System.Drawing.Size(348, 22)
+        Me.chkStyleStatsO.TabIndex = 288
+        Me.chkStyleStatsO.Text = "Include Ord/Res Details"
         '
         'SORCUSTQ
         '
@@ -1332,6 +1346,7 @@ Partial Class SORCUSTQ
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage1.ResumeLayout(False)
         CType(Me.grdWEBLINKS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkStyleStatsO, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1381,4 +1396,5 @@ Partial Class SORCUSTQ
     Friend WithEvents chkWIP As ABSCS.ABSCheckBox
     Friend WithEvents chkINTRANSIT As ABSCS.ABSCheckBox
     Friend WithEvents chkONHAND As ABSCS.ABSCheckBox
+    Friend WithEvents chkStyleStatsO As ABSCS.ABSCheckBox
 End Class
