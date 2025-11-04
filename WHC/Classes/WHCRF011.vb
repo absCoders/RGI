@@ -20,6 +20,8 @@
     Dim HOLD_PROMPT As String
     Dim Mode As String
     Dim colors As String = ""
+    Dim page As Int16 = 0
+    Dim tblPage As DataTable = Nothing
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -33,7 +35,7 @@
         AppStates.Add("SCAN_COLOR", "Select a Color from List |CANCEL|")
         AppStates.Add("SCAN_CASES", "How many cases, (0 for units) |CANCEL|")
         AppStates.Add("SCAN_UNITS", "How many units |CANCEL|")
-        AppStates.Add("SCAN_SHOW", "Scan UPC|CANCEL|") ' BLUE
+        AppStates.Add("SCAN_SHOW", "Scan UPC|BACK|<<|>>|") ' BLUE
         AppStates.Add("VERIFY", "Update (Y/N)|Y|N|CANCEL|")
 
         AppState = "GET_MODE"
@@ -144,9 +146,14 @@
                     End If
 
                 Case "SCAN_SHOW"
-                    If SCANTEXT = "CANCEL" Then
+                    If SCANTEXT = "BACK" Then
                         ClearScanner()
                         CreateResponse("SCAN_LOC", "YELLOW", "Show Cancelled, Scan  location")
+                        Exit Select
+                    ElseIf SCANTEXT = "<<" Or SCANTEXT = ">>" Then
+                        Dim output As String = TACMAIN1.PaginateDataTable(tblPage, page, 6, "LOCATION_CODE,F1, LOCATION_QTY", SCANTEXT)
+                        Dim msg As String = "Style " & STYLE_CODE & " Color " & COLOR_CODE & vbCrLf & output
+                        CreateResponse("", "BLUE", msg)
                         Exit Select
                     Else
                         Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
@@ -159,7 +166,25 @@
                             UPC_CODE = CheckResponse("UPC_CODE")
                             STYLE_CODE = CheckResponse("STYLE_CODE")
                             COLOR_CODE = CheckResponse("COLOR_CODE")
-                            CreateResponse("", "BLUE", Show_Locations())
+                            page = 0
+                            ASCMAIN1.sql = $"select b1.LOCATION_QTY, ' #' F1, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE
+                                        from WHTLOCB1 b1
+                                        join WHTLOCM1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE
+                                        where b1.STYLE_CODE = '{STYLE_CODE}' 
+                                            and b1.COLOR_CODE = '{COLOR_CODE}' 
+                                            and nvl(m1.LOCATION_USE,'A') in ('A','E') 
+                                            and m1.WHSE_CODE = '{G.WHSE_CODE}'
+                                        order by 
+                                            case 
+                                                when b1.LOCATION_QTY > 0 then 1
+                                                when b1.LOCATION_QTY < 0 then 2
+                                                else 3
+                                            end,
+                                            b1.LOCATION_QTY desc, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
+                            tblPage = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+                            Dim output As String = TACMAIN1.PaginateDataTable(tblPage, page, 6, "LOCATION_CODE,F1, LOCATION_QTY", ">>")
+                            Dim msg As String = "Style " & STYLE_CODE & " Color " & COLOR_CODE & vbCrLf & output
+                            CreateResponse("", "BLUE", msg)
                             Exit Select
                         End If
 
@@ -345,30 +370,6 @@
         End If
 
 
-        Return msg
-    End Function
-
-    Function Show_Locations() As String
-        Dim rc As Integer = 0
-        ASCMAIN1.sql = " select b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE " & vbCrLf _
-            & " from whtlocb1 b1 " & vbCrLf _
-            & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
-            & "  where b1.STYLE_CODE = '" & STYLE_CODE & "' and b1.COLOR_CODE = '" & COLOR_CODE & "' " & vbCrLf _
-            & "  and  nvl(m1.LOCATION_USE,'A') in ('A','E') " & vbCrLf _
-            & "  and m1.WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
-            & "  order by b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
-        'Dim rows() As DataRow = ASCDATA1.GetDataTable.Select("", "LOCATION_QTY")
-        Dim msg As String = "Style " & STYLE_CODE & " Color " & COLOR_CODE & vbCrLf
-
-        For Each row As DataRow In ASCDATA1.GetDataTable.Select("", "LOCATION_QTY desc")
-            rc = rc + 1
-            If rc > 4 Then Exit For
-            msg = msg & row("LOCATION_CODE") & " #" & row("LOCATION_QTY") & vbCrLf
-        Next
-        If rc < 4 Then
-            msg = msg & String.Format("FOUND IN {0} LOCS", rc) & vbCrLf
-        End If
-        msg = msg & "".PadRight(60)
         Return msg
     End Function
 

@@ -28,6 +28,7 @@ Public Class ASCNOTE1
     Private emailTo As String = String.Empty
     Private emailCC As String = String.Empty
     Private emailBCC As String = String.Empty
+    Private emailSender As String = String.Empty
 
     Private additionalNote As String = String.Empty
     Public Attachments As New List(Of String)
@@ -62,6 +63,7 @@ Public Class ASCNOTE1
         emailTo = String.Empty
         emailCC = String.Empty
         emailBCC = String.Empty
+        emailSender = String.Empty
 
         NOTE_CODE = String.Empty
         clsDST = Nothing
@@ -252,6 +254,7 @@ Public Class ASCNOTE1
         emailFrom = String.Empty
         emailCC = String.Empty
         emailBCC = String.Empty
+        emailSender = String.Empty
 
         LoadDocumentData()
 
@@ -330,6 +333,7 @@ Public Class ASCNOTE1
         emailFrom = String.Empty
         emailCC = String.Empty
         emailBCC = String.Empty
+        emailSender = String.Empty
 
         Dim srepEmail As String = String.Empty
         Dim altSrepEmail As String = String.Empty
@@ -387,6 +391,8 @@ Public Class ASCNOTE1
                     emailCC &= emailaddress
                 Case "B"
                     emailBCC &= emailaddress
+                Case "S"
+                    emailSender &= emailaddress
             End Select
 
         Next
@@ -402,6 +408,10 @@ Public Class ASCNOTE1
 
         emailBCC = emailBCC.Replace(";;", ";")
         If emailBCC.EndsWith(";") Then emailBCC = emailBCC.Substring(0, emailBCC.Length - 1)
+
+        emailSender = emailSender.Replace(";;", ";")
+        If emailSender.EndsWith(";") Then emailSender = emailSender.Substring(0, emailSender.Length - 1)
+
 
     End Sub
 
@@ -439,6 +449,10 @@ Public Class ASCNOTE1
 
             Dim mail As New Net.Mail.MailMessage()
             mail.From = New Net.Mail.MailAddress(emailFrom, "")
+
+            If emailSender.Length > 0 Then
+                mail.Sender = New Net.Mail.MailAddress(emailSender, "")
+            End If
 
             For Each sendTo As String In emailTo.Split(";")
                 If sendTo.Length > 0 Then

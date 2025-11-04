@@ -217,6 +217,7 @@
     <Compile Include="Classes\SOCMAIN2.vb" />
     <Compile Include="Classes\SOCORDR1.vb" />
     <Compile Include="Classes\SOCPRNT1.vb" />
+    <Compile Include="Classes\SOCSHOPF.vb" />
     <Compile Include="Classes\TACSCOM1.vb" />
     <Compile Include="Classes\TACZPLT1.vb" />
     <Compile Include="Classes\test.vb" />

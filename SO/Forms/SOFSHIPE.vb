@@ -170,7 +170,7 @@ Public Class SOFSHIPE
                 .Columns.Add("ORDR_INV_COMMENT", GetType(String))
                 .Columns.Add("TRUCK_NO", GetType(System.String))
                 .Columns.Add("INV_STAX", GetType(System.Decimal))
-                .Columns.Add("INV_STAX_CURR", GetType(System.Decimal))
+                .Columns.Add("GST_TAX", GetType(System.Decimal))
                 .Columns.Add("STAX_CODE", GetType(System.String))
                 .Columns.Add("STAX_RATE", GetType(System.Decimal))
             End With
@@ -273,6 +273,7 @@ Public Class SOFSHIPE
 
             Create_TDA(.Tables.Add, "SOTCART2", "*")
             .Tables("SOTCART2").Columns.Add("STYLE_DESC", GetType(System.String))
+            .Tables("SOTCART2").Columns.Add("ORDR_UNIT_PRICE", GetType(System.String))
             .Tables("SOTCART2").Columns.Add("STYLE_WEIGHT", GetType(System.Decimal))
             .Tables("SOTCART2").Columns.Add("STYLE_WEIGHT_TOT", GetType(System.Decimal), "ISNULL(QTY_PACKED, 0) * ISNULL(STYLE_WEIGHT, 0)")
 
@@ -415,6 +416,7 @@ Public Class SOFSHIPE
 
         EMsg = String.Empty
 
+
         Select Case eItemKey
 
             Case "Cancel"
@@ -427,7 +429,6 @@ Public Class SOFSHIPE
             Case "Refresh"
 
             Case "Request Rates"
-
 
                 If dst.Tables("SOTCART1").Rows.Count = 0 Then
                     EMsg &= vbCr & "At least one carton must be added before shipping rates can be requested."
@@ -854,114 +855,6 @@ Public Class SOFSHIPE
         End Try
     End Sub
 
-    Private Sub RePrintGlobalLabel(ByVal PICK_NO As String)
-
-        Try
-            If PICK_NO.Length = 0 Then
-                Exit Sub
-            End If
-
-            Dim drSOTPICK1 As DataRow = LookUp("SOTPICK1", PICK_NO)
-            If drSOTPICK1 Is Nothing Then
-                Exit Sub
-            End If
-
-            Dim ORDR_NO As String = drSOTPICK1.Item("ORDR_NO") & String.Empty
-            Dim drSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_NO = :PARM1", "V", {ORDR_NO})
-            If drSOTORDR1 Is Nothing Then
-                Exit Sub
-            End If
-
-            Dim GlobaleOrderID As String = String.Empty
-            Dim drSOTORDR6 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR6 WHERE ORDR_NO = :PARM1", "V", {ORDR_NO})
-            If drSOTORDR6 IsNot Nothing Then
-                GlobaleOrderID = drSOTORDR6.Item("SHIP_REFERENCE") & String.Empty
-            End If
-
-            Dim rowSOTORDR5 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR5 WHERE ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = 'ST'", "V", {ORDR_NO})
-
-            Dim TOTE_NO As String = String.Empty
-            If drSOTPICK1 IsNot Nothing Then
-                TOTE_NO = drSOTPICK1.Item("TOTE_NO") & String.Empty
-            End If
-
-            Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
-            Dim ORDR_NO_WEB As String = drSOTORDR1.Item("ORDR_NO_WEB") & String.Empty
-
-            Dim tblSOTCART1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTCART1 WHERE PICK_NO = :PARM1", "SOTCART1", "V", {PICK_NO})
-
-            Dim numPackages As Int16 = tblSOTCART1.Rows.Count
-            Dim labelNum As Int32 = 1
-
-            For Each rowSOTCART1 As DataRow In tblSOTCART1.Select("", "CART_SEQ")
-
-                Dim WEIGHT As Decimal = Val(rowSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty)
-                Dim LENGTH As Decimal = Val(rowSOTCART1.Item("PKG_L") & String.Empty)
-                Dim WIDTH As Decimal = Val(rowSOTCART1.Item("PKG_W") & String.Empty)
-                Dim HEIGHT As Decimal = Val(rowSOTCART1.Item("PKG_H") & String.Empty)
-                Dim SHIPDATE As String = CDate(drSOTPICK1.Item("PICK_SHIPPED") & String.Empty).ToString("ddMMMyy").ToUpper
-
-                Dim label As String = "^XA 
-                                ^CF0,50,30
-                                ^FO100,20^FDGlobal E Shipment^FS 
-                                ^CF0,35,30
-                                ^FO100,100^FDTote No: {TOTE_NO}^FS 
-                                ^FO100,150^FDOrder No: {ORDR_NO}^FS 
-                                ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
-                                ^FO100,250^FDInvoice: {INV_NO}^FS 
-                                ^FO100,300^FDShopify Order ID: {ORDR_WEB_ID}^FS 
-                                ^FO100,350^FDShopify #: {ORDR_NO_WEB}^FS 
-                                ^FO100,450^FDName: {CUST_NAME}^FS 
-                                ^FO100,500^FDContact: {CUST_CONTACT}^FS 
-                                ^FO100,550^FDAddr Line 1: {CUST_ADDR1}^FS 
-                                ^FO100,600^FDAddr Line 2: {CUST_ADDR2}^FS 
-                                ^FO100,650^FDAddr Line 3: {CUST_ADDR3}^FS 
-                                ^FO100,700^FDCity: {CUST_CITY}^FS 
-                                ^FO100,750^FDState: {CUST_STATE}^FS 
-                                ^FO100,800^FDZip Code: {CUST_ZIP_CODE}^FS 
-                                ^FO100,850^FDCountry: {CUST_COUNTRY}^FS 
-                                ^FO100,900^FDPhone: {CUST_PHONE}^FS 
-                                ^FO100,950^FDEmail: {CUST_EMAIL}^FS 
-                                ^CF0,50
-                                ^FO100,1100^FDGlobal-e ID: {GlobaleOrderID}^FS 
-                                ^CF0,10
-                                ^FO488,3^AdN,0,0^FWN^FH^FDSHIP DATE: {SHIPDATE}^FS
-                                ^FO488,19^AdN,0,0^FWN^FH^FDACTWGT: {WEIGHT} LB^FS
-                                ^FO488,35^AdN,0,0^FWN^FH^FDDIMMED: {LENGTH} X {WIDTH} X {HEIGHT} IN^FS
-                                ^FO488,51^AdN,0,0^FWN^FH^FDLABEL: {N} of {M}^FS
-                                ^FO480,3^GB2,65,2^FS
-                                ^FO480,68^GB300,1,2^FS
-                               ^XZ"
-                For Each dcol As DataColumn In rowSOTORDR5.Table.Columns
-                    label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
-                Next
-
-                label = label.Replace("{TOTE_NO}", TOTE_NO)
-                label = label.Replace("{PICK_NO}", drSOTPICK1.Item("PICK_NO") & String.Empty)
-                label = label.Replace("{INV_NO}", drSOTPICK1.Item("INV_NO") & String.Empty)
-                label = label.Replace("{ORDR_WEB_ID}", ORDR_WEB_ID)
-                label = label.Replace("{ORDR_NO_WEB}", ORDR_NO_WEB)
-                label = label.Replace("{GlobaleOrderID}", GlobaleOrderID)
-
-                label = label.Replace("{SHIPDATE}", SHIPDATE)
-                label = label.Replace("{WEIGHT}", Val(WEIGHT & String.Empty).ToString("#0.00"))
-                label = label.Replace("{LENGTH}", Val(LENGTH & String.Empty).ToString("#0"))
-                label = label.Replace("{WIDTH}", Val(WIDTH & String.Empty).ToString("#0"))
-                label = label.Replace("{HEIGHT}", Val(HEIGHT & String.Empty).ToString("#0"))
-
-                label = label.Replace("{N}", labelNum.ToString("#0"))
-                label = label.Replace("{M}", numPackages.ToString("#0"))
-
-                clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, label)
-
-                labelNum += 1
-            Next
-
-        Catch ex As Exception
-            MessageBox.Show(ex.Message & " - " & ex.InnerException.Message)
-        End Try
-    End Sub
-
     Private Sub PrintAddressLabel(ByVal TOTE_NO As String)
 
         Try
@@ -1121,6 +1014,7 @@ Public Class SOFSHIPE
                     'drSOTCART2.Item("P2L_INIT") = ""
                     drSOTCART2.Item("STYLE_DESC") = drSOTPICK2.Item("STYLE_DESC")
                     drSOTCART2.Item("STYLE_WEIGHT") = drSOTPICK2.Item("STYLE_WEIGHT")
+                    drSOTCART2.Item("ORDR_UNIT_PRICE") = drSOTPICK2.Item("ORDR_UNIT_PRICE")
                     dst.Tables("SOTCART2").Rows.Add(drSOTCART2)
                 Next
             End If
@@ -1462,14 +1356,10 @@ Public Class SOFSHIPE
             Dim PICK_FREIGHT As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = 0 AND ORDR_CHARGE_CODE = 'FRT'") & String.Empty)
             drSOTPICK1.Item("PICK_FREIGHT") = PICK_FREIGHT
 
-            'STAX_CODE                      VARCHAR2(6)   
-            'STAX_RATE                      Number(8, 4)   
-            'INV_STAX                       Number(7, 2)   
-            'INV_STAX_CURR                  Number(7, 2)   
-
-            ' Tax needs to be calculted at the line level since we can short ship.
+            ' Tax needs to be calculated at the line level since we can short ship.
             Dim frtTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = 0 AND ORDR_CHARGE_CODE = 'FTAX'") & String.Empty)
             Dim INV_STAX As Decimal = frtTax
+            Dim GST_TAX As Decimal = 0
 
             For Each drSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}'")
                 Dim ORDR_LNO As Int16 = drSOTPICK2.Item("ORDR_LNO")
@@ -1477,15 +1367,23 @@ Public Class SOFSHIPE
                 Dim PICK_QTY_CONF As Int16 = Val(drSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
 
                 If PICK_QTY_CONF > 0 Then
-                    Dim sTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO} AND ORDR_CHARGE_CODE = 'DLTAX'") & String.Empty)
+                    Dim sTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO} AND ORDR_CHARGE_CODE = 'DLTAX' AND ISNULL(ORDR_CHARGE_DESC, '*') <> 'GST'") & String.Empty)
                     If sTax > 0 Then
-                        INV_STAX += sTax * (PICK_QTY / PICK_QTY_CONF)
+                        INV_STAX += (sTax * (PICK_QTY / PICK_QTY_CONF))
+                    End If
+                End If
+
+                If PICK_QTY_CONF > 0 Then
+                    Dim sTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = {ORDR_LNO} AND ORDR_CHARGE_CODE = 'DLTAX' AND ISNULL(ORDR_CHARGE_DESC, '*') = 'GST'") & String.Empty)
+                    If sTax > 0 Then
+                        GST_TAX += (sTax * (PICK_QTY / PICK_QTY_CONF))
                     End If
                 End If
             Next
 
             Dim FreightTax As Decimal = Val(dst.Tables("SOTORDRT").Compute("SUM(ORDR_CHARGE_PRICE)", $"ORDR_NO = '{ORDR_NO}' AND ORDR_LNO = 0 AND ORDR_CHARGE_CODE = 'TAX'") & String.Empty)
             drSOTPICK1.Item("INV_STAX") = INV_STAX + FreightTax
+            drSOTPICK1.Item("GST_TAX") = GST_TAX
 
             Dim WHSE_CODE As String = drSOTORDR1.Item("WHSE_CODE") & String.Empty
             Dim rowICTWHSE1 As DataRow = dst.Tables("ICTWHSE1").Rows.Find(WHSE_CODE)
@@ -1698,6 +1596,26 @@ Public Class SOFSHIPE
                 drSOTPICK1.Item("PICK_STATUS") = "F"
             End If
 
+            ' Need To Capture Credit Card
+            If dst.Tables("SOTINVH1").Rows.Count > 0 Then
+                Dim INV_TOTAL_AMOUNT As Decimal = Val(dst.Tables("SOTINVH1").Rows(0).Item("INV_TOTAL_AMOUNT") & String.Empty)
+                If INV_TOTAL_AMOUNT > 0 Then
+                    Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
+                    Dim clsSOCSHOPF As New TAC.SOCSHOPF()
+                    Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
+                    ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT)
+                    With ccResponse
+                        ' If we charge the credit card and then get an error in code
+                        ' the subsequent calls will result in ststus <> SUCCESS ?????
+                        If .status.ToUpper <> "SUCCESS" Then
+                            Dim message As String = "Credit Card Capture failed." & Environment.NewLine & Environment.NewLine & $"Kind: { .kind}. {Environment.NewLine}Status: { .status}, {Environment.NewLine}Message: { .message}"
+                            MessageBox.Show(message, "Capture Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            Return False
+                        End If
+                    End With
+                End If
+            End If
+
             Try
                 BeginTrans()
 
@@ -1739,6 +1657,9 @@ Public Class SOFSHIPE
                                  End Loop; End;
                                 End;"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", New Object() {ORDR_NO})
+
+                Dim ORDR_GROUP_NO As String = drSOTORDR1.Item("ORDR_GROUP_NO") & String.Empty
+                ASCDATA1.ExecuteSP("SOPORDR0_G", "V", New Object() {ORDR_GROUP_NO}, New String() {"ORDR_GROUP_NO_IN"})
 
                 ' 6/18/2019 - Vandale uses SORUPDT1 for the code that does Invoice Update at Vandale
                 For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Rows
@@ -2913,14 +2834,15 @@ Public Class SOFSHIPE
                 If dst.Tables("SOTCART2").Select("CART_NO = '" & CART_NO & "'").Length = 0 Then
                     ErrorMessage &= vbCr & "Carton " & CART_NO & " does not have any assigned products."
                 End If
-
             Next
 
             Dim GlobaleOrderID As String = String.Empty
+            Dim ShopifyOrderID As String = String.Empty
+
             Select Case CARRIER_CODE
                 Case "GLOBAL"
                     If dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'").Length = 0 Then
-                        ErrorMessage &= vbCr & "Cannot determne the Global-e ID."
+                        ErrorMessage &= vbCr & "Cannot determine the Global-e ID."
                     Else
                         GlobaleOrderID = dst.Tables("SOTORDR6").Select($"ORDR_NO = '{ORDR_NO}'")(0).Item("SHIP_REFERENCE") & String.Empty
                     End If
@@ -2928,6 +2850,8 @@ Public Class SOFSHIPE
                     If GlobaleOrderID.Length = 0 Then
                         ErrorMessage &= vbCr & "Cannot determne the Global-e ID."
                     End If
+
+                    ShopifyOrderID = ORDR_NO_WEB
             End Select
 
             If ErrorMessage.Length > 0 Then
@@ -2965,8 +2889,10 @@ Public Class SOFSHIPE
             clsShip.FedexMeterNumber = drSOTCARR3.Item("METER_NUMBER") & String.Empty
             clsShip.FedexDeveloperKey = drSOTCARR3.Item("ACCESSLICENSENUMBER") & String.Empty
             clsShip.LabelStockType = (drSOTCARR1.Item("LABEL_STOCK_TYPE") & String.Empty).ToString.Trim
+            clsShip.dictGlobaleContents.Clear()
 
             clsShip.GlobaleOrderID = GlobaleOrderID
+            clsShip.ShopifyOrderID = ShopifyOrderID
 
             Dim drWHTSHPC1 As DataRow = Nothing
             Dim drWHTSHPC2 As DataRow = Nothing
@@ -3281,8 +3207,6 @@ Public Class SOFSHIPE
             ' The user is not permitted to deselect a pick ticket; therefore, no londfer need to use dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_NO")
             clsShip.PackageDetailList.Clear()
 
-            Dim cartSequenceNos As List(Of Int16) = New List(Of Int16)
-
             ' Commodities for international shipments
             clsShip.TotalCustomsValue = 0
             clsShip.CommodityDetailList.Clear()
@@ -3319,28 +3243,18 @@ Public Class SOFSHIPE
                 drSOTPICK1.Item("INV_NO") = INV_NO
                 drSOTPICK1.Item("SHIP_CNTL_NO") = SHIP_CNTL_NO
 
-                For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("PICK_NO = '" & PICK_NO & "'", "CART_SEQ, CART_TOTAL_WGT_ACTUAL DESC")
-                    ' This is done to place multi pick tickets into one carton
-                    Dim CART_SEQ As Int32 = drSOTCART1.Item("CART_SEQ")
-                    If cartSequenceNos.Contains(CART_SEQ) Then
-                        Continue For
-                    End If
-                    cartSequenceNos.Add(CART_SEQ)
+                For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"PICK_NO = '{PICK_NO}'", "CART_NO")
+                    Dim CART_NO As String = drSOTCART1.Item("CART_NO")
 
                     Dim PACKAGING_TYPE As String = drSOTCART1.Item("PACKAGING_TYPE") & String.Empty
                     Dim PKG_CODE As String = drSOTCART1.Item("PKG_CODE") & String.Empty
-                    pkgId = CART_SEQ ' (Val(StrReverse(StrReverse(rowSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
+                    pkgId = (Val(StrReverse(StrReverse(drSOTCART1.Item("CART_NO").ToString).Substring(0, 8))))
 
-                    Dim shipPackageDetail As New PackageDetail
+                    Dim shipPackageDetail As New PackageDetail()
                     With shipPackageDetail
                         .PackagingType = Val(PACKAGING_TYPE)
 
-                        ' This is done to place multi pick tickets into one carton. Need combined weight 
-                        If ASCMAIN1.CLIENT = "RGI" Then
-                            .Weight = Val(drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty)
-                        Else
-                            .Weight = Val(dst.Tables("SOTCART1").Compute("SUM(CART_TOTAL_WGT_ACTUAL)", "CART_SEQ = " & CART_SEQ) & String.Empty)
-                        End If
+                        .Weight = Val(drSOTCART1.Item("CART_TOTAL_WGT_ACTUAL") & String.Empty)
                         If .Weight = 0 Then
                             .Weight = 1
                         End If
@@ -3491,6 +3405,9 @@ Public Class SOFSHIPE
                                     reference = reference.Substring(1).Trim
                                 End If
 
+                            Case WHCSHIP1.ProviderTypeGlobale
+
+
                         End Select
 
                         If reference.Length > 0 Then
@@ -3503,8 +3420,31 @@ Public Class SOFSHIPE
                             End If
                         End If
 
+                        Select Case CARRIER_CODE
+                            Case "GLOBAL"
+                                If dst.Tables("SOTORDR1").Rows.Count = 1 AndAlso dst.Tables("SOTORDR1").Rows(0).Item("ORDR_WEB_ID") & String.Empty <> String.Empty Then
+                                    Dim drSOTORDR1x As DataRow = dst.Tables("SOTORDR1").Rows(0)
+                                    reference = drSOTORDR1x.Item("ORDR_WEB_ID") & "_" & drSOTCART1.Item("CART_SEQ")
+                                Else
+                                    reference = drSOTCART1.Item("PICK_NO") & "_" & drSOTCART1.Item("CART_SEQ")
+                                End If
+                        End Select
+
                         .Reference = reference
                         .Id = pkgId.ToString("D8")
+
+                        If CARRIER_CODE = "GLOBAL" Then
+                            Dim lstParcelContent As New List(Of TAC.WHCSHIP1.ParcelContent)
+                            For Each drSOTCART2 As DataRow In dst.Tables("SOTCART2").Select($"CART_NO = '{CART_NO}'")
+                                Dim ParcelContent As New TAC.WHCSHIP1.ParcelContent
+                                With ParcelContent
+                                    .ProductCode = drSOTCART2.Item("UPC_CODE") & ""
+                                    .DeliveryQuantity = Val(drSOTCART2.Item("QTY_PACKED") & "")
+                                End With
+                                lstParcelContent.Add(ParcelContent)
+                            Next
+                            clsShip.dictGlobaleContents.Add(.Id, lstParcelContent)
+                        End If
                     End With
 
                     clsShip.PackageDetailList.Add(shipPackageDetail)
@@ -3758,7 +3698,7 @@ Public Class SOFSHIPE
                 If isPitneyBowes Then
                     drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
                 ElseIf isGlobale Then
-                    drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.GlobaleOrderID
+                    drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
                 Else
                     drWHTSHPC1.Item("MASTER_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
                 End If
@@ -3766,11 +3706,7 @@ Public Class SOFSHIPE
                 ' Update Pro Number if it is blank
                 For Each dr As DataRow In dst.Tables("SOTSHIP1").Select("")
                     If dr.Item("SHIP_REF") & String.Empty = String.Empty Then
-                        If isGlobale Then
-                            dr.Item("SHIP_REF") = clsShip.GlobaleOrderID & String.Empty
-                        Else
-                            dr.Item("SHIP_REF") = clsShip.MasterTrackingNumber & String.Empty
-                        End If
+                        dr.Item("SHIP_REF") = clsShip.MasterTrackingNumber & String.Empty
                     End If
                 Next
 
@@ -3788,8 +3724,8 @@ Public Class SOFSHIPE
                             drWHTSHPC2.Item("TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             drWHTSHPC2.Item("TRACKING_NUMBER") = pitneyBowesshipdata.ShipmentID & String.Empty
                         ElseIf isGlobale Then
-                            drWHTSHPC2.Item("TRACKING_NO") = clsShip.lstGlobalePackageInformation(globalIndex).ShipmentID & String.Empty
-                            drWHTSHPC2.Item("TRACKING_NUMBER") = clsShip.lstGlobalePackageInformation(globalIndex).ShipmentID & String.Empty
+                            drWHTSHPC2.Item("TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
+                            drWHTSHPC2.Item("TRACKING_NUMBER") = clsShip.MasterTrackingNumber & String.Empty
                         Else
                             drWHTSHPC2.Item("TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                         End If
@@ -3850,12 +3786,11 @@ Public Class SOFSHIPE
 
                         ' Thes are web orders. The freight was charged on the Web.
                         ' Freight is on the Pick Ticket Header. We will Update the Carton to have the real freight charges.
-                        Dim numPickTickets As Int16 = dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO).Length
-                        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select("CART_SEQ = " & SHIP_PACKAGE_NO)
+                        For Each drSOTCART1 As DataRow In dst.Tables("SOTCART1").Select($"CART_NO LIKE '%{SHIP_PACKAGE_NO}'")
                             If isPitneyBowes Then
                                 drSOTCART1.Item("CART_TRACKING_NO") = pitneyBowesshipdata.TrackingNumber & String.Empty
                             ElseIf isGlobale Then
-                                drSOTCART1.Item("CART_TRACKING_NO") = clsShip.lstGlobalePackageInformation(globalIndex).TrackingNumber & String.Empty
+                                drSOTCART1.Item("CART_TRACKING_NO") = clsShip.MasterTrackingNumber & String.Empty
                             Else
                                 drSOTCART1.Item("CART_TRACKING_NO") = shipPackageDetail.TrackingNumber & String.Empty
                             End If
@@ -3872,7 +3807,9 @@ Public Class SOFSHIPE
                             sr.Dispose()
                         End Using
                     ElseIf isGlobale Then
-                        ShippingLabels.Add(clsShip.lstGlobalePackageInformation(globalIndex).ShippingLabel)
+                        For Each gLabel As String In clsShip.GlobaleLabels
+                            ShippingLabels.Add(gLabel)
+                        Next
                     Else
                         ShippingLabels.Add(shipPackageDetail.ShippingLabel)
                         ShippingLabels.Add(shipPackageDetail.CODLabel)
@@ -3939,8 +3876,10 @@ Public Class SOFSHIPE
             RequestShippingLabel = False
         End Try
 
+        Dim SHIP_CTL_NO As String = dst.Tables("WHTSHPC1").Rows(0).Item("SHIP_CNTL_NO") & String.Empty
+
         For Each shippingLabel As String In ShippingLabels
-            If shippingLabel.Trim.Length > 0 Then PrintShippingLabels(shippingLabel)
+            If shippingLabel.Trim.Length > 0 Then PrintShippingLabels(shippingLabel, CARRIER_CODE, SHIP_CTL_NO)
         Next
 
         ErrorMessage = ErrorMessage.Trim
@@ -4213,14 +4152,22 @@ Public Class SOFSHIPE
 
     End Function
 
-    Public Function PrintShippingLabels(ByVal LabelData As String) As Boolean
-
+    Public Function PrintShippingLabels(ByVal LabelData As String,
+                                        ByVal CARRIER_CODE As String,
+                                        ByVal SHIP_CTL_NO As String) As Boolean
         Try
-            If IsIPAddress(txtLabelPrinter.Text) Then
-                clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
-            Else
-                ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
-            End If
+            ' Globale Logic to read labels for the stored Json
+            Select Case CARRIER_CODE
+                Case "GLOBAL"
+                    clsShip.PrintGlobaleLabels(SHIP_CTL_NO)
+
+                Case Else
+                    If IsIPAddress(txtLabelPrinter.Text) Then
+                        clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
+                    Else
+                        ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+                    End If
+            End Select
 
         Catch ex As Exception
             MessageBox.Show("Print Shipping Label Error: " & ex.Message)
@@ -4642,23 +4589,32 @@ Public Class SOFSHIPE
                 Exit Sub
             End If
 
-            Dim SHIP_BOL_NO As String = rowSOTPICK1.Item("SHIP_BOL_NO") & String.Empty
-            If SHIP_BOL_NO = "" Then
-                MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text} shipping record (SOTSHIP1).", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Exit Sub
+            Dim SHIP_CNTL_NO As String = rowSOTPICK1.Item("SHIP_CNTL_NO") & String.Empty
+            Dim rowWHTSHPC1 As DataRow = Nothing
+            If SHIP_CNTL_NO.Length > 0 Then
+                rowWHTSHPC1 = ASCDATA1.GetDataRow("SELECT * FROM WHTSHPC1 WHERE SHIP_CNTL_NO = :PARM1", "V", {SHIP_CNTL_NO})
             End If
 
-            Dim rowWHTSHPC1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM WHTSHPC1 WHERE SHIP_BOL_NO = :PARM1", "V", {SHIP_BOL_NO})
             If rowWHTSHPC1 Is Nothing Then
-                MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text} Shipping Label record. (WHTSHPC1)", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Exit Sub
+                Dim SHIP_BOL_NO As String = rowSOTPICK1.Item("SHIP_BOL_NO") & String.Empty
+                If SHIP_BOL_NO = "" Then
+                    MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text} shipping record (SOTSHIP1).", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                rowWHTSHPC1 = ASCDATA1.GetDataRow("SELECT * FROM WHTSHPC1 WHERE SHIP_BOL_NO = :PARM1", "V", {SHIP_BOL_NO})
+                If rowWHTSHPC1 Is Nothing Then
+                    MessageBox.Show($"Cannot locate Pick Ticket {txtPickNo.Text} Shipping Label record. (WHTSHPC1)", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                SHIP_CNTL_NO = rowWHTSHPC1.Item("SHIP_CNTL_NO") & String.Empty
             End If
 
-            Dim SHIP_CNTL_NO As String = rowWHTSHPC1.Item("SHIP_CNTL_NO") & String.Empty
             Dim CARRIER_CODE As String = rowWHTSHPC1.Item("CARRIER_CODE") & String.Empty
 
             If CARRIER_CODE = "GLOBAL" Then
-                RePrintGlobalLabel(txtPickNo.Text)
+                PrintShippingLabels("", CARRIER_CODE, SHIP_CNTL_NO)
                 Exit Sub
             End If
 
@@ -4995,6 +4951,7 @@ Public Class SOFSHIPE
             txt_KeyDown(txtCUST_UPC, New KeyEventArgs(Keys.Enter))
         End If
     End Sub
+
 
 #End Region
 

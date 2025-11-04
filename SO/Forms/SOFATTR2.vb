@@ -1983,9 +1983,9 @@ Public Class SOFATTR2
                         & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
                         & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
                         & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
-                        & "and x.style_status in ('D','N')" & vbCrLf _
-                        & "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
-                        & "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
+                        & "and x.style_status in ('D','N')"
+                        '& "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
+                        '& "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
                     Else
                         ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1" & vbCrLf
                         Dim sqlw As String = ""
@@ -2004,9 +2004,9 @@ Public Class SOFATTR2
                         & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
                         & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
                         & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
-                        & "and x.style_status in ('A')" & vbCrLf _
-                        & "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
-                        & "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
+                        & "and x.style_status in ('A')"
+                        '& "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
+                        '& "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
                     End If
                 Else
                     'If SCCs(0) = "ALL" Then

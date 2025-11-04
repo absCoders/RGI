@@ -533,13 +533,6 @@
                 .Item("INV_SALES") = INV_SALES
                 .Item("INV_COGS") = INV_COGS
 
-                If tblSOTINVH1.Columns.Contains("INV_STAX") Then
-                    If rowSOTPICK1.Table.Columns.Contains("INV_STAX") Then
-                        .Item("INV_STAX") = Math.Round(Val(rowSOTPICK1.Item("INV_STAX") & String.Empty), 2)
-                        .Item("INV_STAX_CURR") = .Item("INV_STAX")
-                    End If
-                End If
-
                 ' Freight
                 PPA_FREIGHT = 0
                 If rowSOTPICK1.Table.Columns.Contains("PPA_FREIGHT") Then
@@ -685,53 +678,104 @@
             End With
             tblSOTINVH1.Rows.Add(rowSOTINVH1)
 
-            ' 04/11/2018 - Allow for GST Tax
-            If ASCMAIN1.CLIENT = "NYA" Then
-                Dim CUST_STORE_NO As String = rowSOTINVH1.Item("CUST_STORE_NO")
-                Dim ORDR_ADDR_TYPE_ST As String = rowSOTORDR1.Item("ORDR_ADDR_TYPE_ST")
-                Dim rowSOTORDR5 As DataRow = tblSOTORDR5.Rows.Find(New Object() {ORDR_NO, "ST"})
-                If rowSOTORDR5 Is Nothing Then
-                    rowSOTORDR5 = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR5 WHERE ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = :PARM2", "VV", New Object() {ORDR_NO, "ST"})
-                End If
-                rowSOTINVH1.Item("CUST_SHIP_TO_STATE") = rowSOTORDR5.Item("CUST_STATE") & String.Empty
-                Dim CUST_ADDR_CODE As String = rowSOTORDR5.Item("CUST_ADDR_CODE") & String.Empty
-                Dim rowARTCUST2 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCUST2 WHERE CUST_CODE = :PARM1 AND CUST_ADDR_TYPE = :PARM2 AND CUST_ADDR_CODE = :PARM3", "VVV", New Object() {CUST_CODE, ORDR_ADDR_TYPE_ST, CUST_ADDR_CODE})
-                Dim STAX_CODE As String = String.Empty
-                If rowARTCUST2 IsNot Nothing Then
-                    STAX_CODE = rowARTCUST2.Item("STAX_CODE") & String.Empty
-                End If
-
-                If STAX_CODE <> "" Then
-                    Dim rowARTSTAX1 As DataRow = tblARTSTAX1.Rows.Find(STAX_CODE)
-                    Dim STAX_RATE As Decimal = Val(rowARTSTAX1.Item("STAX_RATE") & "")
-                    Dim COUNTRY_CODE As String = rowARTSTAX1.Item("COUNTRY_CODE") & ""
-
-                    INV_SALES_CURR = Val(rowSOTINVH1.Item("INV_SALES_CURR") & "")
-                    INV_SALES = Val(rowSOTINVH1.Item("INV_SALES") & "")
-
-                    With rowSOTINVH1
-                        Dim INV_STAX_CURR As Decimal = System.Math.Round(STAX_RATE * INV_SALES_CURR / 100, 2)
-                        Dim INV_STAX As Decimal = System.Math.Round(STAX_RATE * INV_SALES / 100, 2)
-
-                        .Item("STAX_CODE") = STAX_CODE
-                        .Item("STAX_RATE") = STAX_RATE
-                        .Item("INV_STAX") = INV_STAX
-                        .Item("INV_TOTAL_AMOUNT") += INV_STAX
-
-                        If INV_SALES_CURR <> 0 Then
-                            .Item("INV_STAX_CURR") = INV_STAX_CURR
-
-                            If COUNTRY_CODE = "CAN" Then
-                                .Item("GST_TAX") = INV_STAX
-                                .Item("GST_TAX_CURR") = INV_STAX_CURR
-                            End If
-
-                            .Item("INV_TOTAL_AMT_CURR") += INV_STAX_CURR
-                            .Item("INV_TOTAL_AMOUNT_CURR") += INV_STAX_CURR
+            Select Case ASCMAIN1.CLIENT
+                Case "VAN"
+                    ' 09/25/2025 - Allow for Web Order Tax
+                    If rowSOTPICK1.Table.Columns.Contains("INV_STAX") OrElse rowSOTPICK1.Table.Columns.Contains("GST_TAX") Then
+                        Dim CUST_STORE_NO As String = rowSOTINVH1.Item("CUST_STORE_NO")
+                        Dim rowSOTORDR5 As DataRow = tblSOTORDR5.Rows.Find(New Object() {ORDR_NO, "ST"})
+                        If rowSOTORDR5 Is Nothing Then
+                            rowSOTORDR5 = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR5 WHERE ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = :PARM2", "VV", New Object() {ORDR_NO, "ST"})
                         End If
-                    End With
-                End If
-            End If
+                        Dim CUST_ADDR_CODE As String = rowSOTORDR5.Item("CUST_ADDR_CODE") & String.Empty
+                        Dim ORDR_ADDR_TYPE As String = "MK"
+                        Dim rowARTCUST2 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCUST2 WHERE CUST_CODE = :PARM1 AND CUST_ADDR_TYPE = :PARM2 AND CUST_ADDR_CODE = :PARM3", "VVV", New Object() {CUST_CODE, ORDR_ADDR_TYPE, CUST_ADDR_CODE})
+                        Dim STAX_CODE As String = String.Empty
+                        If rowARTCUST2 IsNot Nothing Then
+                            STAX_CODE = rowARTCUST2.Item("STAX_CODE") & String.Empty
+                        End If
+
+                        Dim INV_STAX As Decimal = 0
+                        Dim GST_TAX As Decimal = 0
+
+                        If rowSOTPICK1.Table.Columns.Contains("INV_STAX") Then
+                            If Val(rowSOTPICK1.Item("INV_STAX") & String.Empty) <> 0 Then
+                                INV_STAX = Math.Round(Val(rowSOTPICK1.Item("INV_STAX") & String.Empty), 2)
+                            End If
+                        End If
+
+                        If rowSOTPICK1.Table.Columns.Contains("GST_TAX") Then
+                            If Val(rowSOTPICK1.Item("GST_TAX") & String.Empty) <> 0 Then
+                                GST_TAX = Math.Round(Val(rowSOTPICK1.Item("GST_TAX") & String.Empty), 2)
+                            End If
+                        End If
+
+                        INV_STAX += GST_TAX
+
+                        With rowSOTINVH1
+                            .Item("INV_STAX") = INV_STAX
+                            .Item("INV_STAX_CURR") = INV_STAX
+                            .Item("STAX_CODE") = STAX_CODE
+
+                            .Item("INV_TOTAL_AMOUNT") += INV_STAX
+                            .Item("INV_STAX_CURR") = INV_STAX
+
+                            .Item("INV_TOTAL_AMT_CURR") += INV_STAX
+                            .Item("INV_TOTAL_AMOUNT_CURR") += INV_STAX
+
+                            .Item("GST_TAX") = GST_TAX
+                            .Item("GST_TAX_CURR") = GST_TAX
+                        End With
+                    End If
+
+                Case "NYA"
+                    ' 04/11/2018 - Allow for GST Tax
+                    Dim CUST_STORE_NO As String = rowSOTINVH1.Item("CUST_STORE_NO")
+                    Dim ORDR_ADDR_TYPE_ST As String = rowSOTORDR1.Item("ORDR_ADDR_TYPE_ST")
+                    Dim rowSOTORDR5 As DataRow = tblSOTORDR5.Rows.Find(New Object() {ORDR_NO, "ST"})
+                    If rowSOTORDR5 Is Nothing Then
+                        rowSOTORDR5 = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR5 WHERE ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = :PARM2", "VV", New Object() {ORDR_NO, "ST"})
+                    End If
+                    Dim CUST_ADDR_CODE As String = rowSOTORDR5.Item("CUST_ADDR_CODE") & String.Empty
+                    rowSOTINVH1.Item("CUST_SHIP_TO_STATE") = rowSOTORDR5.Item("CUST_STATE") & String.Empty
+                    Dim rowARTCUST2 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ARTCUST2 WHERE CUST_CODE = :PARM1 AND CUST_ADDR_TYPE = :PARM2 AND CUST_ADDR_CODE = :PARM3", "VVV", New Object() {CUST_CODE, ORDR_ADDR_TYPE_ST, CUST_ADDR_CODE})
+                    Dim STAX_CODE As String = String.Empty
+                    If rowARTCUST2 IsNot Nothing Then
+                        STAX_CODE = rowARTCUST2.Item("STAX_CODE") & String.Empty
+                    End If
+
+                    If STAX_CODE <> "" Then
+                        Dim rowARTSTAX1 As DataRow = tblARTSTAX1.Rows.Find(STAX_CODE)
+                        Dim STAX_RATE As Decimal = Val(rowARTSTAX1.Item("STAX_RATE") & "")
+                        Dim COUNTRY_CODE As String = rowARTSTAX1.Item("COUNTRY_CODE") & ""
+
+                        INV_SALES_CURR = Val(rowSOTINVH1.Item("INV_SALES_CURR") & "")
+                        INV_SALES = Val(rowSOTINVH1.Item("INV_SALES") & "")
+
+                        With rowSOTINVH1
+                            Dim INV_STAX_CURR As Decimal = System.Math.Round(STAX_RATE * INV_SALES_CURR / 100, 2)
+                            Dim INV_STAX As Decimal = System.Math.Round(STAX_RATE * INV_SALES / 100, 2)
+
+                            .Item("STAX_CODE") = STAX_CODE
+                            .Item("STAX_RATE") = STAX_RATE
+                            .Item("INV_STAX") = INV_STAX
+                            .Item("INV_TOTAL_AMOUNT") += INV_STAX
+
+                            If INV_SALES_CURR <> 0 Then
+                                .Item("INV_STAX_CURR") = INV_STAX_CURR
+
+                                If COUNTRY_CODE = "CAN" Then
+                                    .Item("GST_TAX") = INV_STAX
+                                    .Item("GST_TAX_CURR") = INV_STAX_CURR
+                                End If
+
+                                .Item("INV_TOTAL_AMT_CURR") += INV_STAX_CURR
+                                .Item("INV_TOTAL_AMOUNT_CURR") += INV_STAX_CURR
+                            End If
+                        End With
+                    End If
+
+            End Select
 
             numInvoices += 1
             If ASCMAIN1.CLIENT = "VAN" Then

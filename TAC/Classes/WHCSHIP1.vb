@@ -264,6 +264,8 @@ Public Class WHCSHIP1
 
     Private clsTrackingData As New TrackingData
     Public GlobaleOrderID As String = String.Empty
+    Public ShopifyOrderID As String = String.Empty
+    Public GlobaleLabels As New List(Of String)
 
     Public ReadOnly Property TrackingInfo As TrackingData
         Get
@@ -1041,7 +1043,7 @@ Public Class WHCSHIP1
                 Case ServiceProviders.USPS
                     Return RequestUSPSLabel()
                 Case ServiceProviders.Global_e
-                    Return RequestGlobalELabel()
+                    Return RequestGlobaleLabel()
                 Case Else
                     Return RequestLabelOther()
             End Select
@@ -1695,8 +1697,6 @@ Public Class WHCSHIP1
         Public CODLabel As String = String.Empty
         Public ReturnReceipt As String = String.Empty
     End Class
-
-    Public lstGlobalePackageInformation As New List(Of GlobalePackageInformation)
 
     Private Class PitneyBowesServices
         Public ServiceCode As String = String.Empty
@@ -6247,152 +6247,212 @@ Public Class WHCSHIP1
 
 #Region "Global E"
 
-    Public Class ShipmentRequest
-        Public Property orderId As String
-        Public Property shipFrom As Address
-        Public Property shipTo As Address
-        Public Property parcels As List(Of Parcel)
-        Public Property carrier As Carrier
+    Public Class ParcelContent
+        Public Property ProductCode As String
+        Public Property DeliveryQuantity As Integer
+        Public Property TrackingNumber As String = Nothing
     End Class
 
-    Public Class Address
-        Public Property name As String
-        Public Property address1 As String
-        Public Property address2 As String
-        Public Property city As String
-        Public Property country As String
-        Public Property postalCode As String
-    End Class
+    Public dictGlobaleContents As New Dictionary(Of String, List(Of ParcelContent))
 
     Public Class Parcel
-        Public Property weight As Decimal
-        Public Property dimensions As Dimensions
-        Public Property parcelNumber As Integer
+        Public Property ParcelCode As String
+        Public Property Products As List(Of ParcelContent)
     End Class
 
-    Public Class Dimensions
-        Public Property length As Decimal
-        Public Property width As Decimal
-        Public Property height As Decimal
+    Public Class ParcelRequest
+        Public Property OrderId As String
+        Public Property Parcels As List(Of Parcel)
     End Class
 
-    Public Class Carrier
-        Public Property service As String
-        Public Property format As String
+    Public Class ShippingDocument
+        Public Property DocumentData As String
+        Public Property URL As String
+        Public Property DocumentType As String
+        Public Property DocumentTypeName As String
+        Public Property DocumentExtension As String
+        Public Property ErrorMessage As String
+        Public Property ParcelCode As String
     End Class
 
-    Private Function RequestGlobalELabel() As Boolean
+    Public Class ShippingParcelTracking
+        Public Property ParcelTrackingNumber As String
+        Public Property ParcelTrackingUrl As String
+        Public Property ParcelCode As String
+        Public Property ScannableBarCodeData As String
+    End Class
+
+    Public Class ShippingTrackingDetails
+        Public Property TrackingNumber As String
+        Public Property TrackingUrl As String
+        Public Property ShipperName As String
+    End Class
+
+    Public Class ShippingDeliveryAdviceInformation
+        Public Property ParcelCode As String
+        Public Property CommercialInvoiceNumber As String
+        Public Property TotalValue As Decimal
+        Public Property CurrenctCode As Decimal
+    End Class
+
+    Public Class ShippingDocumentsResponse
+        Public Property IsSuccess As Boolean
+        Public Property ErrorText As String
+        Public Property Errors As String
+        Public Property Documents As List(Of ShippingDocument)
+        Public Property ParcelsTracking As List(Of ShippingParcelTracking)
+        Public Property TrackingDetails As ShippingTrackingDetails
+        Public Property DeliveryAdviceInformation As List(Of ShippingDeliveryAdviceInformation)
+    End Class
+
+    Public Class ParcelVoid
+        Public Property OrderId As String
+        Public Property ParcelCode As String
+    End Class
+
+    Private Function VoidGlobaleParcel(OrderId As String, ParcelCode As String) As Boolean
 
         Try
-
-            Return RequestGlobalELabelGeneric()
-
-            If 1 = 1 Then
-                Return True
-            End If
-
-            If GlobaleOrderID.Length = 0 Then
-                LastError = "No Global Order ID provided"
-                Return False
-            End If
-
-
-            If cServiceProvider = ServiceProviders.Unknown Then
-                LastError = "Unknown Service Type"
-                Return False
-            End If
-
-            objUpsShip.Config("SSLEnabledProtocols=" & SSLEnabledProtocols)
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
-
-            Dim bearerToken As String = GetAuthorizationToken(Carriers.GlobalE, cAccountNumber)
-            If inTestMode Then
-
-            End If
-
-            ' $"https://api.global-e.com/shipping-documents/v1/orders/{orderId}/ready_for_dispatch"
-            Dim apiUrl As String = Server ' GlobaleOrderID
-            apiUrl = apiUrl.Replace("{orderId}", GlobaleOrderID)
-
-            Dim shipFrom As New Address
-            Dim shipTo As New Address
-
-            With shipTo
-                .address1 = cRecipientContact.Address1
-                .address2 = cRecipientContact.Address2
-                .city = cRecipientContact.City
-                .country = cRecipientContact.CountryCode
-                .name = cRecipientContact.Company
-                .postalCode = cRecipientContact.ZipCode
+            Dim Parcel As New ParcelVoid
+            With Parcel
+                .OrderId = OrderId
+                .ParcelCode = ParcelCode
             End With
 
-            With shipFrom
-                If cAccountContact.Company & String.Empty <> String.Empty Then
-                    .address1 = cAccountContact.Address1
-                    .address2 = cAccountContact.Address2
-                    .city = cAccountContact.City
-                    .country = cAccountContact.CountryCode
-                    .name = cAccountContact.Company
-                    .postalCode = cAccountContact.ZipCode
-                Else
-                    .address1 = cSenderContact.Address1
-                    .address2 = cSenderContact.Address2
-                    .city = cSenderContact.City
-                    .country = cSenderContact.CountryCode
-                    .name = cSenderContact.Company
-                    .postalCode = cSenderContact.ZipCode
+            Dim endpoint As String = String.Empty
+            ' https://api.global-e.com/
+            endpoint = $"{Server}Parcel/VoidParcel"
+
+
+            Using client As New HttpClient()
+                client.DefaultRequestHeaders.Clear()
+                client.DefaultRequestHeaders.Add("MerchantGUID", UserId)
+                client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+
+                Dim settings As New JsonSerializerSettings With {
+                                .NullValueHandling = NullValueHandling.Ignore
+                            }
+
+                Dim jsonBody As String = JsonConvert.SerializeObject(Parcel, Formatting.Indented, settings)
+                Dim content As New StringContent(jsonBody, Encoding.UTF8, "application/json")
+
+                Dim response = client.PostAsync(endpoint, content).Result
+                Dim responseBody = response.Content.ReadAsStringAsync().Result
+
+                If Not response.IsSuccessStatusCode Then
+                    LastError = response.StatusCode & " " & responseBody
+                    Return False
                 End If
-            End With
+            End Using
 
+            Return True
+
+        Catch ex As Exception
+            LastError = ex.Message
+            Return False
+        End Try
+    End Function
+
+    Private Function RequestGlobaleLabel() As Boolean
+
+        ' Production API URL
+        '   https://api.global-e.com/
+        'GetShippingDocuments API endpoint
+        '   https://{globale_api_domain}/Order/GetShippingDocuments
+        'Dispatch/ Manifest API endpoint 
+        '   https://{globale_api_domain}/Order/DispatchOrders
+
+        GlobaleLabels.Clear()
+
+        Try
             Dim lstParcels As New List(Of Parcel)
-            Dim parcelNumber As Int16 = 1
+            Dim ParcelRequest As New ParcelRequest
+            Dim ShippingLabelDir As String = String.Empty
+
             For Each shippingPackageDetail In PackageDetailList
                 Dim parcel As New Parcel
 
                 With parcel
-                    .weight = Math.Round(Val(shippingPackageDetail.Weight), 2)
-                    .dimensions = New Dimensions With {.length = shippingPackageDetail.Length, .width = shippingPackageDetail.Width, .height = shippingPackageDetail.Height}
-                    .parcelNumber = parcelNumber
-                End With
+                    '.ParcelCode = shippingPackageDetail.Id
+                    ' This is SOTCART1.PICK_NO _ SOTCART1.CART_SEQ
+                    ' If we need to request the label a second time we need to have the same parcel value
+                    ' 44360780 
+                    .ParcelCode = shippingPackageDetail.Reference
 
-                parcelNumber += 1
+                    Dim lstContents As New List(Of ParcelContent)
+                    For Each kvp As KeyValuePair(Of String, List(Of ParcelContent)) In dictGlobaleContents
+                        Dim v1 As String = kvp.Key
+                        Dim v2 As List(Of ParcelContent) = kvp.Value
+
+                        If v1 = shippingPackageDetail.Id Then
+                            For Each content As ParcelContent In v2
+                                lstContents.Add(content)
+                            Next
+                        End If
+                    Next
+                    .Products = lstContents
+                End With
                 lstParcels.Add(parcel)
             Next
 
-            Dim carrier As New Carrier
-            With carrier
-                Select Case cRequestedServiceType
-                    Case "01"
-                        .service = "Express"
-                    Case "02"
-                        .service = "Standard"
-                End Select
-                .format = "ZPL"
+            With ParcelRequest
+                .OrderId = "#" & ShopifyOrderID
+                .Parcels = lstParcels
             End With
 
-            Dim requestObj As New ShipmentRequest With {
-                .orderId = GlobaleOrderID,
-                .shipFrom = shipFrom,
-                .shipTo = shipTo,
-                .parcels = lstParcels,
-                .carrier = carrier
-            }
+            Dim endpoint As String = String.Empty
+            ' https://api.global-e.com/
+            endpoint = $"{Server}Order/GetShippingDocuments"
 
-            Dim jsonBody As String = JsonConvert.SerializeObject(requestObj, Formatting.Indented)
+            'If ASCMAIN1.Running_in_VS Then
+            '    Stop
+            '    VoidGlobaleParcel("#107930", "44360797")
+            'End If
 
             Using client As New HttpClient()
-                client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("Bearer", bearerToken)
+                client.DefaultRequestHeaders.Clear()
+                client.DefaultRequestHeaders.Add("MerchantGUID", UserId)
+                client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
 
+                Dim settings As New JsonSerializerSettings With {
+                                .NullValueHandling = NullValueHandling.Ignore
+                            }
+
+                Dim jsonBody As String = JsonConvert.SerializeObject(ParcelRequest, Formatting.Indented, settings)
                 Dim content As New StringContent(jsonBody, Encoding.UTF8, "application/json")
-                Dim response As HttpResponseMessage = client.PostAsync(apiUrl, content).Result
 
-                If response.IsSuccessStatusCode Then
-                    Dim result As String = response.Content.ReadAsStringAsync().Result
-                    ' This should conatin the error
-                Else
-                    LastError = response.StatusCode.ToString()
-                    Dim err As String = response.Content.ReadAsStringAsync().Result
-                    LastError = LastError & " " & err
+                Dim response = client.PostAsync(endpoint, content).Result
+                Dim responseBody = response.Content.ReadAsStringAsync().Result
+
+                If Not response.IsSuccessStatusCode Then
+                    LastError = response.StatusCode & " " & responseBody
+                    Return False
+                End If
+
+                Dim ShippingLabelFile As String = ShippingLabelDirectory & ShippingLabelPrefix & "_1.json"
+                Using sw As New StreamWriter(ShippingLabelFile)
+                    sw.Write(responseBody)
+                    sw.Close()
+                End Using
+                GlobaleLabels.Add(ShippingLabelFile)
+
+                cMasterTrackingNumber = String.Empty
+                ' Try to exract the Master Tranking No
+                Try
+
+                    Dim docResponse = JsonConvert.DeserializeObject(Of ShippingDocumentsResponse)(responseBody)
+                    For Each ParcelTracking In docResponse.ParcelsTracking
+                        If ParcelTracking.ParcelTrackingNumber & String.Empty <> String.Empty Then
+                            cMasterTrackingNumber = ParcelTracking.ParcelTrackingNumber
+                            Exit For
+                        End If
+                    Next
+                Catch ex As Exception
+
+                End Try
+
+                If cMasterTrackingNumber.Length = 0 Then
+                    cMasterTrackingNumber = GlobaleOrderID
                 End If
             End Using
 
@@ -6401,115 +6461,67 @@ Public Class WHCSHIP1
             LastError = ex.Message
             Return False
         End Try
+
     End Function
 
-    Private Function RequestGlobalELabelGeneric() As Boolean
+    Public Function PrintGlobaleLabels(ByVal SHIP_CNTL_NO As String) As Boolean
+
         Try
-            lstGlobalePackageInformation.Clear()
+            Dim sql As String = "Select * from WHTSHPC1 WHERE SHIP_CNTL_NO = :PARM1"
+            Dim drWHTSHPC1 As DataRow = ASCDATA1.GetDataRow(sql, "V", {SHIP_CNTL_NO})
 
-            If GlobaleOrderID.Length = 0 Then
-                LastError = "No Global Order ID provided"
+            If drWHTSHPC1 Is Nothing Then
+                LastError = "Unable to locate shipping label data for the requested shipment"
                 Return False
             End If
 
-            Dim drSOTORDR6 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR6 WHERE SHIP_REFERENCE = :PARM1", "V", {GlobaleOrderID})
-            If drSOTORDR6 Is Nothing Then
-                LastError = $"Cannot locate Global Order ID {GlobaleOrderID}."
+            Dim CARRIER_CODE As String = drWHTSHPC1.Item("CARRIER_CODE") & String.Empty
+            sql = "Select * from SOTCARR1 WHERE CARRIER_CODE = :PARM1"
+            Dim drSOTCARR1 As DataRow = ASCDATA1.GetDataRow(sql, "V", {CARRIER_CODE})
+
+            If drSOTCARR1 Is Nothing Then
+                LastError = $"Unable to locate master record for Carrier {CARRIER_CODE}"
                 Return False
             End If
 
-            Dim ORDR_NO As String = drSOTORDR6.Item("ORDR_NO") & String.Empty
-            Dim drSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_NO = :PARM1", "V", {ORDR_NO})
-            Dim drSOTPICK1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTPICK1 WHERE ORDR_NO = :PARM1", "V", {ORDR_NO})
-            Dim rowSOTORDR5 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR5 WHERE ORDR_NO = :PARM1 AND CUST_ADDR_TYPE = 'ST'", "V", {ORDR_NO})
-
-            Dim TOTE_NO As String = String.Empty
-            If drSOTPICK1 IsNot Nothing Then
-                TOTE_NO = drSOTPICK1.Item("TOTE_NO") & String.Empty
+            Dim ShippingLabelDirectory As String = (drSOTCARR1.Item("CARRIER_ARCHIVE_DIR") & String.Empty).ToString.Trim
+            If ASCMAIN1.Running_in_VS Then
+                ShippingLabelDirectory = ShippingLabelDirectory.Replace("R:\", "C:\").Replace("S:\", "C:\")
             End If
 
-            Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
-            Dim ORDR_NO_WEB As String = drSOTORDR1.Item("ORDR_NO_WEB") & String.Empty
+            For Each file As String In My.Computer.FileSystem.GetFiles(ShippingLabelDirectory, FileIO.SearchOption.SearchTopLevelOnly, $"*{SHIP_CNTL_NO}*")
+                Dim responseBody As String = String.Empty
+                Using sr As New StreamReader(file)
+                    responseBody = sr.ReadToEnd
+                    sr.Close()
+                End Using
 
-            Dim numPackages As Int16 = PackageDetailList.Count
-            Dim labelNum As Int32 = 1
+                ' Parse responseBody
+                Dim docResponse = JsonConvert.DeserializeObject(Of ShippingDocumentsResponse)(responseBody)
+                Dim iLoop As Int16 = 1
+                For Each doc In docResponse.Documents
+                    Dim DocumentExtension As String = doc.DocumentExtension
+                    Dim fileBytes As Byte() = Convert.FromBase64String(doc.DocumentData)
+                    Dim readableText As String = System.Text.Encoding.UTF8.GetString(fileBytes)
 
-            For Each shippingPackageDetail In PackageDetailList
+                    Select Case DocumentExtension.ToUpper
+                        Case "ZPL"
+                            ' send to the user's label printer
+                            Dim clsTACZPLT1 As New TACZPLT1
+                            clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, readableText)
 
-                Dim WEIGHT As Decimal = CInt(Math.Ceiling(shippingPackageDetail.Weight / 16))
-                Dim LENGTH As Decimal = shippingPackageDetail.Length
-                Dim WIDTH As Decimal = shippingPackageDetail.Width
-                Dim HEIGHT As Decimal = shippingPackageDetail.Height
-                Dim SHIPDATE As String = DateTime.Now.ToString("ddMMMyy").ToUpper
+                        Case "PDF"
 
-                Dim label As String = "^XA 
-                                ^CF0,50,30
-                                ^FO100,20^FDGlobal E Shipment^FS 
-                                ^CF0,35,30
-                                ^FO100,100^FDTote No: {TOTE_NO}^FS 
-                                ^FO100,150^FDOrder No: {ORDR_NO}^FS 
-                                ^FO100,200^FDPick Ticket: {PICK_NO}^FS 
-                                ^FO100,250^FDInvoice: {INV_NO}^FS 
-                                ^FO100,300^FDShopify Order ID: {ORDR_WEB_ID}^FS 
-                                ^FO100,350^FDShopify #: {ORDR_NO_WEB}^FS 
-                                ^FO100,450^FDName: {CUST_NAME}^FS 
-                                ^FO100,500^FDContact: {CUST_CONTACT}^FS 
-                                ^FO100,550^FDAddr Line 1: {CUST_ADDR1}^FS 
-                                ^FO100,600^FDAddr Line 2: {CUST_ADDR2}^FS 
-                                ^FO100,650^FDAddr Line 3: {CUST_ADDR3}^FS 
-                                ^FO100,700^FDCity: {CUST_CITY}^FS 
-                                ^FO100,750^FDState: {CUST_STATE}^FS 
-                                ^FO100,800^FDZip Code: {CUST_ZIP_CODE}^FS 
-                                ^FO100,850^FDCountry: {CUST_COUNTRY}^FS 
-                                ^FO100,900^FDPhone: {CUST_PHONE}^FS 
-                                ^FO100,950^FDEmail: {CUST_EMAIL}^FS 
-                                ^CF0,50
-                                ^FO100,1100^FDGlobal-e ID: {GlobaleOrderID}^FS 
-                                ^CF0,10
-                                ^FO488,3^AdN,0,0^FWN^FH^FDSHIP DATE: {SHIPDATE}^FS
-                                ^FO488,19^AdN,0,0^FWN^FH^FDACTWGT: {WEIGHT} LB^FS
-                                ^FO488,35^AdN,0,0^FWN^FH^FDDIMMED: {LENGTH} X {WIDTH} X {HEIGHT} IN^FS
-                                ^FO488,51^AdN,0,0^FWN^FH^FDLABEL: {N} of {M}^FS
-                                ^FO480,3^GB2,65,2^FS
-                                ^FO480,68^GB300,1,2^FS
-                               ^XZ"
-                For Each dcol As DataColumn In rowSOTORDR5.Table.Columns
-                    label = label.Replace("{" & dcol.ColumnName & "}", rowSOTORDR5.Item(dcol.ColumnName) & String.Empty)
+                    End Select
                 Next
-
-                label = label.Replace("{TOTE_NO}", TOTE_NO)
-                label = label.Replace("{PICK_NO}", drSOTPICK1.Item("PICK_NO") & String.Empty)
-                label = label.Replace("{INV_NO}", drSOTPICK1.Item("INV_NO") & String.Empty)
-                label = label.Replace("{ORDR_WEB_ID}", ORDR_WEB_ID)
-                label = label.Replace("{ORDR_NO_WEB}", ORDR_NO_WEB)
-                label = label.Replace("{GlobaleOrderID}", GlobaleOrderID)
-
-                label = label.Replace("{SHIPDATE}", SHIPDATE)
-                label = label.Replace("{WEIGHT}", Val(WEIGHT & String.Empty).ToString("#0.00"))
-                label = label.Replace("{LENGTH}", Val(LENGTH & String.Empty).ToString("#0"))
-                label = label.Replace("{WIDTH}", Val(WIDTH & String.Empty).ToString("#0"))
-                label = label.Replace("{HEIGHT}", Val(HEIGHT & String.Empty).ToString("#0"))
-
-                label = label.Replace("{N}", labelNum.ToString("#0"))
-                label = label.Replace("{M}", numPackages.ToString("#0"))
-
-                Dim GlobalePackageInformation = New GlobalePackageInformation
-                With GlobalePackageInformation
-                    .ShippingLabel = label
-                    .ShipmentID = GlobaleOrderID
-                    .TrackingNumber = GlobaleOrderID
-                End With
-                lstGlobalePackageInformation.Add(GlobalePackageInformation)
-
-                labelNum += 1
             Next
 
             Return True
+
         Catch ex As Exception
             LastError = ex.Message
             Return False
         End Try
-
 
     End Function
 
@@ -6902,6 +6914,9 @@ Public Class WHCSHIP1
             Case Carriers.UPS
                 CARRIER_CODE = "UPS"
 
+            Case Carriers.GlobalE
+                CARRIER_CODE = "GLOBAL"
+
             Case Else
                 numLoops = 0
                 Return String.Empty
@@ -6992,6 +7007,15 @@ Public Class WHCSHIP1
                 bearerToken = oauth.GetAuthorization
                 tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(oauth.AccessTokenExp))
 
+            Case Carriers.GlobalE
+                Dim CLIENT_ID As String = rowSOTCARR3.Item("CLIENT_ID") & String.Empty
+                Dim CLIENT_SECRET As String = rowSOTCARR3.Item("CLIENT_SECRET") & String.Empty
+
+                Dim gOath As gOauth = GetGlobaleToken(CLIENT_ID, CLIENT_SECRET)
+
+                bearerToken = gOath.bearerToken
+                tokenExp = DateAdd(DateInterval.Minute, -5, DateTime.Now.AddSeconds(gOath.AccessTokenExp))
+
         End Select
 
         sql = "UPDATE SOTCARR3 SET AUTH_CODE = :PARM1, TOKEN_EXPIRES = :PARM2 WHERE CARRIER_CODE = :PARM3 AND CARRIER_ACCOUNT_NO = :PARM4"
@@ -7008,6 +7032,60 @@ Public Class WHCSHIP1
 
     End Function
 
+    Public Class AuthRequest
+        Public Property userName As String
+        Public Property password As String
+    End Class
+
+    Public Class AuthResponse
+        Public Property token As String
+        Public Property TTLInMinutes As Integer
+    End Class
+
+    Public Class gOauth
+        Public Property bearerToken As String
+        Public Property AccessTokenExp As Integer
+    End Class
+
+    Private Function GetGlobaleToken(ByVal ClientId As String,
+                                        ByVal ClientSecret As String) As gOauth
+
+        Dim respone As New gOauth
+
+        Try
+            Dim endpoint As String = $"{Server}Authentication/GetAuthenticationToken"
+
+            Using client As New HttpClient()
+                client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+
+                Dim requestBody As New AuthRequest With {
+                    .userName = ClientId,
+                    .password = ClientSecret
+                }
+
+                Dim jsonBody As String = JsonConvert.SerializeObject(requestBody)
+                Dim content As New StringContent(jsonBody, Encoding.UTF8, "application/json")
+
+                Dim response = client.PostAsync(endpoint, content).Result
+                Dim responseBody = response.Content.ReadAsStringAsync().Result
+
+                If response.IsSuccessStatusCode Then
+                    Dim auth = JsonConvert.DeserializeObject(Of AuthResponse)(responseBody)
+                    With respone
+                        .bearerToken = auth.token
+                        .AccessTokenExp = auth.TTLInMinutes
+                    End With
+                End If
+            End Using
+
+            Return respone
+
+        Catch ex As Exception
+            LastError = ex.Message
+            Return respone
+        End Try
+
+    End Function
 
 #End Region
 
