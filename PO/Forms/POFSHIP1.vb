@@ -8632,10 +8632,17 @@ Public Class POFSHIP1
         Dim TOTAL_CBM As Decimal = Val(rowPOTSHIP1.Item("TOTAL_CBM") & "")
         ' Dim TOTAL_DUTY As Decimal = Val(rowPOTSHIP1.Item("TOTAL_DUTY") & "")
         Dim TOTAL_QTY_THIS_SHIPMENT As Int64 = Val(dst.Tables("POTSHIP3").Compute("SUM(PO_QTY_SR)", "") & "")
+        Dim TOTAL_FC_THIS_SHIPMENT As Int64 = Val(dst.Tables("POTSHIP3").Compute("SUM(EXT_FIRST)", "") & "")
+        Dim TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE As Int64 = Val(dst.Tables("POTSHIP3").Compute("SUM(PO_QTY_SR)", "DUTY_RATE <> 0") & "")
 
         Dim TOTAL_MISC_INVOICED As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_M)", sqlP & sqlp2) & "")
+        Dim TOTAL_MISC_INVOICED_TARRIFF As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_M)", sqlP & sqlp2 & " AND COST_CATGY_CODE = 'TARIFF'") & "")
+        Dim TOTAL_MISC_INVOICED_NOT_TARIFF As Decimal = Math.Abs(TOTAL_MISC_INVOICED_TARRIFF - TOTAL_MISC_INVOICED)
+
+        Dim TOTAL_DUTY_INVOICED_TARIFF As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_D)", sqlP & sqlp2 & " AND COST_CATGY_CODE = 'TARIFF'") & "")
         Dim TOTAL_DUTY_INVOICED As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_D)", sqlP & sqlp2) & "")
         Dim TOTAL_CUSTOMS_INVOICED As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_W)", sqlP & sqlp2) & "")
+        Dim TOTAL_DUTY_INVOICED_NOT_TARIFF As Decimal = Math.Abs(TOTAL_DUTY_INVOICED_TARIFF - TOTAL_DUTY_INVOICED)
 
         For Each rowPOTSHIP2 As DataRow In dst.Tables("POTSHIP2").Select("")
 
@@ -8645,7 +8652,8 @@ Public Class POFSHIP1
 
                 Dim sqlp_LNO As String = "PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "' and PO_SHIPMENT_LNO_DIST = " & CStr(PO_SHIPMENT_LNO)
                 Dim TOTAL_TRUCKING_LNO As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_T)", sqlp_LNO) & "")
-                Dim TOTAL_MISC_INVOICED_LNO As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_M)", sqlp_LNO) & "")
+                Dim TOTAL_MISC_INVOICED_LNO As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_M)", sqlp_LNO & " AND COST_CATGY_CODE <> 'TARIFF'") & "")
+                '  Dim TOTAL_MISC_INVOICED_LNO As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_M)", sqlp_LNO) & "")
                 Dim TOTAL_DUTY_INVOICED_LNO As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_D)", sqlp_LNO) & "")
                 Dim TOTAL_CUSTOMS_INVOICED_LNO As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_W)", sqlp_LNO) & "")
 
@@ -8753,11 +8761,15 @@ Public Class POFSHIP1
                         ' The 2% is a fee we charge to the supplier to cover our overhead costs for JA. 
                         ' We will pay less duty
 
-                        .Item("PO_COST_DUTY") = PO_COST_DUTY
+                        If TOTAL_DUTY_INVOICED <> 0 And ASCMAIN1.CLIENT = "RGI" Then
+                            .Item("PO_COST_DUTY") = 0
+                        Else
+                            .Item("PO_COST_DUTY") = PO_COST_DUTY
+                        End If
                         .Item("PO_COST_CUSTOMS") = 0
                         .Item("PO_COST_CUSTOMS") = System.Math.Round((Val(.Item("PO_COST_CUSTOMS") & "") + TOTAL_CUSTOMS_INVOICED * PXWF) / PO_QTY_SR, 6)
                         .Item("PO_COST_MISC") = 0
-                        .Item("PO_COST_MISC") = System.Math.Round((Val(.Item("PO_COST_MISC") & "") + TOTAL_MISC_INVOICED * PXWF + TOTAL_MISC_INVOICED_LNO) / PO_QTY_SR, 6)
+                        .Item("PO_COST_MISC") = System.Math.Round((Val(.Item("PO_COST_MISC") & "") + TOTAL_MISC_INVOICED_NOT_TARIFF * PXWF + TOTAL_MISC_INVOICED_LNO) / PO_QTY_SR, 6)
 
                         Dim otherCost As Decimal = (Val(.Item("PO_COST_OTHER") & "") + Val(.Item("PO_COST_QUOTA") & ""))
 
@@ -8775,18 +8787,69 @@ Public Class POFSHIP1
                     If Not chkNoDuty.Checked Then
                         If ASCMAIN1.CLIENT = "RGIX" Then
                         Else
-                            ' Add Duty from Grid
-                            Dim e As Decimal = TOTAL_DUTY_INVOICED / TOTAL_QTY_THIS_SHIPMENT
-                            For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
-                                rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(e, 6)
-                                rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(e, 6)
-                            Next
-                        End If
-                    End If
+                            ' Add Duty from Grid 
+                            ' 2ND PASS DGJ
+                            Dim e As Decimal = 0
+                            If ASCMAIN1.CLIENT = "RGI" And TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE <> 0 And TOTAL_DUTY_INVOICED <> 0 Then
+                                e = TOTAL_DUTY_INVOICED / TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE
+                                For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                    If rowPOTSHIP3.Item("DUTY_RATE") <> 0 Then
 
+                                        Dim a As Decimal = Val(rowPOTSHIP3.Item("DUTY_RATE") & "") / 100
+                                        Dim b As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
+
+                                        e = System.Math.Round(a * b, 6)
+                                        rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(e, 6)
+                                        rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(e, 6)
+
+                                    End If
+                                Next
+                            Else
+
+                                Dim dutyRate As Decimal = TOTAL_DUTY_INVOICED_TARIFF / TOTAL_FC_THIS_SHIPMENT
+
+                                For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                    Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
+                                    Dim EXT_FIRST_DET As Decimal = Val(rowPOTSHIP3.Item("EXT_FIRST") & "")
+                                    Dim allocatedDuty As Decimal = System.Math.Round(dutyRate * EXT_FIRST_DET, 6)
+                                    allocatedDuty = allocatedDuty / PO_QTY_SR
+                                    rowPOTSHIP3.Item("PO_COST_DUTY") += allocatedDuty
+                                    rowPOTSHIP3.Item("PO_COST_LANDED") += allocatedDuty
+                                Next
+
+                                If TOTAL_DUTY_INVOICED_NOT_TARIFF <> 0 Then
+                                    dutyRate = TOTAL_DUTY_INVOICED_NOT_TARIFF / TOTAL_QTY_THIS_SHIPMENT
+                                    For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                        If ASCMAIN1.CLIENT = "VAN" Or ASCMAIN1.CLIENT = "RGI" Then
+                                            rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(dutyRate, 6)
+                                            rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(dutyRate, 6)
+                                        Else
+                                        End If
+                                    Next
+
+                                End If
+
+
+                            End If
+
+                        End If
+                    Else
+
+                        '  CALCULATE MISC
+                        Dim dutyRate As Decimal = TOTAL_MISC_INVOICED_TARRIFF / TOTAL_FC_THIS_SHIPMENT
+
+                        For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                            Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
+                            Dim EXT_FIRST_DET As Decimal = Val(rowPOTSHIP3.Item("EXT_FIRST") & "")
+                            Dim allocatedDuty As Decimal = System.Math.Round(dutyRate * EXT_FIRST_DET, 6)
+                            allocatedDuty = allocatedDuty / PO_QTY_SR
+                            rowPOTSHIP3.Item("PO_COST_MISC") += allocatedDuty
+                            rowPOTSHIP3.Item("PO_COST_LANDED") += allocatedDuty
+                        Next
+                    End If
                     Dim m As Decimal = TOTAL_MISC_INVOICED / TOTAL_QTY_THIS_SHIPMENT
                     For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
-                        If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Then
+                        If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "VAN" Or ASCMAIN1.CLIENT = "RGI" Then
                             ' 20190617 email Leslie - does not want MISC mixed with Duty, but wants it included in Landed
                             ' LOOK ABOVE  .Item("PO_COST_MISC") IS ADDING IT TO PO_COST_MISC - SO WHY THEN DO WE NEED IT IN PO_COST_DUTY?
                         Else
@@ -8795,7 +8858,6 @@ Public Class POFSHIP1
                         End If
 
                     Next
-
                 End If
             End With
         Next
@@ -8819,9 +8881,24 @@ Public Class POFSHIP1
             Else
 
             End If
+            ' RGI DUTY TARIFF CALC
+            If ASCMAIN1.CLIENT = "RGI" And TOTAL_DUTY_INVOICED <> 0 Then
+                Dim TOTAL_DUTY_RATE_OTHER As Decimal = Val(dst.Tables("POTSHIP3").Compute("SUM(EXT_DUTY)", "DUTY_RATE <> 0") & "")
+                Dim F As Decimal = TOTAL_DUTY_INVOICED - TOTAL_DUTY_RATE_OTHER
+                For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
+                    If rowPOTSHIP3.Item("DUTY_RATE") <> 0 Then
+                        Dim e As Decimal = (F * (Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "") / TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE)) / Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
+                        rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(e, 6)
+                        rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(e, 6)
+                    End If
+                Next
+
+            End If
+
+
         End If
 
-        rowPOTSHIP1.Item("COST_IND") = "1"
+            rowPOTSHIP1.Item("COST_IND") = "1"
         Set_Landed_Cost_Needs_to_be_Calculated_Indicator(True)
 
         '  Calculate_DUTY_DIST()
@@ -15537,12 +15614,12 @@ Public Class POFSHIP1
             rowPOTSHIP5.Item("PO_SHIPMENT_LNO") = Val(dst.Tables("POTSHIP5").Compute("MAX(PO_SHIPMENT_LNO)", "") & "") + 1
             rowPOTSHIP5.Item("COST_CATGY_CODE") = "TARIFF"
             rowPOTSHIP5.Item("COST_CATGY_DESC") = "Tariff (Additional Duty)"
-            '''If chkNoDuty.Checked Then
-            '''    rowPOTSHIP5.Item("LANDING_COST_DIST") = "M"
-            '''Else
-            '''    rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
-            '''End If
-            rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
+            If chkNoDuty.Checked Then
+                rowPOTSHIP5.Item("LANDING_COST_DIST") = "M"
+            Else
+                rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
+            End If
+            ' rowPOTSHIP5.Item("LANDING_COST_DIST") = "D"
             dst.Tables("POTSHIP5").Rows.Add(rowPOTSHIP5)
         Else
             rowPOTSHIP5 = rowPOTSHIP5s(0)
@@ -15573,7 +15650,11 @@ Public Class POFSHIP1
             rowPOTSHIP1.Item("TARIFF_PCT_LAST_OPER") = ASCMAIN1.USER_ID
         Next
 
-        MsgBox("Tariff added to Duty", MsgBoxStyle.OkOnly, "Verification")
+        If chkNoDuty.Checked Then
+            MsgBox("Tariff added to Misc", MsgBoxStyle.OkOnly, "Verification")
+        Else
+            MsgBox("Tariff added to Duty", MsgBoxStyle.OkOnly, "Verification")
+        End If
     End Sub
 
     Sub Receive_Shipment_to_Whs()
