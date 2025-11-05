@@ -157,6 +157,12 @@
     <Import Include="TAC" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\WHFDASH2.Designer.vb">
+      <DependentUpon>WHFDASH2.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFDASH2.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\WHFCYCLA.Designer.vb">
       <DependentUpon>WHFCYCLA.vb</DependentUpon>
     </Compile>
@@ -456,6 +462,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\WHFDASH2.resx">
+      <DependentUpon>WHFDASH2.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFCYCLA.resx">
       <DependentUpon>WHFCYCLA.vb</DependentUpon>
     </EmbeddedResource>
