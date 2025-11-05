@@ -91,6 +91,8 @@ Partial Class SORSORD1
         Me.btnFilterReservations = New System.Windows.Forms.Button()
         Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.chkStyleStats = New ABSCS.ABSCheckBox()
+        Me.txtPOREF = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.lblPOREF = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -142,11 +144,12 @@ Partial Class SORSORD1
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtPOREF, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
@@ -167,6 +170,8 @@ Partial Class SORSORD1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.lblPOREF)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.txtPOREF)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer5.Panel1.Controls.Add(Me.AbsCheckBox2)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpFilterReservations)
@@ -629,6 +634,25 @@ Partial Class SORSORD1
         Me.chkStyleStats.TabIndex = 279
         Me.chkStyleStats.Text = "Show In-Transit Details"
         '
+        'txtPOREF
+        '
+        Me.txtPOREF.Location = New System.Drawing.Point(21, 289)
+        Me.txtPOREF.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtPOREF.Multiline = True
+        Me.txtPOREF.Name = "txtPOREF"
+        Me.txtPOREF.Size = New System.Drawing.Size(511, 263)
+        Me.txtPOREF.TabIndex = 341
+        '
+        'lblPOREF
+        '
+        Me.lblPOREF.AutoSize = True
+        Me.lblPOREF.Location = New System.Drawing.Point(20, 260)
+        Me.lblPOREF.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.lblPOREF.Name = "lblPOREF"
+        Me.lblPOREF.Size = New System.Drawing.Size(227, 22)
+        Me.lblPOREF.TabIndex = 342
+        Me.lblPOREF.Text = "Order Cust Po's to Include"
+        '
         'SORSORD1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -644,6 +668,7 @@ Partial Class SORSORD1
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         Me.SplitContainer5.Panel1.ResumeLayout(False)
+        Me.SplitContainer5.Panel1.PerformLayout()
         Me.SplitContainer5.Panel2.ResumeLayout(False)
         CType(Me.SplitContainer5, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer5.ResumeLayout(False)
@@ -689,6 +714,7 @@ Partial Class SORSORD1
         CType(Me.grdSOTRSRV1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtPOREF, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -708,4 +734,6 @@ Partial Class SORSORD1
     Friend WithEvents btnFilterReservations As Button
     Friend WithEvents AbsCheckBox2 As ABSCS.ABSCheckBox
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents txtPOREF As UltraWinEditors.UltraTextEditor
+    Friend WithEvents lblPOREF As Misc.UltraLabel
 End Class

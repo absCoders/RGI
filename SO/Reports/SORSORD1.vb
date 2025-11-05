@@ -37,6 +37,7 @@ Public Class SORSORD1
         End If
         Absx1.chkFor("CHKTRANONLY").Checked = False
 
+        txtPOREF.Visible = (ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN")
         With UltraExplorerBar1.Groups("Special Functions")
             .Visible = False
         End With
@@ -71,6 +72,33 @@ Public Class SORSORD1
         'sql &= SQL_in("CUST_CODE", "SOTORDR1.CUST_CODE")
         MyBase.Get_SQL("*")
         sqlw &= sql_WHERE & sql_JOIN
+
+        ' new 
+        Dim POREF As String = ""
+        If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+            If txtPOREF.Text <> "" Then
+                Dim i As Integer
+                POREF = ""
+                Dim datarec() As String = Split(txtPOREF.Text, vbCrLf)
+                For i = 0 To UBound(datarec)
+                    If datarec(i).Length <> 0 And POREF = "" Then
+                        POREF = POREF & "("
+                    End If
+                    If datarec(i).Length <> 0 Then
+                        POREF = POREF & "'" & datarec(i) & "',"
+                    End If
+                    '     MessageBox.Show(datarec(i))
+                Next i
+
+                If POREF <> "" Then
+                    POREF = POREF.TrimEnd(CChar(","))
+                    POREF = POREF & ")"
+                    sqlw &= "" _
+                              & " and SOTORDR1.ORDR_CUST_PO IN " & POREF & vbCrLf
+                End If
+            End If
+        End If
+
         If Absx1.optFor("OPTORB").Value = "R" Then
             sqlw &= " and ROWNUM < 1"
         End If
@@ -124,6 +152,11 @@ Public Class SORSORD1
                     fltrList = fltrList & String.Format("'{0}',", rowSOTRSRV1.Item("RSRV_NO").ToString & String.Empty)
                 Next
                 sqlw_r &= " AND SOTRSRV1.RSRV_NO IN (" & fltrList.Substring(0, fltrList.Length - 1) & ")"
+            End If
+
+            If POREF <> "" Then
+                sqlw_r &= "" _
+                              & " and SOTRSRV1.ORDR_CUST_PO IN " & POREF & vbCrLf
             End If
 
 
