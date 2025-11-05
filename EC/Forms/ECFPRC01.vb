@@ -44,6 +44,9 @@ Public Class ECFPRC01
                 .Add("FINAL_PARTNER_SET_PRICE", GetType(System.Double), Calc_Exp)
                 .Add("IS_ECOM")
                 .Add("PO_DATE_ETA", GetType(System.DateTime))
+                .Add("PO_DATE_SHIPPED", GetType(System.DateTime))
+                .Add("USE_TARIFF")
+                .Add("TARIFF_PRICE", GetType(System.Double))
             End With
 
             S.Length = 0
@@ -65,6 +68,22 @@ Public Class ECFPRC01
             ASCMAIN1.sql = S.ToString()
             Create_TDA(.Tables.Add, "POTORDRX", "**", 0, False)
             Fill_Records("POTORDRX")
+
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("    STYLE_CODE,")
+            S.AppendLine("    COLOR_CODE,")
+            S.AppendLine("    MAX(PO_DATE_SHIPPED) AS PO_DATE_SHIPPED")
+            S.AppendLine("FROM POTORDR2, POTSHIP3, POTSHIP1")
+            S.AppendLine("WHERE POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO (+)")
+            S.AppendLine("  AND POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO (+)")
+            S.AppendLine("  AND POTSHIP3.PO_SHIPMENT_NO = POTSHIP1.PO_SHIPMENT_NO (+)")
+            S.AppendLine("  AND PO_QTY_OPN = 0")
+            S.AppendLine("  AND NVL(PO_DATE_SHIPPED, '01-JAN-1900') <> '01-JAN-1900'")
+            S.AppendLine("GROUP BY STYLE_CODE, COLOR_CODE")
+            ASCMAIN1.sql = S.ToString()
+            Create_TDA(.Tables.Add, "POTSHIPX", "**", 0, False)
+            Fill_Records("POTSHIPX")
 
             'S.Length = 0
             'S.AppendLine("SELECT *")
@@ -117,8 +136,11 @@ Public Class ECFPRC01
             Next
             .Columns("MANUAL_PARTNER_PRICE").CellActivation = UltraWinGrid.Activation.AllowEdit
             .Columns("MANUAL_PARTNER_PRICE").CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+            .Columns("USE_TARIFF").CellActivation = UltraWinGrid.Activation.AllowEdit
+            .Columns("USE_TARIFF").CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
 
             .Columns("PO_DATE_ETA").Format = "MM/dd/yy"
+            .Columns("PO_DATE_SHIPPED").Format = "MM/dd/yy"
             .Columns("SET_QTY").Format = "###,###,##0"
             .Columns("STYLE_PRICE").Format = "###,###,##0.00"
             .Columns("CASE_QTY").Format = "###,###,##0"
@@ -136,6 +158,7 @@ Public Class ECFPRC01
             .Columns("STANDARD_PARTNER_PRICE").Format = "###,###,##0.00"
             .Columns("FINAL_PARTNER_PRICE").Format = "###,###,##0.00"
             .Columns("FINAL_PARTNER_SET_PRICE").Format = "###,###,##0.00"
+            .Columns("TARIFF_PRICE").Format = "###,###,##0.00"
 
             .Columns("STYLE_CODE").Header.Fixed = True
             .Columns("COLOR_CODE").Header.Fixed = True
@@ -154,6 +177,7 @@ Public Class ECFPRC01
             .Columns("STANDARD_PARTNER_PRICE").Header.Appearance.BackColor2 = Drawing.Color.Yellow
             .Columns("FINAL_PARTNER_PRICE").Header.Appearance.BackColor2 = Drawing.Color.Yellow
             .Columns("FINAL_PARTNER_SET_PRICE").Header.Appearance.BackColor2 = Drawing.Color.Yellow
+            .Columns("TARIFF_PRICE").Header.Appearance.BackColor2 = Drawing.Color.Yellow
 
         End With
 
@@ -328,7 +352,8 @@ Public Class ECFPRC01
                 Load_Header()
                 Load_Partners("")
                 Load_Styles("")
-                Calc_Extra_Fields()
+                Calc_Extra_Fields_Grid()
+                AddPOETA()
             Case "Save"
                 Call Mode_Settings(False)
                 Update_Record()
@@ -337,7 +362,8 @@ Public Class ECFPRC01
             Case "Add Partner"
                 AddPartner()
             Case "Refresh"
-                Calc_Extra_Fields()
+                Calc_Extra_Fields_Grid()
+                AddPOETA()
             Case "Cancel"
                 Call Mode_Settings(False)
                 'Update_Record()
@@ -448,6 +474,7 @@ Public Class ECFPRC01
             S.AppendLine("FROM ECTPRCG3")
             S.AppendLine($"WHERE PRCG_NO = '{txtPRCG_NO.Text}'")
             Fill_Records("ECTPRCG3",,, S.ToString)
+            TARIFF_ONOFF(True)
             dst.AcceptChanges()
         Else
             S.Length = 0
@@ -522,7 +549,9 @@ Public Class ECFPRC01
             End If
 
             Fill_Records("ECTPRCG3",, False, S.ToString)
-            Calc_Extra_Fields()
+            TARIFF_ONOFF(True)
+            grdECTPRCG3.Refresh()
+            Calc_Extra_Fields_Grid()
             AddPOETA()
             dst.AcceptChanges()
         End If
@@ -546,6 +575,12 @@ Public Class ECFPRC01
             If Not IsNothing(rowPOTORDRX) Then
                 If IsDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString & String.Empty) Then
                     rowECTPRCG3.Item("PO_DATE_ETA") = CDate(rowPOTORDRX.Item("PO_DATE_ETA").ToString & String.Empty)
+                End If
+            End If
+            Dim rowPOTSHIPX As DataRow = dst.Tables("POTSHIPX").Select(fltr).FirstOrDefault
+            If Not IsNothing(rowPOTSHIPX) Then
+                If IsDate(rowPOTSHIPX.Item("PO_DATE_SHIPPED").ToString & String.Empty) Then
+                    rowECTPRCG3.Item("PO_DATE_SHIPPED") = CDate(rowPOTSHIPX.Item("PO_DATE_SHIPPED").ToString & String.Empty)
                 End If
             End If
         Next
@@ -603,153 +638,193 @@ Public Class ECFPRC01
             End If
         End If
     End Sub
-    Private Sub Calc_Extra_Fields()
 
-        For Each rowECTPRCG3 As DataRow In dst.Tables("ECTPRCG3").Select()
-            'rowECTPRCG3.Item("CURR_PRICE") = calcCURR_PRICE(rowECTPRCG3)
-            'rowECTPRCG3.Item("ECOM_UP_PRICE") = calcECOM_UP_PRICE(rowECTPRCG3)
-            'rowECTPRCG3.Item("ECOM_PRICE") = calcECOM_PRICE(rowECTPRCG3)
-            Dim STYLE_CODE As String = rowECTPRCG3.Item("STYLE_CODE").ToString & String.Empty
-            'Dim SIZE_CODE As String = rowECTPRCG3.Item("SIZE_CODE").ToString & String.Empty
-            Dim SET_QTY As Int64 = Val(rowECTPRCG3.Item("SET_QTY").ToString & String.Empty)
-            If SET_QTY = 0 Then SET_QTY = 1
-            Dim STYLE_PRICE As Decimal = Val(rowECTPRCG3.Item("STYLE_PRICE").ToString & String.Empty)
-            Dim MANUAL_PARTNER_PRICE As Decimal = Val(rowECTPRCG3.Item("MANUAL_PARTNER_PRICE").ToString & String.Empty)
-            Dim STYLE_CLASS_CODE As String = rowECTPRCG3.Item("STYLE_CLASS_CODE").ToString & String.Empty
-            Dim CARTON_PACK_QTY As Int64 = Val(rowECTPRCG3.Item("CASE_QTY").ToString & String.Empty)
-            If CARTON_PACK_QTY = 0 Then CARTON_PACK_QTY = 1
-            Dim ECOM_CODE As String = rowECTPRCG3.Item("ECOM_CODE").ToString & String.Empty
-            Dim rowECTPRCG2 As DataRow = dst.Tables.Item("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'", "").FirstOrDefault
-            If IsNothing(rowECTPRCG2) Then
-                MsgBox($"No Record Found For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
-                Exit Sub
-            End If
-
-            Dim ECOM_PRICE_ADD As Decimal = 0
-            Dim ECOM_PRICE_MARKUP_PCT As Decimal = 0
-            Dim ECOM_PRICE_TARIFF_PCT As Decimal = 0
-            If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty) Then
-                ECOM_PRICE_ADD = Val(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty)
-            Else
-                MsgBox($"Invalid Add For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
-                Exit Sub
-            End If
-            If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty) Then
-                ECOM_PRICE_MARKUP_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty)
-            Else
-                MsgBox($"Invalid Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
-                Exit Sub
-            End If
-            If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty) Then
-                ECOM_PRICE_TARIFF_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty)
-            Else
-                MsgBox($"Invalid Tariff Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
-                Exit Sub
-            End If
-
-            Dim STYLE_CLASS_CODE_MULT As Decimal = Val(txtECOM_PRICE_MARKUP_NON_PVC.Text)
-            If STYLE_CLASS_CODE = "PVC" Then
-                STYLE_CLASS_CODE_MULT = Val(txtECOM_PRICE_MARKUP_PVC.Text)
-            End If
-
-            Dim CARTON_PACK_QTY_ADDITION As Decimal = Val(txtECOM_PRICE_CART_ADD.Text.Replace("$", "").Replace(",", ""))
-            If CARTON_PACK_QTY = 1 Then
-                CARTON_PACK_QTY_ADDITION = 1
-            End If
-
-            If MANUAL_PARTNER_PRICE = 999.99 Then
-                MANUAL_PARTNER_PRICE = 0
-            End If
-
-            'If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then Stop
-            Dim STANDARD_PRICE As Decimal = 0
-            Dim STANDARD_SET_PRICE As Decimal = 0
-            Dim CARTON_SET_PRICE As Decimal = 0
-            Dim STANDARD_PARTNER_PRICE As Decimal = 0
-            Dim FINAL_PARTNER_PRICE As Decimal = 0
-
-            STANDARD_PRICE = STYLE_PRICE * STYLE_CLASS_CODE_MULT
-            STANDARD_SET_PRICE = STANDARD_PRICE * SET_QTY
-            CARTON_SET_PRICE = STANDARD_SET_PRICE + CARTON_PACK_QTY_ADDITION
-            STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + ECOM_PRICE_ADD
-            'FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * (1 + ECOM_PRICE_MARKUP_PCT)) + MANUAL_PARTNER_PRICE
-            FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE / (1 - (ECOM_PRICE_MARKUP_PCT + ECOM_PRICE_TARIFF_PCT))) + MANUAL_PARTNER_PRICE
-            rowECTPRCG3.Item("STANDARD_PRICE") = STANDARD_PRICE
-            rowECTPRCG3.Item("STANDARD_SET_PRICE") = STANDARD_SET_PRICE
-            rowECTPRCG3.Item("CARTON_SET_PRICE") = CARTON_SET_PRICE
-            rowECTPRCG3.Item("STANDARD_PARTNER_PRICE") = STANDARD_PARTNER_PRICE
-            rowECTPRCG3.Item("FINAL_PARTNER_PRICE") = FINAL_PARTNER_PRICE
-
-            If Val(rowECTPRCG3.Item("ECOM_UNIT_PRICE").ToString & String.Empty) = 999.99 Then
-                rowECTPRCG3.Item("ECOM_UNIT_PRICE") = STANDARD_PRICE
-            End If
-            If Val(rowECTPRCG3.Item("SET_PRICE").ToString & String.Empty) = 999.99 Then
-                rowECTPRCG3.Item("SET_PRICE") = STANDARD_PRICE
-            End If
-
-            rowECTPRCG3.Item("MANUAL_PARTNER_PRICE") = 0
-            'Dim COLS As String() = {"STANDARD_PRICE", "STANDARD_SET_PRICE", "CARTON_SET_PRICE", "STANDARD_PARTNER_PRICE", "FINAL_PARTNER_PRICE"}
-            'For Each COL As String In COLS
-            '    Select Case COL
-            '        Case "STANDARD_PRICE"
-            '            'If STYLE_CODE = "MTF20964" Then Stop
-            '            STANDARD_PRICE = STYLE_PRICE * STYLE_CLASS_CODE_MULT
-            '            rowECTPRCG3.Item(COL) = STANDARD_PRICE
-            '        Case "STANDARD_SET_PRICE"
-            '            STANDARD_SET_PRICE = STANDARD_PRICE * SET_QTY
-            '            rowECTPRCG3.Item(COL) = STANDARD_SET_PRICE
-            '        Case "CARTON_SET_PRICE"
-            '            CARTON_SET_PRICE = STANDARD_SET_PRICE + CARTON_PACK_QTY_ADDITION
-            '            rowECTPRCG3.Item(COL) = CARTON_SET_PRICE
-            '        Case "STANDARD_PARTNER_PRICE"
-            '            Select Case ECOM_CODE
-            '                Case "AMAZON"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
-            '                Case "HOMEDEPOT"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0.5
-            '                Case "HOUZZ"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
-            '                Case "KIRKLANDS"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
-            '                Case "OVERSTOCK"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0.5
-            '                Case "QVC"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 2
-            '                Case "WAYFAIR"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
-            '                Case "XMASCENT"
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
-            '                Case Else
-            '                    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + 0
-            '            End Select
-            '            rowECTPRCG3.Item(COL) = STANDARD_PARTNER_PRICE
-            '        Case "FINAL_PARTNER_PRICE"
-            '            Select Case ECOM_CODE
-            '                Case "AMAZON"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.15) + MANUAL_PARTNER_PRICE
-            '                Case "HOMEDEPOT"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.13) + MANUAL_PARTNER_PRICE
-            '                Case "HOUZZ"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.17) + MANUAL_PARTNER_PRICE
-            '                Case "KIRKLANDS"
-            '                    'If STYLE_CODE = "MTX72299" Then Stop
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.15) + MANUAL_PARTNER_PRICE
-            '                Case "OVERSTOCK"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.2303) + MANUAL_PARTNER_PRICE
-            '                Case "QVC"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.1875) + MANUAL_PARTNER_PRICE
-            '                Case "WAYFAIR"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.15) + MANUAL_PARTNER_PRICE
-            '                Case "XMASCENT"
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1.18) + MANUAL_PARTNER_PRICE
-            '                Case Else
-            '                    FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE * 1) + MANUAL_PARTNER_PRICE
-            '            End Select
-            '            rowECTPRCG3.Item(COL) = FINAL_PARTNER_PRICE
-            '        Case Else
-            '    End Select
-            'Next
+    Private Sub Calc_Extra_Fields_Grid()
+        For Each rowECTPRCG3 As UltraWinGrid.UltraGridRow In grdECTPRCG3.Rows
+            Calc_Extra_Fields(rowECTPRCG3)
         Next
+        grdECTPRCG3.UpdateData()
+
+    End Sub
+    Private Sub Calc_Extra_Fields(ByRef row As Infragistics.Win.UltraWinGrid.UltraGridRow)
+        Dim STYLE_CODE As String = row.Cells.Item("STYLE_CODE").Text.ToString & String.Empty
+        Dim SET_QTY As Int64 = Val(row.Cells.Item("SET_QTY").Text.ToString & String.Empty)
+        If SET_QTY = 0 Then SET_QTY = 1
+        Dim STYLE_PRICE As Decimal = Val(row.Cells.Item("STYLE_PRICE").Text.ToString & String.Empty)
+        Dim MANUAL_PARTNER_PRICE As Decimal = Val(row.Cells.Item("MANUAL_PARTNER_PRICE").Text.ToString & String.Empty)
+        Dim STYLE_CLASS_CODE As String = row.Cells.Item("STYLE_CLASS_CODE").Text.ToString & String.Empty
+        Dim CARTON_PACK_QTY As Int64 = Val(row.Cells.Item("CASE_QTY").Text.ToString & String.Empty)
+        If CARTON_PACK_QTY = 0 Then CARTON_PACK_QTY = 1
+        Dim ECOM_CODE As String = row.Cells.Item("ECOM_CODE").Text.ToString & String.Empty
+        Dim rowECTPRCG2 As DataRow = dst.Tables.Item("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'", "").FirstOrDefault
+        If IsNothing(rowECTPRCG2) Then
+            MsgBox($"No Record Found For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+            Exit Sub
+        End If
+
+        Dim USE_TARIFF As Boolean = row.Cells.Item("USE_TARIFF").Value.ToString & String.Empty = "1"
+
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            'If STYLE_CODE = "MT20274" Then Stop
+        End If
+
+        Dim ECOM_PRICE_ADD As Decimal = 0
+        Dim ECOM_PRICE_MARKUP_PCT As Decimal = 0
+        Dim ECOM_PRICE_TARIFF_PCT As Decimal = 0
+        If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty) Then
+            ECOM_PRICE_ADD = Val(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty)
+        Else
+            MsgBox($"Invalid Add For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+            Exit Sub
+        End If
+        If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty) Then
+            ECOM_PRICE_MARKUP_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty)
+        Else
+            MsgBox($"Invalid Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+            Exit Sub
+        End If
+        If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty) Then
+            ECOM_PRICE_TARIFF_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty)
+        Else
+            ECOM_PRICE_TARIFF_PCT = 0
+            'MsgBox($"Invalid Tariff Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+            'Exit Sub
+        End If
+
+        Dim STYLE_CLASS_CODE_MULT As Decimal = Val(txtECOM_PRICE_MARKUP_NON_PVC.Text)
+        If STYLE_CLASS_CODE = "PVC" Then
+            STYLE_CLASS_CODE_MULT = Val(txtECOM_PRICE_MARKUP_PVC.Text)
+        End If
+
+        Dim CARTON_PACK_QTY_ADDITION As Decimal = Val(txtECOM_PRICE_CART_ADD.Text.Replace("$", "").Replace(",", ""))
+        If CARTON_PACK_QTY = 1 Then
+            CARTON_PACK_QTY_ADDITION = 1
+        End If
+
+        If MANUAL_PARTNER_PRICE = 999.99 Then
+            MANUAL_PARTNER_PRICE = 0
+        End If
+
+        Dim STANDARD_PRICE As Decimal = 0
+        Dim STANDARD_SET_PRICE As Decimal = 0
+        Dim TARIFF_PRICE As Decimal = 0
+        Dim CARTON_SET_PRICE As Decimal = 0
+        Dim STANDARD_PARTNER_PRICE As Decimal = 0
+        Dim FINAL_PARTNER_PRICE As Decimal = 0
+
+        STANDARD_PRICE = STYLE_PRICE * STYLE_CLASS_CODE_MULT
+        STANDARD_SET_PRICE = STANDARD_PRICE * SET_QTY
+        If USE_TARIFF Then
+            TARIFF_PRICE = STANDARD_SET_PRICE + (STANDARD_SET_PRICE * ECOM_PRICE_TARIFF_PCT)
+        Else
+            TARIFF_PRICE = STANDARD_SET_PRICE
+        End If
+        CARTON_SET_PRICE = TARIFF_PRICE + CARTON_PACK_QTY_ADDITION
+        STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + ECOM_PRICE_ADD
+
+        FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE / (1 - (ECOM_PRICE_MARKUP_PCT))) + MANUAL_PARTNER_PRICE
+        row.Cells.Item("STANDARD_PRICE").Value = STANDARD_PRICE
+        row.Cells.Item("STANDARD_SET_PRICE").Value = STANDARD_SET_PRICE
+        row.Cells.Item("CARTON_SET_PRICE").Value = CARTON_SET_PRICE
+        row.Cells.Item("STANDARD_PARTNER_PRICE").Value = STANDARD_PARTNER_PRICE
+        row.Cells.Item("FINAL_PARTNER_PRICE").Value = FINAL_PARTNER_PRICE
+        row.Cells.Item("TARIFF_PRICE").Value = TARIFF_PRICE
+
+        If Val(row.Cells.Item("ECOM_UNIT_PRICE").Value.ToString & String.Empty) = 999.99 Then
+            row.Cells.Item("ECOM_UNIT_PRICE").Value = STANDARD_PRICE
+        End If
+        If Val(row.Cells.Item("SET_PRICE").Text.ToString & String.Empty) = 999.99 Then
+            row.Cells.Item("SET_PRICE").Value = STANDARD_PRICE
+        End If
+
+        row.Cells.Item("MANUAL_PARTNER_PRICE").Value = 0
+
+        'For Each rowECTPRCG3 As DataRow In dst.Tables("ECTPRCG3").Select()
+        '    Dim STYLE_CODE As String = rowECTPRCG3.Item("STYLE_CODE").ToString & String.Empty
+        '    Dim SET_QTY As Int64 = Val(rowECTPRCG3.Item("SET_QTY").ToString & String.Empty)
+        '    If SET_QTY = 0 Then SET_QTY = 1
+        '    Dim STYLE_PRICE As Decimal = Val(rowECTPRCG3.Item("STYLE_PRICE").ToString & String.Empty)
+        '    Dim MANUAL_PARTNER_PRICE As Decimal = Val(rowECTPRCG3.Item("MANUAL_PARTNER_PRICE").ToString & String.Empty)
+        '    Dim STYLE_CLASS_CODE As String = rowECTPRCG3.Item("STYLE_CLASS_CODE").ToString & String.Empty
+        '    Dim CARTON_PACK_QTY As Int64 = Val(rowECTPRCG3.Item("CASE_QTY").ToString & String.Empty)
+        '    If CARTON_PACK_QTY = 0 Then CARTON_PACK_QTY = 1
+        '    Dim ECOM_CODE As String = rowECTPRCG3.Item("ECOM_CODE").ToString & String.Empty
+        '    Dim rowECTPRCG2 As DataRow = dst.Tables.Item("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'", "").FirstOrDefault
+        '    If IsNothing(rowECTPRCG2) Then
+        '        MsgBox($"No Record Found For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+        '        Exit Sub
+        '    End If
+
+        '    If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+        '        'If STYLE_CODE = "MT20274" Then Stop
+        '    End If
+
+        '    Dim ECOM_PRICE_ADD As Decimal = 0
+        '    Dim ECOM_PRICE_MARKUP_PCT As Decimal = 0
+        '    Dim ECOM_PRICE_TARIFF_PCT As Decimal = 0
+        '    If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty) Then
+        '        ECOM_PRICE_ADD = Val(rowECTPRCG2.Item("ECOM_PRICE_ADD").ToString & String.Empty)
+        '    Else
+        '        MsgBox($"Invalid Add For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+        '        Exit Sub
+        '    End If
+        '    If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty) Then
+        '        ECOM_PRICE_MARKUP_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_MARKUP_PCT").ToString & String.Empty)
+        '    Else
+        '        MsgBox($"Invalid Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+        '        Exit Sub
+        '    End If
+        '    If IsNumeric(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty) Then
+        '        ECOM_PRICE_TARIFF_PCT = Val(rowECTPRCG2.Item("ECOM_PRICE_TARIFF_PCT").ToString & String.Empty)
+        '    Else
+        '        MsgBox($"Invalid Tariff Markup For Partner {ECOM_CODE}!!", vbCritical, "Pricing Not Complete!")
+        '        Exit Sub
+        '    End If
+
+        '    Dim STYLE_CLASS_CODE_MULT As Decimal = Val(txtECOM_PRICE_MARKUP_NON_PVC.Text)
+        '    If STYLE_CLASS_CODE = "PVC" Then
+        '        STYLE_CLASS_CODE_MULT = Val(txtECOM_PRICE_MARKUP_PVC.Text)
+        '    End If
+
+        '    Dim CARTON_PACK_QTY_ADDITION As Decimal = Val(txtECOM_PRICE_CART_ADD.Text.Replace("$", "").Replace(",", ""))
+        '    If CARTON_PACK_QTY = 1 Then
+        '        CARTON_PACK_QTY_ADDITION = 1
+        '    End If
+
+        '    If MANUAL_PARTNER_PRICE = 999.99 Then
+        '        MANUAL_PARTNER_PRICE = 0
+        '    End If
+
+        '    Dim STANDARD_PRICE As Decimal = 0
+        '    Dim STANDARD_SET_PRICE As Decimal = 0
+        '    Dim CARTON_SET_PRICE As Decimal = 0
+        '    Dim STANDARD_PARTNER_PRICE As Decimal = 0
+        '    Dim FINAL_PARTNER_PRICE As Decimal = 0
+
+        '    STANDARD_PRICE = STYLE_PRICE * STYLE_CLASS_CODE_MULT
+        '    STANDARD_SET_PRICE = STANDARD_PRICE * SET_QTY
+        '    CARTON_SET_PRICE = STANDARD_SET_PRICE + CARTON_PACK_QTY_ADDITION
+        '    STANDARD_PARTNER_PRICE = CARTON_SET_PRICE + ECOM_PRICE_ADD
+        '    If chkUseTariff.Checked Then
+        '        FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE / (1 - (ECOM_PRICE_MARKUP_PCT + ECOM_PRICE_TARIFF_PCT))) + MANUAL_PARTNER_PRICE
+        '    Else
+        '        FINAL_PARTNER_PRICE = (STANDARD_PARTNER_PRICE / (1 - (ECOM_PRICE_MARKUP_PCT))) + MANUAL_PARTNER_PRICE
+        '    End If
+        '    rowECTPRCG3.Item("STANDARD_PRICE") = STANDARD_PRICE
+        '    rowECTPRCG3.Item("STANDARD_SET_PRICE") = STANDARD_SET_PRICE
+        '    rowECTPRCG3.Item("CARTON_SET_PRICE") = CARTON_SET_PRICE
+        '    rowECTPRCG3.Item("STANDARD_PARTNER_PRICE") = STANDARD_PARTNER_PRICE
+        '    rowECTPRCG3.Item("FINAL_PARTNER_PRICE") = FINAL_PARTNER_PRICE
+
+        '    If Val(rowECTPRCG3.Item("ECOM_UNIT_PRICE").ToString & String.Empty) = 999.99 Then
+        '        rowECTPRCG3.Item("ECOM_UNIT_PRICE") = STANDARD_PRICE
+        '    End If
+        '    If Val(rowECTPRCG3.Item("SET_PRICE").ToString & String.Empty) = 999.99 Then
+        '        rowECTPRCG3.Item("SET_PRICE") = STANDARD_PRICE
+        '    End If
+
+        '    rowECTPRCG3.Item("MANUAL_PARTNER_PRICE") = 0
+        'Next
     End Sub
 
     Private Function calcFINALPRICE() As Double
@@ -779,9 +854,8 @@ Public Class ECFPRC01
 
 #Region "Popup Menus"
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdECTPRCG3, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdECTPRCG3, "SSBBB", "Show Filter", "Show GroupBox", "Tariff All", "Tariff None", "Style Status Inquiry")
         Load_Popup_Menu(grdECTPRCG2, "BB", "Select All", "Select None")
-
     End Sub
 
     Public Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -832,6 +906,19 @@ Public Class ECFPRC01
                 For Each rowECTPRCG2 As DataRow In dst.Tables("ECTPRCG2").Select()
                     rowECTPRCG2.Item("SEL") = "0"
                 Next
+            Case "Tariff All"
+                TARIFF_ONOFF(True)
+                Calc_Extra_Fields_Grid()
+            Case "Tariff None"
+                TARIFF_ONOFF(False)
+                Calc_Extra_Fields_Grid()
+            Case "Style Status Inquiry"
+                Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Value
+                Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+                If rowICTSTYL1 IsNot Nothing Then
+                    Context_Launch("Select", STYLE_CODE, e.Tool.Key, "ICFSTAT1")
+                End If
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -899,9 +986,13 @@ Public Class ECFPRC01
     End Sub
 
     Private Sub grdECTPRCG3_AfterCellUpdate(sender As Object, e As CellEventArgs) Handles grdECTPRCG3.AfterCellUpdate
-        If e.Cell.Column.Key = "MANUAL_PARTNER_PRICE" Then
-            e.Cell.Row.Cells.Item("FINAL_PARTNER_PRICE").Value = Val(e.Cell.Row.Cells.Item("FINAL_PARTNER_PRICE").Value) + Val(e.Cell.Row.Cells.Item("MANUAL_PARTNER_PRICE").Value)
-        End If
+        Select Case e.Cell.Column.Key
+            Case "MANUAL_PARTNER_PRICE"
+                e.Cell.Row.Cells.Item("FINAL_PARTNER_PRICE").Value = Val(e.Cell.Row.Cells.Item("FINAL_PARTNER_PRICE").Value) + Val(e.Cell.Row.Cells.Item("MANUAL_PARTNER_PRICE").Value)
+            Case "USE_TARIFF"
+                Calc_Extra_Fields(e.Cell.Row)
+                grdECTPRCG3.UpdateData()
+        End Select
     End Sub
 
     Private Sub grdECTPRCG2_BeforeRowsDeleted(sender As Object, e As BeforeRowsDeletedEventArgs) Handles grdECTPRCG2.BeforeRowsDeleted
@@ -928,6 +1019,18 @@ Public Class ECFPRC01
 
     Private Sub chkShowCalcs_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowCalcs.CheckedChanged
         ShowHideCols()
+    End Sub
+
+    Private Sub TARIFF_ONOFF(ByVal UseTariffs As Boolean)
+        For Each rowECTPRCG3 As UltraWinGrid.UltraGridRow In grdECTPRCG3.Rows
+            If Not rowECTPRCG3.IsFilteredOut Then
+                If UseTariffs = True Then
+                    rowECTPRCG3.Cells.Item("USE_TARIFF").Value = "1"
+                Else
+                    rowECTPRCG3.Cells.Item("USE_TARIFF").Value = "0"
+                End If
+            End If
+        Next
     End Sub
 
 #End Region

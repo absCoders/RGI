@@ -23,6 +23,8 @@
         sql &= " SELECT 'B' SEND_TYPE, 'BCC' SEND_DESC FROM DUAL"
         sql &= " UNION"
         sql &= " SELECT 'F' SEND_TYPE, 'From' SEND_DESC FROM DUAL"
+        sql &= " UNION"
+        sql &= " SELECT 'S' SEND_TYPE, 'Sender' SEND_DESC FROM DUAL"
 
         ASCMAIN1.Add_Value_List(grdASTNOTE4, "SEND_TYPE", sql)
 

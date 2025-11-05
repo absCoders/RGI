@@ -3351,7 +3351,7 @@ Public Class ICCMAIN1
             If rowICTTARF1 IsNot Nothing Then
                 Dim TARIFF_DATE As Date = Now.Date
                 ASCMAIN1.sql = $"Select * from ICTTARF2 where COUNTRY_CODE = '{COUNTRY_CODE}' 
-                                    AND TARIFF_START >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}' AND (TARIFF_END IS NULL OR TARIFF_END >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}') "
+                                    AND TO_DATE(TARIFF_START,'DD-Mon-YYYY') <= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}' AND (TARIFF_END IS NULL OR TO_DATE(TARIFF_END,'DD-Mon-YYYY') >= '{TARIFF_DATE.ToString("dd-MMM-yyyy")}') "
                 Dim rowICTTARF2 As DataRow = ASCDATA1.GetDataRow
                 If rowICTTARF2 IsNot Nothing Then
                     tariffByCountry_pct = Val(rowICTTARF2("TARIFF_PCT") & "")

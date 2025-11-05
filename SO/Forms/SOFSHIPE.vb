@@ -416,12 +416,6 @@ Public Class SOFSHIPE
 
         EMsg = String.Empty
 
-        'If ASCMAIN1.Running_in_VS Then
-        '    Stop
-        '    RequestShippingLabel("", "", False)
-        '    Stop
-        '    Exit Sub
-        'End If
 
         Select Case eItemKey
 

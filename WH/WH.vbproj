@@ -123,6 +123,7 @@
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.1.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="nsoftware.IPWorks, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
@@ -137,6 +138,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -161,6 +163,12 @@
       <DependentUpon>WHFDASH2.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\WHFDASH2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\WHFGLOBM.Designer.vb">
+      <DependentUpon>WHFGLOBM.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\WHFGLOBM.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\WHFCYCLA.Designer.vb">
@@ -462,9 +470,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\WHFDASH2.resx">
-      <DependentUpon>WHFDASH2.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\WHFCYCLA.resx">
       <DependentUpon>WHFCYCLA.vb</DependentUpon>
     </EmbeddedResource>
