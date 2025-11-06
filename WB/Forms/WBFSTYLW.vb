@@ -56,7 +56,7 @@ Public Class WBFSTYLW
     Private FTP_REMOTE_HOST As String = "regency-rib.com"
 
     Private DISABLED_STYLES As New List(Of String)
-    Private USInventory As Boolean = False
+    'Private USInventory As Boolean = False
 
 #Region "ABS Standard Routines"
     ' These Routines should be found in all Forms which Launch from the Menu.
@@ -65,9 +65,9 @@ Public Class WBFSTYLW
         Sftp1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
         Dim sql As String = String.Empty
 
-        If MsgBox("Do You Want To Use US Inventory?", vbYesNo, "Inventory") = vbYes Then
-            USInventory = True
-        End If
+        'If MsgBox("Do You Want To Use US Inventory?", vbYesNo, "Inventory") = vbYes Then
+        '    USInventory = True
+        'End If
 
         'Make Sure There Are No Orphaned Header Records.
         Dim SU As New StringBuilder With {.Length = 0}
@@ -144,11 +144,11 @@ Public Class WBFSTYLW
             sqls.AppendLine("    SUM(NVL(WHSE_QTY_OPEN, 0)) WHSE_QTY_OPEN,")
             sqls.AppendLine("    SUM((NVL(WHSE_QTY_ON_HAND, 0) - NVL(WHSE_QTY_PICK, 0) + NVL(WHSE_QTY_TRAN, 0) + NVL(WHSE_QTY_ON_ORDER, 0) - NVL(WHSE_QTY_OPEN, 0))) FUT_AVAIL")
             sqls.AppendLine("FROM ICTSTAT2")
-            If USInventory Then
-                sqls.AppendLine("WHERE WHSE_CODE IN ('MS','US')")
-            Else
-                sqls.AppendLine("WHERE WHSE_CODE IN ('MS')")
-            End If
+            'If USInventory Then
+            sqls.AppendLine("WHERE WHSE_CODE IN ('MS','US')")
+            'Else
+            '    sqls.AppendLine("WHERE WHSE_CODE IN ('MS')")
+            'End If
             sqls.AppendLine("GROUP BY")
             sqls.AppendLine("    STYLE_CODE,")
             sqls.AppendLine("    COLOR_CODE")
@@ -173,204 +173,204 @@ Public Class WBFSTYLW
             Create_TDA(.Tables.Add, "WBTRSSF1", "*")
 
             sqls.Length = 0
-            If USInventory Then
-                sqls.AppendLine("SELECT * FROM")
-                sqls.AppendLine("(")
-                sqls.AppendLine("   SELECT UPPER(C1.STYLE_CODE) AS STYLE_CODE, C1.COLOR_CODE,")
-                sqls.AppendLine("   9999 AS ORDR_QTY,")
-                sqls.AppendLine("   C2.COLOR_DESC AS COLOR_CODE_LONG,")
-                sqls.AppendLine("   C1.STYLE_COLOR_STATUS,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) < 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END)")
-                sqls.AppendLine("   END AS MSOH,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) <= 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("     CASE WHEN")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("         CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("         ELSE 0")
-                sqls.AppendLine("         END) < 0")
-                sqls.AppendLine("     THEN")
-                sqls.AppendLine("       0")
-                sqls.AppendLine("     ELSE")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("         CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("         ELSE 0")
-                sqls.AppendLine("         END) ")
-                sqls.AppendLine("     END")
-                sqls.AppendLine("   END AS MSFT,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE WHEN 'SW'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) < 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'SW'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END)")
-                sqls.AppendLine("   END AS SWOH,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE WHEN 'SW'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) <= 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("     CASE WHEN")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("         CASE S2.WHSE_CODE")
-                sqls.AppendLine("         WHEN 'SW'")
-                sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("         ELSE 0")
-                sqls.AppendLine("         END) < 0")
-                sqls.AppendLine("     THEN")
-                sqls.AppendLine("       0")
-                sqls.AppendLine("     ELSE")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("         CASE S2.WHSE_CODE")
-                sqls.AppendLine("         WHEN 'SW'")
-                sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("         ELSE 0")
-                sqls.AppendLine("         END) ")
-                sqls.AppendLine("     END")
-                sqls.AppendLine("   END AS SWFT")
-                sqls.AppendLine("   FROM ICTSTYC1 C1")
-                sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
-                sqls.AppendLine("     ON C1.STYLE_CODE  = S2.STYLE_CODE")
-                sqls.AppendLine("    AND C1.COLOR_CODE = S2.COLOR_CODE")
-                sqls.AppendLine("   INNER JOIN ICTCOLR1 C2")
-                sqls.AppendLine("     ON C1.COLOR_CODE = C2.COLOR_CODE")
-                sqls.AppendLine("   GROUP BY UPPER(C1.STYLE_CODE), C1.COLOR_CODE, C2.COLOR_DESC, C1.STYLE_COLOR_STATUS")
-                sqls.AppendLine(")")
-            Else
-                sqls.AppendLine("SELECT * FROM")
-                sqls.AppendLine("  (")
-                sqls.AppendLine("   SELECT UPPER(C1.STYLE_CODE) AS STYLE_CODE, C1.COLOR_CODE,")
-                sqls.AppendLine("   9999 AS ORDR_QTY,")
-                sqls.AppendLine("   C2.COLOR_DESC AS COLOR_CODE_LONG,")
-                sqls.AppendLine("   C1.STYLE_COLOR_STATUS,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) < 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE")
-                sqls.AppendLine("     WHEN 'MS'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END)")
-                sqls.AppendLine("   END AS MSOH,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) <= 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("     CASE WHEN")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'MS'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) < 0")
-                sqls.AppendLine("     THEN")
-                sqls.AppendLine("       0")
-                sqls.AppendLine("     ELSE")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'MS'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) END")
-                sqls.AppendLine("   END AS MSFT,")
-                sqls.AppendLine(" CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'SW'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) < 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE")
-                sqls.AppendLine("     WHEN 'SW'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END)")
-                sqls.AppendLine("   END AS SWOH,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'SW'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) <= 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("     CASE WHEN")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'SW'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) < 0")
-                sqls.AppendLine("     THEN")
-                sqls.AppendLine("       0")
-                sqls.AppendLine("     ELSE")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'SW'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) END")
-                sqls.AppendLine("   END AS SWFT")
-                sqls.AppendLine("   FROM ICTSTYC1 C1")
-                sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
-                sqls.AppendLine("   ON C1.STYLE_CODE  = S2.STYLE_CODE")
-                sqls.AppendLine("   AND C1.COLOR_CODE = S2.COLOR_CODE")
-                sqls.AppendLine("   INNER JOIN ICTCOLR1 C2")
-                sqls.AppendLine("   ON C1.COLOR_CODE = C2.COLOR_CODE")
-                sqls.AppendLine("   GROUP BY UPPER(C1.STYLE_CODE), C1.COLOR_CODE, C2.COLOR_DESC, C1.STYLE_COLOR_STATUS")
-                sqls.AppendLine("  )")
-            End If
+            'If USInventory Then
+            sqls.AppendLine("SELECT * FROM")
+            sqls.AppendLine("(")
+            sqls.AppendLine("   SELECT UPPER(C1.STYLE_CODE) AS STYLE_CODE, C1.COLOR_CODE,")
+            sqls.AppendLine("   9999 AS ORDR_QTY,")
+            sqls.AppendLine("   C2.COLOR_DESC AS COLOR_CODE_LONG,")
+            sqls.AppendLine("   C1.STYLE_COLOR_STATUS,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) < 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END)")
+            sqls.AppendLine("   END AS MSOH,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) <= 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("     CASE WHEN")
+            sqls.AppendLine("       SUM(")
+            sqls.AppendLine("         CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("         ELSE 0")
+            sqls.AppendLine("         END) < 0")
+            sqls.AppendLine("     THEN")
+            sqls.AppendLine("       0")
+            sqls.AppendLine("     ELSE")
+            sqls.AppendLine("       SUM(")
+            sqls.AppendLine("         CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("         ELSE 0")
+            sqls.AppendLine("         END) ")
+            sqls.AppendLine("     END")
+            sqls.AppendLine("   END AS MSFT,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE S2.WHSE_CODE WHEN 'SW'")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) < 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE S2.WHSE_CODE")
+            sqls.AppendLine("       WHEN 'SW'")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END)")
+            sqls.AppendLine("   END AS SWOH,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE S2.WHSE_CODE WHEN 'SW'")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) <= 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("     CASE WHEN")
+            sqls.AppendLine("       SUM(")
+            sqls.AppendLine("         CASE S2.WHSE_CODE")
+            sqls.AppendLine("         WHEN 'SW'")
+            sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("         ELSE 0")
+            sqls.AppendLine("         END) < 0")
+            sqls.AppendLine("     THEN")
+            sqls.AppendLine("       0")
+            sqls.AppendLine("     ELSE")
+            sqls.AppendLine("       SUM(")
+            sqls.AppendLine("         CASE S2.WHSE_CODE")
+            sqls.AppendLine("         WHEN 'SW'")
+            sqls.AppendLine("         THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("         ELSE 0")
+            sqls.AppendLine("         END) ")
+            sqls.AppendLine("     END")
+            sqls.AppendLine("   END AS SWFT")
+            sqls.AppendLine("   FROM ICTSTYC1 C1")
+            sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
+            sqls.AppendLine("     ON C1.STYLE_CODE  = S2.STYLE_CODE")
+            sqls.AppendLine("    AND C1.COLOR_CODE = S2.COLOR_CODE")
+            sqls.AppendLine("   INNER JOIN ICTCOLR1 C2")
+            sqls.AppendLine("     ON C1.COLOR_CODE = C2.COLOR_CODE")
+            sqls.AppendLine("   GROUP BY UPPER(C1.STYLE_CODE), C1.COLOR_CODE, C2.COLOR_DESC, C1.STYLE_COLOR_STATUS")
+            sqls.AppendLine(")")
+            'Else
+            '    sqls.AppendLine("SELECT * FROM")
+            '    sqls.AppendLine("  (")
+            '    sqls.AppendLine("   SELECT UPPER(C1.STYLE_CODE) AS STYLE_CODE, C1.COLOR_CODE,")
+            '    sqls.AppendLine("   9999 AS ORDR_QTY,")
+            '    sqls.AppendLine("   C2.COLOR_DESC AS COLOR_CODE_LONG,")
+            '    sqls.AppendLine("   C1.STYLE_COLOR_STATUS,")
+            '    sqls.AppendLine("   CASE WHEN")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END) < 0")
+            '    sqls.AppendLine("   THEN")
+            '    sqls.AppendLine("     0")
+            '    sqls.AppendLine("   ELSE")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("     WHEN 'MS'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END)")
+            '    sqls.AppendLine("   END AS MSOH,")
+            '    sqls.AppendLine("   CASE WHEN")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END) <= 0")
+            '    sqls.AppendLine("   THEN")
+            '    sqls.AppendLine("     0")
+            '    sqls.AppendLine("   ELSE")
+            '    sqls.AppendLine("     CASE WHEN")
+            '    sqls.AppendLine("       SUM(")
+            '    sqls.AppendLine("       CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("       WHEN 'MS'")
+            '    sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("       ELSE 0")
+            '    sqls.AppendLine("       END) < 0")
+            '    sqls.AppendLine("     THEN")
+            '    sqls.AppendLine("       0")
+            '    sqls.AppendLine("     ELSE")
+            '    sqls.AppendLine("     SUM(")
+            '    sqls.AppendLine("       CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("       WHEN 'MS'")
+            '    sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("       ELSE 0")
+            '    sqls.AppendLine("       END) END")
+            '    sqls.AppendLine("   END AS MSFT,")
+            '    sqls.AppendLine(" CASE WHEN")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'SW'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END) < 0")
+            '    sqls.AppendLine("   THEN")
+            '    sqls.AppendLine("     0")
+            '    sqls.AppendLine("   ELSE")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("     WHEN 'SW'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END)")
+            '    sqls.AppendLine("   END AS SWOH,")
+            '    sqls.AppendLine("   CASE WHEN")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'SW'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END) <= 0")
+            '    sqls.AppendLine("   THEN")
+            '    sqls.AppendLine("     0")
+            '    sqls.AppendLine("   ELSE")
+            '    sqls.AppendLine("     CASE WHEN")
+            '    sqls.AppendLine("       SUM(")
+            '    sqls.AppendLine("       CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("       WHEN 'SW'")
+            '    sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("       ELSE 0")
+            '    sqls.AppendLine("       END) < 0")
+            '    sqls.AppendLine("     THEN")
+            '    sqls.AppendLine("       0")
+            '    sqls.AppendLine("     ELSE")
+            '    sqls.AppendLine("     SUM(")
+            '    sqls.AppendLine("       CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("       WHEN 'SW'")
+            '    sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("       ELSE 0")
+            '    sqls.AppendLine("       END) END")
+            '    sqls.AppendLine("   END AS SWFT")
+            '    sqls.AppendLine("   FROM ICTSTYC1 C1")
+            '    sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
+            '    sqls.AppendLine("   ON C1.STYLE_CODE  = S2.STYLE_CODE")
+            '    sqls.AppendLine("   AND C1.COLOR_CODE = S2.COLOR_CODE")
+            '    sqls.AppendLine("   INNER JOIN ICTCOLR1 C2")
+            '    sqls.AppendLine("   ON C1.COLOR_CODE = C2.COLOR_CODE")
+            '    sqls.AppendLine("   GROUP BY UPPER(C1.STYLE_CODE), C1.COLOR_CODE, C2.COLOR_DESC, C1.STYLE_COLOR_STATUS")
+            '    sqls.AppendLine("  )")
+            'End If
             ASCMAIN1.sql = sqls.ToString
             Create_TDA(dst.Tables.Add, "ICTSTYC1", "**", 0, False, "", 2)
             Fill_Records("ICTSTYC1")
@@ -523,153 +523,153 @@ Public Class WBFSTYLW
             ASCMAIN1.sql = sqls.ToString()
             Create_TDA(.Tables.Add, "ICTSTYL1", "**", 0, False)
 
-            If USInventory Then
-                sqls.Length = 0
-                sqls.AppendLine("")
-                sqls.AppendLine("SELECT * FROM")
-                sqls.AppendLine("  (")
-                sqls.AppendLine("   SELECT")
-                sqls.AppendLine("   UPPER(D1.STYLE_CODE) AS STYLE_CODE,")
-                sqls.AppendLine("   UPPER(D1.COLOR_CODE) AS COLOR_CODE,")
-                sqls.AppendLine("   (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)) AS SKU,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) < 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("   CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END)")
-                sqls.AppendLine("   END AS MSOH,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) <= 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) < 0")
-                sqls.AppendLine("     THEN")
-                sqls.AppendLine("       0")
-                sqls.AppendLine("     ELSE")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) END")
-                sqls.AppendLine("   END AS MSFT,")
-                sqls.AppendLine("   D1.ALT_FUT_QTY,")
-                sqls.AppendLine("   D1.ALT_FUT_DATE")
-                sqls.AppendLine("   FROM WBTSTYLD D1")
-                sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
-                sqls.AppendLine("   ON D1.STYLE_CODE  = S2.STYLE_CODE")
-                sqls.AppendLine("   AND D1.COLOR_CODE = S2.COLOR_CODE")
-                sqls.AppendLine("   WHERE D1.WEB_IND = 'W'")
-                sqls.AppendLine("   GROUP BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)), UPPER(D1.STYLE_CODE), UPPER(D1.COLOR_CODE), D1.ALT_FUT_QTY, D1.ALT_FUT_DATE")
-                sqls.AppendLine("   ORDER BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE))")
-                sqls.AppendLine("  )")
-            Else
-                sqls.Length = 0
-                sqls.AppendLine("")
-                sqls.AppendLine("SELECT * FROM")
-                sqls.AppendLine("  (")
-                sqls.AppendLine("   SELECT")
-                sqls.AppendLine("   UPPER(D1.STYLE_CODE) AS STYLE_CODE,")
-                sqls.AppendLine("   UPPER(D1.COLOR_CODE) AS COLOR_CODE,")
-                sqls.AppendLine("   (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)) AS SKU,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) < 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("   CASE S2.WHSE_CODE")
-                sqls.AppendLine("     WHEN 'MS'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END)")
-                sqls.AppendLine("   END AS MSOH,")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("   SUM(")
-                sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
-                sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("     ELSE 0")
-                sqls.AppendLine("     END) <= 0")
-                sqls.AppendLine("   THEN")
-                sqls.AppendLine("     0")
-                sqls.AppendLine("   ELSE")
-                sqls.AppendLine("   CASE WHEN")
-                sqls.AppendLine("       SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'MS'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) < 0")
-                sqls.AppendLine("     THEN")
-                sqls.AppendLine("       0")
-                sqls.AppendLine("     ELSE")
-                sqls.AppendLine("     SUM(")
-                sqls.AppendLine("       CASE S2.WHSE_CODE")
-                sqls.AppendLine("       WHEN 'MS'")
-                sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
-                sqls.AppendLine("       ELSE 0")
-                sqls.AppendLine("       END) END")
-                sqls.AppendLine("   END AS MSFT,")
-                sqls.AppendLine("   D1.ALT_FUT_QTY,")
-                sqls.AppendLine("   D1.ALT_FUT_DATE")
-                sqls.AppendLine("   FROM WBTSTYLD D1")
-                sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
-                sqls.AppendLine("   ON D1.STYLE_CODE  = S2.STYLE_CODE")
-                sqls.AppendLine("   AND D1.COLOR_CODE = S2.COLOR_CODE")
-                sqls.AppendLine("   WHERE D1.WEB_IND = 'W'")
-                sqls.AppendLine("   GROUP BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)), UPPER(D1.STYLE_CODE), UPPER(D1.COLOR_CODE), D1.ALT_FUT_QTY, D1.ALT_FUT_DATE")
-                sqls.AppendLine("   ORDER BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE))")
-                sqls.AppendLine("  )")
-            End If
+            'If USInventory Then
+            sqls.Length = 0
+            sqls.AppendLine("")
+            sqls.AppendLine("SELECT * FROM")
+            sqls.AppendLine("  (")
+            sqls.AppendLine("   SELECT")
+            sqls.AppendLine("   UPPER(D1.STYLE_CODE) AS STYLE_CODE,")
+            sqls.AppendLine("   UPPER(D1.COLOR_CODE) AS COLOR_CODE,")
+            sqls.AppendLine("   (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)) AS SKU,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("   SUM(")
+            sqls.AppendLine("     CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("     ELSE 0")
+            sqls.AppendLine("     END) < 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("   SUM(")
+            sqls.AppendLine("   CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            sqls.AppendLine("     ELSE 0")
+            sqls.AppendLine("     END)")
+            sqls.AppendLine("   END AS MSOH,")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("   SUM(")
+            sqls.AppendLine("     CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("     ELSE 0")
+            sqls.AppendLine("     END) <= 0")
+            sqls.AppendLine("   THEN")
+            sqls.AppendLine("     0")
+            sqls.AppendLine("   ELSE")
+            sqls.AppendLine("   CASE WHEN")
+            sqls.AppendLine("       SUM(")
+            sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) < 0")
+            sqls.AppendLine("     THEN")
+            sqls.AppendLine("       0")
+            sqls.AppendLine("     ELSE")
+            sqls.AppendLine("     SUM(")
+            sqls.AppendLine("       CASE WHEN S2.WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            sqls.AppendLine("       ELSE 0")
+            sqls.AppendLine("       END) END")
+            sqls.AppendLine("   END AS MSFT,")
+            sqls.AppendLine("   D1.ALT_FUT_QTY,")
+            sqls.AppendLine("   D1.ALT_FUT_DATE")
+            sqls.AppendLine("   FROM WBTSTYLD D1")
+            sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
+            sqls.AppendLine("   ON D1.STYLE_CODE  = S2.STYLE_CODE")
+            sqls.AppendLine("   AND D1.COLOR_CODE = S2.COLOR_CODE")
+            sqls.AppendLine("   WHERE D1.WEB_IND = 'W'")
+            sqls.AppendLine("   GROUP BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)), UPPER(D1.STYLE_CODE), UPPER(D1.COLOR_CODE), D1.ALT_FUT_QTY, D1.ALT_FUT_DATE")
+            sqls.AppendLine("   ORDER BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE))")
+            sqls.AppendLine("  )")
+            'Else
+            '    sqls.Length = 0
+            '    sqls.AppendLine("")
+            '    sqls.AppendLine("SELECT * FROM")
+            '    sqls.AppendLine("  (")
+            '    sqls.AppendLine("   SELECT")
+            '    sqls.AppendLine("   UPPER(D1.STYLE_CODE) AS STYLE_CODE,")
+            '    sqls.AppendLine("   UPPER(D1.COLOR_CODE) AS COLOR_CODE,")
+            '    sqls.AppendLine("   (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)) AS SKU,")
+            '    sqls.AppendLine("   CASE WHEN")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END) < 0")
+            '    sqls.AppendLine("   THEN")
+            '    sqls.AppendLine("     0")
+            '    sqls.AppendLine("   ELSE")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("   CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("     WHEN 'MS'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END)")
+            '    sqls.AppendLine("   END AS MSOH,")
+            '    sqls.AppendLine("   CASE WHEN")
+            '    sqls.AppendLine("   SUM(")
+            '    sqls.AppendLine("     CASE S2.WHSE_CODE WHEN 'MS'")
+            '    sqls.AppendLine("     THEN (NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("     ELSE 0")
+            '    sqls.AppendLine("     END) <= 0")
+            '    sqls.AppendLine("   THEN")
+            '    sqls.AppendLine("     0")
+            '    sqls.AppendLine("   ELSE")
+            '    sqls.AppendLine("   CASE WHEN")
+            '    sqls.AppendLine("       SUM(")
+            '    sqls.AppendLine("       CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("       WHEN 'MS'")
+            '    sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("       ELSE 0")
+            '    sqls.AppendLine("       END) < 0")
+            '    sqls.AppendLine("     THEN")
+            '    sqls.AppendLine("       0")
+            '    sqls.AppendLine("     ELSE")
+            '    sqls.AppendLine("     SUM(")
+            '    sqls.AppendLine("       CASE S2.WHSE_CODE")
+            '    sqls.AppendLine("       WHEN 'MS'")
+            '    sqls.AppendLine("       THEN (NVL(S2.WHSE_QTY_ON_HAND,0) - NVL(S2.WHSE_QTY_OPEN,0) - NVL(S2.WHSE_QTY_PICK,0) + NVL(S2.WHSE_QTY_ON_ORDER,0) + NVL(S2.WHSE_QTY_TRAN,0))")
+            '    sqls.AppendLine("       ELSE 0")
+            '    sqls.AppendLine("       END) END")
+            '    sqls.AppendLine("   END AS MSFT,")
+            '    sqls.AppendLine("   D1.ALT_FUT_QTY,")
+            '    sqls.AppendLine("   D1.ALT_FUT_DATE")
+            '    sqls.AppendLine("   FROM WBTSTYLD D1")
+            '    sqls.AppendLine("   LEFT JOIN ICTSTAT2 S2")
+            '    sqls.AppendLine("   ON D1.STYLE_CODE  = S2.STYLE_CODE")
+            '    sqls.AppendLine("   AND D1.COLOR_CODE = S2.COLOR_CODE")
+            '    sqls.AppendLine("   WHERE D1.WEB_IND = 'W'")
+            '    sqls.AppendLine("   GROUP BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE)), UPPER(D1.STYLE_CODE), UPPER(D1.COLOR_CODE), D1.ALT_FUT_QTY, D1.ALT_FUT_DATE")
+            '    sqls.AppendLine("   ORDER BY (UPPER(D1.STYLE_CODE) || '-' || UPPER(D1.COLOR_CODE))")
+            '    sqls.AppendLine("  )")
+            'End If
             ASCMAIN1.sql = sqls.ToString()
             Create_TDA(.Tables.Add, "ICTINVTR", "**", 0, False)
 
-            If USInventory Then
-                sqls.Length = 0
-                sqls.AppendLine("SELECT")
-                sqls.AppendLine("'MS' AS WHSE_CODE,")
-                sqls.AppendLine("STYLE_CODE,")
-                sqls.AppendLine("COLOR_CODE,")
-                sqls.AppendLine("STATUS_DATE,")
-                sqls.AppendLine("SUM(STATUS_QTY) AS STATUS_QTY,")
-                sqls.AppendLine("SUM(SUPPLY_QTY) AS SUPPLY_QTY,")
-                sqls.AppendLine("SUM(QTY_ATS) AS QTY_ATS,")
-                sqls.AppendLine("SUM(QTY_ATS_CUM) AS QTY_ATS_CUM")
-                sqls.AppendLine("FROM ICTSTDQ1")
-                sqls.AppendLine("WHERE WHSE_CODE IN ('MS','US')")
-                sqls.AppendLine("GROUP BY")
-                sqls.AppendLine("'MS',")
-                sqls.AppendLine("STYLE_CODE,")
-                sqls.AppendLine("COLOR_CODE,")
-                sqls.AppendLine("STATUS_DATE")
-            Else
-                sqls.Length = 0
-                sqls.AppendLine("SELECT *")
-                sqls.AppendLine("FROM ICTSTDQ1")
-                sqls.AppendLine("WHERE WHSE_CODE = 'MS'")
-            End If
+            'If USInventory Then
+            sqls.Length = 0
+            sqls.AppendLine("SELECT")
+            sqls.AppendLine("'MS' AS WHSE_CODE,")
+            sqls.AppendLine("STYLE_CODE,")
+            sqls.AppendLine("COLOR_CODE,")
+            sqls.AppendLine("STATUS_DATE,")
+            sqls.AppendLine("SUM(STATUS_QTY) AS STATUS_QTY,")
+            sqls.AppendLine("SUM(SUPPLY_QTY) AS SUPPLY_QTY,")
+            sqls.AppendLine("SUM(QTY_ATS) AS QTY_ATS,")
+            sqls.AppendLine("SUM(QTY_ATS_CUM) AS QTY_ATS_CUM")
+            sqls.AppendLine("FROM ICTSTDQ1")
+            sqls.AppendLine("WHERE WHSE_CODE IN ('MS','US')")
+            sqls.AppendLine("GROUP BY")
+            sqls.AppendLine("'MS',")
+            sqls.AppendLine("STYLE_CODE,")
+            sqls.AppendLine("COLOR_CODE,")
+            sqls.AppendLine("STATUS_DATE")
+            'Else
+            '    sqls.Length = 0
+            '    sqls.AppendLine("SELECT *")
+            '    sqls.AppendLine("FROM ICTSTDQ1")
+            '    sqls.AppendLine("WHERE WHSE_CODE = 'MS'")
+            'End If
             ASCMAIN1.sql = sqls.ToString()
             Create_TDA(.Tables.Add, "ICTSTDQ1", "**", 0, False)
         End With
@@ -1028,13 +1028,10 @@ Public Class WBFSTYLW
     Sub Load_Record()
         Me.Cursor = Cursors.WaitCursor
 
-        If USInventory Then
-            chkIncludeUSTST.Visible = True
-            chkIncludeUSTST.Checked = True
-        Else
-            chkIncludeUSTST.Visible = False
-            chkIncludeUSTST.Checked = False
-        End If
+        'Else
+        '    chkIncludeUSTST.Visible = False
+        '    chkIncludeUSTST.Checked = False
+        'End If
 
         Fill_Records("ICTSTYL1")
 
@@ -1085,11 +1082,11 @@ Public Class WBFSTYLW
         SQLW.AppendLine("    SUM(NVL(WHSE_QTY_OPEN, 0)) WHSE_QTY_OPEN,")
         SQLW.AppendLine("    SUM((NVL(WHSE_QTY_ON_HAND, 0) - NVL(WHSE_QTY_PICK, 0) + NVL(WHSE_QTY_TRAN, 0) + NVL(WHSE_QTY_ON_ORDER, 0) - NVL(WHSE_QTY_OPEN, 0))) FUT_AVAIL")
         SQLW.AppendLine("FROM ICTSTAT2")
-        If USInventory Then
-            SQLW.AppendLine("WHERE WHSE_CODE IN ('MS','US')")
-        Else
-            SQLW.AppendLine("WHERE WHSE_CODE IN ('MS')")
-        End If
+        'If USInventory Then
+        SQLW.AppendLine("WHERE WHSE_CODE IN ('MS','US')")
+        'Else
+        '    SQLW.AppendLine("WHERE WHSE_CODE IN ('MS')")
+        'End If
         SQLW.AppendLine("GROUP BY")
         SQLW.AppendLine("    STYLE_CODE,")
         SQLW.AppendLine("    COLOR_CODE")
@@ -1646,18 +1643,23 @@ Public Class WBFSTYLW
             Dim FUT_QTY_AVAIL As Int64 = 0
             Dim FUT_DATE As String = ""
             Dim MSOH As Int64 = 0
+            Dim MSFT As Int64 = 0
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
+                If STYLE_CODE = "MTX76385" Then Stop
+            End If
             If IsNumeric(rowICTINVTR.Item("MSOH").ToString & String.Empty) Then
                 MSOH = Val(rowICTINVTR.Item("MSOH").ToString & String.Empty)
+                MSFT = Val(rowICTINVTR.Item("MSFT").ToString & String.Empty)
             End If
             Dim SFilter As String = String.Format("STYLE_CODE = '{0}' AND COLOR_CODE = '{1}'", STYLE_CODE, COLOR_CODE)
-            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then
-                If STYLE_CODE = "MTX68059" Then Stop
-            End If
+
             Dim FUT_MULT As New Dictionary(Of Date, Int64)
             For Each rowICTSTDQ1 As DataRow In dst.Tables.Item("ICTSTDQ1").Select(SFilter, "STATUS_DATE")
                 If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
                     If CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) <= Now().AddDays(1) Then
-                        CURR_QTY_AVAIL = CURR_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                        If MSOH > 0 Or MSFT > 0 Then
+                            CURR_QTY_AVAIL = CURR_QTY_AVAIL + Val(rowICTSTDQ1.Item("QTY_ATS").ToString & String.Empty)
+                        End If
                     Else
                         If IsDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty) Then
                             FUT_DATE = CDate(rowICTSTDQ1.Item("STATUS_DATE").ToString & String.Empty).ToShortDateString
@@ -1728,7 +1730,12 @@ Public Class WBFSTYLW
             str.Append(Chr(34) & FAVL & Chr(34) & ",")
             str.Replace(",", vbNewLine, str.Length - 1, 1)
         Next
-        Dim localFile As String = ASCMAIN1.Folders("Temp")
+
+        If (ASCMAIN1.Running_in_VS) Then
+            Stop
+        End If
+        'Dim localFile As String = ASCMAIN1.Folders("Temp")
+        Dim localFile As String = WB_PARM_INVENTORY_DIR
         If Not localFile.EndsWith("\") Then
             localFile = localFile & "\"
         End If
@@ -1743,74 +1750,37 @@ Public Class WBFSTYLW
         End If
 
         If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
-        If chkIncludeUSTST.Checked = True Then
-            MsgBox($"US Test Inventory: {localFile}", vbOKOnly, "US Inventory Not Uploaded.")
-        Else
-            Dim FtpShopSite As New nsoftware.IPWorks.Ftp
-            With FtpShopSite
-                Try
-                    If .Connected = True Then
-                        .Logoff()
-                    End If
-                    .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-                    .User = WB_PARM_SITE_USER
-                    .Password = WB_PARM_SITE_PWD
-                    .RemoteHost = FTP_REMOTE_HOST
-                    .RemotePath = RemotePath
-                    .Logon()
-                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-                    .LocalFile = localFile
-                    .RemoteFile = FileName
-                    '.Overwrite = False
-                    .Overwrite = True
-                    'If Not .FileExists() Then
-                    .Upload()
+        Dim FtpShopSite As New nsoftware.IPWorks.Ftp
+        With FtpShopSite
+            Try
+                If .Connected = True Then
                     .Logoff()
-                    Do While .Connected
-                        .DoEvents()
-                    Loop
-                    'End If
-                Catch ex As Exception
-                    .Logoff()
-                    Do While .Connected
-                        .DoEvents()
-                    Loop
-                End Try
-            End With
-            'If chkMultiFuture.Checked = False Then
-            '    Dim FtpShopSite As New nsoftware.IPWorks.Ftp
-            '    With FtpShopSite
-            '        Try
-            '            If .Connected = True Then
-            '                .Logoff()
-            '            End If
-            '            .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
-            '            .User = WB_PARM_SITE_USER
-            '            .Password = WB_PARM_SITE_PWD
-            '            .RemoteHost = FTP_REMOTE_HOST
-            '            .RemotePath = RemotePath
-            '            .Logon()
-            '            .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-            '            .LocalFile = localFile
-            '            .RemoteFile = FileName
-            '            '.Overwrite = False
-            '            .Overwrite = True
-            '            'If Not .FileExists() Then
-            '            .Upload()
-            '            .Logoff()
-            '            Do While .Connected
-            '                .DoEvents()
-            '            Loop
-            '            'End If
-            '        Catch ex As Exception
-            '            .Logoff()
-            '            Do While .Connected
-            '                .DoEvents()
-            '            Loop
-            '        End Try
-            '    End With
-            'End If
-        End If
+                End If
+                .RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
+                .User = WB_PARM_SITE_USER
+                .Password = WB_PARM_SITE_PWD
+                .RemoteHost = FTP_REMOTE_HOST
+                .RemotePath = RemotePath
+                .Logon()
+                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                .LocalFile = localFile
+                .RemoteFile = FileName
+                '.Overwrite = False
+                .Overwrite = True
+                'If Not .FileExists() Then
+                .Upload()
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+                'End If
+            Catch ex As Exception
+                .Logoff()
+                Do While .Connected
+                    .DoEvents()
+                Loop
+            End Try
+        End With
 
         ASCMAIN1.Progress("", "")
 

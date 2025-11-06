@@ -180,7 +180,6 @@ Partial Class WBFSTYLW
         Me.chkUSEUPLOADS = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
-        Me.chkIncludeUSTST = New System.Windows.Forms.CheckBox()
         Me.btnCheckInventory = New System.Windows.Forms.Button()
         Me.btnRemoveInventory = New System.Windows.Forms.Button()
         Me.txtInventoryLast = New System.Windows.Forms.TextBox()
@@ -501,7 +500,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel2)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, -208)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 211)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -621,14 +620,13 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 61)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 480)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 175)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
         '
         'Panel3
         '
-        Me.Panel3.Controls.Add(Me.chkIncludeUSTST)
         Me.Panel3.Controls.Add(Me.btnCheckInventory)
         Me.Panel3.Controls.Add(Me.btnRemoveInventory)
         Me.Panel3.Controls.Add(Me.txtInventoryLast)
@@ -638,17 +636,6 @@ Partial Class WBFSTYLW
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(172, 175)
         Me.Panel3.TabIndex = 0
-        '
-        'chkIncludeUSTST
-        '
-        Me.chkIncludeUSTST.AutoSize = True
-        Me.chkIncludeUSTST.Location = New System.Drawing.Point(13, 53)
-        Me.chkIncludeUSTST.Name = "chkIncludeUSTST"
-        Me.chkIncludeUSTST.Size = New System.Drawing.Size(140, 20)
-        Me.chkIncludeUSTST.TabIndex = 22
-        Me.chkIncludeUSTST.Text = "Test US File Only"
-        Me.chkIncludeUSTST.UseVisualStyleBackColor = True
-        Me.chkIncludeUSTST.Visible = False
         '
         'btnCheckInventory
         '
@@ -689,7 +676,7 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 280)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 699)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
@@ -790,10 +777,11 @@ Partial Class WBFSTYLW
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grpUploads)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 474)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 225)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'grpUploads
         '
@@ -2453,5 +2441,4 @@ Partial Class WBFSTYLW
     Friend WithEvents chkNoDNR As CheckBox
     Friend WithEvents btnRun999Group As Button
     Friend WithEvents btnReGroup As Button
-    Friend WithEvents chkIncludeUSTST As CheckBox
 End Class
