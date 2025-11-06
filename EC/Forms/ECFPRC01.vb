@@ -648,12 +648,15 @@ Public Class ECFPRC01
     End Sub
     Private Sub Calc_Extra_Fields(ByRef row As Infragistics.Win.UltraWinGrid.UltraGridRow)
         Dim STYLE_CODE As String = row.Cells.Item("STYLE_CODE").Text.ToString & String.Empty
-        Dim SET_QTY As Int64 = Val(row.Cells.Item("SET_QTY").Text.ToString & String.Empty)
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            If STYLE_CODE = "MTX72872L" Then Stop
+        End If
+        Dim SET_QTY As Int64 = Val(row.Cells.Item("SET_QTY").Text.Replace(",", "").ToString & String.Empty)
         If SET_QTY = 0 Then SET_QTY = 1
-        Dim STYLE_PRICE As Decimal = Val(row.Cells.Item("STYLE_PRICE").Text.ToString & String.Empty)
-        Dim MANUAL_PARTNER_PRICE As Decimal = Val(row.Cells.Item("MANUAL_PARTNER_PRICE").Text.ToString & String.Empty)
+        Dim STYLE_PRICE As Decimal = Val(row.Cells.Item("STYLE_PRICE").Text.Replace(",", "").ToString & String.Empty)
+        Dim MANUAL_PARTNER_PRICE As Decimal = Val(row.Cells.Item("MANUAL_PARTNER_PRICE").Text.Replace(",", "").ToString & String.Empty)
         Dim STYLE_CLASS_CODE As String = row.Cells.Item("STYLE_CLASS_CODE").Text.ToString & String.Empty
-        Dim CARTON_PACK_QTY As Int64 = Val(row.Cells.Item("CASE_QTY").Text.ToString & String.Empty)
+        Dim CARTON_PACK_QTY As Int64 = Val(row.Cells.Item("CASE_QTY").Text.Replace(",", "").ToString & String.Empty)
         If CARTON_PACK_QTY = 0 Then CARTON_PACK_QTY = 1
         Dim ECOM_CODE As String = row.Cells.Item("ECOM_CODE").Text.ToString & String.Empty
         Dim rowECTPRCG2 As DataRow = dst.Tables.Item("ECTPRCG2").Select($"ECOM_CODE = '{ECOM_CODE}'", "").FirstOrDefault
@@ -663,10 +666,6 @@ Public Class ECFPRC01
         End If
 
         Dim USE_TARIFF As Boolean = row.Cells.Item("USE_TARIFF").Value.ToString & String.Empty = "1"
-
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            'If STYLE_CODE = "MT20274" Then Stop
-        End If
 
         Dim ECOM_PRICE_ADD As Decimal = 0
         Dim ECOM_PRICE_MARKUP_PCT As Decimal = 0
@@ -730,10 +729,10 @@ Public Class ECFPRC01
         row.Cells.Item("FINAL_PARTNER_PRICE").Value = FINAL_PARTNER_PRICE
         row.Cells.Item("TARIFF_PRICE").Value = TARIFF_PRICE
 
-        If Val(row.Cells.Item("ECOM_UNIT_PRICE").Value.ToString & String.Empty) = 999.99 Then
+        If Val(row.Cells.Item("ECOM_UNIT_PRICE").Value.ToString.Replace(",", "") & String.Empty) = 999.99 Then
             row.Cells.Item("ECOM_UNIT_PRICE").Value = STANDARD_PRICE
         End If
-        If Val(row.Cells.Item("SET_PRICE").Text.ToString & String.Empty) = 999.99 Then
+        If Val(row.Cells.Item("SET_PRICE").Text.ToString.Replace(",", "") & String.Empty) = 999.99 Then
             row.Cells.Item("SET_PRICE").Value = STANDARD_PRICE
         End If
 
