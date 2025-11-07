@@ -105,7 +105,7 @@ Partial Class WHFDASH2
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
-        Me.dteErrorDate = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.dteDateFrom = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.lblSelDate = New System.Windows.Forms.Label()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
@@ -129,6 +129,7 @@ Partial Class WHFDASH2
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.dteDateTo = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -140,7 +141,7 @@ Partial Class WHFDASH2
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel4.SuspendLayout()
-        CType(Me.dteErrorDate, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dteDateFrom, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer2.Panel1.SuspendLayout()
@@ -173,6 +174,7 @@ Partial Class WHFDASH2
         Me.UltraGroupBox1.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
+        CType(Me.dteDateTo, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -285,7 +287,8 @@ Partial Class WHFDASH2
         '
         'Panel4
         '
-        Me.Panel4.Controls.Add(Me.dteErrorDate)
+        Me.Panel4.Controls.Add(Me.dteDateTo)
+        Me.Panel4.Controls.Add(Me.dteDateFrom)
         Me.Panel4.Controls.Add(Me.lblSelDate)
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel4.Location = New System.Drawing.Point(0, 0)
@@ -293,12 +296,12 @@ Partial Class WHFDASH2
         Me.Panel4.Size = New System.Drawing.Size(189, 150)
         Me.Panel4.TabIndex = 0
         '
-        'dteErrorDate
+        'dteDateFrom
         '
-        Me.dteErrorDate.Location = New System.Drawing.Point(6, 29)
-        Me.dteErrorDate.Name = "dteErrorDate"
-        Me.dteErrorDate.Size = New System.Drawing.Size(121, 25)
-        Me.dteErrorDate.TabIndex = 2
+        Me.dteDateFrom.Location = New System.Drawing.Point(6, 29)
+        Me.dteDateFrom.Name = "dteDateFrom"
+        Me.dteDateFrom.Size = New System.Drawing.Size(121, 25)
+        Me.dteDateFrom.TabIndex = 2
         '
         'lblSelDate
         '
@@ -306,9 +309,9 @@ Partial Class WHFDASH2
         Me.lblSelDate.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblSelDate.Location = New System.Drawing.Point(3, 10)
         Me.lblSelDate.Name = "lblSelDate"
-        Me.lblSelDate.Size = New System.Drawing.Size(102, 16)
+        Me.lblSelDate.Size = New System.Drawing.Size(147, 16)
         Me.lblSelDate.TabIndex = 1
-        Me.lblSelDate.Text = "Selected Date"
+        Me.lblSelDate.Text = "Selected Date Range"
         '
         'UltraTabPageControl1
         '
@@ -803,6 +806,13 @@ Partial Class WHFDASH2
         '
         Me.Timer1.Interval = 1000
         '
+        'dteDateTo
+        '
+        Me.dteDateTo.Location = New System.Drawing.Point(6, 74)
+        Me.dteDateTo.Name = "dteDateTo"
+        Me.dteDateTo.Size = New System.Drawing.Size(121, 25)
+        Me.dteDateTo.TabIndex = 3
+        '
         'WHFDASH2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -822,7 +832,7 @@ Partial Class WHFDASH2
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
-        CType(Me.dteErrorDate, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dteDateFrom, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
@@ -856,6 +866,7 @@ Partial Class WHFDASH2
         Me.UltraGroupBox1.PerformLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
+        CType(Me.dteDateTo, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -884,5 +895,6 @@ Partial Class WHFDASH2
     Friend WithEvents grdWHTRFID1 As UltraWinGrid.UltraGrid
     Friend WithEvents lblUpdated As Label
     Friend WithEvents lblSelDate As Label
-    Friend WithEvents dteErrorDate As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents dteDateFrom As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents dteDateTo As UltraWinEditors.UltraDateTimeEditor
 End Class

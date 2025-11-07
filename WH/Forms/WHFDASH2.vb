@@ -18,9 +18,12 @@ Public Class WHFDASH2
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         Dim eDate = DateTime.Now
-        dteErrorDate.MinDate = DateAdd(DateInterval.Year, -1, eDate)
-        dteErrorDate.DateTime = eDate
-        dteErrorDate.MaxDate = eDate
+        dteDateFrom.MinDate = DateAdd(DateInterval.Year, -1, eDate)
+        dteDateFrom.DateTime = eDate
+        dteDateFrom.MaxDate = eDate
+        dteDateTo.MinDate = DateAdd(DateInterval.Year, -1, eDate)
+        dteDateTo.DateTime = eDate
+        dteDateTo.MaxDate = eDate
 
         With dst
 
@@ -35,20 +38,20 @@ Public Class WHFDASH2
                             SUM(WHTRFID2.PICK_QTY) REQUESTED, SUM(WHTRFID2.SCAN_QTY - WHTRFID2.PICK_QTY) VARIANCE, COUNT(1) UPCS
                             FROM WHTRFID1, WHTRFID2
                             WHERE WHTRFID2.SCAN_NO =  WHTRFID1.SCAN_NO
-                            AND trunc(WHTRFID1.SCAN_DATE) = :PARM1
+                            AND trunc(WHTRFID1.SCAN_DATE) between :PARM1 and :PARM2
                             GROUP BY WHTRFID2.SCAN_NO, WHTRFID1.CART_NO,  WHTRFID1.DISPOSITION)"
-            Create_TDA(.Tables.Add, "WHTRFIDS", "**", 0, False, "D")
-            Fill_Records("WHTRFIDS", New Object() {dteErrorDate.DateTime.ToShortDateString})
+            Create_TDA(.Tables.Add, "WHTRFIDS", "**", 0, False, "DD")
+            'Fill_Records("WHTRFIDS", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
 
             ASCMAIN1.sql = "SELECT WHTRFID1.SCAN_NO, WHTRFID1.CART_NO, WHTRFID1.DISPOSITION, WHTRFID1.DISPOSITION_REASON,  
                             SUM(WHTRFID2.SCAN_QTY) SCANNED, SUM(WHTRFID2.PICK_QTY) REQUESTED, 
                             SUM(WHTRFID2.SCAN_QTY - WHTRFID2.PICK_QTY) VARIANCE, COUNT(1) UPCS
                             FROM WHTRFID1, WHTRFID2
                             WHERE WHTRFID2.SCAN_NO =  WHTRFID1.SCAN_NO
-                            AND trunc(WHTRFID1.SCAN_DATE) = :PARM1
+                            AND trunc(WHTRFID1.SCAN_DATE) between :PARM1 and :PARM2
                             GROUP BY WHTRFID1.SCAN_NO, WHTRFID1.CART_NO, WHTRFID1.DISPOSITION, WHTRFID1.DISPOSITION_REASON"
-            Create_TDA(.Tables.Add, "WHTRFID1", "**", 0, False, "D")
-            Fill_Records("WHTRFID1", New Object() {dteErrorDate.DateTime.ToShortDateString})
+            Create_TDA(.Tables.Add, "WHTRFID1", "**", 0, False, "DD")
+            'Fill_Records("WHTRFID1", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
 
             ASCMAIN1.sql = "select WHTRFID2.UPC_CODE, MIN(WHTSCSEQ.STYLE_SEQ) STYLE_SEQ, MIN(WHTLOCM1.LOCATION_ZONE) LOCATION_ZONE,
                             MIN(ICVLUPC1.STYLE_CODE) STYLE_CODE, min(ICVLUPC1.COLOR_CODE) COLOR_CODE,
@@ -64,11 +67,11 @@ Public Class WHFDASH2
                             and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ
                             and WHTLOCM1.WHSE_CODE = 'NJC'
                             and WHTLOCM1.LOCATION_CODE like 'F1%'
-                            and trunc(WHTRFID1.SCAN_DATE) = :PARM1
+                            and trunc(WHTRFID1.SCAN_DATE) between :PARM1 and :PARM2
                             group by WHTRFID2.UPC_CODE
                             having sum(WHTRFID2.SCAN_QTY - WHTRFID2.PICK_QTY) <> 0"
-            Create_TDA(.Tables.Add, "WHTRFID2", "**", 0, False, "D")
-            Fill_Records("WHTRFID2", New Object() {dteErrorDate.DateTime.ToShortDateString})
+            Create_TDA(.Tables.Add, "WHTRFID2", "**", 0, False, "DD")
+            'Fill_Records("WHTRFID2", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
 
             ASCMAIN1.sql = "select WHTRFID3.RFID, WHTRFID3.UPC_CODE, MIN(WHTSCSEQ.STYLE_SEQ) STYLE_SEQ, MIN(WHTLOCM1.LOCATION_ZONE) LOCATION_ZONE,
                             MIN(ICVLUPC1.STYLE_CODE) STYLE_CODE, min(ICVLUPC1.COLOR_CODE) COLOR_CODE, count(distinct WHTRFID1.CART_NO) Cartons,
@@ -86,7 +89,7 @@ Public Class WHFDASH2
                             group by WHTRFID3.RFID, WHTRFID3.UPC_CODE
                             having count(distinct WHTRFID1.CART_NO) > 1"
             Create_TDA(.Tables.Add, "WHTRFID3", "**", 0, False, "D")
-            Fill_Records("WHTRFID3", New Object() {dteErrorDate.DateTime.ToShortDateString})
+            'Fill_Records("WHTRFID3", New Object() {dteDateFrom.DateTime.ToShortDateString})
 
         End With
 
@@ -385,12 +388,17 @@ Public Class WHFDASH2
 #Region "Custom Methods"
     Private Sub RefreshData()
         ASCMAIN1.Progress("Refreshing Statistics", "")
+
+        If dteDateFrom.Value > dteDateTo.Value Then
+            MsgBox("Date From is larger then Date To " & vbCrLf & " Fix and try again", vbCritical, "Date Error")
+            Exit Sub
+        End If
         lblUpdated.Text = ""
 
-        Fill_Records("WHTRFIDS", New Object() {dteErrorDate.DateTime.ToShortDateString})
-        Fill_Records("WHTRFID1", New Object() {dteErrorDate.DateTime.ToShortDateString})
-        Fill_Records("WHTRFID2", New Object() {dteErrorDate.DateTime.ToShortDateString})
-        Fill_Records("WHTRFID3", New Object() {dteErrorDate.DateTime.ToShortDateString})
+        Fill_Records("WHTRFIDS", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        Fill_Records("WHTRFID1", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        Fill_Records("WHTRFID2", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        Fill_Records("WHTRFID3", New Object() {dteDateTo.DateTime.ToShortDateString})
 
         lstWHTRFIDS.View = View.Details
         If lstWHTRFIDS.Columns.Count = 0 Then
@@ -407,10 +415,18 @@ Public Class WHFDASH2
             lstWHTRFIDS.Items.Add(item)
         Next
 
-        lblUpdated.Text = $"Scans Analyzed for {dteErrorDate.DateTime.ToShortDateString} at " & DateTime.Now.ToString("g")
-        grdWHTRFID1.Text = "Cartons Scanned on " & dteErrorDate.DateTime.ToShortDateString
-        grdWHTRFID2.Text = "UPCs with Errors on " & dteErrorDate.DateTime.ToShortDateString
-        grdWHTRFID3.Text = "RFIDs with multiple scans on " & dteErrorDate.DateTime.ToShortDateString
+        If dteDateFrom.Value = dteDateTo.Value Then
+            lblUpdated.Text = $"Scans Analyzed for {dteDateFrom.DateTime.ToShortDateString} at " & DateTime.Now.ToString("g")
+            grdWHTRFID1.Text = "Cartons Scanned on " & dteDateFrom.DateTime.ToShortDateString
+            grdWHTRFID2.Text = "UPCs with Errors on " & dteDateFrom.DateTime.ToShortDateString
+            grdWHTRFID3.Text = "RFIDs with multiple scans on " & dteDateFrom.DateTime.ToShortDateString
+        Else
+            lblUpdated.Text = $"Scans Analyzed for {dteDateFrom.DateTime.ToShortDateString} - {dteDateTo.DateTime.ToShortDateString}  at " & DateTime.Now.ToString("g")
+            grdWHTRFID1.Text = $"Cartons Scanned between { dteDateFrom.DateTime.ToShortDateString} and {dteDateTo.DateTime.ToShortDateString} "
+            grdWHTRFID2.Text = $"UPCs with Errors between { dteDateFrom.DateTime.ToShortDateString} and {dteDateTo.DateTime.ToShortDateString} "
+            grdWHTRFID3.Text = "RFIDs with multiple scans on " & dteDateTo.DateTime.ToShortDateString
+        End If
+
 
         'MsgBox("Analysis Complete", vbOKOnly, "Done")
         ASCMAIN1.Progress("", "")
