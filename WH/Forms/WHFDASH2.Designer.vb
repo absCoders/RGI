@@ -45,6 +45,7 @@ Partial Class WHFDASH2
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTONS")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_SEQ")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_ZONE")
+        Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_SEEN_LIST")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -104,6 +105,8 @@ Partial Class WHFDASH2
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.dteErrorDate = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
+        Me.lblSelDate = New System.Windows.Forms.Label()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
@@ -136,6 +139,8 @@ Partial Class WHFDASH2
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
+        Me.Panel4.SuspendLayout()
+        CType(Me.dteErrorDate, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer2.Panel1.SuspendLayout()
@@ -280,11 +285,30 @@ Partial Class WHFDASH2
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.dteErrorDate)
+        Me.Panel4.Controls.Add(Me.lblSelDate)
         Me.Panel4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel4.Location = New System.Drawing.Point(0, 0)
         Me.Panel4.Name = "Panel4"
         Me.Panel4.Size = New System.Drawing.Size(189, 150)
         Me.Panel4.TabIndex = 0
+        '
+        'dteErrorDate
+        '
+        Me.dteErrorDate.Location = New System.Drawing.Point(6, 29)
+        Me.dteErrorDate.Name = "dteErrorDate"
+        Me.dteErrorDate.Size = New System.Drawing.Size(121, 25)
+        Me.dteErrorDate.TabIndex = 2
+        '
+        'lblSelDate
+        '
+        Me.lblSelDate.AutoSize = True
+        Me.lblSelDate.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblSelDate.Location = New System.Drawing.Point(3, 10)
+        Me.lblSelDate.Name = "lblSelDate"
+        Me.lblSelDate.Size = New System.Drawing.Size(102, 16)
+        Me.lblSelDate.TabIndex = 1
+        Me.lblSelDate.Text = "Selected Date"
         '
         'UltraTabPageControl1
         '
@@ -359,12 +383,14 @@ Partial Class WHFDASH2
         UltraGridColumn28.Header.VisiblePosition = 4
         UltraGridColumn28.Width = 64
         UltraGridColumn7.Header.Caption = "Match#"
-        UltraGridColumn7.Header.VisiblePosition = 5
+        UltraGridColumn7.Header.VisiblePosition = 6
         UltraGridColumn7.Width = 62
         UltraGridColumn6.Header.Caption = "Zone"
-        UltraGridColumn6.Header.VisiblePosition = 6
+        UltraGridColumn6.Header.VisiblePosition = 7
         UltraGridColumn6.Width = 48
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn26, UltraGridColumn27, UltraGridColumn3, UltraGridColumn4, UltraGridColumn28, UltraGridColumn7, UltraGridColumn6})
+        UltraGridColumn5.Header.Caption = "Last Seen"
+        UltraGridColumn5.Header.VisiblePosition = 5
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn26, UltraGridColumn27, UltraGridColumn3, UltraGridColumn4, UltraGridColumn28, UltraGridColumn7, UltraGridColumn6, UltraGridColumn5})
         Me.grdWHTRFID3.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWHTRFID3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -794,6 +820,9 @@ Partial Class WHFDASH2
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
+        Me.Panel4.ResumeLayout(False)
+        Me.Panel4.PerformLayout()
+        CType(Me.dteErrorDate, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
         Me.SplitContainer2.Panel2.ResumeLayout(False)
@@ -854,4 +883,6 @@ Partial Class WHFDASH2
     Friend WithEvents Splitter1 As Splitter
     Friend WithEvents grdWHTRFID1 As UltraWinGrid.UltraGrid
     Friend WithEvents lblUpdated As Label
+    Friend WithEvents lblSelDate As Label
+    Friend WithEvents dteErrorDate As UltraWinEditors.UltraDateTimeEditor
 End Class

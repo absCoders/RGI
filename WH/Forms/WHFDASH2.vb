@@ -17,6 +17,11 @@ Public Class WHFDASH2
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
+        Dim eDate = DateTime.Now
+        dteErrorDate.MinDate = DateAdd(DateInterval.Year, -1, eDate)
+        dteErrorDate.DateTime = eDate
+        dteErrorDate.MaxDate = eDate
+
         With dst
 
             ASCMAIN1.sql = "SELECT COUNT(DISTINCT CART_NO)CARTONS, COUNT(1) SCANS, 
@@ -30,20 +35,20 @@ Public Class WHFDASH2
                             SUM(WHTRFID2.PICK_QTY) REQUESTED, SUM(WHTRFID2.SCAN_QTY - WHTRFID2.PICK_QTY) VARIANCE, COUNT(1) UPCS
                             FROM WHTRFID1, WHTRFID2
                             WHERE WHTRFID2.SCAN_NO =  WHTRFID1.SCAN_NO
-                            AND WHTRFID1.SCAN_DATE > trunc(sysdate)
+                            AND trunc(WHTRFID1.SCAN_DATE) = :PARM1
                             GROUP BY WHTRFID2.SCAN_NO, WHTRFID1.CART_NO,  WHTRFID1.DISPOSITION)"
-            Create_TDA(.Tables.Add, "WHTRFIDS", "**", 0, False)
-            Fill_Records("WHTRFIDS")
+            Create_TDA(.Tables.Add, "WHTRFIDS", "**", 0, False, "D")
+            Fill_Records("WHTRFIDS", New Object() {dteErrorDate.DateTime.ToShortDateString})
 
             ASCMAIN1.sql = "SELECT WHTRFID1.SCAN_NO, WHTRFID1.CART_NO, WHTRFID1.DISPOSITION, WHTRFID1.DISPOSITION_REASON,  
                             SUM(WHTRFID2.SCAN_QTY) SCANNED, SUM(WHTRFID2.PICK_QTY) REQUESTED, 
                             SUM(WHTRFID2.SCAN_QTY - WHTRFID2.PICK_QTY) VARIANCE, COUNT(1) UPCS
                             FROM WHTRFID1, WHTRFID2
                             WHERE WHTRFID2.SCAN_NO =  WHTRFID1.SCAN_NO
-                            AND WHTRFID1.SCAN_DATE > TRUNC(sysdate)
+                            AND trunc(WHTRFID1.SCAN_DATE) = :PARM1
                             GROUP BY WHTRFID1.SCAN_NO, WHTRFID1.CART_NO, WHTRFID1.DISPOSITION, WHTRFID1.DISPOSITION_REASON"
-            Create_TDA(.Tables.Add, "WHTRFID1", "**", 0, False)
-            Fill_Records("WHTRFID1")
+            Create_TDA(.Tables.Add, "WHTRFID1", "**", 0, False, "D")
+            Fill_Records("WHTRFID1", New Object() {dteErrorDate.DateTime.ToShortDateString})
 
             ASCMAIN1.sql = "select WHTRFID2.UPC_CODE, MIN(WHTSCSEQ.STYLE_SEQ) STYLE_SEQ, MIN(WHTLOCM1.LOCATION_ZONE) LOCATION_ZONE,
                             MIN(ICVLUPC1.STYLE_CODE) STYLE_CODE, min(ICVLUPC1.COLOR_CODE) COLOR_CODE,
@@ -59,14 +64,15 @@ Public Class WHFDASH2
                             and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ
                             and WHTLOCM1.WHSE_CODE = 'NJC'
                             and WHTLOCM1.LOCATION_CODE like 'F1%'
-                            and WHTRFID1.scan_date > TRUNC(sysdate)
+                            and trunc(WHTRFID1.SCAN_DATE) = :PARM1
                             group by WHTRFID2.UPC_CODE
                             having sum(WHTRFID2.SCAN_QTY - WHTRFID2.PICK_QTY) <> 0"
-            Create_TDA(.Tables.Add, "WHTRFID2", "**", 0, False)
-            Fill_Records("WHTRFID2")
+            Create_TDA(.Tables.Add, "WHTRFID2", "**", 0, False, "D")
+            Fill_Records("WHTRFID2", New Object() {dteErrorDate.DateTime.ToShortDateString})
 
             ASCMAIN1.sql = "select WHTRFID3.RFID, WHTRFID3.UPC_CODE, MIN(WHTSCSEQ.STYLE_SEQ) STYLE_SEQ, MIN(WHTLOCM1.LOCATION_ZONE) LOCATION_ZONE,
-                            MIN(ICVLUPC1.STYLE_CODE) STYLE_CODE, min(ICVLUPC1.COLOR_CODE) COLOR_CODE, count(distinct WHTRFID1.CART_NO) Cartons
+                            MIN(ICVLUPC1.STYLE_CODE) STYLE_CODE, min(ICVLUPC1.COLOR_CODE) COLOR_CODE, count(distinct WHTRFID1.CART_NO) Cartons,
+                            LISTAGG(TO_CHAR(WHTRFID1.SCAN_DATE, 'HH24:MI:SS'), ', ') WITHIN GROUP (ORDER BY WHTRFID1.SCAN_DATE desc) AS LAST_SEEN_LIST
                             from WHTRFID1, WHTRFID3, ICVLUPC1, WHTSCSEQ, WHTLOCM1
                             where WHTRFID3.SCAN_NO =  WHTRFID1.SCAN_NO
                             and WHTRFID3.UPC_CODE = ICVLUPC1.UPC_CODE
@@ -76,11 +82,11 @@ Public Class WHFDASH2
                             and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ
                             and WHTLOCM1.WHSE_CODE = 'NJC'
                             and WHTLOCM1.LOCATION_CODE like 'F1%'
-                            and WHTRFID1.scan_date > TRUNC(sysdate)
+                            and trunc(WHTRFID1.SCAN_DATE) = :PARM1
                             group by WHTRFID3.RFID, WHTRFID3.UPC_CODE
                             having count(distinct WHTRFID1.CART_NO) > 1"
-            Create_TDA(.Tables.Add, "WHTRFID3", "**", 0, False)
-            Fill_Records("WHTRFID3")
+            Create_TDA(.Tables.Add, "WHTRFID3", "**", 0, False, "D")
+            Fill_Records("WHTRFID3", New Object() {dteErrorDate.DateTime.ToShortDateString})
 
         End With
 
@@ -88,14 +94,14 @@ Public Class WHFDASH2
         grdWHTRFID2.DataSource = dst.Tables("WHTRFID2")
         grdWHTRFID3.DataSource = dst.Tables("WHTRFID3")
 
-        Create_Summary(grdWHTRFID3, "STYLE_CODE", "Count", "", "###,##0")
-        Create_Summary(grdWHTRFID2, "STYLE_CODE", "Count", "", "###,##0")
+        Create_Summary(grdWHTRFID3, "RFID", "Count", "", "###,##0")
+        Create_Summary(grdWHTRFID2, "UPC_CODE", "Count", "", "###,##0")
         Create_Summary(grdWHTRFID1, "SCAN_NO", "Count", "", "###,##0")
 
 
         Sort_grdColumns(grdWHTRFID1, "scan_no, CART_NO", False)
         Sort_grdColumns(grdWHTRFID2, "errors", False)
-        Sort_grdColumns(grdWHTRFID3, "cartons", False)
+        Sort_grdColumns(grdWHTRFID3, "last_seen_list, cartons", False)
 
         'grdWHTRFID3.DisplayLayout.Bands(0).Columns("AVAIL").Format = "###,##0"
 
@@ -152,15 +158,13 @@ Public Class WHFDASH2
                 GCOL.Header.Appearance.BackColor2 = Color.Gray
                 GCOL.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
                 GCOL.CellActivation = Activation.NoEdit
+                GCOL.Header.Appearance.BackColor2 = Color.LightGreen
 
                 If New String() {"CARTONS", "STYLE_SEQ"}.Contains(GCOL.Key) Then
-                    GCOL.Header.Appearance.BackColor2 = Color.Orange
-                    If GCOL.Key = "STYLE_SEQ" Then
-                        GCOL.Header.Appearance.BackColor2 = Color.LightGreen
-                    End If
                     GCOL.Format = "####,##0"
-                Else
-                    GCOL.Header.Appearance.BackColor2 = Color.LightGreen
+                End If
+                If New String() {"CARTONS", "LAST_SEEN_LIST"}.Contains(GCOL.Key) Then
+                    GCOL.Header.Appearance.BackColor2 = Color.Orange
                 End If
             Next
         End With
@@ -381,11 +385,12 @@ Public Class WHFDASH2
 #Region "Custom Methods"
     Private Sub RefreshData()
         ASCMAIN1.Progress("Refreshing Statistics", "")
+        lblUpdated.Text = ""
 
-        Fill_Records("WHTRFIDS")
-        Fill_Records("WHTRFID1")
-        Fill_Records("WHTRFID2")
-        Fill_Records("WHTRFID3")
+        Fill_Records("WHTRFIDS", New Object() {dteErrorDate.DateTime.ToShortDateString})
+        Fill_Records("WHTRFID1", New Object() {dteErrorDate.DateTime.ToShortDateString})
+        Fill_Records("WHTRFID2", New Object() {dteErrorDate.DateTime.ToShortDateString})
+        Fill_Records("WHTRFID3", New Object() {dteErrorDate.DateTime.ToShortDateString})
 
         lstWHTRFIDS.View = View.Details
         If lstWHTRFIDS.Columns.Count = 0 Then
@@ -402,10 +407,10 @@ Public Class WHFDASH2
             lstWHTRFIDS.Items.Add(item)
         Next
 
-        lblUpdated.Text = "Analyzed at " & DateTime.Now.ToString("g")
-        grdWHTRFID1.Text = "Cartons Scanned "
-        grdWHTRFID2.Text = "UPCs with Errors "
-        grdWHTRFID3.Text = "RFIDs with multiple scans "
+        lblUpdated.Text = $"Scans Analyzed for {dteErrorDate.DateTime.ToShortDateString} at " & DateTime.Now.ToString("g")
+        grdWHTRFID1.Text = "Cartons Scanned on " & dteErrorDate.DateTime.ToShortDateString
+        grdWHTRFID2.Text = "UPCs with Errors on " & dteErrorDate.DateTime.ToShortDateString
+        grdWHTRFID3.Text = "RFIDs with multiple scans on " & dteErrorDate.DateTime.ToShortDateString
 
         'MsgBox("Analysis Complete", vbOKOnly, "Done")
         ASCMAIN1.Progress("", "")
@@ -427,22 +432,14 @@ Public Class WHFDASH2
         ' Join the words back into a single string
         Return String.Join(" ", words)
     End Function
-
-    Private Sub grdWBTIMGLT_MouseHover(sender As Object, e As EventArgs) Handles grdWHTRFID3.MouseHover
-        If 1 = 1 Then
-
-        End If
-    End Sub
-
-    Private Sub grdWHTRFID3_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTRFID3.InitializeLayout
-
-    End Sub
 #End Region
 
 #Region "Form Controls"
 
 #Region "Grids"
+    Private Sub grdWHTRFID3_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTRFID3.InitializeLayout
 
+    End Sub
 #End Region
 #End Region
 
