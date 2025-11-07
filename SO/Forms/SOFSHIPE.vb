@@ -1607,7 +1607,7 @@ Public Class SOFSHIPE
                     With ccResponse
                         ' If we charge the credit card and then get an error in code
                         ' the subsequent calls will result in ststus <> SUCCESS ?????
-                        If .status.ToUpper <> "SUCCESS" Then
+                        If .status.ToUpper <> "SUCCESS" AndAlso .status.ToUpper <> "PENDING" Then
                             Dim message As String = "Credit Card Capture failed." & Environment.NewLine & Environment.NewLine & $"Kind: { .kind}. {Environment.NewLine}Status: { .status}, {Environment.NewLine}Message: { .message}"
                             MessageBox.Show(message, "Capture Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
                             Return False

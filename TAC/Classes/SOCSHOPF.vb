@@ -145,8 +145,8 @@ Public Class SOCSHOPF
 
                         Dim receipt As JObject = CType(transaction("receipt"), JObject)
                         If receipt IsNot Nothing Then
-                            .receipt.id = receipt("id").ToString()
-                            .receipt.status = receipt("status").ToString()
+                            '.receipt.id = receipt("id").ToString()
+                            '.receipt.status = receipt("status").ToString()
                         End If
                     End With
                 End If
@@ -184,7 +184,8 @@ Public Class SOCSHOPF
                     Next
                 End Using
             End Using
-            Return True
+
+            Return False
         Catch ex As Exception
             MessageBox.Show(ex.Message, "Is Payment Captured", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return False
