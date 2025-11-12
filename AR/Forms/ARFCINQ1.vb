@@ -284,7 +284,7 @@ Public Class ARFCINQ1
             Create_TDA(.Tables.Add, "ARTCUSTT_FUPS", "**", 0, False, "", 1)
 
 
-            chkALLFU.Visible = ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "dgj"
+            chkALLFU.Visible = ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "andy"
 
             ASCMAIN1.sql = "Select ARTCUST6.*" _
             & ", ARTCUST1.CUST_NAME, ARTCUST1.CUST_ADDR1, ARTCUST1.CUST_ADDR2, ARTCUST1.CUST_ADDR3" & vbCrLf _
@@ -1589,7 +1589,7 @@ Public Class ARFCINQ1
 
         chkEditCredit.Checked = False
         grdARTCUSTT_FUPS.Visible = Not ScreenMode And (grdARTCUST6.Tag <> "*")
-        chkALLFU.Visible = Not ScreenMode And (grdARTCUST6.Tag <> "*") And ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "dgj"
+        chkALLFU.Visible = Not ScreenMode And (grdARTCUST6.Tag <> "*") And ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "andy"
         chkALLFU.Checked = False
 
         SetControlPanel()
@@ -4083,7 +4083,7 @@ Public Class ARFCINQ1
     Sub Refresh_FollowUps()
         Fill_Records("ARTCUSTT_FUPS")
         grdARTCUSTT_FUPS.Visible = True
-        chkALLFU.Visible = ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "dgj"
+        chkALLFU.Visible = ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "andy"
         grdARTCUST6.Visible = False
         ' grdARTOPENB.Visible = False
         tabChargebacks.Visible = False
@@ -5542,6 +5542,7 @@ Public Class ARFCINQ1
                 & " from TATCONV1,ARTCUST1 " _
                 & " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
                 & "   and TATCONV1.CONV_STATUS = '1'" _
+                & "   and TATCONV1.INIT_OPER <> 'ana'" _
                 & "   and TATCONV1.TABLE_NAME = 'ARTCUST1'"
         Else
             ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
