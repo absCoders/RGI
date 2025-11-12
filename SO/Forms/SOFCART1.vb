@@ -576,12 +576,15 @@ Public Class SOFCART1
                 Next
                 Update_Record_TDA(TABLE_NAME)
             Next
-
-            For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("ISNULL(QTY_PACKED,0)<>ISNULL(PICK_QTY_CONF,0)")
+            If Absx1.txtFor("CUST_CODE").Text = "WALMART" Then
+                '   this is creating double qty for P2L shipments - pick_qty_conf is 0 by default
+            Else
+                For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select("ISNULL(QTY_PACKED,0)<>ISNULL(PICK_QTY_CONF,0)")
                 rowSOTPICK2.Item("PICK_QTY_CONF") = rowSOTPICK2.Item("QTY_PACKED")
                 rowSOTPICK2.Item("PICK_QTY_CANC") = Val(rowSOTPICK2.Item("PICK_QTY") & "") - Val(rowSOTPICK2.Item("PICK_QTY_CONF") & "")
             Next
             Update_Record_TDA("SOTPICK2")
+            End If
 
             For Each rowSOTPICK1 As DataRow In dst.Tables("SOTPICK1").Select("ISNULL(PICK_CNT_CARTONS,0)<>ISNULL(PICK_CNT_CARTONS_CALC,0)")
                 rowSOTPICK1.Item("PICK_CNT_CARTONS") = rowSOTPICK1.Item("PICK_CNT_CARTONS_CALC")

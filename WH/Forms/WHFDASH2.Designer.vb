@@ -40,12 +40,13 @@ Partial Class WHFDASH2
         Dim UltraGridBand1 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTRFID3", -1)
         Dim UltraGridColumn26 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("RFID")
         Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UPC_CODE")
-        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_CODE")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODE")
         Dim UltraGridColumn28 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTONS")
         Dim UltraGridColumn7 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_SEQ")
         Dim UltraGridColumn6 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_ZONE")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_SEEN_LIST")
+        Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SCAN_LIST", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -105,6 +106,7 @@ Partial Class WHFDASH2
         Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.dteDateTo = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.dteDateFrom = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.lblSelDate = New System.Windows.Forms.Label()
         Me.UltraTabPageControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -129,7 +131,6 @@ Partial Class WHFDASH2
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.dteDateTo = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -141,6 +142,7 @@ Partial Class WHFDASH2
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel4.SuspendLayout()
+        CType(Me.dteDateTo, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dteDateFrom, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl1.SuspendLayout()
         CType(Me.SplitContainer2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -174,7 +176,6 @@ Partial Class WHFDASH2
         Me.UltraGroupBox1.SuspendLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.dteDateTo, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -296,6 +297,13 @@ Partial Class WHFDASH2
         Me.Panel4.Size = New System.Drawing.Size(189, 150)
         Me.Panel4.TabIndex = 0
         '
+        'dteDateTo
+        '
+        Me.dteDateTo.Location = New System.Drawing.Point(6, 74)
+        Me.dteDateTo.Name = "dteDateTo"
+        Me.dteDateTo.Size = New System.Drawing.Size(121, 25)
+        Me.dteDateTo.TabIndex = 3
+        '
         'dteDateFrom
         '
         Me.dteDateFrom.Location = New System.Drawing.Point(6, 29)
@@ -386,14 +394,16 @@ Partial Class WHFDASH2
         UltraGridColumn28.Header.VisiblePosition = 4
         UltraGridColumn28.Width = 64
         UltraGridColumn7.Header.Caption = "Match#"
-        UltraGridColumn7.Header.VisiblePosition = 6
+        UltraGridColumn7.Header.VisiblePosition = 7
         UltraGridColumn7.Width = 62
         UltraGridColumn6.Header.Caption = "Zone"
-        UltraGridColumn6.Header.VisiblePosition = 7
+        UltraGridColumn6.Header.VisiblePosition = 8
         UltraGridColumn6.Width = 48
         UltraGridColumn5.Header.Caption = "Last Seen"
-        UltraGridColumn5.Header.VisiblePosition = 5
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn26, UltraGridColumn27, UltraGridColumn3, UltraGridColumn4, UltraGridColumn28, UltraGridColumn7, UltraGridColumn6, UltraGridColumn5})
+        UltraGridColumn5.Header.VisiblePosition = 6
+        UltraGridColumn10.Header.Caption = "Scan List"
+        UltraGridColumn10.Header.VisiblePosition = 5
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn26, UltraGridColumn27, UltraGridColumn3, UltraGridColumn4, UltraGridColumn28, UltraGridColumn7, UltraGridColumn6, UltraGridColumn5, UltraGridColumn10})
         Me.grdWHTRFID3.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdWHTRFID3.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -806,13 +816,6 @@ Partial Class WHFDASH2
         '
         Me.Timer1.Interval = 1000
         '
-        'dteDateTo
-        '
-        Me.dteDateTo.Location = New System.Drawing.Point(6, 74)
-        Me.dteDateTo.Name = "dteDateTo"
-        Me.dteDateTo.Size = New System.Drawing.Size(121, 25)
-        Me.dteDateTo.TabIndex = 3
-        '
         'WHFDASH2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -832,6 +835,7 @@ Partial Class WHFDASH2
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
+        CType(Me.dteDateTo, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dteDateFrom, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl1.ResumeLayout(False)
         Me.SplitContainer2.Panel1.ResumeLayout(False)
@@ -866,7 +870,6 @@ Partial Class WHFDASH2
         Me.UltraGroupBox1.PerformLayout()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.dteDateTo, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub

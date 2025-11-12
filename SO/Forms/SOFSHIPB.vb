@@ -15627,8 +15627,14 @@ Public Class SOFSHIPB
                             Return False
                         End If
 
-                        Dim rowSOTPICK2X As DataRow = dst.Tables("SOTPICK2").Select("PICK_NO = '" & PICK_NO & "' AND STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "' AND PICK_QTY >= " & EDI_SHIP_QTY)(0)
-                        PICK_LNO = rowSOTPICK2X.Item("PICK_LNO")
+                        For Each rowx As DataRow In dst.Tables("SOTPICK2").Select("PICK_NO = '" & PICK_NO & "' AND STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "' AND PICK_QTY >= " & EDI_SHIP_QTY)
+                            'we'll have a line no that matches the SKU, but if there are multiple lines
+                            'find the next free line to prevent the first line from getting the entire shipment qty
+                            PICK_LNO = rowx("PICK_LNO")
+                            If Val(rowx("PICK_QTY_CONF") & "") = 0 Then
+                                Exit For
+                            End If
+                        Next
                         ' Update the Pick Line Number
                         rowEDT945T2.Item("PICK_LNO") = PICK_LNO
                     End If
