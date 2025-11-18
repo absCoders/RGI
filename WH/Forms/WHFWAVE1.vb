@@ -224,6 +224,7 @@ Public Class WHFWAVE1
                 .Columns.Add("P2L_QTY_NOT_INDUCTED", GetType(System.Int64))
                 .Columns.Add("P2L_QTY_INDUCTED", GetType(System.Int64))
                 .Columns.Add("P2L_QTY_AVAILABLE", GetType(System.Int64), "(ISNULL(P2L_QTY_OH,0)+ISNULL(P2L_WO_OPEN,0)+ISNULL(P2L_WO_PICK,0))-(ISNULL(P2L_QTY_COMMITED,0) + ISNULL(P2L_QTY_NOT_INDUCTED,0) + ISNULL(P2L_QTY_INDUCTED, 0))")
+                .Columns.Add("SELECTED")
             End With
 
 
@@ -258,6 +259,10 @@ Public Class WHFWAVE1
                 .Columns.Add("SUB_WAVE", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY)")
                 .Columns.Add("SUB_PICK", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY_PICK)")
                 .Columns.Add("SUB_OPEN", GetType(System.Int64), "SUM(CHILD(WHTWAVE2_WHTWAVE2_SUB).WAVE_QTY_OPEN)")
+            End With
+
+            With .Tables("WHTWAVE2_SUB")
+                .Columns.Add("SELECTED", GetType(System.String), "PARENT(WHTWAVE2_WHTWAVE2_SUB).SELECTED")
             End With
 
             ASCMAIN1.sql = "Select WHTWAVE3.WAVE_NO,SOTSHIPX.*, WHTWAVE3.P2L_SHIP_STATUS" & vbCrLf _
@@ -476,7 +481,7 @@ Public Class WHFWAVE1
         Create_Summary(grdSOTCART2, New String() {"QTY_PACKED", "QTY_PACKED_ORIG"})
 
         Create_Summary(grdWHTWAVE2, "STYLE_CODE", "Count")
-        Create_Summary(grdWHTWAVE2, New String() {"PICK_QTY", "WAVE_QTY_LEFT", "WAVE_QTY_LOCS", "WAVE_QTY_ADJ", "WAVE_QTY_SHIP", "WAVE_QTY_DIFF", "WAVE_QTY_SUB2", "WAVE_QTY_CANC", "WAVE_QTY_CONC", "WAVE_QTY_BACK", "WAVE_QTY_CONF", "WAVE_QTY_PACK"})
+        Create_Summary(grdWHTWAVE2, New String() {"SELECTED", "PICK_QTY", "WAVE_QTY_LEFT", "WAVE_QTY_LOCS", "WAVE_QTY_ADJ", "WAVE_QTY_SHIP", "WAVE_QTY_DIFF", "WAVE_QTY_SUB2", "WAVE_QTY_CANC", "WAVE_QTY_CONC", "WAVE_QTY_BACK", "WAVE_QTY_CONF", "WAVE_QTY_PACK"})
         Create_Summary(grdWHTWAVE2, "WAVE_QTY", "Custom")
         Create_Summary(grdWHTWAVE2, "WAVE_QTY_PICK", "Custom")
         Create_Summary(grdWHTWAVE2, "WAVE_QTY_OPEN", "Custom")
@@ -554,6 +559,7 @@ Public Class WHFWAVE1
 
         grdWHTWAVE2.DisplayLayout.Override.CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
         With grdWHTWAVE2.DisplayLayout.Bands(0)
+            .Columns("SELECTED").Header.Fixed = True
             .Columns("STYLE_CODE").Header.Fixed = True
             .Columns("COLOR_CODE").Header.Fixed = True
 
@@ -571,6 +577,9 @@ Public Class WHFWAVE1
 
                 If gcol.Key = "CARTON_NO" Then
                     gcol.CellAppearance.TextHAlign = HAlign.Right
+                End If
+                If gcol.Key = "SELECTED" Then
+                    gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
                 End If
             Next
 
@@ -1030,6 +1039,11 @@ Public Class WHFWAVE1
                         If dst.Tables("WHTWAVE2").Select("ISNULL(WAVE_QTY_CONF,0) <> ISNULL(WAVE_QTY_PACK,0)").Length <> 0 Then
                             ' EMsg &= vbCr & "Cannot Finalize a Wave which is Out of Balance between Qty Confirmed and Qty Packed"
                             If MsgBox("Qty Confirmed does NOT equal Qty Packed." & vbCrLf & vbCrLf & "OK to Continue?", MsgBoxStyle.OkCancel, "Verificaiton") = MsgBoxResult.Cancel Then
+                                Exit Sub
+                            End If
+                        End If
+                        If dst.Tables("WHTWAVE2").Select("WAVE_QTY_CONC <> 0").Length <> 0 Then
+                            If MsgBox("Concealed Qty will generate Inventory Adjustments." & vbCrLf & vbCrLf & "OK to Continue?", MsgBoxStyle.OkCancel, "Inventory Adjustment") = MsgBoxResult.Cancel Then
                                 Exit Sub
                             End If
                         End If
@@ -2602,7 +2616,7 @@ Public Class WHFWAVE1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTSHIPX, "SSSBBBBBS", "Show Filter", "Show GroupBox", "Show Pins", "Customer Order Inquiry", "De-Select All", "Select All for Customer", "Select Selected", "Select All", "Show Billed Not Waved")
-        Load_Popup_Menu(grdWHTWAVE2, "BBBBS", "Style Status Inquiry", "Location Inquiry", "Add Sub", "Load P2L Styles", "Show Details")
+        Load_Popup_Menu(grdWHTWAVE2, "BBBBSBBB", "Style Status Inquiry", "Location Inquiry", "Add Sub", "Load P2L Styles", "Show Details", "De-Select All", "Select All", "Select Selected")
         Load_Popup_Menu(grdWHTLOCB1, "BS", "Location Inquiry", "Summary by Location")
         Load_Popup_Menu(grdWHTINST1, "BSBBBBBB", "Location Inquiry", "Show Pick Details", "Void Pick", "De-Select All", "Select All", "Pick Selected", "Pick", "Show Instruction Events")
         Load_Popup_Menu(grdWHTWAVEX, "SBBB", "Show Filter", "Customer Order Inquiry", "Wave Inquiry", "Make P2L Wave")
@@ -2651,6 +2665,12 @@ Public Class WHFWAVE1
                 tlb_btn = DirectCast(tlb_pop.Tools("Load P2L Styles"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Caption = $"Load {P2LWrkOrd} P2L Styles"
                 tlb_btn.SharedProps.Visible = (EntryMode = "N" Or EntryMode = "E") And (WAVE_TYPE = "W" And P2LWrkOrd <> "")
+                tlb_btn = DirectCast(tlb_pop.Tools("De-Select All"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (Not InquiryMode)
+                tlb_btn = DirectCast(tlb_pop.Tools("Select All"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (Not InquiryMode)
+                tlb_btn = DirectCast(tlb_pop.Tools("Select Selected"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (Not InquiryMode)
             Case "grdWHTINST1"
                 tlb_btn = DirectCast(tlb_pop.Tools("Void Pick"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E")
@@ -2701,6 +2721,8 @@ Public Class WHFWAVE1
                         tname = "WHTINST1"
                     Case "grdWHTWAVEP"
                         tname = "WHTWAVEP"
+                    Case "grdWHTWAVE2"
+                        tname = "WHTWAVE2"
                 End Select
                 If tname <> "" Then
                     If tname = "WHTWAVEP" Then
@@ -4121,6 +4143,7 @@ Public Class WHFWAVE1
 
     Sub Create_Wave_Instructions(from_Load_Record As Boolean)
 
+        If from_Load_Record And (EntryMode = "N" And chkEmptyWave.Checked) Then Exit Sub
         Me.Cursor = Cursors.WaitCursor
         ASCMAIN1.Progress("Now Waving ...")
 
@@ -4136,13 +4159,18 @@ Public Class WHFWAVE1
             End If
         End If
 
+        If dst.Tables("WHTWAVE2").Select("SELECTED = '1'").Length = 0 Then
+            MsgBox("No Lines selected for Wave, Select lines to Wave", MsgBoxStyle.OkOnly, "Cannot Wave")
+            Exit Sub
+        End If
+
         Create_WHTLOCBX(from_Load_Record) ' Create Supply Records based on Styles Listed in Demand table WHTWAVE2
 
         For Each TABLE_NAME As String In New String() {"WHTWAVE2", "WHTWAVE2_SUB"}
 
             Dim WAVE_SUB As String = IIf(TABLE_NAME = "WHTWAVE2", "0", "1")
 
-            For Each rowWHTWAVE2 As DataRow In dst.Tables(TABLE_NAME).Select("WAVE_QTY_LEFT > 0", "STYLE_CODE,COLOR_CODE")
+            For Each rowWHTWAVE2 As DataRow In dst.Tables(TABLE_NAME).Select("WAVE_QTY_LEFT > 0 and SELECTED = '1'", "STYLE_CODE,COLOR_CODE")
 
                 Dim STYLE_CODE As String = rowWHTWAVE2.Item("STYLE_CODE")
                 Dim COLOR_CODE As String = rowWHTWAVE2.Item("COLOR_CODE")
