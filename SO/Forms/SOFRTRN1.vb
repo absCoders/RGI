@@ -1,5 +1,6 @@
 Imports System.Drawing
 Imports System.Math
+Imports Infragistics.Win.UltraWinGrid
 
 Public Class SOFRTRN1
     Private rowSOTRTRN1 As DataRow
@@ -33,6 +34,8 @@ Public Class SOFRTRN1
 
     Private WHSE_LOC_RFB As String = String.Empty
     Private WHSE_LOC_DST As String = String.Empty
+
+    Private LoopReturnID As String = String.Empty
 
     'DROP TABLE SOTRMAFR CASCADE CONSTRAINTS ; 
 
@@ -127,19 +130,25 @@ Public Class SOFRTRN1
             .Tables("SOTRTRN2").Columns.Add("LINE_SALES", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE,0)")
             .Tables("SOTRTRN2").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE_CURR,0)")
             .Tables("SOTRTRN2").Columns.Add("LINE_COSTS", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(STYLE_COST,0)")
-            .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0)")
+            .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_REFUSED", GetType(System.Int32))
+            .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0) + ISNULL(RTRN_QTY_REFUSED,0)")
             .Tables("SOTRTRN2").Columns.Add("IMPORTED", GetType(System.String))
             .Tables("SOTRTRN2").Columns.Add("SURCHARGE_PERC", GetType(System.Decimal))
             .Tables("SOTRTRN2").Columns.Add("LINE_TARIFF", GetType(System.Decimal)) ', "Round(ISNULL(RTRN_PRICE,0) * (ISNULL(SURCHARGE_PERC,0) / 100), 2) * ISNULL(RTRN_QTY,0)")
             .Tables("SOTRTRN2").Columns.Add("MISC_CHG_CODE", GetType(System.String))
             .Tables("SOTRTRN2").Columns.Add("COUNTRY_CODE", GetType(System.String))
+            .Tables("SOTRTRN2").Columns.Add("REFUND_TAX", GetType(System.Decimal))
+            .Tables("SOTRTRN2").Columns.Add("WEB_RETURN_REASON", GetType(System.String))
+            .Tables("SOTRTRN2").Columns.Add("LINE_ITEM_ID", GetType(System.String))
+            .Tables("SOTRTRN2").Columns.Add("CUST_UPC", GetType(System.String))
 
             Create_TDA(.Tables.Add("SOTRTRN2P"), "SOTRTRN2", "**", 1)
             .Tables("SOTRTRN2P").Columns.Add("RECORD_INDEX", GetType(System.Int32))
             .Tables("SOTRTRN2P").Columns.Add("LINE_SALES", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE,0)")
             .Tables("SOTRTRN2P").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE_CURR,0)")
             .Tables("SOTRTRN2P").Columns.Add("LINE_COSTS", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(STYLE_COST,0)")
-            .Tables("SOTRTRN2P").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0)")
+            .Tables("SOTRTRN2P").Columns.Add("RTRN_QTY_REFUSED", GetType(System.Int32))
+            .Tables("SOTRTRN2P").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0) + ISNULL(RTRN_QTY_REFUSED,0)")
 
             Create_TDA(.Tables.Add("SOTRTRN2_RPT"), "SOTRTRN2", "*")
 
@@ -291,6 +300,18 @@ Public Class SOFRTRN1
             Create_TDA(.Tables.Add, "SOTRMAF2", "**", 1)
             .Tables("SOTRMAF2").Columns.Add("IMPORTED", GetType(System.String))
 
+            ASCMAIN1.sql = "SELECT * FROM SOTRTNL1 WHERE NVL(PROCESS_IND, '0') = '0'"
+            Create_TDA(.Tables.Add, "SOTRTNL1", ASCMAIN1.sql, 0, True)
+
+            ASCMAIN1.sql = "SELECT * FROM SOTRTNL2 WHERE RETURN_ID IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+            Create_TDA(.Tables.Add, "SOTRTNL2", ASCMAIN1.sql, 0, False, "V")
+
+            ASCMAIN1.sql = "SELECT * FROM SOTRTNL3 WHERE RETURN_ID IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+            Create_TDA(.Tables.Add, "SOTRTNL3", ASCMAIN1.sql, 0, False, "V")
+
+            Create_TDA(.Tables.Add, "ECTECOMD", "*")
+            Fill_Records("ECTECOMD", "", True, "Select * from ECTECOMD")
+
         End With
 
         Fill_Records("ARTREAS1")
@@ -319,6 +340,14 @@ Public Class SOFRTRN1
 
         grdSOTORDR2180.DataSource = dst.Tables("SOTORDR2180")
 
+        Create_Relation("SOTRTNL1", "SOTRTNL2", "RETURN_ID", "RETURN_ID")
+        Create_Relation("SOTRTNL1", "SOTRTNL3", "RETURN_ID", "RETURN_ID")
+        grdSOTRTNL1.DataSource = dst.Tables("SOTRTNL1")
+
+        ASCMAIN1.Add_Value_List(grdSOTRTNL1, "REFUND_BEFORE_INSPECTION", , New String() {":", "0:False", "1:True"})
+        ASCMAIN1.Add_Value_List(grdSOTRTNL1, "WAS_PROCESSED", , New String() {":", "0:False", "1:True"})
+        ASCMAIN1.Add_Value_List(grdSOTRTNL1, "MULTI_CURRENCY", , New String() {":", "0:False", "1:True"})
+
         Create_Summary(grdSOTRTRNX, "RTRN_NO", "Count")
         Create_Summary(grdSOTRTRNX, New String() {"RTRN_SALES", "RTRN_COSTS", "RTRN_STAX", "RTRN_FREIGHT", "RTRN_HANDLING", "RTRN_AMOUNT"})
 
@@ -326,7 +355,7 @@ Public Class SOFRTRN1
         Create_Summary(grdSOTRTRNG, "DIST_AMT")
 
         Create_Summary(grdSOTRTRN2, "RTRN_LNO", "Count")
-        Create_Summary(grdSOTRTRN2, New String() {"RTRN_QTY", "RTRN_QTY_1", "RTRN_QTY_2", "RTRN_QTY_3", "LINE_SALES", "LINE_SALES_CURR", "LINE_COSTS", "LINE_TARIFF"})
+        Create_Summary(grdSOTRTRN2, New String() {"RTRN_QTY", "RTRN_QTY_1", "RTRN_QTY_2", "RTRN_QTY_3", "RTRN_QTY_REFUSED", "LINE_SALES", "LINE_SALES_CURR", "LINE_COSTS", "LINE_TARIFF", "REFUND_TAX"})
 
         Create_Summary(grdSOTRTRN3, "RTRN_GNO", "Count")
         Create_Summary(grdSOTRTRN3, "DIST_AMT")
@@ -357,6 +386,16 @@ Public Class SOFRTRN1
 
         ASCMAIN1.Add_Value_List(grdSOTRMAFR, "RA_RTN_STATUS", , New String() {":", "1:Return To Stock", "2:Refurbish", "3:Destroy"})
 
+        For Each grdBand As Infragistics.Win.UltraWinGrid.UltraGridBand In grdSOTRTNL1.DisplayLayout.Bands
+            grdBand.Hidden = False
+            For Each gcol As UltraWinGrid.UltraGridColumn In grdBand.Columns
+                gcol.Hidden = False
+                gcol.Header.Caption = StrConv(gcol.Header.Caption.Replace("_", " "), VbStrConv.ProperCase)
+                gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+            Next
+        Next
+        grdSOTRTNL1.DisplayLayout.PerformAutoResizeColumns(False, UltraWinGrid.PerformAutoSizeType.AllRowsInBand, True)
+        Create_Summary(grdSOTRTNL1, "RETURN_ID", "Count")
 
         grdSOTRTRN0.DisplayLayout.Bands(0).ColHeadersVisible = False
         Set_SEGS(grdSOTRTRN3, "SOTRTRN3")
@@ -374,7 +413,6 @@ Public Class SOFRTRN1
                 .Columns("SALES_DIVISION_CODE").Hidden = True
             End With
         End If
-
 
         ' Setup grdSOTRTRN1P bad 1 to look like grdSOTRTRN2
         For Each grdColumn As Infragistics.Win.UltraWinGrid.UltraGridColumn In grdSOTRTRN1P.DisplayLayout.Bands(1).Columns
@@ -399,6 +437,8 @@ Public Class SOFRTRN1
                 .Columns("RTRN_QTY_1").Header.Caption = "Stock"
                 .Columns("RTRN_QTY_2").Header.Caption = "Refurb"
                 .Columns("RTRN_QTY_3").Header.Caption = "Destroy"
+                .Columns("RTRN_QTY_REFUSED").Header.Caption = "Refused"
+
                 For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                     gcol.Header.Appearance.BackColor = Color.White
                     gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
@@ -406,7 +446,7 @@ Public Class SOFRTRN1
                         gcol.Header.Appearance.BackColor2 = Color.LightGray
                     End If
 
-                    If New String() {"RTRN_QTY", "RTRN_QTY_1", "RTRN_QTY_2", "RTRN_QTY_3"}.Contains(gcol.Key) Then
+                    If New String() {"RTRN_QTY", "RTRN_QTY_1", "RTRN_QTY_2", "RTRN_QTY_3", "RTRN_QTY_REFUSED"}.Contains(gcol.Key) Then
                         gcol.Header.Appearance.BackColor2 = Color.LightBlue
                         If gcol.Key = "RTRN_QTY" Then
                             gcol.CellAppearance.BackColor = Color.LightBlue
@@ -489,12 +529,9 @@ Public Class SOFRTRN1
                 WHSE_LOC_RFB = String.Empty
                 WHSE_LOC_DST = String.Empty
 
-
                 Absx1.txtFor("RA_NO").Text = Absx1.txtFor("RA_NO").Text.Trim
 
-                If ASCMAIN1.CLIENT = "VAN" Then
-                    ' NOT FOR VAN
-                ElseIf Absx1.txtFor("RA_NO").TextLength > 0 Then
+                If Absx1.txtFor("RA_NO").TextLength > 0 Then
                     Dim rowSOTRMAF1 As DataRow = Nothing
 
                     If IsNumeric(Absx1.txtFor("RA_NO").Text) Then
@@ -663,7 +700,7 @@ Public Class SOFRTRN1
                                 ' NO MSGBOX REQUIRED
                             Else
                                 MsgBox("You are entering a Customer Credit involving a 3PL warehouse" _
-                                       & vbCrLf & vbCrLf & "You must choose a reason code that does NOT impact inventory", _
+                                       & vbCrLf & vbCrLf & "You must choose a reason code that does NOT impact inventory",
                                        MsgBoxStyle.OkOnly, "Verification")
                                 '    EMsg &= vbCr & "Warehouse Entered Is A 3PL.  No Adjustments Allowed"
                             End If
@@ -671,6 +708,29 @@ Public Class SOFRTRN1
 
                         WHSE_LOC_RFB = rowICTWHSE1.Item("WHSE_LOC_RFB") & String.Empty
                         WHSE_LOC_DST = rowICTWHSE1.Item("WHSE_LOC_DST") & String.Empty
+                    End If
+                End If
+
+                If EMsg.Length = 0 Then
+                    If ASCMAIN1.CLIENT = "VAN" AndAlso LoopReturnID.Length > 0 Then
+                        If Not ASCMAIN1.Logical_Lock("SOTRTNL1", LoopReturnID) Then
+                            LoopReturnID = String.Empty
+                            Exit Sub
+                        End If
+
+                        ' Verify it is still open
+                        Dim drSOTRTNL1 As DataRow = LookUp("SOTRTNL1", LoopReturnID)
+                        If drSOTRTNL1 Is Nothing Then
+                            EMsg &= vbCr & $"Web Return No ({LoopReturnID}) is invalid."
+                            LoopReturnID = String.Empty
+                            Exit Select
+                        End If
+
+                        If drSOTRTNL1.Item("PROCESS_IND") & String.Empty = "1" Then
+                            EMsg &= vbCr & $"Web Return No ({LoopReturnID}) was already processed."
+                            LoopReturnID = String.Empty
+                            Exit Select
+                        End If
                     End If
                 End If
 
@@ -745,7 +805,7 @@ Public Class SOFRTRN1
                                     ' NO MSGBOX REQUIRED
                                 Else
                                     MsgBox("You are entering a Customer Credit involving a 3PL warehouse" _
-                                           & vbCrLf & vbCrLf & "You must choose a reason code that does NOT impact inventory", _
+                                           & vbCrLf & vbCrLf & "You must choose a reason code that does NOT impact inventory",
                                            MsgBoxStyle.OkOnly, "Verification")
                                     '    EMsg &= vbCr & "Warehouse Entered Is A 3PL.  No Adjustments Allowed"
                                 End If
@@ -791,6 +851,13 @@ Public Class SOFRTRN1
                                     Exit Select
                                 End If
                             End If
+
+                            If Val(rowSOTRTRN2.Item("RTRN_QTY_2") & "") <> 0 Then
+                                If WHSE_LOC_RFB.Length = 0 Then
+                                    EMsg = vbCr & "The warehouse for this return does not have an assigned Refurbish Location."
+                                    Exit Select
+                                End If
+                            End If
                         End If
                     Next
                 End If
@@ -800,7 +867,7 @@ Public Class SOFRTRN1
                 End If
 
                 If dst.Tables("SOTRTRN2").Select("RTRN_PRICE IS NULL").Length <> 0 Then
-                    If MsgBox("Some lines do not have Price, OK to  Continue?", MsgBoxStyle.YesNo, _
+                    If MsgBox("Some lines do not have Price, OK to  Continue?", MsgBoxStyle.YesNo,
                         "Missing prices") = MsgBoxResult.No Then
                         Exit Sub
                     End If
@@ -852,21 +919,33 @@ Public Class SOFRTRN1
                     EMsg = String.Empty
                 End If
 
+                'If EMsg.Length = 0 Then
+                '    If ASCMAIN1.CLIENT = "VAN" AndAlso LoopReturnID.Length > 0 Then
+                '        Absx1.txtFor("RTRN_NOTE").Text = Absx1.txtFor("RTRN_NOTE").Text.Trim
+                '        If Absx1.txtFor("RTRN_NOTE").TextLength = 0 Then
+                '            If dst.Tables("SOTRTRN2").Select("ISNULL(RTRN_QTY_REFUSED,0) > 0").Length <> 0 Then
+                '                EMsg &= vbCr & "When you Refuse Items on the return you must provide a Note."
+                '                Exit Select
+                '            End If
+                '        End If
+                '    End If
+                'End If
+
                 If EMsg.Length = 0 Then
-                    If MessageBox.Show("Do you want to Update this Return?", "Update", _
+                    If MessageBox.Show("Do you want to Update this Return?", "Update",
                                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                         Exit Sub
                     End If
                 End If
 
             Case "Cancel"
-                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo, _
+                If MsgBox("OK to Lose Changes?", MsgBoxStyle.YesNo,
                           "You may have made Changes") = MsgBoxResult.No Then
                     Exit Sub
                 End If
 
             Case "Reverse"
-                If MessageBox.Show("Are you sure you want to reverse this Entry?", "Confirm Reversal", _
+                If MessageBox.Show("Are you sure you want to reverse this Entry?", "Confirm Reversal",
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -879,6 +958,9 @@ Public Class SOFRTRN1
         End Select
 
         If EMsg <> "" Then
+            If eItemKey = "New" Then
+                LoopReturnID = String.Empty
+            End If
             MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
             Exit Sub
         End If
@@ -1041,7 +1123,7 @@ Public Class SOFRTRN1
                 'Set_Read_Only_for_ctl(Absx1.txtFor("WHSE_CODE"), True)
             Else
                 Set_Read_Only_for_ctl(Absx1.dteFor("RTRN_DATE"), False)
-                Set_Read_Only_for_ctl(Absx1.txtFor("WHSE_CODE"), False)
+                Set_Read_Only_for_ctl(Absx1.txtFor("WHSE_CODE"), LoopReturnID.Length > 0)
             End If
 
 
@@ -1124,14 +1206,22 @@ Public Class SOFRTRN1
             End If
         End If
 
+        If LoopReturnID.Length > 0 Then
+            grdSOTRTRN2.DisplayLayout.Bands(0).Columns("RTRN_QTY").CellActivation = Activation.NoEdit
+            grdSOTRTRN2.DisplayLayout.Bands(0).Columns("RTRN_PRICE").CellActivation = Activation.NoEdit
+        Else
+            grdSOTRTRN2.DisplayLayout.Bands(0).Columns("RTRN_QTY").CellActivation = Activation.AllowEdit
+            grdSOTRTRN2.DisplayLayout.Bands(0).Columns("RTRN_PRICE").CellActivation = Activation.AllowEdit
+        End If
     End Sub
 
     Sub Clear_Record()
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"SOTRTRN0", "SOTRTRN1", "SOTRTRN2", "SOTRTRN1P", "SOTRTRN2P", "SOTRTRN3", "SOTINVHH", "SOTINVHX", "ICTIADJ1", "ICTIADJ2", _
-             "SOTORDR2180", "SOTORDR2", "ICTWHSE1", "SOTRTRN2_RPT", "WHTMOVE1", "WHTMOVE2", "SOTRMAF1", "SOTRMAF2"}
+            {"SOTRTRN0", "SOTRTRN1", "SOTRTRN2", "SOTRTRN1P", "SOTRTRN2P", "SOTRTRN3", "SOTINVHH", "SOTINVHX", "ICTIADJ1", "ICTIADJ2",
+             "SOTORDR2180", "SOTORDR2", "ICTWHSE1", "SOTRTRN2_RPT", "WHTMOVE1", "WHTMOVE2", "SOTRMAF1", "SOTRMAF2",
+             "SOTRTNL1", "SOTRTNL2", "SOTRTNL3"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -1165,10 +1255,14 @@ Public Class SOFRTRN1
         INV_NO_RETURNED = ""
         KEY_3PL_RECORD = ""
 
-        Absx1.txtFor("WHSE_CODE").Text = ""
+        txtTrackingNo.Clear()
+        txtReturnId.Clear()
+        LoopReturnID = String.Empty
+
+        Absx1.txtFor("WHSE_CODE").Clear()
         Absx1.dteFor("RTRN_DATE").Value = Format(Now, "MM/dd/yyyy")
         'Absx1.dteFor("RTRN_DATE").Value = Now.Date
-        Absx1.txtFor("RTRN_NO").Text = ""
+        Absx1.txtFor("RTRN_NO").Clear()
 
         optGL.Tag = ""
         priceChange = False
@@ -1190,15 +1284,21 @@ Public Class SOFRTRN1
 
         grdSOTRTRN2.DisplayLayout.Bands(0).Columns("LINE_SALES_CURR").Hidden = True
         grdSOTRTRN2.DisplayLayout.Bands(0).Columns("LINE_SALES").Hidden = False
-
+        grdSOTRTRN2.DisplayLayout.Bands(0).Columns("REFUND_TAX").Hidden = ASCMAIN1.CLIENT <> "VAN"
+        grdSOTRTRN2.DisplayLayout.Bands(0).Columns("WEB_RETURN_REASON").Hidden = ASCMAIN1.CLIENT <> "VAN"
+        grdSOTRTRN2.DisplayLayout.Bands(0).Columns("RTRN_QTY_REFUSED").Hidden = ASCMAIN1.CLIENT <> "VAN"
+        grdSOTRTRN2.DisplayLayout.Bands(0).Columns("CUST_UPC").Hidden = ASCMAIN1.CLIENT <> "VAN"
         grdSOTINVHX.DisplayLayout.Bands(0).Columns("ORDR_UNIT_PRICE_CURR").Hidden = True
         grdSOTINVHX.DisplayLayout.Bands(0).Columns("ORDR_UNIT_PRICE").Hidden = False
+        grdSOTRTRN2.DisplayLayout.Override.AllowAddNew = AllowAddNew.FixedAddRowOnTop
 
         ' must have ths value set to be able to enter a Handling Charge
         Absx1.numFor("RTRN_HANDLING").Enabled = SO_PARM_MISC_CHG_RTN.Length > 0
 
         WHSE_LOC_RFB = String.Empty
         WHSE_LOC_DST = String.Empty
+
+        tab0.Tabs("Web Returns").Visible = ASCMAIN1.CLIENT = "VAN"
 
     End Sub
 
@@ -1355,6 +1455,47 @@ Public Class SOFRTRN1
                     Next
                 End If
 
+            ElseIf ASCMAIN1.CLIENT = "VAN" AndAlso LoopReturnID.Length > 0 Then
+
+                Dim drSOTRTNL1 As DataRow = LookUp("SOTRTNL1", LoopReturnID)
+                rowSOTRTRN1.Item("RTRN_SOURCE_DOC_NO") = LoopReturnID
+                rowSOTRTRN1.Item("CUST_CLAIM_NO") = drSOTRTNL1.Item("PROVIDER_ORDER_NUMBER")
+                rowSOTRTRN1.Item("RTRN_HANDLING") = Val(drSOTRTNL1.Item("HANDLING_FEE") & String.Empty)
+                For Each drSOTRTNL2 As DataRow In dst.Tables("SOTRTNL2").Select($"RETURN_ID = '{LoopReturnID}'", "ORDR_LNO")
+                    Dim ORDR_NO As String = drSOTRTNL2.Item("ORDR_NO") & String.Empty
+                    Dim ORDR_LNO As String = Val(drSOTRTNL2.Item("ORDR_LNO") & String.Empty)
+                    Dim drSOTORDR2 As DataRow = LookUp("SOTORDR2", {ORDR_NO, ORDR_LNO})
+                    If drSOTORDR2 Is Nothing Then
+                        MessageBox.Show($"Cannot locate detail line for Sales Order No {ORDR_NO}, Line No {ORDR_LNO}. Line skipped", "Load Web Return", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Continue For
+                    End If
+
+                    grdSOTRTRN2.DisplayLayout.Bands(0).AddNew()
+                    With grdSOTRTRN2.ActiveRow
+                        .Cells("STYLE_CODE").Value = drSOTORDR2.Item("STYLE_CODE") & String.Empty
+                        .Cells("COLOR_CODE").Value = drSOTORDR2.Item("COLOR_CODE") & String.Empty
+                        .Cells("RTRN_QTY").Value = 1
+                        .Cells("RTRN_QTY_1").Value = 1
+                        .Cells("RTRN_PRICE").Value = Val(drSOTRTNL2.Item("REFUND_ITEM") & String.Empty)
+                        .Cells("RTRN_PRICE_CURR").Value = Val(drSOTRTNL2.Item("REFUND_ITEM") & String.Empty)
+                        .Cells("REFUND_TAX").Value = Val(drSOTRTNL2.Item("TAX") & String.Empty)
+                        .Cells("LINE_ITEM_ID").Value = drSOTRTNL2.Item("LINE_ITEM_ID") & String.Empty
+                        .Cells("CUST_UPC").Value = drSOTORDR2.Item("CUST_UPC") & String.Empty
+
+                        .Cells("ORDR_NO").Value = drSOTRTNL2.Item("ORDR_NO") & String.Empty
+                        .Cells("ORDR_LNO").Value = drSOTRTNL2.Item("ORDR_LNO") & String.Empty
+
+                        If drSOTRTNL2.Item("RETURN_REASON") & String.Empty <> String.Empty Then
+                            .Cells("WEB_RETURN_REASON").Value = drSOTRTNL2.Item("RETURN_REASON") & String.Empty
+                        Else
+                            .Cells("WEB_RETURN_REASON").Value = drSOTRTNL2.Item("PARENT_RETURN_REASON") & String.Empty
+                        End If
+
+                        .Update()
+                    End With
+                Next
+                grdSOTRTRN2.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+
             ElseIf tblSOTINVH2_Ret IsNot Nothing AndAlso preloadInvoiceDetails Then
                 ' If new Load from invoice then load the items
                 grdSOTRTRN2.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.Yes
@@ -1500,8 +1641,8 @@ Public Class SOFRTRN1
                 If ASCMAIN1.CLIENT = "NYA" Then
                     whse_is_a_3PL = False
                 Else
-                    If MsgBox("Do you want to bypass 3PL Integration for this Entry?", _
-                        MsgBoxStyle.YesNo, _
+                    If MsgBox("Do you want to bypass 3PL Integration for this Entry?",
+                        MsgBoxStyle.YesNo,
                         "Option to enter Returns without 3PL Integration") = MsgBoxResult.Yes Then
                         whse_is_a_3PL = False
                     End If
@@ -1770,8 +1911,8 @@ Public Class SOFRTRN1
 
             If location_support Then
                 If Whse_Rtn_no <> "" Then
-                    ASCDATA1.ExecuteSP("WHPLOCB2", "VVV", _
-                    New Object() {"Z", Whse_Rtn_no, ASCMAIN1.SESSION_NO}, _
+                    ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                    New Object() {"Z", Whse_Rtn_no, ASCMAIN1.SESSION_NO},
                     New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
 
                     ASCMAIN1.sql = "Update WHTWRTN1 Set WH_RTN_STATUS = 'F' Where WH_RTN_NO = '" & Whse_Rtn_no & "'"
@@ -1868,19 +2009,40 @@ Public Class SOFRTRN1
 
             CreateAdjustment(Absx1.txtFor("RTRN_NO").Text)
 
+            If ASCMAIN1.CLIENT = "VAN" AndAlso LoopReturnID.Length > 0 Then
+                ASCMAIN1.sql = "UPDATE SOTRTNL1 SET PROCESS_IND = '1', RTRN_NO = :PARM1, INV_NO = :PARM2 WHERE RETURN_ID = :PARM3"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVV", {Absx1.txtFor("RTRN_NO").Text, INV_NO, LoopReturnID})
+
+                For Each drSOTRTRN2 As DataRow In dst.Tables("SOTRTRN2").Select("")
+                    If Val(drSOTRTRN2.Item("RTRN_QTY") & String.Empty) > 0 Then
+                        Dim LINE_ITEM_ID As String = drSOTRTRN2.Item("LINE_ITEM_ID") & String.Empty
+                        Dim RTRN_QTY_REFUSED As Int32 = Val(drSOTRTRN2.Item("RTRN_QTY_REFUSED") & String.Empty)
+                        If LINE_ITEM_ID.Length > 0 AndAlso RTRN_QTY_REFUSED = 0 Then
+                            ASCMAIN1.sql = "UPDATE SOTRTNL2 SET RTRN_QTY = :PARM1 WHERE RETURN_ID = :PARM2 AND LINE_ITEM_ID = :PARM3"
+                            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NVV", {1, LoopReturnID, LINE_ITEM_ID})
+                        End If
+                    End If
+                Next
+            End If
+
             CommitTrans("Update Complete")
 
             ' Create Web Invoices
-            Try
-                ASCMAIN1.Progress("Creating Web Invoice", "")
-                For Each row As DataRow In dst.Tables("SOTINVH1").Select("")
-                    TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))
-                    ' Email Invoice to Sales Rep and Customer.
-                    EmailInvoice(row.Item("INV_TYPE"), row.Item("INV_NO"))
-                Next
-            Catch ex As Exception
+            If ASCMAIN1.CLIENT = "RGI" Then
+                If ASCMAIN1.Running_in_VS Then
+                    Stop
+                End If
+                Try
+                    ASCMAIN1.Progress("Creating Web Invoice", "")
+                    For Each row As DataRow In dst.Tables("SOTINVH1").Select("")
+                        TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))
+                        ' Email Invoice to Sales Rep and Customer.
+                        EmailInvoice(row.Item("INV_TYPE"), row.Item("INV_NO"))
+                    Next
+                Catch ex As Exception
 
-            End Try
+                End Try
+            End If
 
             If ASCMAIN1.CLIENT = "RGI" Then
                 Back_to_Stock_Report(False)
@@ -2002,9 +2164,9 @@ Public Class SOFRTRN1
     End Function
 
     Overrides Sub Prepare_for_View_Lookup_Special _
-        (ByVal ctl As Windows.Forms.Control, _
-         ByVal COLUMN_NAME As String, _
-         Optional ByRef sql_where As String = "", _
+        (ByVal ctl As Windows.Forms.Control,
+         ByVal COLUMN_NAME As String,
+         Optional ByRef sql_where As String = "",
          Optional ByRef Cancel As Boolean = False)
 
         Select Case COLUMN_NAME
@@ -2035,8 +2197,8 @@ Public Class SOFRTRN1
         End Select
     End Sub
 
-    Public Overrides Function Remote_Control( _
-    ByVal command As String, _
+    Public Overrides Function Remote_Control(
+    ByVal command As String,
     Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -2180,6 +2342,7 @@ Public Class SOFRTRN1
         Load_Popup_Menu(grdSOTRMAFR, "SSB", "Show Filter", "Show Voids", "Show Summary")
         Load_Popup_Menu(grdSOTRMAFRS, "SB", "Show Filter", "Show Details")
 
+        Load_Popup_Menu(grdSOTRTNL1, "SSB", "Show Filter", "Show GroupBox", "Track Package")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -2201,15 +2364,19 @@ Public Class SOFRTRN1
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case grd.Name
-            Case "grdSOTINVHH"
+            Case grdSOTINVHH.Name
                 tlb_btn = DirectCast(tlb_pop.Tools("Credit Entire Invoice"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not InquiryMode
 
-            Case "grdSOTRTRN2"
-                tlb_btn = DirectCast(tlb_pop.Tools("Copy Price to All Lines"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "N")
-                tlb_btn = DirectCast(tlb_pop.Tools("Copy All Lines to Negate Inventory Impact"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "N")
+            Case grdSOTRTRN2.Name
+                tlb_btn = DirectCast(tlb_pop.Tools("Copy Price To All Lines"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "N" AndAlso LoopReturnID.Length = 0)
+                tlb_btn = DirectCast(tlb_pop.Tools("Copy All Lines To Negate Inventory Impact"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "N" AndAlso LoopReturnID.Length = 0)
+
+            Case grdSOTRTNL1.Name
+                tlb_btn = DirectCast(tlb_pop.Tools("Track Package"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Enabled = (grdSOTRTNL1.ActiveRow.Band.Key = grdSOTRTNL1.DisplayLayout.Bands(2).Key)
 
         End Select
 
@@ -2289,8 +2456,6 @@ Public Class SOFRTRN1
                 Else
                     splSCANS.Panel2Collapsed = True
                 End If
-
-
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -2298,6 +2463,30 @@ Public Class SOFRTRN1
         End If
 
         Select Case e.Tool.Key
+
+            Case "Track Package"
+                Dim TRACKING_NUMBER As String = grd.ActiveRow.Cells("TRACKING_NUMBER").Value & String.Empty
+                Dim CARRIER As String = (grd.ActiveRow.Cells("CARRIER").Value & String.Empty).ToString.ToUpper
+
+                Dim drSOTCARR1 As DataRow = LookUp("SOTCARR1", CARRIER)
+                If drSOTCARR1 Is Nothing Then
+                    MessageBox.Show($"Unable to track Carrier {CARRIER}.", "Track Package", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                Dim CARRIER_URL_TRACKING As String = drSOTCARR1.Item("CARRIER_URL_TRACKING") & String.Empty
+                If CARRIER_URL_TRACKING.Length = 0 Then
+                    MessageBox.Show($" Carrier {CARRIER} doe not have a TRacking URL.", "Track Package", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                ' update sotcarr1 set carrier_url_tracking = 'https://www.fedex.com/fedextrack/?trknbr=' where carrier_code = 'FEDEX';
+
+                Try
+                    Process.Start(CARRIER_URL_TRACKING & TRACKING_NUMBER)
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, "Track Package", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
 
             Case "Cancel RMA Balance"
                 Dim RA_NO As String = grd.ActiveRow.Cells("RA_NO").Value & String.Empty
@@ -2511,10 +2700,11 @@ Public Class SOFRTRN1
     Public Overrides Sub num_ValueChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
         MyBase.num_ValueChanged(sender, e)
         Select Case Absx1.GetABSColumnName(sender)
-            Case "RTRN_SALES", "RTRN_FREIGHT", "RTRN_HANDLING"
+            Case "RTRN_SALES", "RTRN_FREIGHT", "RTRN_HANDLING", "RTRN_STAX"
                 Absx1.numFor("RTRN_AMOUNT").Value _
                     = Val(Absx1.numFor("RTRN_SALES").Value & "") _
                     + Val(Absx1.numFor("RTRN_FREIGHT").Value & "") _
+                    + Val(Absx1.numFor("RTRN_STAX").Value & "") _
                     + Val(Absx1.numFor("RTRN_HANDLING").Value & "")
         End Select
     End Sub
@@ -2591,7 +2781,7 @@ Public Class SOFRTRN1
                         ORDR_UNIT_PRICE_CALC = dst.Tables("SOTINVHX").Compute("MIN(ORDR_UNIT_PRICE)", "STYLE_CODE = '" & STYLE_CODE & "' AND COLOR_CODE = '" & COLOR_CODE & "'")
                     Else
                         ORDR_UNIT_PRICE_CALC = TAC.SOCMAIN1.Price_Line(Me, HFs("CUST_CODE"), rowARTCUST1,
-                                    grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE").Value & "", _
+                                    grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE").Value & "",
                                     grdSOTRTRN2.ActiveRow.Cells("COLOR_CODE").Value & "",
                                     Val(grdSOTRTRN2.ActiveRow.Cells("RTRN_QTY").Value & ""), ORDR_PRICE_SOURCE)
 
@@ -2618,7 +2808,7 @@ Public Class SOFRTRN1
 
     Private Sub grdSOTRTRN2_AfterRowActivate(ByVal sender As Object, ByVal e As System.EventArgs) Handles grdSOTRTRN2.AfterRowActivate
         With grdSOTRTRN2.DisplayLayout.Bands(0)
-            If grdSOTRTRN2.ActiveRow.IsAddRow And (Not whse_is_a_3PL Or KEY_3PL_RECORD = "") Then
+            If grdSOTRTRN2.ActiveRow.IsAddRow AndAlso (Not whse_is_a_3PL Or KEY_3PL_RECORD = "") AndAlso LoopReturnID.Length = 0 Then
                 .Columns("STYLE_CODE").CellActivation = UltraWinGrid.Activation.AllowEdit
                 .Columns("COLOR_CODE").CellActivation = UltraWinGrid.Activation.AllowEdit
                 grdSOTRTRN2.ActiveCell = grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE")
@@ -2629,7 +2819,7 @@ Public Class SOFRTRN1
             End If
         End With
 
-        If EntryMode = "N" And Not grdSOTRTRN2.ActiveRow.IsAddRow Then
+        If EntryMode = "N" AndAlso Not grdSOTRTRN2.ActiveRow.IsAddRow AndAlso LoopReturnID.Length = 0 Then
             Load_SOTINVHX(grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE").Value)
             Dim row As DataRow = dst.Tables("SOTINVHMR").Select($"STYLE_CODE = '{grdSOTRTRN2.ActiveRow.Cells("STYLE_CODE").Value}'").FirstOrDefault
             If row IsNot Nothing Then
@@ -2691,7 +2881,7 @@ Public Class SOFRTRN1
                             e.Cancel = True
                         End If
                         If Not e.Cancel Then
-                            cdr = LookUp("ICTSTYC1", New String() {.Row.Cells("STYLE_CODE").Value, .Text})
+                            cdr = LookUp("ICTSTYC1", New String() { .Row.Cells("STYLE_CODE").Value, .Text})
                             If cdr Is Nothing Then
                                 ASCMAIN1.Progress("Color Code (" & .Text & ") not set up with Style (" & .Row.Cells("STYLE_CODE").Value & ")")
                                 If .Value IsNot Nothing Then
@@ -2765,7 +2955,7 @@ Public Class SOFRTRN1
             Else
                 LookUp("ICTSTYL1", e.Row.Cells("STYLE_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
@@ -2777,14 +2967,14 @@ Public Class SOFRTRN1
             Else
                 LookUp("ICTCOLR1", e.Row.Cells("COLOR_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Color Code (" & e.Row.Cells("COLOR_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for Color Code (" & e.Row.Cells("COLOR_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
                 If Not e.Cancel Then
                     LookUp("ICTSTYC1", New String() {e.Row.Cells("STYLE_CODE").Text, e.Row.Cells("COLOR_CODE").Text})
                     If cdr Is Nothing Then
-                        MsgBox("Color Code (" & e.Row.Cells("COLOR_CODE").Text & ") not set up for Style (" & e.Row.Cells("STYLE_CODE").Text & ")", _
+                        MsgBox("Color Code (" & e.Row.Cells("COLOR_CODE").Text & ") not set up for Style (" & e.Row.Cells("STYLE_CODE").Text & ")",
                                    MsgBoxStyle.OkOnly, "Cannot Update Row")
                         e.Cancel = True
                     End If
@@ -2798,7 +2988,7 @@ Public Class SOFRTRN1
             Else
                 LookUp("SOTREASV", e.Row.Cells("RTV_REASON_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for RTV Reason Code (" & e.Row.Cells("RTV_REASON_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for RTV Reason Code (" & e.Row.Cells("RTV_REASON_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
@@ -3001,6 +3191,18 @@ Public Class SOFRTRN1
 #End Region
 
 #Region "Form Controls"
+
+    Private Sub grdSOTRTNL1_DoubleClickRow(sender As Object, e As DoubleClickRowEventArgs) Handles grdSOTRTNL1.DoubleClickRow
+
+        LoopReturnID = String.Empty
+
+        If Not e.Row.IsDataRow Then
+            Exit Sub
+        End If
+
+        Dim RETURN_ID As String = e.Row.Cells("RETURN_ID").Value & String.Empty
+        LookUpReturn(RefundLookupTypes.ReturnID, RETURN_ID)
+    End Sub
 
     Private Sub grdSOTRTRNX_DoubleClickRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdSOTRTRNX.DoubleClickRow
         If e.Row.IsDataRow Then
@@ -3394,8 +3596,8 @@ Public Class SOFRTRN1
 
         If location_support Then
 
-            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV", _
-                     New Object() {"A", rowICTIADJ1.Item("ADJ_NO"), ASCMAIN1.SESSION_NO}, _
+            ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
+                     New Object() {"A", rowICTIADJ1.Item("ADJ_NO"), ASCMAIN1.SESSION_NO},
                      New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
         End If
 
@@ -3483,6 +3685,11 @@ Public Class SOFRTRN1
 
         Dim RTRN_COSTS As Decimal = Val(dst.Tables("SOTRTRN2").Compute("SUM(LINE_COSTS)", "") & "")
         Absx1.numFor("RTRN_COSTS").Value = RTRN_COSTS
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Dim REFUND_TAX As Decimal = Val(dst.Tables("SOTRTRN2").Compute("SUM(REFUND_TAX)", "") & "")
+            Absx1.numFor("RTRN_STAX").Value = REFUND_TAX
+        End If
     End Sub
 
     Sub Show_GL()
@@ -3507,7 +3714,7 @@ Public Class SOFRTRN1
                 For Each rowA234 As DataRow In ASCDATA1.SelectDistinct _
                 ("SOTRTRN3", New String() {"ACCT_CODE", "SEG2_CODE", "SEG3_CODE", "SEG4_CODE", "ACCT_DESC"}).Rows
                     Dim DIST_AMT As Decimal = dst.Tables("SOTRTRN3").Compute _
-                    ("SUM(DIST_AMT)", _
+                    ("SUM(DIST_AMT)",
                      "ACCT_CODE = '" & rowA234.Item("ACCT_CODE") & "' and SEG2_CODE = '" & rowA234.Item("SEG2_CODE") & "' and SEG3_CODE = '" & rowA234.Item("SEG3_CODE") & "' and SEG4_CODE = '" & rowA234.Item("SEG4_CODE") & "'")
                     Dim row As DataRow = tbl.NewRow
                     row.Item("RTRN_NO") = Absx1.txtFor("RTRN_NO").Text
@@ -3538,6 +3745,25 @@ Public Class SOFRTRN1
             Fill_Records("SOTRTRNG", YP)
             grdSOTRTRN3.Text = "Entered in " & cbeYP.Text
         End If
+
+        If ASCMAIN1.CLIENT = "VAN" Then
+            EnforceConstraints(False)
+            dst.Tables("SOTRTNL3").Rows.Clear()
+            dst.Tables("SOTRTNL2").Rows.Clear()
+            dst.Tables("SOTRTNL1").Rows.Clear()
+
+            Fill_Records("SOTRTNL1")
+            If dst.Tables("SOTRTNL1").Rows.Count > 0 Then
+                Dim lstReturnIds As New List(Of String)
+                For Each drSOTRTNL1 As DataRow In dst.Tables("SOTRTNL1").Select("")
+                    lstReturnIds.Add(drSOTRTNL1.Item("RETURN_ID"))
+                Next
+                Fill_Records("SOTRTNL2", {String.Join(",", lstReturnIds.ToArray)})
+                Fill_Records("SOTRTNL3", {String.Join(",", lstReturnIds.ToArray)})
+            End If
+            EnforceConstraints(True)
+        End If
+
     End Sub
 
     Sub Setup_tab0_GL()
@@ -4115,8 +4341,8 @@ Public Class SOFRTRN1
             End Select
 
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, _
-                    SUBJECT, EMAIL_KEY, _
+                   (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                    SUBJECT, EMAIL_KEY,
                     True, False, CUST_CODE, rowARTCUST1.Item("CUST_NAME"), "Customer")
 
 
@@ -4140,6 +4366,115 @@ Public Class SOFRTRN1
 
     End Function
 
+    Private Sub txtTrackingNo_KeyDown(sender As Object, e As KeyEventArgs) Handles txtTrackingNo.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+
+            LoopReturnID = String.Empty
+            Dim TRACKING_NUMBER As String = txtTrackingNo.Text.Trim
+
+            If TRACKING_NUMBER.Length = 0 Then
+                Exit Sub
+            End If
+
+            LookUpReturn(RefundLookupTypes.TrackingNumber, TRACKING_NUMBER)
+        End If
+    End Sub
+
+    Private Sub txtReturnId_KeyDown(sender As Object, e As KeyEventArgs) Handles txtReturnId.KeyDown
+        If e.KeyCode = Keys.Enter Then
+            e.SuppressKeyPress = True
+
+            LoopReturnID = String.Empty
+            Dim RETURN_ID As String = txtReturnId.Text.Trim
+
+            If RETURN_ID.Length = 0 Then
+                Exit Sub
+            End If
+
+            LookUpReturn(RefundLookupTypes.ReturnID, RETURN_ID)
+        End If
+    End Sub
+
+    Private Enum RefundLookupTypes
+        ReturnID
+        TrackingNumber
+    End Enum
+
+    Private Sub LookUpReturn(lookupType As RefundLookupTypes, inValue As String)
+
+        Try
+            LoopReturnID = String.Empty
+            Select Case lookupType
+                Case RefundLookupTypes.ReturnID
+                    ASCMAIN1.sql = "SELECT RETURN_ID FROM SOTRTNL1 WHERE RETURN_ID = :PARM1"
+
+                Case RefundLookupTypes.TrackingNumber
+                    ASCMAIN1.sql = "SELECT MAX(RETURN_ID) RETURN_ID FROM SOTRTNL3 WHERE :PARM1 LIKE '%' ||TRACKING_NUMBER"
+            End Select
+
+            Dim RETURN_ID As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", {inValue}) & String.Empty
+
+            If RETURN_ID.Length = 0 Then
+                MessageBox.Show("Cannot locate the Web Return.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim drSOTRTNL1 As DataRow = LookUp("SOTRTNL1", RETURN_ID)
+            If drSOTRTNL1 Is Nothing Then
+                MessageBox.Show("Cannot locate the Web Return.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            If drSOTRTNL1.Item("PROCESS_IND") & String.Empty = "1" Then
+                MessageBox.Show($"Web Return {RETURN_ID} was already processed.", "Search", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Dim tbl As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTRTNL3 WHERE RETURN_ID = :PARM1", "", "V", {RETURN_ID})
+            If tbl.Rows.Count > 1 Then
+                MessageBox.Show($"This return should have {tbl.Rows.Count} cartons.", "Search Tracking No", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+
+            LoopReturnID = RETURN_ID
+            Dim ORDR_NO As String = drSOTRTNL1.Item("ORDR_NO") & String.Empty
+
+            Dim drECTECOMD As DataRow = dst.Tables("ECTECOMD").Rows.Find("SHOPIFY")
+            If drECTECOMD Is Nothing Then
+                MessageBox.Show($"Cannot locate attributes for Ecommerce Partner SHOPIFY", "Process Return", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Exit Sub
+            End If
+
+            Absx1.txtFor("CUST_CODE").Text = drECTECOMD.Item("ECOM_CUST_CODE") & String.Empty
+            Absx1.txtFor("WHSE_CODE").Text = drECTECOMD.Item("ECOM_WHSE_CODE") & String.Empty
+
+            If IsDate(drSOTRTNL1.Item("CREATED_AT") & String.Empty) Then
+                Absx1.dteFor("RTRN_DATE").Value = CDate(drSOTRTNL1.Item("CREATED_AT") & String.Empty).ToShortDateString
+            Else
+                Absx1.dteFor("RTRN_DATE").Value = DateTime.Now.ToShortDateString
+            End If
+            LoopReturnID = RETURN_ID
+
+            Click_Command("New")
+            If LoopReturnID.Length > 0 Then
+                Absx1.txtFor("CUST_STORE_NO").Value = drECTECOMD.Item("ECOM_CUST_ADDR_CODE") & String.Empty
+                'If ORDR_NO.Length > 0 Then
+                '    Absx1.txtFor("RTRN_NOTE").Value = $"Sales Order No: {ORDR_NO}"
+                'End If
+                Absx1.txtFor("REASON_CODE").Value = "RTN"
+                DisplayTotals()
+                grdSOTRTRN2.DisplayLayout.Override.AllowAddNew = AllowAddNew.No
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show($"Error {ex.Message}", "Locate Web Refund", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            LoopReturnID = String.Empty
+        Finally
+            txtTrackingNo.Clear()
+            txtReturnId.Clear()
+        End Try
+
+    End Sub
 
 #End Region
 
