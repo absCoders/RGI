@@ -2374,8 +2374,8 @@ Public Class ICCMAIN1
 
         Dim INV_NO As String = ""
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
-            'INV_NO = ASCMAIN1.Next_Control_No("INV_NO_01")
-            INV_NO = rowSOTRTRN1.Item("RTRN_NO")
+            INV_NO = ASCMAIN1.Next_Control_No("INV_NO_01")
+            'INV_NO = rowSOTRTRN1.Item("RTRN_NO")
         Else
             INV_NO = ASCMAIN1.Next_Control_No("SOTINVH1.INV_NO")
         End If
