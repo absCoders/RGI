@@ -44,24 +44,24 @@ Partial Class SOFATTR2
         Dim Appearance99 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance100 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance101 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance102 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem2 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance7 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance8 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance9 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance103 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance104 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance105 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance106 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance107 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance108 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance109 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance110 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem11 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance10 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance11 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance12 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance111 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance112 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance113 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand2 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ICTATTR1", -1)
         Dim UltraGridColumn3 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ATTR_CODE")
@@ -238,10 +238,10 @@ Partial Class SOFATTR2
         Dim Appearance72 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem26 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem27 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance73 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance114 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem9 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem10 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance74 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance115 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -249,12 +249,12 @@ Partial Class SOFATTR2
         Dim ValueListItem23 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem24 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem25 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim Appearance75 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance76 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance77 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance78 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance79 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance80 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance116 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance117 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance118 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance119 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance120 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance121 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab1 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab3 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
@@ -374,6 +374,7 @@ Partial Class SOFATTR2
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.UltraGroupBox2 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnCatelog = New System.Windows.Forms.Button()
         Me.btnAllActive = New System.Windows.Forms.Button()
         Me.btnSelectClass = New System.Windows.Forms.Button()
         Me.btnAllDiscontinued = New System.Windows.Forms.Button()
@@ -647,10 +648,10 @@ Partial Class SOFATTR2
         'chkWebImages
         '
         Me.chkWebImages.ABSChecked = "1"
-        Appearance1.BackColor = System.Drawing.Color.Transparent
-        Appearance1.BackColor2 = System.Drawing.Color.Transparent
-        Appearance1.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkWebImages.Appearance = Appearance1
+        Appearance102.BackColor = System.Drawing.Color.Transparent
+        Appearance102.BackColor2 = System.Drawing.Color.Transparent
+        Appearance102.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkWebImages.Appearance = Appearance102
         Me.chkWebImages.BackColor = System.Drawing.Color.Transparent
         Me.chkWebImages.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkWebImages.Checked = True
@@ -682,10 +683,10 @@ Partial Class SOFATTR2
         'chkDefaultColor
         '
         Me.chkDefaultColor.ABSChecked = "1"
-        Appearance2.BackColor = System.Drawing.Color.Transparent
-        Appearance2.BackColor2 = System.Drawing.Color.Transparent
-        Appearance2.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkDefaultColor.Appearance = Appearance2
+        Appearance103.BackColor = System.Drawing.Color.Transparent
+        Appearance103.BackColor2 = System.Drawing.Color.Transparent
+        Appearance103.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkDefaultColor.Appearance = Appearance103
         Me.chkDefaultColor.BackColor = System.Drawing.Color.Transparent
         Me.chkDefaultColor.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkDefaultColor.CheckAlign = System.Drawing.ContentAlignment.TopLeft
@@ -710,10 +711,10 @@ Partial Class SOFATTR2
         '
         'chkDiscSheets
         '
-        Appearance3.BackColor = System.Drawing.Color.Transparent
-        Appearance3.BackColor2 = System.Drawing.Color.Transparent
-        Appearance3.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkDiscSheets.Appearance = Appearance3
+        Appearance104.BackColor = System.Drawing.Color.Transparent
+        Appearance104.BackColor2 = System.Drawing.Color.Transparent
+        Appearance104.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkDiscSheets.Appearance = Appearance104
         Me.chkDiscSheets.BackColor = System.Drawing.Color.Transparent
         Me.chkDiscSheets.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkDiscSheets.Location = New System.Drawing.Point(6, 191)
@@ -752,10 +753,10 @@ Partial Class SOFATTR2
         '
         'chkLongColors
         '
-        Appearance4.BackColor = System.Drawing.Color.Transparent
-        Appearance4.BackColor2 = System.Drawing.Color.Transparent
-        Appearance4.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkLongColors.Appearance = Appearance4
+        Appearance105.BackColor = System.Drawing.Color.Transparent
+        Appearance105.BackColor2 = System.Drawing.Color.Transparent
+        Appearance105.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkLongColors.Appearance = Appearance105
         Me.chkLongColors.BackColor = System.Drawing.Color.Transparent
         Me.chkLongColors.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkLongColors.Location = New System.Drawing.Point(6, 175)
@@ -767,10 +768,10 @@ Partial Class SOFATTR2
         'chkSTYLE_COLOR_STATUS_N
         '
         Me.chkSTYLE_COLOR_STATUS_N.ABSChecked = "1"
-        Appearance5.BackColor = System.Drawing.Color.Transparent
-        Appearance5.BackColor2 = System.Drawing.Color.Transparent
-        Appearance5.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkSTYLE_COLOR_STATUS_N.Appearance = Appearance5
+        Appearance106.BackColor = System.Drawing.Color.Transparent
+        Appearance106.BackColor2 = System.Drawing.Color.Transparent
+        Appearance106.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkSTYLE_COLOR_STATUS_N.Appearance = Appearance106
         Me.chkSTYLE_COLOR_STATUS_N.BackColor = System.Drawing.Color.Transparent
         Me.chkSTYLE_COLOR_STATUS_N.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkSTYLE_COLOR_STATUS_N.Checked = True
@@ -783,10 +784,10 @@ Partial Class SOFATTR2
         '
         'chkGroupBySize
         '
-        Appearance6.BackColor = System.Drawing.Color.Transparent
-        Appearance6.BackColor2 = System.Drawing.Color.Transparent
-        Appearance6.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkGroupBySize.Appearance = Appearance6
+        Appearance107.BackColor = System.Drawing.Color.Transparent
+        Appearance107.BackColor2 = System.Drawing.Color.Transparent
+        Appearance107.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkGroupBySize.Appearance = Appearance107
         Me.chkGroupBySize.BackColor = System.Drawing.Color.Transparent
         Me.chkGroupBySize.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkGroupBySize.Location = New System.Drawing.Point(6, 158)
@@ -798,10 +799,10 @@ Partial Class SOFATTR2
         'chkSTYLE_COLOR_STATUS_D
         '
         Me.chkSTYLE_COLOR_STATUS_D.ABSChecked = "1"
-        Appearance7.BackColor = System.Drawing.Color.Transparent
-        Appearance7.BackColor2 = System.Drawing.Color.Transparent
-        Appearance7.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkSTYLE_COLOR_STATUS_D.Appearance = Appearance7
+        Appearance108.BackColor = System.Drawing.Color.Transparent
+        Appearance108.BackColor2 = System.Drawing.Color.Transparent
+        Appearance108.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkSTYLE_COLOR_STATUS_D.Appearance = Appearance108
         Me.chkSTYLE_COLOR_STATUS_D.BackColor = System.Drawing.Color.Transparent
         Me.chkSTYLE_COLOR_STATUS_D.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkSTYLE_COLOR_STATUS_D.Checked = True
@@ -815,10 +816,10 @@ Partial Class SOFATTR2
         'chkSTYLE_COLOR_STATUS_A
         '
         Me.chkSTYLE_COLOR_STATUS_A.ABSChecked = "1"
-        Appearance8.BackColor = System.Drawing.Color.Transparent
-        Appearance8.BackColor2 = System.Drawing.Color.Transparent
-        Appearance8.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkSTYLE_COLOR_STATUS_A.Appearance = Appearance8
+        Appearance109.BackColor = System.Drawing.Color.Transparent
+        Appearance109.BackColor2 = System.Drawing.Color.Transparent
+        Appearance109.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkSTYLE_COLOR_STATUS_A.Appearance = Appearance109
         Me.chkSTYLE_COLOR_STATUS_A.BackColor = System.Drawing.Color.Transparent
         Me.chkSTYLE_COLOR_STATUS_A.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkSTYLE_COLOR_STATUS_A.Checked = True
@@ -832,10 +833,10 @@ Partial Class SOFATTR2
         'chkAttachZip
         '
         Me.chkAttachZip.ABSChecked = "1"
-        Appearance9.BackColor = System.Drawing.Color.Transparent
-        Appearance9.BackColor2 = System.Drawing.Color.Transparent
-        Appearance9.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkAttachZip.Appearance = Appearance9
+        Appearance110.BackColor = System.Drawing.Color.Transparent
+        Appearance110.BackColor2 = System.Drawing.Color.Transparent
+        Appearance110.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkAttachZip.Appearance = Appearance110
         Me.chkAttachZip.BackColor = System.Drawing.Color.Transparent
         Me.chkAttachZip.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkAttachZip.Checked = True
@@ -866,10 +867,10 @@ Partial Class SOFATTR2
         'chkSTYLE_STATUS_N
         '
         Me.chkSTYLE_STATUS_N.ABSChecked = "1"
-        Appearance10.BackColor = System.Drawing.Color.Transparent
-        Appearance10.BackColor2 = System.Drawing.Color.Transparent
-        Appearance10.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkSTYLE_STATUS_N.Appearance = Appearance10
+        Appearance111.BackColor = System.Drawing.Color.Transparent
+        Appearance111.BackColor2 = System.Drawing.Color.Transparent
+        Appearance111.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkSTYLE_STATUS_N.Appearance = Appearance111
         Me.chkSTYLE_STATUS_N.BackColor = System.Drawing.Color.Transparent
         Me.chkSTYLE_STATUS_N.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkSTYLE_STATUS_N.Checked = True
@@ -883,10 +884,10 @@ Partial Class SOFATTR2
         'chkSTYLE_STATUS_D
         '
         Me.chkSTYLE_STATUS_D.ABSChecked = "1"
-        Appearance11.BackColor = System.Drawing.Color.Transparent
-        Appearance11.BackColor2 = System.Drawing.Color.Transparent
-        Appearance11.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkSTYLE_STATUS_D.Appearance = Appearance11
+        Appearance112.BackColor = System.Drawing.Color.Transparent
+        Appearance112.BackColor2 = System.Drawing.Color.Transparent
+        Appearance112.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkSTYLE_STATUS_D.Appearance = Appearance112
         Me.chkSTYLE_STATUS_D.BackColor = System.Drawing.Color.Transparent
         Me.chkSTYLE_STATUS_D.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkSTYLE_STATUS_D.Checked = True
@@ -900,10 +901,10 @@ Partial Class SOFATTR2
         'chkSTYLE_STATUS_A
         '
         Me.chkSTYLE_STATUS_A.ABSChecked = "1"
-        Appearance12.BackColor = System.Drawing.Color.Transparent
-        Appearance12.BackColor2 = System.Drawing.Color.Transparent
-        Appearance12.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkSTYLE_STATUS_A.Appearance = Appearance12
+        Appearance113.BackColor = System.Drawing.Color.Transparent
+        Appearance113.BackColor2 = System.Drawing.Color.Transparent
+        Appearance113.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkSTYLE_STATUS_A.Appearance = Appearance113
         Me.chkSTYLE_STATUS_A.BackColor = System.Drawing.Color.Transparent
         Me.chkSTYLE_STATUS_A.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkSTYLE_STATUS_A.Checked = True
@@ -1941,10 +1942,10 @@ Partial Class SOFATTR2
         'chkPVC
         '
         Me.chkPVC.ABSChecked = "1"
-        Appearance73.BackColor = System.Drawing.Color.Transparent
-        Appearance73.BackColor2 = System.Drawing.Color.Transparent
-        Appearance73.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPVC.Appearance = Appearance73
+        Appearance114.BackColor = System.Drawing.Color.Transparent
+        Appearance114.BackColor2 = System.Drawing.Color.Transparent
+        Appearance114.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPVC.Appearance = Appearance114
         Me.chkPVC.BackColor = System.Drawing.Color.Transparent
         Me.chkPVC.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPVC.Checked = True
@@ -2013,10 +2014,10 @@ Partial Class SOFATTR2
         'chkNonPVC
         '
         Me.chkNonPVC.ABSChecked = "1"
-        Appearance74.BackColor = System.Drawing.Color.Transparent
-        Appearance74.BackColor2 = System.Drawing.Color.Transparent
-        Appearance74.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkNonPVC.Appearance = Appearance74
+        Appearance115.BackColor = System.Drawing.Color.Transparent
+        Appearance115.BackColor2 = System.Drawing.Color.Transparent
+        Appearance115.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkNonPVC.Appearance = Appearance115
         Me.chkNonPVC.BackColor = System.Drawing.Color.Transparent
         Me.chkNonPVC.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkNonPVC.Checked = True
@@ -2146,10 +2147,10 @@ Partial Class SOFATTR2
         '
         'chkPB4
         '
-        Appearance75.BackColor = System.Drawing.Color.Transparent
-        Appearance75.BackColor2 = System.Drawing.Color.Transparent
-        Appearance75.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPB4.Appearance = Appearance75
+        Appearance116.BackColor = System.Drawing.Color.Transparent
+        Appearance116.BackColor2 = System.Drawing.Color.Transparent
+        Appearance116.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPB4.Appearance = Appearance116
         Me.chkPB4.BackColor = System.Drawing.Color.Transparent
         Me.chkPB4.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPB4.Location = New System.Drawing.Point(6, 84)
@@ -2160,10 +2161,10 @@ Partial Class SOFATTR2
         '
         'chkPB3
         '
-        Appearance76.BackColor = System.Drawing.Color.Transparent
-        Appearance76.BackColor2 = System.Drawing.Color.Transparent
-        Appearance76.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPB3.Appearance = Appearance76
+        Appearance117.BackColor = System.Drawing.Color.Transparent
+        Appearance117.BackColor2 = System.Drawing.Color.Transparent
+        Appearance117.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPB3.Appearance = Appearance117
         Me.chkPB3.BackColor = System.Drawing.Color.Transparent
         Me.chkPB3.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPB3.Location = New System.Drawing.Point(6, 60)
@@ -2174,10 +2175,10 @@ Partial Class SOFATTR2
         '
         'chkPB2
         '
-        Appearance77.BackColor = System.Drawing.Color.Transparent
-        Appearance77.BackColor2 = System.Drawing.Color.Transparent
-        Appearance77.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPB2.Appearance = Appearance77
+        Appearance118.BackColor = System.Drawing.Color.Transparent
+        Appearance118.BackColor2 = System.Drawing.Color.Transparent
+        Appearance118.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPB2.Appearance = Appearance118
         Me.chkPB2.BackColor = System.Drawing.Color.Transparent
         Me.chkPB2.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPB2.Location = New System.Drawing.Point(6, 36)
@@ -2188,10 +2189,10 @@ Partial Class SOFATTR2
         '
         'chkPB1
         '
-        Appearance78.BackColor = System.Drawing.Color.Transparent
-        Appearance78.BackColor2 = System.Drawing.Color.Transparent
-        Appearance78.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPB1.Appearance = Appearance78
+        Appearance119.BackColor = System.Drawing.Color.Transparent
+        Appearance119.BackColor2 = System.Drawing.Color.Transparent
+        Appearance119.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPB1.Appearance = Appearance119
         Me.chkPB1.BackColor = System.Drawing.Color.Transparent
         Me.chkPB1.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPB1.Location = New System.Drawing.Point(6, 12)
@@ -2202,10 +2203,10 @@ Partial Class SOFATTR2
         '
         'chkPBFE
         '
-        Appearance79.BackColor = System.Drawing.Color.Transparent
-        Appearance79.BackColor2 = System.Drawing.Color.Transparent
-        Appearance79.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPBFE.Appearance = Appearance79
+        Appearance120.BackColor = System.Drawing.Color.Transparent
+        Appearance120.BackColor2 = System.Drawing.Color.Transparent
+        Appearance120.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPBFE.Appearance = Appearance120
         Me.chkPBFE.BackColor = System.Drawing.Color.Transparent
         Me.chkPBFE.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPBFE.Location = New System.Drawing.Point(203, 22)
@@ -2217,10 +2218,10 @@ Partial Class SOFATTR2
         'chkPBSTANDARD
         '
         Me.chkPBSTANDARD.ABSChecked = "1"
-        Appearance80.BackColor = System.Drawing.Color.Transparent
-        Appearance80.BackColor2 = System.Drawing.Color.Transparent
-        Appearance80.BackColorAlpha = Infragistics.Win.Alpha.Transparent
-        Me.chkPBSTANDARD.Appearance = Appearance80
+        Appearance121.BackColor = System.Drawing.Color.Transparent
+        Appearance121.BackColor2 = System.Drawing.Color.Transparent
+        Appearance121.BackColorAlpha = Infragistics.Win.Alpha.Transparent
+        Me.chkPBSTANDARD.Appearance = Appearance121
         Me.chkPBSTANDARD.BackColor = System.Drawing.Color.Transparent
         Me.chkPBSTANDARD.BackColorInternal = System.Drawing.Color.Transparent
         Me.chkPBSTANDARD.Checked = True
@@ -2465,6 +2466,7 @@ Partial Class SOFATTR2
         '
         'UltraGroupBox2
         '
+        Me.UltraGroupBox2.Controls.Add(Me.btnCatelog)
         Me.UltraGroupBox2.Controls.Add(Me.btnAllActive)
         Me.UltraGroupBox2.Controls.Add(Me.btnSelectClass)
         Me.UltraGroupBox2.Controls.Add(Me.btnAllDiscontinued)
@@ -2473,6 +2475,15 @@ Partial Class SOFATTR2
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
         Me.UltraGroupBox2.Size = New System.Drawing.Size(1033, 78)
         Me.UltraGroupBox2.TabIndex = 1
+        '
+        'btnCatelog
+        '
+        Me.btnCatelog.Location = New System.Drawing.Point(533, 46)
+        Me.btnCatelog.Name = "btnCatelog"
+        Me.btnCatelog.Size = New System.Drawing.Size(170, 29)
+        Me.btnCatelog.TabIndex = 199
+        Me.btnCatelog.Text = "Catalog Page"
+        Me.btnCatelog.UseVisualStyleBackColor = True
         '
         'btnAllActive
         '
@@ -2764,4 +2775,5 @@ Partial Class SOFATTR2
     Friend WithEvents txtPRCG_DESC As TextBox
     Friend WithEvents Label3 As Label
     Friend WithEvents btnAllActive As Button
+    Friend WithEvents btnCatelog As Button
 End Class

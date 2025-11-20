@@ -1831,7 +1831,8 @@ Public Class SOFATTR2
                     Optional ByVal Load_from_Excel As Boolean = False,
                     Optional Style_List As List(Of String) = Nothing,
                     Optional Color_List As List(Of String) = Nothing,
-                    Optional AllActive As Boolean = False)
+                    Optional AllActive As Boolean = False,
+                    Optional PAGE_CODE As String = "")
         Dim QD As String = ""
         Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
         'STYLE_CLASS_CODE = Absx1.txtFor("STYLE_CLASS_CODE").Text
@@ -2009,101 +2010,125 @@ Public Class SOFATTR2
                         '& "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
                     End If
                 Else
-                    'If SCCs(0) = "ALL" Then
-                    '    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE <> 'ALL'" & vbCrLf
-                    'Else
-                    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE IN (" & SCC_IN & ")" & vbCrLf
-                    'End If
-
-                    If Not chkSTYLE_STATUS_A.Checked Or Not chkSTYLE_STATUS_N.Checked Or Not chkSTYLE_STATUS_D.Checked Then
-                        Dim STATUS_CODEs As String = ""
-                        If chkSTYLE_STATUS_A.Checked Then STATUS_CODEs &= ",'A'"
-                        If chkSTYLE_STATUS_N.Checked Then STATUS_CODEs &= ",'N'"
-                        If chkSTYLE_STATUS_D.Checked Then STATUS_CODEs &= ",'D'"
-                        If STATUS_CODEs = "" Then
-                            MsgBox("Cannot Find Style if No Status is Selected", MsgBoxStyle.OkOnly, "Cannot Peform Requested Action")
-                        Else
-                            ASCMAIN1.sql &= " and STYLE_STATUS in (" & Mid(STATUS_CODEs, 2) & ")" & vbCrLf
-                        End If
+                    If PAGE_CODE.Length > 0 Then
+                        ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1" & vbCrLf
+                        Dim sqlw As String = ""
+                        ASCMAIN1.sql = "Select X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, ICTSTYC1.THEME_CODE from ICTSTYC1, (" & vbCrLf _
+                        & ASCMAIN1.sql _
+                        & ") X," & vbCrLf _
+                        & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
+                        & "(SELECT S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
+                        & " from ICTSTAT2 S2  , ICTCOLR1 C1  WHERE S2.COLOR_CODE = C1.COLOR_CODE GROUP BY S2.STYLE_CODE, S2.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE) Z" & vbCrLf _
+                        & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
+                        & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "and (X.STYLE_CODE, Z.COLOR_CODE) IN" & vbCrLf _
+                        & $"(SELECT STYLE_CODE, COLOR_CODE FROM WBTCATED WHERE PAGE_CODE = '{PAGE_CODE}')" & vbCrLf
+                        '& "AND NVL(Z.COLOR_CODE,'null') <> 'null'" & vbCrLf _
+                        '& "AND NVL(Y.ATTR_CODE,'null') <> 'null'"
                     Else
-                    End If
+                        'If SCCs(0) = "ALL" Then
+                        '    ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE <> 'ALL'" & vbCrLf
+                        'Else
+                        ASCMAIN1.sql = "Select " & sqlcols & " from ICTSTYL1 where STYLE_CLASS_CODE IN (" & SCC_IN & ")" & vbCrLf
+                        'End If
 
-                    If optSN.Value = "S" Then
-                        ASCMAIN1.sql &= " and NVL(CUST_CODE,'NULL') = 'NULL'"
-                        QD &= " ;" & "Stock Only"
-                    ElseIf optSN.Value = "N" Then
-                        ASCMAIN1.sql &= " and NVL(CUST_CODE,'NULL') <> 'NULL'"
-                        QD &= " ;" & "Non-Stock Only"
-                    End If
-
-                    Dim sqlw As String = ""
-                    For I As Integer = 1 To 3
-                        If I = 1 Then
-                            ATTR_CODE_1s = Get_CODE_VALUEs(grdICTATTR1_1)
-                            If ATTR_CODE_1s <> "" Then
-                                QD &= " ;" & "Any of " & Replace(Mid(ATTR_CODE_1s, 2), "'", "")
-                                ASCMAIN1.sql &= " and STYLE_CODE in (Select Distinct STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))" & vbCrLf
+                        If Not chkSTYLE_STATUS_A.Checked Or Not chkSTYLE_STATUS_N.Checked Or Not chkSTYLE_STATUS_D.Checked Then
+                            Dim STATUS_CODEs As String = ""
+                            If chkSTYLE_STATUS_A.Checked Then STATUS_CODEs &= ",'A'"
+                            If chkSTYLE_STATUS_N.Checked Then STATUS_CODEs &= ",'N'"
+                            If chkSTYLE_STATUS_D.Checked Then STATUS_CODEs &= ",'D'"
+                            If STATUS_CODEs = "" Then
+                                MsgBox("Cannot Find Style if No Status is Selected", MsgBoxStyle.OkOnly, "Cannot Peform Requested Action")
+                            Else
+                                ASCMAIN1.sql &= " and STYLE_STATUS in (" & Mid(STATUS_CODEs, 2) & ")" & vbCrLf
                             End If
-                        End If
-                        If I = 2 Then
-                            SIZE_CODEs = Get_CODE_VALUEs(grdICTSIZE1)
-                            If SIZE_CODEs <> "" Then
-                                QD &= " ;" & "Sizes: " & Replace(Mid(SIZE_CODEs, 2), "'", "")
-                                ASCMAIN1.sql &= " and NVL(SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")" & vbCrLf
-                            End If
-                        End If
-                        If I = 3 Then
-                            ATTR_CODE_2s = Get_CODE_VALUEs(grdICTATTR1_2)
-                            If ATTR_CODE_2s <> "" Then
-                                QD &= " ;" & "And also any of " & Replace(Mid(ATTR_CODE_2s, 2), "'", "")
-                                ASCMAIN1.sql &= " and STYLE_CODE in (Select Distinct STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_2s, 2) & "))" & vbCrLf
-                            End If
-                        End If
-                    Next
-
-                    '            & ", SUM (DECODE(WHSE_CODE,'SW',WHSE_QTY_ON_HAND,0)) OHSW, SUM (DECODE(WHSE_CODE,'SW',WHSE_QTY_ON_ORDER,0)) POSW, SUM (DECODE(WHSE_CODE,'SW',WHSE_QTY_TRAN,0)) PSSW" & vbCrLf _
-
-                    ASCMAIN1.sql = "SELECT X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, Z.THEME_CODE from ICTSTYC1, (" & vbCrLf _
-                    & ASCMAIN1.sql _
-                    & ") X," & vbCrLf _
-                    & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
-                    & "(SELECT CL.STYLE_CODE, CL.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, NVL(CL.THEME_CODE,'') AS THEME_CODE" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
-                    & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
-                    & " from ICTSTAT2 S2, ICTCOLR1 C1, ICTSTYC1 CL  " & vbCrLf _
-                    & " WHERE CL.COLOR_CODE = C1.COLOR_CODE " & vbCrLf _
-                    & " AND S2.STYLE_CODE (+) = CL.STYLE_CODE" & vbCrLf _
-                    & " AND S2.COLOR_CODE (+) = CL.COLOR_CODE" & vbCrLf _
-                    & " GROUP BY CL.STYLE_CODE, CL.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE, CL.THEME_CODE) Z" & vbCrLf _
-                    & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
-                    & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
-                    & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
-                    & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf
-
-                    If Not chkSTYLE_COLOR_STATUS_A.Checked Or Not chkSTYLE_COLOR_STATUS_N.Checked Or Not chkSTYLE_COLOR_STATUS_D.Checked Then
-                        Dim STATUS_COLOR_CODEs As String = ""
-                        If chkSTYLE_COLOR_STATUS_A.Checked Then STATUS_COLOR_CODEs &= ",'A'"
-                        If chkSTYLE_COLOR_STATUS_N.Checked Then STATUS_COLOR_CODEs &= ",'N'"
-                        If chkSTYLE_COLOR_STATUS_D.Checked Then STATUS_COLOR_CODEs &= ",'D'"
-                        If STATUS_COLOR_CODEs = "" Then
-                            MsgBox("Cannot Find Style if No Color Status is Selected", MsgBoxStyle.OkOnly, "Cannot Peform Requested Action")
                         Else
-                            ASCMAIN1.sql &= " and ICTSTYC1.STYLE_COLOR_STATUS in (" & Mid(STATUS_COLOR_CODEs, 2) & ")" & vbCrLf
                         End If
-                    Else
-                    End If
 
-                    If optAvail.Value = "C" Then
-                        ASCMAIN1.sql &= " and NVL(Z.ONH,0) - NVL(Z.OPEN,0) - NVL(Z.PICK,0) > 0"
-                        ' QD &= " ;" & "Current Available to Sell Only"
-                    ElseIf optAvail.Value = "A" Then
-                        ASCMAIN1.sql &= " and NVL(Z.ONH,0) - NVL(Z.OPEN,0) - NVL(Z.PICK,0) + NVL(Z.ONPO,0) + NVL(Z.TRAN,0) > 0"
-                        'QD &= " ;" & "Current Available to Sell Only" - THIS IS WRONG
+                        If optSN.Value = "S" Then
+                            ASCMAIN1.sql &= " and NVL(CUST_CODE,'NULL') = 'NULL'"
+                            QD &= " ;" & "Stock Only"
+                        ElseIf optSN.Value = "N" Then
+                            ASCMAIN1.sql &= " and NVL(CUST_CODE,'NULL') <> 'NULL'"
+                            QD &= " ;" & "Non-Stock Only"
+                        End If
+
+                        Dim sqlw As String = ""
+                        For I As Integer = 1 To 3
+                            If I = 1 Then
+                                ATTR_CODE_1s = Get_CODE_VALUEs(grdICTATTR1_1)
+                                If ATTR_CODE_1s <> "" Then
+                                    QD &= " ;" & "Any of " & Replace(Mid(ATTR_CODE_1s, 2), "'", "")
+                                    ASCMAIN1.sql &= " and STYLE_CODE in (Select Distinct STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_1s, 2) & "))" & vbCrLf
+                                End If
+                            End If
+                            If I = 2 Then
+                                SIZE_CODEs = Get_CODE_VALUEs(grdICTSIZE1)
+                                If SIZE_CODEs <> "" Then
+                                    QD &= " ;" & "Sizes: " & Replace(Mid(SIZE_CODEs, 2), "'", "")
+                                    ASCMAIN1.sql &= " and NVL(SIZE_CODE,'?') in (" & Mid(SIZE_CODEs, 2) & ")" & vbCrLf
+                                End If
+                            End If
+                            If I = 3 Then
+                                ATTR_CODE_2s = Get_CODE_VALUEs(grdICTATTR1_2)
+                                If ATTR_CODE_2s <> "" Then
+                                    QD &= " ;" & "And also any of " & Replace(Mid(ATTR_CODE_2s, 2), "'", "")
+                                    ASCMAIN1.sql &= " and STYLE_CODE in (Select Distinct STYLE_CODE from ICTSTYL3 where ATTR_CODE in (" & Mid(ATTR_CODE_2s, 2) & "))" & vbCrLf
+                                End If
+                            End If
+                        Next
+
+                        '            & ", SUM (DECODE(WHSE_CODE,'SW',WHSE_QTY_ON_HAND,0)) OHSW, SUM (DECODE(WHSE_CODE,'SW',WHSE_QTY_ON_ORDER,0)) POSW, SUM (DECODE(WHSE_CODE,'SW',WHSE_QTY_TRAN,0)) PSSW" & vbCrLf _
+
+                        ASCMAIN1.sql = "SELECT X.*, NVL(Y.ATTR_CODE,'NONE') AS ATTR_CODE,ICTSTYC1.UPC_CODE,ICTSTYC1.STYLE_COLOR_STATUS, Z.COLOR_CODE, Z.ONH, Z.ONPO, Z.OPEN, Z.TRAN, Z.PICK, Z.COLOR_CODE_LONG AS LONG_COLOR, NVL(Z.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, Z.THEME_CODE from ICTSTYC1, (" & vbCrLf _
+                        & ASCMAIN1.sql _
+                        & ") X," & vbCrLf _
+                        & "(" & SQLAttribute.ToString & ") Y," & vbCrLf _
+                        & "(SELECT CL.STYLE_CODE, CL.COLOR_CODE, C1.COLOR_CODE_LONG, NVL(C1.COLOR_GROUP_CODE,'') AS COLOR_GROUP_CODE, NVL(CL.THEME_CODE,'') AS THEME_CODE" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_HAND,0)) ONH" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_ON_ORDER,0)) ONPO" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_TRAN,0)) TRAN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_OPEN,0)) OPEN" & vbCrLf _
+                        & ", SUM (DECODE(S2.WHSE_CODE,'" & WHSE_CODE & "',S2.WHSE_QTY_PICK,0)) PICK" & vbCrLf _
+                        & " from ICTSTAT2 S2, ICTCOLR1 C1, ICTSTYC1 CL  " & vbCrLf _
+                        & " WHERE CL.COLOR_CODE = C1.COLOR_CODE " & vbCrLf _
+                        & " AND S2.STYLE_CODE (+) = CL.STYLE_CODE" & vbCrLf _
+                        & " AND S2.COLOR_CODE (+) = CL.COLOR_CODE" & vbCrLf _
+                        & " GROUP BY CL.STYLE_CODE, CL.COLOR_CODE, C1.COLOR_CODE_LONG, C1.COLOR_GROUP_CODE, CL.THEME_CODE) Z" & vbCrLf _
+                        & " where Y.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.STYLE_CODE (+) = Z.STYLE_CODE" & vbCrLf _
+                        & "   and ICTSTYC1.COLOR_CODE (+) = Z.COLOR_CODE" & vbCrLf _
+                        & "   and Z.STYLE_CODE (+) = X.STYLE_CODE" & vbCrLf
+
+                        If Not chkSTYLE_COLOR_STATUS_A.Checked Or Not chkSTYLE_COLOR_STATUS_N.Checked Or Not chkSTYLE_COLOR_STATUS_D.Checked Then
+                            Dim STATUS_COLOR_CODEs As String = ""
+                            If chkSTYLE_COLOR_STATUS_A.Checked Then STATUS_COLOR_CODEs &= ",'A'"
+                            If chkSTYLE_COLOR_STATUS_N.Checked Then STATUS_COLOR_CODEs &= ",'N'"
+                            If chkSTYLE_COLOR_STATUS_D.Checked Then STATUS_COLOR_CODEs &= ",'D'"
+                            If STATUS_COLOR_CODEs = "" Then
+                                MsgBox("Cannot Find Style if No Color Status is Selected", MsgBoxStyle.OkOnly, "Cannot Peform Requested Action")
+                            Else
+                                ASCMAIN1.sql &= " and ICTSTYC1.STYLE_COLOR_STATUS in (" & Mid(STATUS_COLOR_CODEs, 2) & ")" & vbCrLf
+                            End If
+                        Else
+                        End If
+
+                        If optAvail.Value = "C" Then
+                            ASCMAIN1.sql &= " and NVL(Z.ONH,0) - NVL(Z.OPEN,0) - NVL(Z.PICK,0) > 0"
+                            ' QD &= " ;" & "Current Available to Sell Only"
+                        ElseIf optAvail.Value = "A" Then
+                            ASCMAIN1.sql &= " and NVL(Z.ONH,0) - NVL(Z.OPEN,0) - NVL(Z.PICK,0) + NVL(Z.ONPO,0) + NVL(Z.TRAN,0) > 0"
+                            'QD &= " ;" & "Current Available to Sell Only" - THIS IS WRONG
+                        End If
+                        QD &= " ;" & optAvail.Text
                     End If
-                    QD &= " ;" & optAvail.Text
                 End If
             End If
         End If
@@ -2392,6 +2417,11 @@ Public Class SOFATTR2
         btnAllDiscontinued.Visible = showSel
         btnAllActive.Visible = showSel
         btnSelectClass.Visible = showSel
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            btnCatelog.Visible = showSel
+        Else
+            btnCatelog.Visible = False
+        End If
         If showSel = True Then
             SCC_CLEAR(False)
         End If
@@ -4422,6 +4452,49 @@ Optional ByVal absolute As Boolean = False) As String
             Call Mode_Settings(True)
             Me.Cursor = Cursors.Default
             ASCMAIN1.Progress("", "")
+        End If
+    End Sub
+
+    Private Sub btnCatelog_Click(sender As Object, e As EventArgs) Handles btnCatelog.Click
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = "Load Catalog Page"
+        Dim iMSG As New System.Text.StringBuilder
+        iMSG.AppendLine("This Will Clear Any Existing Searches And")
+        iMSG.AppendLine("Load The Grid With Selected Catalog Page.")
+        iMSG.AppendLine("")
+        iMSG.AppendLine("Is That What You Want?")
+        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+        If iResult = MsgBoxResult.Yes Then
+            Dim S As New System.Text.StringBuilder With {.Length = 0}
+            S.AppendLine("SELECT")
+            S.AppendLine("PAGE_CODE,")
+            S.AppendLine("PAGE_NAME")
+            S.AppendLine("FROM WBTCATEH")
+            With ASCMAIN1.CodeSelector
+                .SQL = S.ToString
+                .MultipleSelections = False
+                .PreviouslySelectedCodes0 = ""
+                .Caption = "Select Page"
+                .TABLE_NAME = ""
+                .VIEW_NAME = ""
+                .VIEW_DESC = ""
+                .COLUMN_NAME = ""
+                .COLUMN_PREKEYs = New Dictionary(Of String, String)
+                '.Custom_sql_where = ""
+                .tblASTVIEW1 = New DataTable
+            End With
+            Dim F As New ASFCODE1
+            F.ShowDialog()
+            If ASCMAIN1.CodeSelector.Selections <> 0 Then
+                Dim PAGE_CODE As String = ASCMAIN1.CodeSelector.SelectedRows(0).Item("PAGE_CODE") & ""
+                Me.Cursor = Cursors.WaitCursor
+                ASCMAIN1.Progress("Fetching Styles", "")
+                Find_Styles(False, False,,,,, PAGE_CODE)
+                showSelectors(False)
+                Call Mode_Settings(True)
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("", "")
+            End If
         End If
     End Sub
 End Class

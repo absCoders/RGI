@@ -373,6 +373,7 @@ Partial Class WHFWAVE1
         Dim UltraGridColumn171 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY_CONF")
         Dim UltraGridColumn35 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY_PACK")
         Dim UltraGridColumn247 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY_BACK")
+        Dim UltraGridColumn338 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
         Dim UltraGridColumn120 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTWAVE2_WHTWAVE2_SUB")
         Dim UltraGridColumn254 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHTWAVE2_SOTCART2")
         Dim UltraGridBand10 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTWAVE2_WHTWAVE2_SUB", 0)
@@ -390,6 +391,7 @@ Partial Class WHFWAVE1
         Dim UltraGridColumn150 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY_OPEN")
         Dim UltraGridColumn151 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY_DIFF")
         Dim UltraGridColumn152 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WAVE_QTY_LEFT")
+        Dim UltraGridColumn339 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
         Dim UltraGridColumn174 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UnboundColumn1", 0)
         Dim UltraGridBand11 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("WHTWAVE2_SOTCART2", 0)
         Dim Appearance90 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -3063,7 +3065,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1027, 390)
         '
@@ -3093,75 +3095,79 @@ Partial Class WHFWAVE1
         UltraGridColumn113.Hidden = True
         UltraGridColumn232.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
         UltraGridColumn232.Header.Caption = "Style"
-        UltraGridColumn232.Header.VisiblePosition = 1
+        UltraGridColumn232.Header.VisiblePosition = 2
         UltraGridColumn232.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn232.Width = 126
         UltraGridColumn233.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
         UltraGridColumn233.Header.Caption = "Color"
-        UltraGridColumn233.Header.VisiblePosition = 2
+        UltraGridColumn233.Header.VisiblePosition = 3
         UltraGridColumn233.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn233.Width = 60
         UltraGridColumn234.Header.Caption = "Reld"
-        UltraGridColumn234.Header.VisiblePosition = 3
+        UltraGridColumn234.Header.VisiblePosition = 4
         UltraGridColumn234.Width = 60
         UltraGridColumn255.Header.Caption = "Waved"
-        UltraGridColumn255.Header.VisiblePosition = 4
+        UltraGridColumn255.Header.VisiblePosition = 5
         UltraGridColumn255.Width = 60
         UltraGridColumn256.Header.Caption = "Picked"
-        UltraGridColumn256.Header.VisiblePosition = 5
+        UltraGridColumn256.Header.VisiblePosition = 6
         UltraGridColumn256.Width = 60
-        UltraGridColumn107.Header.VisiblePosition = 20
+        UltraGridColumn107.Header.VisiblePosition = 21
         UltraGridColumn107.Hidden = True
         UltraGridColumn107.Width = 60
-        UltraGridColumn110.Header.VisiblePosition = 21
+        UltraGridColumn110.Header.VisiblePosition = 22
         UltraGridColumn110.Hidden = True
         UltraGridColumn110.Width = 60
         UltraGridColumn106.Header.Caption = "Sub"
-        UltraGridColumn106.Header.VisiblePosition = 11
+        UltraGridColumn106.Header.VisiblePosition = 12
         UltraGridColumn106.Hidden = True
         UltraGridColumn106.Width = 60
         UltraGridColumn111.Header.Caption = "Canc"
-        UltraGridColumn111.Header.VisiblePosition = 13
+        UltraGridColumn111.Header.VisiblePosition = 14
         UltraGridColumn111.Width = 60
         UltraGridColumn112.Header.Caption = "Conc"
-        UltraGridColumn112.Header.VisiblePosition = 15
+        UltraGridColumn112.Header.VisiblePosition = 16
         UltraGridColumn112.Width = 60
         UltraGridColumn169.Header.Caption = "Adj"
-        UltraGridColumn169.Header.VisiblePosition = 6
+        UltraGridColumn169.Header.VisiblePosition = 7
         UltraGridColumn169.Width = 60
         UltraGridColumn172.Header.Caption = "Note"
-        UltraGridColumn172.Header.VisiblePosition = 7
+        UltraGridColumn172.Header.VisiblePosition = 8
         UltraGridColumn172.Width = 56
         UltraGridColumn257.Header.Caption = "OH Locs"
-        UltraGridColumn257.Header.VisiblePosition = 18
+        UltraGridColumn257.Header.VisiblePosition = 19
         UltraGridColumn257.Width = 60
         UltraGridColumn258.Header.Caption = "PO Shp"
-        UltraGridColumn258.Header.VisiblePosition = 19
+        UltraGridColumn258.Header.VisiblePosition = 20
         UltraGridColumn258.Width = 60
         UltraGridColumn103.Header.Caption = "Open"
-        UltraGridColumn103.Header.VisiblePosition = 8
+        UltraGridColumn103.Header.VisiblePosition = 9
         UltraGridColumn103.Width = 64
         UltraGridColumn104.Header.Caption = "Diff"
-        UltraGridColumn104.Header.VisiblePosition = 9
+        UltraGridColumn104.Header.VisiblePosition = 10
         UltraGridColumn104.Width = 63
         UltraGridColumn158.Header.Caption = "To Wave"
-        UltraGridColumn158.Header.VisiblePosition = 10
+        UltraGridColumn158.Header.VisiblePosition = 11
         UltraGridColumn158.Width = 60
         UltraGridColumn105.Header.Caption = "Sub"
-        UltraGridColumn105.Header.VisiblePosition = 12
+        UltraGridColumn105.Header.VisiblePosition = 13
         UltraGridColumn105.Width = 60
         UltraGridColumn171.Header.Caption = "Conf"
-        UltraGridColumn171.Header.VisiblePosition = 16
+        UltraGridColumn171.Header.VisiblePosition = 17
         UltraGridColumn171.Width = 60
         UltraGridColumn35.Header.Caption = "Pack"
-        UltraGridColumn35.Header.VisiblePosition = 17
+        UltraGridColumn35.Header.VisiblePosition = 18
         UltraGridColumn35.Width = 51
         UltraGridColumn247.Header.Caption = "Back"
-        UltraGridColumn247.Header.VisiblePosition = 14
+        UltraGridColumn247.Header.VisiblePosition = 15
         UltraGridColumn247.Width = 60
-        UltraGridColumn120.Header.VisiblePosition = 22
-        UltraGridColumn254.Header.VisiblePosition = 23
-        UltraGridBand9.Columns.AddRange(New Object() {UltraGridColumn113, UltraGridColumn232, UltraGridColumn233, UltraGridColumn234, UltraGridColumn255, UltraGridColumn256, UltraGridColumn107, UltraGridColumn110, UltraGridColumn106, UltraGridColumn111, UltraGridColumn112, UltraGridColumn169, UltraGridColumn172, UltraGridColumn257, UltraGridColumn258, UltraGridColumn103, UltraGridColumn104, UltraGridColumn158, UltraGridColumn105, UltraGridColumn171, UltraGridColumn35, UltraGridColumn247, UltraGridColumn120, UltraGridColumn254})
+        UltraGridColumn338.Header.Caption = "Sel"
+        UltraGridColumn338.Header.VisiblePosition = 1
+        UltraGridColumn338.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn338.Width = 59
+        UltraGridColumn120.Header.VisiblePosition = 23
+        UltraGridColumn254.Header.VisiblePosition = 24
+        UltraGridBand9.Columns.AddRange(New Object() {UltraGridColumn113, UltraGridColumn232, UltraGridColumn233, UltraGridColumn234, UltraGridColumn255, UltraGridColumn256, UltraGridColumn107, UltraGridColumn110, UltraGridColumn106, UltraGridColumn111, UltraGridColumn112, UltraGridColumn169, UltraGridColumn172, UltraGridColumn257, UltraGridColumn258, UltraGridColumn103, UltraGridColumn104, UltraGridColumn158, UltraGridColumn105, UltraGridColumn171, UltraGridColumn35, UltraGridColumn247, UltraGridColumn338, UltraGridColumn120, UltraGridColumn254})
         UltraGridBand9.Indentation = 0
         UltraGridColumn122.Header.VisiblePosition = 0
         UltraGridColumn122.Hidden = True
@@ -3169,35 +3175,39 @@ Partial Class WHFWAVE1
         UltraGridColumn133.Hidden = True
         UltraGridColumn135.Header.VisiblePosition = 2
         UltraGridColumn135.Hidden = True
-        UltraGridColumn138.Header.VisiblePosition = 5
+        UltraGridColumn138.Header.VisiblePosition = 6
         UltraGridColumn138.Width = 60
-        UltraGridColumn139.Header.VisiblePosition = 6
+        UltraGridColumn139.Header.VisiblePosition = 7
         UltraGridColumn139.Width = 60
-        UltraGridColumn140.Header.VisiblePosition = 7
+        UltraGridColumn140.Header.VisiblePosition = 8
         UltraGridColumn140.Width = 60
         UltraGridColumn141.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
-        UltraGridColumn141.Header.VisiblePosition = 3
+        UltraGridColumn141.Header.VisiblePosition = 4
         UltraGridColumn141.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
-        UltraGridColumn141.Width = 107
+        UltraGridColumn141.Width = 126
         UltraGridColumn142.ButtonDisplayStyle = Infragistics.Win.UltraWinGrid.ButtonDisplayStyle.Always
-        UltraGridColumn142.Header.VisiblePosition = 4
+        UltraGridColumn142.Header.VisiblePosition = 5
         UltraGridColumn142.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn142.Width = 60
-        UltraGridColumn143.Header.VisiblePosition = 13
+        UltraGridColumn143.Header.VisiblePosition = 14
         UltraGridColumn143.Width = 60
-        UltraGridColumn170.Header.VisiblePosition = 8
+        UltraGridColumn170.Header.VisiblePosition = 9
         UltraGridColumn170.Width = 60
-        UltraGridColumn173.Header.VisiblePosition = 14
+        UltraGridColumn173.Header.VisiblePosition = 15
         UltraGridColumn173.Hidden = True
-        UltraGridColumn150.Header.VisiblePosition = 10
+        UltraGridColumn150.Header.VisiblePosition = 11
         UltraGridColumn150.Width = 64
-        UltraGridColumn151.Header.VisiblePosition = 11
+        UltraGridColumn151.Header.VisiblePosition = 12
         UltraGridColumn151.Width = 63
-        UltraGridColumn152.Header.VisiblePosition = 12
+        UltraGridColumn152.Header.VisiblePosition = 13
         UltraGridColumn152.Width = 60
-        UltraGridColumn174.Header.VisiblePosition = 9
+        UltraGridColumn339.Header.Caption = "Sel"
+        UltraGridColumn339.Header.VisiblePosition = 3
+        UltraGridColumn339.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn339.Width = 40
+        UltraGridColumn174.Header.VisiblePosition = 10
         UltraGridColumn174.Width = 56
-        UltraGridBand10.Columns.AddRange(New Object() {UltraGridColumn122, UltraGridColumn133, UltraGridColumn135, UltraGridColumn138, UltraGridColumn139, UltraGridColumn140, UltraGridColumn141, UltraGridColumn142, UltraGridColumn143, UltraGridColumn170, UltraGridColumn173, UltraGridColumn150, UltraGridColumn151, UltraGridColumn152, UltraGridColumn174})
+        UltraGridBand10.Columns.AddRange(New Object() {UltraGridColumn122, UltraGridColumn133, UltraGridColumn135, UltraGridColumn138, UltraGridColumn139, UltraGridColumn140, UltraGridColumn141, UltraGridColumn142, UltraGridColumn143, UltraGridColumn170, UltraGridColumn173, UltraGridColumn150, UltraGridColumn151, UltraGridColumn152, UltraGridColumn339, UltraGridColumn174})
         UltraGridBand11.Hidden = True
         Me.grdWHTWAVE2.DisplayLayout.BandsSerializer.Add(UltraGridBand9)
         Me.grdWHTWAVE2.DisplayLayout.BandsSerializer.Add(UltraGridBand10)
@@ -3509,7 +3519,7 @@ Partial Class WHFWAVE1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1027, 390)
         '
