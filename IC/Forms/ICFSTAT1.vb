@@ -58,6 +58,8 @@ Public Class ICFSTAT1
     Dim sqlECOM As String = ""
     Dim sqlPOTORDR2x As String
 
+    Dim zplPrint As New TAC.TACZPLT1()
+
 #Region "ABS Standard Routines"
 
     Private Sub ICFSTAT1_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyDown
@@ -2370,7 +2372,7 @@ Public Class ICFSTAT1
         Load_Popup_Menu(grdWHTLOCB1, "SSSBB", "Show Filter", "Show GroupBox", "Show 0 Qty", "Location Inquiry for Style", "Location Inquiry for Location")
         Load_Popup_Menu(grdSOTORDRX, "SSSBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Sales Reservations Inquiry", "Customer Order Inquiry", "Cancel Open Quantity", "Edit Ship+")
         Load_Popup_Menu(grdICTTRANX, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Show Transaction", "Show Order")
-        Load_Popup_Menu(grdICTSTATA, "SSB", "Show Style/Colors w/Zero Status", "Cardview", "Style Masterfile")
+        Load_Popup_Menu(grdICTSTATA, "SSBB", "Show Style/Colors w/Zero Status", "Cardview", "Style Masterfile", "Print UPC Label")
         Load_Popup_Menu(grdPOTORDRX, "SSSBBSB", "Show Filter", "Show GroupBox", "Show Pins", "PO Inquiry", "Shipments Inquiry", "Show Cartons", "Edit At-Once")
         Load_Popup_Menu(grdICTQUOTX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
         Load_Popup_Menu(grdSOTSUPPX, "SSS", "Show Filter", "Show GroupBox", "Show Pins")
@@ -2454,6 +2456,9 @@ Public Class ICFSTAT1
                     Dim WHSE_CODE As String = grd.ActiveRow.Cells("WHSE_CODE").Value & ""
                     tlb_pop.Tools("Edit At-Once").SharedProps.Visible = ASCMAIN1.USER_SECURITY_CODEs.Contains("AO") AndAlso WHSE_CODE = "MS"
                 End If
+
+            Case "grdICTSTATA"
+                tlb_pop.Tools("Print UPC Label").SharedProps.Visible = ASCMAIN1.CLIENT = "VAN" AndAlso rowICTSTYL1("SALES_DIVISION_CODE") & "" = "30"
 
 
         End Select
@@ -2649,7 +2654,7 @@ Public Class ICFSTAT1
 
             Case "Show Transaction"
                 Dim TRAN_TYPE As String = grd.ActiveRow.Cells("TRAN_TYPE").Value
-                Dim TRAN_NO As String = grd.ActiveRow.Cells("TRAN_NO").Value
+                Dim TRAN_NO As String = grd.ActiveRow.Cells("TRAN_NO").Value & ""
                 If TRAN_TYPE = "R" Then
                     Dim rowICTIREC1 As DataRow = LookUp("ICTIREC1", TRAN_NO)
                     Dim PO_SHIPMENT_NO As String = rowICTIREC1.Item("PO_SHIPMENT_NO")
@@ -2896,6 +2901,16 @@ Public Class ICFSTAT1
 
                 ASCMAIN1.MultiTask_Release(,, 1)
 
+            Case "Print UPC Label"
+                Me.Cursor = Cursors.WaitCursor
+                ASCMAIN1.Progress("Now Printing UPC Label")
+                Dim rowICVLUPC1 As DataRow = ASCDATA1.GetDataRow($"SELECT * FROM ICVLUPC1 Where STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'")
+                Dim SIZE_CODE As String = rowICVLUPC1("SIZE_CODE")
+                Dim UPC_CODE As String = rowICVLUPC1("UPC_CODE")
+                zplPrint.Print_VAN_UPC_Label(STYLE_CODE, COLOR_CODE, SIZE_CODE, UPC_CODE)
+
+                Me.Cursor = Cursors.Default
+                ASCMAIN1.Progress("")
         End Select
     End Sub
 
