@@ -762,6 +762,22 @@ Public Class TACZPLT1
 
     End Sub
 
+    Public Sub Print_VAN_UPC_Label(STYLE_CODE As String, COLOR_CODE As String, SIZE_CODE As String, UPC_CODE As String)
+        Dim ZPL_KEY As String = "VAN_UPC"
+        rowTATZPLT1 = tblTATZPLT1.Rows.Find(ZPL_KEY)
+        If rowTATZPLT1 Is Nothing Then
+            Exit Sub
+        End If
+
+        Dim labelImage As String = rowTATZPLT1.Item("ZPL_BODY") & ""
+        labelImage = labelImage.Replace("{STYLE_CODE}", STYLE_CODE)
+        labelImage = labelImage.Replace("{COLOR_CODE}", COLOR_CODE)
+        labelImage = labelImage.Replace("{SIZE_CODE}", SIZE_CODE)
+        labelImage = labelImage.Replace("{UPC_CODE}", UPC_CODE)
+
+        SendLabelToPrinter(ASCMAIN1.MiniLabelPrinterIPAddress, labelImage)
+    End Sub
+
     Public Sub Print_Location_Label(LOC_CODE As String, LOC_TYPE As String)
 
         Dim LOC_CODE_FMT As String = LOC_CODE
