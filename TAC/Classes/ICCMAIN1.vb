@@ -2487,6 +2487,7 @@ Public Class ICCMAIN1
         rowSOTINVH1.Item("SREP_CODE") = rowSOTRTRN1.Item("SREP_CODE")
         rowSOTINVH1.Item("INV_SALES") = -1 * Val(rowSOTRTRN1.Item("RTRN_SALES") & "")
         rowSOTINVH1.Item("INV_COGS") = -1 * Val(rowSOTRTRN1.Item("RTRN_COSTS") & "")
+        rowSOTINVH1.Item("INV_STAX") = -1 * Val(rowSOTRTRN1.Item("RTRN_STAX") & "")
         rowSOTINVH1.Item("INV_FREIGHT") = -1 * Val(rowSOTRTRN1.Item("RTRN_FREIGHT") & "")
         If Val(rowSOTRTRN1.Item("RTRN_HANDLING") & "") <> 0 Then
             rowSOTINVH1.Item("INV_MISC_CHG") = -1 * Val(rowSOTRTRN1.Item("RTRN_HANDLING") & "")
@@ -2534,11 +2535,11 @@ Public Class ICCMAIN1
         End If
 
         Dim rowARTOPEN1 As DataRow = frm.dst.Tables("ARTOPEN1").NewRow
-        ' "STAX_CODE","INV_STAX",
+        ' "STAX_CODE"
         For Each C As String In New String() _
-        {"CUST_CODE", "INV_TYPE", "INV_DATE", "CUST_STORE_NO", "POST_CODE", _
-         "TERM_CODE", "SREP_CODE", _
-         "ORDR_NO", "INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT", _
+        {"CUST_CODE", "INV_TYPE", "INV_DATE", "CUST_STORE_NO", "POST_CODE",
+         "TERM_CODE", "SREP_CODE", "INV_STAX",
+         "ORDR_NO", "INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT",
          "REASON_CODE", "INIT_OPER", "INIT_DATE", "INV_MISC_CHG", "ORDR_TYPE_CODE", "SALES_DIVISION_CODE"}
             rowARTOPEN1.Item(C) = rowSOTINVH1.Item(C)
         Next
@@ -3125,6 +3126,7 @@ Public Class ICCMAIN1
         Return SIZEs_And_QTYs & COLORs
 
     End Function
+
     Public Shared Function Calculate_Style_Royalty_Markup(frmASFBASE0 As ASFBASE0, STYLE_CODE As String, Optional STYLE_PRICE_FEFD As Decimal = 0) As Decimal
         Dim RetVal As Decimal = 0
         Dim S As New System.Text.StringBuilder With {.Length = 0}
@@ -3179,6 +3181,7 @@ Public Class ICCMAIN1
 
         Return RetVal
     End Function
+
     Public Shared Function Calculate_Style_Price(frmASFBASE0 As ASFBASE0, SILENT As Boolean, STYLE_CODE As String, Optional rowICTSTYL1 As DataRow = Nothing, Optional rowICTSTYV1 As DataRow = Nothing, Optional rowICTLSTC1 As DataRow = Nothing, Optional rowAPTVEND1 As DataRow = Nothing) As String
 
         'Public Shared Function Calculate_Style_Price(frmASFBASE0 As ASFBASE0, STYLE_CODE As String, Optional rowICTSTYL1 As DataRow = Nothing, Optional rowICTSTYV1 as DataRow = Nothing) As String
@@ -3325,6 +3328,7 @@ Public Class ICCMAIN1
 
 
     End Function
+
     Public Shared Function Calculate_Tariff_By_Country(STYLE_PRICE As Decimal, COUNTRY_CODE As String) As Decimal
         Dim tariffByCountry_amt As Decimal = 0
         If COUNTRY_CODE <> "" Then
@@ -3343,6 +3347,7 @@ Public Class ICCMAIN1
         End If
         Return tariffByCountry_amt
     End Function
+
     Public Shared Function Get_Tariff_Pct_By_Country(COUNTRY_CODE As String) As Decimal
         Dim tariffByCountry_pct As Decimal = 0
         If COUNTRY_CODE <> "" Then

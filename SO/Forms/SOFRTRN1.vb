@@ -735,6 +735,7 @@ Public Class SOFRTRN1
                 End If
 
             Case "View"
+                LoopReturnID = String.Empty
                 If Absx1.txtFor("RTRN_NO").Text = "" Then
                     EMsg &= vbCr & "You must specify a Document No to View"
                 Else
@@ -744,6 +745,11 @@ Public Class SOFRTRN1
                     rowSOTRTRN1 = LookUp("SOTRTRN1", RTRN_NO)
                     If rowSOTRTRN1 Is Nothing Then
                         EMsg &= vbCr & "No Record of Return Document " & RTRN_NO & " on File"
+                    ElseIf ASCMAIN1.CLIENT = "VAN" Then
+                        Dim drSOTRTRL1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTRTNL1 WHERE RTRN_NO = :PARM1", "V", {RTRN_NO})
+                        If drSOTRTRL1 IsNot Nothing Then
+                            LoopReturnID = drSOTRTRL1.Item("RETURN_ID") & String.Empty
+                        End If
                     End If
                 End If
 
@@ -958,7 +964,7 @@ Public Class SOFRTRN1
         End Select
 
         If EMsg <> "" Then
-            If eItemKey = "New" Then
+            If eItemKey = "New" OrElse eItemKey = "View" Then
                 LoopReturnID = String.Empty
             End If
             MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Proceed")
@@ -1460,7 +1466,7 @@ Public Class SOFRTRN1
                 Dim drSOTRTNL1 As DataRow = LookUp("SOTRTNL1", LoopReturnID)
                 rowSOTRTRN1.Item("RTRN_SOURCE_DOC_NO") = LoopReturnID
                 rowSOTRTRN1.Item("CUST_CLAIM_NO") = drSOTRTNL1.Item("PROVIDER_ORDER_NUMBER")
-                rowSOTRTRN1.Item("RTRN_HANDLING") = Val(drSOTRTNL1.Item("HANDLING_FEE") & String.Empty)
+                rowSOTRTRN1.Item("RTRN_HANDLING") = Math.Abs(Val(drSOTRTNL1.Item("HANDLING_FEE") & String.Empty)) * -1
                 For Each drSOTRTNL2 As DataRow In dst.Tables("SOTRTNL2").Select($"RETURN_ID = '{LoopReturnID}'", "ORDR_LNO")
                     Dim ORDR_NO As String = drSOTRTNL2.Item("ORDR_NO") & String.Empty
                     Dim ORDR_LNO As String = Val(drSOTRTNL2.Item("ORDR_LNO") & String.Empty)
@@ -1476,8 +1482,8 @@ Public Class SOFRTRN1
                         .Cells("COLOR_CODE").Value = drSOTORDR2.Item("COLOR_CODE") & String.Empty
                         .Cells("RTRN_QTY").Value = 1
                         .Cells("RTRN_QTY_1").Value = 1
-                        .Cells("RTRN_PRICE").Value = Val(drSOTRTNL2.Item("REFUND_ITEM") & String.Empty)
-                        .Cells("RTRN_PRICE_CURR").Value = Val(drSOTRTNL2.Item("REFUND_ITEM") & String.Empty)
+                        .Cells("RTRN_PRICE").Value = Val(drSOTRTNL2.Item("PRICE") & String.Empty) - Val(drSOTRTNL2.Item("DISCOUNT") & String.Empty)
+                        .Cells("RTRN_PRICE_CURR").Value = Val(drSOTRTNL2.Item("PRICE") & String.Empty) - Val(drSOTRTNL2.Item("DISCOUNT") & String.Empty)
                         .Cells("REFUND_TAX").Value = Val(drSOTRTNL2.Item("TAX") & String.Empty)
                         .Cells("LINE_ITEM_ID").Value = drSOTRTNL2.Item("LINE_ITEM_ID") & String.Empty
                         .Cells("CUST_UPC").Value = drSOTORDR2.Item("CUST_UPC") & String.Empty
@@ -1605,6 +1611,32 @@ Public Class SOFRTRN1
             Fill_Record("SOTRTRN1", Absx1.txtFor("RTRN_NO").Text)
             Fill_Record("SOTRTRN2", Absx1.txtFor("RTRN_NO").Text)
             dst.AcceptChanges()
+
+            If LoopReturnID.Length > 0 Then
+                Dim tblSOTRTNL2 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTRTNL2 WHERE RETURN_ID = :PARM1", "SOTRTNL2", "V", {LoopReturnID})
+                For Each drSOTRTNL2 As DataRow In tblSOTRTNL2.Select("")
+                    Dim ORDR_NO As String = drSOTRTNL2.Item("ORDR_NO") & String.Empty
+                    Dim ORDR_LNO As String = Val(drSOTRTNL2.Item("ORDR_LNO") & String.Empty)
+
+                    Dim drSOTORDR2 As DataRow = LookUp("SOTORDR2", {ORDR_NO, ORDR_LNO})
+
+                    For Each drSOTRTRN2 As DataRow In dst.Tables("SOTRTRN2").Select($"ORDR_NO = '{ORDR_NO}' and ORDR_LNO = {ORDR_LNO}")
+                        drSOTRTRN2.Item("REFUND_TAX") = Val(drSOTRTNL2.Item("REFUND_TAX") & String.Empty)
+                        drSOTRTRN2.Item("LINE_ITEM_ID") = drSOTRTNL2.Item("LINE_ITEM_ID") & String.Empty
+
+                        If drSOTORDR2 IsNot Nothing Then
+                            drSOTRTRN2.Item("CUST_UPC") = drSOTORDR2.Item("CUST_UPC") & String.Empty
+                        End If
+
+                        If drSOTRTNL2.Item("RETURN_REASON") & String.Empty <> String.Empty Then
+                            drSOTRTRN2.Item("WEB_RETURN_REASON") = drSOTRTNL2.Item("RETURN_REASON") & String.Empty
+                        Else
+                            drSOTRTRN2.Item("WEB_RETURN_REASON") = drSOTRTNL2.Item("PARENT_RETURN_REASON") & String.Empty
+                        End If
+                    Next
+                Next
+                tblSOTRTNL2.Rows.Clear()
+            End If
 
             ASCMAIN1.sql = $"Select * from SOTINVHM where INV_TYPE = 'C' and INV_NO = '{rowSOTRTRN1.Item("INV_NO")}' and MISC_CHARGE_TYPE = 'T'"
             For Each row As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Rows
@@ -1788,7 +1820,6 @@ Public Class SOFRTRN1
                 For Each rowSOTRTRN2 As DataRow In dst.Tables("SOTRTRN2").Select("")
                     rowSOTRTRN2.Item("RTRN_PRICE") = Val(rowSOTRTRN2.Item("RTRN_PRICE_CURR") & String.Empty) * CURR_EXCH_RATE
                 Next
-
             End If
 
             rowSOTRTRN1.Item("RTRN_AMOUNT") _
