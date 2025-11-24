@@ -29,7 +29,6 @@ Public Class WHFLNFA1
             ASCMAIN1.sql = "Select * from " & WHTLOCBX
             Create_TDA(.Tables.Add, "WHTLOCBX", "**", 0, False, "", 2)
             .Tables("WHTLOCBX").Columns.Add("BAL", GetType(Integer), "ISNULL(ONH, 0) - ( ISNULL(PICK, 0) + ISNULL(OPEN, 0))")
-
             '                & "   and (WHTLOCB1.LOCATION_QTY <> 0 OR WHTLOCB1.LOCATION_QTY_WAVE <> 0)" & vbCrLf _
 
             ASCMAIN1.sql = "Select X.*, Y.DATE_LAST_COUNTED, Y.COUNTS from (" & vbCrLf _
@@ -135,6 +134,7 @@ Public Class WHFLNFA1
         With grdWHTLOCBX.DisplayLayout.Bands("WHTLOCBX")
             .Columns("STYLE_CODE").Header.Fixed = True
             .Columns("COLOR_CODE").Header.Fixed = True
+            .Columns("STYLE_SEQ").Header.Fixed = True
             .Columns("SALES_DIVISION_CODE").Hidden = True
 
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
@@ -913,7 +913,7 @@ Public Class WHFLNFA1
 
         Dim locations_to_avoid As String = "'00-REC-A','00-REC-B','00-LNF-A','00-SHP-A','00-RTN-A','00-FIN-A','00-ADJ-A'"
 
-        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, 0 OPEN, ' ' STYLE_DESC, '  ' SALES_DIVISION_CODE, WHTLOCBC.DATE_LAST_CYCLE_COUNT from {WHTLOCBC} WHTLOCBC, (
+        Dim sqlWHTLOCBX As String = $"Select X.*, 0 PICK, 0 OPEN, ' ' STYLE_DESC, '  ' SALES_DIVISION_CODE, WHTLOCBC.DATE_LAST_CYCLE_COUNT, ' ' STYLE_SEQ from {WHTLOCBC} WHTLOCBC, (
              Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE
              , SUM (WHTLOCB1.LOCATION_QTY) ONH, SUM (WHTLOCB1.LOCATION_QTY_WAVE) WAV
              , SUM (DECODE(WHTLOCB1.LOCATION_CODE,'00-REC-A',WHTLOCB1.LOCATION_QTY,0)) RECA
@@ -948,6 +948,7 @@ Public Class WHFLNFA1
             ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY PICK NUMBER(8)")
             ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY OPEN NUMBER(8)")
             ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY STYLE_DESC VARCHAR2(256)")
+            ASCDATA1.ExecuteSQL("Alter Table " & WHTLOCBX & " MODIFY STYLE_SEQ VARCHAR2(6)")
         Else
             ASCDATA1.ExecuteSQL("DELETE FROM " & WHTLOCBX)
             ASCDATA1.ExecuteSQL("Insert into " & WHTLOCBX & " " & sqlWHTLOCBX)
@@ -955,6 +956,10 @@ Public Class WHFLNFA1
         ASCMAIN1.sql = $"Update {WHTLOCBX} x set STYLE_DESC = (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE),
                         SALES_DIVISION_CODE = (SELECT SALES_DIVISION_CODE FROM ICTSTYL1 WHERE STYLE_CODE = x.STYLE_CODE)
                         where exists (Select STYLE_DESC from ICTSTYL1 where STYLE_CODE = x.STYLE_CODE)"
+        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+        ASCMAIN1.sql = $"Update {WHTLOCBX} x set STYLE_SEQ = (Select STYLE_SEQ from WHTSCSEQ where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE)
+                        where exists (Select 1 from WHTSCSEQ where STYLE_CODE = x.STYLE_CODE and COLOR_CODE = x.COLOR_CODE)"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
         ASCMAIN1.sql = $"Update {WHTLOCBX} x set PICK = (
