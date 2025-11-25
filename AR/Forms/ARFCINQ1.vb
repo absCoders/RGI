@@ -1091,6 +1091,8 @@ Public Class ARFCINQ1
             Create_Summary(grdARTOPEN1, "AGE_4")
             If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
                 .Columns("WHSE_CODE").Hidden = False
+                .Columns("INV_DUE_DATE").Width = .Columns("INV_DATE").Width
+                .Columns("INV_DUE_DATE").Format = "MM/dd/yyyy"
             Else
                 .Columns("WHSE_CODE").Hidden = True
             End If
@@ -2089,9 +2091,9 @@ Public Class ARFCINQ1
         If collections_mode Then
             Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL", "Show", "Show Pymt Applications", "Retrieve Paid Items", "Create Log", "Total Balance")
         Else
-            Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL",
+            Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL",
                         "email", "Fax", "Show", "Sales Order Inquiry", "Customer Returns Inquiry", "Show Pymt Applications",
-                        "Retrieve Paid Invoices", "Create Log", "Total Balance", "Change Terms", "Credit Card", "Sales Order Entry", "Show Aged AR", "email Aged AR")
+                        "Retrieve Paid Invoices", "Create Log", "Total Balance", "Change Terms", "Credit Card", "Sales Order Entry", "Show Aged AR", "email Aged AR", "email Cust Statment")
 
         End If
         Load_Popup_Menu(grdSOTORDR0, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Customer Order Inquiry", "Sales Order Entry", "Print Selected")
@@ -2122,6 +2124,11 @@ Public Class ARFCINQ1
             Load_Popup_Menu(grdARTPYMTY, "SS", "Show Filter", "Show GroupBox")
         End If
         Load_Popup_Menu(grdTATEVNT1, "B", "Show email")
+        'grdARTCUSTT_FUPS
+
+        If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+            Load_Popup_Menu(grdARTCUSTT_FUPS, "SS", "Show Filter", "Show GroupBox")
+        End If
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
