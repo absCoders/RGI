@@ -1126,7 +1126,7 @@ Public Class ICCMAIN1
 
         Dim RGITEMP As String = ", NVL(POTSHIP3.PO_COST_LANDED,0)"
 
-        If ASCMAIN1.CLIENT = "RGI" Then
+        If ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.DBS_SERVER <> "RGIUAT" Then
             RGITEMP = ", NVL(POTSHIP3.PO_COST,0)"
         End If
 

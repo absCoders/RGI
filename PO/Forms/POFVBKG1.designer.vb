@@ -542,7 +542,7 @@ Partial Class POFVBKG1
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.grdPOTVBKGX)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1329, 374)
@@ -681,7 +681,7 @@ Partial Class POFVBKG1
         '
         Me.UltraTabPageControl5.Controls.Add(Me.cmdShipReport)
         Me.UltraTabPageControl5.Controls.Add(Me.grdPOTSHIP1)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(1329, 374)
@@ -1249,7 +1249,7 @@ Partial Class POFVBKG1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer3)
         Me.UltraTabPageControl1.Controls.Add(Me.grd)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1333, 702)
@@ -1404,7 +1404,7 @@ Partial Class POFVBKG1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 2, 4, 2)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1333, 702)
@@ -1474,13 +1474,13 @@ Partial Class POFVBKG1
         UltraGridColumn33.Hidden = True
         UltraGridColumn34.Header.VisiblePosition = 1
         UltraGridColumn34.Hidden = True
-        UltraGridColumn35.Header.Caption = "Contaner No"
+        UltraGridColumn35.Header.Caption = "Container No"
         UltraGridColumn35.Header.VisiblePosition = 2
         UltraGridColumn35.Width = 180
         UltraGridColumn36.Header.Caption = "Seal No"
         UltraGridColumn36.Header.VisiblePosition = 3
         UltraGridColumn36.Width = 97
-        UltraGridColumn37.Header.Caption = "Contaner Sz"
+        UltraGridColumn37.Header.Caption = "Container Sz"
         UltraGridColumn37.Header.VisiblePosition = 4
         UltraGridColumn37.Width = 103
         UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37})
