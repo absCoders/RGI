@@ -2,14 +2,17 @@
 Imports Infragistics.Win.UltraWinGrid
 
 Public Class WBTCATEH
-
     Private PAGE_CODE As String = String.Empty
+    Private SB As New Text.StringBuilder With {.Length = 0}
+    Private SQL_LOAD As New Text.StringBuilder With {.Length = 0}
 
 #Region "ABS Standards"
     Overrides Sub Proceed_PreReq_Special(ByVal eItemKey As String)
         Select Case eItemKey
             Case "New"
                 Absx1.txtFor("PAGE_CODE").Text = ASCMAIN1.Next_Control_No("WBTCATEH.PAGE_CODE")
+            Case "Edit"
+                setIS_PVC()
         End Select
     End Sub
 
@@ -26,9 +29,12 @@ Public Class WBTCATEH
         Update_Record_TDA("WBTCATU1", "DELETE FROM WBTCATU1 WHERE PAGE_CODE = '" & MyBase.Absx1.txtFor("PAGE_CODE").Text & "'")
         'Update_Record_TDA("WBTCATU1")
         Update_Record_TDA("WBTCATU2", "DELETE FROM WBTCATU2 WHERE PAGE_CODE = '" & MyBase.Absx1.txtFor("PAGE_CODE").Text & "'")
+        setIS_PVC()
     End Sub
 
     Overrides Sub Show_Record_Special()
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Loading Data")
 
         PAGE_CODE = MyBase.Absx1.txtFor("PAGE_CODE").Text.Trim
 
@@ -36,26 +42,38 @@ Public Class WBTCATEH
 
         MyBase.EnforceConstraints(False)
 
-        Dim SB As New Text.StringBuilder
-        SB.Length = 0
-        SB.AppendLine("SELECT")
-        SB.AppendLine("WBTCATED.PAGE_CODE,")
-        SB.AppendLine("WBTCATED.STYLE_CODE,")
-        SB.AppendLine("WBTCATED.COLOR_CODE,")
-        SB.AppendLine("ICTSTYL1.STYLE_DESC,")
-        SB.AppendLine("ICTSTYL1.STYLE_STATUS,")
-        SB.AppendLine("0 AS CURR_ON_HAND,")
-        SB.AppendLine("NULL AS THEME_DESC")
-        SB.AppendLine("FROM WBTCATED, ICTSTYL1")
-        SB.AppendLine("WHERE WBTCATED.STYLE_CODE = ICTSTYL1.STYLE_CODE")
-        SB.AppendLine($"AND WBTCATED.PAGE_CODE = '" & PAGE_CODE & "'")
-        SB.AppendLine("GROUP BY")
-        SB.AppendLine("WBTCATED.PAGE_CODE,")
-        SB.AppendLine("WBTCATED.STYLE_CODE,")
-        SB.AppendLine("WBTCATED.COLOR_CODE,")
-        SB.AppendLine("ICTSTYL1.STYLE_DESC,")
-        SB.AppendLine("ICTSTYL1.STYLE_STATUS")
-        Call Fill_Records("WBTCATED", String.Empty, True, SB.ToString)
+        Dim S As New Text.StringBuilder With {.Length = 0}
+        S.Length = 0
+        S.AppendLine("SELECT")
+        S.AppendLine("WBTCATED.PAGE_CODE,")
+        S.AppendLine("WBTCATED.STYLE_CODE,")
+        S.AppendLine("WBTCATED.COLOR_CODE,")
+        S.AppendLine("WBTCATED.COLOR_CODES,")
+        S.AppendLine("WBTCATED.STYLE_ORDR,")
+        S.AppendLine("ICTSTYL1.STYLE_DESC,")
+        S.AppendLine("ICTSTYL1.STYLE_STATUS,")
+        S.AppendLine("ICTPVC01.HEIGHT,")
+        S.AppendLine("ICTPVC01.DIAMETER,")
+        S.AppendLine("ICTPVC01.PVC_LENGTH,")
+        S.AppendLine("ICTPVCLT.LIGHT_TYPE_DESC,")
+        S.AppendLine("ICTPVC01.LIGHT_COUNT,")
+        S.AppendLine("ICTPVCLC.LIGHT_COLOR_DESC,")
+        S.AppendLine("ICTPVC01.TIP_COUNT,")
+        S.AppendLine("ICTPVC01.G40_COUNT,")
+        S.AppendLine("('*' || WBTCATED.STYLE_CODE || '*') AS BAR_CODE,")
+        S.AppendLine("9999.99 AS FULL_CASE,")
+        S.AppendLine("9999.99 AS FIVE_CASE,")
+        S.AppendLine("ICTSTYL1.CARTON_PACK_QTY,")
+        S.AppendLine("ICTSTYL1.CASE_CUBE")
+        S.AppendLine("FROM WBTCATED, ICTSTYL1, ICTPVC01, ICTPVCLT, ICTPVCLC")
+        S.AppendLine("WHERE WBTCATED.STYLE_CODE = ICTSTYL1.STYLE_CODE")
+        S.AppendLine("AND ICTSTYL1.STYLE_CODE = ICTPVC01.STYLE_CODE (+)")
+        S.AppendLine("AND ICTPVC01.LIGHT_TYPE_CODE = ICTPVCLT.LIGHT_TYPE_CODE (+)")
+        S.AppendLine("AND ICTPVC01.LIGHT_COLOR_CODE = ICTPVCLC.LIGHT_COLOR_CODE(+)")
+        S.AppendLine($"AND WBTCATED.PAGE_CODE = '{PAGE_CODE}'")
+        Call Fill_Records("WBTCATED", String.Empty, True, S.ToString)
+        setIS_PVC()
+
 
         SB.Length = 0
         SB.AppendLine("SELECT *")
@@ -70,37 +88,68 @@ Public Class WBTCATEH
         SB.AppendLine("WHERE PAGE_CODE = '" & PAGE_CODE & "'")
         Call Fill_Records("WBTCATU2", String.Empty, True, SB.ToString)
 
-        UpdateInventory()
-        UpdateTheme()
+        UpdateExtraData()
 
         grdWBTCATED.DisplayLayout.Bands(0).SortedColumns.Clear()
+        grdWBTCATED.DisplayLayout.Bands(0).SortedColumns.Add("STYLE_ORDR", False)
         grdWBTCATED.DisplayLayout.Bands(0).SortedColumns.Add("STYLE_CODE", False)
 
         grdWBTCATU2.DisplayLayout.Bands(0).SortedColumns.Clear()
         grdWBTCATU2.DisplayLayout.Bands(0).SortedColumns.Add("ATTR_CODE", False)
 
+        setColsVisable()
 
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
 
     End Sub
 
-    Private Sub UpdateInventory()
-        For Each rowWBTCATED As DataRow In dst.Tables("WBTCATED").Select()
+    Private Sub UpdateExtraData()
+        'Fill_Records("ICTSTYC1")
+        Dim rowARTCUST1 As DataRow = Nothing
+        For Each rowWBTCATED As DataRow In dst.Tables("WBTCATED").Select("", "STYLE_ORDR, STYLE_CODE")
             Dim STYLE_CODE As String = rowWBTCATED.Item("STYLE_CODE").ToString & String.Empty
-            Dim filter As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
-            Dim rowICTSTYC1 As DataRow = dst.Tables("ICTSTYC1").Select(filter).FirstOrDefault
-            If Not IsNothing(rowICTSTYC1) Then
-                rowWBTCATED.Item("CURR_ON_HAND") = Val(rowICTSTYC1.Item("MSOH").ToString & String.Empty) + Val(rowICTSTYC1.Item("MSFT").ToString & String.Empty)
+            Dim COLOR_CODE As String = rowWBTCATED.Item("COLOR_CODE").ToString & String.Empty
+
+            'Current On-Hand
+            Dim fltrS As String = String.Format("STYLE_CODE = '{0}'", STYLE_CODE)
+            Dim rowICTSTYCX As DataRow = dst.Tables("ICTSTYCX").Select(fltrS).FirstOrDefault
+            If Not IsNothing(rowICTSTYCX) Then
+                rowWBTCATED.Item("CURR_ON_HAND") = Val(rowICTSTYCX.Item("MSOH").ToString & String.Empty) + Val(rowICTSTYCX.Item("MSFT").ToString & String.Empty)
             End If
-        Next
-        grdWBTCATED.UpdateData()
-        grdWBTCATED.Refresh()
-    End Sub
 
-    Private Sub UpdateTheme()
-        For Each rowWBTCATED As DataRow In dst.Tables("WBTCATED").Select()
-            Dim STYLE_CODE As String = rowWBTCATED.Item("STYLE_CODE").ToString & String.Empty
+            'Pricing
+            Dim Discounts As List(Of DISCOUNTS)
+            Discounts = SOCMAIN2.Price_Discounts(Me, "", rowARTCUST1, STYLE_CODE, False)
+            If Discounts(2).DISCOUNT_QTY = 0 Then
+                rowWBTCATED.Item("FULL_CASE") = Null
+                rowWBTCATED.Item("FULL_CASE") = Null
+            Else
+                rowWBTCATED.Item("FULL_CASE") = Discounts(2).DISCOUNT_QTY
+                rowWBTCATED.Item("FULL_CASE") = Format(Discounts(2).DISCOUNT_PRICE, "###,##0.00")
+            End If
+
+            If Discounts(1).DISCOUNT_QTY = 0 Then
+                rowWBTCATED.Item("FIVE_CASE") = Null
+                rowWBTCATED.Item("FIVE_CASE") = Null
+            Else
+                rowWBTCATED.Item("FIVE_CASE") = Discounts(1).DISCOUNT_QTY
+                rowWBTCATED.Item("FIVE_CASE") = Format(Discounts(1).DISCOUNT_PRICE, "###,##0.00")
+            End If
+
+            'Colors
+            Dim COLORS As String = ""
+            For Each rowICTSTYC1 As DataRow In dst.Tables("ICTSTYC1").Select(fltrS, "COLOR_CODE")
+                Dim CC As String = rowICTSTYC1.Item("COLOR_CODE").ToString & String.Empty
+                COLORS = COLORS & $"{CC},"
+            Next
+            If COLORS.Length > 0 Then
+                COLORS = COLORS.Substring(0, COLORS.Length - 1)
+            End If
+            rowWBTCATED.Item("COLOR_CODES") = COLORS
+
+            'Theme
             Dim THEME_DESC As String = ""
-
             Dim sql As New Text.StringBuilder With {.Length = 0}
             sql.AppendLine("SELECT DISTINCT TH1.THEME_DESC")
             sql.AppendLine("FROM ICTSTYL1 ST1, ICTSTYC1 CL1, ICTTHEME TH1")
@@ -117,6 +166,12 @@ Public Class WBTCATEH
                 THEME_DESC = THEME_DESC.Substring(3, THEME_DESC.Length - 3)
             End If
             rowWBTCATED.Item("THEME_DESC") = THEME_DESC
+
+            'STYLE_ORDR if empty
+            Dim STYLE_ORDR As String = rowWBTCATED.Item("STYLE_ORDR").ToString & String.Empty
+            If STYLE_ORDR.Length = 0 Then
+                rowWBTCATED.Item("STYLE_ORDR") = getNextSort()
+            End If
         Next
         grdWBTCATED.UpdateData()
         grdWBTCATED.Refresh()
@@ -132,6 +187,7 @@ Public Class WBTCATEH
             txtSTYLE_CLASS_CODE.Text = ""
             txtTHEME_CODE.Text = ""
             txtSTYLE_CLASS_CODE2.Text = ""
+            setIS_PVC()
             MyBase.EnforceConstraints(True)
 
             PAGE_CODE = String.Empty
@@ -145,6 +201,20 @@ Public Class WBTCATEH
             .Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
             .Override.AllowUpdate = DefaultableBoolean.True
         End With
+
+        'With grdWBTCATED.DisplayLayout
+        '    .Override.AllowAddNew = UltraWinGrid.AllowAddNew.Yes
+        '    .Override.AllowDelete = DefaultableBoolean.True
+        '    .Override.AllowUpdate = DefaultableBoolean.True
+        '    For i As Integer = 0 To .Bands(0).Columns.Count - 1
+        '        .Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
+        '    Next i
+        '    .Bands(0).Columns("STYLE_ORDR").CellActivation = UltraWinGrid.Activation.AllowEdit
+        '    .Bands(0).Columns("STYLE_ORDR").CellClickAction = UltraWinGrid.CellClickAction.EditAndSelectText
+        'End With
+
+        setIS_PVC()
+        setColsVisable()
     End Sub
 #End Region
 
@@ -211,6 +281,7 @@ Public Class WBTCATEH
                 iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
                 If iResult = MsgBoxResult.Yes Then
                     dst.Tables.Item("WBTCATED").Clear()
+                    setIS_PVC()
                 End If
         End Select
 
@@ -401,6 +472,7 @@ Public Class WBTCATEH
             MessageBox.Show("Style already belongs to the Page.", "Update", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Else
             Dim rowICTSTYL1 As DataRow = LookUp("ICTSTYL1", STYLE_CODE)
+            e.Row.Cells("STYLE_ORDR").Value = getNextSort()
             e.Row.Cells("STYLE_DESC").Value = rowICTSTYL1.Item("STYLE_DESC") & String.Empty
             e.Row.Cells("STYLE_STATUS").Value = rowICTSTYL1.Item("STYLE_STATUS") & String.Empty
         End If
@@ -455,8 +527,7 @@ Public Class WBTCATEH
                         e.Cell.Row.Cells.Item("STYLE_DESC").Value = STYLE_DESC
                         'e.Cell.Row.Cells.Item("THEME_CODE").Value = THEME_CODE
                     Next
-                    UpdateInventory()
-                    UpdateTheme()
+                    UpdateExtraData()
                 End If
 
         End Select
@@ -476,6 +547,10 @@ Public Class WBTCATEH
         '2 = Theme
         '3 = Class / Attribute
         '4 = Discontinued
+
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Loading Data")
+
         Dim err As New Text.StringBuilder With {.Length = 0}
         Dim sql As New Text.StringBuilder With {.Length = 0}
         Dim sqlin As New Text.StringBuilder With {.Length = 0}
@@ -565,14 +640,22 @@ Public Class WBTCATEH
                     For Each COL As String In New String() {"PAGE_CODE", "STYLE_CODE", "COLOR_CODE", "STYLE_DESC", "STYLE_STATUS"}
                         newWBTCATU2.Item(COL) = rowICTSTYL1.Item(COL).ToString & String.Empty
                     Next
+                    newWBTCATU2.Item("STYLE_ORDR") = getNextSort()
                     dst.Tables.Item("WBTCATED").Rows.Add(newWBTCATU2)
                 End If
             Next
-            UpdateInventory()
-            UpdateTheme()
+            UpdateExtraData()
         End If
+        setIS_PVC()
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
     End Sub
 
+    Private Function getNextSort() As Int64
+        Dim RETVAL As Int64
+        RETVAL = Val(dst.Tables("WBTCATED").Compute("MAX(STYLE_ORDR)", "").ToString & String.Empty) + 1
+        Return RETVAL
+    End Function
     Private Sub saveWBTCATU1()
         If dst.Tables.Item("WBTCATU1").Rows.Count = 1 Then
             Dim rowWBTCATU1 As DataRow = dst.Tables.Item("WBTCATU1").Rows(0)
@@ -598,10 +681,38 @@ Public Class WBTCATEH
             Create_TDA(.Tables.Add, "WBTCATU1", "*", 1, True, String.Empty, 1)
             Create_TDA(.Tables.Add, "WBTCATU2", "*", 2, True, String.Empty, 2)
 
-            Create_TDA(.Tables.Add, "WBTCATED", "*", 2, True, String.Empty, 2)
+            Dim S As New Text.StringBuilder With {.Length = 0}
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("WBTCATED.PAGE_CODE,")
+            S.AppendLine("WBTCATED.STYLE_CODE,")
+            S.AppendLine("WBTCATED.COLOR_CODE,")
+            S.AppendLine("WBTCATED.COLOR_CODES,")
+            S.AppendLine("WBTCATED.STYLE_ORDR,")
+            S.AppendLine("ICTSTYL1.STYLE_DESC,")
+            S.AppendLine("ICTSTYL1.STYLE_STATUS,")
+            S.AppendLine("ICTPVC01.HEIGHT,")
+            S.AppendLine("ICTPVC01.DIAMETER,")
+            S.AppendLine("ICTPVC01.PVC_LENGTH,")
+            S.AppendLine("ICTPVCLT.LIGHT_TYPE_DESC,")
+            S.AppendLine("ICTPVC01.LIGHT_COUNT,")
+            S.AppendLine("ICTPVCLC.LIGHT_COLOR_DESC,")
+            S.AppendLine("ICTPVC01.TIP_COUNT,")
+            S.AppendLine("ICTPVC01.G40_COUNT,")
+            S.AppendLine("('*' || WBTCATED.STYLE_CODE || '*') AS BAR_CODE,")
+            S.AppendLine("9999.99 AS FULL_CASE,")
+            S.AppendLine("9999.99 AS FIVE_CASE,")
+            S.AppendLine("ICTSTYL1.CARTON_PACK_QTY,")
+            S.AppendLine("ICTSTYL1.CASE_CUBE")
+            S.AppendLine("FROM WBTCATED, ICTSTYL1, ICTPVC01, ICTPVCLT, ICTPVCLC")
+            S.AppendLine("WHERE WBTCATED.STYLE_CODE = ICTSTYL1.STYLE_CODE")
+            S.AppendLine("AND ICTSTYL1.STYLE_CODE = ICTPVC01.STYLE_CODE (+)")
+            S.AppendLine("AND ICTPVC01.LIGHT_TYPE_CODE = ICTPVCLT.LIGHT_TYPE_CODE (+)")
+            S.AppendLine("AND ICTPVC01.LIGHT_COLOR_CODE = ICTPVCLC.LIGHT_COLOR_CODE (+)")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "WBTCATED", "**", 2, True, String.Empty, 2)
+            'Create_TDA(.Tables.Add, "WBTCATED", S.ToString)
             With dst.Tables("WBTCATED")
-                .Columns.Add("STYLE_DESC", GetType(System.String))
-                .Columns.Add("STYLE_STATUS", GetType(System.String))
                 .Columns.Add("CURR_ON_HAND", GetType(System.Int64))
                 .Columns.Add("THEME_DESC", GetType(System.String))
             End With
@@ -662,8 +773,15 @@ Public Class WBTCATEH
             SB.AppendLine("   GROUP BY C1.STYLE_CODE")
             SB.AppendLine("  )")
             ASCMAIN1.sql = SB.ToString
+            Create_TDA(dst.Tables.Add, "ICTSTYCX", "**", 0, False, "", 2)
+            Fill_Records("ICTSTYCX")
+
+            S.Length = 0
+            S.AppendLine("SELECT STYLE_CODE, COLOR_CODE from ICTSTYC1")
+            ASCMAIN1.sql = S.ToString
             Create_TDA(dst.Tables.Add, "ICTSTYC1", "**", 0, False, "", 2)
             Fill_Records("ICTSTYC1")
+
         End With
 
         grdWBTCATED.DataSource = dst.Tables("WBTCATED")
@@ -676,6 +794,9 @@ Public Class WBTCATEH
             .Columns("STYLE_CODE").Header.Appearance.ForeColor = System.Drawing.Color.White
             .Columns("STYLE_CODE").Header.Appearance.BackColor2 = System.Drawing.Color.Blue
             .Columns("STYLE_CODE").Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
+            .Columns("COLOR_CODE").Header.Appearance.ForeColor = System.Drawing.Color.White
+            .Columns("COLOR_CODE").Header.Appearance.BackColor2 = System.Drawing.Color.Blue
+            .Columns("COLOR_CODE").Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
         End With
 
         With grdWBTCATU2.DisplayLayout
@@ -683,15 +804,7 @@ Public Class WBTCATEH
             .Override.AllowUpdate = DefaultableBoolean.True
         End With
 
-        'With grdWBTCATED.DisplayLayout
-        '    '.Override.AllowAddNew = UltraWinGrid.AllowAddNew.Yes
-        '    '.Override.AllowDelete = DefaultableBoolean.True
-        '    '.Override.AllowUpdate = DefaultableBoolean.True
-        '    .Bands(0).Columns("STYLE_CODE").CellActivation = UltraWinGrid.Activation.NoEdit
-        '    'For i As Integer = 0 To .Bands(0).Columns.Count - 1
-        '    '    .Bands(0).Columns(i).CellActivation = UltraWinGrid.Activation.NoEdit
-        '    'Next i
-        'End With
+
     End Sub
 
     Private Sub btnDiscontinued_Click(sender As Object, e As EventArgs) Handles btnDiscontinued.Click
@@ -751,7 +864,10 @@ Public Class WBTCATEH
                     Dim HeaderFound As Boolean = False
                     Do While Blanks <> 25
                         Dim STYLE_CODE As String = oSheet.Cells(r, 0).Text & ""
-                        Dim COLOR_CODE As String = oSheet.Cells(r, 1).Text & ""
+                        Dim COLOR_CODE As String = ""
+                        If Not chkIS_PVC.Checked Then
+                            COLOR_CODE = oSheet.Cells(r, 1).Text & ""
+                        End If
                         If STYLE_CODE = "" Or IsNumeric(STYLE_CODE) Or STYLE_CODE = "Totals" Then
                             Blanks += 1
                         End If
@@ -765,9 +881,20 @@ Public Class WBTCATEH
                                     BAD_STYLES.Add(STYLE_CODE)
                                 End If
                             Else
-                                Dim flt As String = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+                                Dim flt As String = ""
+                                If chkIS_PVC.Checked Then
+                                    flt = $"STYLE_CODE = '{STYLE_CODE}'"
+                                Else
+                                    flt = $"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'"
+                                End If
+
                                 If dst.Tables.Item("WBTCATED").Select(flt).Count > 0 Then
-                                    Dim STYLE_COLOR As String = $"{STYLE_CODE}-{COLOR_CODE}"
+                                    Dim STYLE_COLOR As String = ""
+                                    If chkIS_PVC.Checked Then
+                                        STYLE_COLOR = $"{STYLE_CODE}"
+                                    Else
+                                        STYLE_COLOR = $"{STYLE_CODE}-{COLOR_CODE}"
+                                    End If
                                     If Not DUPE_STYLES.Contains(STYLE_COLOR) Then
                                         DUPE_STYLES.Add(STYLE_COLOR)
                                     End If
@@ -775,7 +902,12 @@ Public Class WBTCATEH
                                     Dim newWBTCATED As DataRow = dst.Tables.Item("WBTCATED").NewRow
                                     newWBTCATED.Item("PAGE_CODE") = MyBase.Absx1.txtFor("PAGE_CODE").Text
                                     newWBTCATED.Item("STYLE_CODE") = STYLE_CODE
-                                    newWBTCATED.Item("COLOR_CODE") = COLOR_CODE
+                                    If Not chkIS_PVC.Checked Then
+                                        newWBTCATED.Item("COLOR_CODE") = COLOR_CODE
+                                    Else
+                                        newWBTCATED.Item("COLOR_CODE") = "PVC"
+                                    End If
+                                    newWBTCATED.Item("STYLE_ORDR") = getNextSort()
                                     newWBTCATED.Item("STYLE_DESC") = rowICTSTYL1.Item("STYLE_DESC").ToString & String.Empty
                                     newWBTCATED.Item("STYLE_STATUS") = rowICTSTYL1.Item("STYLE_STATUS") & String.Empty
                                     dst.Tables.Item("WBTCATED").Rows.Add(newWBTCATED)
@@ -793,20 +925,59 @@ Public Class WBTCATEH
                         MsgBox("The following Duplicate Styles have been encountered: " & Join(DUPE_STYLES.ToArray, ","), MsgBoxStyle.OkOnly, "Warning")
                     End If
                 End If
-                UpdateInventory()
-                UpdateTheme()
+                UpdateExtraData()
+                setIS_PVC()
                 Me.Cursor = Cursors.Default
                 ASCMAIN1.Progress("")
-                MsgBox("Import Complete", vbOKOnly, "Done")
+                Dim mg As New Text.StringBuilder With {.Length = 0}
+                mg.AppendLine("Import Complete.")
+                mg.AppendLine("Please Save and Re-load")
+                mg.AppendLine("To See PVC Data.")
+
+                MsgBox(mg.ToString, vbOKOnly, "Done")
             End If
         End If
     End Sub
 
-    Private Sub chkPVCFormat_CheckedChanged(sender As Object, e As EventArgs) Handles chkPVCFormat.CheckedChanged
-        If chkPVCFormat.Checked Then
-            MsgBox("This Feature Is Under Construction", vbOKOnly, "Working As Fast As I Can Captain!")
-            chkPVCFormat.Checked = False
+    Private Sub chkIS_PVC_CheckedChanged(sender As Object, e As EventArgs) Handles chkIS_PVC.CheckedChanged
+        setIS_PVC()
+
+        If chkIS_PVC.Checked Then
+
         End If
+        setColsVisable()
+    End Sub
+    Private Sub setIS_PVC()
+        Dim DETL_RECS As Int64 = dst.Tables.Item("WBTCATED").Rows.Count
+        If DETL_RECS > 0 Then
+            chkIS_PVC.Enabled = False
+        Else
+            chkIS_PVC.Enabled = True
+        End If
+    End Sub
+    Private Sub setColsVisable()
+        With grdWBTCATED.DisplayLayout.Bands(0)
+            .Columns.Item("STYLE_CODE").Hidden = False
+            .Columns.Item("STYLE_ORDR").Hidden = False
+            .Columns.Item("HEIGHT").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("DIAMETER").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("PVC_LENGTH").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("COLOR_CODE").Hidden = chkIS_PVC.Checked
+            .Columns.Item("COLOR_CODES").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("LIGHT_TYPE_DESC").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("LIGHT_COUNT").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("TIP_COUNT").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("G40_COUNT").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("BAR_CODE").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("FULL_CASE").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("FIVE_CASE").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("CARTON_PACK_QTY").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("CASE_CUBE").Hidden = Not chkIS_PVC.Checked
+            .Columns.Item("STYLE_DESC").Hidden = False
+            .Columns.Item("STYLE_STATUS").Hidden = chkIS_PVC.Checked
+            .Columns.Item("CURR_ON_HAND").Hidden = chkIS_PVC.Checked
+            .Columns.Item("THEME_DESC").Hidden = chkIS_PVC.Checked
+        End With
     End Sub
 #End Region
 End Class
