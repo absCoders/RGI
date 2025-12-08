@@ -73,7 +73,11 @@ Public Class WHFCARRB
             ASCMAIN1.sql = $"SELECT * FROM {wkSOTSHIPX}"
             Create_TDA(.Tables.Add, "WHTSHPCX_DETAILS", ASCMAIN1.sql, 0, False, "", 0)
 
-            ASCMAIN1.sql = $"SELECT DISTINCT MASTER_TRACKING_NO TRACKING_NO, CUST_CODE, CUST_NAME, SHIP_VIA_CODE FROM {wkSOTSHIPX}"
+            'ASCMAIN1.sql = $"SELECT DISTINCT MASTER_TRACKING_NO TRACKING_NO, CUST_CODE, CUST_NAME, SHIP_VIA_CODE FROM {wkSOTSHIPX}"
+            ' 12/04/2025 - Looks like to Ship Bols were shipped together and the Customer names are different
+            ASCMAIN1.sql = $"SELECT DISTINCT {wkSOTSHIPX}.MASTER_TRACKING_NO TRACKING_NO, {wkSOTSHIPX}.CUST_CODE, ARTCUST1.CUST_NAME, {wkSOTSHIPX}.SHIP_VIA_CODE 
+                                FROM {wkSOTSHIPX}, ARTCUST1
+                                WHERE {wkSOTSHIPX}.CUST_CODE = ARTCUST1.CUST_CODE (+)"
             Create_TDA(.Tables.Add, "WHTSHPCX", ASCMAIN1.sql, 0, False, "", 0)
 
             Create_TDA(.Tables.Add("WHTSHPBX"), "WHTSHPB1", "*")

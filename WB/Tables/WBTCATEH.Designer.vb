@@ -61,6 +61,21 @@ Partial Class WBTCATEH
         Dim UltraGridColumn8 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_STATUS")
         Dim UltraGridColumn4 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CURR_ON_HAND")
         Dim UltraGridColumn5 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("THEME_DESC")
+        Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_ORDR")
+        Dim UltraGridColumn11 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_CODES")
+        Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("HEIGHT")
+        Dim UltraGridColumn13 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DIAMETER")
+        Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PVC_LENGTH")
+        Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LIGHT_TYPE_DESC")
+        Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LIGHT_COUNT")
+        Dim UltraGridColumn17 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TIP_COUNT")
+        Dim UltraGridColumn18 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("G40_COUNT")
+        Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BAR_CODE")
+        Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FULL_CASE")
+        Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FIVE_CASE", -1, Nothing, 0, Infragistics.Win.UltraWinGrid.SortIndicator.Ascending, False)
+        Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CARTON_PACK_QTY")
+        Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CASE_CUBE")
+        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LIGHT_COLOR_DESC")
         Dim Appearance18 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance19 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance20 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -78,6 +93,7 @@ Partial Class WBTCATEH
         Me.UltraOptionSet1 = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.SplitContainer3 = New System.Windows.Forms.SplitContainer()
         Me.grpSOLDTO = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkIS_PVC = New ABSCS.ABSCheckBox()
         Me.btnUploadXLS = New System.Windows.Forms.Button()
         Me.btnDiscontinued = New System.Windows.Forms.Button()
         Me.btnBuildOnRules = New System.Windows.Forms.Button()
@@ -92,7 +108,6 @@ Partial Class WBTCATEH
         Me.UltraLabel2 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSTYLE_CLASS_CODE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.grdWBTCATED = New Infragistics.Win.UltraWinGrid.UltraGrid()
-        Me.chkPVCFormat = New System.Windows.Forms.CheckBox()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -112,6 +127,7 @@ Partial Class WBTCATEH
         Me.SplitContainer3.SuspendLayout()
         CType(Me.grpSOLDTO, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpSOLDTO.SuspendLayout()
+        CType(Me.chkIS_PVC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdWBTCATU2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_CLASS_CODE2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtTHEME_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -122,7 +138,7 @@ Partial Class WBTCATEH
         'Panel1
         '
         Me.Panel1.Controls.Add(Me.SplitContainer3)
-        Me.Panel1.Size = New System.Drawing.Size(772, 507)
+        Me.Panel1.Size = New System.Drawing.Size(926, 507)
         '
         'UltraExplorerBar1
         '
@@ -137,7 +153,7 @@ Partial Class WBTCATEH
         '
         'ASFBASE1_Fill_Panel
         '
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(776, 574)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(930, 574)
         '
         'grdASFBASEX
         '
@@ -190,17 +206,17 @@ Partial Class WBTCATEH
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1143, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 574)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1143, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 574)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(989, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1143, 0)
         '
         'tlb
         '
@@ -266,14 +282,14 @@ Partial Class WBTCATEH
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdWBTCATED)
-        Me.SplitContainer3.Size = New System.Drawing.Size(772, 507)
+        Me.SplitContainer3.Size = New System.Drawing.Size(926, 507)
         Me.SplitContainer3.SplitterDistance = 181
         Me.SplitContainer3.TabIndex = 45
         '
         'grpSOLDTO
         '
         Me.grpSOLDTO.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.grpSOLDTO.Controls.Add(Me.chkPVCFormat)
+        Me.grpSOLDTO.Controls.Add(Me.chkIS_PVC)
         Me.grpSOLDTO.Controls.Add(Me.btnUploadXLS)
         Me.grpSOLDTO.Controls.Add(Me.btnDiscontinued)
         Me.grpSOLDTO.Controls.Add(Me.btnBuildOnRules)
@@ -294,8 +310,17 @@ Partial Class WBTCATEH
         Me.grpSOLDTO.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpSOLDTO.Location = New System.Drawing.Point(0, 0)
         Me.grpSOLDTO.Name = "grpSOLDTO"
-        Me.grpSOLDTO.Size = New System.Drawing.Size(772, 181)
+        Me.grpSOLDTO.Size = New System.Drawing.Size(926, 181)
         Me.grpSOLDTO.TabIndex = 103
+        '
+        'chkIS_PVC
+        '
+        Me.Absx1.SetABSColumnName(Me.chkIS_PVC, "IS_PVC")
+        Me.chkIS_PVC.Location = New System.Drawing.Point(755, 23)
+        Me.chkIS_PVC.Name = "chkIS_PVC"
+        Me.chkIS_PVC.Size = New System.Drawing.Size(113, 18)
+        Me.chkIS_PVC.TabIndex = 69
+        Me.chkIS_PVC.Text = "PVC Format"
         '
         'btnUploadXLS
         '
@@ -504,26 +529,68 @@ Partial Class WBTCATEH
         UltraGridColumn1.Hidden = True
         UltraGridColumn1.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn6.Header.Caption = "Style"
-        UltraGridColumn6.Header.VisiblePosition = 1
+        UltraGridColumn6.Header.VisiblePosition = 2
         UltraGridColumn6.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
         UltraGridColumn9.Header.Caption = "Color"
-        UltraGridColumn9.Header.VisiblePosition = 2
+        UltraGridColumn9.Header.VisiblePosition = 6
         UltraGridColumn9.Width = 87
         UltraGridColumn7.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn7.Header.Caption = "Description"
-        UltraGridColumn7.Header.VisiblePosition = 4
+        UltraGridColumn7.Header.VisiblePosition = 18
         UltraGridColumn7.Width = 446
         UltraGridColumn8.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn8.Header.Caption = "Status"
-        UltraGridColumn8.Header.VisiblePosition = 3
+        UltraGridColumn8.Header.VisiblePosition = 19
         UltraGridColumn8.Width = 69
         UltraGridColumn4.Header.Caption = "Avail"
-        UltraGridColumn4.Header.VisiblePosition = 5
+        UltraGridColumn4.Header.VisiblePosition = 20
         UltraGridColumn4.Width = 87
         UltraGridColumn5.Header.Caption = "Theme"
-        UltraGridColumn5.Header.VisiblePosition = 6
-        UltraGridColumn5.Width = 421
-        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn6, UltraGridColumn9, UltraGridColumn7, UltraGridColumn8, UltraGridColumn4, UltraGridColumn5})
+        UltraGridColumn5.Header.VisiblePosition = 21
+        UltraGridColumn5.Width = 132
+        UltraGridColumn10.Header.Caption = "Ordr"
+        UltraGridColumn10.Header.VisiblePosition = 1
+        UltraGridColumn10.Width = 48
+        UltraGridColumn11.Header.Caption = "Colors"
+        UltraGridColumn11.Header.VisiblePosition = 7
+        UltraGridColumn11.Width = 212
+        UltraGridColumn12.Header.Caption = "Height"
+        UltraGridColumn12.Header.VisiblePosition = 3
+        UltraGridColumn12.Width = 70
+        UltraGridColumn13.Header.Caption = "Diameter"
+        UltraGridColumn13.Header.VisiblePosition = 4
+        UltraGridColumn13.Width = 87
+        UltraGridColumn14.Header.Caption = "Length"
+        UltraGridColumn14.Header.VisiblePosition = 5
+        UltraGridColumn14.Width = 74
+        UltraGridColumn15.Header.Caption = "Light Type"
+        UltraGridColumn15.Header.VisiblePosition = 8
+        UltraGridColumn16.Header.Caption = "Light Count"
+        UltraGridColumn16.Header.VisiblePosition = 9
+        UltraGridColumn16.Width = 92
+        UltraGridColumn17.Header.Caption = "Tip Count"
+        UltraGridColumn17.Header.VisiblePosition = 11
+        UltraGridColumn17.Width = 87
+        UltraGridColumn18.Header.Caption = "G40 Count"
+        UltraGridColumn18.Header.VisiblePosition = 12
+        UltraGridColumn18.Width = 91
+        UltraGridColumn19.Header.Caption = "Bar Code"
+        UltraGridColumn19.Header.VisiblePosition = 13
+        UltraGridColumn20.Header.Caption = "Full Case"
+        UltraGridColumn20.Header.VisiblePosition = 14
+        UltraGridColumn20.Width = 88
+        UltraGridColumn21.Header.Caption = "5-9 Case"
+        UltraGridColumn21.Header.VisiblePosition = 15
+        UltraGridColumn21.Width = 93
+        UltraGridColumn22.Header.Caption = "Cart Pack"
+        UltraGridColumn22.Header.VisiblePosition = 16
+        UltraGridColumn22.Width = 87
+        UltraGridColumn23.Header.Caption = "Cube"
+        UltraGridColumn23.Header.VisiblePosition = 17
+        UltraGridColumn23.Width = 77
+        UltraGridColumn24.Header.Caption = "Light Color"
+        UltraGridColumn24.Header.VisiblePosition = 10
+        UltraGridBand2.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn6, UltraGridColumn9, UltraGridColumn7, UltraGridColumn8, UltraGridColumn4, UltraGridColumn5, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24})
         Me.grdWBTCATED.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdWBTCATED.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance18.TextHAlignAsString = "Left"
@@ -584,25 +651,15 @@ Partial Class WBTCATEH
         Me.grdWBTCATED.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdWBTCATED.Location = New System.Drawing.Point(0, 0)
         Me.grdWBTCATED.Name = "grdWBTCATED"
-        Me.grdWBTCATED.Size = New System.Drawing.Size(772, 322)
+        Me.grdWBTCATED.Size = New System.Drawing.Size(926, 322)
         Me.grdWBTCATED.TabIndex = 4
         Me.grdWBTCATED.TabStop = False
-        '
-        'chkPVCFormat
-        '
-        Me.chkPVCFormat.AutoSize = True
-        Me.chkPVCFormat.Location = New System.Drawing.Point(385, 112)
-        Me.chkPVCFormat.Name = "chkPVCFormat"
-        Me.chkPVCFormat.Size = New System.Drawing.Size(104, 20)
-        Me.chkPVCFormat.TabIndex = 57
-        Me.chkPVCFormat.Text = "PVC Format"
-        Me.chkPVCFormat.UseVisualStyleBackColor = True
         '
         'WBTCATEH
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(989, 574)
+        Me.ClientSize = New System.Drawing.Size(1143, 574)
         Me.Name = "WBTCATEH"
         Me.Text = "WBTCATEH"
         Me.Panel1.ResumeLayout(False)
@@ -625,6 +682,7 @@ Partial Class WBTCATEH
         CType(Me.grpSOLDTO, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpSOLDTO.ResumeLayout(False)
         Me.grpSOLDTO.PerformLayout()
+        CType(Me.chkIS_PVC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdWBTCATU2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSTYLE_CLASS_CODE2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtTHEME_CODE, System.ComponentModel.ISupportInitialize).EndInit()
@@ -653,5 +711,5 @@ Partial Class WBTCATEH
     Friend WithEvents btnBuildOnRules As Button
     Friend WithEvents btnDiscontinued As Button
     Friend WithEvents btnUploadXLS As Button
-    Friend WithEvents chkPVCFormat As CheckBox
+    Friend WithEvents chkIS_PVC As ABSCS.ABSCheckBox
 End Class

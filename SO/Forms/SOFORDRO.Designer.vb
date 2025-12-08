@@ -578,9 +578,9 @@ Partial Class SOFORDRO
         Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtVEND_PURCH_COMMENT = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel21 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor10 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtSTYLE_DESC2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtSTYLE_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel10 = New Infragistics.Win.Misc.UltraLabel()
         Me.lblSTATUS = New System.Windows.Forms.Label()
         Me.UltraLabel6 = New Infragistics.Win.Misc.UltraLabel()
@@ -709,8 +709,8 @@ Partial Class SOFORDRO
         CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtVEND_PURCH_COMMENT, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtSTYLE_DESC2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtSTYLE_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_CODE, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tabPricing, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -990,6 +990,7 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'Panel5
         '
@@ -1233,6 +1234,7 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpFindCustomer
         '
@@ -1260,6 +1262,7 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 2
+        Me.UltraExplorerBarContainerControl3.Visible = False
         '
         'Panel3
         '
@@ -1288,6 +1291,7 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'Panel4
         '
@@ -1303,7 +1307,7 @@ Partial Class SOFORDRO
         'numFEFDFACTOR
         '
         Me.numFEFDFACTOR.Location = New System.Drawing.Point(15, 28)
-        Me.numFEFDFACTOR.Maximum = New Decimal(New Integer() {0, 0, 0, 0})
+        Me.numFEFDFACTOR.Maximum = New Decimal(New Integer() {5, 0, 0, 0})
         Me.numFEFDFACTOR.Minimum = New Decimal(New Integer() {14, 0, 0, -2147483648})
         Me.numFEFDFACTOR.Name = "numFEFDFACTOR"
         Me.numFEFDFACTOR.Size = New System.Drawing.Size(86, 23)
@@ -1707,7 +1711,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(952, 510)
         '
@@ -2198,7 +2202,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraPanel1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(952, 510)
         '
@@ -2903,9 +2907,9 @@ Partial Class SOFORDRO
         Me.grpSTYL1.Controls.Add(Me.UltraLabel13)
         Me.grpSTYL1.Controls.Add(Me.txtVEND_PURCH_COMMENT)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel21)
-        Me.grpSTYL1.Controls.Add(Me.UltraTextEditor10)
+        Me.grpSTYL1.Controls.Add(Me.txtSTYLE_DESC2)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel11)
-        Me.grpSTYL1.Controls.Add(Me.UltraTextEditor8)
+        Me.grpSTYL1.Controls.Add(Me.txtSTYLE_DESC)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel10)
         Me.grpSTYL1.Controls.Add(Me.lblSTATUS)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel6)
@@ -3202,16 +3206,16 @@ Partial Class SOFORDRO
         Me.UltraLabel21.TabIndex = 63
         Me.UltraLabel21.Text = "Factory Message"
         '
-        'UltraTextEditor10
+        'txtSTYLE_DESC2
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "SIZE_SCALE")
-        Me.Absx1.SetABSTableName(Me.UltraTextEditor10, "ICTSTYL1")
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(7, 119)
-        Me.UltraTextEditor10.Name = "UltraTextEditor10"
-        Me.UltraTextEditor10.ReadOnly = True
-        Me.UltraTextEditor10.Size = New System.Drawing.Size(288, 25)
-        Me.UltraTextEditor10.TabIndex = 59
-        Me.UltraTextEditor10.TabStop = False
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_DESC2, "STYLE_DESC2")
+        Me.Absx1.SetABSTableName(Me.txtSTYLE_DESC2, "ICTSTYL1")
+        Me.txtSTYLE_DESC2.Location = New System.Drawing.Point(7, 119)
+        Me.txtSTYLE_DESC2.Name = "txtSTYLE_DESC2"
+        Me.txtSTYLE_DESC2.ReadOnly = True
+        Me.txtSTYLE_DESC2.Size = New System.Drawing.Size(288, 25)
+        Me.txtSTYLE_DESC2.TabIndex = 59
+        Me.txtSTYLE_DESC2.TabStop = False
         '
         'UltraLabel11
         '
@@ -3221,17 +3225,17 @@ Partial Class SOFORDRO
         Me.UltraLabel11.TabIndex = 61
         Me.UltraLabel11.Text = "Remarks"
         '
-        'UltraTextEditor8
+        'txtSTYLE_DESC
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "STYLE_DESC")
-        Me.Absx1.SetABSParentColumnName(Me.UltraTextEditor8, "STYLE_CODE")
-        Me.Absx1.SetABSTableName(Me.UltraTextEditor8, "ICTSTYL1")
-        Me.UltraTextEditor8.Location = New System.Drawing.Point(8, 79)
-        Me.UltraTextEditor8.Name = "UltraTextEditor8"
-        Me.UltraTextEditor8.ReadOnly = True
-        Me.UltraTextEditor8.Size = New System.Drawing.Size(219, 25)
-        Me.UltraTextEditor8.TabIndex = 58
-        Me.UltraTextEditor8.TabStop = False
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_DESC, "STYLE_DESC")
+        Me.Absx1.SetABSParentColumnName(Me.txtSTYLE_DESC, "STYLE_CODE")
+        Me.Absx1.SetABSTableName(Me.txtSTYLE_DESC, "ICTSTYL1")
+        Me.txtSTYLE_DESC.Location = New System.Drawing.Point(8, 79)
+        Me.txtSTYLE_DESC.Name = "txtSTYLE_DESC"
+        Me.txtSTYLE_DESC.ReadOnly = True
+        Me.txtSTYLE_DESC.Size = New System.Drawing.Size(219, 25)
+        Me.txtSTYLE_DESC.TabIndex = 58
+        Me.txtSTYLE_DESC.TabStop = False
         '
         'UltraLabel10
         '
@@ -3346,7 +3350,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOTORDRX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(956, 538)
         '
@@ -3568,7 +3572,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabORDERS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(956, 538)
         '
@@ -3877,8 +3881,8 @@ Partial Class SOFORDRO
         CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtVEND_PURCH_COMMENT, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor8, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtSTYLE_DESC2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtSTYLE_DESC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSTYLE_CODE, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tabPricing, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3956,9 +3960,9 @@ Partial Class SOFORDRO
     Friend WithEvents UltraLabel17 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents txtVEND_PURCH_COMMENT As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel21 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents UltraTextEditor10 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtSTYLE_DESC2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel11 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents UltraTextEditor8 As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtSTYLE_DESC As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel10 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents qtyDISC2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents lblDISC2QP As Infragistics.Win.Misc.UltraLabel
