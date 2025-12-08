@@ -73,7 +73,7 @@ Public Class ARFCALL1
             SQLSB.AppendLine("FROM ARTOPEN1 O1, ARTCUST1 C1, ARTCUSTN N1")
             SQLSB.AppendLine("WHERE O1.CUST_CODE = C1.CUST_CODE")
             SQLSB.AppendLine("AND C1.CUST_CODE = N1.CUST_CODE (+)")
-            SQLSB.AppendLine("AND O1.INV_BALANCE > 0")
+            SQLSB.AppendLine("AND O1.INV_BALANCE <> 0")
             SQLSB.AppendLine("GROUP BY O1.CUST_CODE, C1.CUST_NAME, C1.SREP_CODE, C1.CUST_CREDIT_HOLD, C1.CUST_STATE, N1.NOTIFY_ACTION, N1.NOTIFY_DATE, NVL(C1.POST_CODE,'REG')")
             ASCMAIN1.sql = SQLSB.ToString
             Create_TDA(.Tables.Add, "ARTOPENX", "**", 0, False)
@@ -83,6 +83,7 @@ Public Class ARFCALL1
             SQLSB.AppendLine("SELECT")
             SQLSB.AppendLine("H1.INV_NO,")
             SQLSB.AppendLine("H1.INV_DATE,")
+            SQLSB.AppendLine("O1.INV_DUE_DATE,")
             SQLSB.AppendLine("H1.ORDR_CUST_PO,")
             SQLSB.AppendLine("H1.ORDR_NO,")
             SQLSB.AppendLine("H1.WHSE_CODE,")
@@ -824,7 +825,7 @@ Public Class ARFCALL1
         'If chkALLINV.Checked Then
         '    SFilter = ""
         'Else
-        SFilter = "INV_BALANCE > 0"
+        SFilter = "INV_BALANCE <> 0"
         'End If
         dvw = DirectCast(grdPMTINVHX.DataSource, DataTable).DefaultView
         dvw.RowFilter = SFilter
