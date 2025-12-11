@@ -131,6 +131,7 @@ Partial Class WHFDASH2
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
+        Me.chkShowDates = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -359,6 +360,7 @@ Partial Class WHFDASH2
         '
         'SplitContainer3.Panel2
         '
+        Me.SplitContainer3.Panel2.Controls.Add(Me.chkShowDates)
         Me.SplitContainer3.Panel2.Controls.Add(Me.grdWHTRFID3)
         Me.SplitContainer3.Size = New System.Drawing.Size(373, 446)
         Me.SplitContainer3.SplitterDistance = 211
@@ -816,6 +818,17 @@ Partial Class WHFDASH2
         '
         Me.Timer1.Interval = 1000
         '
+        'chkShowDates
+        '
+        Me.chkShowDates.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.chkShowDates.AutoSize = True
+        Me.chkShowDates.Location = New System.Drawing.Point(316, 3)
+        Me.chkShowDates.Name = "chkShowDates"
+        Me.chkShowDates.Size = New System.Drawing.Size(54, 20)
+        Me.chkShowDates.TabIndex = 4
+        Me.chkShowDates.Text = "only"
+        Me.chkShowDates.UseVisualStyleBackColor = True
+        '
         'WHFDASH2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -844,6 +857,7 @@ Partial Class WHFDASH2
         Me.SplitContainer2.ResumeLayout(False)
         Me.SplitContainer3.Panel1.ResumeLayout(False)
         Me.SplitContainer3.Panel2.ResumeLayout(False)
+        Me.SplitContainer3.Panel2.PerformLayout()
         CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer3.ResumeLayout(False)
         CType(Me.grdWHTRFID3, System.ComponentModel.ISupportInitialize).EndInit()
@@ -900,4 +914,5 @@ Partial Class WHFDASH2
     Friend WithEvents lblSelDate As Label
     Friend WithEvents dteDateFrom As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents dteDateTo As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents chkShowDates As CheckBox
 End Class

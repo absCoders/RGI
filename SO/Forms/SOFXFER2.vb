@@ -2487,6 +2487,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Expose 2nd Description In Order Entry.")
 
+        VersionNo = "25.12.11.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Remove Factory From SKU Inq and Order Entry.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

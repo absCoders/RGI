@@ -86,10 +86,10 @@ Public Class WHFDASH2
                             and WHTSCSEQ.STYLE_SEQ = WHTLOCM1.LOCATION_ROUTE_SEQ
                             and WHTLOCM1.WHSE_CODE = 'NJC'
                             and WHTLOCM1.LOCATION_CODE like 'F1%'
-                            and trunc(WHTRFID1.SCAN_DATE) = :PARM1
+                            and trunc(WHTRFID1.SCAN_DATE) between :PARM1 and :PARM2
                             group by WHTRFID3.RFID, WHTRFID3.UPC_CODE
                             having count(distinct WHTRFID1.CART_NO) > 1"
-            Create_TDA(.Tables.Add, "WHTRFID3", "**", 0, False, "D")
+            Create_TDA(.Tables.Add, "WHTRFID3", "**", 0, False, "DD")
             'Fill_Records("WHTRFID3", New Object() {dteDateFrom.DateTime.ToShortDateString})
 
         End With
@@ -399,7 +399,11 @@ Public Class WHFDASH2
         Fill_Records("WHTRFIDS", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
         Fill_Records("WHTRFID1", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
         Fill_Records("WHTRFID2", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
-        Fill_Records("WHTRFID3", New Object() {dteDateTo.DateTime.ToShortDateString})
+        If chkShowDates.Checked Then
+            Fill_Records("WHTRFID3", New Object() {dteDateTo.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        Else
+            Fill_Records("WHTRFID3", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        End If
 
         lstWHTRFIDS.View = View.Details
         If lstWHTRFIDS.Columns.Count = 0 Then
@@ -425,9 +429,9 @@ Public Class WHFDASH2
             lblUpdated.Text = $"Scans Analyzed for {dteDateFrom.DateTime.ToShortDateString} - {dteDateTo.DateTime.ToShortDateString}  at " & DateTime.Now.ToString("g")
             grdWHTRFID1.Text = $"Cartons Scanned between { dteDateFrom.DateTime.ToShortDateString} and {dteDateTo.DateTime.ToShortDateString} "
             grdWHTRFID2.Text = $"UPCs with Errors between { dteDateFrom.DateTime.ToShortDateString} and {dteDateTo.DateTime.ToShortDateString} "
-            grdWHTRFID3.Text = "RFIDs with multiple scans on " & dteDateTo.DateTime.ToShortDateString
+            grdWHTRFID3.Text = $"RFIDs with multiple between { dteDateFrom.DateTime.ToShortDateString} and {dteDateTo.DateTime.ToShortDateString} "
         End If
-
+        chkShowDates.Text = $"Show only {dteDateTo.DateTime.ToShortDateString}"
 
         'MsgBox("Analysis Complete", vbOKOnly, "Done")
         ASCMAIN1.Progress("", "")
@@ -452,6 +456,13 @@ Public Class WHFDASH2
 #End Region
 
 #Region "Form Controls"
+    Private Sub chkShowDates_CheckedChanged(sender As Object, e As EventArgs) Handles chkShowDates.CheckedChanged
+        If chkShowDates.Checked Then
+            Fill_Records("WHTRFID3", New Object() {dteDateTo.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        Else
+            Fill_Records("WHTRFID3", New Object() {dteDateFrom.DateTime.ToShortDateString, dteDateTo.DateTime.ToShortDateString})
+        End If
+    End Sub
 
 #Region "Grids"
     Private Sub grdWHTRFID3_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdWHTRFID3.InitializeLayout

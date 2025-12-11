@@ -201,8 +201,6 @@ Partial Class SOFSKUI1
         Me.UltraLabel12 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtPort = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel9 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraTextEditor18 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel21 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor16 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel19 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor15 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -301,7 +299,6 @@ Partial Class SOFSKUI1
         CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPort, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1407,8 +1404,6 @@ Partial Class SOFSKUI1
         Me.grpSTYL1.Controls.Add(Me.UltraLabel12)
         Me.grpSTYL1.Controls.Add(Me.txtPort)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel9)
-        Me.grpSTYL1.Controls.Add(Me.UltraTextEditor18)
-        Me.grpSTYL1.Controls.Add(Me.UltraLabel21)
         Me.grpSTYL1.Controls.Add(Me.UltraTextEditor16)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel19)
         Me.grpSTYL1.Controls.Add(Me.UltraTextEditor15)
@@ -1667,25 +1662,6 @@ Partial Class SOFSKUI1
         Me.UltraLabel9.TabIndex = 39
         Me.UltraLabel9.Text = "Port"
         '
-        'UltraTextEditor18
-        '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor18, "PURCH_NOTES")
-        Me.Absx1.SetABSTableName(Me.UltraTextEditor18, "ICTSTYL1")
-        Me.UltraTextEditor18.Location = New System.Drawing.Point(8, 154)
-        Me.UltraTextEditor18.Name = "UltraTextEditor18"
-        Me.UltraTextEditor18.ReadOnly = True
-        Me.UltraTextEditor18.Size = New System.Drawing.Size(289, 25)
-        Me.UltraTextEditor18.TabIndex = 30
-        Me.UltraTextEditor18.TabStop = False
-        '
-        'UltraLabel21
-        '
-        Me.UltraLabel21.Location = New System.Drawing.Point(7, 137)
-        Me.UltraLabel21.Name = "UltraLabel21"
-        Me.UltraLabel21.Size = New System.Drawing.Size(133, 23)
-        Me.UltraLabel21.TabIndex = 31
-        Me.UltraLabel21.Text = "Factory Message"
-        '
         'UltraTextEditor16
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor16, "CASE_CUBE")
@@ -1760,7 +1736,7 @@ Partial Class SOFSKUI1
         '
         'UltraTextEditor10
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "SIZE_SCALE")
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "STYLE_DESC2")
         Me.Absx1.SetABSTableName(Me.UltraTextEditor10, "ICTSTYL1")
         Me.UltraTextEditor10.Location = New System.Drawing.Point(7, 112)
         Me.UltraTextEditor10.Name = "UltraTextEditor10"
@@ -2018,7 +1994,6 @@ Partial Class SOFSKUI1
         CType(Me.UltraTextEditor13, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor9, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPort, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor18, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor15, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit()
@@ -2055,8 +2030,6 @@ Partial Class SOFSKUI1
     Friend WithEvents UltraLabel12 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents txtPort As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel9 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents UltraTextEditor18 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraLabel21 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor16 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel19 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraTextEditor15 As Infragistics.Win.UltraWinEditors.UltraTextEditor
