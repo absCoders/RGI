@@ -1528,6 +1528,7 @@ Partial Class ARFCINQ1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage12 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkSALES_HOLD = New ABSCS.ABSCheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1800,6 +1801,7 @@ Partial Class ARFCINQ1
         Me.spl.SuspendLayout
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tab.SuspendLayout
+        CType(Me.chkSALES_HOLD, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SuspendLayout
         '
         'UltraExplorerBar1
@@ -2795,7 +2797,7 @@ Partial Class ARFCINQ1
         'UltraExplorerBarContainerControl11
         '
         Me.UltraExplorerBarContainerControl11.Controls.Add(Me.UltraGroupBox7)
-        Me.UltraExplorerBarContainerControl11.Location = New System.Drawing.Point(13, 610)
+        Me.UltraExplorerBarContainerControl11.Location = New System.Drawing.Point(13, 496)
         Me.UltraExplorerBarContainerControl11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl11.Name = "UltraExplorerBarContainerControl11"
         Me.UltraExplorerBarContainerControl11.Size = New System.Drawing.Size(168, 169)
@@ -3646,6 +3648,7 @@ Partial Class ARFCINQ1
         '
         'grpARCredit
         '
+        Me.grpARCredit.Controls.Add(Me.chkSALES_HOLD)
         Me.grpARCredit.Controls.Add(Me.UltraLabel31)
         Me.grpARCredit.Controls.Add(Me.UltraNumericEditor3)
         Me.grpARCredit.Controls.Add(Me.UltraLabel30)
@@ -6578,7 +6581,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1019, 582)
@@ -6836,7 +6839,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer6)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(1019, 582)
@@ -7756,14 +7759,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabPageControl34.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl34.Name = "UltraTabPageControl34"
-        Me.UltraTabPageControl34.Size = New System.Drawing.Size(767, 484)
+        Me.UltraTabPageControl34.Size = New System.Drawing.Size(767, 485)
         '
         'UltraTabPageControl35
         '
         Me.UltraTabPageControl35.Controls.Add(Me.SplitContainer17)
         Me.UltraTabPageControl35.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl35.Name = "UltraTabPageControl35"
-        Me.UltraTabPageControl35.Size = New System.Drawing.Size(767, 484)
+        Me.UltraTabPageControl35.Size = New System.Drawing.Size(767, 485)
         '
         'SplitContainer17
         '
@@ -7779,7 +7782,7 @@ Partial Class ARFCINQ1
         'SplitContainer17.Panel2
         '
         Me.SplitContainer17.Panel2.Controls.Add(Me.grdDETJOBMC)
-        Me.SplitContainer17.Size = New System.Drawing.Size(767, 484)
+        Me.SplitContainer17.Size = New System.Drawing.Size(767, 485)
         Me.SplitContainer17.SplitterDistance = 267
         Me.SplitContainer17.TabIndex = 0
         '
@@ -7909,14 +7912,14 @@ Partial Class ARFCINQ1
         Me.grdDETJOBMC.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdDETJOBMC.Location = New System.Drawing.Point(0, 0)
         Me.grdDETJOBMC.Name = "grdDETJOBMC"
-        Me.grdDETJOBMC.Size = New System.Drawing.Size(767, 213)
+        Me.grdDETJOBMC.Size = New System.Drawing.Size(767, 214)
         Me.grdDETJOBMC.TabIndex = 5
         Me.grdDETJOBMC.Text = "Credit History"
         '
         'UltraTabPageControl44
         '
         Me.UltraTabPageControl44.Controls.Add(Me.grdARTCUSTT_FUPS)
-        Me.UltraTabPageControl44.Location = New System.Drawing.Point(1, 29)
+        Me.UltraTabPageControl44.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl44.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl44.Name = "UltraTabPageControl44"
         Me.UltraTabPageControl44.Size = New System.Drawing.Size(1023, 614)
@@ -8264,7 +8267,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl46
         '
         Me.UltraTabPageControl46.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl46.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl46.Location = New System.Drawing.Point(1, 29)
         Me.UltraTabPageControl46.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabPageControl46.Name = "UltraTabPageControl46"
         Me.UltraTabPageControl46.Size = New System.Drawing.Size(1023, 614)
@@ -8601,7 +8604,7 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage9.Name = "UltraTabSharedControlsPage9"
-        Me.UltraTabSharedControlsPage9.Size = New System.Drawing.Size(767, 484)
+        Me.UltraTabSharedControlsPage9.Size = New System.Drawing.Size(767, 485)
         '
         'UltraTabPageControl24
         '
@@ -8788,6 +8791,17 @@ Partial Class ARFCINQ1
         Me.UltraTabSharedControlsPage12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraTabSharedControlsPage12.Name = "UltraTabSharedControlsPage12"
         Me.UltraTabSharedControlsPage12.Size = New System.Drawing.Size(1023, 614)
+        '
+        'chkSALES_HOLD
+        '
+        Me.Absx1.SetABSColumnName(Me.chkSALES_HOLD, "CUST_SALES_HOLD")
+        Me.Absx1.SetABSTableName(Me.chkSALES_HOLD, "ARTCUST1")
+        Me.chkSALES_HOLD.Location = New System.Drawing.Point(812, 51)
+        Me.chkSALES_HOLD.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkSALES_HOLD.Name = "chkSALES_HOLD"
+        Me.chkSALES_HOLD.Size = New System.Drawing.Size(126, 23)
+        Me.chkSALES_HOLD.TabIndex = 197
+        Me.chkSALES_HOLD.Text = "Sales Hold"
         '
         'ARFCINQ1
         '
@@ -9084,6 +9098,7 @@ Partial Class ARFCINQ1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
         Me.tab.ResumeLayout(False)
+        CType(Me.chkSALES_HOLD, System.ComponentModel.ISupportInitialize).EndInit
         Me.ResumeLayout(False)
 
     End Sub
@@ -9362,4 +9377,5 @@ Partial Class ARFCINQ1
     Friend WithEvents cmdUpdate_Due_Date As Misc.UltraButton
     Friend WithEvents dteDue_Date As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents chkALLFU As ABSCS.ABSCheckBox
+    Friend WithEvents chkSALES_HOLD As ABSCS.ABSCheckBox
 End Class
