@@ -48,7 +48,7 @@ Public Class ECTECOMD
                 .Columns.Add("WEB_DESCRIPTION", GetType(System.String))
                 .Columns.Add("BODY_HTML", GetType(System.String))
                 .Columns.Add("EXISTS", GetType(System.String))
-
+                .Columns.Add("NUM_STYLES", GetType(System.String))
                 .PrimaryKey = New DataColumn() { .Columns("ECOM_CODE"), .Columns("STYLE_CODE_PLM")}
             End With
 
@@ -144,6 +144,55 @@ Public Class ECTECOMD
 
         End Try
 
+        ' Auto populate ICTSTYL1.SALES_DIVISION_CODE = '30' for SHOPIFY. Default items to 'I' ECOM_PRODUCT_STATUS
+        If Absx1.txtFor("ECOM_CODE").Text = "SHOPIFY" AndAlso EntryMode = "Edit" Then
+            Dim numRecords As Int16 = 0
+            Try
+                ASCMAIN1.sql = "INSERT INTO ICTSTYCW
+                    (ECOM_CODE, STYLE_CODE, COLOR_CODE, SIZE_INDEX, ECOM_PRODUCT_STATUS, ECOM_PRODUCT_STATUS_DATE)
+                    SELECT ECOM_CODE, STYLE_CODE, COLOR_CODE, SIZE_INDEX, 'I' ECOM_PRODUCT_STATUS, SYSDATE
+                    FROM
+                    (
+                    SELECT :PARM1 ECOM_CODE, ICTSTYC3.STYLE_CODE, ICTSTYC3.COLOR_CODE, ICTSTYC3.SIZE_INDEX
+                    FROM ICTSTYC3, ICTSTYL1
+                    WHERE ICTSTYL1.STYLE_CODE = ICTSTYC3.STYLE_CODE
+                    AND ICTSTYL1.SALES_DIVISION_CODE = '30'
+                    AND NVL(ICTSTYL1.STYLE_STATUS, 'A') = 'A'
+                    MINUS
+                    SELECT ECOM_CODE, STYLE_CODE, COLOR_CODE, SIZE_INDEX
+                    FROM ICTSTYCW
+                    WHERE ECOM_CODE = :PARM1
+                    )"
+                numRecords = ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", {Absx1.txtFor("ECOM_CODE").Text})
+            Catch ex As Exception
+                numRecords = 0
+            End Try
+
+            'If numRecords > 0 Then
+            '    MessageBox.Show($"{numRecords} new item(s) added to Available Items. Sort by Status Date descending to see these items. The item's status defaults to Inactive.", "Load", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            'End If
+
+            ' Update Missing PLM Code. used to group Styles together
+            Try
+                ASCMAIN1.sql = "BEGIN DECLARE CURSOR C1 IS
+                                SELECT ICTSTYCW.STYLE_CODE, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM,
+                                SUBSTR(ICTSTYCW.STYLE_CODE, 1, LENGTH(ICTSTYCW.STYLE_CODE) - LENGTH(ICTSTYC3.SIZE_CODE)) AS STYLE_CODE_PLM_NEW
+                                FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3
+                                WHERE ICTSTYCW.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
+                                AND ICTSTYCW.COLOR_CODE = ICTCOLR1.COLOR_CODE (+)
+                                AND ICTSTYCW.ECOM_CODE = 'SHOPIFY'
+                                AND ICTSTYCW.STYLE_CODE = ICTSTYC3.STYLE_CODE (+)
+                                AND ICTSTYCW.COLOR_CODE = ICTSTYC3.COLOR_CODE (+)
+                                AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+);
+                                BEGIN FOR R1 IN C1 LOOP
+                                    UPDATE ICTSTYL1 SET STYLE_CODE_PLM = R1.STYLE_CODE_PLM_NEW WHERE STYLE_CODE = R1.STYLE_CODE AND STYLE_CODE_PLM IS NULL;
+                                END LOOP; END; END;"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+            Catch ex As Exception
+
+            End Try
+        End If
+
         ASCMAIN1.sql = $"SELECT ICTSTYCW.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM
                             FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3
                             WHERE ICTSTYCW.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
@@ -165,7 +214,8 @@ Public Class ECTECOMD
                 Dim drLookup As DataRow = dst.Tables("ICTSTYCW").Select($"ECOM_CODE = '{ECOM_CODE}' and STYLE_CODE_PLM = '{STYLE_CODE_PLM}'")(0)
                 Dim WEB_DESCRIPTION As String = drLookup.Item("WEB_DESCRIPTION") & String.Empty
                 Dim BODY_HTML As String = drLookup.Item("BODY_HTML") & String.Empty
-                dst.Tables("ICTSTYCW_PLM").Rows.Add({ECOM_CODE, STYLE_CODE_PLM, WEB_DESCRIPTION, BODY_HTML, "1"})
+                Dim NUM_STYLES As Int32 = dst.Tables("ICTSTYCW").Select($"STYLE_CODE_PLM = '{STYLE_CODE_PLM}'").Length
+                dst.Tables("ICTSTYCW_PLM").Rows.Add({ECOM_CODE, STYLE_CODE_PLM, WEB_DESCRIPTION, BODY_HTML, "1", NUM_STYLES})
             End If
         Next
         dst.Tables("ICTSTYCW_PLM").AcceptChanges()
@@ -191,6 +241,8 @@ Public Class ECTECOMD
             dst.Tables("WHTPKGMW").Rows.Clear()
             EnforceConstraints(True)
         End If
+
+        WebBrowser1.DocumentText = String.Empty
     End Sub
 
     Overrides Sub Set_ScreenMode_Special(ByVal tf As Boolean)
@@ -220,6 +272,7 @@ Public Class ECTECOMD
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTSTYCW_PLM, "S", "Show Filter")
+        Load_Popup_Menu(grdICTSTYCW, "S", "Update Shopify Variants")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -264,7 +317,34 @@ Public Class ECTECOMD
         End If
 
         Select Case e.Tool.Key
-            Case ""
+            Case "Update Shopify Variants"
+                If Absx1.txtFor("ECOM_CODE").Text <> "SHOPIFY" Then
+                    MessageBox.Show("This feature is exclusive to Shopify", "Update Shopify Variants", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                If EntryMode <> "View" Then
+                    MessageBox.Show("This feature is exclusive to Shopify while in View mode.", "Update Shopify Variants", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Exit Sub
+                End If
+
+                Dim uMsg As String = "Do you want the system to connect to Shopify, review all items and update designated Shopify Items with the Shopify variants? This may take a few minutes."
+                If MessageBox.Show(uMsg, e.Tool.Key, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    Exit Sub
+                End If
+
+                Try
+                    ASCMAIN1.Progress("Communicating with Shopify", "")
+                    Dim NumItemsUpdated As Int16 = 0
+                    Dim clsSOCSHOPF As New TAC.SOCSHOPF
+                    clsSOCSHOPF.GetShopifyProducts(NumItemsUpdated)
+                    MessageBox.Show($"{NumItemsUpdated} Items Updated", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, "Update Shopify Variants", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Finally
+                    ASCMAIN1.Progress("", "")
+                End Try
+
         End Select
 
     End Sub
@@ -312,6 +392,12 @@ Public Class ECTECOMD
     End Sub
 
     Private Sub grdICTSTYCW_PLM_BeforeRowActivate(sender As Object, e As RowEventArgs) Handles grdICTSTYCW_PLM.BeforeRowActivate
+
+        grdICTSTYCW_PLM.DisplayLayout.Bands(0).Columns("STYLE_CODE_PLM").CellActivation = Activation.NoEdit
+
+        If 1 = 1 Then
+            Exit Sub
+        End If
 
         If e.Row.Cells("EXISTS").Value & String.Empty = "1" Then
             grdICTSTYCW_PLM.DisplayLayout.Bands(0).Columns("STYLE_CODE_PLM").CellActivation = Activation.NoEdit
