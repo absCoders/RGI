@@ -1634,6 +1634,7 @@ Public Class ARFCINQ1
         grdARTCUSTT_FUPS.Visible = Not ScreenMode And (grdARTCUST6.Tag <> "*")
         chkALLFU.Visible = Not ScreenMode And (grdARTCUST6.Tag <> "*") And ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "andy"
         chkALLFU.Checked = False
+        chkSALES_HOLD.Visible = ASCMAIN1.CLIENT = "RGI"
 
         SetControlPanel()
 
@@ -4078,47 +4079,93 @@ Public Class ARFCINQ1
 
                 dst.Tables("ARTCUST1").AcceptChanges()
 
-                ASCMAIN1.sql = "Update ARTCUST1 Set" _
-                & "  CUST_CREDIT_LIMIT = :PARM1" _
-                & ", CUST_CRED_LIMIT_EST = :PARM2" _
-                & ", CUST_CRED_LIMIT_REV = :PARM3" _
-                & ", CUST_CREDIT_HOLD = :PARM4" _
-                & ", CUST_FACTOR_IND = :PARM5" _
-                & ", CUST_CREDIT_SCORE = :PARM6" _
-                & ", CUST_CREDIT_SCORE_DATE = :PARM7" _
-                & ", TERM_CODE = :PARM8" _
-                & ", CUST_CREDIT_LIMIT_APPR_BY = :PARM9" _
-                & ", CUST_CREDIT_LIMIT_NOTES = :PARM10" _
-                & ", CUST_CREDIT_RATING = :PARM11" _
-                & ", CUST_CREDIT_RATING_DATE = :PARM12" _
-                & ", CUST_INS_AMT = :PARM13" _
-                & ", CUST_INS_DATE = :PARM14" _
-                & ", CUST_DUNS = :PARM15" _
-                & ", CUST_PD_GRACE_DAYS = :PARM16" _
-                & ", CUST_PD_GRACE_PCT = :PARM17" _
-                & ", CUST_CREDIT_RELEASE = :PARM18" _
-                & " where CUST_CODE = :PARM19"
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    ASCMAIN1.sql = "Update ARTCUST1 Set" _
+                    & "  CUST_CREDIT_LIMIT = :PARM1" _
+                    & ", CUST_CRED_LIMIT_EST = :PARM2" _
+                    & ", CUST_CRED_LIMIT_REV = :PARM3" _
+                    & ", CUST_CREDIT_HOLD = :PARM4" _
+                    & ", CUST_FACTOR_IND = :PARM5" _
+                    & ", CUST_CREDIT_SCORE = :PARM6" _
+                    & ", CUST_CREDIT_SCORE_DATE = :PARM7" _
+                    & ", TERM_CODE = :PARM8" _
+                    & ", CUST_CREDIT_LIMIT_APPR_BY = :PARM9" _
+                    & ", CUST_CREDIT_LIMIT_NOTES = :PARM10" _
+                    & ", CUST_CREDIT_RATING = :PARM11" _
+                    & ", CUST_CREDIT_RATING_DATE = :PARM12" _
+                    & ", CUST_INS_AMT = :PARM13" _
+                    & ", CUST_INS_DATE = :PARM14" _
+                    & ", CUST_DUNS = :PARM15" _
+                    & ", CUST_PD_GRACE_DAYS = :PARM16" _
+                    & ", CUST_PD_GRACE_PCT = :PARM17" _
+                    & ", CUST_CREDIT_RELEASE = :PARM18" _
+                    & ", CUST_SALES_HOLD = :PARM19" _
+                    & " where CUST_CODE = :PARM20"
 
-                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDDVVVDVVVVDNDVNNVV", New Object() _
-                { .Item("CUST_CREDIT_LIMIT"),
-                .Item("CUST_CRED_LIMIT_EST"),
-                .Item("CUST_CRED_LIMIT_REV"),
-                .Item("CUST_CREDIT_HOLD"),
-                .Item("CUST_FACTOR_IND"),
-                .Item("CUST_CREDIT_SCORE"),
-                .Item("CUST_CREDIT_SCORE_DATE"),
-                .Item("TERM_CODE"),
-                .Item("CUST_CREDIT_LIMIT_APPR_BY"),
-                .Item("CUST_CREDIT_LIMIT_NOTES"),
-                .Item("CUST_CREDIT_RATING"),
-                .Item("CUST_CREDIT_RATING_DATE"),
-                .Item("CUST_INS_AMT"),
-                .Item("CUST_INS_DATE"),
-                .Item("CUST_DUNS"),
-                .Item("CUST_PD_GRACE_DAYS"),
-                .Item("CUST_PD_GRACE_PCT"),
-                .Item("CUST_CREDIT_RELEASE"),
-                HFs("CUST_CODE")})
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDDVVVDVVVVDNDVNNVVV", New Object() _
+                        { .Item("CUST_CREDIT_LIMIT"),
+                        .Item("CUST_CRED_LIMIT_EST"),
+                        .Item("CUST_CRED_LIMIT_REV"),
+                        .Item("CUST_CREDIT_HOLD"),
+                        .Item("CUST_FACTOR_IND"),
+                        .Item("CUST_CREDIT_SCORE"),
+                        .Item("CUST_CREDIT_SCORE_DATE"),
+                        .Item("TERM_CODE"),
+                        .Item("CUST_CREDIT_LIMIT_APPR_BY"),
+                        .Item("CUST_CREDIT_LIMIT_NOTES"),
+                        .Item("CUST_CREDIT_RATING"),
+                        .Item("CUST_CREDIT_RATING_DATE"),
+                        .Item("CUST_INS_AMT"),
+                        .Item("CUST_INS_DATE"),
+                        .Item("CUST_DUNS"),
+                        .Item("CUST_PD_GRACE_DAYS"),
+                        .Item("CUST_PD_GRACE_PCT"),
+                        .Item("CUST_CREDIT_RELEASE"),
+                        .Item("CUST_SALES_HOLD"),
+                        HFs("CUST_CODE")})
+                Else
+                    ASCMAIN1.sql = "Update ARTCUST1 Set" _
+                        & "  CUST_CREDIT_LIMIT = :PARM1" _
+                        & ", CUST_CRED_LIMIT_EST = :PARM2" _
+                        & ", CUST_CRED_LIMIT_REV = :PARM3" _
+                        & ", CUST_CREDIT_HOLD = :PARM4" _
+                        & ", CUST_FACTOR_IND = :PARM5" _
+                        & ", CUST_CREDIT_SCORE = :PARM6" _
+                        & ", CUST_CREDIT_SCORE_DATE = :PARM7" _
+                        & ", TERM_CODE = :PARM8" _
+                        & ", CUST_CREDIT_LIMIT_APPR_BY = :PARM9" _
+                        & ", CUST_CREDIT_LIMIT_NOTES = :PARM10" _
+                        & ", CUST_CREDIT_RATING = :PARM11" _
+                        & ", CUST_CREDIT_RATING_DATE = :PARM12" _
+                        & ", CUST_INS_AMT = :PARM13" _
+                        & ", CUST_INS_DATE = :PARM14" _
+                        & ", CUST_DUNS = :PARM15" _
+                        & ", CUST_PD_GRACE_DAYS = :PARM16" _
+                        & ", CUST_PD_GRACE_PCT = :PARM17" _
+                        & ", CUST_CREDIT_RELEASE = :PARM18" _
+                        & " where CUST_CODE = :PARM19"
+
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "NDDVVVDVVVVDNDVNNVV", New Object() _
+                        { .Item("CUST_CREDIT_LIMIT"),
+                        .Item("CUST_CRED_LIMIT_EST"),
+                        .Item("CUST_CRED_LIMIT_REV"),
+                        .Item("CUST_CREDIT_HOLD"),
+                        .Item("CUST_FACTOR_IND"),
+                        .Item("CUST_CREDIT_SCORE"),
+                        .Item("CUST_CREDIT_SCORE_DATE"),
+                        .Item("TERM_CODE"),
+                        .Item("CUST_CREDIT_LIMIT_APPR_BY"),
+                        .Item("CUST_CREDIT_LIMIT_NOTES"),
+                        .Item("CUST_CREDIT_RATING"),
+                        .Item("CUST_CREDIT_RATING_DATE"),
+                        .Item("CUST_INS_AMT"),
+                        .Item("CUST_INS_DATE"),
+                        .Item("CUST_DUNS"),
+                        .Item("CUST_PD_GRACE_DAYS"),
+                        .Item("CUST_PD_GRACE_PCT"),
+                        .Item("CUST_CREDIT_RELEASE"),
+                        HFs("CUST_CODE")})
+                End If
 
                 rowARTCUST5.Item("CUST_CODE") = .Item("CUST_CODE")
                 rowARTCUST5.Item("CUST_CREDIT_LIMIT") = .Item("CUST_CREDIT_LIMIT")

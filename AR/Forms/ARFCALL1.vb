@@ -4,6 +4,7 @@ Public Class ARFCALL1
     Dim CallInProgress As Boolean
     Dim AllSelected As Boolean
     Dim IsFollowUpCall As Boolean
+    Dim ARTSTMTR As String
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
     'Notes On Call Status:
     '-- 0 = Finished.
@@ -19,6 +20,9 @@ Public Class ARFCALL1
         'Check_Form_Options()
 
         With dst
+
+            Get_PARM("ARTPARM1")
+
             SQLSB.Length = 0
             SQLSB.AppendLine("SELECT")
             SQLSB.AppendLine("O1.CUST_CODE,")
@@ -138,6 +142,9 @@ Public Class ARFCALL1
             ASCMAIN1.sql = SQLSB.ToString
             Create_TDA(.Tables.Add, "TATCONV1", "**", 0, True, "V")
 
+            .Tables("TATCONV1").Columns.Add("CONV_ATTACHMENTS", GetType(System.Int64))
+
+
             SQLSB.Length = 0
             SQLSB.AppendLine("SELECT")
             SQLSB.AppendLine("USER_ID AS EMPLOYEE_CODE,")
@@ -239,6 +246,57 @@ Public Class ARFCALL1
 
             'Create_TDA(.Tables.Add, "ASTATTV1", "*")
             'Fill_Records("ASTATTV1")
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                Dim rowGLTPARM2 As DataRow = LookUp("GLTPARM2", ASCMAIN1.CYP)
+                ''PRD_END_DATE = rowGLTPARM2.Item("PRD_END_DATE")
+                Dim Report_date As Date = Now
+                ' Report_date = rowGLTPARM2.Item("PRD_END_DATE")
+
+
+                TAC.ARCMAIN2.Get_Aging_Data_RGI(
+                ROWs("ARTPARM1"),
+                Report_date, True)
+
+                ASCMAIN1.sql = "Select ARTOPEN1.* " & TAC.ARCMAIN2.DAYS_AND_BUCKETS _
+                & ", DECODE (ARTOPEN1.INV_TYPE,'B',ARTOPEN1.INV_BALANCE,0) CHARGEBACKS " & vbCrLf _
+                & ", CASE WHEN ARTOPEN1.INV_TYPE = 'C' OR ARTOPEN1.INV_TYPE = 'O' THEN ARTOPEN1.INV_BALANCE ELSE 0 END CREDITS" & vbCrLf _
+                & " from ARTOPEN1, ARTCUST1 ARTCUSTX, TATTERM1 " & vbCrLf _
+                & " where ARTOPEN1.INV_BALANCE <> 0" & vbCrLf _
+                & " and ARTCUSTX.CUST_CODE = ARTOPEN1.CUST_CODE" & vbCrLf _
+                & " and TATTERM1.TERM_CODE = ARTOPEN1.TERM_CODE" & vbCrLf _
+                & " and ARTCUSTX.CUST_CODE = :PARM1"
+                Create_TDA(dst.Tables.Add, "ARTSTMTR", "**", 0, False, "V", 3)
+                Dim ADD_SQL As String = "(" & ASCMAIN1.sql & ")"
+
+                ASCMAIN1.sql = "Select CUST_CODE" & vbCrLf _
+                & ", SUM (DECODE(AGE_BUCKET,0,INV_BALANCE,0)) AGE_0" & vbCrLf _
+                & ", SUM (DECODE(AGE_BUCKET,1,INV_BALANCE,0)) AGE_1" & vbCrLf _
+                & ", SUM (DECODE(AGE_BUCKET,2,INV_BALANCE,0)) AGE_2" & vbCrLf _
+                & ", SUM (DECODE(AGE_BUCKET,3,INV_BALANCE,0)) AGE_3" & vbCrLf _
+                & ", SUM (DECODE(AGE_BUCKET,4,INV_BALANCE,0)) AGE_4" & vbCrLf _
+                & ", SUM (DECODE(DUE_BUCKET,0,INV_BALANCE,0)) DUE_0" & vbCrLf _
+                & ", SUM (DECODE(DUE_BUCKET,1,INV_BALANCE,0)) DUE_1" & vbCrLf _
+                & ", SUM (DECODE(DUE_BUCKET,2,INV_BALANCE,0)) DUE_2" & vbCrLf _
+                & ", SUM (DECODE(DUE_BUCKET,3,INV_BALANCE,0)) DUE_3" & vbCrLf _
+                & ", SUM (DECODE(DUE_BUCKET,4,INV_BALANCE,0)) DUE_4" & vbCrLf _
+                & " from " & ADD_SQL & "  group by CUST_CODE"
+                Create_TDA(dst.Tables.Add, "ARTCUSTA", "**", 0, False, "V", 1)
+
+
+                ASCMAIN1.sql = "Select ARTCUST1.* from ARTCUST1 WHERE ARTCUST1.CUST_CODE = :PARM1"
+                Create_TDA(dst.Tables.Add, "ARTCUST1", "**", 0, False, "V", 1)
+
+
+
+
+            End If
+
+
+
+
+
+
         End With
 
         grdARTOPENX.DataSource = dst.Tables("ARTOPENX")
@@ -279,7 +337,6 @@ Public Class ARFCALL1
 
         ASCMAIN1.Add_Value_List(grdTATCONV1, "CONV_STATUS", , New String() {":", ":Unknown", "0:Closed", "1:Open", "2:Followed Up"})
         ASCMAIN1.Add_Value_List(grdARTCUSTD, "CONTACT_TYPE")
-
         TABLE_NAME = "ARTOPENX"
 
         EntryMode = "E"
@@ -408,6 +465,7 @@ Public Class ARFCALL1
         ComputeCreditSnapshot()
         Fill_Records("PMTEMPL1")
         Fill_Records("ARTCUSTD")
+
         dst.EnforceConstraints = True
         SetFollowUpData()
         Setup_ARTCUSTD()
@@ -465,8 +523,11 @@ Public Class ARFCALL1
 
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdARTOPENX, "SSB", "Show Filter", "Show GroupBox", "Show Customer")
-        Call Load_Popup_Menu(grdPMTINVHX, "SSB", "Show Filter", "Show GroupBox", "Show Job", "Show Invoice", "e-mail Invoice")
-        Call Load_Popup_Menu(grdTATCONV1, "SSBS", "Show Filter", "Show GroupBox", "Start Follow-up", "Select All")
+        Call Load_Popup_Menu(grdPMTINVHX, "SSB", "Show Filter", "Show GroupBox", "Show Job", "Show Invoice", "e-mail Invoice", "email Cust Statement")
+        Call Load_Popup_Menu(grdTATCONV1, "SSBBBBS", "Show Filter", "Show GroupBox", "Add to Log", "Show Log", "Edit Log", "Start Follow-up", "Select All")
+
+        '    Load_Popup_Menu(grdTATCONV1, "BBBB", "Add to Log", "Show Log", "Edit Log", "Follow-Up")
+
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -611,6 +672,173 @@ Public Class ARFCALL1
                         FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO)
 
                 End If
+
+            Case "email Cust Statement"
+                If grd.ActiveRow Is Nothing Then
+                    Exit Sub
+                End If
+
+                Dim CUST_CODE As String = grdARTOPENX.ActiveRow.Cells("CUST_CODE").Value & ""
+                If CUST_CODE = "" Then
+                    Exit Sub
+                End If
+
+
+                Call AR_STATEMENT()
+                Dim FILENAME As String = Print_Hard_Copy_Statement(True, True)
+
+                dst.Tables("ARTSTMTZ").Rows.Clear()
+
+
+                '  Show_Document(ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
+
+                Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+                If rowARTCUST1 IsNot Nothing Then
+                    ' Context_Launch("Select", CUST_CODE, e.Tool.Key, "ARFCINQ1")
+                End If
+
+
+
+
+
+                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                '    Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+                Dim CUST_NAME As String = rowARTCUST1.Item("CUST_NAME") & ""
+                Dim CUST_EMAIL As String = rowARTCUST1.Item("CUST_EMAIL") & ""
+                Dim CUST_CONTACT As String = rowARTCUST1.Item("CUST_CONTACT") & ""
+                If CUST_EMAIL <> "" Then
+                    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                End If
+
+                Dim ATTACHMENTs As New Dictionary(Of String, String)
+                ATTACHMENTs.Add(FILENAME & ".pdf", ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
+
+                Dim SUBJECT As String = "Statement " & " - Customer No " & CUST_CODE
+                Dim BODY As String = "Attached is your statement.  Thank you for the opportunity to do business with you."
+
+
+                Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                SUBJECT, "AR", False, True, CUST_CODE, CUST_NAME, "Customer", BODY)
+
+                If SEND_NO <> "" Then
+                    TAC.TACMAIN1.Record_Event("ARTOPEN1", CUST_CODE, DATETIME_STAMP, ASCMAIN1.USER_ID, "EML", "email Cust Statement " & Format(Now, "MM/dd/yyyy"), SEND_NO)
+                    Dim ATTACHMENT_NO As String = ASCMAIN1.Next_Control_No("ASTATTA2.ATTACHMENT_NO")
+                    Dim CONV_NO As String = ASCMAIN1.Next_Control_No("TATCONV1.CONV_NO")
+
+                    If Not dst.Tables.Contains("ASTATTA2") Then
+                        Create_TDA(dst.Tables.Add, "ASTATTA2", "*")
+                    End If
+                    Dim rowASTATTA2 As DataRow = dst.Tables("ASTATTA2").NewRow
+                    With rowASTATTA2
+                        .Item("TABLE_NAME") = "TATCONV1"
+                        .Item("COLUMN_NAME") = "CONV_NO"
+                        .Item("CODE_VALUE") = CONV_NO
+                        .Item("ATTACHMENT_NO") = ATTACHMENT_NO
+                        .Item("ATTACHMENT_DESC") = FILENAME & ".pdf"
+                        .Item("ATTACHMENT_FILENAME") = ASCMAIN1.Folders("Temp") & FILENAME & ".PDF"
+                        .Item("ATTACHMENT_EXT") = "PDF"
+                        .Item("COMPUTER_NAME") = ASCMAIN1.COMPUTER_NAME
+                        .Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+                        .Item("INIT_DATE") = DATETIME_STAMP
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                        .Item("LAST_DATE") = DATETIME_STAMP
+                        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+                        .Item("ATTACHMENT_DATETIME") = DATETIME_STAMP
+                    End With
+                    dst.Tables("ASTATTA2").Rows.Add(rowASTATTA2)
+                    Update_Record_TDA("ASTATTA2")
+                    dst.Tables("ASTATTA2").Rows.Clear()
+
+                    Dim rowTATSEND1 As DataRow = LookUp("TATSEND1", SEND_NO)
+
+                    dst.Tables("TATCONV1").AcceptChanges()
+                    Dim rowTATCONV1 As DataRow = dst.Tables("TATCONV1").NewRow
+                    With rowTATCONV1
+                        .Item("CONV_NO") = CONV_NO
+                        .Item("CONV_DATE") = DATETIME_STAMP.Date
+                        .Item("CONV_SUBJECT") = rowTATSEND1.Item("SEND_SUBJECT")
+                        .Item("CONV_NOTES") = rowTATSEND1.Item("SEND_BODY")
+                        .Item("CONV_STATUS") = "0"
+                        .Item("INIT_DATE") = DATETIME_STAMP
+                        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+                        .Item("TABLE_NAME") = "ARTCUST1"
+                        .Item("TABLE_KEY") = CUST_CODE
+                        .Item("SEND_NO") = SEND_NO
+                    End With
+                    dst.Tables("TATCONV1").Rows.Add(rowTATCONV1)
+                    Update_Record_TDA("TATCONV1")
+
+                    ''Dim F2 As ASFCONV1 = DirectCast(tabMain.Tabs("Log").TabPage.Controls(0), ASFCONV1)
+                    ''If F2.tblTATCONV1 IsNot Nothing Then
+                    ''    F2.tblTATCONV1.Rows.Add(rowTATCONV1.ItemArray)
+                    ''End If
+
+                    dst.Tables("TATCONV1").Rows.Clear()
+
+
+                End If
+
+                Exit Sub
+
+            Case "Add to Log"
+
+                'If Not E_.TABLE_KEY_locked Then
+                '    If Not ASCMAIN1.Logical_Lock(_E.TABLE_NAME, _E.TABLE_KEY, , , , 1) Then Exit Sub
+                'End If
+                Dim CUST_CODE As String = grdARTOPENX.ActiveRow.Cells("CUST_CODE").Value
+                Dim F As New ASFCONV2(Me, "ARTCUST1", CUST_CODE, "")
+                F.EntryMode = "N"
+                F.ShowDialog()
+                If F.result = "U" Then
+                    dst.Tables("TATCONV1").Rows.Add(F.rowTATCONV1.ItemArray)
+                    Sort_grdColumns(grdTATCONV1, "INIT_DATE".ToLower)
+
+                    Update_Record_TDA("TATCONV1")
+                End If
+                F.Dispose()
+                ASCMAIN1.MultiTask_Release(, , 1)
+
+
+            Case "Show Log"
+                Dim CONV_NO As String
+                CONV_NO = grd.ActiveRow.Cells("CONV_NO").Text
+                Dim CUST_CODE As String = grdARTOPENX.ActiveRow.Cells("CUST_CODE").Value
+
+
+                Dim F As New ASFCONV2(Me, "ARTCUST1", CUST_CODE, "")
+                F.EntryMode = "V"
+                F.rowTATCONV1 = dst.Tables("TATCONV1").Rows.Find(CONV_NO)
+                F.ShowDialog()
+                F.Dispose()
+
+            Case "Edit Log"
+                Dim CONV_NO As String
+                CONV_NO = grd.ActiveRow.Cells("CONV_NO").Text
+                Dim CUST_CODE As String = grdARTOPENX.ActiveRow.Cells("CUST_CODE").Value
+
+
+                'If Not _E.TABLE_KEY_locked Then
+                '    If Not ASCMAIN1.Logical_Lock(_E.TABLE_NAME, _E.TABLE_KEY, , , , 1) Then Exit Sub
+                'End If
+                If Not ASCMAIN1.Logical_Lock("TATCONV1", CONV_NO, , , , 1) Then Exit Sub
+
+                Dim F As New ASFCONV2(Me, "ARTCUST1", CUST_CODE, "")
+                F.EntryMode = "E"
+                F.followup_is_mandatory = Not (EntryMode = "N" Or EntryMode = "E")
+                F.rowTATCONV1 = dst.Tables("TATCONV1").Rows.Find(CONV_NO)
+                F.ShowDialog()
+                If F.result = "U" Then
+                    Sort_grdColumns(grdTATCONV1, "INIT_DATE".ToLower)
+
+                    'If tabTATCONV1.SelectedTab.Key = "Tree View" Then
+                    '    Setup_tvwTATCONV1()
+                    'End If
+                    Update_Record_TDA("TATCONV1")
+                End If
+                F.Dispose()
+                ASCMAIN1.MultiTask_Release(, , 1)
+
         End Select
     End Sub
 
@@ -783,6 +1011,13 @@ Public Class ARFCALL1
                 EnforceConstraints(False)
                 dst.Tables("TATCONV1").Rows.Clear()
                 Fill_Records("TATCONV1", Cust_Code)
+
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    Fill_Records("ARTSTMTR", Cust_Code)
+                    Fill_Records("ARTCUSTA", Cust_Code)
+                    Fill_Records("ARTCUST1", Cust_Code)
+                End If
+
                 EnforceConstraints(True)
                 grdTATCONV1.Text = "Conversations for " & Cust_Name
             End If
@@ -800,6 +1035,12 @@ Public Class ARFCALL1
                 Fill_Records("PMTINVHX", CUST_CODE, True)
                 Fill_Records("ARTPYMTX", CUST_CODE, True)
                 Fill_Records("TATCONV1", CUST_CODE, True)
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    Fill_Records("ARTSTMTR", CUST_CODE, True)
+                    Fill_Records("ARTCUSTA", CUST_CODE, True)
+                    Fill_Records("ARTCUST1", CUST_CODE, True)
+                End If
+
                 EnforceConstraints(True)
                 dst.EnforceConstraints = True
             End If
@@ -1268,6 +1509,91 @@ Public Class ARFCALL1
             i += take
         Loop
         Return "(" & sb.ToString() & ")"
+    End Function
+
+    Sub AR_STATEMENT()
+        Dim Report_date As Date = Now
+        If dst.Tables.Contains("ARTSTMTZ") Then
+            dst.Tables("ARTSTMTZ").Rows.Clear()
+        Else
+            With dst.Tables.Add("ARTSTMTZ")
+                .Columns.Add("AR_PARM_KEY")
+                .Columns.Add("REMIT0")
+                .Columns.Add("REMIT1")
+                .Columns.Add("REMIT2")
+                .Columns.Add("REMIT3")
+                .Columns.Add("AR_PARM_REMIT_MESSAGE")
+                .Columns.Add("AR_PARM_DUNS_NO")
+                .Columns.Add("ADDRESS_LINE")
+                .Columns.Add("LOGO", GetType(System.Byte()))
+                .Columns.Add("AR_PARM_FIN_CHG_RATE", GetType(System.Decimal))
+                .Columns.Add("STMT_DATE", GetType(System.DateTime))
+                .PrimaryKey = New DataColumn() { .Columns("AR_PARM_KEY")}
+            End With
+        End If
+
+        Dim rowARTSTMTZ As DataRow = dst.Tables("ARTSTMTZ").NewRow
+        With ROWs("ARTPARM1")
+            rowARTSTMTZ.Item("AR_PARM_KEY") = "Z"
+            rowARTSTMTZ.Item("REMIT0") = .Item("AR_PARM_REMIT_NAME") & ""
+            rowARTSTMTZ.Item("REMIT1") = .Item("AR_PARM_REMIT_ADDR1") & ""
+            rowARTSTMTZ.Item("REMIT2") = .Item("AR_PARM_REMIT_CITY") & ", " _
+                    & .Item("AR_PARM_REMIT_STATE") & " " _
+                    & .Item("AR_PARM_REMIT_ZIP_CODE") & " " _
+                    & .Item("AR_PARM_REMIT_COUNTRY")
+            If .Item("AR_PARM_REMIT_PHONE") & "" <> "" And .Item("AR_PARM_REMIT_FAX") & "" <> "" Then
+                rowARTSTMTZ.Item("REMIT3") = "" _
+                    & " Tel " & ASCMAIN1.FormatTel(.Item("AR_PARM_REMIT_PHONE")) _
+                    & ", Fax " & ASCMAIN1.FormatTel(.Item("AR_PARM_REMIT_FAX"))
+            End If
+            rowARTSTMTZ.Item("AR_PARM_REMIT_MESSAGE") = .Item("AR_PARM_REMIT_MESSAGE") & ""
+            If 1 = 1 Then
+                rowARTSTMTZ.Item("AR_PARM_REMIT_MESSAGE") = rowARTSTMTZ.Item("AR_PARM_REMIT_MESSAGE") & vbCrLf & .Item("AR_PARM_REMIT_MESSAGE_EXPORT")
+            End If
+            rowARTSTMTZ.Item("AR_PARM_DUNS_NO") = .Item("AR_PARM_DUNS_NO") & ""
+            rowARTSTMTZ.Item("AR_PARM_FIN_CHG_RATE") = .Item("AR_PARM_FIN_CHG_RATE") & ""
+            rowARTSTMTZ.Item("ADDRESS_LINE") = "" _
+                & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_ADDR1") _
+                & ", " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_CITY") _
+                & ", " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_STATE") _
+                & " " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_ZIP_CODE") _
+                & IIf(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_PHONE") & "" <> "" _
+                  And ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_FAX") & "" <> "", "" _
+                      & ", Tel " & ASCMAIN1.FormatTel(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_PHONE") & "") _
+                      & ", Fax " & ASCMAIN1.FormatTel(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_FAX") & ""), "")
+        End With
+        rowARTSTMTZ.Item("LOGO") = ASCMAIN1.GetImageData(ASCMAIN1.Folders("Images") & "\ABS\" & ASCMAIN1.DBS_COMPANY & ".PNG")
+        rowARTSTMTZ.Item("STMT_DATE") = Report_date
+        dst.Tables("ARTSTMTZ").Rows.Add(rowARTSTMTZ)
+
+    End Sub
+    Function Print_Hard_Copy_Statement(Optional aged_ar As Boolean = False, Optional email As Boolean = False) As String
+
+        Dim RPT_TITLE As String = "Customer Statement Printing"
+        Dim reportFile As String = "ARRSTMTR"
+        Dim FILENAME As String = ""
+
+        Me.Cursor = Cursors.WaitCursor
+        ASCMAIN1.Progress("Now Preparing " & RPT_TITLE)
+
+        Print_Report_Begin()
+        CR_params.Add("SUBT", "")
+
+        If email Then
+            FILENAME = ASCMAIN1.Next_Control_No("ARFCINQ1.STMT")
+            Dim REPORT_NO As String = Generate_Report(reportFile, IIf(aged_ar, "Customer Statement Printing", RPT_TITLE), "As of " & Format(Now, "MM/dd/yyyy"), "", "PDF", FILENAME, False)
+            Print_Report_End(, True)
+        Else
+            Generate_Report(reportFile, IIf(aged_ar, "Customer Statement Printing", RPT_TITLE))
+            Print_Report_End()
+        End If
+
+        Me.Cursor = Cursors.Default
+        ASCMAIN1.Progress("")
+
+        'Show_Document(FILENAME)
+        Return FILENAME
+
     End Function
 
 #End Region
