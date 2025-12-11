@@ -19,6 +19,7 @@ Public Class APFINVH1
     Dim disable_calculate_totals As Boolean = False
     Dim POTSHIP3 As String
     Dim POTSHIP2 As String
+    Dim GROUPINGs As New List(Of String)
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -69,6 +70,7 @@ Public Class APFINVH1
                 & ",POTLCST1.PO_ORDER_NO,POTLCST1.PO_SHIPMENT_NO,POTLCST1.PO_SHIPMENT_LNO" & vbCrLf _
                 & ",POTSHIP1.PO_SHIP_VESSEL,POTSHIP1.PO_SHIP_REF_NO" & vbCrLf _
                 & ",POTSHIP2.CONTAINER_NO,POTSHIP2.BOL_NO,POTSHIP2.COMM_INV_NO" & vbCrLf _
+                & ",POTLCST1.GROUPING,POTLCST1.GROUPING_DISB,POTLCST1.PO_QTY_ORD" & vbCrLf _
                 & " from APTINVH7,POTLCST1,POTORDR1,POTSHIP1,POTSHIP2" & vbCrLf _
                 & " where POTLCST1.CTL_NO = APTINVH7.CTL_NO and APTINVH7.VOUCHER_NO = :PARM1" & vbCrLf _
                 & "   and POTSHIP1.PO_SHIPMENT_NO (+) = POTLCST1.PO_SHIPMENT_NO" & vbCrLf _
@@ -432,6 +434,15 @@ Public Class APFINVH1
             chkACCRUE_PRIOR.Visible = False
         End If
 
+
+        With grdAPTINVH7.DisplayLayout.Bands("APTINVH7")
+            If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
+                .Columns("GROUPING").Hidden = True
+                .Columns("GROUPING_DISB").Hidden = True
+                .Columns("PO_QTY_ORD").Hidden = True
+            End If
+        End With
+
         For Each gcol As UltraWinGrid.UltraGridColumn In grdAPTINVH7.DisplayLayout.Bands(0).Columns
             If gcol.Key = "TOTAL_INV" Then
                 gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
@@ -439,6 +450,18 @@ Public Class APFINVH1
             Else
                 gcol.CellActivation = UltraWinGrid.Activation.NoEdit
             End If
+            If gcol.Key = "PO_ORDER_NO" Then
+                If ASCMAIN1.DBS_COMPANY = "RGI" Then
+                    gcol.CellActivation = UltraWinGrid.Activation.AllowEdit
+                    gcol.CellAppearance.BackColor = Drawing.Color.Yellow
+                Else
+                    gcol.CellActivation = UltraWinGrid.Activation.NoEdit
+                    gcol.CellAppearance.BackColor = Drawing.Color.Empty
+                End If
+            End If
+
+
+
         Next
 
         If InquiryMode Then
@@ -841,6 +864,15 @@ Public Class APFINVH1
                         End If
                     End If
 
+                    For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Select("")
+                        If rowAPTINVH7.Item("PO_ORDER_NO") & "" = "" And rowAPTINVH7.Item("PO_SHIPMENT_NO") & "" = "" Then
+                            EMsg &= vbCr & "Cannot have Blanks for both Ship No & PO No in Other Accruals"
+                            Exit For
+                        End If
+
+                    Next
+
+
                     If EMsg = "" Then
                         If Val(Absx1.numFor("INV_AMT").Value & "") = 0 Then
                             If MsgBox("Proceed with Entry?", MsgBoxStyle.YesNo, "Invoice Payable Amount is Zero") <> MsgBoxResult.Yes Then
@@ -1181,6 +1213,8 @@ Public Class APFINVH1
         Absx1.numFor("QE_INV_AMT").Value = 0
 
         Absx1.numFor("CHECK_AMT").Value = 0
+        numPOAMTDIST.Value = 0
+        numPOLINES.Value = 0
 
         Setup_QE(chkQuickEntry.Checked)
 
@@ -1660,6 +1694,8 @@ Public Class APFINVH1
                     Update_Record_TDA("APTINVH8")
                     Update_Record_TDA("APTINVH7")
                 End If
+                Update_Record_TDA("POTLCST1")
+
             End If
 
 
@@ -1839,6 +1875,8 @@ Public Class APFINVH1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTIREC1, "SSB", "Show Filter", "Show GroupBox", "PO Inquiry", "Shipment Inquiry")
         Load_Popup_Menu(grdAPTINVH5_SUM, "SS", "Show Filter", "Show GroupBox")
+        Load_Popup_Menu(grdAPTINVH7, "B", "Add Line to Grouping")
+
         ' Load_Popup_Menu(grdAPTINVH5, "SSSSSBB", "Show Filter", "Show GroupBox", "Show Description", "Show Receipt Qty/Price/Amt", "Discrepancies Only", "Copy Price to All Lines", "Check All Lines", "Uncheck All Lines")
         Load_Popup_Menu(grdAPTINVH5, "BBBBB", "PO Inquiry", "Use PO Cost as AP Cost", "Copy Price to All Lines", "Check CB on All Lines", "Uncheck CB on All Lines")
     End Sub
@@ -1874,6 +1912,14 @@ Public Class APFINVH1
         If tlb_pop.Tools.Exists("Discrepancies Only") Then
             tlb_sbt = DirectCast(tlb_pop.Tools("Discrepancies Only"), UltraWinToolbars.StateButtonTool)
             tlb_sbt.Checked = discrepancies_only
+        End If
+
+        If tlb_pop.Tools.Exists("Add Line to Grouping") Then
+            tlb_btn = DirectCast(tlb_pop.Tools("Add Line to Grouping"), UltraWinToolbars.ButtonTool)
+            tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
+
+            ' tlb_sbt = DirectCast(tlb_pop.Tools("Add Line to Grouping"), UltraWinToolbars.StateButtonTool)
+            ' tlb_sbt.Checked = Not grd.DisplayLayout.Bands(0).Columns("STYLE_DESC").Hidden
         End If
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -1971,6 +2017,53 @@ Public Class APFINVH1
                     Me.Cursor = Cursors.Default
                     ASCMAIN1.Progress("")
                 End If
+
+            Case "Add Line to Grouping"
+                If grd.ActiveRow.Band.Key = "APTINVH7" Then
+                    Dim GROUP As String = grd.ActiveRow.Cells("GROUPING").Value & ""
+                    If GROUP <> "" Then
+
+                        Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").NewRow
+                        Dim CTL_NO As String = ASCMAIN1.Next_Control_No("POTLCST1.CTL_NO")
+                        With rowPOTLCST1
+                            .Item("CTL_NO") = CTL_NO
+                            .Item("VEND_CODE") = Absx1.txtFor("VEND_CODE").Text
+                            .Item("PO_ORDER_NO") = ""
+                            .Item("PO_SHIPMENT_NO") = ""
+                            .Item("PO_SHIPMENT_LNO") = 0
+                            .Item("COST_CATGY_CODE") = grd.ActiveRow.Cells("COST_CATGY_CODE").Value & ""
+                            .Item("CHARGEBACK_IND") = grd.ActiveRow.Cells("CHARGEBACK_IND").Value & ""
+                            .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                            .Item("COST_ACT") = 0
+                            .Item("GROUPING") = GROUP
+                            .Item("GROUPING_DISB") = Val(grd.ActiveRow.Cells("GROUPING_DISB").Value & "")
+
+                        End With
+                        dst.Tables("POTLCST1").Rows.Add(rowPOTLCST1)
+
+                        Add_APTINVH7(CTL_NO)
+
+
+
+                        ' ADD LINE 
+                    End If
+                    ' Context_Launch("View", PO_ORDER_NO, e.Tool.Key, "POFORDRI")
+                End If
+
+                '''If tlb_sbt.Checked Then
+                '''    grdAPTINVH7.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.FixedAddRowOnTop
+                '''Else
+                '''    grdAPTINVH7.DisplayLayout.Override.AllowAddNew = UltraWinGrid.AllowAddNew.No
+                '''End If
+                '''''discrepancies_only = tlb_sbt.Checked
+                '''If grdAPTINVH7.ActiveRow IsNot Nothing Then
+                '''    Dim GROUPINGS As String = grdAPTINVH7.ActiveRow.Cells("GROUPINGS").Text
+                '''    If GROUPINGS <> "" Then
+                '''        ' ADD LINE 
+                '''    End If
+                '''    '  Setup_grdAPTINVH5(RECEIPT_NO)
+                '''End If
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -4622,9 +4715,9 @@ Public Class APFINVH1
             Me.Cursor = Cursors.WaitCursor
             Application.DoEvents()
 
-            Dim APTINVH5_SUM As DataRow = Add_APTINVH5_SUM(RECEIPT_NO, _
-                                                           CDate(grdICTIREC1.ActiveRow.Cells("RECEIPT_DATE").Text), _
-                                                          Val(grdICTIREC1.ActiveRow.Cells("QTY_REC").Text), _
+            Dim APTINVH5_SUM As DataRow = Add_APTINVH5_SUM(RECEIPT_NO,
+                                                           CDate(grdICTIREC1.ActiveRow.Cells("RECEIPT_DATE").Text),
+                                                          Val(grdICTIREC1.ActiveRow.Cells("QTY_REC").Text),
                                                           Val(grdICTIREC1.ActiveRow.Cells("AMT_REC").Text))
             Dim VOUCHER_DLNO_max As Integer = Val(dst.Tables("APTINVH5").Compute("MAX(VOUCHER_DLNO)", "") & "")
 
@@ -4715,6 +4808,16 @@ Public Class APFINVH1
     Private Sub optAssociate_ValueChanged(sender As System.Object, e As System.EventArgs) Handles optAssociate.ValueChanged
         txtPO_ORDER_NO.Visible = (optAssociate.Value = "3")
         txtPO_SHIPMENT_NO.Visible = (optAssociate.Value = "1")
+        numPOAMTDIST.Visible = (optAssociate.Value = "3" And ASCMAIN1.DBS_COMPANY = "RGI")
+        numPOLINES.Visible = (optAssociate.Value = "3" And ASCMAIN1.DBS_COMPANY = "RGI")
+        lblPOLINES.Visible = (optAssociate.Value = "3" And ASCMAIN1.DBS_COMPANY = "RGI")
+        lblPOAMTDIST.Visible = (optAssociate.Value = "3" And ASCMAIN1.DBS_COMPANY = "RGI")
+        cmdCreateBatchAccrual.Visible = (optAssociate.Value = "3" And ASCMAIN1.DBS_COMPANY = "RGI")
+
+
+
+        numPOAMTDIST.Value = 0
+        numPOLINES.Value = 0
         If optAssociate.Value = "2" Then
             'ASCMAIN1.sql = "" _
             '     & sqlPOTORDR1 & " where PO_STATUS = 'O'" _
@@ -4895,6 +4998,9 @@ Public Class APFINVH1
             .Item("CONTAINER_NO") = rowPOTLCST1.Item("CONTAINER_NO")
             .Item("BOL_NO") = rowPOTLCST1.Item("BOL_NO")
             .Item("COMM_INV_NO") = rowPOTLCST1.Item("COMM_INV_NO")
+            .Item("GROUPING") = rowPOTLCST1.Item("GROUPING")
+            .Item("GROUPING_DISB") = rowPOTLCST1.Item("GROUPING_DISB")
+            .Item("PO_QTY_ORD") = rowPOTLCST1.Item("PO_QTY_ORD")
         End With
         dst.Tables("APTINVH7").Rows.Add(rowAPTINVH7)
         Calc_DIST_Other()
@@ -4920,7 +5026,18 @@ Public Class APFINVH1
         For Each CTL_NO As String In CTL_NOs
             Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").Rows.Find(CTL_NO)
             rowPOTLCST1.Item("VOUCHER_NO") = ""
+            rowPOTLCST1.Item("PO_ORDER_NO") = ""
+            rowPOTLCST1.Item("PO_QTY_ORD") = 0
+            rowPOTLCST1.Item("GROUPING") = ""
+            rowPOTLCST1.Item("GROUPING_DISB") = 0
+            rowPOTLCST1.Item("COST_ACT") = 0
+
         Next
+
+        For Each GROUP As String In GROUPINGs
+            CALC_DIST_GROUPINGS(GROUP)
+        Next
+
 
         Calc_DIST_Other()
     End Sub
@@ -4928,15 +5045,45 @@ Public Class APFINVH1
     Private Sub grdAPTINVH7_AfterRowUpdate(sender As Object, e As Infragistics.Win.UltraWinGrid.RowEventArgs) Handles grdAPTINVH7.AfterRowUpdate
         Dim CTL_NO As String = e.Row.Cells("CTL_NO").Value
         Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").Rows.Find(CTL_NO)
-        rowPOTLCST1.Item("COST_ACT") = e.Row.Cells("TOTAL_INV").Value
+        rowPOTLCST1.Item("COST_ACT") = Val(e.Row.Cells("TOTAL_INV").Value & "")
+        rowPOTLCST1.Item("PO_ORDER_NO") = e.Row.Cells("PO_ORDER_NO").Value & ""
+        ' CALCULATE PO_QTY_ORD FROM POTORDR2 IF rowPOTLCST1.Item("PO_ORDER_NO") <> ""
+
+        If ASCMAIN1.DBS_COMPANY = "RGI" Then
+            If rowPOTLCST1.Item("PO_ORDER_NO") & "" <> "" Then
+                ASCMAIN1.sql = "Select SUM(PO_QTY_ORD) from POTORDR2 " _
+                & " where PO_ORDER_NO = '" & rowPOTLCST1.Item("PO_ORDER_NO") & "'"
+                Dim rowPOTORDR2 As DataRow = ASCDATA1.GetDataRow
+                If rowPOTORDR2 IsNot Nothing Then
+                    rowPOTLCST1.Item("PO_QTY_ORD") = Val(rowPOTORDR2.Item(0) & "")
+                End If
+            End If
+            If rowPOTLCST1.Item("GROUPING") & "" <> "" Then
+                CALC_DIST_GROUPINGS(rowPOTLCST1.Item("GROUPING"))
+            End If
+        End If
+
+
         Calc_DIST_Other()
+
+
     End Sub
 
     Private Sub grdAPTINVH7_BeforeRowsDeleted(sender As Object, e As Infragistics.Win.UltraWinGrid.BeforeRowsDeletedEventArgs) Handles grdAPTINVH7.BeforeRowsDeleted
         Dim CTL_NOs As New List(Of String)
+        GROUPINGs.Clear()
+        ' Dim GROUPINGs As List(Of String)
         For Each grow As UltraWinGrid.UltraGridRow In e.Rows
             Dim CTL_NO As String = grow.Cells("CTL_NO").Value
             CTL_NOs.Add(CTL_NO)
+            Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").Rows.Find(CTL_NO)
+
+            Dim GROUPING As String = rowPOTLCST1.Item("GROUPING") & ""
+            If GROUPING <> "" Then
+                If Not GROUPINGs.Contains(GROUPING) Then
+                    GROUPINGs.Add(GROUPING)
+                End If
+            End If
         Next
         grdAPTINVH7.Tag = CTL_NOs
     End Sub
@@ -5040,8 +5187,8 @@ Public Class APFINVH1
         Print_Check("1")
     End Sub
 
-    Function Add_APTINVH5_SUM(RECEIPT_NO As String, RECEIPT_DATE As Date, _
-                              Optional QTY_REC As Int64 = 0, _
+    Function Add_APTINVH5_SUM(RECEIPT_NO As String, RECEIPT_DATE As Date,
+                              Optional QTY_REC As Int64 = 0,
                               Optional AMT_REC As Decimal = 0) As DataRow
         Dim rowAPTINVH5_SUM As DataRow = dst.Tables("APTINVH5_SUM").NewRow
         rowAPTINVH5_SUM.Item("RECEIPT_NO") = RECEIPT_NO
@@ -5083,5 +5230,198 @@ Public Class APFINVH1
 
         Return rowAPTINVH5_SUM
     End Function
+
+    Private Sub cmdCreateBatchAccrual_Click(sender As Object, e As EventArgs) Handles cmdCreateBatchAccrual.Click
+        If ASCMAIN1.DBS_COMPANY <> "RGI" Then
+            Exit Sub
+        End If
+        Dim EMsg As String = ""
+        Dim rowPOTCATG1 As DataRow = Nothing
+
+        Dim COST_CATGY_CODE As String = Absx1.txtFor("COST_CATGY_CODE").Text
+        If COST_CATGY_CODE = "" Then
+            EMsg &= vbCr & "No Value Specified for Cost Category Code"
+        Else
+            rowPOTCATG1 = LookUp("POTCATG1", COST_CATGY_CODE)
+            If rowPOTCATG1 Is Nothing Then
+                EMsg &= vbCr & "Invalid Value Specified for Cost Category Code"
+            End If
+        End If
+
+        Dim PO_ORDER_NO As String = txtPO_ORDER_NO.Text
+        Dim PO_SHIPMENT_NO As String = txtPO_SHIPMENT_NO.Text
+        Dim PO_SHIPMENT_LNO As Integer = Val(txtPO_SHIPMENT_LNO.Text)
+
+        Dim rowPOTORDR1 As DataRow = Nothing
+        Dim rowPOTSHIP1 As DataRow = Nothing
+        Dim rowPOTSHIP2 As DataRow = Nothing
+
+        ''If optAssociate.Value = "3" Then
+        ''    If PO_ORDER_NO = "" Then
+        ''        EMsg &= vbCr & "No Value Specified for PO No"
+        ''    Else
+        ''        rowPOTORDR1 = LookUp("POTORDR1", PO_ORDER_NO)
+        ''        If rowPOTORDR1 Is Nothing Then
+        ''            EMsg &= vbCr & "Invalid Value Specified for PO No"
+        ''        End If
+        ''    End If
+        ''ElseIf optAssociate.Value = "1" Then
+        ''    If PO_SHIPMENT_NO = "" Then
+        ''        EMsg &= vbCr & "No Value Specified for PO Shipment No"
+        ''    Else
+        ''        rowPOTSHIP1 = LookUp("POTSHIP1", PO_SHIPMENT_NO)
+        ''        If rowPOTSHIP1 Is Nothing Then
+        ''            EMsg &= vbCr & "Invalid Value Specified for PO Shipment No"
+        ''        End If
+        ''    End If
+        ''ElseIf optAssociate.Value = "2" Then
+        ''    If PO_SHIPMENT_NO = "" Then
+        ''        EMsg &= vbCr & "No Value Specified for PO Shipment No"
+        ''    Else
+        ''        rowPOTSHIP1 = LookUp("POTSHIP1", PO_SHIPMENT_NO)
+        ''        If rowPOTSHIP1 Is Nothing Then
+        ''            EMsg &= vbCr & "Invalid Value Specified for PO Shipment No"
+        ''        Else
+        ''            rowPOTSHIP2 = LookUp("POTSHIP2", New String() {PO_SHIPMENT_NO, PO_SHIPMENT_LNO})
+        ''            If rowPOTSHIP2 Is Nothing Then
+        ''                EMsg &= vbCr & "Invalid Value Specified for Bill of Lading No"
+        ''            End If
+        ''        End If
+        ''    End If
+        ''End If
+
+        If numPOLINES.Value <= 0 Then
+            EMsg &= vbCr & "Invalid Number of Accrual Lines to Distribute"
+        End If
+        If numPOAMTDIST.Value <= 0 Then
+            EMsg &= vbCr & "Invalid Amount Specified to distribute"
+        End If
+
+        If EMsg <> "" Then
+            MsgBox(EMsg, MsgBoxStyle.OkOnly, "Cannot Create $0 Accrual")
+            Exit Sub
+        End If
+
+        Dim numlines As Integer = numPOLINES.Value
+        Dim amtdistline As Double = Val(numPOAMTDIST.Value & "") / numlines
+        Dim GROUPING As Integer = Val(dst.Tables("POTLCST1").Compute("Max(GROUPING)", "") & "") + 1
+        Dim GROUPING_DISB As Double = Val(numPOAMTDIST.Value & "")
+
+
+        For i As Int64 = 1 To numlines
+
+
+            Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").NewRow
+            Dim CTL_NO As String = ASCMAIN1.Next_Control_No("POTLCST1.CTL_NO")
+            With rowPOTLCST1
+                .Item("CTL_NO") = CTL_NO
+                .Item("VEND_CODE") = Absx1.txtFor("VEND_CODE").Text
+                .Item("PO_ORDER_NO") = ""
+                .Item("PO_SHIPMENT_NO") = ""
+                .Item("PO_SHIPMENT_LNO") = 0
+                .Item("COST_CATGY_CODE") = COST_CATGY_CODE
+                .Item("CHARGEBACK_IND") = rowPOTCATG1.Item("CHARGEBACK_IND")
+                .Item("OPS_YYYYPP") = ASCMAIN1.CYP
+                .Item("COST_ACT") = amtdistline
+                .Item("GROUPING") = GROUPING
+                .Item("GROUPING_DISB") = GROUPING_DISB
+
+                ''If rowPOTSHIP1 IsNot Nothing Then
+                ''    .Item("PO_SHIP_VESSEL") = rowPOTSHIP1.Item("PO_SHIP_VESSEL")
+                ''    .Item("PO_SHIP_REF_NO") = rowPOTSHIP1.Item("PO_SHIP_REF_NO")
+                ''End If
+                ''If rowPOTSHIP2 IsNot Nothing Then
+                ''    .Item("CONTAINER_NO") = rowPOTSHIP2.Item("CONTAINER_NO")
+                ''    .Item("BOL_NO") = rowPOTSHIP2.Item("BOL_NO")
+                ''    .Item("COMM_INV_NO") = rowPOTSHIP2.Item("COMM_INV_NO")
+                ''End If
+
+            End With
+            dst.Tables("POTLCST1").Rows.Add(rowPOTLCST1)
+
+            Add_APTINVH7(CTL_NO)
+
+
+        Next
+
+
+
+        ''Dim PO_SHIPMENT_NO_SAVE As String = txtPO_SHIPMENT_NO.Text
+        ''Clear_Other_Accrual_Controls()
+
+        ''If optAssociate.Value = "1" Then
+        ''    txtPO_SHIPMENT_NO.Text = PO_SHIPMENT_NO_SAVE
+        ''End If
+
+    End Sub
+
+    Private Sub grdAPTINVH7_BeforeCellUpdate(sender As Object, e As BeforeCellUpdateEventArgs) Handles grdAPTINVH7.BeforeCellUpdate
+        Dim newValue = e.NewValue.ToString()
+        Dim rowPOTORDR1 As DataRow = Nothing
+        If e.Cell.Column.Key.StartsWith("PO_ORDER_NO") Then
+
+            If newValue = "" Then
+                MsgBox("No Value Specified for PO No", MsgBoxStyle.OkOnly, "Cannot Proceed, Please Re-enter")
+                e.Cancel = True
+            Else
+                rowPOTORDR1 = LookUp("POTORDR1", newValue)
+                If rowPOTORDR1 Is Nothing Then
+                    MsgBox("Invalid Value Specified for PO No", MsgBoxStyle.OkOnly, "Cannot Proceed, Please Re-enter")
+                    e.Cancel = True
+                Else
+                    'CALCULATE QTY AGAINST TOTAL QTY DIVIDED BY AMOUNT
+
+
+                End If
+            End If
+
+        End If
+
+
+    End Sub
+    Sub CALC_DIST_GROUPINGS(GROUPING As String)
+        Dim TOTALQTY As Decimal = Val(dst.Tables("POTLCST1").Compute("SUM(PO_QTY_ORD)", "GROUPING = '" & GROUPING & "'") & "")
+
+        For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Rows
+            If rowAPTINVH7.RowState <> DataRowState.Deleted Then
+
+                Dim TOTALQTY_PO As Double = 0
+                Dim TOTAL_AMT As Double = 0
+                ''Dim CTL_NOs As List(Of String) = DirectCast(grdAPTINVH7.Tag, List(Of String))
+                ''For Each CTL_NO As String In CTL_NOs
+                ''    Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").Rows.Find(CTL_NO)
+                ''    If rowPOTLCST1 Is Nothing Then
+                ''    Else
+                ''        TOTAL_AMT = Val(rowPOTLCST1.Item("GROUPING_DISB") & "")
+                ''        If rowPOTLCST1.Item("GROUPING") & "" = GROUPING Then
+                ''            TOTALQTY_PO = Val(rowPOTLCST1.Item("PO_QTY_ORD") & "")
+                ''            rowAPTINVH7.Item("TOTAL_INV") = (TOTALQTY_PO / TOTALQTY) * TOTAL_AMT
+                ''            rowPOTLCST1.Item("COST_ACT") = (TOTALQTY_PO / TOTALQTY) * TOTAL_AMT
+
+                ''        End If
+                ''    End If
+                ''Next
+
+                Dim CTL_NO As String = rowAPTINVH7.Item("CTL_NO")
+                Dim rowPOTLCST1 As DataRow = dst.Tables("POTLCST1").Rows.Find(CTL_NO)
+                If rowPOTLCST1 Is Nothing Then
+                Else
+                    TOTAL_AMT = Val(rowPOTLCST1.Item("GROUPING_DISB") & "")
+                    If rowPOTLCST1.Item("GROUPING") & "" = GROUPING Then
+                        TOTALQTY_PO = Val(rowPOTLCST1.Item("PO_QTY_ORD") & "")
+                        rowAPTINVH7.Item("TOTAL_INV") = (TOTALQTY_PO / TOTALQTY) * TOTAL_AMT
+                        rowPOTLCST1.Item("COST_ACT") = (TOTALQTY_PO / TOTALQTY) * TOTAL_AMT
+
+                    End If
+                End If
+
+
+
+            End If
+
+        Next
+
+    End Sub
+
 
 End Class
