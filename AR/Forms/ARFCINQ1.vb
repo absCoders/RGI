@@ -2715,7 +2715,11 @@ Public Class ARFCINQ1
                     FILENAME = TAC.SOCMAIN1.Create_Invoice(Me, INV_NO)
                     SUBJECT = "Invoice " & INV_NO
                     If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
-                        SUBJECT = SUBJECT & " - Customer No " & grd.ActiveRow.Cells("CUST_CODE").Value
+                        If e.Tool.OwningMenu.Key = "grdARTPYMTX" Then
+                            SUBJECT = SUBJECT
+                        Else
+                            SUBJECT = SUBJECT & " - Customer No " & grd.ActiveRow.Cells("CUST_CODE").Value
+                        End If
                     End If
 
                 ElseIf e.Tool.OwningMenu.Key = "grdSOTINVH1" Then
