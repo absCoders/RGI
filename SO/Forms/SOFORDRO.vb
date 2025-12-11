@@ -2581,7 +2581,7 @@ Public Class SOFORDRO
             Next
             txtFactory.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "VEND_SUPPLIER_ID")
             txtPort.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "PORT_CODE")
-            txtVEND_PURCH_COMMENT.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "VEND_PURCH_COMMENT")
+            'txtVEND_PURCH_COMMENT.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "VEND_PURCH_COMMENT")
             Dim STYLE_CLASS_CODE As String = dst.Tables("ICTSTYL1").Rows(0).Item("STYLE_CLASS_CODE").ToString
             SetEditorTip(Absx1.txtFor("STYLE_CODE"), STYLE_CLASS_CODE)
             Dim STYLE_DESC As String = dst.Tables("ICTSTYL1").Rows(0).Item("STYLE_DESC").ToString
@@ -3449,7 +3449,7 @@ Public Class SOFORDRO
         txtNET_PRICE.Value = 0
         txtPort.Text = ""
         txtFactory.Text = ""
-        txtVEND_PURCH_COMMENT.Text = ""
+        'txtVEND_PURCH_COMMENT.Text = ""
         txtRETAIL_PRICE.Text = ""
         SetEditorTip(Absx1.txtFor("STYLE_CODE"), "")
         SetEditorTip(txtSTYLE_DESC, "")

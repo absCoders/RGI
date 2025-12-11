@@ -576,8 +576,6 @@ Partial Class SOFORDRO
         Me.UltraLabel15 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor16 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel13 = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtVEND_PURCH_COMMENT = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraLabel21 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSTYLE_DESC2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtSTYLE_DESC = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -708,7 +706,6 @@ Partial Class SOFORDRO
         CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtVEND_PURCH_COMMENT, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_DESC2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtSTYLE_DESC, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2905,8 +2902,6 @@ Partial Class SOFORDRO
         Me.grpSTYL1.Controls.Add(Me.UltraLabel15)
         Me.grpSTYL1.Controls.Add(Me.UltraTextEditor16)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel13)
-        Me.grpSTYL1.Controls.Add(Me.txtVEND_PURCH_COMMENT)
-        Me.grpSTYL1.Controls.Add(Me.UltraLabel21)
         Me.grpSTYL1.Controls.Add(Me.txtSTYLE_DESC2)
         Me.grpSTYL1.Controls.Add(Me.UltraLabel11)
         Me.grpSTYL1.Controls.Add(Me.txtSTYLE_DESC)
@@ -3186,25 +3181,6 @@ Partial Class SOFORDRO
         Me.UltraLabel13.Size = New System.Drawing.Size(42, 23)
         Me.UltraLabel13.TabIndex = 65
         Me.UltraLabel13.Text = "UOM"
-        '
-        'txtVEND_PURCH_COMMENT
-        '
-        Me.Absx1.SetABSBindToTable(Me.txtVEND_PURCH_COMMENT, False)
-        Me.Absx1.SetABSColumnName(Me.txtVEND_PURCH_COMMENT, "VEND_PURCH_COMMENT")
-        Me.txtVEND_PURCH_COMMENT.Location = New System.Drawing.Point(8, 162)
-        Me.txtVEND_PURCH_COMMENT.Name = "txtVEND_PURCH_COMMENT"
-        Me.txtVEND_PURCH_COMMENT.ReadOnly = True
-        Me.txtVEND_PURCH_COMMENT.Size = New System.Drawing.Size(219, 25)
-        Me.txtVEND_PURCH_COMMENT.TabIndex = 62
-        Me.txtVEND_PURCH_COMMENT.TabStop = False
-        '
-        'UltraLabel21
-        '
-        Me.UltraLabel21.Location = New System.Drawing.Point(7, 145)
-        Me.UltraLabel21.Name = "UltraLabel21"
-        Me.UltraLabel21.Size = New System.Drawing.Size(133, 23)
-        Me.UltraLabel21.TabIndex = 63
-        Me.UltraLabel21.Text = "Factory Message"
         '
         'txtSTYLE_DESC2
         '
@@ -3880,7 +3856,6 @@ Partial Class SOFORDRO
         CType(Me.UltraTextEditor11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor16, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtVEND_PURCH_COMMENT, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSTYLE_DESC2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtSTYLE_DESC, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraTextEditor6, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3958,8 +3933,6 @@ Partial Class SOFORDRO
     Friend WithEvents UltraLabel3 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents txtSTYLE_CODE As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel17 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents txtVEND_PURCH_COMMENT As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraLabel21 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents txtSTYLE_DESC2 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraLabel11 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents txtSTYLE_DESC As Infragistics.Win.UltraWinEditors.UltraTextEditor
