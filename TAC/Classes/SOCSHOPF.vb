@@ -19,7 +19,10 @@ Public Class SOCSHOPF
 
 
     Public Sub New()
+        Initialize()
+    End Sub
 
+    Private Sub Initialize()
         rowECTECOMD = ASCDATA1.GetDataRow("SELECT * FROM ECTECOMD WHERE ECOM_CODE = :PARM1", "V", {ECOM_CODE})
         If rowECTECOMD Is Nothing Then
             Throw New Exception($"ECOM_CODE: {ECOM_CODE} not found in ECTECOMD")
@@ -33,7 +36,6 @@ Public Class SOCSHOPF
         ShopifyUrl = rowECTECOMD.Item("ECOM_URL") & String.Empty
         ShopifyUrl = ShopifyUrl.Replace("{USER_ID}", ECOM_SITE_USER).Replace("{PASSWORD}", ECOM_SITE_PWD)
         shopAccessToken = rowECTECOMD.Item("ECOM_SITE_SECRET_KEY") & String.Empty
-
     End Sub
 
     Public Class Receipt
@@ -202,7 +204,7 @@ Public Class SOCSHOPF
             Dim sql As String = String.Empty
             Dim lstDiscontinuedItems As New List(Of String)
 
-            rowECTECOMD = ASCDATA1.GetDataRow("SELECT * FROM ECTECOMD WHERE ECOM_CODE = :PARM1", "V", {ECOM_CODE})
+            Initialize()
 
             If rowECTECOMD Is Nothing Then
                 MessageBox.Show($"UpdateProducts, Ecommerce Partner {ECOM_CODE} does not have Shopify credentials")
@@ -319,7 +321,7 @@ Public Class SOCSHOPF
             Dim sql As String = String.Empty
             Dim lstDiscontinuedItems As New List(Of String)
 
-            rowECTECOMD = ASCDATA1.GetDataRow("SELECT * FROM ECTECOMD WHERE ECOM_CODE = :PARM1", "V", {ECOM_CODE})
+            Initialize()
 
             If rowECTECOMD Is Nothing Then
                 MessageBox.Show($"UpdateProducts, Ecommerce Partner {ECOM_CODE} does not have Shopify credentials")
@@ -450,7 +452,7 @@ Public Class SOCSHOPF
     Public Function GetShopifyPayouts(ByVal startDate As Date, ByVal endDate As Date) As DataSet
 
         Try
-            rowECTECOMD = ASCDATA1.GetDataRow("SELECT * FROM ECTECOMD WHERE ECOM_CODE = :PARM1", "V", {ECOM_CODE})
+            Initialize()
 
             If rowECTECOMD Is Nothing Then
                 MessageBox.Show($"UpdateProducts, Ecommerce Partner {ECOM_CODE} does not have Shopify credentials")
@@ -530,7 +532,11 @@ Public Class SOCSHOPF
                 While currentStart < endDate
                     Dim dateMin As String = currentStart.ToString("yyyy-MM-dd")
                     Dim response As New HttpResponseMessage
-                    response = client.GetAsync(ShopifyUrl & $"shopify_payments/payouts.json?limit=250&date_min={dateMin}&date_max={dateMin}").Result
+
+                    ' GET /admin/api/2025-04/shopify_payments/payouts.json?date_min=YYYY-MM-DD&date_max=YYYY-MM-DD
+                    Dim endPoint As String = ShopifyUrl & $"shopify_payments/payouts.json?limit=250&date_min={dateMin}&date_max={dateMin}&status=paid"
+
+                    response = client.GetAsync(endPoint).Result
                     Dim json As String = response.Content.ReadAsStringAsync().Result
 
                     Dim parsed = JObject.Parse(json)
@@ -589,14 +595,18 @@ Public Class SOCSHOPF
                 .Columns.Add("AMOUNT", GetType(Decimal))
                 .Columns.Add("FEE", GetType(Decimal))
                 .Columns.Add("NET", GetType(Decimal))
-                .Columns.Add("ORDER_ID", GetType(Decimal))
+                .Columns.Add("ORDR_WEB_ID", GetType(Decimal))
                 .Columns.Add("DATE_PROCESED", GetType(Date))
+                .Columns.Add("INV_NO", GetType(String))
             End With
             dtTransaction.TableName = "TRANSACTIONS"
 
             For Each drPayment As DataRow In dtPayment.Select("")
                 Dim payoutId As String = drPayment.Item("PAYOUT_ID") & String.Empty
+
+                ' GET /admin/api/2025-04/shopify_payments/payouts/{payout_id}/transactions.json
                 Dim endpoint As String = ShopifyUrl & $"shopify_payments/payouts/{payoutId}/transactions.json"
+
                 Using client As New HttpClient()
                     client.BaseAddress = New Uri(ShopifyUrl)
                     client.DefaultRequestHeaders.Add("X-Shopify-Access-Token", shopAccessToken)
@@ -608,6 +618,7 @@ Public Class SOCSHOPF
                     Dim transactions As JArray = parsed("transactions")
 
                     For Each t In transactions
+
                         Dim drTransaction As DataRow = dtTransaction.NewRow
                         With drTransaction
                             .Item("TRANS_ID") = t("id").ToString()
@@ -615,25 +626,37 @@ Public Class SOCSHOPF
                             .Item("PAYOUT_ID") = t("payout_id").ToString()
                             .Item("PAYOUT_STATUS") = t("payout_status").ToString()
                             .Item("CURRENCY") = t("currency").ToString()
-                            .Item("AMOUNT") = t("amount").ToString()
-                            .Item("FEE") = t("fee").ToString()
-                            .Item("NET") = t("net").ToString()
+                            .Item("AMOUNT") = Val(t("amount").ToString() & String.Empty)
+                            .Item("FEE") = Val(t("fee").ToString() & String.Empty)
+                            .Item("NET") = Val(t("net").ToString() & String.Empty)
 
                             If t("source_order_id") IsNot Nothing AndAlso t("source_order_id").ToString() <> "" Then
-                                .Item("ORDER_ID") = t("source_order_id").ToString()
+                                .Item("ORDR_WEB_ID") = t("source_order_id").ToString()
                             ElseIf t("order_id") IsNot Nothing AndAlso t("order_id").ToString() <> "" Then
-                                '.Item("ORDER_ID") = t("order_id").ToString()
+                                '.Item("ORDR_WEB_ID") = t("order_id").ToString()
                             ElseIf t("source_id") IsNot Nothing AndAlso IsNumeric(t("source_id").ToString()) Then
-                                '.Item("ORDER_ID") = t("source_id").ToString()
+                                '.Item("ORDR_WEB_ID") = t("source_id").ToString()
                             End If
 
                             If t("processed_at") IsNot Nothing AndAlso t("processed_at").ToString() <> "" Then
                                 If IsDate(t("processed_at").ToString()) Then
                                     .Item("DATE_PROCESED") = CDate(t("processed_at").ToString())
                                 End If
-
                             End If
 
+                            Dim ORDR_WEB_ID As String = .Item("ORDR_WEB_ID") & String.Empty
+                            Dim INV_TOTAL_AMOUNT As Decimal = VAL(.Item("AMOUNT") & String.EMPTY)
+
+                            If ORDR_WEB_ID.Length > 0 Then
+                                Dim sql As String = "SELECT SOTINVH1.INV_NO, SOTINVH1.INV_TOTAL_AMOUNT
+                                                            FROM SOTORDR1, SOTINVH1
+                                                            WHERE SOTORDR1.ORDR_NO = SOTINVH1.ORDR_NO
+                                                            AND SOTORDR1.ORDR_WEB_ID = :PARM1"
+                                Dim drSOTINVH1 As DataRow = ASCDATA1.GetDataRow(sql, "V", ORDR_WEB_ID)
+                                If drSOTINVH1 IsNot Nothing AndAlso drSOTINVH1.Item("INV_TOTAL_AMOUNT") = INV_TOTAL_AMOUNT Then
+                                    .Item("INV_NO") = drSOTINVH1.Item("INV_NO") & String.Empty
+                                End If
+                            End If
                         End With
                         dtTransaction.Rows.Add(drTransaction)
                     Next
