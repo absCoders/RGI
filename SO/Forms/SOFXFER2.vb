@@ -2477,6 +2477,21 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("* Update To Transfer Process To Sync Pricing Tiers.")
         VersionInfo.AppendLine("* Warn When Starting Order If Customer Is On Credit Hold.")
 
+        VersionNo = "25.12.03.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Stop When Starting Order If Customer Is On Sales Hold.")
+
+        VersionNo = "25.12.07.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Expose 2nd Description In Order Entry.")
+
+        VersionNo = "25.12.11.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Remove Factory From SKU Inq and Order Entry.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

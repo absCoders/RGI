@@ -428,7 +428,8 @@ Public Class SOFORDRO
                 Call Validate_Code("CUST_CODE")
                 If Absx1.txtFor("CUST_CODE").Text.Length > 0 Then
                     If Not CheckForSalesHold() Then
-                        MsgBox("Selected Customer Is On Sales Hold.", MsgBoxStyle.Information, "Please Note")
+                        'MsgBox("Selected Customer Is On Sales Hold.", MsgBoxStyle.Information, "Please Note")
+                        EMsg &= vbCr & "Selected Customer Is On Sales Hold."
                     End If
                     If Not CheckForCreditHold() Then
                         MsgBox("Selected Customer Is On Credit Hold.", MsgBoxStyle.Information, "Please Note")
@@ -1731,6 +1732,14 @@ Public Class SOFORDRO
     Private Sub txtSTYLE_CODE_MouseEnter(sender As Object, e As System.EventArgs) Handles txtSTYLE_CODE.MouseEnter
         ShowClassTip(sender, e)
     End Sub
+
+    Private Sub txtSTYLE_DESC_MouseEnter(sender As Object, e As System.EventArgs) Handles txtSTYLE_DESC.MouseEnter
+        ShowClassTip(sender, e)
+    End Sub
+
+    Private Sub txtSTYLE_DESC2_MouseEnter(sender As Object, e As System.EventArgs) Handles txtSTYLE_DESC2.MouseEnter
+        ShowClassTip(sender, e)
+    End Sub
 #End Region
 
 #Region "Grids"
@@ -2572,9 +2581,14 @@ Public Class SOFORDRO
             Next
             txtFactory.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "VEND_SUPPLIER_ID")
             txtPort.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "PORT_CODE")
-            txtVEND_PURCH_COMMENT.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "VEND_PURCH_COMMENT")
+            'txtVEND_PURCH_COMMENT.Text = GetVendorData(dst.Tables("ICTSTYL1").Rows(0).Item("VEND_CODE").ToString, "VEND_PURCH_COMMENT")
             Dim STYLE_CLASS_CODE As String = dst.Tables("ICTSTYL1").Rows(0).Item("STYLE_CLASS_CODE").ToString
-            SetClassTip(STYLE_CLASS_CODE)
+            SetEditorTip(Absx1.txtFor("STYLE_CODE"), STYLE_CLASS_CODE)
+            Dim STYLE_DESC As String = dst.Tables("ICTSTYL1").Rows(0).Item("STYLE_DESC").ToString
+            SetEditorTip(txtSTYLE_DESC, STYLE_DESC)
+            Dim STYLE_DESC2 As String = dst.Tables("ICTSTYL1").Rows(0).Item("STYLE_DESC2").ToString
+            SetEditorTip(txtSTYLE_DESC2, STYLE_DESC2)
+
             SetStyleColor()
             lblSTATUS.Visible = True
             Sort_grdColumns(grdICTSTYC1, "COLOR_CODE".ToUpper, True)
@@ -3038,11 +3052,12 @@ Public Class SOFORDRO
         Return RetVal
     End Function
 
-    Private Sub SetClassTip(ByVal STYLE_CLASS_CODE As String)
+    Private Sub SetEditorTip(ByRef UTextEditor As UltraWinEditors.UltraTextEditor, ByVal STYLE_CLASS_CODE As String)
         Dim tt As Infragistics.Win.UltraWinToolTip.UltraToolTipInfo =
                                 New Infragistics.Win.UltraWinToolTip.UltraToolTipInfo() _
                                 With {.ToolTipText = STYLE_CLASS_CODE}
-        tip.SetUltraToolTip(Absx1.txtFor("STYLE_CODE"), tt)
+        'tip.SetUltraToolTip(Absx1.txtFor("STYLE_CODE"), tt)
+        tip.SetUltraToolTip(UTextEditor, tt)
     End Sub
 
     Private Sub SetFEPics(ByVal PicName As String, Optional ByVal ClearAll As Boolean = False)
@@ -3434,9 +3449,11 @@ Public Class SOFORDRO
         txtNET_PRICE.Value = 0
         txtPort.Text = ""
         txtFactory.Text = ""
-        txtVEND_PURCH_COMMENT.Text = ""
+        'txtVEND_PURCH_COMMENT.Text = ""
         txtRETAIL_PRICE.Text = ""
-        SetClassTip("")
+        SetEditorTip(Absx1.txtFor("STYLE_CODE"), "")
+        SetEditorTip(txtSTYLE_DESC, "")
+        SetEditorTip(txtSTYLE_DESC2, "")
         SetStyleColor()
         lblSTATUS.Visible = False
         Absx1.txtFor("STYLE_CODE").Focus()

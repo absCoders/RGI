@@ -1601,6 +1601,8 @@ Partial Class ICFSTAT1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.UltraLabel17 = New Infragistics.Win.Misc.UltraLabel()
+        Me.txtSTYLE_DESC2 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1881,6 +1883,7 @@ Partial Class ICFSTAT1
         Me.spl.SuspendLayout
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit
         Me.tab.SuspendLayout
+        CType(Me.txtSTYLE_DESC2, System.ComponentModel.ISupportInitialize).BeginInit
         Me.SuspendLayout
         '
         'UltraExplorerBar1
@@ -2279,7 +2282,7 @@ Partial Class ICFSTAT1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 396)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 246)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 168)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -4792,7 +4795,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.splDetails)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1026, 321)
         '
@@ -5719,12 +5722,14 @@ Partial Class ICFSTAT1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grpICTSTYL1)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(1026, 321)
         '
         'grpICTSTYL1
         '
+        Me.grpICTSTYL1.Controls.Add(Me.UltraLabel17)
+        Me.grpICTSTYL1.Controls.Add(Me.txtSTYLE_DESC2)
         Me.grpICTSTYL1.Controls.Add(Me.lblFDPRICE)
         Me.grpICTSTYL1.Controls.Add(Me.lblFDMIXPRICE)
         Me.grpICTSTYL1.Controls.Add(Me.lblFEMIXPRICE)
@@ -5878,7 +5883,7 @@ Partial Class ICFSTAT1
         'lblSTYLE_MATL_DESC
         '
         Me.lblSTYLE_MATL_DESC.AutoSize = True
-        Me.lblSTYLE_MATL_DESC.Location = New System.Drawing.Point(12, 246)
+        Me.lblSTYLE_MATL_DESC.Location = New System.Drawing.Point(12, 272)
         Me.lblSTYLE_MATL_DESC.Margin = New System.Windows.Forms.Padding(4)
         Me.lblSTYLE_MATL_DESC.Name = "lblSTYLE_MATL_DESC"
         Me.lblSTYLE_MATL_DESC.Size = New System.Drawing.Size(59, 18)
@@ -5889,7 +5894,7 @@ Partial Class ICFSTAT1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor16, "STYLE_MATL_DESC")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor16, True)
-        Me.UltraTextEditor16.Location = New System.Drawing.Point(104, 243)
+        Me.UltraTextEditor16.Location = New System.Drawing.Point(104, 269)
         Me.UltraTextEditor16.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor16.Multiline = True
         Me.UltraTextEditor16.Name = "UltraTextEditor16"
@@ -6156,7 +6161,7 @@ Partial Class ICFSTAT1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor5, "SIZE_CODE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor5, True)
-        Me.UltraTextEditor5.Location = New System.Drawing.Point(14, 210)
+        Me.UltraTextEditor5.Location = New System.Drawing.Point(14, 236)
         Me.UltraTextEditor5.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor5.Name = "UltraTextEditor5"
         Me.UltraTextEditor5.Size = New System.Drawing.Size(85, 25)
@@ -6166,7 +6171,7 @@ Partial Class ICFSTAT1
         'lblSIZE_CODE
         '
         Me.lblSIZE_CODE.AutoSize = True
-        Me.lblSIZE_CODE.Location = New System.Drawing.Point(12, 190)
+        Me.lblSIZE_CODE.Location = New System.Drawing.Point(12, 216)
         Me.lblSIZE_CODE.Margin = New System.Windows.Forms.Padding(4)
         Me.lblSIZE_CODE.Name = "lblSIZE_CODE"
         Me.lblSIZE_CODE.Size = New System.Drawing.Size(33, 18)
@@ -6253,7 +6258,7 @@ Partial Class ICFSTAT1
         '
         Me.Absx1.SetABSColumnName(Me.UltraTextEditor23, "SIZE_SCALE")
         Me.Absx1.SetABSHasButton(Me.UltraTextEditor23, True)
-        Me.UltraTextEditor23.Location = New System.Drawing.Point(103, 175)
+        Me.UltraTextEditor23.Location = New System.Drawing.Point(103, 201)
         Me.UltraTextEditor23.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraTextEditor23.Multiline = True
         Me.UltraTextEditor23.Name = "UltraTextEditor23"
@@ -6264,7 +6269,7 @@ Partial Class ICFSTAT1
         'UltraLabel11
         '
         Me.UltraLabel11.AutoSize = True
-        Me.UltraLabel11.Location = New System.Drawing.Point(11, 175)
+        Me.UltraLabel11.Location = New System.Drawing.Point(11, 201)
         Me.UltraLabel11.Margin = New System.Windows.Forms.Padding(4)
         Me.UltraLabel11.Name = "UltraLabel11"
         Me.UltraLabel11.Size = New System.Drawing.Size(88, 18)
@@ -8558,7 +8563,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tabStyles)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1030, 512)
         '
@@ -8598,7 +8603,7 @@ Partial Class ICFSTAT1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1030, 512)
         '
@@ -9377,6 +9382,28 @@ Partial Class ICFSTAT1
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
         Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(1030, 512)
         '
+        'UltraLabel17
+        '
+        Me.UltraLabel17.AutoSize = True
+        Me.UltraLabel17.Location = New System.Drawing.Point(13, 171)
+        Me.UltraLabel17.Margin = New System.Windows.Forms.Padding(4)
+        Me.UltraLabel17.Name = "UltraLabel17"
+        Me.UltraLabel17.Size = New System.Drawing.Size(89, 18)
+        Me.UltraLabel17.TabIndex = 308
+        Me.UltraLabel17.Text = "Description2"
+        '
+        'txtSTYLE_DESC2
+        '
+        Me.Absx1.SetABSColumnName(Me.txtSTYLE_DESC2, "STYLE_DESC2")
+        Me.Absx1.SetABSHasButton(Me.txtSTYLE_DESC2, True)
+        Me.txtSTYLE_DESC2.Location = New System.Drawing.Point(105, 168)
+        Me.txtSTYLE_DESC2.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtSTYLE_DESC2.Multiline = True
+        Me.txtSTYLE_DESC2.Name = "txtSTYLE_DESC2"
+        Me.txtSTYLE_DESC2.Scrollbars = System.Windows.Forms.ScrollBars.Vertical
+        Me.txtSTYLE_DESC2.Size = New System.Drawing.Size(327, 25)
+        Me.txtSTYLE_DESC2.TabIndex = 307
+        '
         'ICFSTAT1
         '
         Me.Absx1.SetABSTableName(Me, "ICTSTYL1")
@@ -9677,6 +9704,7 @@ Partial Class ICFSTAT1
         Me.spl.ResumeLayout(False)
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit
         Me.tab.ResumeLayout(False)
+        CType(Me.txtSTYLE_DESC2, System.ComponentModel.ISupportInitialize).EndInit
         Me.ResumeLayout(False)
 
     End Sub
@@ -9960,4 +9988,6 @@ Partial Class ICFSTAT1
     Friend WithEvents grdICTATOP1 As UltraWinGrid.UltraGrid
     Friend WithEvents UltraTabPageControl20 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdICTSTYL1_Xit As UltraWinGrid.UltraGrid
+    Friend WithEvents UltraLabel17 As Misc.UltraLabel
+    Friend WithEvents txtSTYLE_DESC2 As UltraWinEditors.UltraTextEditor
 End Class
