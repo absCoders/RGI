@@ -338,6 +338,14 @@ Public Class ECTECOMD
                     Dim NumItemsUpdated As Int16 = 0
                     Dim clsSOCSHOPF As New TAC.SOCSHOPF
                     clsSOCSHOPF.GetShopifyProducts(NumItemsUpdated)
+
+                    'If ASCMAIN1.Running_in_VS Then
+                    '    Stop
+                    '    Dim ds As New DataSet
+                    '    ds = clsSOCSHOPF.GetShopifyPayouts(CDate("11/01/2025"), CDate("12/03/2025"))
+                    '    Stop
+                    'End If
+
                     MessageBox.Show($"{NumItemsUpdated} Items Updated", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Catch ex As Exception
                     MessageBox.Show(ex.Message, "Update Shopify Variants", MessageBoxButtons.OK, MessageBoxIcon.Error)
