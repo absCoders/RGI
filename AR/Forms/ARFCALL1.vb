@@ -555,8 +555,9 @@ Public Class ARFCALL1
             tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
             tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
         End If
+
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
-            e.Cancel = True
+            '    e.Cancel = True
         Else
             Select Case e.SourceControl.Name
 
@@ -584,7 +585,7 @@ Public Class ARFCALL1
                 grd.DisplayLayout.GroupByBox.Hidden = Not tlb_sbt.Checked
         End Select
 
-        If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
+        If (grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow) And e.Tool.Key <> "Add to Log" Then
             Exit Sub
         End If
 
@@ -721,6 +722,7 @@ Public Class ARFCALL1
                (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                 SUBJECT, "AR", False, True, CUST_CODE, CUST_NAME, "Customer", BODY)
 
+                DATETIME_STAMP = Now + ASCMAIN1.NowTSD
                 If SEND_NO <> "" Then
                     TAC.TACMAIN1.Record_Event("ARTOPEN1", CUST_CODE, DATETIME_STAMP, ASCMAIN1.USER_ID, "EML", "email Cust Statement " & Format(Now, "MM/dd/yyyy"), SEND_NO)
                     Dim ATTACHMENT_NO As String = ASCMAIN1.Next_Control_No("ASTATTA2.ATTACHMENT_NO")
@@ -769,12 +771,12 @@ Public Class ARFCALL1
                     dst.Tables("TATCONV1").Rows.Add(rowTATCONV1)
                     Update_Record_TDA("TATCONV1")
 
-                    ''Dim F2 As ASFCONV1 = DirectCast(tabMain.Tabs("Log").TabPage.Controls(0), ASFCONV1)
-                    ''If F2.tblTATCONV1 IsNot Nothing Then
-                    ''    F2.tblTATCONV1.Rows.Add(rowTATCONV1.ItemArray)
-                    ''End If
+                    'Dim F2 As ASFCONV1 = DirectCast(tabMain.Tabs("Log").TabPage.Controls(0), ASFCONV1)
+                    'If F2.tblTATCONV1 IsNot Nothing Then
+                    '    F2.tblTATCONV1.Rows.Add(rowTATCONV1.ItemArray)
+                    'End If
 
-                    dst.Tables("TATCONV1").Rows.Clear()
+                    '   dst.Tables("TATCONV1").Rows.Clear()
 
 
                 End If
