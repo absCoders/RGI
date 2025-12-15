@@ -2619,7 +2619,7 @@ Public Class SOFSHIPB
                                 Select Case ASCMAIN1.CLIENT
                                     Case "RGI"
                                         ' If UPS or FEDEX then use the Master Tracking Number as Pro Number
-                                        If Not commonCarrier AndAlso eItemKey = "Finalize" Then
+                                        If Not select_from_3PL_list AndAlso Not commonCarrier AndAlso eItemKey = "Finalize" Then
                                             EMsg &= vbCr & "Shippers Reference (Pro #) is Required"
                                         End If
 
