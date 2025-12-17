@@ -232,8 +232,9 @@ Public Class SOCSHOPF
                 Return False
             End If
 
-            Dim client As New HttpClient()
-            client.BaseAddress = New Uri(ShopifyUrl)
+            Dim client As New HttpClient() With {
+                .BaseAddress = New Uri(ShopifyUrl)
+            }
 
             ' Authentication
             client.DefaultRequestHeaders.Accept.Clear()
@@ -449,7 +450,7 @@ Public Class SOCSHOPF
 
     End Function
 
-    Public Function GetShopifyPayouts(ByVal startDate As Date, ByVal endDate As Date) As DataSet
+    Private Function GetShopifyPayouts(ByVal startDate As Date, ByVal endDate As Date) As DataSet
 
         Try
             Initialize()
@@ -519,12 +520,13 @@ Public Class SOCSHOPF
                 .Columns.Add("RESERVED_FUNDS_GROSS_AMOUNT", GetType(Decimal))
                 .Columns.Add("RETRIED_PAYOUTS_FEE_AMOUNT", GetType(Decimal))
                 .Columns.Add("RETRIED_PAYOUTS_GROSS_AMOUNT", GetType(Decimal))
-
             End With
             dtPayment.TableName = "PAYMENTS"
 
-            Using client As New HttpClient()
-                client.BaseAddress = New Uri(ShopifyUrl)
+            Using client As New HttpClient() With {
+                .BaseAddress = New Uri(ShopifyUrl)
+                }
+
                 client.DefaultRequestHeaders.Add("X-Shopify-Access-Token", shopAccessToken)
 
                 Dim currentStart As Date = startDate
@@ -601,6 +603,15 @@ Public Class SOCSHOPF
             End With
             dtTransaction.TableName = "TRANSACTIONS"
 
+            'Summary Table
+            'Type	    Meaning	                                    Affects Invoice?    Notes
+            'payment	Customer payment	                        ✅ Yes	            What you apply to invoice
+            'refund	    Refund to customer	                        ❌ No	            Reduces payout
+            'adjustment	Shopify manual adjustments	                ❌ No	            Usually not order-specific
+            'dispute	Chargeback/dispute resolution	            ❌ Maybe	        Can affect payout for the order
+            'credit	    Shopify credit (refunds, fees returned)	    ❌ No	            Usually special cases
+            'payout	    Payout summary	                            ❌ No	            Total batch amount
+
             For Each drPayment As DataRow In dtPayment.Select("")
                 Dim payoutId As String = drPayment.Item("PAYOUT_ID") & String.Empty
 
@@ -655,8 +666,13 @@ Public Class SOCSHOPF
                                 Dim drSOTINVH1 As DataRow = ASCDATA1.GetDataRow(sql, "V", ORDR_WEB_ID)
                                 If drSOTINVH1 IsNot Nothing AndAlso drSOTINVH1.Item("INV_TOTAL_AMOUNT") = INV_TOTAL_AMOUNT Then
                                     .Item("INV_NO") = drSOTINVH1.Item("INV_NO") & String.Empty
+                                Else
+                                    ' See if this is a refund invoice
+                                    ' --- SOTRTNL1, ORDR_NO, INV_NO
+                                    sql = ""
                                 End If
                             End If
+
                         End With
                         dtTransaction.Rows.Add(drTransaction)
                     Next
