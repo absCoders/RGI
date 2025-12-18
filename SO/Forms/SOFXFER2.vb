@@ -2492,6 +2492,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Remove Factory From SKU Inq and Order Entry.")
 
+        VersionNo = "25.12.18.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Addition Of Sales And Credit Hold To Cust Matrix.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class
