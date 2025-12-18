@@ -3505,6 +3505,24 @@ Public Class POFSHIP1
                             If PO_ORDER_NO4 & "" <> "" Then
                                 packingListPOs.Add(PO_ORDER_NO4)
                             End If
+                            Dim PO_ORDER_NO5 As String = rowPOTPACK1.Item("PO_ORDER_NO5") & ""
+                            If PO_ORDER_NO5 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO5)
+                            End If
+                            Dim PO_ORDER_NO6 As String = rowPOTPACK1.Item("PO_ORDER_NO6") & ""
+                            If PO_ORDER_NO6 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO6)
+                            End If
+                            Dim PO_ORDER_NO7 As String = rowPOTPACK1.Item("PO_ORDER_NO7") & ""
+                            If PO_ORDER_NO7 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO7)
+                            End If
+                            Dim PO_ORDER_NO8 As String = rowPOTPACK1.Item("PO_ORDER_NO8") & ""
+                            If PO_ORDER_NO8 & "" <> "" Then
+                                packingListPOs.Add(PO_ORDER_NO8)
+                            End If
+                            ' dgj new
+
                         Next
                         'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
                     Next
