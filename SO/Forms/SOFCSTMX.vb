@@ -48,7 +48,9 @@ Public Class SOFCSTMX
             SQLB.AppendLine("C1.CUST_PHONE,")
             SQLB.AppendLine("C1.CUST_EMAIL,")
             SQLB.AppendLine("C1.SREP_CODE,")
-            SQLB.AppendLine("C1.INIT_DATE")
+            SQLB.AppendLine("C1.INIT_DATE,")
+            SQLB.AppendLine("NVL(C1.CUST_SALES_HOLD,'0') CUST_SALES_HOLD,")
+            SQLB.AppendLine("NVL(C1.CUST_CREDIT_HOLD,'0') CUST_CREDIT_HOLD")
             SQLB.AppendLine("FROM ARTCUST1 C1")
             SQLB.AppendLine("WHERE C1.CUST_STATUS = 'A'")
             If ASCMAIN1.DBS_COMPANY <> "RGI" Then
