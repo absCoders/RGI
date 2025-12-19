@@ -113,6 +113,7 @@ Partial Class ECTECOMD
         Dim UltraGridColumn19 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("COLOR_DESC")
         Dim Appearance35 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn20 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SIZE_INDEX")
+        Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("WHSE_QTY_ON_HAND")
         Dim UltraGridColumn21 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SIZE_CODE")
         Dim Appearance36 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ECOM_PRODUCT_ID")
@@ -141,9 +142,9 @@ Partial Class ECTECOMD
         Dim Appearance52 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance53 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueList3 As Infragistics.Win.ValueList = New Infragistics.Win.ValueList(118864891)
-        Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
-        Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem12 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem13 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem14 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim Appearance73 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("Band 0", -1)
         Dim UltraGridColumn12 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ECOM_CODE")
@@ -427,7 +428,7 @@ Partial Class ECTECOMD
         Me.UltraTabPageControl3.Controls.Add(Me.UltraTextEditor2)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraLabel5)
         Me.UltraTabPageControl3.Controls.Add(Me.UltraLabel4)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1160, 513)
         '
@@ -484,9 +485,9 @@ Partial Class ECTECOMD
         Me.UltraLabel19.AutoSize = True
         Me.UltraLabel19.Location = New System.Drawing.Point(8, 473)
         Me.UltraLabel19.Name = "UltraLabel19"
-        Me.UltraLabel19.Size = New System.Drawing.Size(142, 18)
+        Me.UltraLabel19.Size = New System.Drawing.Size(149, 18)
         Me.UltraLabel19.TabIndex = 345
-        Me.UltraLabel19.Text = "Max order to Import"
+        Me.UltraLabel19.Text = "Max orders to Import"
         '
         'UltraTextEditor20
         '
@@ -1011,7 +1012,7 @@ Partial Class ECTECOMD
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splPLM)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1160, 513)
         '
@@ -1024,6 +1025,7 @@ Partial Class ECTECOMD
         'splPLM.Panel1
         '
         Me.splPLM.Panel1.Controls.Add(Me.splItems)
+        Me.splPLM.Panel1Collapsed = True
         '
         'splPLM.Panel2
         '
@@ -1194,7 +1196,7 @@ Partial Class ECTECOMD
         UltraGridColumn15.CellAppearance = Appearance32
         UltraGridColumn15.Header.Caption = "Style Code"
         UltraGridColumn15.Header.VisiblePosition = 0
-        UltraGridColumn15.RowLayoutColumnInfo.OriginX = 0
+        UltraGridColumn15.RowLayoutColumnInfo.OriginX = 2
         UltraGridColumn15.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn15.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(104, 0)
         UltraGridColumn15.RowLayoutColumnInfo.SpanX = 2
@@ -1204,10 +1206,9 @@ Partial Class ECTECOMD
         UltraGridColumn16.CellAppearance = Appearance33
         UltraGridColumn16.Header.Caption = "Plm"
         UltraGridColumn16.Header.VisiblePosition = 2
-        UltraGridColumn16.Hidden = True
-        UltraGridColumn16.RowLayoutColumnInfo.OriginX = 16
+        UltraGridColumn16.RowLayoutColumnInfo.OriginX = 0
         UltraGridColumn16.RowLayoutColumnInfo.OriginY = 0
-        UltraGridColumn16.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(98, 0)
+        UltraGridColumn16.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(82, 0)
         UltraGridColumn16.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn16.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn17.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
@@ -1215,14 +1216,14 @@ Partial Class ECTECOMD
         UltraGridColumn17.CellAppearance = Appearance34
         UltraGridColumn17.Header.Caption = "Style Desc"
         UltraGridColumn17.Header.VisiblePosition = 3
-        UltraGridColumn17.RowLayoutColumnInfo.OriginX = 2
+        UltraGridColumn17.RowLayoutColumnInfo.OriginX = 4
         UltraGridColumn17.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn17.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn17.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn18.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn18.Header.Caption = "Color Code"
         UltraGridColumn18.Header.VisiblePosition = 4
-        UltraGridColumn18.RowLayoutColumnInfo.OriginX = 4
+        UltraGridColumn18.RowLayoutColumnInfo.OriginX = 6
         UltraGridColumn18.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn18.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(93, 0)
         UltraGridColumn18.RowLayoutColumnInfo.SpanX = 2
@@ -1233,7 +1234,7 @@ Partial Class ECTECOMD
         UltraGridColumn19.CellAppearance = Appearance35
         UltraGridColumn19.Header.Caption = "Color Desc"
         UltraGridColumn19.Header.VisiblePosition = 5
-        UltraGridColumn19.RowLayoutColumnInfo.OriginX = 6
+        UltraGridColumn19.RowLayoutColumnInfo.OriginX = 8
         UltraGridColumn19.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn19.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(99, 0)
         UltraGridColumn19.RowLayoutColumnInfo.SpanX = 2
@@ -1241,18 +1242,27 @@ Partial Class ECTECOMD
         UltraGridColumn20.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn20.Header.Caption = "Size Index"
         UltraGridColumn20.Header.VisiblePosition = 6
-        UltraGridColumn20.RowLayoutColumnInfo.OriginX = 8
+        UltraGridColumn20.RowLayoutColumnInfo.OriginX = 10
         UltraGridColumn20.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn20.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(83, 0)
         UltraGridColumn20.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn20.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn20.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.EditButton
+        UltraGridColumn23.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
+        UltraGridColumn23.Format = "#,##0"
+        UltraGridColumn23.Header.Caption = "On Hand"
+        UltraGridColumn23.Header.VisiblePosition = 7
+        UltraGridColumn23.RowLayoutColumnInfo.OriginX = 14
+        UltraGridColumn23.RowLayoutColumnInfo.OriginY = 0
+        UltraGridColumn23.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(90, 0)
+        UltraGridColumn23.RowLayoutColumnInfo.SpanX = 1
+        UltraGridColumn23.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn21.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         Appearance36.BackColor = System.Drawing.Color.LightBlue
         UltraGridColumn21.CellAppearance = Appearance36
         UltraGridColumn21.Header.Caption = "Size Code"
-        UltraGridColumn21.Header.VisiblePosition = 7
-        UltraGridColumn21.RowLayoutColumnInfo.OriginX = 10
+        UltraGridColumn21.Header.VisiblePosition = 8
+        UltraGridColumn21.RowLayoutColumnInfo.OriginX = 12
         UltraGridColumn21.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn21.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(84, 0)
         UltraGridColumn21.RowLayoutColumnInfo.SpanX = 2
@@ -1261,8 +1271,8 @@ Partial Class ECTECOMD
         Appearance37.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn22.CellAppearance = Appearance37
         UltraGridColumn22.Header.Caption = "Product ID"
-        UltraGridColumn22.Header.VisiblePosition = 8
-        UltraGridColumn22.RowLayoutColumnInfo.OriginX = 24
+        UltraGridColumn22.Header.VisiblePosition = 9
+        UltraGridColumn22.RowLayoutColumnInfo.OriginX = 21
         UltraGridColumn22.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn22.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn22.RowLayoutColumnInfo.SpanY = 2
@@ -1270,8 +1280,8 @@ Partial Class ECTECOMD
         Appearance38.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn29.CellAppearance = Appearance38
         UltraGridColumn29.Header.Caption = "Item Variant ID"
-        UltraGridColumn29.Header.VisiblePosition = 9
-        UltraGridColumn29.RowLayoutColumnInfo.OriginX = 26
+        UltraGridColumn29.Header.VisiblePosition = 10
+        UltraGridColumn29.RowLayoutColumnInfo.OriginX = 23
         UltraGridColumn29.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn29.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn29.RowLayoutColumnInfo.SpanY = 2
@@ -1279,14 +1289,14 @@ Partial Class ECTECOMD
         Appearance39.BackColor = System.Drawing.Color.LightGreen
         UltraGridColumn31.CellAppearance = Appearance39
         UltraGridColumn31.Header.Caption = "Inventory Variant ID"
-        UltraGridColumn31.Header.VisiblePosition = 11
-        UltraGridColumn31.RowLayoutColumnInfo.OriginX = 28
+        UltraGridColumn31.Header.VisiblePosition = 12
+        UltraGridColumn31.RowLayoutColumnInfo.OriginX = 25
         UltraGridColumn31.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn31.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn31.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn32.Header.Caption = "Product Status"
-        UltraGridColumn32.Header.VisiblePosition = 10
-        UltraGridColumn32.RowLayoutColumnInfo.OriginX = 12
+        UltraGridColumn32.Header.VisiblePosition = 11
+        UltraGridColumn32.RowLayoutColumnInfo.OriginX = 15
         UltraGridColumn32.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn32.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn32.RowLayoutColumnInfo.SpanY = 2
@@ -1295,8 +1305,8 @@ Partial Class ECTECOMD
         UltraGridColumn33.CellAppearance = Appearance40
         UltraGridColumn33.Format = "n"
         UltraGridColumn33.Header.Caption = "Status Date"
-        UltraGridColumn33.Header.VisiblePosition = 12
-        UltraGridColumn33.RowLayoutColumnInfo.OriginX = 14
+        UltraGridColumn33.Header.VisiblePosition = 13
+        UltraGridColumn33.RowLayoutColumnInfo.OriginX = 17
         UltraGridColumn33.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn33.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn33.RowLayoutColumnInfo.SpanY = 2
@@ -1305,14 +1315,14 @@ Partial Class ECTECOMD
         UltraGridColumn34.CellAppearance = Appearance41
         UltraGridColumn34.Format = "n"
         UltraGridColumn34.Header.Caption = "Last Updated"
-        UltraGridColumn34.Header.VisiblePosition = 13
-        UltraGridColumn34.RowLayoutColumnInfo.OriginX = 22
+        UltraGridColumn34.Header.VisiblePosition = 14
+        UltraGridColumn34.RowLayoutColumnInfo.OriginX = 19
         UltraGridColumn34.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn34.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn34.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn35.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn35.Header.Caption = "Web Description"
-        UltraGridColumn35.Header.VisiblePosition = 14
+        UltraGridColumn35.Header.VisiblePosition = 15
         UltraGridColumn35.Hidden = True
         UltraGridColumn35.RowLayoutColumnInfo.OriginX = 18
         UltraGridColumn35.RowLayoutColumnInfo.OriginY = 0
@@ -1320,13 +1330,13 @@ Partial Class ECTECOMD
         UltraGridColumn35.RowLayoutColumnInfo.SpanY = 2
         UltraGridColumn36.CellActivation = Infragistics.Win.UltraWinGrid.Activation.NoEdit
         UltraGridColumn36.Header.Caption = "Body Html"
-        UltraGridColumn36.Header.VisiblePosition = 15
+        UltraGridColumn36.Header.VisiblePosition = 16
         UltraGridColumn36.Hidden = True
         UltraGridColumn36.RowLayoutColumnInfo.OriginX = 20
         UltraGridColumn36.RowLayoutColumnInfo.OriginY = 0
         UltraGridColumn36.RowLayoutColumnInfo.SpanX = 2
         UltraGridColumn36.RowLayoutColumnInfo.SpanY = 2
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn29, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36})
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn17, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn23, UltraGridColumn21, UltraGridColumn22, UltraGridColumn29, UltraGridColumn31, UltraGridColumn32, UltraGridColumn33, UltraGridColumn34, UltraGridColumn35, UltraGridColumn36})
         UltraGridBand3.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         Me.grdICTSTYCW.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdICTSTYCW.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -1387,19 +1397,19 @@ Partial Class ECTECOMD
         Me.grdICTSTYCW.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdICTSTYCW.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         ValueList3.Key = "CUST_COMMENT_KEY"
-        ValueListItem6.DataValue = "DEL"
-        ValueListItem6.DisplayText = "Digital Eye Lab"
-        ValueListItem7.DataValue = "BILLING"
-        ValueListItem7.DisplayText = "Billing"
-        ValueListItem8.DataValue = "SOE"
-        ValueListItem8.DisplayText = "Sales Order Entry"
-        ValueList3.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem6, ValueListItem7, ValueListItem8})
+        ValueListItem12.DataValue = "DEL"
+        ValueListItem12.DisplayText = "Digital Eye Lab"
+        ValueListItem13.DataValue = "BILLING"
+        ValueListItem13.DisplayText = "Billing"
+        ValueListItem14.DataValue = "SOE"
+        ValueListItem14.DisplayText = "Sales Order Entry"
+        ValueList3.ValueListItems.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem12, ValueListItem13, ValueListItem14})
         Me.grdICTSTYCW.DisplayLayout.ValueLists.AddRange(New Infragistics.Win.ValueList() {ValueList3})
         Me.grdICTSTYCW.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdICTSTYCW.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdICTSTYCW.Location = New System.Drawing.Point(0, 0)
         Me.grdICTSTYCW.Name = "grdICTSTYCW"
-        Me.grdICTSTYCW.Size = New System.Drawing.Size(521, 513)
+        Me.grdICTSTYCW.Size = New System.Drawing.Size(1160, 513)
         Me.grdICTSTYCW.TabIndex = 142
         '
         'UltraTabPageControl4

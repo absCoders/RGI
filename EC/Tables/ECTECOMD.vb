@@ -36,6 +36,7 @@ Public Class ECTECOMD
             .Tables("ICTSTYCW").Columns.Add("STYLE_DESC", GetType(System.String))
             .Tables("ICTSTYCW").Columns.Add("COLOR_DESC", GetType(System.String))
             .Tables("ICTSTYCW").Columns.Add("SIZE_CODE", GetType(System.String))
+            .Tables("ICTSTYCW").Columns.Add("WHSE_QTY_ON_HAND", GetType(System.Int32))
 
             Create_TDA(.Tables.Add, "SOTSVIA1", "*")
             ASCMAIN1.sql = "SELECT * FROM SOTSVIA1 WHERE CARRIER_PROD_CODE IS NOT NULL AND NVL(SHIP_VIA_STATUS, 'A') = 'A'"
@@ -193,14 +194,22 @@ Public Class ECTECOMD
             End Try
         End If
 
-        ASCMAIN1.sql = $"SELECT ICTSTYCW.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM
-                            FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3
+        ASCMAIN1.sql = $"SELECT ICTSTYCW.*, ICTSTYL1.STYLE_DESC, ICTCOLR1.COLOR_DESC, ICTSTYC3.SIZE_CODE, ICTSTYL1.STYLE_CODE_PLM, ICTSTATX.WHSE_QTY_ON_HAND
+                            FROM ICTSTYCW, ICTSTYL1, ICTCOLR1, ICTSTYC3,
+                            (
+                                SELECT STYLE_CODE, COLOR_CODE, WHSE_QTY_ON_HAND
+                                FROM ICTSTAT2, ECTECOMD
+                                WHERE ICTSTAT2.WHSE_CODE = ECTECOMD.ECOM_WHSE_CODE
+                                AND ECTECOMD.ECOM_CODE = '{Absx1.txtFor("ECOM_CODE").Text}'
+                            ) ICTSTATX
                             WHERE ICTSTYCW.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)
                             AND ICTSTYCW.COLOR_CODE = ICTCOLR1.COLOR_CODE (+)
                             AND ICTSTYCW.ECOM_CODE = '{Absx1.txtFor("ECOM_CODE").Text}'
                             AND ICTSTYCW.STYLE_CODE = ICTSTYC3.STYLE_CODE (+)
                             AND ICTSTYCW.COLOR_CODE = ICTSTYC3.COLOR_CODE (+)
-                            AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+)"
+                            AND ICTSTYCW.SIZE_INDEX = ICTSTYC3.SIZE_INDEX (+)
+                            AND ICTSTYCW.STYLE_CODE = ICTSTATX.STYLE_CODE (+)
+                            AND ICTSTYCW.COLOR_CODE = ICTSTATX.COLOR_CODE (+)"
         Fill_Records("ICTSTYCW", "", True, ASCMAIN1.sql)
 
         Dim tblPLM As DataTable = ASCDATA1.SelectDistinct(dst.Tables("ICTSTYCW"), {"ECOM_CODE", "STYLE_CODE_PLM"})
@@ -272,7 +281,7 @@ Public Class ECTECOMD
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTSTYCW_PLM, "S", "Show Filter")
-        Load_Popup_Menu(grdICTSTYCW, "S", "Update Shopify Variants")
+        Load_Popup_Menu(grdICTSTYCW, "SSBB", "Show Filter", "Show GroupBox", "Update Shopify Variants", "Auto Fit Columns")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -338,19 +347,21 @@ Public Class ECTECOMD
                     Dim NumItemsUpdated As Int16 = 0
                     Dim clsSOCSHOPF As New TAC.SOCSHOPF
                     clsSOCSHOPF.GetShopifyProducts(NumItemsUpdated)
-
-                    'If ASCMAIN1.Running_in_VS Then
-                    '    Stop
-                    '    Dim ds As New DataSet
-                    '    ds = clsSOCSHOPF.GetShopifyPayouts(CDate("11/01/2025"), CDate("12/03/2025"))
-                    '    Stop
-                    'End If
-
                     MessageBox.Show($"{NumItemsUpdated} Items Updated", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
                 Catch ex As Exception
                     MessageBox.Show(ex.Message, "Update Shopify Variants", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 Finally
                     ASCMAIN1.Progress("", "")
+                End Try
+
+            Case "Auto Fit Columns"
+                Try
+                    Me.Cursor = Cursors.WaitCursor
+                    grd.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, "Auto Fit Columns", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Finally
+                    Me.Cursor = Cursors.Default
                 End Try
 
         End Select
@@ -362,18 +373,18 @@ Public Class ECTECOMD
 #Region "Form Controls"
 
     Private Sub grdPLM_AfterRowActivate(sender As Object, e As EventArgs) Handles grdICTSTYCW_PLM.AfterRowActivate
-        Try
-            WebBrowser1.DocumentText = grdICTSTYCW_PLM.ActiveRow.Cells("BODY_HTML").Value & String.Empty
-        Catch ex As Exception
-            WebBrowser1.DocumentText = String.Empty
-        End Try
+        'Try
+        '    WebBrowser1.DocumentText = grdICTSTYCW_PLM.ActiveRow.Cells("BODY_HTML").Value & String.Empty
+        'Catch ex As Exception
+        '    WebBrowser1.DocumentText = String.Empty
+        'End Try
 
-        Dim ECOM_CODE As String = grdICTSTYCW_PLM.ActiveRow.Cells("ECOM_CODE").Value & String.Empty
-        Dim STYLE_CODE_PLM As String = grdICTSTYCW_PLM.ActiveRow.Cells("STYLE_CODE_PLM").Value & String.Empty
+        'Dim ECOM_CODE As String = grdICTSTYCW_PLM.ActiveRow.Cells("ECOM_CODE").Value & String.Empty
+        'Dim STYLE_CODE_PLM As String = grdICTSTYCW_PLM.ActiveRow.Cells("STYLE_CODE_PLM").Value & String.Empty
 
-        Dim dvw As DataView = DirectCast(grdICTSTYCW.DataSource, DataTable).DefaultView
-        dvw.RowFilter = $"ECOM_CODE = '{ECOM_CODE}' and STYLE_CODE_PLM = '{STYLE_CODE_PLM}'"
-        dvw.Sort = "STYLE_CODE,COLOR_CODE,SIZE_INDEX"
+        'Dim dvw As DataView = DirectCast(grdICTSTYCW.DataSource, DataTable).DefaultView
+        'dvw.RowFilter = $"ECOM_CODE = '{ECOM_CODE}' and STYLE_CODE_PLM = '{STYLE_CODE_PLM}'"
+        'dvw.Sort = "STYLE_CODE,COLOR_CODE,SIZE_INDEX"
 
     End Sub
 
@@ -509,7 +520,7 @@ Public Class ECTECOMD
             grdICTSTYCW.DisplayLayout.Bands(0).Columns("STYLE_CODE").CellActivation = Activation.AllowEdit
             grdICTSTYCW.DisplayLayout.Bands(0).Columns("COLOR_CODE").CellActivation = Activation.AllowEdit
             grdICTSTYCW.DisplayLayout.Bands(0).Columns("SIZE_INDEX").CellActivation = Activation.AllowEdit
-        Else
+        ElseIf e.Row.IsDataRow Then
             Dim ECOM_CODE As String = e.Row.Cells("ECOM_CODE").Value & String.Empty
             Dim STYLE_CODE As String = e.Row.Cells("STYLE_CODE").Value & String.Empty
             Dim COLOR_CODE As String = e.Row.Cells("COLOR_CODE").Value & String.Empty
