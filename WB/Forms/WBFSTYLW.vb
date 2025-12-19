@@ -3730,6 +3730,10 @@ Public Class WBFSTYLW
         sql.AppendLine(")")
         DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ATTR_CODE"))
 
+        sql.Length = 0
+        sql.AppendLine("SELECT * FROM ICTBULT1")
+        DS.Tables.Add(ASCDATA1.GetDataTable(sql.ToString(), "ICTBULT1"))
+
         Return DS
     End Function
 

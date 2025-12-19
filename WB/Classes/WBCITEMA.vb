@@ -506,6 +506,13 @@ Public Class WBCITEMA
                             MakeXMLNode(nodeProduct, "ProductField12", 1)
                         End If
                     End If
+                Case 13
+                    If Not UploadInventoryOnly Then
+                        Dim BULLETS As String = MakeBullets(rowICTSTYL1.Item("STYLE_CODE").ToString & String.Empty)
+                        If BULLETS.Length > 0 Then
+                            MakeXMLNode(nodeProduct, "ProductField13", BULLETS)
+                        End If
+                    End If
                 Case 18
                     If Not UploadInventoryOnly Then
                         MakeXMLNode(nodeProduct, "ProductField18", GetColorGroups(STYLE_CODE))
@@ -737,6 +744,18 @@ Public Class WBCITEMA
             MakeXMLNode(nodeProduct, "ProductField37", "")
         End If
     End Sub
+
+    Private Function MakeBullets(ByVal STYLE_CODE As String) As String
+        Dim RetVal As String = ""
+        Dim fltr As String = $"STYLE_CODE = '{STYLE_CODE}'"
+        For Each rowICTBULT1 As DataRow In data.Tables("ICTBULT1").Select(fltr, "LINE_NO")
+            RetVal = RetVal & rowICTBULT1.Item("BULLET_TEXT") & vbCrLf
+        Next
+        If RetVal.Length > 2 Then
+            RetVal = RetVal.Substring(0, RetVal.Length - 2)
+        End If
+        Return RetVal
+    End Function
 
     Private Function GetCategoryGroup(ByVal STYLE_CODE As String) As String
         Dim CAT_DESC As New Text.StringBuilder With {.Length = 0}
