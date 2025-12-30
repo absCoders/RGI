@@ -36,6 +36,8 @@ Public Class SOCSHOPF
         ShopifyUrl = rowECTECOMD.Item("ECOM_URL") & String.Empty
         ShopifyUrl = ShopifyUrl.Replace("{USER_ID}", ECOM_SITE_USER).Replace("{PASSWORD}", ECOM_SITE_PWD)
         shopAccessToken = rowECTECOMD.Item("ECOM_SITE_SECRET_KEY") & String.Empty
+
+        System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
     End Sub
 
     Public Class Receipt
@@ -104,6 +106,8 @@ Public Class SOCSHOPF
             Dim url As String = $"{ShopifyUrl}orders/{ShopifyOrderID}/transactions.json"
 
             Dim jsonPayload As String = $"{{""transaction"": {{""kind"": ""capture"", ""amount"": ""{amountToCapture}""}}}}"
+
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             Dim request As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)
             request.Method = "POST"

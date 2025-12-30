@@ -6404,10 +6404,7 @@ Public Class WHCSHIP1
             ' https://api.global-e.com/
             endpoint = $"{Server}Order/GetShippingDocuments"
 
-            'If ASCMAIN1.Running_in_VS Then
-            '    Stop
-            '    VoidGlobaleParcel("#107930", "44360797")
-            'End If
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
 
             Using client As New HttpClient()
                 client.DefaultRequestHeaders.Clear()
