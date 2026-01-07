@@ -29,7 +29,7 @@
         Me.MENU_ITEM_TYPE = "C"
         Me.MENU_ITEM_OBJECT = "WHCRF015"
 
-        If "rick,victor,".Contains(g.USER_ID & ",") Then
+        If "rick,victor,teo,baudilio,".Contains(g.USER_ID & ",") Then
             AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|NEXT|EXTRA|+OH|") ' BLUE
         Else
             AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |EXIT|NEXT|EXTRA|") ' BLUE
@@ -233,13 +233,13 @@
         ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1, WHTLOCM1" & vbCrLf _
                        & " where WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" & vbCrLf _
                        & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
-                       & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E')" & vbCrLf _
+                       & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E','C')" & vbCrLf _
                        & " and WHTLOCB1.WHSE_CODE = '" & G.WHSE_CODE & "'" _
                        & " and WHTLOCB1.STYLE_CODE = '" & STYLE_CODE & "'" _
                        & " and WHTLOCB1.COLOR_CODE = '" & COLOR_CODE & "'" _
                        & " order by abs(sign(WHTLOCB1.LOCATION_QTY)) DESC, WHTLOCB1.LOCATION_QTY DESC, WHTLOCB1.LAST_DATE DESC"
         If EXTRA Then
-            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E')", "WHTLOCM1.LOCATION_CODE in ('00-RCV','00-RTS','00-SHP','00-DST')")
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E','C')", "WHTLOCM1.LOCATION_CODE in ('00-RCV','00-RTS','00-SHP','00-DST')")
         End If
         rows = ASCDATA1.GetDataTable.Select("")
         Dim cnt As Int32 = 0

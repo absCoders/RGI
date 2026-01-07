@@ -3639,7 +3639,7 @@
                         & "WHERE WHSE_CODE = '" & WHSE_CODE & "' AND  STYLE_CODE = '" & STYLE_CODE & "' AND " & vbCrLf _
                         & " COLOR_CODE = '" & COLOR_CODE & "' AND  LOCATION_QTY > 0  " & vbCrLf _
                         & " ORDER BY LOCATION_QTY,   LOCATION_CODE) X  " & vbCrLf _
-                        & "WHERE WHTLOCM1.WHSE_CODE = X.WHSE_CODE AND WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE and NVL(WHTLOCM1.LOCATION_USE,'A') in ('A','E')" & vbCrLf _
+                        & "WHERE WHTLOCM1.WHSE_CODE = X.WHSE_CODE AND WHTLOCM1.LOCATION_CODE = X.LOCATION_CODE and NVL(WHTLOCM1.LOCATION_USE,'A') in ('A','C','E')" & vbCrLf _
                         & "ORDER BY X.LOCATION_QTY, WHTLOCM1.LOCATION_ROUTE_SEQ, X.LOCATION_CODE"
 
         Dim TBL As DataTable = ASCDATA1.GetDataTable

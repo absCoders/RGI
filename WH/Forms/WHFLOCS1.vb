@@ -133,7 +133,7 @@ Public Class WHFLOCS1
                 & " from WHTLOCB1, WHTLOCM1, ICTSTYL1, ICTSTYC1 " & vbCrLf _
                 & " where WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
                 & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
-                & " and NVL(LOCATION_USE,'A') = 'A' " & vbCrLf _
+                & " and NVL(LOCATION_USE,'A') in ('A','C') " & vbCrLf _
                 & " and WHTLOCB1.WHSE_CODE = 'MS' " & vbCrLf _
                 & " and WHTLOCB1.LOCATION_QTY > 0 " & vbCrLf _
                 & " and ICTSTYL1.STYLE_CODE = WHTLOCB1.STYLE_CODE " & vbCrLf _
@@ -145,7 +145,7 @@ Public Class WHFLOCS1
                 & " where WHTLOCB1.LOCATION_QTY > 0 " & vbCrLf _
                 & " and WHTLOCB1.LOCATION_CODE like '%-C' " & vbCrLf _
                 & " and WHTLOCB1.WHSE_CODE = 'MS' " & vbCrLf _
-                & " and NVL(LOCATION_USE,'A') = 'A' " & vbCrLf _
+                & " and NVL(LOCATION_USE,'A') in ('A','C') " & vbCrLf _
                 & " and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
                 & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
                 & " minus " & vbCrLf _
@@ -154,7 +154,7 @@ Public Class WHFLOCS1
                 & " where WHTLOCB1.LOCATION_QTY > 0 " & vbCrLf _
                 & " and WHTLOCB1.LOCATION_CODE not like '%-C' " & vbCrLf _
                 & " and WHTLOCB1.WHSE_CODE = 'MS' " & vbCrLf _
-                & " and NVL(LOCATION_USE,'A') = 'A' " & vbCrLf _
+                & " and NVL(LOCATION_USE,'A') in ('A','C') " & vbCrLf _
                 & " and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
                 & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE) "
                 Create_TDA(.Tables.Add, "WHTRPRT1", "**", 0, False, "", 3)

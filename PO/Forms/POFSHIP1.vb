@@ -10985,7 +10985,7 @@ Public Class POFSHIP1
             Select Case e.Cell.Column.Key
 
                 Case "LOCATION_CODE"
-                    Dim sql_where As String = "WHSE_CODE = '" & WHSE_CODE & "' and nvl(LOCATION_USE, 'A') = 'A'"
+                    Dim sql_where As String = "WHSE_CODE = '" & WHSE_CODE & "' and nvl(LOCATION_USE, 'A') in ('A','C')"
                     grdClickCellButton(grdWHTPREC3, sql_where)
 
 
@@ -13161,7 +13161,7 @@ Public Class POFSHIP1
             & " from whtlocb1 b1 " & vbCrLf _
             & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
             & "  where b1.STYLE_CODE = '" & Style & "' and b1.COLOR_CODE = '" & Color & "' and m1.WHSE_CODE = '" & WHSE_CODE & "' " & vbCrLf _
-            & "  and  nvl(m1.LOCATION_USE,'A') = 'A' and m1.LOCATION_ROUTE_SEQ is not null" & vbCrLf _
+            & "  and  nvl(m1.LOCATION_USE,'A') in ('A','C') and m1.LOCATION_ROUTE_SEQ is not null" & vbCrLf _
             & "  order by b1.LOCATION_QTY DESC, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
         For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
             rtn_row = row

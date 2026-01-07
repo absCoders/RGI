@@ -127,16 +127,19 @@
 
         Dim suffix As String = ""
         Dim RtnDict As New Dictionary(Of String, String)
+        Dim LOCATION_USE As String = ""
         SCANTEXT = SCANTEXT.ToUpper
         If SCANTEXT.Length > 12 Then
             suffix = SCANTEXT.Substring(12)
             SCANTEXT = SCANTEXT.Substring(0, 12)
         End If
 
-        clsWHCRF000.ASCMAIN1.sql = "Select ICTSTYC1.*, NVL(ICTCOLR1.COLOR_CODE_LONG, ICTCOLR1.COLOR_ABBR) COLOR_DESC, nvl(ICTSTYL1.CARTONS_PER_UNIT, 0) CARTONS_PER_UNIT" & vbCrLf _
-                    & " ,nvl(CARTON_PACK_QTY,1) CARTON_PACK_QTY, nvl(INNER_PACK_QTY,0) INNER_PACK_QTY, STYLE_DESC" & vbCrLf _
-                    & " from ICTSTYC1, ICTCOLR1, ICTSTYL1" & vbCrLf _
-                    & " where  '" & SCANTEXT & "' in  (ICTSTYC1.STYLE_CODE, ICTSTYC1.UPC_CODE) and ICTSTYC1.COLOR_CODE = ICTCOLR1.COLOR_CODE and ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE"
+        clsWHCRF000.ASCMAIN1.sql = "Select ICTSTYC1.*, NVL(ICTCOLR1.COLOR_CODE_LONG, ICTCOLR1.COLOR_ABBR) COLOR_DESC, nvl(ICTSTYL1.CARTONS_PER_UNIT, 0) CARTONS_PER_UNIT
+                    ,nvl(CARTON_PACK_QTY,1) CARTON_PACK_QTY, nvl(INNER_PACK_QTY,0) INNER_PACK_QTY, STYLE_DESC
+                    from ICTSTYC1, ICTCOLR1, ICTSTYL1
+                    where  '" & SCANTEXT & "' in  (ICTSTYC1.STYLE_CODE, ICTSTYC1.UPC_CODE) 
+                    and ICTSTYC1.COLOR_CODE = ICTCOLR1.COLOR_CODE 
+                    and ICTSTYL1.STYLE_CODE = ICTSTYC1.STYLE_CODE"
         Dim cnt As Integer = 0
         Dim rows() As DataRow = clsWHCRF000.ASCDATA1.GetDataTable.Select("")
         If rows.Length > 0 Then
@@ -152,8 +155,12 @@
                 If suffix <> "" Then
                     RtnDict.Add("UPC_SUFFIX", suffix)
                 End If
+                LOCATION_USE = clsWHCRF000.ASCDATA1.GetDataValue($"Select LOCATION_USE from WHTSTLC1 WHERE STYLE_CODE = '{rows(0).Item("STYLE_CODE")}'")
+                If LOCATION_USE & "" <> "" Then
+                    RtnDict.Add("LOCATION_USE", LOCATION_USE)
+                End If
             Else
-                If rows(0).Item("STYLE_CODE") <> SCANTEXT Then
+                    If rows(0).Item("STYLE_CODE") <> SCANTEXT Then
                     RtnDict.Add("Error", "Style/UPC '" & SCANTEXT & "' not found, Try again")
                 Else
                     RtnDict.Add("STYLE_CODE", rows(0).Item("STYLE_CODE"))
@@ -271,7 +278,7 @@
 
         RtnDict.Add("LOCATION_CODE", SCANTEXT)
         RtnDict.Add("Stylelist", SSSS)
-
+        RtnDict.Add("LOCATION_USE", rowWHTLOCM1.Item("LOCATION_USE") & "")
         Return RtnDict
     End Function
     Public Shared Sub GetColors(

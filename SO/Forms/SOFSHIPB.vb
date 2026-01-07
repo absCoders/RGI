@@ -5948,7 +5948,7 @@ Public Class SOFSHIPB
             Dim nextLocSql = "Select WHTLOCB1.*, nvl(WHTLOCM1.LOCATION_USE,'A') LOCATION_USE from WHTLOCB1, WHTLOCM1 " & vbCrLf _
                 & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE " & vbCrLf _
                 & " and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE " & vbCrLf _
-                & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','E') " & vbCrLf _
+                & " and nvl(WHTLOCM1.LOCATION_USE,'A') in ('A','C','E') " & vbCrLf _
                 & $" and WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
                 & " and WHTLOCB1.STYLE_CODE = '{0}' and WHTLOCB1.COLOR_CODE = '{1}'"
 
@@ -12821,7 +12821,7 @@ Public Class SOFSHIPB
                     & " and WHTLOCB1.LOCATION_QTY > 0" _
                     & " AND WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" _
                     & " AND WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" _
-                    & " AND WHTLOCM1.LOCATION_USE IN ('A', 'E')"
+                    & " AND WHTLOCM1.LOCATION_USE IN ('A','C','E')"
 
                 For Each row2 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("", "LOCATION_USE DESC, LOCATION_QTY DESC")
                     Dim LOCATION_CODE As String = row2.Item("LOCATION_CODE")

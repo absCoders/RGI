@@ -824,7 +824,7 @@ Public Class WHFPNPK1
         ASCMAIN1.sql = "Select WHTLOCB1.*, LOCATION_ROUTE_SEQ from WHTLOCB1,WHTLOCM1,WHTPNPS1" & vbCrLf _
            & " where WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
            & "   and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" & vbCrLf _
-           & "   and WHTLOCM1.LOCATION_USE = 'A' and WHTLOCB1.LOCATION_QTY <> 0" & vbCrLf _
+           & "   and WHTLOCM1.LOCATION_USE in ('A','C') and WHTLOCB1.LOCATION_QTY <> 0" & vbCrLf _
            & "   and WHTLOCB1.WHSE_CODE = WHTPNPS1.WHSE_CODE" & vbCrLf _
            & "   and WHTLOCB1.STYLE_CODE = WHTPNPS1.STYLE_CODE" & vbCrLf _
            & "   and WHTLOCB1.COLOR_CODE = WHTPNPS1.COLOR_CODE" & vbCrLf
