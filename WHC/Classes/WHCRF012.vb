@@ -92,8 +92,11 @@
                     SCANTEXT = Trim(SCANTEXT)
                     RcvQty = 0
                     Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
+                    LOCATION_USE = ""
+                    COLOR_DESC = ""
                     If CheckResponse.ContainsKey("LOCATION_USE") Then
                         LOCATION_USE = CheckResponse("LOCATION_USE")
+                        COLOR_DESC = "(III-IV)"
                     End If
                     If CheckResponse.ContainsKey("UPC_CODE") Then
                         If SCANTEXT = CheckResponse("UPC_CODE") Or SCANTEXT.ToUpper = CheckResponse("STYLE_CODE") Then

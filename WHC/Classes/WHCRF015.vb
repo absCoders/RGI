@@ -229,7 +229,12 @@
     Function FINDUPC(ByVal STYLE_CODE As String, ByVal COLOR_CODE As String, EXTRA As Boolean) As String
         Dim locations As String = ""
         Dim rows() As DataRow
+        Dim LOCATION_USE As String
 
+        LOCATION_USE = ASCDATA1.GetDataValue($"Select LOCATION_USE from WHTSTLC1 WHERE STYLE_CODE = '{STYLE_CODE}'")
+        If LOCATION_USE & "" <> "" Then
+            locations = "Class III-IV Item" & vbCrLf
+        End If
         ASCMAIN1.sql = "Select WHTLOCB1.* from WHTLOCB1, WHTLOCM1" & vbCrLf _
                        & " where WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" & vbCrLf _
                        & " and WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" & vbCrLf _
@@ -254,7 +259,7 @@
                         PAGE_NO += 1
                         Exit For
                     End If
-                    locations = locations & If(cnt = 1, "", vbCrLf & " ") & ROW.Item("WHSE_CODE") & ":" & ROW.Item("LOCATION_CODE") & " #" & ROW.Item("LOCATION_QTY") & " "
+                    locations = locations & If(cnt = 1, " ", vbCrLf & " ") & ROW.Item("WHSE_CODE") & ":" & ROW.Item("LOCATION_CODE") & " #" & ROW.Item("LOCATION_QTY") & " "
                 End If
             Next
         End If

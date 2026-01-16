@@ -9,6 +9,7 @@
     Dim UPC_CODE As String
     Dim LOCATION_CODE As String
     Dim LOCATION_USE As String
+    Dim LOCATION_USE_STYLE As String
     Dim COLOR_CODEs As New List(Of String)
     Dim Cases_count As Integer
     Dim TICKET_NO As String
@@ -214,8 +215,10 @@
                             STYLE_CODE = SCANTEXT.ToUpper
                             TACMAIN1.GetColors(Me, STYLE_CODE, LOCATION_CODE, COLOR_CODEs, colors)
                         End If
+                        LOCATION_USE_STYLE = ""
                         If CheckResponse.ContainsKey("LOCATION_USE") Then
-                            If LOCATION_USE <> CheckResponse("LOCATION_USE") And LOCATION_USE = "A" And Mode <> "M2G" Then
+                            LOCATION_USE_STYLE = CheckResponse("LOCATION_USE")
+                            If LOCATION_USE <> LOCATION_USE_STYLE And LOCATION_USE = "A" And Mode <> "M2G" Then
                                 Dim msg As String = $"Location {LOCATION_CODE}{vbCrLf}{STYLE_CODE} - {COLOR_CODE}{vbCrLf}The location selected Is Not Class III-IV,{vbCrLf}This Item requires Class III-IV"
                                 CreateResponse("GET_BTNS", "", msg)
                                 Exit Select
@@ -418,6 +421,7 @@
                 msg = msg & vbCrLf & STYLE_CODE
                 If COLOR_CODE <> "" Then
                     msg = msg & " " & COLOR_CODE
+                    If LOCATION_USE_STYLE = "C" Then msg = msg & " (III-IV)"
                     ASCMAIN1.sql = "Select LOCATION_QTY from WHTLOCB1 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "' and WHSE_CODE = '" & G.WHSE_CODE & "' and LOCATION_CODE = '" & FromLoc & "'"
                     Dim LOC_QTY As String = ASCDATA1.GetDataValue
                     msg = msg & vbCrLf & "Found: " & FromLoc & " QTY " & ": " & LOC_QTY

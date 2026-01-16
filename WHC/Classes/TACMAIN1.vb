@@ -155,16 +155,16 @@
                 If suffix <> "" Then
                     RtnDict.Add("UPC_SUFFIX", suffix)
                 End If
-                LOCATION_USE = clsWHCRF000.ASCDATA1.GetDataValue($"Select LOCATION_USE from WHTSTLC1 WHERE STYLE_CODE = '{rows(0).Item("STYLE_CODE")}'")
-                If LOCATION_USE & "" <> "" Then
-                    RtnDict.Add("LOCATION_USE", LOCATION_USE)
-                End If
             Else
-                    If rows(0).Item("STYLE_CODE") <> SCANTEXT Then
+                If rows(0).Item("STYLE_CODE") <> SCANTEXT Then
                     RtnDict.Add("Error", "Style/UPC '" & SCANTEXT & "' not found, Try again")
                 Else
                     RtnDict.Add("STYLE_CODE", rows(0).Item("STYLE_CODE"))
                 End If
+            End If
+            LOCATION_USE = clsWHCRF000.ASCDATA1.GetDataValue($"Select LOCATION_USE from WHTSTLC1 WHERE STYLE_CODE = '{rows(0).Item("STYLE_CODE")}'")
+            If LOCATION_USE & "" <> "" Then
+                RtnDict.Add("LOCATION_USE", LOCATION_USE)
             End If
         Else
             RtnDict.Add("Error", "Style/UPC '" & SCANTEXT & "' not found, Try again")
