@@ -1297,7 +1297,7 @@ Public Class ASFMAIN1
 
             If MENU_ITEM_PASSWORD <> "" Then
                 Dim frmASFMSGBF As New ASFMSGBF
-                If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
+                If ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "wjz" Or ASCMAIN1.USER_ID = "rick") Then
                 Else
                     If MENU_ITEM_PASSWORD <> frmASFMSGBF.Get_txt_from_User _
                     ("Enter Password", "Password Required for " & MENU_ITEM_DESC, True) Then
