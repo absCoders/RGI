@@ -105,7 +105,7 @@ Public Class WHFPACK1
                             FROM WHTLOCB1, WHTLOCM1  
                             WHERE WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE
                             and WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE
-                            and WHTLOCM1.LOCATION_USE = 'A'
+                            and WHTLOCM1.LOCATION_USE in ('A','C')
                             and LOCATION_QTY > 0
                             and WHTLOCB1.WHSE_CODE = :PARM1
                             and WHTLOCB1.STYLE_CODE = :PARM2
@@ -213,7 +213,7 @@ Public Class WHFPACK1
                                 FROM WHTLOCB1
                                 JOIN WHTLOCM1 ON WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE
                                              AND WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE
-                                WHERE WHTLOCM1.LOCATION_USE = 'A'
+                                WHERE WHTLOCM1.LOCATION_USE in ('A','C')
                                 GROUP BY WHTLOCB1.WHSE_CODE, WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE
                                 ) WHTLOCB1 ON WHTLOCB1.STYLE_CODE = SOTORDR2.STYLE_CODE
                                       AND WHTLOCB1.COLOR_CODE = SOTORDR2.COLOR_CODE
@@ -1726,7 +1726,7 @@ Public Class WHFPACK1
             & " from whtlocb1 b1 " & vbCrLf _
             & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
             & "  where b1.STYLE_CODE = :PARM1 and b1.COLOR_CODE = :PARM2 " & vbCrLf _
-            & "  and  nvl(m1.LOCATION_USE,'A') = 'A' " & vbCrLf _
+            & "  and  nvl(m1.LOCATION_USE,'A') in ('A','C') " & vbCrLf _
             & "  and m1.WHSE_CODE = :PARM3" & vbCrLf _
             & "  order by b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
 

@@ -7,6 +7,7 @@
     Dim LOCATION_FROM As String
     Dim LOCATION_TO As String
     Dim LOCATION_CODE As String
+    Dim LOCATION_USE As String
     Dim TICKET_NO As String
     Dim WHSE_TRAN_TYPE As String
     Dim Styles As String = ""
@@ -41,6 +42,7 @@
         AppStates.Add("SCAN_CASES", "How many cases, (0 for units)|CANCEL|")
         AppStates.Add("SCAN_UNITS", "How many units|CANCEL|")
         AppStates.Add("VERIFY", "Update (Y/N)|Y|N|CANCEL|")
+        AppStates.Add("GET_BTNS", "OK to Continue, or New Location|NEWLOC|OK|")
 
         AppState = "SCAN_UPC"
         LAST_CLR = "BLUE"
@@ -90,12 +92,18 @@
                     SCANTEXT = Trim(SCANTEXT)
                     RcvQty = 0
                     Dim CheckResponse As Dictionary(Of String, String) = TACMAIN1.CheckUPC(Me, SCANTEXT)
-
+                    LOCATION_USE = ""
+                    COLOR_DESC = ""
+                    If CheckResponse.ContainsKey("LOCATION_USE") Then
+                        LOCATION_USE = CheckResponse("LOCATION_USE")
+                        COLOR_DESC = "(III-IV)"
+                    End If
                     If CheckResponse.ContainsKey("UPC_CODE") Then
                         If SCANTEXT = CheckResponse("UPC_CODE") Or SCANTEXT.ToUpper = CheckResponse("STYLE_CODE") Then
                             UPC_CODE = CheckResponse("UPC_CODE")
                             STYLE_CODE = CheckResponse("STYLE_CODE")
                             COLOR_CODE = CheckResponse("COLOR_CODE")
+
                             LOCATION_CODE = GetLocation(STYLE_CODE, COLOR_CODE)
                             InReceiving = GetInReceiving(STYLE_CODE, COLOR_CODE)
 
@@ -201,9 +209,27 @@
                         dst.Tables("WHTMOVE1").Rows.Clear()
                         dst.Tables("WHTMOVE2").Rows.Clear()
 
+                        If dResponse.ContainsKey("LOCATION_USE") Then
+                            If LOCATION_USE <> dResponse("LOCATION_USE") And dResponse("LOCATION_USE") = "A" Then
+                                Dim msg As String = $"Location {LOCATION_CODE}{vbCrLf}{STYLE_CODE} - {COLOR_CODE}{vbCrLf}The location selected Is Not Class III-IV,{vbCrLf}This Item requires Class III-IV"
+                                CreateResponse("GET_BTNS", "", msg)
+                                Exit Select
+                            End If
+                        End If
+
                         'CreateResponse("VERIFY", "B", "About to Putaway merchandise" & vbCrLf & "To " & LOCATION_TO & vbCrLf & "UPC: " & UPC_CODE)
                         CreateResponse("SCAN_CASES", "B", "Enter Qty to Putaway " & vbCrLf & "Location " & LOCATION_TO & vbCrLf & " for UPC: " & UPC_CODE & vbCrLf & "Style " & STYLE_CODE & " - " _
                                        & COLOR_CODE & " " & COLOR_DESC)
+                    End If
+
+                Case "GET_BTNS"
+                    If SCANTEXT = "NEWLOC" Then
+                        CreateResponse("SCAN_LOC", "YELLOW", "Move Cancelled, Scan new location")
+                        Exit Select
+                    ElseIf SCANTEXT = "OK" Then
+                        CreateResponse("SCAN_CASES", "B", "Enter Qty to Putaway " & vbCrLf & "Location " & LOCATION_TO & vbCrLf & " for UPC: " & UPC_CODE & vbCrLf & "Style " & STYLE_CODE & " - " _
+                                       & COLOR_CODE & " " & COLOR_DESC)
+                        Exit Select
                     End If
 
                 Case "SCAN_CASES"

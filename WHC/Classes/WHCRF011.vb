@@ -8,6 +8,8 @@
     Dim COLOR_CODE As String
     Dim UPC_CODE As String
     Dim LOCATION_CODE As String
+    Dim LOCATION_USE As String
+    Dim LOCATION_USE_STYLE As String
     Dim COLOR_CODEs As New List(Of String)
     Dim Cases_count As Integer
     Dim TICKET_NO As String
@@ -30,6 +32,7 @@
         Me.MENU_ITEM_OBJECT = "WHCRF011"
 
         AppStates.Add("GET_MODE", "Select Move direction|M2G|MFG2L|EXIT|")
+        AppStates.Add("GET_BTNS", "OK to Continue, or New Location|NEWLOC|OK|")
         AppStates.Add("SCAN_LOC", "Scan Move From Location|MFG2L|EXIT|") ' YELLOW
         AppStates.Add("SCAN_UPC", "Scan UPC or Enter Style |CANCEL|") ' BLUE
         AppStates.Add("SCAN_COLOR", "Select a Color from List |CANCEL|")
@@ -138,6 +141,7 @@
 
                         LOCATION_CODE = SCANTEXT.ToUpper
                         Dim Styles As String = CheckResponse("Stylelist")
+                        LOCATION_USE = CheckResponse("LOCATION_USE") & ""
 
                         dst.Tables("WHTMOVE1").Rows.Clear()
                         dst.Tables("WHTMOVE2").Rows.Clear()
@@ -172,7 +176,7 @@
                                         join WHTLOCM1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE
                                         where b1.STYLE_CODE = '{STYLE_CODE}' 
                                             and b1.COLOR_CODE = '{COLOR_CODE}' 
-                                            and nvl(m1.LOCATION_USE,'A') in ('A','E') 
+                                            and nvl(m1.LOCATION_USE,'A') in ('A','E','C') 
                                             and m1.WHSE_CODE = '{G.WHSE_CODE}'
                                         order by 
                                             case 
@@ -202,19 +206,46 @@
                             CreateResponse("", "R", DisplayMsg(CheckResponse("Error")))
                             Exit Select
                         End If
-
+                        UPC_CODE = ""
                         If CheckResponse.ContainsKey("UPC_CODE") Then
                             UPC_CODE = CheckResponse("UPC_CODE")
                             STYLE_CODE = CheckResponse("STYLE_CODE")
                             COLOR_CODE = CheckResponse("COLOR_CODE")
+                        Else
+                            STYLE_CODE = SCANTEXT.ToUpper
+                            TACMAIN1.GetColors(Me, STYLE_CODE, LOCATION_CODE, COLOR_CODEs, colors)
+                        End If
+                        LOCATION_USE_STYLE = ""
+                        If CheckResponse.ContainsKey("LOCATION_USE") Then
+                            LOCATION_USE_STYLE = CheckResponse("LOCATION_USE")
+                            If LOCATION_USE <> LOCATION_USE_STYLE And LOCATION_USE = "A" And Mode <> "M2G" Then
+                                Dim msg As String = $"Location {LOCATION_CODE}{vbCrLf}{STYLE_CODE} - {COLOR_CODE}{vbCrLf}The location selected Is Not Class III-IV,{vbCrLf}This Item requires Class III-IV"
+                                CreateResponse("GET_BTNS", "", msg)
+                                Exit Select
+                            End If
+                        End If
+
+                        If UPC_CODE <> "" Then
                             CreateResponse("SCAN_CASES", "G", DisplayMsg("UPC " & UPC_CODE & " selected"))
                             Exit Select
                         End If
-                        STYLE_CODE = SCANTEXT.ToUpper
-                        TACMAIN1.GetColors(Me, STYLE_CODE, LOCATION_CODE, COLOR_CODEs, colors)
 
                     End If
                     CreateResponse("SCAN_COLOR", "G", DisplayMsg("colors " & colors))
+
+                Case "GET_BTNS"
+                    If SCANTEXT = "CANCEL" Or SCANTEXT = "NEWLOC" Then
+                        ClearScanner()
+                        CreateResponse("SCAN_LOC", "YELLOW", "Move Cancelled, Scan  location")
+                        Exit Select
+                    ElseIf SCANTEXT = "OK" Then
+                        If UPC_CODE <> "" Then
+                            CreateResponse("SCAN_CASES", "G", DisplayMsg("UPC " & UPC_CODE & " selected"))
+                            Exit Select
+                        Else
+                            CreateResponse("SCAN_COLOR", "G", DisplayMsg("colors " & colors))
+                        End If
+                    End If
 
                 Case "SCAN_COLOR"
                     Dim colors As String = ""
@@ -390,6 +421,7 @@
                 msg = msg & vbCrLf & STYLE_CODE
                 If COLOR_CODE <> "" Then
                     msg = msg & " " & COLOR_CODE
+                    If LOCATION_USE_STYLE = "C" Then msg = msg & " (III-IV)"
                     ASCMAIN1.sql = "Select LOCATION_QTY from WHTLOCB1 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "' and WHSE_CODE = '" & G.WHSE_CODE & "' and LOCATION_CODE = '" & FromLoc & "'"
                     Dim LOC_QTY As String = ASCDATA1.GetDataValue
                     msg = msg & vbCrLf & "Found: " & FromLoc & " QTY " & ": " & LOC_QTY

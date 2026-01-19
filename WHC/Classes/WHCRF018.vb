@@ -428,7 +428,7 @@
             & " from whtlocb1 b1 " & vbCrLf _
             & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
             & "  where b1.STYLE_CODE = '" & STYLE_CODE & "' and b1.COLOR_CODE = '" & COLOR_CODE & "' " & vbCrLf _
-            & "  and  nvl(m1.LOCATION_USE,'A') = 'A' " & vbCrLf _
+            & "  and  nvl(m1.LOCATION_USE,'A') in ('A','C') " & vbCrLf _
             & "  and m1.WHSE_CODE = '" & G.WHSE_CODE & "'" & vbCrLf _
             & "  order by b1.LOCATION_QTY, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
         Dim rc As Integer = 0

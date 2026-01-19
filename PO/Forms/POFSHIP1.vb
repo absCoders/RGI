@@ -529,16 +529,20 @@ Public Class POFSHIP1
 
             Else
 
-                ASCMAIN1.sql = "Select Distinct POTORDR2.STYLE_CODE, ICTDUTY1.DUTY_RATE_CODE, ICTSTYL1.COUNTRY_CODE" & vbCrLf _
-                    & ", NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE,NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE_PERC,NVL(POTSHIP3.TARIFF_1,0) TARIFF_1,NVL(POTSHIP3.TARIFF_2,0) TARIFF_2" & vbCrLf _
-                    & " from ICTDUTY3,ICTSTYL1,POTORDR2,POTSHIP3,ICTDUTY1" & vbCrLf _
-                    & " where POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO" & vbCrLf _
-                    & "   and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO" & vbCrLf _
-                    & "   and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE" & vbCrLf _
-                    & "   and POTSHIP3.PO_SHIPMENT_NO = :PARM1" & vbCrLf _
-                    & "   and ICTDUTY1.DUTY_RATE_CODE = ICTSTYL1.DUTY_RATE_CODE" & vbCrLf _
-                    & "   and ICTDUTY3.DUTY_RATE_CODE (+) = ICTSTYL1.DUTY_RATE_CODE" & vbCrLf _
-                    & "   and ICTDUTY3.OPS_YYYY (+) = :PARM2"
+                ASCMAIN1.sql = "select STYLE_CODE, DUTY_RATE_CODE, COUNTRY_CODE, DUTY_RATE, DUTY_RATE_PERC, max(TARIFF_1) TARIFF_1, max(TARIFF_2) TARIFF_2
+                                from (
+                                    Select POTORDR2.STYLE_CODE, ICTDUTY1.DUTY_RATE_CODE, ICTSTYL1.COUNTRY_CODE
+                                        , NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE,NVL(ICTDUTY3.DUTY_RATE,ICTDUTY1.DUTY_RATE) DUTY_RATE_PERC
+                                        , NVL(POTSHIP3.TARIFF_1,0) TARIFF_1,NVL(POTSHIP3.TARIFF_2,0) TARIFF_2
+                                     from ICTDUTY3,ICTSTYL1,POTORDR2,POTSHIP3,ICTDUTY1
+                                     where POTORDR2.PO_ORDER_NO = POTSHIP3.PO_ORDER_NO
+                                       and POTORDR2.PO_ORDER_LNO = POTSHIP3.PO_ORDER_LNO
+                                       and ICTSTYL1.STYLE_CODE = POTORDR2.STYLE_CODE
+                                       and POTSHIP3.PO_SHIPMENT_NO = :PARM1
+                                       and ICTDUTY1.DUTY_RATE_CODE = ICTSTYL1.DUTY_RATE_CODE
+                                       and ICTDUTY3.DUTY_RATE_CODE (+) = ICTSTYL1.DUTY_RATE_CODE
+                                       and ICTDUTY3.OPS_YYYY (+) = :PARM2)
+                                   group by STYLE_CODE, DUTY_RATE_CODE, COUNTRY_CODE, DUTY_RATE, DUTY_RATE_PERC"
 
                 Create_TDA(.Tables.Add, "ICTSTYLD", "**", 0, False, "VV", 1)
 
@@ -10985,7 +10989,7 @@ Public Class POFSHIP1
             Select Case e.Cell.Column.Key
 
                 Case "LOCATION_CODE"
-                    Dim sql_where As String = "WHSE_CODE = '" & WHSE_CODE & "' and nvl(LOCATION_USE, 'A') = 'A'"
+                    Dim sql_where As String = "WHSE_CODE = '" & WHSE_CODE & "' and nvl(LOCATION_USE, 'A') in ('A','C')"
                     grdClickCellButton(grdWHTPREC3, sql_where)
 
 
@@ -13161,7 +13165,7 @@ Public Class POFSHIP1
             & " from whtlocb1 b1 " & vbCrLf _
             & "  join whtlocm1 m1 on b1.LOCATION_CODE = m1.LOCATION_CODE and b1.WHSE_CODE = m1.WHSE_CODE " & vbCrLf _
             & "  where b1.STYLE_CODE = '" & Style & "' and b1.COLOR_CODE = '" & Color & "' and m1.WHSE_CODE = '" & WHSE_CODE & "' " & vbCrLf _
-            & "  and  nvl(m1.LOCATION_USE,'A') = 'A' and m1.LOCATION_ROUTE_SEQ is not null" & vbCrLf _
+            & "  and  nvl(m1.LOCATION_USE,'A') in ('A','C') and m1.LOCATION_ROUTE_SEQ is not null" & vbCrLf _
             & "  order by b1.LOCATION_QTY DESC, m1.LOCATION_ROUTE_SEQ, m1.LOCATION_CODE"
         For Each row As DataRow In ASCDATA1.GetDataTable.Select("")
             rtn_row = row

@@ -321,7 +321,7 @@ Public Class SORPICKE
                     & " and WHTLOCB1.LOCATION_QTY > 0" _
                     & " AND WHTLOCB1.LOCATION_CODE = WHTLOCM1.LOCATION_CODE" _
                     & " AND WHTLOCB1.WHSE_CODE = WHTLOCM1.WHSE_CODE" _
-                    & " AND WHTLOCM1.LOCATION_USE IN ('A', 'E')"
+                    & " AND WHTLOCM1.LOCATION_USE IN ('A','C','E')"
 
                 For Each row2 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("", "LOCATION_USE DESC, LOCATION_QTY DESC")
                     Dim LOCATION_CODE As String = row2.Item("LOCATION_CODE")

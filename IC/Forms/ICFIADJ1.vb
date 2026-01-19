@@ -1403,7 +1403,7 @@ Public Class ICFIADJ1
                          FROM WHTLOCB1, WHTLOCM1
                          Where WHTLOCB1.WHSE_CODE =  WHTLOCM1.WHSE_CODE
                          And WHTLOCB1.LOCATION_CODE =  WHTLOCM1.LOCATION_CODE
-                         And WHTLOCM1.LOCATION_USE in ('A','E','R')
+                         And WHTLOCM1.LOCATION_USE in ('A','C','E','R')
                          And WHTLOCM1.WHSE_CODE = '{Absx1.txtFor("WHSE_CODE").Text}' ) WHTLOCM1
                          WHERE WHTPICKS.STYLE_CODE = WHTLOCM1.STYLE_CODE
                          And WHTPICKS.COLOR_CODE = WHTLOCM1.COLOR_CODE

@@ -1216,12 +1216,23 @@ Public Class CartonLabel
                 For i As Integer = 1 To MaxRows
                     rowSOTCART2.Table.Columns.Add("EDI_SKU_" & Format(i, "0#"))
                 Next
-                ASCMAIN1.sql = $"SELECT SOTORDR2.* FROM SOTCART2, SOTORDR2
-                                WHERE CART_NO = '{CART_NO}'
-                                AND SOTCART2.ORDR_NO = SOTORDR2.ORDR_NO
-                                AND SOTCART2.ORDR_LNO = SOTORDR2.ORDR_LNO"
+                ASCMAIN1.sql = $"SELECT EDT850T2.EDI_SKU,
+                                    COUNT(DISTINCT EDT850T2.EDI_SKU) OVER () AS SKUs,
+                                    SOTORDR2.*
+                                FROM SOTCART2
+                                JOIN SOTORDR2 
+                                    ON SOTCART2.ORDR_NO = SOTORDR2.ORDR_NO
+                                   AND SOTCART2.ORDR_LNO = SOTORDR2.ORDR_LNO
+                                JOIN EDT850T2
+                                    ON SOTORDR2.EDI_DOC_SEQ_NO = EDT850T2.EDI_DOC_SEQ_NO
+                                   AND SOTORDR2.EDI_DTL_SEQ = EDT850T2.EDI_DTL_SEQ
+                                WHERE CART_NO = '{CART_NO}'"
                 Dim tbl As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
                 For Each rowSOTCARTX As DataRow In tbl.Rows
+                    If rowSOTCARTX("SKUS") = 1 Then
+                        Row("EDI_SKU") = rowSOTCARTX("EDI_SKU")
+                        Exit For
+                    End If
                     z += 1
                     If z > MaxRows Then
                         Exit For
