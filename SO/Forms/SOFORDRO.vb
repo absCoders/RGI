@@ -326,6 +326,14 @@ Public Class SOFORDRO
             ASCMAIN1.sql = SQLs.ToString()
             Create_TDA(.Tables.Add, "ARTCUSX2", "**", 0, False, "VV", 3)
             .Tables("ARTCUSX2").Columns.Add("VERIFIED", GetType(System.String))
+
+            SQLs.Length = 0
+            SQLs.AppendLine("SELECT *")
+            SQLs.AppendLine("FROM ICTDUTY4")
+            SQLs.AppendLine($"WHERE DUTY_RATE_CODE = :PARM1")
+            SQLs.AppendLine($"AND COUNTRY_CODE = :PARM2")
+            ASCMAIN1.sql = SQLs.ToString()
+            Create_TDA(.Tables.Add, "ICTDUTY4", "**", 0, False, "VV")
         End With
 
         grdSOTORDRX.DataSource = dst.Tables("SOTORDRX")
@@ -4242,11 +4250,12 @@ Public Class SOFORDRO
         Dim rowSOTORDX1 As DataRow = dst.Tables("SOTORDX1").Rows(0)
         Dim rowSOTORDX5 As DataRow = dst.Tables("SOTORDX5").Rows(0)
         'Dim rng As Excel.Range
-        If PrintRemarks Then
-            EndMark = 20
-        Else
-            EndMark = 19
-        End If
+        'If PrintRemarks Then
+        '    EndMark = 20
+        'Else
+        '    EndMark = 19
+        'End If
+        EndMark = 19
         'rng = oSheet.Range(Excel_Cell(1, 1), Excel_Cell(1, 3))
         oSheet.Range(Excel_Cell(1, 1), Excel_Cell(1, 3)).Merge()
         oSheet.Range(Excel_Cell(2, 1), Excel_Cell(2, 3)).Merge()
@@ -4334,8 +4343,8 @@ Public Class SOFORDRO
         oSheet.Range(Excel_Cell(SCD - 1, 2 + ap), Excel_Cell(SCD - 1, 2 + ap)).Value = "Description"
         oSheet.Range(Excel_Cell(SCD - 1, 3 + ap), Excel_Cell(SCD - 1, 3 + ap)).Value = "Color"
         oSheet.Range(Excel_Cell(SCD - 1, 4 + ap), Excel_Cell(SCD - 1, 4 + ap)).Value = "UPC"
-        oSheet.Range(Excel_Cell(SCD - 1, 5 + ap), Excel_Cell(SCD - 1, 5 + ap)).Value = "Box"
-        oSheet.Range(Excel_Cell(SCD - 1, 6 + ap), Excel_Cell(SCD - 1, 6 + ap)).Value = "Cart"
+        oSheet.Range(Excel_Cell(SCD - 1, 5 + ap), Excel_Cell(SCD - 1, 5 + ap)).Value = "Inner"
+        oSheet.Range(Excel_Cell(SCD - 1, 6 + ap), Excel_Cell(SCD - 1, 6 + ap)).Value = "Case"
         oSheet.Range(Excel_Cell(SCD - 1, 7 + ap), Excel_Cell(SCD - 1, 7 + ap)).Value = "U/M"
         oSheet.Range(Excel_Cell(SCD - 1, 8 + ap), Excel_Cell(SCD - 1, 8 + ap)).Value = "CuFt"
         oSheet.Range(Excel_Cell(SCD - 1, 9 + ap), Excel_Cell(SCD - 1, 9 + ap)).Value = "List Price"
@@ -4373,9 +4382,19 @@ Public Class SOFORDRO
         oSheet.Range(Excel_Cell(SCD - 1, 19 + ap), Excel_Cell(SCD - 1, 19 + ap)).Value = "C.O."
         oSheet.Range(Excel_Cell(SCD - 1, 20 + ap), Excel_Cell(SCD - 1, 20 + ap)).Value = "Total"
         If PrintRemarks Then
-            oSheet.Range(Excel_Cell(SCD - 1, 21 + ap), Excel_Cell(SCD - 1, 21 + ap)).Value = "Remarks"
+            EndMark += 1
+            oSheet.Range(Excel_Cell(SCD - 1, EndMark + 1 + ap), Excel_Cell(SCD - 1, EndMark + 1 + ap)).Value = "Remarks"
         End If
-        For i As Integer = 1 To EndMark
+        If chkNewExcel.Checked Then
+            EndMark += 1
+            oSheet.Range(Excel_Cell(SCD - 1, EndMark + 1 + ap), Excel_Cell(SCD - 1, EndMark + 1 + ap)).Value = "Duty Rate"
+            EndMark += 1
+            oSheet.Range(Excel_Cell(SCD - 1, EndMark + 1 + ap), Excel_Cell(SCD - 1, EndMark + 1 + ap)).Value = "Duty Code"
+            EndMark += 1
+            oSheet.Range(Excel_Cell(SCD - 1, EndMark + 1 + ap), Excel_Cell(SCD - 1, EndMark + 1 + ap)).Value = "Materials"
+        End If
+
+        For i As Integer = 1 To EndMark + 1
             oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i + ap)).Font.Bold = True
             oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i + ap)).Borders.Item(Excel.XlBordersIndex.xlEdgeBottom).LineStyle = Excel.XlLineStyle.xlContinuous
             oSheet.Range(Excel_Cell(SCD - 1, i), Excel_Cell(SCD - 1, i + ap)).Font.Bold = True
@@ -4538,6 +4557,12 @@ Public Class SOFORDRO
                 If PrintRemarks = True Then
                     oSheet.Range(Excel_Cell(SCD + RowCount, 21 + ap), Excel_Cell(SCD + RowCount, 21 + ap)).Value = "" 'We still Don't know where this comes from. rsItemMaster.Fields("Remark").Value
                 End If
+                If chkNewExcel.Checked Then
+
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 22 + ap), Excel_Cell(SCD + RowCount, 22 + ap)).Value = getCurrentDutyRate(rowICTSTYL1.Item("DUTY_RATE_CODE").ToString & String.Empty, rowICTSTYL1.Item("COUNTRY_CODE") & String.Empty)
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 23 + ap), Excel_Cell(SCD + RowCount, 23 + ap)).Value = rowICTSTYL1.Item("DUTY_RATE_CODE").ToString & String.Empty
+                    oSheet.Range(Excel_Cell(SCD + RowCount, 24 + ap), Excel_Cell(SCD + RowCount, 24 + ap)).Value = rowICTSTYL1.Item("STYLE_MATL_DESC").ToString & String.Empty
+                End If
                 LastSKU = rowSOTORDX2.Item("STYLE_CODE")
                 Dim fltr As String = $"STYLE_CODE = '{rowSOTORDX2.Item("STYLE_CODE").ToString & String.Empty}' AND COLOR_CODE = '{rowSOTORDX2.Item("COLOR_CODE").ToString & String.Empty}'"
                 Dim subs As Int64 = dst.Tables.Item("ICTXLSPS").Select(fltr).Count
@@ -4561,6 +4586,34 @@ Public Class SOFORDRO
             End If
         Next
     End Sub
+
+    Private Function getCurrentDutyRate(ByVal DUTY_RATE_CODE As String, ByVal COUNTRY_CODE As String) As Double
+        Dim RetVal As Double = 0
+        Try
+            Dim TD As Date = CDate(Now().ToShortDateString)
+            Fill_Records("ICTDUTY4", New String() {DUTY_RATE_CODE, COUNTRY_CODE}, True)
+            For Each rowICTDUTY4 As DataRow In dst.Tables.Item("ICTDUTY4").Select("", "DUTY_RATE_BEGIN")
+                If IsDate(rowICTDUTY4.Item("DUTY_RATE_BEGIN").ToString & String.Empty) Then
+                    If CDate(rowICTDUTY4.Item("DUTY_RATE_BEGIN").ToString & String.Empty) <= TD Then
+                        If IsDate(rowICTDUTY4.Item("DUTY_RATE_END").ToString & String.Empty) Then
+                            If CDate(rowICTDUTY4.Item("DUTY_RATE_END").ToString & String.Empty) >= TD Then
+                                If IsNumeric(rowICTDUTY4.Item("DUTY_RATE").ToString & String.Empty) Then
+                                    RetVal = Val(rowICTDUTY4.Item("DUTY_RATE").ToString & String.Empty)
+                                End If
+                            End If
+                        Else
+                            If IsNumeric(rowICTDUTY4.Item("DUTY_RATE").ToString & String.Empty) Then
+                                RetVal = Val(rowICTDUTY4.Item("DUTY_RATE").ToString & String.Empty)
+                            End If
+                        End If
+                    End If
+                End If
+            Next
+        Catch ex As Exception
+
+        End Try
+        Return RetVal
+    End Function
 
     Private Sub Excel_Make_Totals(ByRef oSheet As Excel.Worksheet)
         Dim ap As Int64 = 0
