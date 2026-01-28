@@ -33,18 +33,19 @@ Public Class APR1099E
             & "    AND APTVEND1.VEND_CODE = APTCHCK1.VEND_CODE_AP"
 
             ' DGJ'
-            SQLX = " FROM APTCHCK1, APTCHCK2, APTINVH1, APTVEND1, ANNA_1099" _
-            & "  WHERE APTCHCK1.CHECK_STATUS = 'I'" _
-            & " AND APTCHCK1.CHECK_DATE >= '" & Format(Absx1.dteFor("CHK_DATE_F").Value, "dd-MMM-yyyy") & "'" _
-            & " AND APTCHCK1.CHECK_DATE <= '" & Format(Absx1.dteFor("CHK_DATE_L").Value, "dd-MMM-yyyy") & "'" _
-            & "    AND APTCHCK1.BANK_CODE = APTCHCK2.BANK_CODE" _
-            & "    AND APTCHCK1.CHECK_NUM = APTCHCK2.CHECK_NUM" _
-            & "    AND APTINVH1.VOUCHER_NO = APTCHCK2.VOUCHER_NO" _
-            & "    AND APTVEND1.VEND_CODE = APTCHCK1.VEND_CODE_AP" _
-            & "    AND ANNA_1099.VEND_CODE = APTCHCK2.VEND_CODE" _
-            & "    AND ANNA_1099.CHECK_NUM = APTCHCK2.CHECK_NUM"
 
-
+            If ASCMAIN1.CLIENT = "VAN" Then
+                SQLX = " FROM APTCHCK1, APTCHCK2, APTINVH1, APTVEND1, ANNA_1099" _
+                & "  WHERE APTCHCK1.CHECK_STATUS = 'I'" _
+                & " AND APTCHCK1.CHECK_DATE >= '" & Format(Absx1.dteFor("CHK_DATE_F").Value, "dd-MMM-yyyy") & "'" _
+                & " AND APTCHCK1.CHECK_DATE <= '" & Format(Absx1.dteFor("CHK_DATE_L").Value, "dd-MMM-yyyy") & "'" _
+                & "    AND APTCHCK1.BANK_CODE = APTCHCK2.BANK_CODE" _
+                & "    AND APTCHCK1.CHECK_NUM = APTCHCK2.CHECK_NUM" _
+                & "    AND APTINVH1.VOUCHER_NO = APTCHCK2.VOUCHER_NO" _
+                & "    AND APTVEND1.VEND_CODE = APTCHCK1.VEND_CODE_AP" _
+                & "    AND ANNA_1099.VEND_CODE = APTCHCK2.VEND_CODE" _
+                & "    AND ANNA_1099.CHECK_NUM = APTCHCK2.CHECK_NUM"
+            End If
 
 
 
@@ -60,10 +61,10 @@ Public Class APR1099E
             ASCMAIN1.sql = "SELECT APTINVH1.*, DECODE(APTINVH1.INV_AMT,0,0, " _
             & " APTINVH1.INV_1099_AMT * APTCHCK2.INV_AMT_APPLIED / APTINVH1.INV_AMT) PMT_1099 " & SQLX
 
-            ' DGJ'
-            ASCMAIN1.Progress("Evaluating Invoice data", "")
-            ASCMAIN1.sql = "SELECT APTINVH1.*, DECODE(APTINVH1.INV_AMT,0,0, " _
-            & " APTINVH1.INV_AMT * APTCHCK2.INV_AMT_APPLIED / APTINVH1.INV_AMT) PMT_1099 " & SQLX
+            ''' DGJ'
+            ''ASCMAIN1.Progress("Evaluating Invoice data", "")
+            ''ASCMAIN1.sql = "SELECT APTINVH1.*, DECODE(APTINVH1.INV_AMT,0,0, " _
+            ''& " APTINVH1.INV_AMT * APTCHCK2.INV_AMT_APPLIED / APTINVH1.INV_AMT) PMT_1099 " & SQLX
 
             .Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "APTINVH1", 1))
 
@@ -71,7 +72,8 @@ Public Class APR1099E
             ASCMAIN1.sql = "SELECT DISTINCT APTVEND1.* " & SQLX
             .Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "APTVEND1", 1))
 
-            ASCMAIN1.sql = "Select APTVEND1.VEND_CODE,APTVEND1.VEND_NAME,APTVEND1.VEND_NAME,APTVEND1.VEND_ADDR1,APTVEND1.VEND_ADDR2,APTVEND1.VEND_CITY,APTVEND1.VEND_STATE," _
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Select APTVEND1.VEND_CODE,APTVEND1.VEND_NAME,APTVEND1.VEND_NAME,APTVEND1.VEND_ADDR1,APTVEND1.VEND_ADDR2,APTVEND1.VEND_CITY,APTVEND1.VEND_STATE," _
                 & " APTVEND1.VEND_ZIP_CODE, SUM(TO_NUMBER(ANNA_1099.CHECK_AMOUNT)) AMT_ANNA_1099, SUM(APTCHCK1.CHECK_AMT) CHECK_AMT_AP FROM  ANNA_1099, APTCHCK1, APTVEND1 WHERE  ANNA_1099.CHECK_NUM Is Not NULL" _
                 & " And ANNA_1099.CHECK_STATUS = 'I'" _
                 & " And APTCHCK1.VEND_CODE = ANNA_1099.VEND_CODE" _
@@ -82,7 +84,9 @@ Public Class APR1099E
                 & " APTVEND1.VEND_ZIP_CODE" _
                 & " ORDER BY APTVEND1.VEND_CODE"
 
-            .Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "APTFIRE1", 1))
+                .Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "APTFIRE1", 1))
+
+            End If
 
 
 
@@ -96,7 +100,7 @@ Public Class APR1099E
 
             Dim CUTOFF As Decimal = Val(Absx1.numFor("CUTOFF").Value & "")
             For Each rowAPT1900V As DataRow In dst.Tables("APT1099V").Select("PMT_1099 < " & CStr(CUTOFF))
-                '  rowAPT1900V.Item("PRINT_IND") = "0"
+                rowAPT1900V.Item("PRINT_IND") = "0"
             Next
 
             ASCMAIN1.sql = "Select * from APTPARM1 Where AP_PARM_KEY = 'Z'"
@@ -115,9 +119,10 @@ Public Class APR1099E
 
         '' 1099 Form
         Report_Subt = ""
-        RPT = "APR1099N"
-        Dim YEAR As String = "22"
-        CR_params.Add("YEAR", YEAR)
+        RPT = "APR1099F"
+        ''RPT = "APR1099N"
+        ''Dim YEAR As String = "22"
+        ''CR_params.Add("YEAR", YEAR)
         Generate_Report(RPT, "1099 Form", Report_Subt)
 
         '' Payment Review
@@ -126,10 +131,10 @@ Public Class APR1099E
         & IIf(Absx1.numFor("CUTOFF").Value > 0, " over " & Format$(Absx1.numFor("CUTOFF").Value, "$##,###.00"), "")
         RPT = "APR1099G"
         Generate_Report(RPT, "Payment Review", Report_Subt)
-        If chkFIRE.Checked Then
-            UPDATE_FIRE_IRS
+        ''If chkFIRE.Checked Then
+        ''    UPDATE_FIRE_IRS
 
-        End If
+        ''End If
 
 
     End Sub
