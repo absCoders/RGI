@@ -27,6 +27,7 @@ Partial Class WBFHORNT
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
+        Dim UltraExplorerBarGroup5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance37 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -124,6 +125,13 @@ Partial Class WBFHORNT
         Me.dtTO = New System.Windows.Forms.DateTimePicker()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.dtFROM = New System.Windows.Forms.DateTimePicker()
+        Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
+        Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.chkWhseNY = New System.Windows.Forms.CheckBox()
+        Me.chkWhseMS = New System.Windows.Forms.CheckBox()
+        Me.chkWhseFE = New System.Windows.Forms.CheckBox()
+        Me.chkWhseFD = New System.Windows.Forms.CheckBox()
+        Me.chkAllWhse = New System.Windows.Forms.CheckBox()
         Me.UltraExplorerBarContainerControl3 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel5 = New System.Windows.Forms.Panel()
         Me.chkOTYPE_W = New System.Windows.Forms.CheckBox()
@@ -160,6 +168,8 @@ Partial Class WBFHORNT
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel4.SuspendLayout()
+        Me.UltraExplorerBarContainerControl4.SuspendLayout()
+        Me.Panel6.SuspendLayout()
         Me.UltraExplorerBarContainerControl3.SuspendLayout()
         Me.Panel5.SuspendLayout()
         Me.UltraExplorerBarContainerControl1.SuspendLayout()
@@ -191,6 +201,7 @@ Partial Class WBFHORNT
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl3)
+        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl4)
         UltraExplorerBarItem5.Key = "Refresh"
         UltraExplorerBarItem5.Text = "Refresh"
         UltraExplorerBarItem4.Key = "Exit"
@@ -203,6 +214,9 @@ Partial Class WBFHORNT
         UltraExplorerBarGroup3.Settings.ContainerHeight = 275
         UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup3.Text = "Options"
+        UltraExplorerBarGroup5.Container = Me.UltraExplorerBarContainerControl4
+        UltraExplorerBarGroup5.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
+        UltraExplorerBarGroup5.Text = "Warehouses"
         UltraExplorerBarGroup4.Container = Me.UltraExplorerBarContainerControl3
         UltraExplorerBarGroup4.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup4.Text = "Order Types"
@@ -211,7 +225,7 @@ Partial Class WBFHORNT
         UltraExplorerBarGroup2.Settings.ContainerHeight = 250
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "E-Commerce"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup4, UltraExplorerBarGroup2})
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup3, UltraExplorerBarGroup5, UltraExplorerBarGroup4, UltraExplorerBarGroup2})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -456,10 +470,87 @@ Partial Class WBFHORNT
         Me.dtFROM.Size = New System.Drawing.Size(149, 23)
         Me.dtFROM.TabIndex = 0
         '
+        'UltraExplorerBarContainerControl4
+        '
+        Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel6)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 449)
+        Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
+        Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl4.TabIndex = 4
+        '
+        'Panel6
+        '
+        Me.Panel6.Controls.Add(Me.chkWhseNY)
+        Me.Panel6.Controls.Add(Me.chkWhseMS)
+        Me.Panel6.Controls.Add(Me.chkWhseFE)
+        Me.Panel6.Controls.Add(Me.chkWhseFD)
+        Me.Panel6.Controls.Add(Me.chkAllWhse)
+        Me.Panel6.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel6.Location = New System.Drawing.Point(0, 0)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(172, 150)
+        Me.Panel6.TabIndex = 1
+        '
+        'chkWhseNY
+        '
+        Me.chkWhseNY.AutoSize = True
+        Me.chkWhseNY.Location = New System.Drawing.Point(29, 88)
+        Me.chkWhseNY.Name = "chkWhseNY"
+        Me.chkWhseNY.Size = New System.Drawing.Size(45, 20)
+        Me.chkWhseNY.TabIndex = 12
+        Me.chkWhseNY.Text = "NY"
+        Me.chkWhseNY.UseVisualStyleBackColor = True
+        Me.chkWhseNY.Visible = False
+        '
+        'chkWhseMS
+        '
+        Me.chkWhseMS.AutoSize = True
+        Me.chkWhseMS.Location = New System.Drawing.Point(29, 68)
+        Me.chkWhseMS.Name = "chkWhseMS"
+        Me.chkWhseMS.Size = New System.Drawing.Size(91, 20)
+        Me.chkWhseMS.TabIndex = 11
+        Me.chkWhseMS.Text = "MS (+US)"
+        Me.chkWhseMS.UseVisualStyleBackColor = True
+        Me.chkWhseMS.Visible = False
+        '
+        'chkWhseFE
+        '
+        Me.chkWhseFE.AutoSize = True
+        Me.chkWhseFE.Location = New System.Drawing.Point(28, 48)
+        Me.chkWhseFE.Name = "chkWhseFE"
+        Me.chkWhseFE.Size = New System.Drawing.Size(43, 20)
+        Me.chkWhseFE.TabIndex = 10
+        Me.chkWhseFE.Text = "FE"
+        Me.chkWhseFE.UseVisualStyleBackColor = True
+        Me.chkWhseFE.Visible = False
+        '
+        'chkWhseFD
+        '
+        Me.chkWhseFD.AutoSize = True
+        Me.chkWhseFD.Location = New System.Drawing.Point(28, 27)
+        Me.chkWhseFD.Name = "chkWhseFD"
+        Me.chkWhseFD.Size = New System.Drawing.Size(44, 20)
+        Me.chkWhseFD.TabIndex = 9
+        Me.chkWhseFD.Text = "FD"
+        Me.chkWhseFD.UseVisualStyleBackColor = True
+        Me.chkWhseFD.Visible = False
+        '
+        'chkAllWhse
+        '
+        Me.chkAllWhse.AutoSize = True
+        Me.chkAllWhse.Checked = True
+        Me.chkAllWhse.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkAllWhse.Location = New System.Drawing.Point(9, 8)
+        Me.chkAllWhse.Name = "chkAllWhse"
+        Me.chkAllWhse.Size = New System.Drawing.Size(126, 20)
+        Me.chkAllWhse.TabIndex = 8
+        Me.chkAllWhse.Text = "All Warehouses"
+        Me.chkAllWhse.UseVisualStyleBackColor = True
+        '
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 449)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 643)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
@@ -536,10 +627,11 @@ Partial Class WBFHORNT
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 643)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 250)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel3
         '
@@ -996,6 +1088,9 @@ Partial Class WBFHORNT
         Me.UltraExplorerBarContainerControl2.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
+        Me.UltraExplorerBarContainerControl4.ResumeLayout(False)
+        Me.Panel6.ResumeLayout(False)
+        Me.Panel6.PerformLayout()
         Me.UltraExplorerBarContainerControl3.ResumeLayout(False)
         Me.Panel5.ResumeLayout(False)
         Me.Panel5.PerformLayout()
@@ -1065,4 +1160,11 @@ Partial Class WBFHORNT
     Friend WithEvents chkOTYPE_A As CheckBox
     Friend WithEvents chkSALES_LY As CheckBox
     Friend WithEvents chkDETAILSLY As CheckBox
+    Friend WithEvents UltraExplorerBarContainerControl4 As UltraWinExplorerBar.UltraExplorerBarContainerControl
+    Friend WithEvents Panel6 As Panel
+    Friend WithEvents chkWhseNY As CheckBox
+    Friend WithEvents chkWhseMS As CheckBox
+    Friend WithEvents chkWhseFE As CheckBox
+    Friend WithEvents chkAllWhse As CheckBox
+    Friend WithEvents chkWhseFD As CheckBox
 End Class
