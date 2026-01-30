@@ -2777,6 +2777,9 @@ Public Class SOFCORD1
 
             If tlb_sbt.Checked Then
                 grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_SHORT)
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    Create_Summary(grdSOTORDR0, New String() {"ORDR_AMT_ALLO_CUR", "ORDR_AMT_ALLO_FUT", "ORDR_AMT_ALLO_CXL"}, , , "#,##0")
+                End If
             Else
                 grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_ORIG)
             End If

@@ -277,6 +277,7 @@ Public Class WBFHORNT
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
 
                 If chkSALES_LY.Checked Then
@@ -301,6 +302,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                     SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
                 End If
 
@@ -353,6 +355,7 @@ Public Class WBFHORNT
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.CUST_CODE, S1.CUST_NAME,  C1.CUST_CITY,  C1.CUST_STATE,  C1.CUST_COUNTRY")
 
                 If chkSALES_LY.Checked Then
@@ -378,6 +381,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                     SQLs.AppendLine("GROUP BY S1.CUST_CODE, S1.CUST_NAME,  C1.CUST_CITY,  C1.CUST_STATE,  C1.CUST_COUNTRY")
 
                 End If
@@ -458,6 +462,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                     If chkStylesInventory.Checked Then
                         SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
                         SQLs.AppendLine("(SELECT")
@@ -499,6 +504,7 @@ Public Class WBFHORNT
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                        SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                         If chkStylesInventory.Checked Then
                             SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
                             SQLs.AppendLine("(SELECT")
@@ -560,6 +566,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                     If chkStylesInventory.Checked Then
                         SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
                         SQLs.AppendLine("(SELECT")
@@ -598,6 +605,7 @@ Public Class WBFHORNT
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                        SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                         If chkStylesInventory.Checked Then
                             SQLs.AppendLine("AND (S2.STYLE_CODE, S2.COLOR_CODE) IN ")
                             SQLs.AppendLine("(SELECT")
@@ -659,6 +667,7 @@ Public Class WBFHORNT
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                 SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
 
                 If chkSALES_LY.Checked Then
@@ -683,6 +692,7 @@ Public Class WBFHORNT
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
+                    SQLs.AppendLine(filterWHSE_SOURCE("S1"))
                     SQLs.AppendLine("GROUP BY S1.SREP_CODE, R1.SREP_NAME")
                 End If
 
@@ -763,6 +773,29 @@ Public Class WBFHORNT
         If RETVAL.Length > 3 Then
             RETVAL = RETVAL.Substring(1, RETVAL.Length - 1)
             RETVAL = $"AND {ORDR_NAME}.ORDR_SOURCE IN ({RETVAL})"
+        End If
+        Return RETVAL
+    End Function
+
+    Private Function filterWHSE_SOURCE(ByVal ORDR_NAME As String) As String
+        Dim RETVAL As String = ""
+        If chkAllWhse.Checked = False Then
+            If chkWhseFD.Checked = True Then
+                RETVAL = RETVAL & ",'FD'"
+            End If
+            If chkWhseFE.Checked = True Then
+                RETVAL = RETVAL & ",'FE'"
+            End If
+            If chkWhseMS.Checked = True Then
+                RETVAL = RETVAL & ",'MS','US'"
+            End If
+            If chkWhseNY.Checked = True Then
+                RETVAL = RETVAL & ",'NY'"
+            End If
+        End If
+        If RETVAL.Length > 3 Then
+            RETVAL = RETVAL.Substring(1, RETVAL.Length - 1)
+            RETVAL = $"AND {ORDR_NAME}.WHSE_CODE IN ({RETVAL})"
         End If
         Return RETVAL
     End Function
@@ -1067,6 +1100,7 @@ Public Class WBFHORNT
                             S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                         End If
                         S.AppendLine(filterORDR_SOURCE("S1"))
+                        S.AppendLine(filterWHSE_SOURCE("S1"))
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
                         S.AppendLine("R1.SREP_NAME,")
@@ -1116,6 +1150,7 @@ Public Class WBFHORNT
                             S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                         End If
                         S.AppendLine(filterORDR_SOURCE("S1"))
+                        S.AppendLine(filterWHSE_SOURCE("S1"))
                         If chkSHIP_ECOM.Checked Then
                             Dim SEL_LIST As New List(Of String)
                             For Each rowECTECOM1_FILTER As DataRow In dst.Tables("ECTECOM1_FILTER").Select()
@@ -1186,6 +1221,7 @@ Public Class WBFHORNT
                             S.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                         End If
                         S.AppendLine(filterORDR_SOURCE("S1"))
+                        S.AppendLine(filterWHSE_SOURCE("S1"))
                         S.AppendLine("GROUP BY")
                         S.AppendLine("S1.SREP_CODE,")
                         S.AppendLine("R1.SREP_NAME,")
@@ -1225,6 +1261,29 @@ Public Class WBFHORNT
             chkOTYPE_L.Visible = True
             chkOTYPE_W.Checked = True
             chkOTYPE_W.Visible = True
+        End If
+    End Sub
+
+    Private Sub chkAllWhseCheckedChanged(sender As Object, e As EventArgs) Handles chkAllWhse.CheckedChanged
+
+        If chkAllWhse.Checked Then
+            chkWhseFD.Checked = False
+            chkWhseFD.Visible = False
+            chkWhseFE.Checked = False
+            chkWhseFE.Visible = False
+            chkWhseMS.Checked = False
+            chkWhseMS.Visible = False
+            chkWhseNY.Checked = False
+            chkWhseNY.Visible = False
+        Else
+            chkWhseFD.Checked = True
+            chkWhseFD.Visible = True
+            chkWhseFE.Checked = True
+            chkWhseFE.Visible = True
+            chkWhseMS.Checked = True
+            chkWhseMS.Visible = True
+            chkWhseNY.Checked = True
+            chkWhseNY.Visible = True
         End If
     End Sub
 
