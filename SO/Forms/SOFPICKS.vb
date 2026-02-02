@@ -2913,7 +2913,8 @@ Public Class SOFPICKS
 
                 Try
                     Dim ORDER_COUNT As Integer = dst.Tables("SOTPICK1").Select("PICK_STATUS = 'P'").Length
-                    Print_Truck_Pick_Tag("Print Truck Tag", TRUCK_NO, PICK_DESCRIPTION, ORDER_COUNT, PICK_BATCH_NO)
+                    If 1 = 2 Then Print_Truck_Pick_Tag("Print Truck Tag", TRUCK_NO, PICK_DESCRIPTION, ORDER_COUNT, PICK_BATCH_NO)
+                    'got request that we don't print, they can right click and print if needed.
 
                     If TRUCK_TYPE = "X" Then
                         Print_Custom_Tote_Labels("Print Custom Tote Labels", PICK_BATCH_NO, TRUCK_NO)
