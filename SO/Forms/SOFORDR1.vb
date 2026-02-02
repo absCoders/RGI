@@ -135,6 +135,17 @@ Public Class SOFORDR1
 
             Create_TDA(.Tables.Add, "SOTORDR1", "*", 1)
 
+            If ASCMAIN1.CLIENT = "VAN" Then
+
+                ASCMAIN1.sql = " Select a.*,s.amt2 AS shop2_amount, s.fee2 AS shop2_fee, s.net2 AS shop2_net,s.trans_type2 AS trans_type2,s.inv_no2 AS inv_no2 From ARTSHOP1 a Join (" & vbCrLf _
+                 & " Select payout_id,SUM(amount) As amt2, SUM(fee) As fee2, SUM(Net) As net2, MAX(trans_type) As trans_type2, MAX(inv_no) As inv_no2" & vbCrLf _
+                 & " From artshop2  Where ordr_web_id = :PARM1" & vbCrLf _
+                 & " GROUP BY payout_id) s  On s.payout_id = a.payout_id WHERE a.payout_id IN (" & vbCrLf _
+                & " Select payout_id From artshop2  Where ordr_web_id = :PARM1" & vbCrLf _
+                 & " )"
+                Create_TDA(.Tables.Add, "ARTSHOP2", "**", 0, False, "V", 0)
+
+            End If
 
             'If ASCMAIN1.CLIENT = "VAN" And InquiryMode Then
             With .Tables("SOTORDR1").Columns
@@ -655,6 +666,10 @@ Public Class SOFORDR1
         grdSOTORDRB.DataSource = dst.Tables("SOTORDRB")
         grdSOTORDRI.DataSource = dst.Tables("SOTORDRI")
 
+        If ASCMAIN1.CLIENT = "VAN" Then
+            grdARTSHOP2.DataSource = dst.Tables("ARTSHOP2")
+        End If
+
         grdEDTDOCS1.DataSource = dst.Tables("EDTDOCS1")
         '   grdEDTDOCS1.Visible = False
 
@@ -1106,7 +1121,10 @@ Public Class SOFORDR1
         Create_Summary(grdSOTORDP2, "ORDR_LNO", "Count")
         Create_Summary(grdSOTORDP2, New String() {"ORDR_QTY_SHIP", "ORDR_AMT_SHIP"})
 
-
+        If ASCMAIN1.CLIENT = "VAN" Then
+            Create_Summary(grdARTSHOP2, "PAYOUT_ID", "Count")
+            Create_Summary(grdARTSHOP2, New String() {"SHOP2_AMOUNT", "SHOP2_FEE", "SHOP2_NET"})
+        End If
 
         Bind_Controls(grpBILLTO, "SOTORDR5", New DataView(dst.Tables("SOTORDR5"), "CUST_ADDR_TYPE = 'BT'", "", DataViewRowState.CurrentRows))
         Bind_Controls(grpSOLDTO, "SOTORDR5", New DataView(dst.Tables("SOTORDR5"), "CUST_ADDR_TYPE = 'BY'", "", DataViewRowState.CurrentRows))
@@ -3113,6 +3131,7 @@ Public Class SOFORDR1
         tabMain.Tabs("Multi-Store").Visible = False
         tabMain.Tabs("Shipments").Visible = (EntryMode = "V") And dst.Tables("SOTPICK1").Rows.Count > 0
         tabMain.Tabs("Back-to-Back").Visible = (EntryMode = "V" Or EntryMode = "E") And dst.Tables("POTORDR1").Rows.Count > 0
+        tabMain.Tabs("Shopify Payments").Visible = ASCMAIN1.DBS_COMPANY = "VAN" And CUST_CODE = "SKINCOM"
 
         tabSOTORDRX.Visible = Not tf
         splPOs.Visible = False
@@ -3398,6 +3417,9 @@ Public Class SOFORDR1
         If subUPCSupport Then
             dst.Tables("ICTXLSPS").Rows.Clear()
         End If
+        If ASCMAIN1.CLIENT = "VAN" Then
+            dst.Tables("ARTSHOP2").Rows.Clear()
+        End If
 
         EnforceConstraints(True)
 
@@ -3446,6 +3468,13 @@ Public Class SOFORDR1
         Else
             rowSOTORDR1 = Fill_Record("SOTORDR1", ORDR_NO)
             Fill_Records("SOTORDR2", ORDR_NO)
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                Dim ORDR_WEB_ID As String = rowSOTORDR1.Item("ORDR_WEB_ID") & ""
+                If ORDR_WEB_ID <> "" Then
+                    Fill_Records("ARTSHOP2", ORDR_WEB_ID)
+                End If
+            End If
 
             If ASCMAIN1.CLIENT = "RGIx" Then
                 ' this code might belong in SOR routines instead of just when calling up an order in SOI

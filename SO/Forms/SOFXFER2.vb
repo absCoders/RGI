@@ -2497,6 +2497,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Addition Of Sales And Credit Hold To Cust Matrix.")
 
+        VersionNo = "26.01.06.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes To Order Excel.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class
