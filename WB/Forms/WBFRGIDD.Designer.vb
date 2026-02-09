@@ -35,8 +35,6 @@ Partial Class WBFRGIDD
         Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance32 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance33 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -61,8 +59,15 @@ Partial Class WBFRGIDD
         Dim Appearance22 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance23 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance24 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
+        Dim UltraTab6 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.btnCreateDump = New System.Windows.Forms.Button()
+        Me.chkOnlyOrderDetails = New System.Windows.Forms.CheckBox()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
+        Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraTabPageControl13 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.Panel1 = New System.Windows.Forms.Panel()
@@ -72,11 +77,7 @@ Partial Class WBFRGIDD
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
-        Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.chkOnlyOrderDetails = New System.Windows.Forms.CheckBox()
-        Me.btnCreateDump = New System.Windows.Forms.Button()
+        Me.chkOnlyInvoiceHeaders = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
         CType(Me.grdASFBASEX, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -87,6 +88,8 @@ Partial Class WBFRGIDD
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl12.SuspendLayout()
         Me.Panel3.SuspendLayout()
+        CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabPageControl13.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -99,8 +102,6 @@ Partial Class WBFRGIDD
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tab.SuspendLayout()
-        CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraExplorerBar1
@@ -207,6 +208,7 @@ Partial Class WBFRGIDD
         '
         'Panel3
         '
+        Me.Panel3.Controls.Add(Me.chkOnlyInvoiceHeaders)
         Me.Panel3.Controls.Add(Me.btnCreateDump)
         Me.Panel3.Controls.Add(Me.chkOnlyOrderDetails)
         Me.Panel3.Controls.Add(Me.Label1)
@@ -218,101 +220,33 @@ Partial Class WBFRGIDD
         Me.Panel3.Size = New System.Drawing.Size(994, 562)
         Me.Panel3.TabIndex = 0
         '
-        'UltraTabPageControl13
+        'btnCreateDump
         '
-        Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(994, 562)
+        Me.btnCreateDump.Location = New System.Drawing.Point(49, 156)
+        Me.btnCreateDump.Name = "btnCreateDump"
+        Me.btnCreateDump.Size = New System.Drawing.Size(146, 23)
+        Me.btnCreateDump.TabIndex = 7
+        Me.btnCreateDump.Text = "Create Data Dump"
+        Me.btnCreateDump.UseVisualStyleBackColor = True
         '
-        'SplitContainer1
+        'chkOnlyOrderDetails
         '
-        Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
-        Me.SplitContainer1.Name = "SplitContainer1"
-        Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
+        Me.chkOnlyOrderDetails.AutoSize = True
+        Me.chkOnlyOrderDetails.Location = New System.Drawing.Point(49, 109)
+        Me.chkOnlyOrderDetails.Name = "chkOnlyOrderDetails"
+        Me.chkOnlyOrderDetails.Size = New System.Drawing.Size(146, 20)
+        Me.chkOnlyOrderDetails.TabIndex = 6
+        Me.chkOnlyOrderDetails.Text = "Only Order Details"
+        Me.chkOnlyOrderDetails.UseVisualStyleBackColor = True
         '
-        'SplitContainer1.Panel1
+        'Label1
         '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.Panel1)
-        '
-        'SplitContainer1.Panel2
-        '
-        Me.SplitContainer1.Panel2.Controls.Add(Me.Panel2)
-        Me.SplitContainer1.Size = New System.Drawing.Size(994, 562)
-        Me.SplitContainer1.SplitterDistance = 304
-        Me.SplitContainer1.TabIndex = 0
-        '
-        'Panel1
-        '
-        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel1.Location = New System.Drawing.Point(0, 0)
-        Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(994, 304)
-        Me.Panel1.TabIndex = 0
-        '
-        'Panel2
-        '
-        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel2.Location = New System.Drawing.Point(0, 0)
-        Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(994, 254)
-        Me.Panel2.TabIndex = 0
-        '
-        'spl
-        '
-        Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.spl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
-        Me.spl.Location = New System.Drawing.Point(0, 0)
-        Me.spl.Name = "spl"
-        Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
-        '
-        'spl.Panel1
-        '
-        Me.spl.Panel1.Controls.Add(Me.UltraGroupBox1)
-        '
-        'spl.Panel2
-        '
-        Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(998, 662)
-        Me.spl.SplitterDistance = 68
-        Me.spl.TabIndex = 4
-        '
-        'UltraGroupBox1
-        '
-        Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(998, 68)
-        Me.UltraGroupBox1.TabIndex = 6
-        '
-        'tab
-        '
-        Me.tab.Controls.Add(Me.UltraTabSharedControlsPage4)
-        Me.tab.Controls.Add(Me.UltraTabPageControl12)
-        Me.tab.Controls.Add(Me.UltraTabPageControl13)
-        Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tab.Location = New System.Drawing.Point(0, 0)
-        Me.tab.Name = "tab"
-        Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.tab.Size = New System.Drawing.Size(998, 590)
-        Me.tab.TabIndex = 1
-        UltraTab5.TabPage = Me.UltraTabPageControl12
-        UltraTab5.Text = "0"
-        UltraTab6.TabPage = Me.UltraTabPageControl13
-        UltraTab6.Text = "1"
-        Me.tab.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab5, UltraTab6})
-        '
-        'UltraTabSharedControlsPage4
-        '
-        Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
-        Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(994, 562)
-        '
-        'Timer1
-        '
-        Me.Timer1.Interval = 1000
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(49, 21)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(93, 16)
+        Me.Label1.TabIndex = 5
+        Me.Label1.Text = "Period Range"
         '
         'UltraCombo2
         '
@@ -446,33 +380,111 @@ Partial Class WBFRGIDD
         Me.UltraCombo1.TabIndex = 3
         Me.UltraCombo1.ValueMember = "OPS_YYYYPP"
         '
-        'Label1
+        'UltraTabPageControl13
         '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(49, 21)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(93, 16)
-        Me.Label1.TabIndex = 5
-        Me.Label1.Text = "Period Range"
+        Me.UltraTabPageControl13.Controls.Add(Me.SplitContainer1)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(994, 562)
         '
-        'chkOnlyOrderDetails
+        'SplitContainer1
         '
-        Me.chkOnlyOrderDetails.AutoSize = True
-        Me.chkOnlyOrderDetails.Location = New System.Drawing.Point(49, 109)
-        Me.chkOnlyOrderDetails.Name = "chkOnlyOrderDetails"
-        Me.chkOnlyOrderDetails.Size = New System.Drawing.Size(146, 20)
-        Me.chkOnlyOrderDetails.TabIndex = 6
-        Me.chkOnlyOrderDetails.Text = "Only Order Details"
-        Me.chkOnlyOrderDetails.UseVisualStyleBackColor = True
+        Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
+        Me.SplitContainer1.Name = "SplitContainer1"
+        Me.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal
         '
-        'btnCreateDump
+        'SplitContainer1.Panel1
         '
-        Me.btnCreateDump.Location = New System.Drawing.Point(49, 147)
-        Me.btnCreateDump.Name = "btnCreateDump"
-        Me.btnCreateDump.Size = New System.Drawing.Size(146, 23)
-        Me.btnCreateDump.TabIndex = 7
-        Me.btnCreateDump.Text = "Create Data Dump"
-        Me.btnCreateDump.UseVisualStyleBackColor = True
+        Me.SplitContainer1.Panel1.Controls.Add(Me.Panel1)
+        '
+        'SplitContainer1.Panel2
+        '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.Panel2)
+        Me.SplitContainer1.Size = New System.Drawing.Size(994, 562)
+        Me.SplitContainer1.SplitterDistance = 304
+        Me.SplitContainer1.TabIndex = 0
+        '
+        'Panel1
+        '
+        Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel1.Location = New System.Drawing.Point(0, 0)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(994, 304)
+        Me.Panel1.TabIndex = 0
+        '
+        'Panel2
+        '
+        Me.Panel2.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.Panel2.Location = New System.Drawing.Point(0, 0)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(994, 254)
+        Me.Panel2.TabIndex = 0
+        '
+        'spl
+        '
+        Me.spl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.spl.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
+        Me.spl.Location = New System.Drawing.Point(0, 0)
+        Me.spl.Name = "spl"
+        Me.spl.Orientation = System.Windows.Forms.Orientation.Horizontal
+        '
+        'spl.Panel1
+        '
+        Me.spl.Panel1.Controls.Add(Me.UltraGroupBox1)
+        '
+        'spl.Panel2
+        '
+        Me.spl.Panel2.Controls.Add(Me.tab)
+        Me.spl.Size = New System.Drawing.Size(998, 662)
+        Me.spl.SplitterDistance = 68
+        Me.spl.TabIndex = 4
+        '
+        'UltraGroupBox1
+        '
+        Me.UltraGroupBox1.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
+        Me.UltraGroupBox1.Name = "UltraGroupBox1"
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(998, 68)
+        Me.UltraGroupBox1.TabIndex = 6
+        '
+        'tab
+        '
+        Me.tab.Controls.Add(Me.UltraTabSharedControlsPage4)
+        Me.tab.Controls.Add(Me.UltraTabPageControl12)
+        Me.tab.Controls.Add(Me.UltraTabPageControl13)
+        Me.tab.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.tab.Location = New System.Drawing.Point(0, 0)
+        Me.tab.Name = "tab"
+        Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage4
+        Me.tab.Size = New System.Drawing.Size(998, 590)
+        Me.tab.TabIndex = 1
+        UltraTab5.TabPage = Me.UltraTabPageControl12
+        UltraTab5.Text = "0"
+        UltraTab6.TabPage = Me.UltraTabPageControl13
+        UltraTab6.Text = "1"
+        Me.tab.Tabs.AddRange(New Infragistics.Win.UltraWinTabControl.UltraTab() {UltraTab5, UltraTab6})
+        '
+        'UltraTabSharedControlsPage4
+        '
+        Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(994, 562)
+        '
+        'Timer1
+        '
+        Me.Timer1.Interval = 1000
+        '
+        'chkOnlyInvoiceHeaders
+        '
+        Me.chkOnlyInvoiceHeaders.AutoSize = True
+        Me.chkOnlyInvoiceHeaders.Location = New System.Drawing.Point(49, 130)
+        Me.chkOnlyInvoiceHeaders.Name = "chkOnlyInvoiceHeaders"
+        Me.chkOnlyInvoiceHeaders.Size = New System.Drawing.Size(167, 20)
+        Me.chkOnlyInvoiceHeaders.TabIndex = 8
+        Me.chkOnlyInvoiceHeaders.Text = "Only Invoice Headers"
+        Me.chkOnlyInvoiceHeaders.UseVisualStyleBackColor = True
         '
         'WBFRGIDD
         '
@@ -493,6 +505,8 @@ Partial Class WBFRGIDD
         Me.UltraTabPageControl12.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel3.PerformLayout()
+        CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl13.ResumeLayout(False)
         Me.SplitContainer1.Panel1.ResumeLayout(False)
         Me.SplitContainer1.Panel2.ResumeLayout(False)
@@ -505,8 +519,6 @@ Partial Class WBFRGIDD
         CType(Me.UltraGroupBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tab, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tab.ResumeLayout(False)
-        CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -526,4 +538,5 @@ Partial Class WBFRGIDD
     Friend WithEvents Label1 As Label
     Friend WithEvents btnCreateDump As Button
     Friend WithEvents chkOnlyOrderDetails As CheckBox
+    Friend WithEvents chkOnlyInvoiceHeaders As CheckBox
 End Class

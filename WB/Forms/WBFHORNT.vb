@@ -778,6 +778,19 @@ Public Class WBFHORNT
     End Function
 
     Private Function filterWHSE_SOURCE(ByVal ORDR_NAME As String) As String
+        Dim sql As New Text.StringBuilder With {.Length = 0}
+        Dim OTHERS As String = ""
+        sql.AppendLine("SELECT WHSE_CODE")
+        sql.AppendLine("FROM ICTWHSE1")
+        sql.AppendLine("WHERE WHSE_CODE NOT IN ('FD','FE','MS','US','NY')")
+        Dim tblICTWHSE1 As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+        For Each rowICTWHSE1 As DataRow In tblICTWHSE1.Rows
+            OTHERS = OTHERS & $",'{rowICTWHSE1.Item("WHSE_CODE").ToString & String.Empty}'"
+        Next
+        If OTHERS.Length > 3 Then
+            OTHERS = ", " & OTHERS.Substring(1, OTHERS.Length - 1)
+        End If
+
         Dim RETVAL As String = ""
         If chkAllWhse.Checked = False Then
             If chkWhseFD.Checked = True Then
@@ -791,6 +804,10 @@ Public Class WBFHORNT
             End If
             If chkWhseNY.Checked = True Then
                 RETVAL = RETVAL & ",'NY'"
+            End If
+            'chkWhseOther
+            If chkWhseOther.Checked = True Then
+                RETVAL = RETVAL & OTHERS
             End If
         End If
         If RETVAL.Length > 3 Then
@@ -1275,6 +1292,8 @@ Public Class WBFHORNT
             chkWhseMS.Visible = False
             chkWhseNY.Checked = False
             chkWhseNY.Visible = False
+            chkWhseOther.Checked = False
+            chkWhseOther.Visible = False
         Else
             chkWhseFD.Checked = True
             chkWhseFD.Visible = True
@@ -1284,6 +1303,8 @@ Public Class WBFHORNT
             chkWhseMS.Visible = True
             chkWhseNY.Checked = True
             chkWhseNY.Visible = True
+            chkWhseOther.Checked = True
+            chkWhseOther.Visible = True
         End If
     End Sub
 

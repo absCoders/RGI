@@ -260,7 +260,18 @@ Public Class ARFPYMT1
                 If MsgBox("Are you sure you want to Delete?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
                     Exit Sub
                 End If
-
+            Case "Load Excel"
+                Dim iResult As MsgBoxResult
+                Dim iTitle As String = "Load Excel"
+                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iMSG.AppendLine("This Will Ask You For An Excel")
+                iMSG.AppendLine("To Auto-Fill The Grid Below.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Are You Ready?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult <> MsgBoxResult.Yes Then
+                    EMsg &= vbCr & "Waiting For You To Be Ready For Auto-Fill."
+                End If
         End Select
 
         If EMsg <> "" Then
@@ -296,6 +307,106 @@ Public Class ARFPYMT1
             Case "Delete"
                 Delete_Record()
                 Mode_Settings(False)
+
+            Case "Load Excel"
+                Dim FILENAME As String = ""
+                Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                Using openFileDialog1 As New OpenFileDialog
+                    openFileDialog1.Title = "Select an Excel Spreadsheet to Auto-Fill With"
+                    'Dim filter As String = "xlsb files (*.xlsb)|*.xlsx|All files (*.*)|*.*"
+                    Dim filter As String = "All files (*.*)|*.*"
+                    openFileDialog1.Filter = filter
+                    openFileDialog1.RestoreDirectory = True
+                    If openFileDialog1.ShowDialog() = DialogResult.OK Then
+                        FILENAME = openFileDialog1.FileName
+                    End If
+                End Using
+                If FILENAME = "" Then
+                    MsgBox("Invalid File", vbCritical, "Did You Pick A File?")
+                Else
+                    Dim excel As Microsoft.Office.Interop.Excel.Application = New Microsoft.Office.Interop.Excel.Application
+                    Dim XWB As Microsoft.Office.Interop.Excel.Workbook = excel.Workbooks.Open(FILENAME)
+                    Dim XWS As New Microsoft.Office.Interop.Excel.Worksheet
+                    Dim WSFound As Boolean = False
+                    XWS = XWB.Worksheets(1)
+                    Dim errMsg As New Text.StringBuilder With {.Length = 0}
+                    Dim CUR_ROW As Int64 = 1
+                    Dim BlankCount As Int64 = 0
+                    Dim BAD_CUSTS As New List(Of String)
+                    Dim PYMT_BATCH_NO As String = Absx1.txtFor("PYMT_BATCH_NO").Text.ToString & String.Empty
+                    Dim PYMT_BATCH_LNO As Int64 = Val(dst.Tables("ARTPYMT2").Compute("MAX(PYMT_BATCH_LNO)", "").ToString & String.Empty)
+                    If errMsg.Length = 0 Then
+                        For i As Int64 = CUR_ROW To 1000
+                            CUR_ROW += 1
+                            Dim CUST_CODE As String = getValFromStr(XWS.Cells(CUR_ROW, 1).text.ToString & String.Empty)
+                            If CUST_CODE.Length = 0 Or CUST_CODE = "0" Then
+                                BlankCount += 1
+                                If BlankCount = 10 Then
+                                    Exit For
+                                End If
+                            Else
+                                If CUST_CODE.Length <> 6 Then
+                                    CUST_CODE = CUST_CODE.PadLeft(6, "0")
+                                End If
+                                SQLS.Length = 0
+                                SQLS.AppendLine($"Select Count(*) AS RECS from ARTCUST1 where CUST_CODE = '{CUST_CODE}'")
+                                ASCMAIN1.sql = SQLS.ToString()
+                                Dim RECS As Int16 = Val(ASCDATA1.GetDataValue)
+                                If RECS <> 1 Then
+                                    BAD_CUSTS.Add(CUST_CODE)
+                                Else
+                                    PYMT_BATCH_LNO += 1
+                                    SQLS.Length = 0
+                                    SQLS.AppendLine($"Select CUST_NAME from ARTCUST1 where CUST_CODE = '{CUST_CODE}'")
+                                    ASCMAIN1.sql = SQLS.ToString()
+                                    Dim CUST_NAME As String = ASCDATA1.GetDataValue
+                                    Dim CUST_PYMT_REF_NO As String = getValFromStr(XWS.Cells(CUR_ROW, 2).text.ToString & String.Empty)
+                                    Dim CUST_PYMT_REF_DATE As Date = Absx1.dteFor("PYMT_BATCH_DATE").DateTime
+                                    Dim CUST_PYMT_REF_DATE_S As String = XWS.Cells(CUR_ROW, 3).text.ToString & String.Empty
+                                    If IsDate(CUST_PYMT_REF_DATE_S) Then
+                                        CUST_PYMT_REF_DATE = CDate(CDate(CUST_PYMT_REF_DATE_S).ToShortDateString)
+                                    End If
+                                    Dim CUST_PYMT_AMT As Double = 0
+                                    Dim CUST_PYMT_AMT_S As String = XWS.Cells(CUR_ROW, 4).text.ToString & String.Empty
+                                    CUST_PYMT_AMT_S = CUST_PYMT_AMT_S.Replace("$", "").Replace(",", "")
+                                    If IsNumeric(CUST_PYMT_AMT_S) Then
+                                        CUST_PYMT_AMT = CUST_PYMT_AMT_S
+                                    End If
+
+                                    Dim newARTPYMT2 As DataRow = dst.Tables("ARTPYMT2").NewRow
+                                    newARTPYMT2.Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                    newARTPYMT2.Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                    newARTPYMT2.Item("CUST_CODE") = CUST_CODE
+                                    newARTPYMT2.Item("CUST_NAME") = CUST_NAME
+                                    newARTPYMT2.Item("CUST_PYMT_REF_NO") = CUST_PYMT_REF_NO
+                                    newARTPYMT2.Item("CUST_PYMT_REF_DATE") = CUST_PYMT_REF_DATE
+                                    newARTPYMT2.Item("CUST_PYMT_AMT") = CUST_PYMT_AMT
+                                    newARTPYMT2.Item("PYMT_STATUS") = 0
+                                    newARTPYMT2.Item("CUST_PYMT_AMT_CURR") = CUST_PYMT_AMT
+                                    newARTPYMT2.Item("CURR_CODE") = "USD"
+                                    newARTPYMT2.Item("CURR_EXCH_RATE") = 1
+                                    dst.Tables("ARTPYMT2").Rows.Add(newARTPYMT2)
+
+                                End If
+                            End If
+                        Next
+                        excel.DisplayAlerts = False
+                        XWB.Save()
+                        excel.Quit()
+                        excel = Nothing
+                        If BAD_CUSTS.Count > 0 Then
+                            Dim iTitle As String = "Bad Customers"
+                            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                            iMSG.AppendLine("The Following Bad Customers Were Skipped:")
+                            For Each BAD_CUST As String In BAD_CUSTS
+                                iMSG.AppendLine(BAD_CUST)
+                            Next
+                            MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+                        End If
+                        MsgBox("Import Complete", vbOKOnly, "Done")
+                        grdARTPYMT2.Update()
+                    End If
+                End If
         End Select
 
     End Sub
@@ -320,6 +431,13 @@ Public Class ARFPYMT1
 
                     .Items("Update").Visible = ScreenMode And Not This_Record_Inquiry_Only
                     .Items("Delete").Visible = ScreenMode And Not This_Record_Inquiry_Only And (EntryMode = "E")
+
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        .Items("Load Excel").Visible = True
+                        .Items("Load Excel").Settings.Enabled = iScreenMode
+                    Else
+                        .Items("Load Excel").Visible = False
+                    End If
                 End With
 
                 .Groups("Batch Options").Visible = Not ScreenMode
@@ -974,5 +1092,24 @@ Public Class ARFPYMT1
         If SELECTION_NO = 0 Then Exit Sub
         Load_ARTPYMTX()
     End Sub
-     
+
+    Private Function getValFromStr(ByVal inStr As String) As Decimal
+        Dim RetVal As Decimal = 0
+        Dim isNeg As Boolean = False
+        If inStr.Contains("(") And inStr.Contains(")") Then
+            isNeg = True
+        End If
+        Dim REP As String() = {",", "$", "(", ")"}
+        For Each R As String In REP
+            inStr = inStr.Replace(R, "")
+        Next
+        If IsNumeric(inStr) Then
+            If isNeg And Val(inStr) > 0 Then
+                RetVal = Val(inStr) * -1
+            Else
+                RetVal = Val(inStr)
+            End If
+        End If
+        Return RetVal
+    End Function
 End Class
