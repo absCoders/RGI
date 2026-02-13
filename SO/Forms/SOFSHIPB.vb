@@ -6373,7 +6373,7 @@ Public Class SOFSHIPB
                             Stop
                         End If
 
-                        If Not ASCMAIN1.RunningInTestEnvironment Then
+                        If Not (ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER) Then
                             TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))
                             ' Email Invoice to Sales Rep and Customer.
                             EmailInvoice(row.Item("INV_TYPE"), row.Item("INV_NO"))
@@ -12350,7 +12350,7 @@ Public Class SOFSHIPB
                 End If
 
                 If chargeAmount > 0 Then
-                    If ASCMAIN1.Running_in_VS OrElse ASCMAIN1.RunningInTestEnvironment Then
+                    If ASCMAIN1.Running_in_VS OrElse (ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER) Then
                         If ASCMAIN1.Running_in_VS Then
                             Stop
                         End If
