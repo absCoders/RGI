@@ -792,11 +792,16 @@ Public Class ARCCCARD
             AmexAuthDays = Val(rowARTCCPRC.Item("AMEX_AUTH_MAX_DAYS") & String.Empty)
 
             cXmlDirectory = rowARTCCPRC.Item("CC_PROC_FOLDER") & String.Empty
+            If ASCMAIN1.Running_in_VS Then
+                Stop
+                ' If not connected to the custimer then chnage the value of cXmlDirectory
+                ' C:\Temp\RGI\Archive\CC_TRANS
+            End If
+
             If Not My.Computer.FileSystem.DirectoryExists(cXmlDirectory) Then
                 cXmlDirectory = String.Empty
             End If
             clsLogFileLocation = cXmlDirectory
-
         End If
 
     End Sub

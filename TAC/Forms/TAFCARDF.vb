@@ -210,14 +210,18 @@ Public Class TAFCARDF
                         rowARTCCPA1_CUST.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1_CUST.Item(field & "_E") & String.Empty)
                         rowARTCCPA1_CUST.Item(field & "_E") = DBNull.Value
                     Next
+
+                    CUST_CREDIT_CARD_NO = rowARTCCPA1_CUST.Item("CUST_CREDIT_CARD_NO") & String.Empty
+                    For Each COLUMN_NAME As String In COLs
+                        rowARTCCPA1.Item(COLUMN_NAME) = rowARTCCPA1_CUST.Item(COLUMN_NAME)
+                    Next
+                    optCC.Value = "X"
+                    MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = CUST_CREDIT_CARD_NO
+                    LoadCCDataIntoRow(rowARTCCPA1_CUST)
+                Else
+                    MessageBox.Show("Cannot locate a Credit Card record for this customer.", "Load Customer Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
-                CUST_CREDIT_CARD_NO = rowARTCCPA1_CUST.Item("CUST_CREDIT_CARD_NO") & String.Empty
-                For Each COLUMN_NAME As String In COLs
-                    rowARTCCPA1.Item(COLUMN_NAME) = rowARTCCPA1_CUST.Item(COLUMN_NAME)
-                Next
-                optCC.Value = "X"
-                MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = CUST_CREDIT_CARD_NO
-                LoadCCDataIntoRow(rowARTCCPA1_CUST)
+
                 Try
                     txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
                 Catch ex As Exception
@@ -498,6 +502,20 @@ Public Class TAFCARDF
             End If
         End If
 
+        If ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER Then
+            If ASCMAIN1.Running_in_VS Then
+                Stop
+            End If
+
+            Dim uMsg As String = "READ CAREFULLY" & Environment.NewLine & Environment.NewLine
+            uMsg &= "You are running in a Test Environment. The customer's credit card will be processed." & Environment.NewLine & Environment.NewLine
+            uMsg &= "Do you want to Contiune?"
+
+            If MessageBox.Show(uMsg, "Submit", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                Exit Sub
+            End If
+        End If
+
         Dim TransactionNumber As String = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
         Dim CUST_CREDIT_CARD_KEY As String = ""
         If optCC.Value = "N" Then
@@ -629,7 +647,56 @@ Public Class TAFCARDF
             End If
         End If
 
+
+        'If ASCMAIN1.Running_in_VS Then
+        '    Stop
+        '    ' This is here to test new Credit Card processing rules without actually processing a credit card.
+        '    ' The current credit card processing company does not support test Mode
+
+        '    Select Case optType.Value
+        '        Case "A"
+        '            rowARTCCPA1.Item("CCPA_STATUS") = "A"
+        '            rowARTCCPA1.Item("CCPA_REASON") = "O"
+        '            rowARTCCPA1.Item("CCPA_TYPE") = "T"
+        '            rowARTCCPA1.Item("CCPA_DATE_AUTH") = DateTime.Now
+        '        Case "S"
+        '            rowARTCCPA1.Item("CCPA_STATUS") = "A"
+        '            rowARTCCPA1.Item("CCPA_REASON") = "C"
+        '            rowARTCCPA1.Item("CCPA_TYPE") = "S"
+        '            rowARTCCPA1.Item("CCPA_DATE_SALE") = DateTime.Now
+        '    End Select
+
+        '    rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") = "1234567890"
+        '    rowARTCCPA1.Item("RESPONSE_TEXT") = "Approved"
+        '    rowARTCCPA1.Item("TRANSACTION_DATE") = DateTime.Now.ToString("MMddyy")
+        '    rowARTCCPA1.Item("TRANS_ID") = "00306J"
+        '    rowARTCCPA1.Item("TRANS_NUM") = "0000159070"
+
+        '    dst.Tables("ARTCCPA2").Rows.Clear()
+        '    Dim rowARTCCPA2 As DataRow = dst.Tables("ARTCCPA2").NewRow
+        '    rowARTCCPA2.Item("CCPA_NO") = CCPA_NO
+        '    rowARTCCPA2.Item("RESPONSE_TEXT") = "Approved"
+        '    'rowARTCCPA2.Item("RESPONSE_SEQ_NO") = ""
+        '    'rowARTCCPA2.Item("RESPONSE_RETRIEVAL_NO") = ""
+        '    rowARTCCPA2.Item("RESPONSE_CODE") = "A"
+        '    'rowARTCCPA2.Item("RESPONSE_BATCH_NO") = ""
+        '    rowARTCCPA2.Item("RESPONSE_APPROVAL_CODE") = "1239499913"
+        '    'rowARTCCPA2.Item("RESPONSE_DATA") = ""
+        '    rowARTCCPA2.Item("RESPONSE_AVS") = "Y"
+        '    'rowARTCCPA2.Item("RESPONSE_AUTH_SOURCE") = ""
+        '    rowARTCCPA2.Item("INIT_OPER") = rowARTCCPA1.Item("INIT_OPER")
+        '    rowARTCCPA2.Item("INIT_DATE") = rowARTCCPA1.Item("INIT_DATE")
+        '    rowARTCCPA2.Item("CCPA_TYPE") = rowARTCCPA1.Item("CCPA_TYPE")
+        '    dst.Tables("ARTCCPA2").Rows.Add(rowARTCCPA2)
+        'End If
+
         Try
+
+            'If ASCMAIN1.Running_in_VS Then
+            '    Stop
+            '    'objCCProcessor.NetworkResponse = New clsNetworkResponse
+            '    GoTo SkipToHere
+            'End If
             objCCProcessor.CCPA_NO = CCPA_NO
 
             Select Case optType.Value
@@ -782,6 +849,7 @@ Public Class TAFCARDF
                 End If
             End If
 
+            'SkipToHere:
             If optType.Value <> "V" Then
                 rowARTCCPA1.Item("ORDR_NO") = ORDR_NO
                 rowARTCCPA1.Item("INV_NO") = INV_NO
@@ -2153,6 +2221,12 @@ Public Class TAFCARDF
 
         If rowARTCCPRC IsNot Nothing Then
             CC_PROC_FOLDER = rowARTCCPRC.Item("CC_PROC_FOLDER") & String.Empty
+        End If
+
+        If ASCMAIN1.Running_in_VS Then
+            Stop
+            ' C:\Temp\RGI\Archive\CC_TRANS
+            ' Change the value of CC_PROC_FOLDER if not connected to the customer.
         End If
 
         objCCProcessor = New TAC.ARCCCARD(CC_PROC_FOLDER, Val(SO_PARM_CC_PROC_CODE))

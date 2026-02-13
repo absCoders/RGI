@@ -127,10 +127,10 @@ Public Class SOFRTRN1
             & " and ICTCOLR1.COLOR_CODE = SOTRTRN2.COLOR_CODE"
             Create_TDA(.Tables.Add, "SOTRTRN2", "**", 1)
             .Tables("SOTRTRN2").Columns.Add("RECORD_INDEX", GetType(System.Int32))
-            .Tables("SOTRTRN2").Columns.Add("LINE_SALES", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE,0)")
-            .Tables("SOTRTRN2").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE_CURR,0)")
-            .Tables("SOTRTRN2").Columns.Add("LINE_COSTS", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(STYLE_COST,0)")
             .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_REFUSED", GetType(System.Int32))
+            .Tables("SOTRTRN2").Columns.Add("LINE_SALES", GetType(System.Decimal), "(ISNULL(RTRN_QTY, 0) - ISNULL(RTRN_QTY_REFUSED, 0)) * ISNULL(RTRN_PRICE,0)")
+            .Tables("SOTRTRN2").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "(ISNULL(RTRN_QTY, 0) - ISNULL(RTRN_QTY_REFUSED, 0))  * ISNULL(RTRN_PRICE_CURR,0)")
+            .Tables("SOTRTRN2").Columns.Add("LINE_COSTS", GetType(System.Decimal), "(ISNULL(RTRN_QTY, 0) - ISNULL(RTRN_QTY_REFUSED, 0))  * ISNULL(STYLE_COST,0)")
             .Tables("SOTRTRN2").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0) + ISNULL(RTRN_QTY_REFUSED,0)")
             .Tables("SOTRTRN2").Columns.Add("IMPORTED", GetType(System.String))
             .Tables("SOTRTRN2").Columns.Add("SURCHARGE_PERC", GetType(System.Decimal))
@@ -144,10 +144,10 @@ Public Class SOFRTRN1
 
             Create_TDA(.Tables.Add("SOTRTRN2P"), "SOTRTRN2", "**", 1)
             .Tables("SOTRTRN2P").Columns.Add("RECORD_INDEX", GetType(System.Int32))
-            .Tables("SOTRTRN2P").Columns.Add("LINE_SALES", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE,0)")
-            .Tables("SOTRTRN2P").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(RTRN_PRICE_CURR,0)")
-            .Tables("SOTRTRN2P").Columns.Add("LINE_COSTS", GetType(System.Decimal), "ISNULL(RTRN_QTY,0) * ISNULL(STYLE_COST,0)")
             .Tables("SOTRTRN2P").Columns.Add("RTRN_QTY_REFUSED", GetType(System.Int32))
+            .Tables("SOTRTRN2P").Columns.Add("LINE_SALES", GetType(System.Decimal), "(ISNULL(RTRN_QTY, 0) - ISNULL(RTRN_QTY_REFUSED, 0)) * ISNULL(RTRN_PRICE,0)")
+            .Tables("SOTRTRN2P").Columns.Add("LINE_SALES_CURR", GetType(System.Decimal), "(ISNULL(RTRN_QTY, 0) - ISNULL(RTRN_QTY_REFUSED, 0)) * ISNULL(RTRN_PRICE_CURR,0)")
+            .Tables("SOTRTRN2P").Columns.Add("LINE_COSTS", GetType(System.Decimal), "(ISNULL(RTRN_QTY, 0) - ISNULL(RTRN_QTY_REFUSED, 0)) * ISNULL(STYLE_COST,0)")
             .Tables("SOTRTRN2P").Columns.Add("RTRN_QTY_TOTAL", GetType(System.Decimal), "ISNULL(RTRN_QTY_1,0) + ISNULL(RTRN_QTY_2,0) + ISNULL(RTRN_QTY_3,0) + ISNULL(RTRN_QTY_REFUSED,0)")
 
             Create_TDA(.Tables.Add("SOTRTRN2_RPT"), "SOTRTRN2", "*")
@@ -308,6 +308,17 @@ Public Class SOFRTRN1
 
             ASCMAIN1.sql = "SELECT * FROM SOTRTNL3 WHERE RETURN_ID IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
             Create_TDA(.Tables.Add, "SOTRTNL3", ASCMAIN1.sql, 0, False, "V")
+
+            ASCMAIN1.sql = "SELECT SOTRTNL1.RETURN_ID, SOTRTRN2.ORDR_NO, SOTRTRN2.ORDR_LNO, SOTRTNL2.RTRN_QTY,
+                                (SOTRTRN2.RTRN_QTY - NVL(RTRN_QTY_1, 0) - NVL(RTRN_QTY_2, 0) - NVL(RTRN_QTY_3, 0)) QTY_REFUSED
+                                FROM SOTRTRN2, SOTRTNL1, SOTRTNL2
+                                WHERE SOTRTRN2.RTRN_NO = SOTRTNL1.RTRN_NO
+                                AND SOTRTNL1.RETURN_ID = SOTRTNL2.RETURN_ID
+                                AND SOTRTNL2.ORDR_NO = SOTRTRN2.ORDR_NO
+                                AND SOTRTNL2.ORDR_LNO = SOTRTRN2.ORDR_LNO
+                                AND SOTRTRN2.RTRN_NO = :PARM1"
+            Create_TDA(.Tables.Add, "SOTRTNL2_REF", ASCMAIN1.sql, 0, False, "V")
+
 
             Create_TDA(.Tables.Add, "ECTECOMD", "*")
             Fill_Records("ECTECOMD", "", True, "Select * from ECTECOMD")
@@ -1227,7 +1238,7 @@ Public Class SOFRTRN1
         For Each TABLE_NAME As String In New String() _
             {"SOTRTRN0", "SOTRTRN1", "SOTRTRN2", "SOTRTRN1P", "SOTRTRN2P", "SOTRTRN3", "SOTINVHH", "SOTINVHX", "ICTIADJ1", "ICTIADJ2",
              "SOTORDR2180", "SOTORDR2", "ICTWHSE1", "SOTRTRN2_RPT", "WHTMOVE1", "WHTMOVE2", "SOTRMAF1", "SOTRMAF2",
-             "SOTRTNL1", "SOTRTNL2", "SOTRTNL3"}
+             "SOTRTNL1", "SOTRTNL2", "SOTRTNL3", "SOTRTNL2_REF"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
 
@@ -1484,7 +1495,14 @@ Public Class SOFRTRN1
                         .Cells("RTRN_QTY_1").Value = 1
                         .Cells("RTRN_PRICE").Value = Val(drSOTRTNL2.Item("PRICE") & String.Empty) - Val(drSOTRTNL2.Item("DISCOUNT") & String.Empty)
                         .Cells("RTRN_PRICE_CURR").Value = Val(drSOTRTNL2.Item("PRICE") & String.Empty) - Val(drSOTRTNL2.Item("DISCOUNT") & String.Empty)
-                        .Cells("REFUND_TAX").Value = Val(drSOTRTNL2.Item("TAX") & String.Empty)
+
+                        ' 02/02/2026 - As per Walter do not refund Tax on Exchanges
+                        If (drSOTRTNL1.Item("OUTCOME") & String.Empty).ToString.ToUpper <> "EXCHANGE" Then
+                            .Cells("REFUND_TAX").Value = Val(drSOTRTNL2.Item("TAX") & String.Empty)
+                        Else
+                            .Cells("REFUND_TAX").Value = 0
+                        End If
+
                         .Cells("LINE_ITEM_ID").Value = drSOTRTNL2.Item("LINE_ITEM_ID") & String.Empty
                         .Cells("CUST_UPC").Value = drSOTORDR2.Item("CUST_UPC") & String.Empty
 
@@ -1613,6 +1631,7 @@ Public Class SOFRTRN1
             dst.AcceptChanges()
 
             If LoopReturnID.Length > 0 Then
+                Fill_Record("SOTRTNL2_REF", Absx1.txtFor("RTRN_NO").Text)
                 Dim tblSOTRTNL2 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTRTNL2 WHERE RETURN_ID = :PARM1", "SOTRTNL2", "V", {LoopReturnID})
                 For Each drSOTRTNL2 As DataRow In tblSOTRTNL2.Select("")
                     Dim ORDR_NO As String = drSOTRTNL2.Item("ORDR_NO") & String.Empty
@@ -1632,6 +1651,17 @@ Public Class SOFRTRN1
                             drSOTRTRN2.Item("WEB_RETURN_REASON") = drSOTRTNL2.Item("RETURN_REASON") & String.Empty
                         Else
                             drSOTRTRN2.Item("WEB_RETURN_REASON") = drSOTRTNL2.Item("PARENT_RETURN_REASON") & String.Empty
+                        End If
+
+                        ' Refused Qty is not stored in SOTRTRN2
+                        Dim RTRN_QTY_LN2 As Int32 = Val(drSOTRTNL2.Item("RTRN_QTY") & "")
+                        Dim RTRN_QTY As Int32 = Val(drSOTRTRN2.Item("RTRN_QTY") & "")
+                        Dim RTRN_QTY_TOTAL As Int32 = Val(drSOTRTRN2.Item("RTRN_QTY_TOTAL") & "")
+
+                        If RTRN_QTY_LN2 <> RTRN_QTY Then
+                            If RTRN_QTY > RTRN_QTY_TOTAL Then
+                                drSOTRTRN2.Item("RTRN_QTY_REFUSED") = RTRN_QTY - RTRN_QTY_TOTAL
+                            End If
                         End If
                     Next
                 Next

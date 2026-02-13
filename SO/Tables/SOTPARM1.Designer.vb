@@ -1,9 +1,9 @@
-<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class SOTPARM1
     'Inherits System.Windows.Forms.Form
     Inherits ABSolution.ASFCODEM
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class SOTPARM1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim Appearance30 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance31 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -117,6 +117,7 @@ Partial Class SOTPARM1
         Me.UltraTextEditor17 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl2 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox3 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.AbsCheckBox3 = New ABSCS.ABSCheckBox()
         Me.grpReleaseAtOnce = New Infragistics.Win.Misc.UltraGroupBox()
         Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.UltraNumericEditor6 = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -189,6 +190,7 @@ Partial Class SOTPARM1
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraGroupBox3.SuspendLayout()
+        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grpReleaseAtOnce, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpReleaseAtOnce.SuspendLayout()
         CType(Me.AbsCheckBox2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -304,7 +306,7 @@ Partial Class SOTPARM1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(768, 458)
         '
@@ -393,9 +395,9 @@ Partial Class SOTPARM1
         Me.UltraGroupBox7.Controls.Add(Me.UltraTextEditor5)
         Me.UltraGroupBox7.Controls.Add(Me.UltraLabel18)
         Me.UltraGroupBox7.Controls.Add(Me.chkCCTestMode)
-        Me.UltraGroupBox7.Location = New System.Drawing.Point(557, 276)
+        Me.UltraGroupBox7.Location = New System.Drawing.Point(557, 236)
         Me.UltraGroupBox7.Name = "UltraGroupBox7"
-        Me.UltraGroupBox7.Size = New System.Drawing.Size(196, 123)
+        Me.UltraGroupBox7.Size = New System.Drawing.Size(196, 120)
         Me.UltraGroupBox7.TabIndex = 23
         Me.UltraGroupBox7.Text = "Credit Card"
         '
@@ -840,12 +842,13 @@ Partial Class SOTPARM1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraGroupBox3)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(768, 457)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(768, 458)
         '
         'UltraGroupBox3
         '
+        Me.UltraGroupBox3.Controls.Add(Me.AbsCheckBox3)
         Me.UltraGroupBox3.Controls.Add(Me.grpReleaseAtOnce)
         Me.UltraGroupBox3.Controls.Add(Me.grdTATSHIPP)
         Me.UltraGroupBox3.Controls.Add(Me.numSO_PARM_GROUP_DAYS)
@@ -868,8 +871,18 @@ Partial Class SOTPARM1
         Me.UltraGroupBox3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox3.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox3.Name = "UltraGroupBox3"
-        Me.UltraGroupBox3.Size = New System.Drawing.Size(768, 457)
+        Me.UltraGroupBox3.Size = New System.Drawing.Size(768, 458)
         Me.UltraGroupBox3.TabIndex = 0
+        '
+        'AbsCheckBox3
+        '
+        Me.Absx1.SetABSColumnName(Me.AbsCheckBox3, "SO_PARM_RELEASE_REQ_CC_SALE")
+        Me.AbsCheckBox3.Location = New System.Drawing.Point(17, 247)
+        Me.AbsCheckBox3.Name = "AbsCheckBox3"
+        Me.AbsCheckBox3.Size = New System.Drawing.Size(593, 21)
+        Me.AbsCheckBox3.TabIndex = 7
+        Me.AbsCheckBox3.Text = "Credit Card Terms requires a Credit Card Sale before Sales order can be released." &
+    ""
         '
         'grpReleaseAtOnce
         '
@@ -891,7 +904,7 @@ Partial Class SOTPARM1
         Me.AbsCheckBox2.Location = New System.Drawing.Point(6, 88)
         Me.AbsCheckBox2.Name = "AbsCheckBox2"
         Me.AbsCheckBox2.Size = New System.Drawing.Size(187, 22)
-        Me.AbsCheckBox2.TabIndex = 306
+        Me.AbsCheckBox2.TabIndex = 12
         Me.AbsCheckBox2.Text = "Enable Release At Once"
         '
         'UltraNumericEditor6
@@ -905,7 +918,7 @@ Partial Class SOTPARM1
         Me.UltraNumericEditor6.Name = "UltraNumericEditor6"
         Me.UltraNumericEditor6.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor6.Size = New System.Drawing.Size(45, 25)
-        Me.UltraNumericEditor6.TabIndex = 302
+        Me.UltraNumericEditor6.TabIndex = 10
         Me.UltraNumericEditor6.Visible = False
         '
         'UltraLabel23
@@ -929,7 +942,7 @@ Partial Class SOTPARM1
         Me.UltraNumericEditor7.Name = "UltraNumericEditor7"
         Me.UltraNumericEditor7.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor7.Size = New System.Drawing.Size(45, 25)
-        Me.UltraNumericEditor7.TabIndex = 304
+        Me.UltraNumericEditor7.TabIndex = 11
         '
         'UltraLabel24
         '
@@ -1015,7 +1028,7 @@ Partial Class SOTPARM1
         Me.grdTATSHIPP.DisplayLayout.ViewStyle = Infragistics.Win.UltraWinGrid.ViewStyle.SingleBand
         Me.grdTATSHIPP.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.grdTATSHIPP.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.grdTATSHIPP.Location = New System.Drawing.Point(318, 271)
+        Me.grdTATSHIPP.Location = New System.Drawing.Point(315, 284)
         Me.grdTATSHIPP.Name = "grdTATSHIPP"
         Me.grdTATSHIPP.Size = New System.Drawing.Size(387, 143)
         Me.grdTATSHIPP.TabIndex = 301
@@ -1027,13 +1040,13 @@ Partial Class SOTPARM1
         Me.Absx1.SetABSColumnName(Me.numSO_PARM_GROUP_DAYS, "SO_PARM_GROUP_DAYS")
         Me.numSO_PARM_GROUP_DAYS.AlwaysInEditMode = True
         Me.numSO_PARM_GROUP_DAYS.FormatString = ""
-        Me.numSO_PARM_GROUP_DAYS.Location = New System.Drawing.Point(17, 295)
+        Me.numSO_PARM_GROUP_DAYS.Location = New System.Drawing.Point(14, 308)
         Me.numSO_PARM_GROUP_DAYS.MaxValue = 9999.0R
         Me.numSO_PARM_GROUP_DAYS.MinValue = 0
         Me.numSO_PARM_GROUP_DAYS.Name = "numSO_PARM_GROUP_DAYS"
         Me.numSO_PARM_GROUP_DAYS.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.numSO_PARM_GROUP_DAYS.Size = New System.Drawing.Size(45, 25)
-        Me.numSO_PARM_GROUP_DAYS.TabIndex = 7
+        Me.numSO_PARM_GROUP_DAYS.TabIndex = 9
         '
         'UltraNumericEditor2
         '
@@ -1046,7 +1059,7 @@ Partial Class SOTPARM1
         Me.UltraNumericEditor2.Name = "UltraNumericEditor2"
         Me.UltraNumericEditor2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.UltraNumericEditor2.Size = New System.Drawing.Size(45, 25)
-        Me.UltraNumericEditor2.TabIndex = 5
+        Me.UltraNumericEditor2.TabIndex = 4
         '
         'UltraLabel6
         '
@@ -1063,7 +1076,7 @@ Partial Class SOTPARM1
         'lblDays
         '
         Me.lblDays.AutoSize = True
-        Me.lblDays.Location = New System.Drawing.Point(67, 300)
+        Me.lblDays.Location = New System.Drawing.Point(64, 313)
         Me.lblDays.Name = "lblDays"
         Me.lblDays.Size = New System.Drawing.Size(241, 18)
         Me.lblDays.TabIndex = 300
@@ -1074,21 +1087,21 @@ Partial Class SOTPARM1
         Me.Absx1.SetABSColumnName(Me.numSO_PARM_REL_CUBE, "SO_PARM_REL_CUBE")
         Me.numSO_PARM_REL_CUBE.AlwaysInEditMode = True
         Me.numSO_PARM_REL_CUBE.FormatString = ""
-        Me.numSO_PARM_REL_CUBE.Location = New System.Drawing.Point(17, 271)
+        Me.numSO_PARM_REL_CUBE.Location = New System.Drawing.Point(14, 284)
         Me.numSO_PARM_REL_CUBE.MaxValue = 9999.0R
         Me.numSO_PARM_REL_CUBE.MinValue = 0
         Me.numSO_PARM_REL_CUBE.Name = "numSO_PARM_REL_CUBE"
         Me.numSO_PARM_REL_CUBE.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
         Me.numSO_PARM_REL_CUBE.Size = New System.Drawing.Size(45, 25)
-        Me.numSO_PARM_REL_CUBE.TabIndex = 6
+        Me.numSO_PARM_REL_CUBE.TabIndex = 8
         '
         'lblCube
         '
         Me.lblCube.AutoSize = True
-        Me.lblCube.Location = New System.Drawing.Point(67, 276)
+        Me.lblCube.Location = New System.Drawing.Point(64, 289)
         Me.lblCube.Name = "lblCube"
         Me.lblCube.Size = New System.Drawing.Size(140, 18)
-        Me.lblCube.TabIndex = 298
+        Me.lblCube.TabIndex = 11
         Me.lblCube.Text = "Total Cube Override"
         '
         'UltraNumericEditor1
@@ -1166,7 +1179,7 @@ Partial Class SOTPARM1
         Me.AbsCheckBox1.Location = New System.Drawing.Point(17, 227)
         Me.AbsCheckBox1.Name = "AbsCheckBox1"
         Me.AbsCheckBox1.Size = New System.Drawing.Size(426, 21)
-        Me.AbsCheckBox1.TabIndex = 5
+        Me.AbsCheckBox1.TabIndex = 6
         Me.AbsCheckBox1.Text = "Release Future Available if Arrival Date is < Release Date"
         '
         'UltraNumericEditor5
@@ -1205,7 +1218,7 @@ Partial Class SOTPARM1
         Me.UltraOptionSet1.Location = New System.Drawing.Point(165, 165)
         Me.UltraOptionSet1.Name = "UltraOptionSet1"
         Me.UltraOptionSet1.Size = New System.Drawing.Size(278, 55)
-        Me.UltraOptionSet1.TabIndex = 4
+        Me.UltraOptionSet1.TabIndex = 5
         '
         'UltraLabel8
         '
@@ -1269,6 +1282,7 @@ Partial Class SOTPARM1
         'SplitContainer1
         '
         Me.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1
         Me.SplitContainer1.IsSplitterFixed = True
         Me.SplitContainer1.Location = New System.Drawing.Point(0, 0)
         Me.SplitContainer1.Name = "SplitContainer1"
@@ -1338,6 +1352,7 @@ Partial Class SOTPARM1
         CType(Me.UltraGroupBox3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox3.ResumeLayout(False)
         Me.UltraGroupBox3.PerformLayout()
+        CType(Me.AbsCheckBox3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grpReleaseAtOnce, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpReleaseAtOnce.ResumeLayout(False)
         Me.grpReleaseAtOnce.PerformLayout()
@@ -1442,4 +1457,5 @@ Partial Class SOTPARM1
     Friend WithEvents AbsCheckBox2 As ABSCS.ABSCheckBox
     Friend WithEvents UltraLabel26 As Misc.UltraLabel
     Friend WithEvents dtetariff As UltraWinEditors.UltraDateTimeEditor
+    Friend WithEvents AbsCheckBox3 As ABSCS.ABSCheckBox
 End Class

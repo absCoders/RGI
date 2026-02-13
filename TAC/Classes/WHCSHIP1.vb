@@ -5142,15 +5142,17 @@ Public Class WHCSHIP1
             ' For multi UPS package shipments the total cost exists in all packages
             ' so spread the costs
             PackageDetailList.Clear()
+
+            ' 01/29/2026 - Instead of splitting the Freight evenly cross the packages use the weight ratio.
             For ictr As Int16 = 0 To objUpsShip.Packages.Count - 1
                 PackageDetailList.Add(objUpsShip.Packages(ictr))
                 GetPackageCosts(objUpsShip.Packages(ictr), objUpsShip)
                 Dim key As Integer = Val(objUpsShip.Packages(ictr).Id)
-                ShipmentBaseCharge(key) = Math.Round(ShipmentBaseCharge(key) / objUpsShip.Packages.Count, 2)
-                ShipmentDiscountCharge(key) = Math.Round(ShipmentDiscountCharge(key) / objUpsShip.Packages.Count, 2)
-                ShipmentSurCharge(key) = Math.Round(ShipmentSurCharge(key) / objUpsShip.Packages.Count, 2)
-                ShipmentNetCharge(key) = Math.Round(ShipmentNetCharge(key) / objUpsShip.Packages.Count, 2)
-                ShipmentListCharge(key) = Math.Round(ShipmentListCharge(key) / objUpsShip.Packages.Count, 2)
+                ShipmentBaseCharge(key) = Math.Round(ShipmentBaseCharge(key) * (objUpsShip.Packages(ictr).Weight / TotalWeight), 2)
+                ShipmentDiscountCharge(key) = Math.Round(ShipmentDiscountCharge(key) * (objUpsShip.Packages(ictr).Weight / TotalWeight), 2)
+                ShipmentSurCharge(key) = Math.Round(ShipmentSurCharge(key) * (objUpsShip.Packages(ictr).Weight / TotalWeight), 2)
+                ShipmentNetCharge(key) = Math.Round(ShipmentNetCharge(key) * (objUpsShip.Packages(ictr).Weight / TotalWeight), 2)
+                ShipmentListCharge(key) = Math.Round(ShipmentListCharge(key) * (objUpsShip.Packages(ictr).Weight / TotalWeight), 2)
             Next
 
             If objUpsShip.Packages.Count = 1 Then
@@ -6528,10 +6530,7 @@ Public Class WHCSHIP1
 
     Private Sub GetPackageCosts(ByVal package As PackageDetail, ByVal shipObject As Object)
 
-        Dim xdoc As New System.Xml.XmlDocument
         Dim PayorListPackageNetAmount As Decimal = 0
-        Dim processingPayorList As Boolean = False
-        Dim netFreight As Boolean = False
         Dim SHIP_PACKAGE_NO As String = String.Empty
 
         Try

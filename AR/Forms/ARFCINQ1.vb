@@ -2138,7 +2138,7 @@ Public Class ARFCINQ1
                         "Retrieve Paid Invoices", "Create Log", "Total Balance", "Change Terms", "Credit Card", "Sales Order Entry", "Show Aged AR", "email Aged AR", "email Cust Statement")
 
         End If
-        Load_Popup_Menu(grdSOTORDR0, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Customer Order Inquiry", "Sales Order Entry", "Print Selected")
+        Load_Popup_Menu(grdSOTORDR0, "SSSBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Customer Order Inquiry", "Sales Order Entry", "Print Selected", "Print Pro-Forma")
         Load_Popup_Menu(grdSOTORDR2, "B", "Style Status Inquiry")
         Load_Popup_Menu(grdSATCUSTS, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdARTCUST6, "SS", "Show Filter", "Show GroupBox")
@@ -2154,9 +2154,6 @@ Public Class ARFCINQ1
         End If
 
         Load_Popup_Menu(grdSOTINVH2, "B", "Style Status Inquiry")
-
-        ' Load_Popup_Menu(grdARTCUST4, "B", "Customer Inquiry")
-
 
         If ASCMAIN1.USER_SECURITY_CODEs.Contains("AR") Then
             Load_Popup_Menu(grdARTPYMTY, "BSSB", "Issue CC Credit", "Show Filter", "Show GroupBox", "Show Raw EDI")
@@ -2304,7 +2301,6 @@ Public Class ARFCINQ1
                         End If
                     End If
 
-
                 Case "grdSOTORDR0"
                     If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
                         tlb_pop.Tools("Sales Order Entry").SharedProps.Visible = True
@@ -2313,6 +2309,9 @@ Public Class ARFCINQ1
                         tlb_pop.Tools("Sales Order Entry").SharedProps.Visible = False
                         tlb_pop.Tools("Print Selected").SharedProps.Visible = False
                     End If
+
+                    tlb_btn = DirectCast(tlb_pop.Tools("Print Pro-Forma"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "RGI"
 
                 Case "grdSOTINVH1"
                     If ASCMAIN1.DBS_COMPANY = "NYA" Or ASCMAIN1.DBS_SERVER = "NYA" Then
@@ -2350,6 +2349,64 @@ Public Class ARFCINQ1
         Dim grd As UltraWinGrid.UltraGrid = GRDs(Mid(e.Tool.OwningMenu.Key, 4))
 
         Select Case e.Tool.Key
+
+            Case "Print Pro-Forma"
+                If grd.Selected.Rows.Count = 0 Then
+                    MessageBox.Show("You must select at least 1 sales order", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                Dim lstCustCodes As New List(Of String)
+                Dim lstOrderNos As New List(Of String)
+                For Each grdRow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    'Dim CUST_CODE As String = grdRow.Cells("CUST_CODE").Value
+                    'If Not lstCustCodes.Contains(CUST_CODE) Then
+                    '    lstCustCodes.Add(CUST_CODE)
+                    'End If
+
+                    'If lstCustCodes.Count > 1 Then
+                    '    MessageBox.Show("All selected sales orders must be for the same customer.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    '    Exit Sub
+                    'End If
+                    Dim ORDR_NO As String = String.Empty
+
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        ORDR_NO = grdRow.Cells("ORDR_GROUP_NO").Value
+                        lstOrderNos.Add(ORDR_NO)
+                    Else
+                        Dim ORDR_GROUP_NO = grdRow.Cells("ORDR_GROUP_NO").Value
+                        ORDR_NO = ASCDATA1.GetDataValue("Select Min (ORDR_NO) from SOTORDR1 where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'")
+                        Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", ORDR_NO)
+                        If rowSOTORDR1 IsNot Nothing Then
+                            lstOrderNos.Add(ORDR_NO)
+                        End If
+                    End If
+                Next
+
+                If lstOrderNos.Count = 0 Then
+                    MessageBox.Show("Could not locate all Selected Orders.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                Using F As New ASFMSGBF
+                    Dim ExportInfo As Boolean = False
+                    If MessageBox.Show("Do you want to show Export Information?", e.Tool.Key, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
+                        ExportInfo = True
+                    End If
+
+                    If ASCMAIN1.CLIENT = "VAN" And InquiryMode Then
+                        Print_ProForma("ORDR_QTY", lstOrderNos, ExportInfo)
+                    Else
+                        Dim ORDR_QTY_fields() As String = New String() {"Qty Ordered", "Qty Open", "Qty Allocated", "Qty In Pick", "Qty Available"}
+                        'Dim ORDR_QTY_fields() As String = New String() {"Qty Ordered", "Qty Open", "Qty Allocated", "Qty Allocated Current", "Qty In Pick"}
+                        Dim i As Integer = F.Get_opt_from_User("Which Qty Field should be Used", ORDR_QTY_fields, 0, "Pro-Forma Qty Option")
+                        If i <> -1 Then
+                            Dim ORDR_QTY_field As String = New String() {"ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_ALLO", "ORDR_QTY_PICK", "ORDR_QTY_ALLO_X"}(i)
+                            Print_ProForma(ORDR_QTY_field, lstOrderNos, ExportInfo)
+                        End If
+                    End If
+                End Using
+
 
             Case "Show $0 Balance Items"
                 Filter_ARTOPEN1()
@@ -3128,6 +3185,77 @@ Public Class ARFCINQ1
         Return INV_NOs
 
     End Function
+
+    Sub Print_ProForma(ByVal ORDR_QTY_field As String,
+                       ByVal lstOrderNos As List(Of String),
+                       ByVal ExportInfo As Boolean)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Now Preparing Invoice")
+            Dim pfComment As String = ""
+            Dim REPORT_NAME As String = "SORINVP1"
+
+            If Not REPORTS.ContainsKey(REPORT_NAME) Then
+                REPORTS.Add(REPORT_NAME, Load_rptClass(REPORT_NAME))
+                REPORTS(REPORT_NAME).Prepare_dst(False, "")
+            End If
+
+            Dim RPT As String = ROWs("ARTPARM1").Item("AR_PARM_INVOICE_RPT") & ""
+            If RPT = "" Then
+                RPT = REPORT_NAME
+            End If
+
+            Dim proFormaQuery As New List(Of String)
+            Dim salesOrders As Boolean = False
+            Dim invoices As Boolean = False
+            Dim INV_TYPE_requested As String = String.Empty
+
+            Dim tbl As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTORDR1 WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))", "SOTORDR1", "V", {String.Join(",", lstOrderNos.ToArray)})
+            For Each dr As DataRow In tbl.Select("")
+                Select Case dr.Item("ORDR_STATUS") & String.Empty
+                    Case "F"
+                        proFormaQuery.Add($"(SOTINVH1.ORDR_NO = '{dr.Item("ORDR_NO")}')")
+                        invoices = True
+                    Case Else
+                        proFormaQuery.Add($"(SOTORDR1.ORDR_NO = '{dr.Item("ORDR_NO")}')")
+                        salesOrders = True
+                End Select
+            Next
+
+            If invoices AndAlso salesOrders Then
+                INV_TYPE_requested = "B"
+            ElseIf salesOrders Then
+                INV_TYPE_requested = "O"
+            Else
+                ' Nothing at this time
+            End If
+
+            Dim rptQuery As String = " AND (" & String.Join(" OR ", proFormaQuery.ToArray) & ")"
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                REPORTS(REPORT_NAME).Fill_Records_RPT(New String() {rptQuery, "1", pfComment})
+            Else
+                REPORTS(REPORT_NAME).Fill_Records_RPT(New String() {rptQuery, "1", INV_TYPE_requested, ORDR_QTY_field})
+            End If
+
+            With REPORTS(REPORT_NAME).clsASCBASE1
+                .Print_Report_Begin()
+                .CR_params.Add("SUBT", "")
+                .CR_params.Add("CONS_INV", "0")
+                .CR_params.Add("EXPORT_INFO", IIf(ExportInfo, "1", "0"))
+                .Generate_Report(RPT, "Sales Invoice", , True, , , , , False)
+                .Print_Report_End()
+            End With
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Print ProForma", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("")
+        End Try
+
+    End Sub
+
 
 
 #End Region
