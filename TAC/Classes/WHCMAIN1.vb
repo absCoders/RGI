@@ -223,7 +223,7 @@ Public Class WHCMAIN1
             Dim WHSE_TRAN_LNO As Integer = Val(row.Item("WHSE_TRAN_LNO") & "")
             Dim WHSE_TRAN_TYPE As String = row.Item("WHSE_TRAN_TYPE")
             Dim WHSE_CODE As String = row.Item("WHSE_CODE")
-            Dim BAR_CODE As String = "0000000000" ' row.Item("BAR_CODE")
+            Dim BAR_CODE As String = row.Item("BAR_CODE")
             Dim LOCATION_CODE As String = row.Item("LOCATION_CODE") & ""
             Dim STYLE_CODE As String = row.Item("STYLE_CODE")
             Dim COLOR_CODE As String = row.Item("COLOR_CODE")

@@ -1988,7 +1988,7 @@ Public Class SOFRTRN1
 
                     For Each Q As String In LOCS.Keys
                         ASCMAIN1.sql = "Select SOTRTRN2.RTRN_NO WHSE_TRAN_NO, SOTRTRN2.RTRN_LNO WHSE_TRAN_LNO" _
-                            & ", 'C' WHSE_TRAN_TYPE, SOTRTRN1.WHSE_CODE" _
+                            & ", 'C' WHSE_TRAN_TYPE, SOTRTRN1.WHSE_CODE, ICTWHSE1.WHSE_DEF_BAR_CODE BAR_CODE" _
                             & ", ICTWHSE1." & LOCS(Q) & " LOCATION_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE" _
                             & ", SOTRTRN2." & Q & " WHSE_TRAN_QTY" _
                             & " from SOTRTRN1,SOTRTRN2,ICTWHSE1" _
