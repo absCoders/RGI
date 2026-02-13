@@ -998,13 +998,13 @@ Public Class SOFPICKS
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTORDQ1, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Select Selected", "Release Selected Orders", "Show Inventory Requirements", "Sales Order Inquiry") ' , "De-Select All Orders with Shortages"
-        Load_Popup_Menu(grdICTSTATO, "SBBBB", "Show Filter", "Item/Location Inquiry", "De-Select Order", "Cancel if Short - All Items", "Back-Order if Short - All Items")
+        Load_Popup_Menu(grdICTSTATO, "SBBBB", "Show Filter", "Style Status Inquiry", "De-Select Order", "Cancel if Short - All Items", "Back-Order if Short - All Items")
         'Load_Popup_Menu(grdSOTORDQ0, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Release Selected Orders", "Show Inventory Requirements", "Calculate Short", "Combine Groups")
         Load_Popup_Menu(grdSOTORDQ0, "SBBB", "Show Filter", "Release Selected Order Groups", "Calculate Short", "Combine Groups")
         Load_Popup_Menu(grdSOTPICK0, "SBBBBBB", "Show Filter", "Print Custom Tote Labels", "Print Resolution Report", "Print Resolution Report - Res Only", "Print Test Report", "Print Truck Pick Tag", "De-Release Pick Batch")
         Load_Popup_Menu(grdSOTPICK1, "SBBB", "Show Filter", "Print Custom Tote Label", "Sales Order Inquiry", "De-Release Pick Tickets", "De-Pick Pick Tickets")
-        Load_Popup_Menu(grdSOTPICK2, "B", "Item/Location Inquiry")
-        'Load_Popup_Menu(grdSOTORDRX, "SSBBBBBB", "Show Filter", "Show GroupBox", "Sales Order Inquiry", "Item/Location Inquiry", "Cancel Selected Orders", "Select All", "De-Select All", "Select Selected")
+        Load_Popup_Menu(grdSOTPICK2, "B", "Style Status Inquiry")
+        'Load_Popup_Menu(grdSOTORDRX, "SSBBBBBB", "Show Filter", "Show GroupBox", "Sales Order Inquiry", "Style Status Inquiry", "Cancel Selected Orders", "Select All", "De-Select All", "Select Selected")
         Load_Popup_Menu(grdSOTORDRX, "SSBB", "Show Filter", "Show GroupBox", "Sales Order Inquiry", "Find in Orders")
     End Sub
 
@@ -1535,7 +1535,7 @@ Public Class SOFPICKS
                 Print_Truck_Pick_Tag(e.Tool.Key, TRUCK_NO, PICK_DESCRIPTION, ORDER_COUNT, PICK_BATCH_NO)
                 MsgBox("Tag Printed")
 
-            Case "Item/Location Inquiry"
+            Case "Style Status Inquiry"
 
                 Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
@@ -1544,10 +1544,9 @@ Public Class SOFPICKS
                 KEYS.Add("WHSE_CODE", WHSE_CODE)
                 KEYS.Add("STYLE_CODE", STYLE_CODE)
                 KEYS.Add("COLOR_CODE", COLOR_CODE)
-                Context_Launch("View", KEYS, e.Tool.Key, "ICFSTAT3")
+                Context_Launch("View", KEYS, e.Tool.Key, "ICFSTAT1")
 
             Case "Sales Order Inquiry"
-
                 Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Text
                 'Dim KEYS As New Dictionary(Of String, Object)
                 'KEYS.Add("ORDR_NO", ORDR_NO)
