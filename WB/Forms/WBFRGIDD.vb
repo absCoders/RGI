@@ -285,7 +285,15 @@ Public Class WBFRGIDD
     End Sub
 
     Private Sub btnCreateDump_Click(sender As Object, e As EventArgs) Handles btnCreateDump.Click
-        Dim clsWBCRGIDD As New WBCRGIDD(Me, Absx1.cmbFor("RYP0").Value, Absx1.cmbFor("RYP1").Value, chkOnlyOrderDetails.Checked)
+        If chkOnlyOrderDetails.Checked And chkOnlyInvoiceHeaders.Checked Then
+            Dim imsg As New Text.StringBuilder With {.Length = 0}
+            imsg.AppendLine("You Can't Run Order Details and")
+            imsg.AppendLine("Invoice Headers Options At ")
+            imsg.AppendLine("The Same Time!")
+            MsgBox(imsg.ToString, vbCritical, "Woah, Slow Down!!")
+            Exit Sub
+        End If
+        Dim clsWBCRGIDD As New WBCRGIDD(Me, Absx1.cmbFor("RYP0").Value, Absx1.cmbFor("RYP1").Value, chkOnlyOrderDetails.Checked, chkOnlyInvoiceHeaders.Checked)
         If clsWBCRGIDD.eMsg.Length = 0 Then
             clsWBCRGIDD.makeExcel()
         Else
