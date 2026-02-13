@@ -2106,6 +2106,9 @@ Public Class ARFPYMT2
 
             Update_Record_TDA("ARTPYMT1")
         End If
+        If Global_in_process Then
+            Update_Record_TDA("ARTPYMT1")
+        End If
 
         If application_only Then
             application_only = False
