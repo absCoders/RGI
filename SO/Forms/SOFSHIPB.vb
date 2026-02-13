@@ -459,7 +459,9 @@ Public Class SOFSHIPB
 
             Create_TDA(.Tables.Add, "SOTORDC1", "*", 1)
             Create_TDA(.Tables.Add, "SOTORDC2", "*", 1)
-            .Tables("SOTORDC2").Columns.Add("PICK_NO", GetType(System.String))
+            If Not dst.Tables("SOTORDC2").Columns.Contains("PICK_NO") Then
+                .Tables("SOTORDC2").Columns.Add("PICK_NO", GetType(System.String))
+            End If
 
             ASCMAIN1.sql = sqlSOTSHIPX & " and ROWNUM < 1"
             Create_TDA(.Tables.Add, "SOTSHIP1", "**", 0, True, "", 1)
@@ -2116,9 +2118,13 @@ Public Class SOFSHIPB
                             If dst.Tables("SOTSHIP1").Columns.Contains(field) Then
                                 ' 09/20/2019 - do not overwrite ORDR_DEPT on the shipment records.
                                 ' 09/01/2022 - do not overwrite the TERM_CODE on shipment records.
-                                If field <> "ORDR_DEPT" AndAlso field <> "TERM_CODE" Then
-                                    rowSOTSHIP1.Item(field) = Absx1.txtFor(field).Text
-                                End If
+                                ' 01/29/2026 - do not overwrite the SREP_CODE and SREP2_CODE on shipment records.
+                                Select Case field
+                                    Case "ORDR_DEPT", "TERM_CODE", "SREP_CODE", "SREP2_CODE"
+                                        ' Do not modify these values
+                                    Case Else
+                                        rowSOTSHIP1.Item(field) = Absx1.txtFor(field).Text
+                                End Select
                             End If
                         Next
                     End If
@@ -2360,7 +2366,14 @@ Public Class SOFSHIPB
                                                 End If
                                             End If
                                         Else
-                                            If dst.Tables("TATEVNT1").Select("EVENT_TYPE = 'CCPDB'").Length = 0 Then
+                                            Dim creditCardCharge As Boolean = False
+                                            ASCMAIN1.sql = "SELECT * FROM SOTORDC1 WHERE PICK_NO = :PARM1"
+                                            Dim drSOTORDC1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {rowSOTPICK1.Item("PICK_NO")})
+                                            If drSOTORDC1 IsNot Nothing Then
+                                                creditCardCharge = True
+                                            End If
+
+                                            If Not creditCardCharge AndAlso dst.Tables("TATEVNT1").Select("EVENT_TYPE = 'CCPDB'").Length = 0 Then
                                                 If MessageBox.Show("Sales Order (" & rowSOTPICK1.Item("ORDR_NO") & ") is missing the Credit Card Authorization. Do you want to Direct Bill this shipment.", "Direct Bill", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.Yes Then
                                                     Dim rowTATEVNT1 As DataRow = dst.Tables("TATEVNT1").NewRow
                                                     rowTATEVNT1.Item("TABLE_NAME") = "SOTORDR1"
@@ -5406,50 +5419,25 @@ Public Class SOFSHIPB
 
             ASCMAIN1.Progress("Now Updating ...")
 
-            ' Place the freight on one Pick Ticket if the user provided a freight
-            Dim shippingFreight As Decimal = Val(numSHIP_FREIGHT.Value & String.Empty)
-
-            ' 02/15/2019 - Regenecy wants the UPS / Fedex total freight cost on one invoice
-            ' Customers are confused when they see a multi - Pick Ticket shipment with the freight spread evenly across each invoice
-            If commonCarrier AndAlso Not processingMasterBOL AndAlso Not select_from_3PL_list Then
-                If ASCMAIN1.CLIENT = "RGI" AndAlso shippingFreight = 0 Then
-                    If dst.Tables("SOTPICK1").Rows.Count > 1 Then
-                        shippingFreight = Val(dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "") & String.Empty)
-                    End If
-                End If
-            End If
-
-            If shippingFreight > 0 Then
-                For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
-                    rowSOTPICK1.Item("PICK_FREIGHT") = 0
-                    rowSOTPICK1.Item("ORDR_FOB") = 0
-                Next
-
-                If ASCMAIN1.CLIENT = "RGI" Then
-                    ' Place freight on invoice with the greatest $$
-                    dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") = shippingFreight
-                Else
-                    ' Spread the freight evenly across the pick tickets
-                    Dim numSpread As Int16 = dst.Tables("SOTPICK1").Select("SELECTED = '1'").Length
-                    For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
-                        rowSOTPICK1.Item("PICK_FREIGHT") = Math.Round(shippingFreight / numSpread, 2)
-                    Next
-
-                    Dim diff As Decimal = shippingFreight - dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "SELECTED = '1'")
-                    If diff <> 0 Then
-                        dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") =
-                            dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") + diff
-                    End If
-                End If
-            End If
-
             Dim freightAllowance As Decimal = 0
             If commonCarrier Then
-                For Each row As DataRow In dst.Tables("SOTPICK1").Rows
-                    freightAllowance += Val(row.Item("PICK_FREIGHT") & String.Empty) + Val(row.Item("ORDR_FOB") & String.Empty)
+                For Each row As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
+                    freightAllowance += Val(row.Item("PICK_FREIGHT") & String.Empty)
                 Next
+                numSHIP_FREIGHT.Value = freightAllowance
             Else
-                freightAllowance = shippingFreight
+                freightAllowance = Val(numSHIP_FREIGHT.Value & String.Empty)
+                Dim numSpread As Int16 = dst.Tables("SOTPICK1").Select("SELECTED = '1'").Length
+                For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
+                    rowSOTPICK1.Item("PICK_FREIGHT") = Math.Round(freightAllowance / numSpread, 2)
+                Next
+
+                Dim diff As Decimal = freightAllowance - dst.Tables("SOTPICK1").Compute("SUM(PICK_FREIGHT)", "SELECTED = '1'")
+                If diff <> 0 Then
+                    dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") =
+                        dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") + diff
+                End If
+
             End If
 
             CalculateFreightDiscount(freightAllowance, rowSOTSVIA1)
@@ -5576,12 +5564,12 @@ Public Class SOFSHIPB
             Dim ship_ref As String = String.Empty
             ' ORDR_INV_COMMENT
             If ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommProcessing Then
-                If dst.Tables("SOTINVH1").Rows.Count > 0 Then
+                If dst.Tables("SOTINVH1").Rows.Count > 1 Then
                     Dim invoicesWithFreight As Int16 = dst.Tables("SOTINVH1").Select("INV_FREIGHT > 0").Length
                     Dim invoicesWithOutFreight As Int16 = dst.Tables("SOTINVH1").Select("INV_FREIGHT = 0").Length
                     Dim totalFreight As Double = Val(dst.Tables("SOTINVH1").Compute("SUM(INV_FREIGHT)", "") & String.Empty)
 
-                    If invoicesWithFreight > 0 AndAlso invoicesWithOutFreight > 0 Then
+                    If invoicesWithFreight > 0 Then
                         Dim freightMessage As String = "Freight (" & totalFreight.ToString("#,##0.00") & ") shared across the following invoices: "
                         For Each rowFreight As DataRow In dst.Tables("SOTINVH1").Select("", "INV_FREIGHT DESC, INV_NO")
                             freightMessage &= rowFreight.Item("INV_NO") & ", "
@@ -5865,6 +5853,27 @@ Public Class SOFSHIPB
             Update_Record_TDA("SOTRNGA1")
             Update_Record_TDA("SOTORDC1")
             Update_Record_TDA("SOTORDC2")
+
+            For Each drSOTORDC1 As DataRow In dst.Tables("SOTORDC1").Select("")
+                ASCMAIN1.sql = "UPDATE SOTORDC1 C1
+                                    SET BALANCE =
+                                        GREATEST(
+                                          C1.AMOUNT -
+                                          NVL((
+                                            SELECT SUM(C2.AMOUNT_APPLIED)
+                                            FROM SOTORDC2 C2
+                                            WHERE C2.ORDR_NO  = C1.ORDR_NO
+                                              AND C2.TRANS_NO = C1.TRANS_NO
+                                          ), 0),
+                                          0
+                                        )
+                                    WHERE C1.ORDR_NO = :PARM1"
+                Dim ORDR_NO As String = drSOTORDC1.Item("ORDR_NO")
+                Try
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", {ORDR_NO})
+                Catch ex As Exception
+                End Try
+            Next
 
             If RFIXMSG = True Then
                 MsgBox("Range Styles Were Fixed On this Shipment. Please Alert ABS", MsgBoxStyle.OkOnly, "Ranges")
@@ -6357,12 +6366,18 @@ Public Class SOFSHIPB
 
             ' Create Web Invoices
             Try
-                If Not (isEcommProcessing OrElse isRegencyTransferShipment) Then ' OrElse (ASCMAIN1.CLIENT = "RGI" AndAlso dst.Tables("SOTINVH1").Select("SREP_CODE = 'DM'").Length > 0) 5/1/2019 - Danny does not want the emails
+                If Not (isEcommProcessing OrElse isRegencyTransferShipment) Then
                     ASCMAIN1.Progress("Creating Web Invoice", "")
                     For Each row As DataRow In dst.Tables("SOTINVH1").Select("")
-                        TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))
-                        ' Email Invoice to Sales Rep and Customer.
-                        EmailInvoice(row.Item("INV_TYPE"), row.Item("INV_NO"))
+                        If ASCMAIN1.Running_in_VS Then
+                            Stop
+                        End If
+
+                        If Not ASCMAIN1.RunningInTestEnvironment Then
+                            TAC.SOCMAIN1.CreateWebInvoice(Me, row.Item("INV_TYPE"), row.Item("INV_NO"))
+                            ' Email Invoice to Sales Rep and Customer.
+                            EmailInvoice(row.Item("INV_TYPE"), row.Item("INV_NO"))
+                        End If
                     Next
                 End If
 
@@ -12148,14 +12163,26 @@ Public Class SOFSHIPB
         Dim rowSOTPICK1 As DataRow = Nothing
         Try
 
-            If ASCMAIN1.Running_in_VS Then
-                Stop
-                CreditCardProcessed = True
-                Exit Sub
-            End If
-
+            ' Current processing may have more than one pick ticket for a sales order.
             dst.Tables("SOTORDC1").Rows.Clear()
             dst.Tables("SOTORDC2").Rows.Clear()
+
+            Dim lstPickNos As New List(Of String)
+            For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "")
+                Dim CCPA_NO_ORDR As String = rowSOTPICK1.Item("CCPA_NO_ORDR") & String.Empty
+                If CCPA_NO_ORDR.Length = 0 Then
+                    lstPickNos.Add(rowSOTPICK1.Item("PICK_NO"))
+                End If
+            Next
+
+            If lstPickNos.Count > 0 Then
+                ASCMAIN1.sql = "SELECT * FROM SOTORDC1 WHERE PICK_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))"
+                Dim tbl As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTORDC1", "V", {String.Join(",", lstPickNos.ToArray)})
+
+                For Each dr As DataRow In tbl.Select("")
+                    dst.Tables("SOTPICK1").Select($"PICK_NO = '{dr.Item("PICK_NO")}'")(0).Item("CCPA_NO_ORDR") = dr.Item("CCPA_NO")
+                Next
+            End If
 
             For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1' AND ISNULL(CCPA_NO_ORDR, '') <> ''", "PICK_AMT_CONF DESC")
 
@@ -12219,6 +12246,9 @@ Public Class SOFSHIPB
                 Dim shippingFreight As Decimal = Val(rowSOTINVH1.Item("INV_FREIGHT") & String.Empty)
                 chargeAmount += shippingFreight + Val(rowSOTINVH1.Item("INV_MISC_CHG") & String.Empty) + inv_stax
 
+                ' Changes on 01/22/2026
+                chargeAmount = Val(rowSOTINVH1.Item("INV_TOTAL_AMOUNT") & String.Empty)
+
                 ' do we need to add additional funds??
                 If Not DirectBill Then
                     For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'A' AND ACTIVE_IND = '1' AND AMOUNT > 0")
@@ -12262,7 +12292,7 @@ Public Class SOFSHIPB
 
                 ' Deposits
                 Dim depositAmount As Decimal = 0
-                For Each row As DataRow In dst.Tables("SOTORDC1").Select("TRANS_TYPE = 'D' AND ACTIVE_IND = '1' AND BALANCE > 0")
+                For Each row As DataRow In dst.Tables("SOTORDC1").Select($"TRANS_TYPE = 'D' AND ACTIVE_IND = '1' AND BALANCE > 0 AND PICK_NO = '{PICK_NO}'")
                     If chargeAmount <= 0 Then
                         Exit For
                     End If
@@ -12283,7 +12313,58 @@ Public Class SOFSHIPB
                     dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
                     chargeAmount -= depositAmount
                     row.Item("BALANCE") -= depositAmount
+
+                    If Val(row.Item("BALANCE") & String.Empty) < 0 Then
+                        row.Item("BALANCE") = 0
+                    End If
                 Next
+
+                depositAmount = 0
+                If ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty <> "1" Then
+                    For Each row As DataRow In dst.Tables("SOTORDC1").Select($"TRANS_TYPE = 'D' AND ACTIVE_IND = '1' AND BALANCE > 0 AND ISNULL(PICK_NO, '') = ''")
+                        If chargeAmount <= 0 Then
+                            Exit For
+                        End If
+
+                        depositAmount = row.Item("BALANCE")
+                        If depositAmount > chargeAmount Then
+                            depositAmount = chargeAmount
+                        End If
+
+                        Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
+                        rowSOTORDC2.Item("ORDR_NO") = row.Item("ORDR_NO")
+                        rowSOTORDC2.Item("TRANS_NO") = row.Item("TRANS_NO")
+                        rowSOTORDC2.Item("TRANS_LNO") = Val(dst.Tables("SOTORDC2").Compute("MAX(TRANS_LNO)", "ORDR_NO = '" & row.Item("ORDR_NO") & "' AND TRANS_NO = " & row.Item("TRANS_NO")) & String.Empty) + 1
+                        rowSOTORDC2.Item("PICK_NO") = PICK_NO ' temp to convert to Inv No
+                        'rowSOTORDC2.Item("INV_DATE") = ""
+                        'rowSOTORDC2.Item("INV_AMOUNT") = ""
+                        rowSOTORDC2.Item("AMOUNT_APPLIED") = chargeAmount
+                        dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
+                        chargeAmount -= depositAmount
+                        row.Item("BALANCE") -= depositAmount
+
+                        If Val(row.Item("BALANCE") & String.Empty) < 0 Then
+                            row.Item("BALANCE") = 0
+                        End If
+                    Next
+                End If
+
+                If chargeAmount > 0 Then
+                    If ASCMAIN1.Running_in_VS OrElse ASCMAIN1.RunningInTestEnvironment Then
+                        If ASCMAIN1.Running_in_VS Then
+                            Stop
+                        End If
+
+                        Dim uMSg As String = "READ CAREFULLY" & Environment.NewLine & Environment.NewLine
+                        uMSg &= $"You are in a Test Environment. If you continue, the system will attempt to create a credit card charge of {chargeAmount}." & Environment.NewLine & Environment.NewLine
+                        uMSg &= "Do you want to continue?"
+
+                        If MessageBox.Show(uMSg, "CC Authorization", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                            CreditCardProcessed = True
+                            Exit Sub
+                        End If
+                    End If
+                End If
 
                 If chargeAmount > 0 Then
                     Try
@@ -12311,6 +12392,10 @@ Public Class SOFSHIPB
                             'rowSOTORDC2.Item("INV_AMOUNT") = ""
                             rowSOTORDC2.Item("AMOUNT_APPLIED") = chargeAmount
                             rowSOTORDC1.Item("BALANCE") -= chargeAmount
+
+                            If Val(rowSOTORDC1.Item("BALANCE") & String.Empty) < 0 Then
+                                rowSOTORDC1.Item("BALANCE") = 0
+                            End If
                             dst.Tables("SOTORDC2").Rows.Add(rowSOTORDC2)
 
                             ' Record Transaction Number in Order Header. Will be placed in Invoice Header
@@ -15538,7 +15623,7 @@ Public Class SOFSHIPB
                 ' Create Cartons
                 For Each rowEDT945T2 As DataRow In dst.Tables("EDT945T2").Select("EDI_DOC_SEQ_NO = '" & EDI_DOC_SEQ_NO & "' AND ISNULL(EDI_SHIP_QTY, 0) > 0", "EDI_CART_NO")
 
-                    ' See if we need to start aqnew carton
+                    ' See if we need to start a new carton
                     If EDI_CART_NO <> rowEDT945T2.Item("EDI_CART_NO") Then
                         EDI_CART_NO = rowEDT945T2.Item("EDI_CART_NO")
                         ASCMAIN1.Progress("Cart No: " & EDI_CART_NO)
