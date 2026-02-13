@@ -1,5 +1,8 @@
 Public Class SOTPARM1
 
+    ' 20251217 - New parameters to require Credit Card Sale prior to release
+    'ALTER TABLE SOTPARM1 ADD SO_PARM_RELEASE_REQ_CC_SALE VARCHAR2(1);
+
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         With dst
