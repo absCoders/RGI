@@ -59,6 +59,7 @@ Public Class SOFCORD1
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
+        Get_PARM("ARTPARM1")
         Get_PARM("SOTPARM1")
         Get_PARM("EDTPARM1")
 
@@ -1265,10 +1266,11 @@ Public Class SOFCORD1
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBBBBBS", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
+        Load_Popup_Menu(grdSOTORDR0, "SSSSBBSSBBBBBBBBBBBBBBBSB", "Show Filter", "Show GroupBox", "Show Pins", "Short View",
                         "Store Configuration Report", "Customer Order Summary", "Show Original Ship/Cancel", "Show Orders with Changed Ship/Cancel",
                         "Sales Order Entry", "Sales Order Inquiry", "Show Raw EDI", "Export Sales Order Details", "Convert CTF to Reservation", "Wave Inquiry",
-                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC", "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary", "Customer Order Inquiry", "Show Comments")
+                        "Create Billing Batch", "Create Master Carton Label", "Set Manual Release", "Clear Manual Release", "Summary by DC",
+                        "Carton Pack Configuration", "Customer Order Status", "Rebuild Order Summary", "Customer Order Inquiry", "Show Comments", "Print Pro-Forma")
         Load_Popup_Menu(grdSOTORDR1, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Sales Order Entry", "Show Raw EDI")
         Load_Popup_Menu(grdSOTORDRS, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Style Status Inquiry")
         Load_Popup_Menu(grdSOTPICK1, "SSSBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Invoice", "Pro-Forma Invoice", "EDI Data", "Show EDI Invoice")
@@ -1366,6 +1368,9 @@ Public Class SOFCORD1
                     tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") And ScreenMode
 
+                    tlb_btn = DirectCast(tlb_pop.Tools("Print Pro-Forma"), UltraWinToolbars.ButtonTool)
+                    tlb_btn.SharedProps.Visible = ASCMAIN1.CLIENT = "RGI"
+
                 Case "grdSOTPICK1"
                     Dim PICK_STATUS As String = ""
                     If grd.ActiveRow.Band.Key = "SOTPICK1" Then
@@ -1437,6 +1442,63 @@ Public Class SOFCORD1
         End If
 
         Select Case e.Tool.Key
+            Case "Print Pro-Forma"
+                If grd.Selected.Rows.Count = 0 Then
+                    MessageBox.Show("You must select at least 1 sales order", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                Dim lstCustCodes As New List(Of String)
+                Dim lstOrderNos As New List(Of String)
+                For Each grdRow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim CUST_CODE As String = grdRow.Cells("CUST_CODE").Value
+                    If Not lstCustCodes.Contains(CUST_CODE) Then
+                        lstCustCodes.Add(CUST_CODE)
+                    End If
+
+                    If lstCustCodes.Count > 1 Then
+                        MessageBox.Show("All selected sales orders must be for the same customer.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        Exit Sub
+                    End If
+                    Dim ORDR_NO As String = String.Empty
+
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        ORDR_NO = grdRow.Cells("ORDR_GROUP_NO").Value
+                        lstOrderNos.Add(ORDR_NO)
+                    Else
+                        Dim ORDR_GROUP_NO = grdRow.Cells("ORDR_GROUP_NO").Value
+                        ORDR_NO = ASCDATA1.GetDataValue("Select Min (ORDR_NO) from SOTORDR1 where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'")
+                        Dim rowSOTORDR1 As DataRow = LookUp("SOTORDR1", ORDR_NO)
+                        If rowSOTORDR1 IsNot Nothing Then
+                            lstOrderNos.Add(ORDR_NO)
+                        End If
+                    End If
+                Next
+
+                If lstOrderNos.Count = 0 Then
+                    MessageBox.Show("Could not locate all Selected Orders.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                Using F As New ASFMSGBF
+                    Dim ExportInfo As Boolean = False
+                    If MessageBox.Show("Do you want to show Export Information?", e.Tool.Key, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
+                        ExportInfo = True
+                    End If
+
+                    If ASCMAIN1.CLIENT = "VAN" And InquiryMode Then
+                        Print_ProForma("ORDR_QTY", lstOrderNos, ExportInfo)
+                    Else
+                        Dim ORDR_QTY_fields() As String = New String() {"Qty Ordered", "Qty Open", "Qty Allocated", "Qty In Pick", "Qty Available"}
+                        'Dim ORDR_QTY_fields() As String = New String() {"Qty Ordered", "Qty Open", "Qty Allocated", "Qty Allocated Current", "Qty In Pick"}
+                        Dim i As Integer = F.Get_opt_from_User("Which Qty Field should be Used", ORDR_QTY_fields, 0, "Pro-Forma Qty Option")
+                        If i <> -1 Then
+                            Dim ORDR_QTY_field As String = New String() {"ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_ALLO", "ORDR_QTY_PICK", "ORDR_QTY_ALLO_X"}(i)
+                            Print_ProForma(ORDR_QTY_field, lstOrderNos, ExportInfo)
+                        End If
+                    End If
+                End Using
+
             Case "Sales Order Inquiry"
 
                 Dim ORDR_NO As String = ""
@@ -2458,6 +2520,76 @@ Public Class SOFCORD1
         '            gcol.Header.VisiblePosition = 13
         '    End Select
         'Next
+    End Sub
+
+    Sub Print_ProForma(ByVal ORDR_QTY_field As String,
+                       ByVal lstOrderNos As List(Of String),
+                       ByVal ExportInfo As Boolean)
+        Try
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Now Preparing Invoice")
+            Dim pfComment As String = ""
+            Dim REPORT_NAME As String = "SORINVP1"
+
+            If Not REPORTS.ContainsKey(REPORT_NAME) Then
+                REPORTS.Add(REPORT_NAME, Load_rptClass(REPORT_NAME))
+                REPORTS(REPORT_NAME).Prepare_dst(False, "")
+            End If
+
+            Dim RPT As String = ROWs("ARTPARM1").Item("AR_PARM_INVOICE_RPT") & ""
+            If RPT = "" Then
+                RPT = REPORT_NAME
+            End If
+
+            Dim proFormaQuery As New List(Of String)
+            Dim salesOrders As Boolean = False
+            Dim invoices As Boolean = False
+            Dim INV_TYPE_requested As String = String.Empty
+
+            Dim tbl As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTORDR1 WHERE ORDR_NO IN (SELECT * FROM TABLE(IN_LIST(:PARM1)))", "SOTORDR1", "V", {String.Join(",", lstOrderNos.ToArray)})
+            For Each dr As DataRow In tbl.Select("")
+                Select Case dr.Item("ORDR_STATUS") & String.Empty
+                    Case "F"
+                        proFormaQuery.Add($"(SOTINVH1.ORDR_NO = '{dr.Item("ORDR_NO")}')")
+                        invoices = True
+                    Case Else
+                        proFormaQuery.Add($"(SOTORDR1.ORDR_NO = '{dr.Item("ORDR_NO")}')")
+                        salesOrders = True
+                End Select
+            Next
+
+            If invoices AndAlso salesOrders Then
+                INV_TYPE_requested = "B"
+            ElseIf salesOrders Then
+                INV_TYPE_requested = "O"
+            Else
+                ' Nothing at this time
+            End If
+
+            Dim rptQuery As String = " AND (" & String.Join(" OR ", proFormaQuery.ToArray) & ")"
+
+            If ASCMAIN1.CLIENT = "VAN" Then
+                REPORTS(REPORT_NAME).Fill_Records_RPT(New String() {rptQuery, "1", pfComment})
+            Else
+                REPORTS(REPORT_NAME).Fill_Records_RPT(New String() {rptQuery, "1", INV_TYPE_requested, ORDR_QTY_field})
+            End If
+
+            With REPORTS(REPORT_NAME).clsASCBASE1
+                .Print_Report_Begin()
+                .CR_params.Add("SUBT", "")
+                .CR_params.Add("CONS_INV", "0")
+                .CR_params.Add("EXPORT_INFO", IIf(ExportInfo, "1", "0"))
+                .Generate_Report(RPT, "Sales Invoice", , True, , , , , False)
+                .Print_Report_End()
+            End With
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message, "Print ProForma", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        Finally
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("")
+        End Try
+
     End Sub
 
 #End Region
