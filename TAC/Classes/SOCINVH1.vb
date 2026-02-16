@@ -490,7 +490,7 @@
                             Dim ECOM_ADD_FEE_SET_CODE As String = drECTECOMD.Item("ECOM_ADD_FEE_SET_CODE") & String.Empty
                             Dim ECOM_ADD_FEE_SET_CHG_CODE As String = drECTECOMD.Item("ECOM_ADD_FEE_SET_CHG_CODE") & String.Empty
                             If ECOM_ADD_FEE_SET_CODE.Length > 0 AndAlso ECOM_ADD_FEE_SET_CHG_CODE.Length > 0 Then
-                                For Each drSOTORDRT In tblSOTORDRT.Select($"ECOM_ADD_FEE_SET_CODE = '{ECOM_ADD_FEE_SET_CODE}'")
+                                For Each drSOTORDRT In tblSOTORDRT.Select($"ORDR_CHARGE_CODE = '{ECOM_ADD_FEE_SET_CODE}'")
                                     Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
                                     rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
                                     rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
@@ -500,7 +500,7 @@
                                     If rowSOTMISC1 IsNot Nothing Then
                                         rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
                                     End If
-                                    rowSOTINVHM.Item("MISC_CHG_NOTE") = drECTECOMD.Item("ORDR_CHARGE_DESC")
+                                    rowSOTINVHM.Item("MISC_CHG_NOTE") = drSOTORDRT.Item("ORDR_CHARGE_DESC")
                                     rowSOTINVHM.Item("INV_MISC_CHG") = drSOTORDRT.Item("ORDR_CHARGE_PRICE")
                                     'rowSOTINVHM.Item("CTL_NO ") = ""
                                     'rowSOTINVHM.Item("PO_ORDER_NO") = ""
@@ -512,9 +512,9 @@
                             End If
 
                             Dim ECOM_DUTY_SET_CODE As String = drECTECOMD.Item("ECOM_DUTY_SET_CODE") & String.Empty
-                            Dim ECOM_DUTY_SET_CHG_CODE As String = drECTECOMD.Item(" ECOM_DUTY_SET_CHG_CODE") & String.Empty
+                            Dim ECOM_DUTY_SET_CHG_CODE As String = drECTECOMD.Item("ECOM_DUTY_SET_CHG_CODE") & String.Empty
                             If ECOM_DUTY_SET_CODE.Length > 0 AndAlso ECOM_DUTY_SET_CHG_CODE.Length > 0 Then
-                                For Each drSOTORDRT In tblSOTORDRT.Select($"ECOM_ADD_FEE_SET_CODE = '{ECOM_ADD_FEE_SET_CODE}'")
+                                For Each drSOTORDRT In tblSOTORDRT.Select($"ORDR_CHARGE_CODE = '{ECOM_DUTY_SET_CODE}'")
                                     Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
                                     rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
                                     rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
@@ -524,7 +524,7 @@
                                     If rowSOTMISC1 IsNot Nothing Then
                                         rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
                                     End If
-                                    rowSOTINVHM.Item("MISC_CHG_NOTE") = drECTECOMD.Item("ORDR_CHARGE_DESC")
+                                    rowSOTINVHM.Item("MISC_CHG_NOTE") = drSOTORDRT.Item("ORDR_CHARGE_DESC")
                                     rowSOTINVHM.Item("INV_MISC_CHG") = drSOTORDRT.Item("ORDR_CHARGE_PRICE")
                                     'rowSOTINVHM.Item("CTL_NO ") = ""
                                     'rowSOTINVHM.Item("PO_ORDER_NO") = ""
