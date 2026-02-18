@@ -144,12 +144,20 @@ Partial Class ARFECOMS
         Dim UltraGridColumn44 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CNT")
         Dim UltraGridColumn45 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY")
         Dim UltraGridColumn46 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AMT")
+        Dim UltraGridColumn50 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("GROSS")
+        Dim UltraGridColumn105 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("DISC")
+        Dim UltraGridColumn107 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("UNPAID")
         Dim UltraGridBand7 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ARTCUSTX_DASH_ARTCUSTX_PYMT", 0)
         Dim UltraGridColumn47 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TYPE")
         Dim UltraGridColumn48 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("YP")
         Dim UltraGridColumn49 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CNT")
-        Dim UltraGridColumn50 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("QTY")
-        Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("AMT")
+        Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("PYMT")
+        Dim UltraGridColumn22 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("APPL")
+        Dim UltraGridColumn23 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("FEE")
+        Dim UltraGridColumn24 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OTHER")
+        Dim UltraGridColumn27 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("GL")
+        Dim UltraGridColumn103 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CBOA")
+        Dim UltraGridColumn104 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("TB")
         Dim Appearance15 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance16 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance17 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -781,16 +789,39 @@ Partial Class ARFECOMS
         UltraGridColumn45.Width = 70
         UltraGridColumn46.Header.VisiblePosition = 4
         UltraGridColumn46.Width = 90
-        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46})
+        UltraGridColumn50.Header.Caption = "$Gross"
+        UltraGridColumn50.Header.VisiblePosition = 5
+        UltraGridColumn50.Width = 90
+        UltraGridColumn105.Header.Caption = "$Disc"
+        UltraGridColumn105.Header.VisiblePosition = 6
+        UltraGridColumn105.Width = 70
+        UltraGridColumn107.Header.Caption = "#Unpaid"
+        UltraGridColumn107.Header.VisiblePosition = 7
+        UltraGridColumn107.Width = 60
+        UltraGridBand6.Columns.AddRange(New Object() {UltraGridColumn42, UltraGridColumn43, UltraGridColumn44, UltraGridColumn45, UltraGridColumn46, UltraGridColumn50, UltraGridColumn105, UltraGridColumn107})
         UltraGridColumn47.Header.VisiblePosition = 0
         UltraGridColumn48.Header.VisiblePosition = 1
         UltraGridColumn49.Header.VisiblePosition = 2
         UltraGridColumn49.Width = 70
-        UltraGridColumn50.Header.VisiblePosition = 3
-        UltraGridColumn50.Width = 70
-        UltraGridColumn51.Header.VisiblePosition = 4
+        UltraGridColumn51.Header.Caption = "Pymt"
+        UltraGridColumn51.Header.VisiblePosition = 3
         UltraGridColumn51.Width = 90
-        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn50, UltraGridColumn51})
+        UltraGridColumn22.Header.Caption = "Appl"
+        UltraGridColumn22.Header.VisiblePosition = 4
+        UltraGridColumn22.Width = 90
+        UltraGridColumn23.Header.Caption = "Fee"
+        UltraGridColumn23.Header.VisiblePosition = 5
+        UltraGridColumn23.Width = 90
+        UltraGridColumn24.Header.Caption = "Other"
+        UltraGridColumn24.Header.VisiblePosition = 6
+        UltraGridColumn24.Width = 90
+        UltraGridColumn27.Header.VisiblePosition = 7
+        UltraGridColumn27.Width = 90
+        UltraGridColumn103.Header.VisiblePosition = 8
+        UltraGridColumn103.Width = 90
+        UltraGridColumn104.Header.VisiblePosition = 9
+        UltraGridColumn104.Width = 90
+        UltraGridBand7.Columns.AddRange(New Object() {UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn51, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn27, UltraGridColumn103, UltraGridColumn104})
         Me.grdARTCUSTX_DASH.DisplayLayout.BandsSerializer.Add(UltraGridBand2)
         Me.grdARTCUSTX_DASH.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdARTCUSTX_DASH.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
