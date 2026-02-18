@@ -170,6 +170,10 @@ Public Class ASCMAIN1
             absTimer.Interval = interval_mins * 1000
         End If
 
+        If ASCMAIN1.Running_in_VS AndAlso ASCMAIN1.USER_ID = "wjz" Then
+            Exit Sub
+        End If
+
         Try
             Dim cca As IConfidentialClientApplication = ConfidentialClientApplicationBuilder _
                 .Create(ConfigurationManager.AppSettings("appId")) _
