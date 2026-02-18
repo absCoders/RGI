@@ -680,6 +680,7 @@ Public Class ARFCREC1
         Dim NET_BEG As Decimal = Val(ASCDATA1.GetDataValue)
 
         ASCMAIN1.sql = "Select SUM (INV_BALANCE) from ARTOPEN1"
+        ASCMAIN1.sql = $"Select SUM (INV_BALANCE) from ARTOPEN1 where OPS_YYYYPP <= '{RYP}'"
         Dim NET_END As Decimal = Val(ASCDATA1.GetDataValue)
 
         Dim P_ALL As String = ""
@@ -1238,7 +1239,7 @@ Public Class ARFCREC1
             ASCMAIN1.sql = "Delete from " & ARTCUST9 & " where OPS_YYYYPP = '" & RYP & "'"
             ASCDATA1.ExecuteSQL()
             ASCMAIN1.sql = "Insert into " & ARTCUST9 _
-            & " Select '" & RYP & "' OPS_YYYYPP, CUST_CODE, SUM (INV_BALANCE) AMT from ARTOPEN1 group BY CUST_CODE"
+            & $" Select '{RYP}' OPS_YYYYPP, CUST_CODE, SUM (INV_BALANCE) AMT from ARTOPEN1 where OPS_YYYYPP <= '{RYP}' group BY CUST_CODE"
             ASCDATA1.ExecuteSQL()
         End If
 
