@@ -2390,6 +2390,11 @@ Public Class ICCMAIN1
             Dim RTRN_QTY As Int32 = Val(rowSOTRTRN2.Item("RTRN_QTY") & "")
             Dim RTRN_QTY_REF As Int32 = 0 ' Val(rowSOTRTRN2.Item("RTRN_QTY_REF") & "") - THIS WOULD BE FOR A QTY REFUSED FOR CREDIT - TO BE RETURNED TO THE CUSTOMER
 
+            'Skin Refusals 02/11/2026
+            If ASCMAIN1.CLIENT = "VAN" Then
+                RTRN_QTY_REF = Val(rowSOTRTRN2.Item("RTRN_QTY_REFUSED") & "")
+            End If
+
             Dim DIST_AMT_SALES As Decimal = (RTRN_QTY - RTRN_QTY_REF) * Val(rowSOTRTRN2.Item("RTRN_PRICE") & "")
             Dim DIST_AMT_COSTS As Decimal = (RTRN_QTY - RTRN_QTY_REF) * Val(rowSOTRTRN2.Item("STYLE_COST") & "")
 

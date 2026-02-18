@@ -29,6 +29,7 @@ Partial Class ARFPYMT1
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem5 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem6 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem7 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -221,7 +222,8 @@ Partial Class ARFPYMT1
         UltraExplorerBarItem5.Text = "Delete"
         UltraExplorerBarItem6.Key = "Done"
         UltraExplorerBarItem6.Text = "Done"
-        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6})
+        UltraExplorerBarItem7.Text = "Load Excel"
+        UltraExplorerBarGroup1.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem1, UltraExplorerBarItem2, UltraExplorerBarItem3, UltraExplorerBarItem4, UltraExplorerBarItem5, UltraExplorerBarItem6, UltraExplorerBarItem7})
         UltraExplorerBarGroup1.Key = "Screen Control"
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -323,7 +325,7 @@ Partial Class ARFPYMT1
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 238)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 265)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 114)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
@@ -375,7 +377,7 @@ Partial Class ARFPYMT1
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpFindCustomer)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 396)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 423)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 111)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -431,7 +433,7 @@ Partial Class ARFPYMT1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdARTPYMTX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(773, 467)
         '
@@ -576,7 +578,7 @@ Partial Class ARFPYMT1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdARTPYMT2)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(773, 467)
         '

@@ -23,6 +23,7 @@
     ' These can be set to tables in a forms dataset
     Public tblSOTORDR1 As DataTable = Nothing
     Public tblSOTORDR2 As DataTable = Nothing
+    Public tblSOTORDRT As DataTable = Nothing
     Public tblSOTCART1 As DataTable = Nothing
 
     Private rowGLTPARM1 As DataRow
@@ -60,6 +61,10 @@
 
         If dst.Tables.Contains("SOTORDR2") Then
             tblSOTORDR2 = dst.Tables("SOTORDR2")
+        End If
+
+        If dst.Tables.Contains("SOTORDRT") Then
+            tblSOTORDRT = dst.Tables("SOTORDRT")
         End If
 
         If dst.Tables.Contains("SOTCART1") Then
@@ -476,6 +481,64 @@
                 End If
             Next
 
+            Dim INV_MISC_CHG_SET_FEE As Decimal = 0
+            If ASCMAIN1.CLIENT = "VAN" Then
+                If rowSOTORDR1 IsNot Nothing AndAlso tblSOTORDRT IsNot Nothing AndAlso tblSOTORDRT.Rows.Count > 0 Then
+                    If rowSOTORDR1.Item("ORDR_WEB_ID") & String.Empty <> String.Empty Then
+                        Dim drECTECOMD As DataRow = ASCDATA1.GetDataRow("SELECT * FROM ECTECOMD WHERE ECOM_CODE = :PARM1", "V", New Object() {"SHOPIFY"})
+                        If drECTECOMD IsNot Nothing Then
+                            Dim ECOM_ADD_FEE_SET_CODE As String = drECTECOMD.Item("ECOM_ADD_FEE_SET_CODE") & String.Empty
+                            Dim ECOM_ADD_FEE_SET_CHG_CODE As String = drECTECOMD.Item("ECOM_ADD_FEE_SET_CHG_CODE") & String.Empty
+                            If ECOM_ADD_FEE_SET_CODE.Length > 0 AndAlso ECOM_ADD_FEE_SET_CHG_CODE.Length > 0 Then
+                                For Each drSOTORDRT In tblSOTORDRT.Select($"ORDR_CHARGE_CODE = '{ECOM_ADD_FEE_SET_CODE}'")
+                                    Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
+                                    rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
+                                    rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
+                                    rowSOTINVHM.Item("INV_MNO") = Val(tblSOTINVHM.Compute("MAX(INV_MNO)", $"INV_TYPE = '{rowSOTINVHM.Item("INV_TYPE")}' AND INV_NO = {rowSOTINVHM.Item("INV_NO")}") & String.Empty) + 1
+                                    rowSOTINVHM.Item("MISC_CHG_CODE") = ECOM_ADD_FEE_SET_CHG_CODE
+                                    Dim rowSOTMISC1 As DataRow = tblSOTMISC1.Rows.Find(ECOM_ADD_FEE_SET_CHG_CODE)
+                                    If rowSOTMISC1 IsNot Nothing Then
+                                        rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                                    End If
+                                    rowSOTINVHM.Item("MISC_CHG_NOTE") = drSOTORDRT.Item("ORDR_CHARGE_DESC")
+                                    rowSOTINVHM.Item("INV_MISC_CHG") = drSOTORDRT.Item("ORDR_CHARGE_PRICE")
+                                    'rowSOTINVHM.Item("CTL_NO ") = ""
+                                    'rowSOTINVHM.Item("PO_ORDER_NO") = ""
+                                    'rowSOTINVHM.Item("MISC_CHARGE_TYPE") = ""
+                                    rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
+                                    tblSOTINVHM.Rows.Add(rowSOTINVHM)
+                                    INV_MISC_CHG_SET_FEE += rowSOTINVHM.Item("INV_MISC_CHG")
+                                Next
+                            End If
+
+                            Dim ECOM_DUTY_SET_CODE As String = drECTECOMD.Item("ECOM_DUTY_SET_CODE") & String.Empty
+                            Dim ECOM_DUTY_SET_CHG_CODE As String = drECTECOMD.Item("ECOM_DUTY_SET_CHG_CODE") & String.Empty
+                            If ECOM_DUTY_SET_CODE.Length > 0 AndAlso ECOM_DUTY_SET_CHG_CODE.Length > 0 Then
+                                For Each drSOTORDRT In tblSOTORDRT.Select($"ORDR_CHARGE_CODE = '{ECOM_DUTY_SET_CODE}'")
+                                    Dim rowSOTINVHM As DataRow = tblSOTINVHM.NewRow
+                                    rowSOTINVHM.Item("INV_TYPE") = rowSOTINVH2.Item("INV_TYPE")
+                                    rowSOTINVHM.Item("INV_NO") = rowSOTINVH2.Item("INV_NO")
+                                    rowSOTINVHM.Item("INV_MNO") = Val(tblSOTINVHM.Compute("MAX(INV_MNO)", $"INV_TYPE = '{rowSOTINVHM.Item("INV_TYPE")}' AND INV_NO = {rowSOTINVHM.Item("INV_NO")}") & String.Empty) + 1
+                                    rowSOTINVHM.Item("MISC_CHG_CODE") = ECOM_DUTY_SET_CHG_CODE
+                                    Dim rowSOTMISC1 As DataRow = tblSOTMISC1.Rows.Find(ECOM_DUTY_SET_CHG_CODE)
+                                    If rowSOTMISC1 IsNot Nothing Then
+                                        rowSOTINVHM.Item("MISC_CHG_DESC") = rowSOTMISC1.Item("MISC_CHG_DESC")
+                                    End If
+                                    rowSOTINVHM.Item("MISC_CHG_NOTE") = drSOTORDRT.Item("ORDR_CHARGE_DESC")
+                                    rowSOTINVHM.Item("INV_MISC_CHG") = drSOTORDRT.Item("ORDR_CHARGE_PRICE")
+                                    'rowSOTINVHM.Item("CTL_NO ") = ""
+                                    'rowSOTINVHM.Item("PO_ORDER_NO") = ""
+                                    'rowSOTINVHM.Item("MISC_CHARGE_TYPE") = ""
+                                    rowSOTINVHM.Item("INV_LNO") = rowSOTINVH2.Item("INV_LNO")
+                                    tblSOTINVHM.Rows.Add(rowSOTINVHM)
+                                    INV_MISC_CHG_SET_FEE += rowSOTINVHM.Item("INV_MISC_CHG")
+                                Next
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+
             INV_SALES = Math.Round(INV_SALES, 2)
 
             Dim tblSOTORDR9 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTORDR9 WHERE ORDR_NO = :PARM1", "", "V", New Object() {ORDR_NO})
@@ -547,7 +610,7 @@
                 End If
 
                 ' Miscellaneous Charges
-                .Item("INV_MISC_CHG") = INV_MISC_CHG_TARIFF
+                .Item("INV_MISC_CHG") = INV_MISC_CHG_TARIFF + INV_MISC_CHG_SET_FEE
                 If rowSOTPICK1.Table.Columns.Contains("INV_MISC_CHG") Then
                     .Item("INV_MISC_CHG") += Val(rowSOTPICK1.Item("INV_MISC_CHG") & String.Empty)
                 End If
@@ -581,11 +644,9 @@
                 '.Item("INV_NO_REV") = ""
                 .Item("CUST_FACTOR_IND") = rowSOTSHIP1.Item("CUST_FACTOR_TRANS_IND") ' IIf(Factored, "1", "0")
                 .Item("CUST_SURCHARGE_IND") = rowARTCUST1.Item("CUST_SURCHARGE_IND")
-                .Item("SREP_CODE") = rowSOTSHIP1.Item("SREP_CODE") ' rowSOTSHIP1.Item("SREP_CODE")
                 .Item("INV_COMMENT") = rowSOTPICK1.Item("ORDR_INV_COMMENT")
                 '.Item("REGISTER_XNO") = ""
                 '.Item("INV_NO_REV_BY") = ""
-                .Item("SREP2_CODE") = rowSOTSHIP1.Item("SREP2_CODE")
                 '.Item("REVISED_CUST_STORE_NO") = ""
                 '.Item("LAST_REVISED_DATE") = ""
                 '.Item("LAST_REVISED_OPER") = ""
@@ -593,6 +654,12 @@
                 '.Item("ORIG_CUST_STORE_NO") = ""
                 .Item("CURR_CODE") = CURR_CODE
                 .Item("CURR_EXCH_RATE") = CURR_EXCH_RATE
+
+                ' Changed on 01/29/2026. When shipping multiple SOTSHIP1s all SOTSHIP1 records have several fields updated based on the initial SOTSHIP1 fields.
+                ' Regency had Invoices where the Sales Order Srep Code did not match the Invoice Srep Code. Reported by Mario.
+                .Item("SREP_CODE") = rowSOTORDR1.Item("SREP_CODE") ' rowSOTSHIP1.Item("SREP_CODE")
+                .Item("SREP2_CODE") = rowSOTORDR1.Item("SREP2_CODE")  ' rowSOTSHIP1.Item("SREP2_CODE")
+
 
                 ' Walmart gets a hard-coded 2.5% discount, on all invoices.
                 ' Do not do this yet, will do only in factored 810 to Rosenthal

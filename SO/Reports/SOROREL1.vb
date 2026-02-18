@@ -183,7 +183,7 @@ Public Class SOROREL1
             chkMerge.Checked = True
             chkCustCreditHold.Checked = True
 
-            Refresh_SOTORDRU
+            Refresh_SOTORDRU()
             grdSOTORDRU.Visible = False
 
         Else
@@ -485,6 +485,11 @@ Public Class SOROREL1
         dst.Tables.Add(ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTSREP1", 1))
 
         Create_TDA(dst.Tables.Add(), "SOTPICK0", "*")
+
+        ' 20251218
+        ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+        ' New Business logic is to charge for the product prior to release.
+        Create_TDA(dst.Tables.Add("SOTORDC1_PT"), "SOTORDC1", "*")
 
         Create_Relation("SOTORDR1", "SOTPICK1", "ORDR_NO")
 
@@ -1619,6 +1624,10 @@ Public Class SOROREL1
 
         ' 03/21/2019 - Try Credit Card auth here not after release. Mark with Hold Code R if it fails
         If ASCMAIN1.CLIENT = "RGI" Then
+            ' 20251218
+            ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+            ' New Business logic is to charge for the product prior to release.
+            dst.Tables("SOTORDC1_PT").Rows.Clear()
 
             ASCMAIN1.sql = "Select * from " & SOTORDR1 & " where ORDR_REL_BATCH_NO = '" & XNO & "' and ORDR_REL_HOLD_CODES is Null and TERM_CODE IN (SELECT TERM_CODE FROM TATTERM1 WHERE TERM_TYPE = 'D')"
             Dim tblCC As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql)
@@ -2030,10 +2039,6 @@ Public Class SOROREL1
             Exit Sub
         End If
 
-        If ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER Then
-            Exit Sub
-        End If
-
         If Not dst.Tables.Contains("ARTCCPA1") Then
             Create_TDA(dst.Tables.Add, "ARTCCPA1", "*")
         Else
@@ -2052,13 +2057,82 @@ Public Class SOROREL1
             Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_NO = :PARM1", "V", ORDR_NO)
             If rowSOTORDR1 Is Nothing Then
                 ASCMAIN1.sql = "Update " & SOTORDR1 _
-                        & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R', ORDR_REL_BATCH_NO = NULL where ORDR_NO = '" & ORDR_NO & "'"
+                        & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
                 Exit Sub
             End If
 
             Dim CUST_CODE As String = rowSOTORDR1.Item("CUST_CODE") & String.Empty
             Dim CCPA_NO As String = rowSOTORDR1.Item("CCPA_NO") & String.Empty
+
+            ' 2025128 - Release requires a pre credit card capture
+            ' 20251218
+            ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+            ' New Business logic is to charge for the product prior to release.
+
+            Dim SO_PARM_RELEASE_REQ_CC_SALE As String = ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty
+            Select Case SO_PARM_RELEASE_REQ_CC_SALE
+                Case "1"
+                    Dim AMOUNT As Decimal = chargeValue
+
+                    ' Each Sale will be attached to a Pick No
+                    ASCMAIN1.sql = "SELECT * FROM SOTORDC1 
+                                        WHERE ORDR_NO = :PARM1
+                                        AND TRANS_TYPE = 'D'
+                                        AND CCPA_STATUS = 'A'
+                                        AND BALANCE > 0
+                                        AND NVL(ACTIVE_IND, '0') = '1'
+                                        AND PICK_NO IS NULL"
+                    Dim tblSOTORDC1 As DataTable = ASCDATA1.GetDataTable(ASCMAIN1.sql, "SOTORDC1", "V", {ORDR_NO})
+                    If tblSOTORDC1.Rows.Count = 0 Then
+                        ASCMAIN1.sql = "Update " & SOTORDR1 _
+                                & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "'"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+                        Exit Sub
+                    End If
+
+                    ' 20251218
+                    ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+                    ' New Business logic is to charge for the product prior to release.
+                    For Each drSOTORDC1 As DataRow In tblSOTORDC1.Select($"BALANCE >= {AMOUNT}", "BALANCE DESC")
+                        dst.Tables("SOTORDC1_PT").ImportRow(drSOTORDC1)
+                        Dim BALANCE As Decimal = drSOTORDC1.Item("BALANCE")
+
+                        AMOUNT -= BALANCE
+                        If AMOUNT <= 0 Then
+                            Exit Sub
+                        End If
+                    Next
+
+                    ' If anything left over then try to find another CC Sale for the remainder
+                    For Each drSOTORDC1 As DataRow In tblSOTORDC1.Select($"BALANCE < {AMOUNT}", "BALANCE")
+                        dst.Tables("SOTORDC1_PT").ImportRow(drSOTORDC1)
+                        Dim BALANCE As Decimal = drSOTORDC1.Item("BALANCE")
+
+                        AMOUNT -= BALANCE
+                        If AMOUNT <= 0 Then
+                            Exit Sub
+                        End If
+                    Next
+
+                    ' Mark as cannot be released
+                    ASCMAIN1.sql = "Update " & SOTORDR1 _
+                            & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "'"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+                    For Each drSOTORDC1 As DataRow In dst.Tables("SOTORDC1_PT").Select($"ORDR_NO = '{ORDR_NO}'")
+                        drSOTORDC1.Delete()
+                    Next
+
+                    dst.Tables("SOTORDC1_PT").AcceptChanges()
+
+                    ASCMAIN1.sql = "Update " & SOTORDR1 _
+                                & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "' AND (ORDR_REL_HOLD_CODES NOT LIKE '%R%' OR ORDR_REL_HOLD_CODES IS NULL)"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+
+                    Exit Sub
+            End Select
 
             ' See if we have an existing auth that will cover these charges
             If CCPA_NO.Length > 0 Then
@@ -2090,9 +2164,23 @@ Public Class SOROREL1
                 End If
             End If
 
-            ASCMAIN1.Progress("Authorize Credit Card for Customer " & rowSOTORDR1.Item("CUST_NAME"), ORDR_NO)
+            If (ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER) OrElse ASCMAIN1.Running_in_VS Then
+                If ASCMAIN1.Running_in_VS Then
+                    Stop
+                End If
 
-            Dim tblARTCCPA1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPA1 WHERE ORDR_NO = :PARM1", "ARTCCPA1", "V", New Object() {ORDR_NO})
+                Dim uMSg As String = "READ CAREFULLY" & Environment.NewLine & Environment.NewLine
+                uMSg &= $"You are in a Test Environment. If you continue, the system will attempt to create a credit card authorization of {chargeValue} for sales order {ORDR_NO}." & Environment.NewLine & Environment.NewLine
+                uMSg &= "Do you want to continue?"
+
+                If MessageBox.Show(uMSg, "CC Authorization", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                    Exit Sub
+                End If
+            End If
+
+            ASCMAIN1.Progress("Authorize Credit Card For Customer " & rowSOTORDR1.Item("CUST_NAME"), ORDR_NO)
+
+            Dim tblARTCCPA1 As DataTable = ASCDATA1.GetDataTable("Select * FROM ARTCCPA1 WHERE ORDR_NO = :PARM1", "ARTCCPA1", "V", New Object() {ORDR_NO})
             Dim tblARTCUSTC As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ARTCUSTC WHERE CUST_CODE = :PARM1 AND NVL(CUST_CREDIT_CARD_STATUS ,'A') = 'A'", "ARTCCPA1", "V", New Object() {CUST_CODE})
 
             If clsTACENCRY.UseEncryption Then
@@ -2172,7 +2260,7 @@ Public Class SOROREL1
 
             If cardNo.Length = 0 Then
                 ASCMAIN1.sql = "Update " & SOTORDR1 _
-                    & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R', ORDR_REL_BATCH_NO = NULL where ORDR_NO = '" & ORDR_NO & "'"
+                    & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
                 Exit Sub
             End If
@@ -2181,7 +2269,7 @@ Public Class SOROREL1
             Dim ORDR_GROUP_NO As String = rowSOTORDR1.Item("ORDR_GROUP_NO") & String.Empty
             If Not ASCMAIN1.Logical_Lock("SOTORDR0", ORDR_GROUP_NO, , False, , 4) Then
                 ASCMAIN1.sql = "Update " & SOTORDR1 _
-                    & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R', ORDR_REL_BATCH_NO = NULL where ORDR_NO = '" & ORDR_NO & "'"
+                    & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
                 Exit Sub
             End If
@@ -2189,14 +2277,14 @@ Public Class SOROREL1
             ' Try to get an Authorization
             If Not ProcessCCAuthorization(ORDR_NO, chargeValue, rowARTCCPA1) Then
                 ASCMAIN1.sql = "Update " & SOTORDR1 _
-                    & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R', ORDR_REL_BATCH_NO = NULL where ORDR_NO = '" & ORDR_NO & "'"
+                    & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R' where ORDR_NO = '" & ORDR_NO & "'"
                 ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
                 Exit Sub
             End If
 
         Catch ex As Exception
             ASCMAIN1.sql = "Update " & SOTORDR1 _
-                & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R', ORDR_REL_BATCH_NO = NULL" _
+                & " Set ORDR_REL_HOLD_CODES = NVL(ORDR_REL_HOLD_CODES,'') || 'R'" _
                 & " where ORDR_NO = '" & ORDR_NO & "'"
             ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
 
@@ -2207,11 +2295,24 @@ Public Class SOROREL1
 
     Private Function ProcessCCAuthorization(ByVal ORDR_NO As String, ByVal shipmentAmount As Decimal, ByVal rowCCAttributes As DataRow) As Boolean
 
+        '01/26/2026, Only Sales when this is set to a 1
+        If ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty = "1" Then
+            Return False
+        End If
+
         ProcessCCAuthorization = True
 
         Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM " & SOTORDR1 & " WHERE ORDR_NO = :PARM1", "V", ORDR_NO)
         If rowSOTORDR1 Is Nothing Then
             Return False
+        End If
+
+        ' Precharge orders for product.
+        ' 20251218
+        ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+        ' New Business logic is to charge for the product prior to release.
+        If dst.Tables("SOTORDC1_PT").Select($"ORDR_NO = '{ORDR_NO}'").Length > 0 Then
+            Return True
         End If
 
         Dim CUST_CODE As String = rowSOTORDR1.Item("CUST_CODE") & String.Empty
@@ -2451,6 +2552,13 @@ Public Class SOROREL1
                     End If
                 End If
             End With
+
+            ' 20251218
+            ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+            ' New Business logic is to charge for the product prior to release.
+            For Each drSOTORDC1_PT As DataRow In dst.Tables("SOTORDC1_PT").Select($"ORDR_NO = '{ORDR_NO}'")
+                drSOTORDC1_PT.Item("PICK_NO") = PICK_NO
+            Next
 
             dst.Tables("SOTPICK1").Rows.Add(rowSOTPICK1)
 
@@ -4091,6 +4199,12 @@ Public Class SOROREL1
                 Next
             Next i
 
+            dst.Tables("SOTORDC1_PT").AcceptChanges()
+            For Each drSOTORDC1_PT As DataRow In dst.Tables("SOTORDC1_PT").Select
+                drSOTORDC1_PT.SetModified()
+            Next
+            Update_Record_TDA("SOTORDC1_PT")
+
             For i As Int64 = 1 To PICK_NO_seq
                 Dim PICK_NO As String = ""
                 If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
@@ -4098,12 +4212,15 @@ Public Class SOROREL1
                 Else
                     PICK_NO = ASCMAIN1.Next_Control_No("SOTPICK1.PICK_NO")
                 End If
-                For Each TABLE_NAME As String In New String() {SOTPICK1, SOTPICK2, SOTCART1}
+
+                ' 20251218
+                ' This is used to mark Credit Card Sales entries to a specific Pick Ticket
+                ' New Business logic is to charge for the product prior to release.
+                For Each TABLE_NAME As String In New String() {SOTPICK1, SOTPICK2, SOTCART1, "SOTORDC1"}
                     ASCDATA1.ExecuteSQL("Update " & TABLE_NAME & " set PICK_NO = '" & PICK_NO & "'" _
                         & " where PICK_NO = 'TEMP" & Format(i, "000000") & "'")
                 Next
             Next i
-
 
             If ASCMAIN1.CLIENT = "VAN" Then
 
@@ -4332,7 +4449,6 @@ Public Class SOROREL1
             & "   where ORDR_REL_BATCH_NO = '" & XNO & "'" _
             & "     and ORDR_REL_HOLD_CODES is Null)"
         ASCDATA1.ExecuteSQL()
-
 
         If ASCMAIN1.CLIENT = "NYA" Or ASCMAIN1.CLIENT = "RGI" Then
             ASCMAIN1.Progress("Updating 855's", "")
@@ -4632,7 +4748,7 @@ Public Class SOROREL1
     End Sub
 
     Sub Refresh_SOTORDRU()
-        tblSOTORDRU.ROWS.CLEAR
+        tblSOTORDRU.Rows.Clear()
         ASCMAIN1.sql = "Select '0' SEL, ORDR_REL_SHORT_OPER USER_ID, COUNT (*) ORDERS" & vbCrLf _
             & " from SOTORDRG,SOTORDR0" & vbCrLf _
             & " where SOTORDRG.ORDR_GROUP_NO = SOTORDR0.ORDR_GROUP_NO" & vbCrLf _

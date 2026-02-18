@@ -648,6 +648,10 @@ Public Class SOFORDR1
                     AND POTORDR2.PO_ORDER_NO = :PARM1"
                 Create_TDA(.Tables.Add, "ICTXLSPS", "**", 0, False, "V")
             End If
+
+            Create_TDA(.Tables.Add, "SOTFRGHT", "*")
+            Fill_Records("SOTFRGHT", String.Empty, True, "SELECT * FROM SOTFRGHT")
+
         End With
 
         If SOTORDPX = "" Then
@@ -3571,6 +3575,7 @@ Public Class SOFORDR1
                  & " and SOTORDC1.ORDR_NO = '" & ORDR_NO & "'"
             Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
             Fill_Records("SOTORDC2", ORDR_NO)
+            grdSOTORDC1.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
             If multiple_order_maintenance Then
                 If EntryMode = "E" Then
@@ -5633,9 +5638,10 @@ Public Class SOFORDR1
         Load_Popup_Menu(grdEDTDOCS1, "B", "Show Document")
 
         Check_InquiryMode()
-        ' If InquiryMode Then
-        Load_Popup_Menu(grdSOTORDC1, "BBB", "CC Deposit", "Add On Account", "Additional Funds", "De-Activate", "CC Authorization", "Void Authorization", "Charge Against Auth")
-        ' End If
+        If InquiryMode Then
+            Load_Popup_Menu(grdSOTORDC1, "BBBBBBBPBB", "CC Deposit", "Add On Account", "Additional Funds", "De-Activate", "CC Authorization", "Void Authorization", "Charge Against Auth", "Set Manual Release", "Clear Manual Release")
+        End If
+
         If subUPCSupport Then
             Load_Popup_Menu(grdICTXLSPS, "B", "Style Master File")
         End If
@@ -5712,13 +5718,15 @@ Public Class SOFORDR1
                 Dim hasCreditCardCharge As Boolean = (row.Item("CCPA_NO") & String.Empty).ToString.Trim.Length > 0
                 Dim hasPickTickets As Boolean = ASCDATA1.GetDataTable("Select * from SOTPICK1 where ORDR_NO = :PARM1 AND PICK_STATUS = 'P'", "", "V", New Object() {ORDR_NO}).Rows.Count > 0
 
-
                 tlb_btn = DirectCast(tlb_pop.Tools("De-Activate"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "V") AndAlso orderInPickOrOpen AndAlso hasCreditCardCharge _
                         AndAlso (grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.Band.Key = "SOTORDC1" AndAlso grd.ActiveRow.Cells("ACTIVE_IND").Value = "1")
 
                 tlb_btn = DirectCast(tlb_pop.Tools("CC Deposit"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "V") AndAlso orderInPickOrOpen AndAlso hasCreditCardCharge
+                tlb_btn.SharedProps.Visible = (EntryMode = "V") AndAlso orderInPickOrOpen ' AndAlso hasCreditCardCharge
+                If ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty = "1" Then
+                    tlb_btn.SharedProps.Caption = "Pre-Release Charge"
+                End If
 
                 tlb_btn = DirectCast(tlb_pop.Tools("Add On Account"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "V") AndAlso orderInPickOrOpen AndAlso hasCreditCardCharge
@@ -5742,6 +5750,11 @@ Public Class SOFORDR1
                     AndAlso grd.ActiveRow.Band.Key = "SOTORDC1" _
                     AndAlso (grd.ActiveRow.Cells("CCPA_STATUS").Value & String.Empty).ToString.Trim = "T" _
                     AndAlso (grd.ActiveRow.Cells("ACTIVE_IND").Value & String.Empty).ToString.Trim = "1"
+
+                tlb_btn = DirectCast(tlb_pop.Tools("Set Manual Release"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
+                tlb_btn = DirectCast(tlb_pop.Tools("Clear Manual Release"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (ASCMAIN1.CLIENT = "RGI")
 
         End Select
 
@@ -5831,8 +5844,107 @@ Public Class SOFORDR1
         Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
+
+            Case "Set Manual Release", "Clear Manual Release"
+
+                Try
+                    Dim ORDR_GROUP_NOs_to_manually_Release As New List(Of String)
+                    Dim ORDR_GROUP_NOs_to_manually_Release_but_cannot As New List(Of String)
+
+                    Dim drSOTORDR1 As DataRow = dst.Tables("SOTORDR1").Rows.Find(HFs("ORDR_NO"))
+
+                    Dim ORDR_GROUP_NO As String = drSOTORDR1.Item("ORDR_GROUP_NO") & String.Empty
+                    Dim ORDR_TYPE_CODE As String = drSOTORDR1.Item("ORDR_TYPE_CODE") & String.Empty
+
+                    Dim drSOTORDR0 As DataRow = LookUp("SOTORDR0", ORDR_GROUP_NO)
+                    Dim drSOTORDRG As DataRow = LookUp("SOTORDRG", ORDR_GROUP_NO)
+
+                    If drSOTORDR0 Is Nothing Then
+                        ORDR_GROUP_NOs_to_manually_Release_but_cannot.Add(ORDR_GROUP_NO)
+                    Else
+                        If ORDR_TYPE_CODE <> "REG" Then
+                            ORDR_GROUP_NOs_to_manually_Release_but_cannot.Add(ORDR_GROUP_NO)
+                            MessageBox.Show("Manual release applies to only Oeder Type Reg.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        Else
+                            Dim ORDR_REL_SHORT As String = drSOTORDRG.Item("ORDR_REL_SHORT") & ""
+                            If e.Tool.Key.StartsWith("Set") Then
+                                If ORDR_REL_SHORT <> "1" Then
+                                    ORDR_GROUP_NOs_to_manually_Release.Add(ORDR_GROUP_NO)
+                                Else
+                                    ORDR_GROUP_NOs_to_manually_Release_but_cannot.Add(ORDR_GROUP_NO)
+                                    MessageBox.Show("Sales order group is already set to Manual Release.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                                End If
+                            ElseIf e.Tool.Key.StartsWith("Clear") Then
+                                If ORDR_REL_SHORT = "1" Then
+                                    ORDR_GROUP_NOs_to_manually_Release.Add(ORDR_GROUP_NO)
+                                Else
+                                    ORDR_GROUP_NOs_to_manually_Release_but_cannot.Add(ORDR_GROUP_NO)
+                                    MessageBox.Show("Sales order group is not set to Manual Release.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                                End If
+                            Else
+                                ORDR_GROUP_NOs_to_manually_Release_but_cannot.Add(ORDR_GROUP_NO)
+                            End If
+                        End If
+                    End If
+
+                    If ORDR_GROUP_NOs_to_manually_Release.Count = 0 Then
+                        Exit Sub
+                    Else
+                        If Not ASCMAIN1.Logical_Lock("SOTORDR0", ORDR_GROUP_NO, , , , 1) Then
+                            Exit Sub
+                        End If
+
+                        Dim ORDR_NO_MIN As String = drSOTORDR0.Item("ORDR_NO_MIN")
+                        If Not ASCMAIN1.Logical_Lock("SOTORDR1", ORDR_NO_MIN, , , , 1) Then
+                            Exit Sub
+                        End If
+
+                        If Not ASCMAIN1.Logical_Open("R", "SOROREL1", , , , 1) Then
+                            Exit Sub
+                        End If
+
+
+                        If MessageBox.Show($"Continue to {e.Tool.Key} this sales order's group?", e.Tool.Key, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
+                            dst.Tables("SOTORDRG").Rows.Clear()
+
+                            For Each ORDR_GROUP_NO In ORDR_GROUP_NOs_to_manually_Release
+                                Dim rowSOTORDRG As DataRow = Fill_Record("SOTORDRG", ORDR_GROUP_NO, True, False)
+                                drSOTORDR0 = LookUp("SOTORDR0", ORDR_GROUP_NO)
+
+                                If drSOTORDR0 IsNot Nothing Then
+                                    If e.Tool.Key.StartsWith("Set") Then
+                                        ASCMAIN1.sql = "SELECT ORDR_GROUP_NO, SUM(ORDR_AMT_ALLO_CUR) ORDR_AMT_ALLO_CUR
+                                                    FROM SOTORDRS
+                                                    WHERE ORDR_GROUP_NO = :PARM1
+                                                    GROUP BY ORDR_GROUP_NO"
+                                        Dim drSOTORDRS As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {ORDR_GROUP_NO})
+
+                                        rowSOTORDRG.Item("ORDR_REL_SHORT") = "1"
+                                        rowSOTORDRG.Item("ORDR_REL_SHORT_OPER") = ASCMAIN1.USER_ID
+                                        rowSOTORDRG.Item("ORDR_REL_SHORT_DATE") = DATETIME_STAMP
+
+                                        If drSOTORDRS IsNot Nothing Then
+                                            rowSOTORDRG.Item("ORDR_REL_SHORT_MIN") = Val(drSOTORDRS.Item("ORDR_AMT_ALLO_CUR") & "")
+                                        End If
+                                    Else
+                                        rowSOTORDRG.Item("ORDR_REL_SHORT") = "0"
+                                    End If
+                                End If
+                            Next
+
+                            Update_Record_TDA("SOTORDRG")
+                            MessageBox.Show("Sales Order Group Updated.", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                        End If
+                    End If
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Finally
+                    ASCMAIN1.MultiTask_Release(, , 1)
+                End Try
+
             Case "Import Details From Excel"
                 ImportDetailsFromExcel()
+
             Case "Show Import Template"
                 Dim FName As String = "SOUpload.xlsx"
                 Dim FLDName As String = "templates"
@@ -5842,6 +5954,7 @@ Public Class SOFORDR1
                 End If
                 Dim FILENAME As String = $"{ROOTName}{FLDName}\{FName}"
                 Show_Document(FILENAME)
+
             Case "Set Customer PO to Value in Header"
                 For Each rowSOTORDRS As DataRow In dst.Tables("SOTORDRS").Select("")
                     rowSOTORDRS.Item("ORDR_CUST_PO") = Absx1.txtFor("ORDR_CUST_PO").Text
@@ -6114,20 +6227,61 @@ Public Class SOFORDR1
                 Generate_Pro_Forma_Invoice()
 
             Case "CC Authorization", "CC Deposit", "Add On Account", "Additional Funds", "De-Activate", "Charge Against Auth", "Void Authorization"
-                Dim trans_no As String = String.Empty
-                If grd.ActiveRow IsNot Nothing Then
-                    trans_no = grd.ActiveRow.Cells("TRANS_NO").Value
-                End If
-                ProcessCreditCardDeposit(e.Tool.Key, trans_no)
 
-                EnforceConstraints(False)
-                ASCMAIN1.sql = "Select SOTORDC1.*, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCCPA1.CCPA_DATE_VOID" _
-                 & " from SOTORDC1, ARTCCPA1 " _
-                 & " where SOTORDC1.ccpa_no = ARTCCPA1.ccpa_no (+)" _
-                 & " and SOTORDC1.ORDR_NO = '" & ORDR_NO & "'"
-                Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
-                Fill_Records("SOTORDC2", Absx1.txtFor("ORDR_NO").Text)
-                EnforceConstraints(True)
+                ' 01/26/2026 - Regency CC charge for product upfront also requires a 5% Auth to cover any additional freight charges.
+                Dim numLoops As Int16 = 1
+                Dim AuthPercent As Decimal = 0
+
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    If e.Tool.Key = "CC Deposit" Then
+                        If ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty = "1" Then
+                            numLoops = 2
+                            AuthPercent = 5
+
+                            'Validate the terms on the sales order.
+                            Dim TERM_CODE As String = Absx1.txtFor("TERM_CODE").Text
+                            Dim drTATTERM1 As DataRow = LookUp("TATTERM1", TERM_CODE)
+                            If drTATTERM1 Is Nothing Then
+                                MessageBox.Show("Cannot determine the Terms for the sales Order", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                Exit Sub
+                            End If
+
+                            Dim TERM_TYPE As String = drTATTERM1.Item("TERM_TYPE") & ""
+                            If TERM_TYPE <> "D" Then
+                                If MessageBox.Show("The sales order's Terms are not set to Credit Card. Do you want to continue?", e.Tool.Key, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                                    Exit Sub
+                                End If
+                            End If
+
+                        End If
+                    End If
+                End If
+
+                For iLoop As Int16 = 1 To numLoops
+
+                    Dim trans_no As String = String.Empty
+
+                    If grd.ActiveRow IsNot Nothing Then
+                        trans_no = grd.ActiveRow.Cells("TRANS_NO").Value
+                    End If
+
+                    Select Case iLoop
+                        Case 1
+                            ProcessCreditCardDeposit(e.Tool.Key, trans_no, 0)
+                        Case 2
+                            ProcessCreditCardDeposit("CC Authorization", "", AuthPercent)
+                    End Select
+
+                    EnforceConstraints(False)
+                    ASCMAIN1.sql = $"SELECT SOTORDC1.*, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCCPA1.CCPA_DATE_VOID
+                                        FROM SOTORDC1, ARTCCPA1
+                                        WHERE SOTORDC1.CCPA_NO = ARTCCPA1.CCPA_NO (+)
+                                        AND SOTORDC1.ORDR_NO = '{ORDR_NO}'"
+                    Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
+                    Fill_Records("SOTORDC2", Absx1.txtFor("ORDR_NO").Text)
+                    grdSOTORDC1.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+                    EnforceConstraints(True)
+                Next
                 Exit Sub
 
             Case "Cancel Qty for All Stores"
@@ -6720,6 +6874,7 @@ Public Class SOFORDR1
             MsgBox("Import Complete." & tstMsg, vbOK, "Import Errors")
         End If
     End Sub
+
     Private Sub ExcelProcessKill()
         Dim oProcesses() As Process
         Dim bFound As Boolean
@@ -10814,7 +10969,11 @@ Public Class SOFORDR1
         End If
     End Sub
 
-    Sub Credit_Card(Optional TRAN_TYPE As String = "A", Optional AUTH_CCPA_NO As String = "", Optional TRANS_NO As Int16 = 0, Optional AdditionalAuthorization As Boolean = False)
+    Sub Credit_Card(Optional TRAN_TYPE As String = "A",
+                    Optional AUTH_CCPA_NO As String = "",
+                    Optional TRANS_NO As Int16 = 0,
+                    Optional AdditionalAuthorization As Boolean = False,
+                    Optional AuthPercentage As Decimal = 0)
 
         Dim CUST_CODE As String = MyBase.Absx1.txtFor("CUST_CODE").Text.Trim
         Dim FRT_TERMS As String = MyBase.Absx1.txtFor("FRT_TERMS").Text.Trim
@@ -10938,27 +11097,36 @@ Public Class SOFORDR1
             ORDR_TOTAL_AMT = Val(rowSOTORDC1.Item("BALANCE") & String.Empty)
         Else
             ' Fedex, UPS and similar pay for freight when freight terms of PPA 
-            If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty = "U" AndAlso FRT_TERMS.ToUpper = "PPA" Then
-                ' New Rule 1/24/2013. 20% or $20 the greater of the two
-                freightCost = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "ORDR_STATUS <> 'F' AND ORDR_STATUS <> 'C'  AND ORDR_STATUS <> 'V'") & String.Empty) * 0.2
-                If freightCost < 20 Then
-                    freightCost = 20
-                End If
-            End If
 
-            ORDR_TOTAL_AMT += Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "ORDR_STATUS <> 'F' AND ORDR_STATUS <> 'C'  AND ORDR_STATUS <> 'V'") & String.Empty)
+            'If ASCMAIN1.CLIENT = "RGI" Then
+            '    If ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty <> "1" Then
+            '        If rowSOTCARR1.Item("CARRIER_TYPE") & String.Empty = "U" AndAlso FRT_TERMS.ToUpper = "PPA" Then
+            '            ' New Rule 1/24/2013. 20% or $20 the greater of the two
+            '            freightCost = Val(dst.Tables("SOTORDR2").Compute("SUM(ORDR_AMT)", "ORDR_STATUS <> 'F' AND ORDR_STATUS <> 'C'  AND ORDR_STATUS <> 'V'") & String.Empty) * 0.2
+            '            If freightCost < 20 Then
+            '                freightCost = 20
+            '            End If
+            '        End If
+            '    End If
+            'End If
+
+            ORDR_TOTAL_AMT += Val(dst.Tables("SOTORDR2").Compute("SUM(AMT_1)", "") & String.Empty)
 
             Dim MiscCalc As Decimal = 0
             If ASCMAIN1.CLIENT = "RGI" AndAlso TRAN_TYPE = "A" Then
-                Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
-                If rowSOTORDR1 IsNot Nothing Then
-                    'MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.045, 2)
-                    'MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2) 'Changed to 10% Per Rich 6/18/21 W.R.
-                    MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.25, 2) 'Changed to 25% Per Rich 8/22/21 W.R.
-                End If
-                Dim rowSOTORDR1_2 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG2 WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
-                If rowSOTORDR1_2 IsNot Nothing Then
-                    MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2)
+                If AuthPercentage > 0 Then
+                    ORDR_TOTAL_AMT = Math.Round(ORDR_TOTAL_AMT * (AuthPercentage / 100), 2)
+                Else
+                    Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
+                    If rowSOTORDR1 IsNot Nothing Then
+                        'MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.045, 2)
+                        'MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2) 'Changed to 10% Per Rich 6/18/21 W.R.
+                        MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.25, 2) 'Changed to 25% Per Rich 8/22/21 W.R.
+                    End If
+                    Dim rowSOTORDR1_2 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOROFSURCHG2 WHERE ORDR_NO = :PARM1", "V", New Object() {HFs("ORDR_NO")})
+                    If rowSOTORDR1_2 IsNot Nothing Then
+                        MiscCalc = Math.Round(ORDR_TOTAL_AMT * 0.1, 2)
+                    End If
                 End If
             End If
 
@@ -10970,14 +11138,30 @@ Public Class SOFORDR1
             End If
         End If
 
-        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+        If ASCMAIN1.CLIENT = "RGI" Then
             Dim zmsg As String = String.Empty
             Dim authorizeFunds As Decimal = 0
-            Dim inPick As Decimal = Val(dst.Tables("SOTORDRTOT").Select("KEY = 4")(0).Item("AMT") & String.Empty)
-            If inPick = 0 Then
-                inPick = Val(dst.Tables("SOTORDRTOT").Select("KEY = 2")(0).Item("AMT") & String.Empty)
+
+            'Dim inPick As Decimal = Val(dst.Tables("SOTORDRTOT").Select("KEY = 4")(0).Item("AMT") & String.Empty)
+
+            ' 01/22/2026 - As Per Rits use the sum ag AMT_1
+            ' This is the Open Amount that we want to release
+            'If ROWs("SOTPARM1").Item("SO_PARM_RELEASE_REQ_CC_SALE") & String.Empty = "1" Then
+            '    ' Default to Allocated
+            '    inPick = Val(dst.Tables("SOTORDRTOT").Select("KEY = 3")(0).Item("AMT") & String.Empty)
+            'End If
+
+            'If inPick = 0 Then
+            '    inPick = Val(dst.Tables("SOTORDRTOT").Select("KEY = 2")(0).Item("AMT") & String.Empty)
+            'End If
+
+            Dim inputValue As String = String.Empty
+            If AuthPercentage > 0 And TRAN_TYPE = "A" Then
+                inputValue = InputBox($"Enter the additional Authorized Funds. The system defaults this value to {Math.Round(AuthPercentage, 2)}% of the released amount.", "Additional Funds", Format(ORDR_TOTAL_AMT, "#,##0.00")) & String.Empty
+            Else
+                inputValue = InputBox($"Enter the amount of Merchandise Funds you want to {If(TRAN_TYPE = "S", "Charge", "Authorize")}.", "Additional Funds", Format(ORDR_TOTAL_AMT, "#,##0.00")) & String.Empty
             End If
-            Dim inputValue As String = InputBox("Enter the amount of merchandise funds you want to authorize.", "Additional Funds", Format(inPick, "#,##0.00")) & String.Empty
+
             inputValue = inputValue.Trim
             If inputValue.Length = 0 Then inputValue = 0
 
@@ -10985,32 +11169,45 @@ Public Class SOFORDR1
 
             Select Case authorizeFunds
                 Case Is < 0
-                    MessageBox.Show("On Account amount must be greater than $0.00", "On Account", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    MessageBox.Show("The amount must be greater than $0.00", "On Account", MessageBoxButtons.OK, MessageBoxIcon.Information)
                     Exit Sub
                 Case 0
                     ' Assume the user clicked cancel
                     Exit Sub
                 Case Is > 0
                     ORDR_TOTAL_AMT = authorizeFunds
-                    zmsg = "The merchandise amount you entered is " & Format$(authorizeFunds, "$#,##0.00") & Environment.NewLine
-                    freightCost = authorizeFunds * 0.2
-                    If freightCost < 20 Then
-                        freightCost = 20
-                    End If
-                    zmsg &= "The anticipated Freight (20%) is " & Format$(freightCost, "$#,##0.00") & Environment.NewLine & Environment.NewLine
-                    ORDR_TOTAL_AMT += freightCost
-                    zmsg &= "Do you want to add the freight the to Authorize amount for a total of: " & Format$(ORDR_TOTAL_AMT, "$#,##0.00")
 
-                    If MessageBox.Show(zmsg, "Authorize", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = Windows.Forms.DialogResult.No Then
-                        ORDR_TOTAL_AMT = authorizeFunds
+                    If AuthPercentage = 0 Then
+                        Dim frtPercentage As Int16 = 15
+                        Dim drSOTORDR5 As DataRow = dst.Tables("SOTORDR5").Rows.Find({ORDR_NO, "ST"})
+                        If drSOTORDR5 IsNot Nothing Then
+                            Dim CUST_STATE As String = drSOTORDR5.Item("CUST_STATE") & String.Empty
+                            CUST_STATE = CUST_STATE.ToUpper
+                            Dim drSOTFRGHT As DataRow = dst.Tables("SOTFRGHT").Rows.Find(CUST_STATE)
+                            If drSOTFRGHT IsNot Nothing Then
+                                frtPercentage = Val(drSOTFRGHT.Item("FREIGHT_PERC") & String.Empty)
+                            End If
+                        End If
+
+                        freightCost = Math.Round(authorizeFunds * (frtPercentage / 100), 2)
+                        If freightCost < 20 Then
+                            freightCost = 20
+                        End If
+
+                        ' Prompt for the user to enter any additional $$ for freight
+                        freightCost = Val(InputBox($"Estimated freight ({Format$(frtPercentage, "#,##0.00")}%) is {Format$(freightCost, "$#,##0.00")}. Please enter the amount you’d like to add. If you don’t want to include any freight charges, just click ‘Cancel’.", "Freight Charges", freightCost))
+                        ORDR_TOTAL_AMT += freightCost
                     End If
             End Select
-
         End If
 
         If ORDR_TOTAL_AMT <= 0 Then
-            MessageBox.Show("You cannot charge $0.00 for sales Order No: " & ORDR_NO, "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("You cannot charge $0.00 for sales Order No:  " & ORDR_NO, "Credit Card", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
+        Else
+            If MessageBox.Show($"Do you want to create a {Format$(ORDR_TOTAL_AMT, "$#,##0.00")} credit card transaction for sales Order No: {ORDR_NO}", "Credit Card", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.No Then
+                Exit Sub
+            End If
         End If
 
         If Not ASCMAIN1.Logical_Lock("ARTCUSTC", CUST_CODE, , , , 1) Then Exit Sub
@@ -11054,7 +11251,7 @@ Public Class SOFORDR1
 
             Try
                 frmCCProcessor.ShowDialog()
-                Dim row As DataRow = ASCDATA1.GetDataRow("select * from ARTCCPA1 where CCPA_NO = :PARM1", "V", New Object() {frmCCProcessor.CCPA_NO & String.Empty})
+                Dim row As DataRow = ASCDATA1.GetDataRow("Select * from ARTCCPA1 where CCPA_NO = :PARM1", "V", New Object() {frmCCProcessor.CCPA_NO & String.Empty})
                 If row IsNot Nothing AndAlso (row.Item("CCPA_STATUS") & String.Empty = "T" OrElse row.Item("CCPA_STATUS") & String.Empty = "S") Then
                     rowSOTORDR1.Item("CCPA_NO") = frmCCProcessor.CCPA_NO & String.Empty
                     rowSOTORDR1.Item("CC_TRANS_ID") = row.Item("TRANS_ID")
@@ -11099,8 +11296,10 @@ Public Class SOFORDR1
                         rowSOTORDC1.Item("CCPA_NO") = row.Item("CCPA_NO")
                         rowSOTORDC1.Item("CCPA_STATUS") = row.Item("CCPA_STATUS")
                         rowSOTORDC1.Item("AMOUNT") = row.Item("CCPA_AMT")
-                        rowSOTORDC1.Item("BALANCE") = 0
-                        rowSOTORDC1.Item("ACTIVE_IND") = "0"
+
+                        ' Modified 12/18/2025 Charge product before Release
+                        rowSOTORDC1.Item("BALANCE") = row.Item("CCPA_AMT")
+                        rowSOTORDC1.Item("ACTIVE_IND") = "1"
                         dst.Tables("SOTORDC1").Rows.Add(rowSOTORDC1)
                     Else
                         Dim rowSOTORDC2 As DataRow = dst.Tables("SOTORDC2").NewRow
@@ -11760,7 +11959,7 @@ Public Class SOFORDR1
 
     End Function
 
-    Private Sub ProcessCreditCardDeposit(ByVal processType As String, ByVal TRANS_NO As String)
+    Private Sub ProcessCreditCardDeposit(ByVal processType As String, ByVal TRANS_NO As String, ByVal AuthPercent As Decimal)
 
         Dim errorMsg As String = String.Empty
 
@@ -11809,6 +12008,14 @@ Public Class SOFORDR1
                 ' See if there is an existing Authorization on the Sales Order
                 If CCPA_NO <> String.Empty Then
                     tblARTCCPA1 = ASCDATA1.GetDataTable("SELECT * FROM ARTCCPA1 WHERE CCPA_NO = :PARM1 OR CCPA_NO_AUTH = :PARM1", "ARTCCPA1", "V", New Object() {CCPA_NO})
+
+                    If processType = "Void Authorization" Then
+                        If tblARTCCPA1.Rows.Count = 0 OrElse tblARTCCPA1.Rows(0).Item("CCPA_STATUS") <> "T" Then
+                            MessageBox.Show("The selected entry is not an Authorization.", processType, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            Exit Sub
+                        End If
+                    End If
+
                     If clsTACENCRY.UseEncryption Then
                         For Each rowARTCCPA1 As DataRow In tblARTCCPA1.Select("")
                             For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE", "CUST_CREDIT_CARD_EXP_DATE"}
@@ -11837,7 +12044,7 @@ Public Class SOFORDR1
                     previouslySettledAmount = Val(tblARTCCPA1.Compute("SUM(CCPA_AMT)", "CCPA_NO_AUTH = '" & CCPA_NO & "' AND CCPA_STATUS = 'S'") & String.Empty)
                     rowARTCCPA1_AUTH = tblARTCCPA1.Rows.Find(CCPA_NO)
 
-                    If rowARTCCPA1_AUTH IsNot Nothing AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
+                    If rowARTCCPA1_AUTH IsNot Nothing AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty AndAlso OriginalAuthAmount > 0 Then
                         errorMsg = "The sales order has an active Authorization for the amount of " & Format(OriginalAuthAmount, "$#,#0.00")
                         errorMsg &= Environment.NewLine
                         errorMsg &= "There are sales against the Authorization totaling " & Format(previouslySettledAmount, "$#,#0.00")
@@ -11862,17 +12069,9 @@ Public Class SOFORDR1
                     End If
                 End If
 
-                'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                '    ' don't ask questions - we are voiding many orders to prepare for new component
-                'Else
-                If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then '
+                If MessageBox.Show(errorMsg, processType, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Select
                 End If
-                'End If
-
-                'If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" And Format(Now, "MM/dd/yyyy") = "11/20/2022" Then
-                '    previouslySettledAmount = 0
-                'End If
 
                 If previouslySettledAmount < OriginalAuthAmount AndAlso rowARTCCPA1_AUTH.Item("CCPA_DATE_VOID") & String.Empty = String.Empty Then
                     Try
@@ -11934,7 +12133,7 @@ Public Class SOFORDR1
 
                 If processType = "CC Authorization" Then
                     ' Try to get an Authorization
-                    Credit_Card("A", CCPA_NO, , True)
+                    Credit_Card("A", CCPA_NO, , True, AuthPercent)
                     Update_Record_TDA("SOTORDC1")
                     Update_Record_TDA("SOTORDC2")
                 End If
@@ -12220,10 +12419,10 @@ Public Class SOFORDR1
         Stop
 
         ASCMAIN1.sql = "SELECT SOTORDC1.CCPA_NO, SOTORDR1.ORDR_NO, SOTORDC1.TRANS_NO
-FROM SOTORDR1,ARTCCPA1,SOTORDC1
- WHERE SOTORDR1.ORDR_STATUS IN ('O','P') 
-   AND SOTORDC1.ORDR_NO = SOTORDR1.ORDR_NO AND SOTORDC1.ACTIVE_IND = '1'
-   AND ARTCCPA1.CCPA_NO = SOTORDC1.CCPA_NO AND ARTCCPA1.CCPA_DATE_VOID IS NULL AND ARTCCPA1.CCPA_AMT > 1"
+                            FROM SOTORDR1,ARTCCPA1,SOTORDC1
+                            WHERE SOTORDR1.ORDR_STATUS IN ('O','P') 
+                            AND SOTORDC1.ORDR_NO = SOTORDR1.ORDR_NO AND SOTORDC1.ACTIVE_IND = '1'
+                            AND ARTCCPA1.CCPA_NO = SOTORDC1.CCPA_NO AND ARTCCPA1.CCPA_DATE_VOID IS NULL AND ARTCCPA1.CCPA_AMT > 1"
         Dim tblv As DataTable = ASCDATA1.GetDataTable
 
         For Each rowv As DataRow In tblv.Rows
@@ -12244,11 +12443,8 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
                  & " and SOTORDC1.ORDR_NO = '" & ORDR_NO & "'"
             Fill_Records("SOTORDC1", String.Empty, True, ASCMAIN1.sql)
             Fill_Records("SOTORDC2", ORDR_NO)
-
-            ProcessCreditCardDeposit("Void Authorization", TRANS_NO)
-
-
-            'Stop
+            grdSOTORDC1.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
+            ProcessCreditCardDeposit("Void Authorization", TRANS_NO, 0)
         Next
 
         Exit Sub
@@ -12687,10 +12883,6 @@ FROM SOTORDR1,ARTCCPA1,SOTORDC1
 
                 Me.Cursor = Cursors.Default
                 ASCMAIN1.Progress("", "")
-
-
-
-
 
                 If ERROR_CODEs.Count <> 0 Then
                     'Using fr As New ASFMSGBF

@@ -753,7 +753,7 @@
 
                 '& ", " & ORDR_QTY_field & " ORDR_QTY_SHIP, SOTORDR2.ORDR_UNIT_PRICE ORDR_UNIT_PRICE_CURR,SOTORDR2.ORDR_NO,SOTORDR2.ORDR_LNO" & vbCrLf _
 
-                If INV_TYPE_requested = "O" Then
+                If INV_TYPE_requested = "O" OrElse INV_TYPE_requested = "B" Then
                     ASCMAIN1.sql = "Insert into " & SOTINVH2 & vbCrLf _
                             & " (INV_TYPE,INV_NO,INV_LNO,STYLE_CODE,COLOR_CODE,ORDR_UNIT_PRICE,ORDR_QTY_SHIP,ORDR_UNIT_PRICE_CURR,ORDR_NO,ORDR_LNO)" & vbCrLf _
                             & "Select 'P' INV_TYPE, SOTORDR2.ORDR_NO INV_NO, SOTORDR2.ORDR_LNO INV_LNO" & vbCrLf _
@@ -806,47 +806,47 @@
                         & sqlw
 
                     ASCDATA1.ExecuteSQL()
+                End If
 
-                Else
+                If INV_TYPE_requested <> "O" OrElse INV_TYPE_requested = "B" Then
                     ASCMAIN1.sql = "Insert into " & SOTINVH2 & vbCrLf _
-                                            & " (INV_TYPE,INV_NO,INV_LNO,STYLE_CODE,COLOR_CODE,ORDR_UNIT_PRICE,ORDR_QTY_SHIP,ORDR_UNIT_PRICE_CURR,ORDR_NO,ORDR_LNO)" & vbCrLf _
-                                            & "Select 'P' INV_TYPE, SOTPICK2.PICK_NO INV_NO, SOTPICK2.PICK_LNO INV_LNO" & vbCrLf _
-                                            & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR2.ORDR_UNIT_PRICE" & vbCrLf _
-                                            & ", SOTPICK2.PICK_QTY ORDR_QTY_SHIP, SOTORDR2.ORDR_UNIT_PRICE ORDR_UNIT_PRICE_CURR,SOTORDR2.ORDR_NO,SOTORDR2.ORDR_LNO" & vbCrLf _
-                                            & " from SOTPICK2,SOTPICK1,SOTORDR2,SOTORDR1,ICTSTYL1" & vbCrLf _
-                                            & " where SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
-                                            & "   and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
-                                            & "   and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO " & vbCrLf _
-                                            & "   and SOTORDR1.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
-                                            & "   and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
-                                            & Replace(sqlw, "SOTINVH1.", "SOTPICK1.")
+                                                & " (INV_TYPE,INV_NO,INV_LNO,STYLE_CODE,COLOR_CODE,ORDR_UNIT_PRICE,ORDR_QTY_SHIP,ORDR_UNIT_PRICE_CURR,ORDR_NO,ORDR_LNO)" & vbCrLf _
+                                                & "Select 'P' INV_TYPE, SOTPICK2.PICK_NO INV_NO, SOTPICK2.PICK_LNO INV_LNO" & vbCrLf _
+                                                & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, SOTORDR2.ORDR_UNIT_PRICE" & vbCrLf _
+                                                & ", SOTPICK2.PICK_QTY ORDR_QTY_SHIP, SOTORDR2.ORDR_UNIT_PRICE ORDR_UNIT_PRICE_CURR,SOTORDR2.ORDR_NO,SOTORDR2.ORDR_LNO" & vbCrLf _
+                                                & " from SOTPICK2,SOTPICK1,SOTORDR2,SOTORDR1,ICTSTYL1" & vbCrLf _
+                                                & " where SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
+                                                & "   and SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO" & vbCrLf _
+                                                & "   and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO " & vbCrLf _
+                                                & "   and SOTORDR1.ORDR_NO = SOTPICK2.ORDR_NO" & vbCrLf _
+                                                & "   and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
+                                                & Replace(sqlw, "SOTINVH1.", "SOTPICK1.")
                     ASCDATA1.ExecuteSQL()
 
                     ASCMAIN1.sql = "Insert into " & SOTINVH1 & vbCrLf _
-                        & "(INV_TYPE,INV_NO,CUST_CODE,CUST_STORE_NO,ORDR_CUST_PO,ORDR_NO,WHSE_CODE," & vbCrLf _
-                        & "REASON_CODE,INV_DATE,ORDR_BILL_TO_CUST,POST_CODE,SHIP_BOL_NO," & vbCrLf _
-                        & "SALES_DIVISION_CODE,TERM_CODE,PICK_NO," & vbCrLf _
-                        & "CUST_FACTOR_IND,SREP_CODE,INV_COMMENT," & vbCrLf _
-                        & "SREP2_CODE,ORDR_DEPT,CURR_CODE,CURR_EXCH_RATE)" & vbCrLf _
-                        & "Select 'P' INV_TYPE, SOTPICK1.PICK_NO INV_NO" & vbCrLf _
-                        & ", SOTORDR1.CUST_CODE, SOTORDR1.CUST_STORE_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
-                        & ", SOTORDR1.ORDR_NO, SOTORDR1.WHSE_CODE" & vbCrLf _
-                        & ", SOTORDR1.REASON_CODE, SOTORDR1.ORDR_SHIP_DATE INV_DATE" & vbCrLf _
-                        & ", SOTORDR1.CUST_BILL_TO_CUST, SOTORDR1.POST_CODE, SOTPICK1.SHIP_BOL_NO" & vbCrLf _
-                        & ", SOTORDR1.SALES_DIVISION_CODE, SOTORDR1.TERM_CODE, SOTPICK1.PICK_NO" & vbCrLf _
-                        & ", SOTORDR1.CUST_FACTOR_IND, SOTORDR1.SREP_CODE, SOTORDR1.ORDR_INV_COMMENT" & vbCrLf _
-                        & ", SOTORDR1.SREP2_CODE, SOTORDR1.ORDR_DEPT" & vbCrLf _
-                        & ", SOTORDR1.CURR_CODE, SOTORDR1.CURR_EXCH_RATE" & vbCrLf _
-                        & " from SOTPICK1,SOTORDR1 " & vbCrLf _
-                        & " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
-                        & Replace(sqlw, "SOTINVH1.", "SOTPICK1.")
+                            & "(INV_TYPE,INV_NO,CUST_CODE,CUST_STORE_NO,ORDR_CUST_PO,ORDR_NO,WHSE_CODE," & vbCrLf _
+                            & "REASON_CODE,INV_DATE,ORDR_BILL_TO_CUST,POST_CODE,SHIP_BOL_NO," & vbCrLf _
+                            & "SALES_DIVISION_CODE,TERM_CODE,PICK_NO," & vbCrLf _
+                            & "CUST_FACTOR_IND,SREP_CODE,INV_COMMENT," & vbCrLf _
+                            & "SREP2_CODE,ORDR_DEPT,CURR_CODE,CURR_EXCH_RATE)" & vbCrLf _
+                            & "Select 'P' INV_TYPE, SOTPICK1.PICK_NO INV_NO" & vbCrLf _
+                            & ", SOTORDR1.CUST_CODE, SOTORDR1.CUST_STORE_NO, SOTORDR1.ORDR_CUST_PO" & vbCrLf _
+                            & ", SOTORDR1.ORDR_NO, SOTORDR1.WHSE_CODE" & vbCrLf _
+                            & ", SOTORDR1.REASON_CODE, SOTORDR1.ORDR_SHIP_DATE INV_DATE" & vbCrLf _
+                            & ", SOTORDR1.CUST_BILL_TO_CUST, SOTORDR1.POST_CODE, SOTPICK1.SHIP_BOL_NO" & vbCrLf _
+                            & ", SOTORDR1.SALES_DIVISION_CODE, SOTORDR1.TERM_CODE, SOTPICK1.PICK_NO" & vbCrLf _
+                            & ", SOTORDR1.CUST_FACTOR_IND, SOTORDR1.SREP_CODE, SOTORDR1.ORDR_INV_COMMENT" & vbCrLf _
+                            & ", SOTORDR1.SREP2_CODE, SOTORDR1.ORDR_DEPT" & vbCrLf _
+                            & ", SOTORDR1.CURR_CODE, SOTORDR1.CURR_EXCH_RATE" & vbCrLf _
+                            & " from SOTPICK1,SOTORDR1 " & vbCrLf _
+                            & " where SOTORDR1.ORDR_NO = SOTPICK1.ORDR_NO" & vbCrLf _
+                            & Replace(sqlw, "SOTINVH1.", "SOTPICK1.")
                     ASCDATA1.ExecuteSQL()
                 End If
 
                 ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INIT_DATE = SYSDATE, INIT_OPER = '" & ASCMAIN1.USER_ID & "'")
                 ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " SOTINVH1 Set INV_SALES = (Select Sum (ORDR_QTY_SHIP * ORDR_UNIT_PRICE) from " & SOTINVH2 & " where INV_TYPE = SOTINVH1.INV_TYPE and INV_NO = SOTINVH1.INV_NO)")
                 ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " SOTINVH1 Set INV_SALES_CURR = (Select Sum (ORDR_QTY_SHIP * ORDR_UNIT_PRICE_CURR) from " & SOTINVH2 & " where INV_TYPE = SOTINVH1.INV_TYPE and INV_NO = SOTINVH1.INV_NO)")
-
 
                 If ASCMAIN1.CLIENT = "NYA" Then
 
@@ -882,16 +882,14 @@
                     ASCDATA1.ExecuteSQL()
                 End If
 
-
                 ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " SOTINVH1 Set INV_COGS = (Select Sum (ORDR_QTY_SHIP * ORDR_UNIT_COST) from " & SOTINVH2 & " where INV_TYPE = SOTINVH1.INV_TYPE and INV_NO = SOTINVH1.INV_NO)")
                 ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_MISC_CHG = 0")
                 ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_FREIGHT = 0")
+
                 If ASCMAIN1.CLIENT = "VAN" Then
                     ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_TOTAL_AMOUNT = NVL(INV_SALES,0) + NVL(INV_FREIGHT,0) + NVL(GST_TAX,0)")
                     ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_SALES_CURR = INV_SALES, INV_FREIGHT_CURR = INV_FREIGHT, INV_MISC_CHG_CURR = INV_MISC_CHG, INV_TOTAL_AMT_CURR = INV_TOTAL_AMOUNT, INV_TOTAL_AMOUNT_CURR = INV_TOTAL_AMOUNT, GST_TAX_CURR = GST_TAX")
                 Else
-
-
                     ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_TOTAL_AMOUNT_CURR = NVL(INV_SALES_CURR,0) + NVL(INV_FREIGHT_CURR,0) + NVL(GST_TAX_CURR,0)")
                     'ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_TOTAL_AMOUNT_CURR = NVL(INV_SALES_CURR,0) + NVL(INV_FREIGHT_CURR,0) + NVL(INV_STAX_CURR,0) + NVL(GST_TAX_CURR,0)")
                     ASCDATA1.ExecuteSQL("Update " & SOTINVH1 & " Set INV_TOTAL_AMT_CURR = INV_TOTAL_AMOUNT_CURR")

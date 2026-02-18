@@ -49,6 +49,8 @@ Public Class SOFPICKS
     Dim MAX_ORDERS_TO_RELEASE As Integer = 25
     Dim SALES_DIVISION_CODE_SKIN As String = "30"
     Dim WHSE_CODE_SKIN As String = "NJC"
+    Dim LNF_LOC As String = ""
+    Dim RTN_LOC As String = ""
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -81,6 +83,8 @@ Public Class SOFPICKS
             Dim drICTWHSE1 As DataRow = LookUp("ICTWHSE1", ECOM_WHSE_CODE)
             If drICTWHSE1 IsNot Nothing Then
                 WHSE_CODE_SKIN = ECOM_WHSE_CODE
+                LNF_LOC = drICTWHSE1("WHSE_LOC_LNF") & ""
+                RTN_LOC = drICTWHSE1("WHSE_LOC_RTN") & ""
             End If
         End If
 
@@ -509,6 +513,8 @@ Public Class SOFPICKS
                 End If
 
                 WHSE_CODE = rowICTWHSE1.Item("WHSE_CODE")
+                LNF_LOC = rowICTWHSE1("WHSE_LOC_LNF") & ""
+                RTN_LOC = rowICTWHSE1("WHSE_LOC_RTN") & ""
 
                 If txtORDR_NO.TextLength > 0 Then
                     Validate_Code("ORDR_NO")
@@ -998,13 +1004,13 @@ Public Class SOFPICKS
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdSOTORDQ1, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Select Selected", "Release Selected Orders", "Show Inventory Requirements", "Sales Order Inquiry") ' , "De-Select All Orders with Shortages"
-        Load_Popup_Menu(grdICTSTATO, "SBBBB", "Show Filter", "Item/Location Inquiry", "De-Select Order", "Cancel if Short - All Items", "Back-Order if Short - All Items")
+        Load_Popup_Menu(grdICTSTATO, "SBBBB", "Show Filter", "Style Status Inquiry", "De-Select Order", "Cancel if Short - All Items", "Back-Order if Short - All Items")
         'Load_Popup_Menu(grdSOTORDQ0, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Release Selected Orders", "Show Inventory Requirements", "Calculate Short", "Combine Groups")
         Load_Popup_Menu(grdSOTORDQ0, "SBBB", "Show Filter", "Release Selected Order Groups", "Calculate Short", "Combine Groups")
         Load_Popup_Menu(grdSOTPICK0, "SBBBBBB", "Show Filter", "Print Custom Tote Labels", "Print Resolution Report", "Print Resolution Report - Res Only", "Print Test Report", "Print Truck Pick Tag", "De-Release Pick Batch")
         Load_Popup_Menu(grdSOTPICK1, "SBBB", "Show Filter", "Print Custom Tote Label", "Sales Order Inquiry", "De-Release Pick Tickets", "De-Pick Pick Tickets")
-        Load_Popup_Menu(grdSOTPICK2, "B", "Item/Location Inquiry")
-        'Load_Popup_Menu(grdSOTORDRX, "SSBBBBBB", "Show Filter", "Show GroupBox", "Sales Order Inquiry", "Item/Location Inquiry", "Cancel Selected Orders", "Select All", "De-Select All", "Select Selected")
+        Load_Popup_Menu(grdSOTPICK2, "B", "Style Status Inquiry")
+        'Load_Popup_Menu(grdSOTORDRX, "SSBBBBBB", "Show Filter", "Show GroupBox", "Sales Order Inquiry", "Style Status Inquiry", "Cancel Selected Orders", "Select All", "De-Select All", "Select Selected")
         Load_Popup_Menu(grdSOTORDRX, "SSBB", "Show Filter", "Show GroupBox", "Sales Order Inquiry", "Find in Orders")
     End Sub
 
@@ -1535,7 +1541,7 @@ Public Class SOFPICKS
                 Print_Truck_Pick_Tag(e.Tool.Key, TRUCK_NO, PICK_DESCRIPTION, ORDER_COUNT, PICK_BATCH_NO)
                 MsgBox("Tag Printed")
 
-            Case "Item/Location Inquiry"
+            Case "Style Status Inquiry"
 
                 Dim WHSE_CODE As String = Absx1.txtFor("WHSE_CODE").Text
                 Dim STYLE_CODE As String = grd.ActiveRow.Cells("STYLE_CODE").Text
@@ -1544,10 +1550,9 @@ Public Class SOFPICKS
                 KEYS.Add("WHSE_CODE", WHSE_CODE)
                 KEYS.Add("STYLE_CODE", STYLE_CODE)
                 KEYS.Add("COLOR_CODE", COLOR_CODE)
-                Context_Launch("View", KEYS, e.Tool.Key, "ICFSTAT3")
+                Context_Launch("View", KEYS, e.Tool.Key, "ICFSTAT1")
 
             Case "Sales Order Inquiry"
-
                 Dim ORDR_NO As String = grd.ActiveRow.Cells("ORDR_NO").Text
                 'Dim KEYS As New Dictionary(Of String, Object)
                 'KEYS.Add("ORDR_NO", ORDR_NO)
@@ -1908,14 +1913,17 @@ Public Class SOFPICKS
                 Declare 
                   RX {ICTSTATX}%ROWTYPE;
                   QTY_AVA NUMBER (6,0); 
-                  QTY_TO_ALLO NUMBER (6,0); 
+                  QTY_TO_ALLO NUMBER (6,0);
+                  QTY_TO_EXCLUDE NUMBER (6,0);
                   Cursor C2 is Select * from {SOTORDRX} SOTORDRX where ORDR_NO = R1.ORDR_NO order by INIT_DATE for Update;
                 Begin         
 
                   For R2 in C2 Loop      
                     QTY_TO_ALLO := {QTY_TO_ALLO_calc};          
                     Select ICTSTATX.* into RX from {ICTSTATX} ICTSTATX where STYLE_CODE = R2.STYLE_CODE and COLOR_CODE = R2.COLOR_CODE;
-                    QTY_AVA := NVL(RX.WHSE_QTY_ON_HAND,0) - NVL(RX.WHSE_QTY_PICK,0) - NVL (RX.LOC_QTY_NOT_AVA,0) - NVL(RX.WHSE_QTY_ALLO,0);
+                    Select nvl(sum(LOCATION_QTY),0) into QTY_TO_EXCLUDE from WHTLOCB1 where WHSE_CODE = '{WHSE_CODE}' and LOCATION_CODE in ('{LNF_LOC}','{RTN_LOC}') and STYLE_CODE = R2.STYLE_CODE and COLOR_CODE = R2.COLOR_CODE;
+
+                    QTY_AVA := NVL(RX.WHSE_QTY_ON_HAND,0) - NVL(RX.WHSE_QTY_PICK,0) - NVL (RX.LOC_QTY_NOT_AVA,0) - NVL(RX.WHSE_QTY_ALLO,0) - QTY_TO_EXCLUDE;
 
                     If QTY_TO_ALLO <= QTY_AVA Then
                       Update {SOTORDRX} Set ORDR_QTY_ALLO = QTY_TO_ALLO where Current of C2;
@@ -2123,11 +2131,11 @@ Public Class SOFPICKS
             ' THIS SQL ASSUMES THAT S2-%-01 AND S2-%-02 ARE PRIMARY, AND S2-%-03/04/05/06 ARE OSL
             Dim sqlLoc As String = "Select WHTLOCB1.STYLE_CODE, WHTLOCB1.COLOR_CODE" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-01' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-02' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-01' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-02' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PRI" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-06' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S1%-06' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
+            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE LIKE 'S2-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S2-%-06' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-03' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-04' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-05' OR WHTLOCB1.LOCATION_CODE LIKE 'S1-%-06' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) OSL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'PALLET' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PAL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'CART' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) CRT" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'LOST' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
+            & $", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = '{LNF_LOC}' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
             & " from WHTLOCB1,ICTSTYD1" & vbCrLf _
             & $" where WHTLOCB1.WHSE_CODE = '{WHSE_CODE}'" & vbCrLf _
             & "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
@@ -2263,7 +2271,7 @@ Public Class SOFPICKS
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'PALLET' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) PAL" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'CART' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) CRT" & vbCrLf _
             & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'TRUCK' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) TRK" & vbCrLf _
-            & ", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = 'LOST' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
+            & $", SUM (CASE WHEN WHTLOCB1.LOCATION_CODE = '{LNF_LOC}' THEN WHTLOCB1.LOCATION_QTY ELSE 0 END) LNF" & vbCrLf _
             & " from WHTLOCB1,ICTSTYD1" & vbCrLf _
             & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}'" & vbCrLf _
             & "   and ICTSTYD1.WHSE_CODE (+) = WHTLOCB1.WHSE_CODE and ICTSTYD1.STYLE_CODE (+) = WHTLOCB1.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = WHTLOCB1.COLOR_CODE" & vbCrLf _
@@ -2272,14 +2280,14 @@ Public Class SOFPICKS
 
         ASCMAIN1.sql = $"Select Y.*, Z.PRI, Z.OSL, Z.PAL, Z.CRT, Z.TRK, Z.LNF from ({ASCMAIN1.sql}) Y, ({sqlLoc}) Z" & vbCrLf _
             & " where Z.STYLE_CODE (+) = Y.STYLE_CODE and Z.COLOR_CODE (+) = Y.COLOR_CODE"
-        ASCMAIN1.sql = $"Select X.*" & vbCrLf _
+        ASCMAIN1.sql = $"Select Distinct X.*" & vbCrLf _
             & ", NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)" & vbCrLf _
             & " - CASE WHEN NVL(WHTLOCB1.LOCATION_QTY,0) > 0 THEN WHTLOCB1.LOCATION_QTY ELSE 0 END QTY_AVA" & vbCrLf _
             & $", LEAST(0, NVL(ORDR_QTY_ALLO,0)" & vbCrLf _
             & " - NVL(ORDR_QTY_OPEN,0)) QTY_SHORT" & vbCrLf _
             & $", ICTSTYD1.LOCATION_CODE, WHTLOCB1.LOCATION_QTY LNF" & vbCrLf _
             & $" from ({ASCMAIN1.sql}) X, ICTSTYD1, WHTLOCB1" & vbCrLf _
-            & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}' and WHTLOCB1.LOCATION_CODE (+) = 'LOST' and WHTLOCB1.STYLE_CODE (+) = X.STYLE_CODE and WHTLOCB1.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
+            & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}' and WHTLOCB1.LOCATION_CODE (+) = '{LNF_LOC}' and WHTLOCB1.STYLE_CODE (+) = X.STYLE_CODE and WHTLOCB1.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
             & $"   And ICTSTYD1.WHSE_CODE (+) = '{WHSE_CODE}' and ICTSTYD1.STYLE_CODE (+) = X.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = X.COLOR_CODE"
 
         'ASCMAIN1.sql = $"Select * from ({ASCMAIN1.sql}) X where X.ORDR_QTY_OPEN <> 0 OR X.ORDR_QTY_BACK <> 0"
@@ -2913,7 +2921,8 @@ Public Class SOFPICKS
 
                 Try
                     Dim ORDER_COUNT As Integer = dst.Tables("SOTPICK1").Select("PICK_STATUS = 'P'").Length
-                    Print_Truck_Pick_Tag("Print Truck Tag", TRUCK_NO, PICK_DESCRIPTION, ORDER_COUNT, PICK_BATCH_NO)
+                    If 1 = 2 Then Print_Truck_Pick_Tag("Print Truck Tag", TRUCK_NO, PICK_DESCRIPTION, ORDER_COUNT, PICK_BATCH_NO)
+                    'got request that we don't print, they can right click and print if needed.
 
                     If TRUCK_TYPE = "X" Then
                         Print_Custom_Tote_Labels("Print Custom Tote Labels", PICK_BATCH_NO, TRUCK_NO)
