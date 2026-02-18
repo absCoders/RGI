@@ -6,6 +6,7 @@ Public Class ARFECOMS
     Dim CUST_CODE As String
 
     Dim sqlSOTORDR1 As String = ""
+    Dim sqlARTPYMTS As String = ""
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -95,26 +96,103 @@ from SOTORDR2,ICTCOLR1 where ICTCOLR1.COLOR_CODE = SOTORDR2.COLOR_CODE and SOTOR
                     .Columns.Add("TYPE")
                     .Columns.Add("YP")
                     .Columns.Add("CNT", GetType(System.Int32))
-                    .Columns.Add("QTY", GetType(System.Int32))
-                    .Columns.Add("AMT", GetType(System.Decimal))
-                    If TYPE = "OPEN" Then
-                        .Columns.Add("MIN_DATE", GetType(System.DateTime))
-                        .Columns.Add("MAX_DATE", GetType(System.DateTime))
-                    ElseIf TYPE = "BOOK" Then
-                        .Columns.Add("CNT_OPEN", GetType(System.Int32))
-                        .Columns.Add("CNT_PICK", GetType(System.Int32))
-                        .Columns.Add("CNT_SHIP", GetType(System.Int32))
-                        .Columns.Add("CNT_CANC", GetType(System.Int32))
-                    ElseIf TYPE = "SHIP" Then
-                        .Columns.Add("GRS", GetType(System.Decimal))
-                        .Columns.Add("DSC", GetType(System.Decimal))
-                        .Columns.Add("UNPAID", GetType(System.Int32))
+
+                    If TYPE = "PYMT" Then
+                        .Columns.Add("PYMT", GetType(System.Decimal))
+                        .Columns.Add("APPL", GetType(System.Decimal))
+                        .Columns.Add("FEE", GetType(System.Decimal))
+                        .Columns.Add("OTHER", GetType(System.Decimal))
+                        .Columns.Add("GL", GetType(System.Decimal))
+                        .Columns.Add("CBOA", GetType(System.Decimal))
+                        .Columns.Add("TB", GetType(System.Decimal))
+                    Else
+
+                        .Columns.Add("QTY", GetType(System.Int32))
+                        .Columns.Add("AMT", GetType(System.Decimal))
+                        If TYPE = "OPEN" Then
+                            .Columns.Add("MIN_DATE", GetType(System.DateTime))
+                            .Columns.Add("MAX_DATE", GetType(System.DateTime))
+                        ElseIf TYPE = "BOOK" Then
+                            .Columns.Add("CNT_OPEN", GetType(System.Int32))
+                            .Columns.Add("CNT_PICK", GetType(System.Int32))
+                            .Columns.Add("CNT_SHIP", GetType(System.Int32))
+                            .Columns.Add("CNT_CANC", GetType(System.Int32))
+                        ElseIf TYPE = "SHIP" Then
+                            .Columns.Add("GRS", GetType(System.Decimal))
+                            .Columns.Add("DSC", GetType(System.Decimal))
+                            .Columns.Add("UNPAID", GetType(System.Int32))
+                        ElseIf TYPE = "RTRN" Then
+                            .Columns.Add("GRS", GetType(System.Decimal))
+                            .Columns.Add("DSC", GetType(System.Decimal))
+                            .Columns.Add("UNPAID", GetType(System.Int32))
+                        End If
                     End If
                     .PrimaryKey = New DataColumn() { .Columns("TYPE"), .Columns("YP")}
                 End With
                 Create_Relation("ARTCUSTX_DASH", $"ARTCUSTX_{TYPE}", "TYPE")
             Next
 
+            ASCMAIN1.sql = "SELECT ':PARM1' YP, RECS, P2.PYMT, P3.APPL, P5_0.FEE, P5_0.OTHER, P4.GL, P5_1.CBOA" & vbCrLf _
+                & ", NVL(PYMT,0) + NVL(FEE,0) + NVL(OTHER,0) + NVL(GL,0) + NVL(CBOA,0) - NVL(APPL,0) TB " & vbCrLf _
+                & "FROM " & vbCrLf _
+                & "(" & vbCrLf _
+                & "SELECT 'X' KEY, COUNT (*) RECS, SUM (ARTPYMT2.CUST_PYMT_AMT) PYMT FROM ARTPYMT1,ARTPYMT2" & vbCrLf _
+                & "WHERE ARTPYMT1.OPS_YYYYPP = ':PARM1'" & vbCrLf _
+                & "AND ARTPYMT2.CUST_CODE = ':PARM2'" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_STATUS = '2'" & vbCrLf _
+                & ") P2, (" & vbCrLf _
+                & "SELECT 'X' KEY, SUM (ARTPYMT3.INV_PMT) APPL FROM ARTPYMT1,ARTPYMT2,ARTPYMT3" & vbCrLf _
+                & "WHERE ARTPYMT1.OPS_YYYYPP = ':PARM1'" & vbCrLf _
+                & "AND ARTPYMT2.CUST_CODE = ':PARM2'" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_STATUS = '2'" & vbCrLf _
+                & "AND ARTPYMT3.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT3.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                & ") P3, (" & vbCrLf _
+                & "SELECT 'X' KEY, SUM (CASE WHEN REASON_CODE = 'SHOPF' THEN DED ELSE 0 END) FEE" & vbCrLf _
+                & ", SUM (CASE WHEN REASON_CODE = 'SHOPF' THEN 0 ELSE DED END) OTHER" & vbCrLf _
+                & "FROM (" & vbCrLf _
+                & "SELECT ARTPYMT5.REASON_CODE, SUM (GL_DIST_AMT) DED" & vbCrLf _
+                & " FROM ARTPYMT1,ARTPYMT2,ARTPYMT5" & vbCrLf _
+                & "WHERE ARTPYMT1.OPS_YYYYPP = ':PARM1'" & vbCrLf _
+                & "AND ARTPYMT2.CUST_CODE = ':PARM2'" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_STATUS = '2'" & vbCrLf _
+                & "AND ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                & "AND NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '0'" & vbCrLf _
+                & "GROUP BY ARTPYMT5.REASON_CODE)" & vbCrLf _
+                & ") P5_0, (" & vbCrLf _
+                & "SELECT 'X' KEY, SUM (CBOA) CBOA FROM (" & vbCrLf _
+                & "SELECT ARTPYMT5.REASON_CODE, SUM (GL_DIST_AMT) CBOA" & vbCrLf _
+                & " FROM ARTPYMT1,ARTPYMT2,ARTPYMT5" & vbCrLf _
+                & "WHERE ARTPYMT1.OPS_YYYYPP = ':PARM1'" & vbCrLf _
+                & "AND ARTPYMT2.CUST_CODE = ':PARM2'" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_STATUS = '2'" & vbCrLf _
+                & "AND ARTPYMT5.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT5.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                & "AND NVL(ARTPYMT5.CHARGEBACK_IND,'0') = '1'" & vbCrLf _
+                & "GROUP BY ARTPYMT5.REASON_CODE)" & vbCrLf _
+                & ") P5_1, (" & vbCrLf _
+                & "SELECT 'X' KEY, SUM (GL) GL FROM (" & vbCrLf _
+                & "SELECT ARTPYMT4.ACCT_CODE, SUM (GL_DIST_AMT) GL" & vbCrLf _
+                & " FROM ARTPYMT1,ARTPYMT2,ARTPYMT4" & vbCrLf _
+                & "WHERE ARTPYMT1.OPS_YYYYPP = ':PARM1'" & vbCrLf _
+                & "AND ARTPYMT2.CUST_CODE = ':PARM2'" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_BATCH_NO = ARTPYMT1.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT2.PYMT_STATUS = '2'" & vbCrLf _
+                & "AND ARTPYMT4.PYMT_BATCH_NO = ARTPYMT2.PYMT_BATCH_NO" & vbCrLf _
+                & "AND ARTPYMT4.PYMT_BATCH_LNO = ARTPYMT2.PYMT_BATCH_LNO" & vbCrLf _
+                & "GROUP BY ARTPYMT4.ACCT_CODE)" & vbCrLf _
+                & ") P4" & vbCrLf _
+                & "WHERE P3.KEY (+) = P2.KEY AND P5_0.KEY = P2.KEY AND P5_1.KEY = P2.KEY AND P4.KEY (+) = P2.KEY"
+            sqlARTPYMTS = ASCMAIN1.sql
+            Create_TDA(.Tables.Add, "ARTPYMTS", "**", 0, False, "", 1)
+            With .Tables("ARTPYMTS")
+                .Columns("YP").MaxLength = 6
+            End With
 
             With .Tables.Add("ARTCUSTX_RF")
                 .Columns.Add("YP")
@@ -134,7 +212,7 @@ from SOTORDR2,ICTCOLR1 where ICTCOLR1.COLOR_CODE = SOTORDR2.COLOR_CODE and SOTOR
                 .Columns.Add("GRS_PRF", GetType(System.Decimal), "ISNULL(NET_SLS,0) - ISNULL(CGS,0)")
                 .Columns.Add("NET_PRF", GetType(System.Decimal), "ISNULL(GRS_PRF,0) - ISNULL(FEE_AMT,0) - ISNULL(OTH_DED,0)")
                 .Columns.Add("END_BAL", GetType(System.Decimal))
-                .Columns.Add("OOBAL", GetType(System.Decimal), "ISNULL(BEG_BAL,0)+ISNULL(NET_AMT,0)+ISNULL(BEG_BAL,0)-ISNULL(GRS_PMT,0)-ISNULL(END_BAL,0)")
+                .Columns.Add("OOBAL", GetType(System.Decimal), "ISNULL(BEG_BAL,0)+ISNULL(NET_AMT,0)-ISNULL(NET_PMT,0)-ISNULL(END_BAL,0)")
                 .PrimaryKey = New DataColumn() { .Columns("YP")}
             End With
 
@@ -166,20 +244,7 @@ group by SOTINVH1.CUST_CODE, SOTINVH1.ORDR_YYYYPP_UPDATED"
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-
                 gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
-
-                'If New String() {"YP"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                'ElseIf New String() {"BEG_BAL", "END_BAL"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
-                'ElseIf New String() {"GRS_SLS", "DISC", "NET_SLS", "SLS_TAX", "FRT_CHG", "MISC_CHG", "NET_AMT"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
-                'ElseIf New String() {"GRS_PMT", "FEE_AMT", "OTH_DED", "NET_PMT"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.Orange
-                'ElseIf New String() {"GRS_PRF", "CGS", "NET_PRF"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.Violet
-                'End If
             Next
         End With
 
@@ -190,20 +255,7 @@ group by SOTINVH1.CUST_CODE, SOTINVH1.ORDR_YYYYPP_UPDATED"
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Drawing.Color.White
                 gcol.Header.Appearance.BackGradientStyle = GradientStyle.ForwardDiagonal
-
                 gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
-
-                'If New String() {"YP"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGray
-                'ElseIf New String() {"BEG_BAL", "END_BAL"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightBlue
-                'ElseIf New String() {"GRS_SLS", "DISC", "NET_SLS", "SLS_TAX", "FRT_CHG", "MISC_CHG", "NET_AMT"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
-                'ElseIf New String() {"GRS_PMT", "FEE_AMT", "OTH_DED", "NET_PMT"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.Orange
-                'ElseIf New String() {"GRS_PRF", "CGS", "NET_PRF"}.Contains(gcol.Key) Then
-                '    gcol.Header.Appearance.BackColor2 = Drawing.Color.Violet
-                'End If
             Next
         End With
 
@@ -351,25 +403,38 @@ group by SOTINVH1.CUST_CODE, SOTINVH1.ORDR_YYYYPP_UPDATED"
                 .Columns("CNT").Width = 55
                 .Columns("CNT").Format = "#,##0"
                 .Columns("CNT").Header.Caption = "Count"
-                .Columns("QTY").Width = 60
-                .Columns("QTY").Format = "#,##0"
-                .Columns("QTY").Header.Caption = "Qty"
-                .Columns("AMT").Width = 90
-                .Columns("AMT").Format = "#,##0.00"
-                .Columns("AMT").Header.Caption = "Net Amt"
+                If B = "PYMT" Then
 
+                Else
+                    .Columns("QTY").Width = 60
+                    .Columns("QTY").Format = "#,##0"
+                    .Columns("QTY").Header.Caption = "Qty"
+                    .Columns("AMT").Width = 90
+                    .Columns("AMT").Format = "#,##0.00"
+                    .Columns("AMT").Header.Caption = "Net Amt"
+                End If
                 If B = "SHIP" Then
                     .Columns("GRS").Width = 90
                     .Columns("GRS").Format = "#,##0.00"
                     .Columns("GRS").Header.Caption = "Grs Amt"
-                    .Columns("DSC").Width = 70
+                    .Columns("DSC").Width = 80
                     .Columns("DSC").Format = "#,##0.00"
                     .Columns("DSC").Header.Caption = "Disc"
                     .Columns("UNPAID").Width = 60
                     .Columns("UNPAID").Format = "#,##0"
                     .Columns("UNPAID").Header.Caption = "unpd"
                 End If
-
+                If B = "RTRN" Then
+                    .Columns("GRS").Width = 90
+                    .Columns("GRS").Format = "#,##0.00"
+                    .Columns("GRS").Header.Caption = "Grs Amt"
+                    .Columns("DSC").Width = 80
+                    .Columns("DSC").Format = "#,##0.00"
+                    .Columns("DSC").Header.Caption = "Disc"
+                    .Columns("UNPAID").Width = 60
+                    .Columns("UNPAID").Format = "#,##0"
+                    .Columns("UNPAID").Header.Caption = "unpd"
+                End If
             End With
         Next
 
@@ -482,7 +547,7 @@ group by SOTINVH1.CUST_CODE, SOTINVH1.ORDR_YYYYPP_UPDATED"
 
         ' , "ARTCUSTX_DASH"
         EnforceConstraints(False)
-        For Each TABLE_NAME As String In New String() {"ARTCUSTX" _
+        For Each TABLE_NAME As String In New String() {"ARTCUSTX", "ARTPYMTS" _
                 , "ARTCUSTX_OPEN", "ARTCUSTX_BOOK", "ARTCUSTX_SHIP", "ARTCUSTX_RTRN", "ARTCUSTX_PYMT" _
                 , "ARTCUSTX_RF", "SOTORDR1", "SOTORDR2"}
             dst.Tables(TABLE_NAME).Rows.Clear()
@@ -632,6 +697,8 @@ group by SOTINVH1.CUST_CODE, SOTINVH1.ORDR_YYYYPP_UPDATED"
             ASCDATA1.ExecuteSQL($"Alter Table {ARTCUSTX} Add AR_OPEN_AMT NUMBER (12,2)")
             ASCDATA1.ExecuteSQL($"Alter Table {ARTCUSTX} Add AR_OVER_CNT NUMBER (6,0)")
             ASCDATA1.ExecuteSQL($"Alter Table {ARTCUSTX} Add AR_OVER_AMT NUMBER (12,2)")
+            ASCDATA1.ExecuteSQL($"Alter Table {ARTCUSTX} Add AR_OPEN_CNT_C NUMBER (6,0)")
+            ASCDATA1.ExecuteSQL($"Alter Table {ARTCUSTX} Add AR_OPEN_AMT_C NUMBER (12,2)")
         Else
             ASCDATA1.ExecuteSQL("Truncate Table " & ARTCUSTX)
             ASCDATA1.ExecuteSQL("Insert into " & ARTCUSTX & " (CUST_CODE, CUST_NAME) " & ASCMAIN1.sql)
@@ -689,9 +756,10 @@ End;"
    Select Count(Distinct SOTINVH1.INV_NO) SHIP_CNT, Sum (SOTINVH2.ORDR_QTY_SHIP) SHIP_QTY, Sum (SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_PRICE) SHIP_AMT
     , Sum (SOTINVH2.ORDR_QTY_SHIP * SOTORDR2.ORDR_RETAIL_PRICE) SHIP_GRS
     , Sum (SOTINVH2.ORDR_QTY_SHIP * (SOTORDR2.ORDR_RETAIL_PRICE - SOTORDR2.ORDR_UNIT_PRICE)) SHIP_DSC
-    from SOTINVH1,SOTINVH2,SOTORDR2
+    from SOTINVH1,SOTINVH2,SOTORDR2,SOTPICK2
     where SOTINVH1.CUST_CODE = R1.CUST_CODE
-      AND SOTORDR2.ORDR_NO = SOTINVH1.ORDR_NO AND SOTORDR2.ORDR_LNO = SOTINVH2.INV_LNO
+AND SOTPICK2.PICK_NO = SOTINVH1.PICK_NO AND SOTPICK2.PICK_LNO = SOTINVH2.INV_LNO
+      AND SOTORDR2.ORDR_NO = SOTPICK2.ORDR_NO AND SOTORDR2.ORDR_LNO = SOTPICK2.ORDR_LNO
       and SOTINVH2.INV_TYPE = SOTINVH1.INV_TYPE and SOTINVH2.INV_NO = SOTINVH1.INV_NO
       and SOTINVH1.INV_TYPE = 'I' and SOTINVH1.ORDR_YYYYPP_UPDATED = '{YP}';
    Begin For R2 in C2 Loop
@@ -702,13 +770,22 @@ End;"
   End;
 
   Begin Declare Cursor C2 is 
-   Select Count(Distinct SOTINVH1.INV_NO) RTRN_CNT, Sum (SOTINVH2.ORDR_QTY_SHIP) RTRN_QTY, Sum (SOTINVH2.ORDR_QTY_SHIP * SOTINVH2.ORDR_UNIT_PRICE) RTRN_AMT
-    from SOTINVH1,SOTINVH2
-    where SOTINVH1.CUST_CODE = R1.CUST_CODE
-      and SOTINVH2.INV_TYPE = SOTINVH1.INV_TYPE and SOTINVH2.INV_NO = SOTINVH1.INV_NO
-      and SOTINVH1.INV_TYPE = 'C' and SOTINVH1.ORDR_YYYYPP_UPDATED = '{YP}';
+   Select Count(Distinct X.INV_NO) RTRN_CNT, Sum (X.ORDR_QTY_SHIP) RTRN_QTY, Sum (X.ORDR_QTY_SHIP * X.ORDR_UNIT_PRICE) RTRN_AMT
+   , Sum (X.ORDR_QTY_SHIP * DECODE(X.ORDR_NO,NULL,SOTORDR2.ORDR_UNIT_PRICE,SOTORDR2.ORDR_RETAIL_PRICE)) RTRN_GRS
+   , Sum (X.ORDR_QTY_SHIP * DECODE(X.ORDR_NO,NULL,SOTORDR2.ORDR_UNIT_PRICE,(SOTORDR2.ORDR_RETAIL_PRICE - SOTORDR2.ORDR_UNIT_PRICE))) RTRN_DSC
+   from (
+    Select SOTINVH1.INV_NO, SOTRTNL1.ORDR_NO, SOTINVH2.INV_LNO ORDR_LNO, SOTINVH2.ORDR_QTY_SHIP, SOTINVH2.ORDR_UNIT_PRICE
+        from SOTINVH1,SOTINVH2,SOTRTNL1
+        where SOTINVH1.CUST_CODE =  R1.CUST_CODE
+          and SOTINVH2.INV_TYPE = SOTINVH1.INV_TYPE and SOTINVH2.INV_NO = SOTINVH1.INV_NO
+          and SOTINVH1.INV_TYPE = 'C' and SOTINVH1.ORDR_YYYYPP_UPDATED = '{YP}'
+          AND SOTRTNL1.INV_NO (+) = SOTINVH1.INV_NO
+    ) X,SOTORDR2
+   where SOTORDR2.ORDR_NO (+) = X.ORDR_NO
+     and SOTORDR2.ORDR_LNO (+) = X.ORDR_LNO;
    Begin For R2 in C2 Loop
     Update {ARTCUSTX} Set RTRN_CNT = R2.RTRN_CNT, RTRN_QTY = R2.RTRN_QTY, RTRN_AMT = R2.RTRN_AMT
+    , RTRN_GRS = R2.RTRN_GRS, RTRN_DSC = R2.RTRN_DSC
      where Current of C1;
    End Loop; End;
   End;
@@ -721,25 +798,42 @@ End;"
     , Sum (Case when ARTOPEN1.INV_DATE > TRUNC(SYSDATE-3) then 1 else 0 end) AR_OVER_CNT
     , Sum (Case when ARTOPEN1.INV_DATE > TRUNC(SYSDATE-3) then ARTOPEN1.INV_BALANCE else 0 end) AR_OVER_AMT
     from ARTOPEN1
-    where ARTOPEN1.CUST_CODE = R1.CUST_CODE;
+    where ARTOPEN1.CUST_CODE = R1.CUST_CODE and ARTOPEN1.OPS_YYYYPP <= '{ASCMAIN1.CYP}' and ARTOPEN1.INV_TYPE = 'I';
    Begin For R2 in C2 Loop
     Update {ARTCUSTX} Set AR_OPEN_CNT = R2.AR_OPEN_CNT, AR_OPEN_AMT = R2.AR_OPEN_AMT, AR_OVER_CNT = R2.AR_OVER_CNT, AR_OVER_AMT = R2.AR_OVER_AMT
      where Current of C1;
    End Loop; End;
   End;
+  Begin Declare Cursor C2 is 
+   Select Count(Distinct ARTOPEN1.INV_NUM) AR_OPEN_CNT, Sum (ARTOPEN1.INV_BALANCE) AR_OPEN_AMT
+    from ARTOPEN1
+    where ARTOPEN1.CUST_CODE = R1.CUST_CODE and ARTOPEN1.OPS_YYYYPP <= '{ASCMAIN1.CYP}' and ARTOPEN1.INV_TYPE <> 'I';
+   Begin For R2 in C2 Loop
+    Update {ARTCUSTX} Set AR_OPEN_CNT_C = R2.AR_OPEN_CNT, AR_OPEN_AMT_C = R2.AR_OPEN_AMT
+     where Current of C1;
+   End Loop; End;
+  End;
 "
-            'and ARTOPEN1.INV_BALANCE > 0
-            'and ARTOPEN1.INV_TYPE = 'I';
-
         Else
             sql &= $"
   Begin Declare Cursor C2 is 
    Select Count(Distinct ARTOPEN1.INV_NUM) AR_OPEN_CNT, Sum (ARTOPEN1.INV_BALANCE) AR_OPEN_AMT
     from (Select DETL_CVX_NO CUST_CODE, DETL_CVX_TYPE INV_TYPE, DETL_CTL_NO INV_NUM, CREC_AMT INV_BALANCE
-           from GLTCREC3 where OPS_YYYYPP = '{YP}' and CREC_TYPE_CODE = 'AR') ARTOPEN1
+           from GLTCREC3 where OPS_YYYYPP = '{YP}' and DETL_CTL_TYPE = 'I' and CREC_TYPE_CODE = 'AR') ARTOPEN1
     where ARTOPEN1.CUST_CODE = R1.CUST_CODE;
    Begin For R2 in C2 Loop
     Update {ARTCUSTX} Set AR_OPEN_CNT = R2.AR_OPEN_CNT, AR_OPEN_AMT = R2.AR_OPEN_AMT, AR_OVER_CNT = 0, AR_OVER_AMT = 0
+     where Current of C1;
+   End Loop; End;
+  End;
+
+  Begin Declare Cursor C2 is 
+   Select Count(Distinct ARTOPEN1.INV_NUM) AR_OPEN_CNT, Sum (ARTOPEN1.INV_BALANCE) AR_OPEN_AMT
+    from (Select DETL_CVX_NO CUST_CODE, DETL_CVX_TYPE INV_TYPE, DETL_CTL_NO INV_NUM, CREC_AMT INV_BALANCE
+           from GLTCREC3 where OPS_YYYYPP = '{YP}' and DETL_CTL_TYPE <> 'I' and CREC_TYPE_CODE = 'AR') ARTOPEN1
+    where ARTOPEN1.CUST_CODE = R1.CUST_CODE;
+   Begin For R2 in C2 Loop
+    Update {ARTCUSTX} Set AR_OPEN_CNT_C = R2.AR_OPEN_CNT, AR_OPEN_AMT_C = R2.AR_OPEN_AMT
      where Current of C1;
    End Loop; End;
   End;
@@ -775,6 +869,7 @@ End;"
         For Each TYPE As String In New String() {"OPEN", "BOOK", "SHIP", "RTRN", "PYMT"}
             dst.Tables($"ARTCUSTX_{TYPE}").Rows.Clear()
         Next
+        dst.Tables("ARTPYMTS").Rows.Clear()
 
         Dim LAST_YP As String = ""
 
@@ -800,6 +895,11 @@ End;"
 
             Dim rowARTCUSTX As DataRow = dst.Tables("ARTCUSTX").Rows.Find(CUST_CODE)
 
+            'Dim rowARTPYMTS As DataRow = Fill_Record("ARTPYMTS", New String() {YP, CUST_CODE})
+            ASCMAIN1.sql = Replace(Replace(sqlARTPYMTS, ":PARM1", YP), ":PARM2", CUST_CODE)
+            Fill_Records("ARTPYMTS",,, ASCMAIN1.sql)
+            Dim rowARTPYMTS As DataRow = dst.Tables("ARTPYMTS").Rows(0)
+
             For Each TYPE As String In New String() {"OPEN", "BOOK", "SHIP", "RTRN", "PYMT"}
 
                 If TYPE = "OPEN" And YPs > 0 Then
@@ -809,15 +909,21 @@ End;"
                     Dim rowARTCUSTX_TYPE As DataRow = dst.Tables($"ARTCUSTX_{TYPE}").NewRow
                     With rowARTCUSTX_TYPE
                         .Item("TYPE") = TYPE
+                        .Item("YP") = YP
 
                         If TYPE = "PYMT" Then
+                            .Item("CNT") = rowARTPYMTS.Item("RECS")
+                            .Item("PYMT") = rowARTPYMTS.Item("PYMT")
+                            .Item("APPL") = rowARTPYMTS.Item("APPL")
+                            .Item("FEE") = rowARTPYMTS.Item("FEE")
+                            .Item("OTHER") = rowARTPYMTS.Item("OTHER")
+                            .Item("CBOA") = rowARTPYMTS.Item("CBOA")
+                            .Item("TB") = rowARTPYMTS.Item("TB")
                         Else
                             .Item("CNT") = rowARTCUSTX.Item($"{TYPE}_CNT")
                             .Item("QTY") = rowARTCUSTX.Item($"{TYPE}_QTY")
                             .Item("AMT") = rowARTCUSTX.Item($"{TYPE}_AMT")
                         End If
-
-                        .Item("YP") = YP
 
                         If TYPE = "OPEN" Then
                             .Item("YP") = "000000"
@@ -832,6 +938,10 @@ End;"
                             .Item("GRS") = rowARTCUSTX.Item($"{TYPE}_GRS")
                             .Item("DSC") = rowARTCUSTX.Item($"{TYPE}_DSC")
                             .Item("UNPAID") = rowARTCUSTX.Item($"AR_OPEN_CNT")
+                        ElseIf TYPE = "RTRN" Then
+                            .Item("GRS") = rowARTCUSTX.Item($"{TYPE}_GRS")
+                            .Item("DSC") = rowARTCUSTX.Item($"{TYPE}_DSC")
+                            .Item("UNPAID") = rowARTCUSTX.Item($"AR_OPEN_CNT_C")
                         End If
                     End With
                     dst.Tables($"ARTCUSTX_{TYPE}").Rows.Add(rowARTCUSTX_TYPE)
@@ -845,19 +955,19 @@ End;"
                 .Item("YP") = YP
 
                 .Item("BEG_BAL") = 0
-                .Item("GRS_SLS") = rowARTCUSTX.Item("SHIP_GRS")
-                .Item("DISC") = rowARTCUSTX.Item("SHIP_DSC")
-                .Item("NET_SLS") = rowSOTINVHX.Item("INV_SALES") ' rowARTCUSTX.Item("SHIP_AMT")
+                .Item("GRS_SLS") = Val(rowARTCUSTX.Item("SHIP_GRS") & "") + Val(rowARTCUSTX.Item("RTRN_GRS") & "")
+                .Item("DISC") = Val(rowARTCUSTX.Item("SHIP_DSC") & "") + Val(rowARTCUSTX.Item("RTRN_DSC") & "")
+                .Item("NET_SLS") = rowSOTINVHX.Item("INV_SALES")
                 .Item("SLS_TAX") = rowSOTINVHX.Item("INV_STAX")
                 .Item("FRT_CHG") = rowSOTINVHX.Item("INV_FREIGHT")
                 .Item("MISC_CHG") = rowSOTINVHX.Item("INV_MISC_CHG")
                 .Item("NET_AMT") = rowSOTINVHX.Item("INV_TOTAL_AMOUNT")
-                .Item("GRS_PMT") = 3
-                .Item("FEE_AMT") = 3
-                .Item("OTH_DED") = 3
-                .Item("NET_PMT") = 3
+                .Item("GRS_PMT") = Val(rowARTPYMTS.Item("PYMT") & "")
+                .Item("FEE_AMT") = Val(rowARTPYMTS.Item("FEE") & "")
+                .Item("OTH_DED") = Val(rowARTPYMTS.Item("OTHER") & "") + Val(rowARTPYMTS.Item("GL") & "")
+                .Item("NET_PMT") = Val(rowARTPYMTS.Item("APPL") & "") + Val(rowARTPYMTS.Item("CBOA") & "")
                 .Item("CGS") = rowSOTINVHX.Item("INV_COGS")
-                .Item("END_BAL") = rowARTCUSTX.Item("AR_OPEN_AMT")
+                .Item("END_BAL") = Val(rowARTCUSTX.Item("AR_OPEN_AMT") & "") + Val(rowARTCUSTX.Item("AR_OPEN_AMT_C") & "")
                 dst.Tables($"ARTCUSTX_RF").Rows.Add(rowARTCUSTX_RF)
 
                 If YPs > 0 Then
@@ -930,7 +1040,12 @@ End;"
             Dim ORDR_NO As String = grdSOTORDR1.ActiveRow.Cells("ORDR_NO").Value
 
             Fill_Records("SOTORDR2", ORDR_NO)
-            Sort_grdColumns(GRDSOTORDR2, "ORDR_NO,ORDR_LNO")
+            Sort_grdColumns(grdSOTORDR2, "ORDR_NO,ORDR_LNO")
+
+            'dst.Tables("SOTORDR2").Rows.Clear()
+            'For Each rowSOTORDR1 As DataRow In dst.Tables("SOTORDR1").Select("")
+            '    Fill_Records("SOTORDR2", rowSOTORDR1.Item("ORDR_NO"), False)
+            'Next
         End If
     End Sub
 
@@ -951,7 +1066,7 @@ End;"
 
             If GRS_SLS - DISC - NET_SLS <> 0 Then
                 e.Row.Cells("NET_SLS").Appearance.ForeColor = Drawing.Color.Red
-                e.Row.Cells("NET_SLS").ToolTipText = "Net Sls <> Grs Sls - Disc"
+                e.Row.Cells("NET_SLS").ToolTipText = "Net Sls <> Grs Sls - Disc; Out by " & Format(GRS_SLS - DISC - NET_SLS, "#,###.00")
             Else
                 e.Row.Cells("NET_SLS").Appearance.ForeColor = Drawing.Color.Empty
                 e.Row.Cells("NET_SLS").ToolTipText = ""
@@ -959,15 +1074,15 @@ End;"
 
             If NET_SLS + SLS_TAX + FRT_CHG + MISC_CHG - NET_AMT <> 0 Then
                 e.Row.Cells("NET_AMT").Appearance.ForeColor = Drawing.Color.Red
-                e.Row.Cells("NET_AMT").ToolTipText = "Net Amt <> Net Sls + Sls Tax + Frt + Misc"
+                e.Row.Cells("NET_AMT").ToolTipText = "Net Amt <> Net Sls + Sls Tax + Frt + Misc; Out by " & Format(NET_SLS + SLS_TAX + FRT_CHG + MISC_CHG - NET_AMT, "#,###.00")
             Else
                 e.Row.Cells("NET_AMT").Appearance.ForeColor = Drawing.Color.Empty
                 e.Row.Cells("NET_AMT").ToolTipText = ""
             End If
 
-            If GRS_PMT - FEE_AMT - OTH_DED - NET_PMT <> 0 Then
+            If GRS_PMT + FEE_AMT + OTH_DED - NET_PMT <> 0 Then
                 e.Row.Cells("NET_PMT").Appearance.ForeColor = Drawing.Color.Red
-                e.Row.Cells("NET_PMT").ToolTipText = "Net Pmt <> Grs Pmt - Fee - Other Ded"
+                e.Row.Cells("NET_PMT").ToolTipText = "Net Pmt <> Grs Pmt + Fee + Other Ded; Out by " & Format(GRS_PMT + FEE_AMT + OTH_DED - NET_PMT, "#,###.00")
             Else
                 e.Row.Cells("NET_PMT").Appearance.ForeColor = Drawing.Color.Empty
                 e.Row.Cells("NET_PMT").ToolTipText = ""

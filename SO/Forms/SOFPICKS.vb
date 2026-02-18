@@ -2280,7 +2280,7 @@ Public Class SOFPICKS
 
         ASCMAIN1.sql = $"Select Y.*, Z.PRI, Z.OSL, Z.PAL, Z.CRT, Z.TRK, Z.LNF from ({ASCMAIN1.sql}) Y, ({sqlLoc}) Z" & vbCrLf _
             & " where Z.STYLE_CODE (+) = Y.STYLE_CODE and Z.COLOR_CODE (+) = Y.COLOR_CODE"
-        ASCMAIN1.sql = $"Select X.*" & vbCrLf _
+        ASCMAIN1.sql = $"Select Distinct X.*" & vbCrLf _
             & ", NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)" & vbCrLf _
             & " - CASE WHEN NVL(WHTLOCB1.LOCATION_QTY,0) > 0 THEN WHTLOCB1.LOCATION_QTY ELSE 0 END QTY_AVA" & vbCrLf _
             & $", LEAST(0, NVL(ORDR_QTY_ALLO,0)" & vbCrLf _
