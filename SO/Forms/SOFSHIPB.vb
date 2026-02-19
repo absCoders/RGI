@@ -5420,7 +5420,7 @@ Public Class SOFSHIPB
             ASCMAIN1.Progress("Now Updating ...")
 
             Dim freightAllowance As Decimal = 0
-            If commonCarrier Then
+            If commonCarrier And Val(numSHIP_FREIGHT.Value & String.Empty) = 0 Then
                 For Each row As DataRow In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
                     freightAllowance += Val(row.Item("PICK_FREIGHT") & String.Empty)
                 Next
