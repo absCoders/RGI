@@ -1348,6 +1348,11 @@ Public Class WHFSHIP1
                             If rowWHTSHPCC.Item("MANUFACTURER") & String.Empty = String.Empty Then
                                 rowWHTSHPCC.Item("MANUFACTURER") = "US"
                             End If
+
+                            If (rowWHTSHPCC.Item("MANUFACTURER") & String.Empty).ToString.Length > 2 Then
+                                rowWHTSHPCC.Item("MANUFACTURER") = rowWHTSHPCC.Item("MANUFACTURER").ToString.Substring(0, 2)
+                            End If
+
                             rowWHTSHPCC.Item("HARMONIZED_CODE") = ""
                             rowWHTSHPCC.Item("WEIGHT") = Val(rowICTSTYL1.Item("STYLE_WEIGHT") & String.Empty)
                             rowWHTSHPCC.Item("QUANTITY") = Val(rowSOTINVH2.Item("ORDR_QTY_SHIP") & String.Empty)

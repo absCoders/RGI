@@ -479,6 +479,8 @@ Public Class ARFCINQ1
                 '.Add("ORDR_SOURCE", GetType(System.String), "MIN(CHILD.ORDR_SOURCE)")
                 .Add("ORDR_NO", GetType(System.String), "MIN(CHILD.ORDR_NO)")
                 .Add("ORDR_HOLD", GetType(System.String), "MAX(CHILD.ORDR_HOLD)")
+                .Add("ORDR_AMT_ALLO_CUR", GetType(System.Decimal))
+                .Add("PCT_ALLO_CUR", GetType(System.Decimal), "IIF(ORDR_AMT=0, 0, 100 * ORDR_AMT_ALLO_CUR / ORDR_AMT)")
             End With
 
             ASCMAIN1.sql = "Select SOTORDR2.* from SOTORDR2 where SOTORDR2.ORDR_NO = :PARM1"
@@ -885,6 +887,7 @@ Public Class ARFCINQ1
         Create_Summary(grdSOTORDR0, "ORDR_GROUP_NO", "Count")
         Create_Summary(grdSOTORDR0, New String() {"ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC"})
         Create_Summary(grdSOTORDR0, New String() {"ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"})
+        Create_Summary(grdSOTORDR0, New String() {"ORDR_AMT_ALLO_CUR"})
 
         Create_Summary(grdSOTINVH1, "INV_NO", "Count")
         Create_Summary(grdSOTINVH1, New String() {"INV_SALES", "INV_FREIGHT", "INV_MISC_CHG", "INV_TOTAL_AMOUNT"})
@@ -962,7 +965,7 @@ Public Class ARFCINQ1
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.Gold
                     GCOL.Format = "MM/dd"
                     GCOL.Width = 60
-                ElseIf New String() {"ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"}.Contains(GCOL.Key) Then
+                ElseIf New String() {"ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO_CUR", "PCT_ALLO_CUR", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
                     GCOL.Format = "#,##0.00"
                     GCOL.Width = 85
@@ -976,6 +979,19 @@ Public Class ARFCINQ1
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.Orange
                 End If
             Next
+            If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                With .Columns("ORDR_AMT_ALLO_CUR")
+                    .Hidden = False
+                    .Format = "#,##0.00"
+                End With
+                With .Columns("PCT_ALLO_CUR")
+                    .Hidden = False
+                    .Format = "#0.0"
+                End With
+            Else
+                .Columns("ORDR_AMT_ALLO_CUR").Hidden = True
+                .Columns("PCT_ALLO_CUR").Hidden = True
+            End If
         End With
 
         With grdSOTORDR0.DisplayLayout.Bands(1)
@@ -1759,6 +1775,12 @@ Public Class ARFCINQ1
             End If
         End If
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            tabMain.Tabs("Outbound").Visible = True
+        Else
+            tabMain.Tabs("Outbound").Visible = False
+        End If
+
     End Sub
 
     Sub Clear_Record()
@@ -2135,7 +2157,7 @@ Public Class ARFCINQ1
         Else
             Load_Popup_Menu(grdARTOPEN1, "SSSSBBBBBBBBBBBBBBBB", "Show Filter", "Show GroupBox", "Show $0 Balance Items", "Show BOL",
                         "email", "Fax", "Show", "Sales Order Inquiry", "Customer Returns Inquiry", "Show Pymt Applications",
-                        "Retrieve Paid Invoices", "Create Log", "Total Balance", "Change Terms", "Credit Card", "Sales Order Entry", "Show Aged AR", "email Aged AR", "email Cust Statement")
+                        "Retrieve Paid Invoices", "Create Log", "Total Balance", "Change Terms", "Credit Card", "Sales Order Entry", "Show Aged AR", "email Aged AR", "email Cust Statement", "Show Cust Statement")
 
         End If
         Load_Popup_Menu(grdSOTORDR0, "SSSBBBBB", "Show Filter", "Show GroupBox", "Show Pins", "Sales Order Inquiry", "Customer Order Inquiry", "Sales Order Entry", "Print Selected", "Print Pro-Forma")
@@ -2231,6 +2253,12 @@ Public Class ARFCINQ1
 
         If tlb_pop.Tools.Exists("Email Cust Statement") Then
             tlb_btn = DirectCast(tlb_pop.Tools("Email Cust Statement"), UltraWinToolbars.ButtonTool)
+            tlb_btn.SharedProps.Visible = ASCMAIN1.DBS_COMPANY = "RGI"
+
+        End If
+
+        If tlb_pop.Tools.Exists("Show Cust Statement") Then
+            tlb_btn = DirectCast(tlb_pop.Tools("Show Cust Statement"), UltraWinToolbars.ButtonTool)
             tlb_btn.SharedProps.Visible = ASCMAIN1.DBS_COMPANY = "RGI"
 
         End If
@@ -2640,6 +2668,10 @@ Public Class ARFCINQ1
 
                 Exit Sub
 
+            Case "Show Cust Statement"
+                Call AR_STATEMENT()
+                Dim FILENAME As String = Print_Hard_Copy_Statement(True, False)
+                'Show_Document(FILENAME)
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -3890,6 +3922,17 @@ Public Class ARFCINQ1
             Fill_Records("SOTORDR0", "", , ASCMAIN1.sql)
         End If
 
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            For Each rowSOTORDR0 As DataRow In dst.Tables("SOTORDR0").Select()
+                Dim ORDR_GROUP_NO As String = rowSOTORDR0.Item("ORDR_GROUP_NO").ToString & String.Empty
+                Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+                SQLS.AppendLine($"SELECT SUM(NVL(ORDR_AMT_ALLO_CUR,0)) ORDR_AMT_ALLO_CUR FROM SOTORDRS WHERE ORDR_GROUP_NO = '{ORDR_GROUP_NO}'")
+                ASCMAIN1.sql = SQLS.ToString()
+                Dim ORDR_AMT_ALLO_CUR As Int16 = Val(ASCDATA1.GetDataValue)
+                rowSOTORDR0.Item("ORDR_AMT_ALLO_CUR") = ORDR_AMT_ALLO_CUR
+            Next
+        End If
+
         ASCMAIN1.sql = "Select SOTORDR1.* from SOTORDR1 where ORDR_GROUP_NO in (" & Replace(subQuery, ".*", ".ORDR_GROUP_NO") & ")"
         Fill_Records("SOTORDR1", "", , ASCMAIN1.sql)
         Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
@@ -4064,6 +4107,10 @@ Public Class ARFCINQ1
                 End If
                 If grdSATCUSTS.Tag = "*" Then
                     SetUp12Month()
+                End If
+            Case "Outbound"
+                If txtOBContact.Text & String.Empty = "" Then
+                    fillOBData()
                 End If
         End Select
 
@@ -5976,4 +6023,83 @@ Public Class ARFCINQ1
 
     End Sub
 
+    Private Sub btnEmailOutbound_Click(sender As Object, e As EventArgs) Handles btnEmailOutbound.Click
+        Dim iTitle As String = "Feature Not Finished Yet."
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+        iMSG.AppendLine("I'm Working As Fast As")
+        iMSG.AppendLine("I Can Captian!")
+        MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+    End Sub
+
+    Private Sub btnPrintOutbound_Click(sender As Object, e As EventArgs) Handles btnPrintOutbound.Click
+        Dim iTitle As String = "Feature Not Finished Yet."
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+        iMSG.AppendLine("I'm Working As Fast As")
+        iMSG.AppendLine("I Can Captian!")
+        MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+    End Sub
+    Private Sub fillOBData()
+        txtOBContact.Text = Absx1.txtFor("CUST_CONTACT").Text.ToString & String.Empty
+
+        Dim ADDR As New Text.StringBuilder With {.Length = 0}
+        Dim CUST_ADDR1 As String = Absx1.txtFor("CUST_ADDR1").Text.ToString & String.Empty
+        Dim CUST_ADDR2 As String = Absx1.txtFor("CUST_ADDR2").Text.ToString & String.Empty
+        Dim CUST_ADDR3 As String = Absx1.txtFor("CUST_ADDR3").Text.ToString & String.Empty
+        Dim CUST_CITY As String = Absx1.txtFor("CUST_CITY").Text.ToString & String.Empty
+        Dim CUST_STATE As String = Absx1.txtFor("CUST_STATE").Text.ToString & String.Empty
+        Dim CUST_ZIP_CODE As String = Absx1.txtFor("CUST_ZIP_CODE").Text.ToString & String.Empty
+
+        ADDR.AppendLine(CUST_ADDR1)
+        If CUST_ADDR2.Length > 0 Then
+            ADDR.AppendLine(CUST_ADDR2)
+        End If
+        If CUST_ADDR3.Length > 0 Then
+            ADDR.AppendLine(CUST_ADDR3)
+        End If
+        ADDR.AppendLine($"{CUST_CITY}, {CUST_STATE} {CUST_ZIP_CODE}")
+        txtOBAddress.Text = ADDR.ToString
+
+        txtOBTerms.Text = Absx1.txtFor("TERM_DESC").Text.ToString & String.Empty
+
+        Dim rowARTCUST6 As DataRow = LookUp("ARTCUST6", HFs("CUST_CODE"), True)
+        If Not IsNothing(rowARTCUST6) Then
+            dteOBFirstOrder.Value = rowARTCUST6.Item("CUST_FIRST_PURCH")
+            dteOBLastOrder.Value = rowARTCUST6.Item("CUST_LAST_INV_DATE")
+        End If
+
+        numOBCreditLimit.Value = Val(Absx1.numFor("CUST_CREDIT_LIMIT").Value & String.Empty)
+
+        Dim rCnt As Int64 = 0
+        Dim rcntMax As Int64 = 36
+        Dim OBHightCredit As Double = 0
+        Dim OBCurrBal As Double = 0
+        Dim OBPastDue As Double = 0
+        For Each rowARTSTMT1 As DataRow In dst.Tables("ARTSTMT1").Select("", "OPS_YYYYPP DESC")
+            rCnt += 1
+            Dim TOTAL_OPEN_AMT As Decimal = Val(rowARTSTMT1.Item("TOTAL_OPEN_AMT").ToString & String.Empty)
+            If rowARTSTMT1.Item("OPS_YYYYPP") = "999999" Then
+                Dim AGE_2 As Decimal = Val(rowARTSTMT1.Item("AGE_2").ToString & String.Empty)
+                Dim AGE_3 As Decimal = Val(rowARTSTMT1.Item("AGE_3").ToString & String.Empty)
+                Dim AGE_4 As Decimal = Val(rowARTSTMT1.Item("AGE_4").ToString & String.Empty)
+                OBPastDue = AGE_2 + AGE_3 + AGE_4
+                OBCurrBal = TOTAL_OPEN_AMT
+            Else
+                If rCnt >= rcntMax Then
+                    Exit For
+                Else
+                    If TOTAL_OPEN_AMT > OBHightCredit Then
+                        OBHightCredit = TOTAL_OPEN_AMT
+                    End If
+                End If
+            End If
+        Next
+        numOBHightCredit.Value = OBHightCredit
+        numOBCurrBal.Value = OBCurrBal
+        numOBPastDue.Value = OBPastDue
+
+        txtOBNotes.Text = ""
+
+        txtOBSendName.Text = ""
+        txtOBSendEmail.Text = ""
+    End Sub
 End Class
