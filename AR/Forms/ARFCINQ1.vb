@@ -4109,7 +4109,7 @@ Public Class ARFCINQ1
                     SetUp12Month()
                 End If
             Case "Outbound"
-                If txtOBContact.Text & String.Empty = "" Then
+                If txtOBTerms.Text & String.Empty = "" Then
                     fillOBData()
                 End If
         End Select
@@ -6024,22 +6024,65 @@ Public Class ARFCINQ1
     End Sub
 
     Private Sub btnEmailOutbound_Click(sender As Object, e As EventArgs) Handles btnEmailOutbound.Click
-        Dim iTitle As String = "Feature Not Finished Yet."
-        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-        iMSG.AppendLine("I'm Working As Fast As")
-        iMSG.AppendLine("I Can Captian!")
-        MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+        Dim emsg As New Text.StringBuilder With {.Length = 0}
+        If txtOBSendName.Text.Length = 0 Then
+            emsg.AppendLine("Missing Sender Name.")
+        End If
+        If txtOBSendEmail.Text.Length = 0 Then
+            emsg.AppendLine("Missing Sender Email.")
+        End If
+        If emsg.Length > 0 Then
+            Dim iTitle As String = "Errors"
+            MsgBox(emsg.ToString(), MsgBoxStyle.OkOnly, iTitle)
+        Else
+            Dim content As String = MakeHTMLBody()
+            Dim fileName As String = ASCMAIN1.Folders("Temp") & "Outbound.html"
+            If System.IO.File.Exists(fileName) Then
+                System.IO.File.Delete(fileName)
+            End If
+            System.IO.File.WriteAllText(fileName, content)
+            If (ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wayne") Then Stop
+            Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+            Dim ATTACHMENTs As New Dictionary(Of String, String)
+            EMAIL_ADDRESSs.Add(txtOBSendEmail.Text, txtOBSendName.Text)
+
+            Dim TEMPLATE_NAME As String = "CREDIT"
+            Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
+                (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
+                 "Credit Reference Request", TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Credit Reference Request", content)
+            If chkBCCAR.Checked Then
+                Dim EMAIL_ADDRESSs_AR As New Dictionary(Of String, String)
+                EMAIL_ADDRESSs_AR.Add("ar@regency-rib.com", "Accounts Receivable")
+                SEND_NO = ASCMAIN1.TACMAIN1.Send_email _
+                    (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs_AR, ATTACHMENTs,
+                    "Credit Reference Request (Copy)", TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Credit Reference Request (Copy)", content)
+            End If
+            MsgBox("Mail Sent", vbOKOnly, "Done")
+        End If
     End Sub
 
     Private Sub btnPrintOutbound_Click(sender As Object, e As EventArgs) Handles btnPrintOutbound.Click
-        Dim iTitle As String = "Feature Not Finished Yet."
-        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-        iMSG.AppendLine("I'm Working As Fast As")
-        iMSG.AppendLine("I Can Captian!")
-        MsgBox(iMSG.ToString(), MsgBoxStyle.OkOnly, iTitle)
+        Dim emsg As New Text.StringBuilder With {.Length = 0}
+        If txtOBSendName.Text.Length = 0 Then
+            emsg.AppendLine("Missing Sender Name.")
+        End If
+        If txtOBSendEmail.Text.Length = 0 Then
+            emsg.AppendLine("Missing Sender Email.")
+        End If
+        If emsg.Length > 0 Then
+            Dim iTitle As String = "Errors"
+            MsgBox(emsg.ToString(), MsgBoxStyle.OkOnly, iTitle)
+        Else
+            Dim content As String = MakeHTMLBody()
+            Dim fileName As String = ASCMAIN1.Folders("Temp") & "Outbound.html"
+            If System.IO.File.Exists(fileName) Then
+                System.IO.File.Delete(fileName)
+            End If
+            System.IO.File.WriteAllText(fileName, content)
+            Show_Document(fileName)
+        End If
     End Sub
     Private Sub fillOBData()
-        txtOBContact.Text = Absx1.txtFor("CUST_CONTACT").Text.ToString & String.Empty
 
         Dim ADDR As New Text.StringBuilder With {.Length = 0}
         Dim CUST_ADDR1 As String = Absx1.txtFor("CUST_ADDR1").Text.ToString & String.Empty
@@ -6102,4 +6145,91 @@ Public Class ARFCINQ1
         txtOBSendName.Text = ""
         txtOBSendEmail.Text = ""
     End Sub
+
+    Private Function MakeHTMLBody() As String
+        Dim RetVal As String
+        Dim TEMPLATE As String = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\Archive\templates\OutboundCredit.html"
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            TEMPLATE = "C:\Users\Wayne\Dropbox\Regency International\Shopsite Integration\Customers\OutboundCredit.html"
+        End If
+        Dim WEB_FIELDS As New Dictionary(Of String, String)
+        WEB_FIELDS.Add("{AccountNumber}", Absx1.txtFor("CUST_CODE").Text.ToString & String.Empty)
+        WEB_FIELDS.Add("{AccountName}", Absx1.txtFor("CUST_NAME").Text.ToString & String.Empty)
+        WEB_FIELDS.Add("{SendName}", txtOBSendName.Text.ToString & String.Empty)
+        WEB_FIELDS.Add("{SendEmail}", txtOBSendEmail.Text.ToString & String.Empty)
+        WEB_FIELDS.Add("{Address}", txtOBAddress.Text.ToString & String.Empty)
+
+        If (txtOBTerms.Text.ToString & String.Empty).Length > 0 Then
+            WEB_FIELDS.Add("{Terms}", $"<li><bold>Terms:</bold> {txtOBTerms.Text.ToString & String.Empty}</li> ")
+        Else
+            WEB_FIELDS.Add("{Terms}", "")
+        End If
+
+        If Not IsNothing(dteOBFirstOrder.Value) Then
+            WEB_FIELDS.Add("{FirstOrder}", $"<li><bold>Last Order:</bold> {Format(CDate(dteOBFirstOrder.Value.ToString & String.Empty), "MM/dd/yyyy")}</li>")
+        Else
+            WEB_FIELDS.Add("{FirstOrder}", "")
+        End If
+
+        If Not IsNothing(dteOBLastOrder.Value) Then
+            WEB_FIELDS.Add("{LastOrder}", $"<li><bold>Last Order:</bold> {Format(CDate(dteOBLastOrder.Value.ToString & String.Empty), "MM/dd/yyyy")}</li>")
+        Else
+            WEB_FIELDS.Add("{LastOrder}", "")
+        End If
+
+        If IsNumeric(numOBCreditLimit.Value.ToString & String.Empty) Then
+            If Val(numOBCreditLimit.Value.ToString & String.Empty) > 0 Then
+                WEB_FIELDS.Add("{CreditLimit}", $"<li><bold>Credit Limit:</bold> {Format(Val(numOBCreditLimit.Value.ToString & String.Empty), "###,###,##0")}</li>")
+            Else
+                WEB_FIELDS.Add("{CreditLimit}", "")
+            End If
+        Else
+            WEB_FIELDS.Add("{CreditLimit}", "")
+        End If
+
+        If IsNumeric(numOBHightCredit.Value.ToString & String.Empty) Then
+            If Val(numOBHightCredit.Value.ToString & String.Empty) > 0 Then
+                WEB_FIELDS.Add("{HightCredit}", $"<li><bold>High Credit:</bold> {Format(Val(numOBHightCredit.Value.ToString & String.Empty), "###,###,##0")}</li>")
+            Else
+                WEB_FIELDS.Add("{HightCredit}", "")
+            End If
+        Else
+            WEB_FIELDS.Add("{HightCredit}", "")
+        End If
+
+        If IsNumeric(numOBCurrBal.Value.ToString & String.Empty) Then
+            If Val(numOBCurrBal.Value.ToString & String.Empty) > 0 Then
+                WEB_FIELDS.Add("{CurrBal}", $"<li><bold>Current Balance:</bold> {Format(Val(numOBCurrBal.Value.ToString & String.Empty), "###,###,##0")}</li>")
+            Else
+                WEB_FIELDS.Add("{CurrBal}", "")
+            End If
+        Else
+            WEB_FIELDS.Add("{CurrBal}", "")
+        End If
+
+        If IsNumeric(numOBPastDue.Value.ToString & String.Empty) Then
+            If Val(numOBPastDue.Value.ToString & String.Empty) > 0 Then
+                WEB_FIELDS.Add("{PastDue}", $"<li><bold>Past Due:</bold> {Format(Val(numOBPastDue.Value.ToString & String.Empty), "###,###,##0")}</li>")
+            Else
+                WEB_FIELDS.Add("{PastDue}", "")
+            End If
+        Else
+            WEB_FIELDS.Add("{PastDue}", "")
+        End If
+
+        If (txtOBNotes.Text.ToString & String.Empty).Length > 0 Then
+            WEB_FIELDS.Add("{Notes}", $"<bold>Other Notes:</bold> {txtOBNotes.Text.ToString & String.Empty}")
+        Else
+            WEB_FIELDS.Add("{Notes}", "")
+        End If
+
+        Dim BodyContent As String = System.IO.File.ReadAllText(TEMPLATE)
+        BodyContent = BodyContent.Replace(vbCrLf, "")
+        For Each WEB_FIELD As KeyValuePair(Of String, String) In WEB_FIELDS
+            BodyContent = BodyContent.Replace(WEB_FIELD.Key, WEB_FIELD.Value)
+        Next
+        RetVal = BodyContent
+
+        Return RetVal
+    End Function
 End Class
