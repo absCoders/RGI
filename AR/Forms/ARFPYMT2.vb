@@ -4189,11 +4189,11 @@ Public Class ARFPYMT2
             ASCDATA1.ExecuteSQL()
         End If
 
-        If rowARTPYMT1.Item("PYMT_SOURCE") & "" = "SFY" Then
-            Dim PAYOUT_ID As String = rowARTPYMT2.Item("PAYOUT_ID ")
-            ASCMAIN1.sql = "Update ARTSHOP1 Set PROCESSED_IND  = '0' where PAYOUT_ID  = '" & PAYOUT_ID & "' and PROCESSED_IND  = '1'"
-            ASCDATA1.ExecuteSQL()
-        End If
+        ''If rowARTPYMT1.Item("PYMT_SOURCE") & "" = "SFY" Then
+        ''    Dim PAYOUT_ID As String = rowARTPYMT2.Item("PAYOUT_ID ")
+        ''    ASCMAIN1.sql = "Update ARTSHOP1 Set PROCESSED_IND  = '0' where PAYOUT_ID  = '" & PAYOUT_ID & "' and PROCESSED_IND  = '1'"
+        ''    ASCDATA1.ExecuteSQL()
+        ''End If
 
         CommitTrans()
     End Sub
@@ -7428,6 +7428,14 @@ Optional ByVal key As String = "") As Object
                     Dim SHOPIFY_INVOICE_NO As String = rowARTSHOP2.Item("INV_NO") & ""
                     ASCMAIN1.Progress("-", SHOPIFY_INVOICE_NO)
 
+                    Dim ORDR_WEB_ID As String = rowARTSHOP2.Item("ORDR_WEB_ID") & ""
+                    Dim DDD As String = ""
+                    If TRANS_TYPE = "refund" And SHOPIFY_INVOICE_NO = "" Then
+                        '   SHOPIFY_INVOICE_NO = FIND_SHOPIFY_INVOICE(ORDR_WEB_ID)
+                    End If
+
+
+
                     Dim INV_NUM As String = SHOPIFY_INVOICE_NO.PadLeft(10, "0")
                     If INV_NUM.Length > 10 Then
                         INV_NUM = Mid(INV_NUM, INV_NUM.Length - 10 + 1, 10)
@@ -7491,6 +7499,12 @@ Optional ByVal key As String = "") As Object
                         If rowARTSHOP2.Item("TRANS_TYPE") & "" = "debit" Then
                             Chargeback = "0"
                             SHOP_REASON_CODE = "SHOPD"
+                            '    GL_COMMENT = 
+                        End If
+
+                        If rowARTSHOP2.Item("TRANS_TYPE") & "" = "refund" Then
+                            Chargeback = "0"
+                            SHOP_REASON_CODE = "SHOPRE"
                             '    GL_COMMENT = 
                         End If
 
@@ -8155,4 +8169,40 @@ Optional ByVal key As String = "") As Object
         rowTATEVNT1.Item("EVENT_KEY") = PYMT_BATCH_NO
         dst.Tables("TATEVNT1").Rows.Add(rowTATEVNT1)
     End Sub
+
+    Function FIND_SHOPIFY_INVOICE(ORDR_WEB_ID As String) As String
+        Dim DDD As String = ""
+        Dim Sql As String = ""
+        ' your lookup logic here
+        ' invoice = ...
+        DDD = "0008193589"
+
+
+        ''If ARTOPENX = "" Then
+        ''    ARTOPENX = ASCMAIN1.Temp_Table("Select * from ARTOPENX where ROWNUM < 1")
+        ''Else
+        ''    ASCDATA1.ExecuteSQL("Truncate Table " & ARTOPENX)
+        ''End If
+
+
+
+        ''Sql = "Select ARTOPEN1.* from ARTOPEN1 ARTOPEN1,ARTPYMT5,ARTPYMT2" & vbCrLf _
+        ''    & " where ARTOPEN1.CUST_CODE = ARTPYMT2.CUST_CODE" & vbCrLf _
+        ''    & "   and ARTOPEN1.INV_TYPE = ARTPYMT5.INV_TYPE_CB" & vbCrLf _
+        ''    & "   and ARTOPEN1.INV_NUM = ARTPYMT5.CHARGEBACK_NO" & vbCrLf _
+        ''    & "   and ARTPYMT2.PYMT_BATCH_NO = ARTPYMT5.PYMT_BATCH_NO" & vbCrLf _
+        ''    & "   and ARTPYMT2.PYMT_BATCH_LNO = ARTPYMT5.PYMT_BATCH_LNO" & vbCrLf _
+        ''    & "   and ARTPYMT5.PYMT_BATCH_NO = '" & PYMT_BATCH_NO & "'" & vbCrLf _
+        ''    & "   and ARTPYMT5.PYMT_BATCH_LNO = " & CStr(PYMT_BATCH_LNO)
+
+        ''ASCDATA1.ExecuteSQL("Insert into " & ARTOPENX & " " & Replace(Sql, "from ARTOPEN1", "from ARTOPENX"))
+        ''' Fill_Records("ARTOPEN1", "", False, "Select * from " & ARTOPENX)
+        ''Fill_Records("ARTOPEN1", "", False, Sql)
+
+        ''Fill_Records("ARTOPEN1", "", False, "Select * from " & ARTOPENX)
+
+
+        Return DDD
+    End Function
+
 End Class
