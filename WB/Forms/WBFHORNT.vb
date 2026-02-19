@@ -48,7 +48,9 @@ Public Class WBFHORNT
             SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
             SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
             SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-            SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+            If chkRemoveCancelled.Checked Then
+                SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+            End If
             SQLs.AppendLine("GROUP BY")
             SQLs.AppendLine("S1.SREP_CODE,")
             SQLs.AppendLine("R1.SREP_NAME,")
@@ -273,7 +275,9 @@ Public Class WBFHORNT
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                 SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                End If
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -298,7 +302,9 @@ Public Class WBFHORNT
                     SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                     SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                     SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    End If
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -351,7 +357,9 @@ Public Class WBFHORNT
                 SQLs.AppendLine("WHERE S1.CUST_CODE = C1.CUST_CODE")
                 SQLs.AppendLine("AND S1.ORDR_NO = S2.ORDR_NO")
                 SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                End If
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -377,7 +385,9 @@ Public Class WBFHORNT
                     SQLs.AppendLine("WHERE S1.CUST_CODE = C1.CUST_CODE")
                     SQLs.AppendLine("AND S1.ORDR_NO = S2.ORDR_NO")
                     SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    End If
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -458,7 +468,9 @@ Public Class WBFHORNT
                     SQLs.AppendLine("AND S2.COLOR_CODE = C1.COLOR_CODE (+)")
                     SQLs.AppendLine("AND C1.THEME_CODE = T1.THEME_CODE (+)")
                     SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    End If
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -500,7 +512,9 @@ Public Class WBFHORNT
                         SQLs.AppendLine("AND S2.COLOR_CODE = C1.COLOR_CODE (+)")
                         SQLs.AppendLine("AND C1.THEME_CODE = T1.THEME_CODE (+)")
                         SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        If chkRemoveCancelled.Checked Then
+                            SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        End If
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -562,7 +576,9 @@ Public Class WBFHORNT
                     SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
                     SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
                     SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    End If
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -601,7 +617,9 @@ Public Class WBFHORNT
                         SQLs.AppendLine("AND S2.STYLE_CODE = I1.STYLE_CODE")
                         SQLs.AppendLine("AND I1.VEND_CODE (+) = V1.VEND_CODE")
                         SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        If chkRemoveCancelled.Checked Then
+                            SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        End If
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                         SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -663,7 +681,9 @@ Public Class WBFHORNT
                 SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                 SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                 SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                If chkRemoveCancelled.Checked Then
+                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                End If
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate, "dd-MMM-yyyy")))
                 SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -688,7 +708,9 @@ Public Class WBFHORNT
                     SQLs.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                     SQLs.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                     SQLs.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                    SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    If chkRemoveCancelled.Checked Then
+                        SQLs.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                    End If
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(String.Format("AND S1.ORDR_DATE < '{0}'", Format(ToDate.AddYears(-1), "dd-MMM-yyyy")))
                     SQLs.AppendLine(filterORDR_SOURCE("S1"))
@@ -1107,7 +1129,9 @@ Public Class WBFHORNT
                         S.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                         S.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                         S.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                        S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        If chkRemoveCancelled.Checked Then
+                            S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        End If
                         S.AppendLine(String.Format("AND S1.SREP_CODE = '{0}'", SREP_CODE))
                         If chkDETAILSLY.Checked Then
                             S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
@@ -1157,7 +1181,9 @@ Public Class WBFHORNT
                         S.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                         S.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                         S.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                        S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        If chkRemoveCancelled.Checked Then
+                            S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        End If
                         S.AppendLine(String.Format("AND S2.STYLE_CODE = '{0}'", STYLE_CODE))
                         If chkDETAILSLY.Checked Then
                             S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))
@@ -1228,7 +1254,9 @@ Public Class WBFHORNT
                         S.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, SOTSREP1 R1")
                         S.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
                         S.AppendLine("AND  S1.SREP_CODE = R1.SREP_CODE (+)")
-                        S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        If chkRemoveCancelled.Checked Then
+                            S.AppendLine("AND  S1.ORDR_STATUS <> 'C'")
+                        End If
                         S.AppendLine(String.Format("AND S1.CUST_CODE = '{0}'", CUST_CODE))
                         If chkDETAILSLY.Checked Then
                             S.AppendLine(String.Format("AND S1.ORDR_DATE >= '{0}'", Format(FromDate.AddYears(-1), "dd-MMM-yyyy")))

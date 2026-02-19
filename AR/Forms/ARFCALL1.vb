@@ -98,6 +98,7 @@ Public Class ARFCALL1
             SQLSB.AppendLine("FROM SOTINVH1 H1, (SELECT * FROM ARTOPEN1 UNION SELECT * FROM ARTOPENX) O1")
             SQLSB.AppendLine("WHERE H1.INV_NO = O1.INV_NUM")
             SQLSB.AppendLine("AND H1.CUST_CODE = :PARM1")
+            SQLSB.AppendLine("AND NVL(O1.INV_BALANCE,0) <> 0")
             ASCMAIN1.sql = SQLSB.ToString
             Create_TDA(.Tables.Add, "PMTINVHX", "**", 0, False, "V", 1)
 
@@ -121,6 +122,7 @@ Public Class ARFCALL1
             SQLSB.AppendLine("  WHERE H1.INV_NO = O1.INV_NUM")
             SQLSB.AppendLine("  AND H1.CUST_CODE = :PARM1")
             SQLSB.AppendLine(")")
+            SQLSB.AppendLine("AND NVL(O1.INV_BALANCE,0) <> 0")
             SQLSB.AppendLine("GROUP BY")
             SQLSB.AppendLine("P3.INV_NUM,")
             SQLSB.AppendLine("P3.PYMT_BATCH_NO,")
@@ -877,9 +879,17 @@ Public Class ARFCALL1
 
     Private Sub grdARTOPENX_AfterRowActivate(ByVal sender As Object, ByVal e As EventArgs) Handles grdARTOPENX.AfterRowActivate
         If grdARTOPENX.ActiveRow.IsDataRow Then
+            Me.Cursor = Cursors.WaitCursor
+            ASCMAIN1.Progress("Now Fetching Invoices")
+            Application.DoEvents()
+
             FetchINVX()
             FetchCONVH()
             Setup_ARTCUSTD()
+
+            Me.Cursor = Cursors.Default
+            ASCMAIN1.Progress("")
+            Application.DoEvents()
         End If
     End Sub
 
