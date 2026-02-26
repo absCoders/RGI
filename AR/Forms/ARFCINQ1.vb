@@ -6023,6 +6023,7 @@ Public Class ARFCINQ1
 
     End Sub
 
+#Region "outbound Requests"
     Private Sub btnEmailOutbound_Click(sender As Object, e As EventArgs) Handles btnEmailOutbound.Click
         Dim emsg As New Text.StringBuilder With {.Length = 0}
         If txtOBSendName.Text.Length = 0 Then
@@ -6046,7 +6047,7 @@ Public Class ARFCINQ1
             Dim ATTACHMENTs As New Dictionary(Of String, String)
             EMAIL_ADDRESSs.Add(txtOBSendEmail.Text, txtOBSendName.Text)
 
-            Dim TEMPLATE_NAME As String = "CREDIT"
+            Dim TEMPLATE_NAME As String = "AR"
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                 (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                  "Credit Reference Request", TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Credit Reference Request", content)
@@ -6126,6 +6127,15 @@ Public Class ARFCINQ1
                 Dim AGE_4 As Decimal = Val(rowARTSTMT1.Item("AGE_4").ToString & String.Empty)
                 OBPastDue = AGE_2 + AGE_3 + AGE_4
                 OBCurrBal = TOTAL_OPEN_AMT
+                If AGE_4 > 0 Then
+                    rdoOBRatingUnsatisfactory.Checked = True
+                Else
+                    If AGE_3 > 0 Then
+                        rdoOBRatingSatisfactory.Checked = True
+                    Else
+                        rdoOBRatingPrompt.Checked = True
+                    End If
+                End If
             Else
                 If rCnt >= rcntMax Then
                     Exit For
@@ -6158,6 +6168,21 @@ Public Class ARFCINQ1
         WEB_FIELDS.Add("{SendName}", txtOBSendName.Text.ToString & String.Empty)
         WEB_FIELDS.Add("{SendEmail}", txtOBSendEmail.Text.ToString & String.Empty)
         WEB_FIELDS.Add("{Address}", txtOBAddress.Text.ToString & String.Empty)
+        If rdoOBFAX.Checked Then
+            WEB_FIELDS.Add("{SendType}", "Fax:")
+        Else
+            WEB_FIELDS.Add("{SendType}", "E-Mail:")
+        End If
+        '
+        If rdoOBRatingUnsatisfactory.Checked Then
+            WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Unsatisfactory")
+        Else
+            If rdoOBRatingSatisfactory.Checked Then
+                WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Satisfactory")
+            Else
+                WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Prompt")
+            End If
+        End If
 
         If (txtOBTerms.Text.ToString & String.Empty).Length > 0 Then
             WEB_FIELDS.Add("{Terms}", $"<li><bold>Terms:</bold> {txtOBTerms.Text.ToString & String.Empty}</li> ")
@@ -6166,13 +6191,13 @@ Public Class ARFCINQ1
         End If
 
         If Not IsNothing(dteOBFirstOrder.Value) Then
-            WEB_FIELDS.Add("{FirstOrder}", $"<li><bold>Last Order:</bold> {Format(CDate(dteOBFirstOrder.Value.ToString & String.Empty), "MM/dd/yyyy")}</li>")
+            WEB_FIELDS.Add("{FirstOrder}", $"<li><bold>Date Opened:</bold> {Format(CDate(dteOBFirstOrder.Value.ToString & String.Empty), "MM/dd/yyyy")}</li>")
         Else
             WEB_FIELDS.Add("{FirstOrder}", "")
         End If
 
         If Not IsNothing(dteOBLastOrder.Value) Then
-            WEB_FIELDS.Add("{LastOrder}", $"<li><bold>Last Order:</bold> {Format(CDate(dteOBLastOrder.Value.ToString & String.Empty), "MM/dd/yyyy")}</li>")
+            WEB_FIELDS.Add("{LastOrder}", $"<li><bold>Last Sale:</bold> {Format(CDate(dteOBLastOrder.Value.ToString & String.Empty), "MM/dd/yyyy")}</li>")
         Else
             WEB_FIELDS.Add("{LastOrder}", "")
         End If
@@ -6232,4 +6257,26 @@ Public Class ARFCINQ1
 
         Return RetVal
     End Function
+
+    Private Sub rdoOBEMAIL_CheckedChanged(sender As Object, e As EventArgs) Handles rdoOBEMAIL.CheckedChanged
+        setOBOptions()
+    End Sub
+
+    Private Sub rdoOBFAX_CheckedChanged(sender As Object, e As EventArgs) Handles rdoOBFAX.CheckedChanged
+        setOBOptions()
+    End Sub
+
+    Private Sub setOBOptions()
+        If rdoOBEMAIL.Checked Then
+            btnPrintOutbound.Enabled = True
+            btnEmailOutbound.Enabled = True
+        End If
+
+        If rdoOBFAX.Checked Then
+            btnPrintOutbound.Enabled = True
+            btnEmailOutbound.Enabled = False
+        End If
+    End Sub
+#End Region
+
 End Class
