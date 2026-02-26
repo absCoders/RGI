@@ -3928,7 +3928,7 @@ Public Class ARFCINQ1
                 Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
                 SQLS.AppendLine($"SELECT SUM(NVL(ORDR_AMT_ALLO_CUR,0)) ORDR_AMT_ALLO_CUR FROM SOTORDRS WHERE ORDR_GROUP_NO = '{ORDR_GROUP_NO}'")
                 ASCMAIN1.sql = SQLS.ToString()
-                Dim ORDR_AMT_ALLO_CUR As Int16 = Val(ASCDATA1.GetDataValue)
+                Dim ORDR_AMT_ALLO_CUR As Int32 = Val(ASCDATA1.GetDataValue)
                 rowSOTORDR0.Item("ORDR_AMT_ALLO_CUR") = ORDR_AMT_ALLO_CUR
             Next
         End If
