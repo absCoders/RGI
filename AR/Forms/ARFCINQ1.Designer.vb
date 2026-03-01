@@ -45,7 +45,6 @@ Partial Class ARFCINQ1
         Dim UltraExplorerBarItem16 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup13 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
-        Dim Appearance438 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance439 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance440 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance441 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -54,6 +53,7 @@ Partial Class ARFCINQ1
         Dim Appearance444 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance445 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance446 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance447 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance1 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem6 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem7 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -1066,6 +1066,9 @@ Partial Class ARFCINQ1
         Dim Appearance409 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance410 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance411 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance413 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance414 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance415 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance416 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance417 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance418 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1077,6 +1080,7 @@ Partial Class ARFCINQ1
         Dim Appearance424 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance425 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance426 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance427 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand28 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ARTOPENB", -1)
         Dim UltraGridColumn105 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CODE")
         Dim UltraGridColumn500 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("'J20'")
@@ -1084,7 +1088,6 @@ Partial Class ARFCINQ1
         Dim UltraGridColumn502 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("'J20B'")
         Dim UltraGridColumn503 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("'J20C'")
         Dim UltraGridColumn505 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("'J20D'")
-        Dim Appearance427 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance428 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance429 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance430 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1095,7 +1098,7 @@ Partial Class ARFCINQ1
         Dim Appearance435 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance436 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance437 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance447 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance438 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance448 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance449 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance450 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1119,6 +1122,7 @@ Partial Class ARFCINQ1
         Dim Appearance468 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance469 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance470 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance471 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance45 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim UltraGridBand4 As Infragistics.Win.UltraWinGrid.UltraGridBand = New Infragistics.Win.UltraWinGrid.UltraGridBand("ARTCUSTT_FUPS", -1)
         Dim UltraGridColumn120 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONV_NO")
@@ -1266,9 +1270,6 @@ Partial Class ARFCINQ1
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab10 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance415 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance414 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
-        Dim Appearance413 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance412 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
@@ -1483,6 +1484,13 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl28 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl52 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel48 = New Infragistics.Win.Misc.UltraLabel()
+        Me.rdoOBRatingUnsatisfactory = New System.Windows.Forms.RadioButton()
+        Me.rdoOBRatingSatisfactory = New System.Windows.Forms.RadioButton()
+        Me.rdoOBRatingPrompt = New System.Windows.Forms.RadioButton()
+        Me.UltraLabel36 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel47 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel46 = New Infragistics.Win.Misc.UltraLabel()
         Me.numOBPastDue = New Infragistics.Win.UltraWinEditors.UltraNumericEditor()
@@ -1502,6 +1510,8 @@ Partial Class ARFCINQ1
         Me.txtOBNotes = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.txtOBAddress = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel35 = New Infragistics.Win.Misc.UltraLabel()
+        Me.rdoOBEMAIL = New System.Windows.Forms.RadioButton()
+        Me.rdoOBFAX = New System.Windows.Forms.RadioButton()
         Me.chkBCCAR = New ABSCS.ABSCheckBox()
         Me.btnPrintOutbound = New System.Windows.Forms.Button()
         Me.txtOBSendEmail = New System.Windows.Forms.TextBox()
@@ -1574,15 +1584,8 @@ Partial Class ARFCINQ1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage12 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.rdoOBFAX = New System.Windows.Forms.RadioButton()
-        Me.rdoOBEMAIL = New System.Windows.Forms.RadioButton()
-        Me.UltraLabel36 = New Infragistics.Win.Misc.UltraLabel()
-        Me.rdoOBRatingPrompt = New System.Windows.Forms.RadioButton()
-        Me.rdoOBRatingSatisfactory = New System.Windows.Forms.RadioButton()
-        Me.rdoOBRatingUnsatisfactory = New System.Windows.Forms.RadioButton()
-        Me.UltraLabel48 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
-        Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
+        Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
+        Me.rdoOBRatingNone = New System.Windows.Forms.RadioButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -1984,45 +1987,45 @@ Partial Class ARFCINQ1
         '
         'grdASFBASEX
         '
-        Appearance438.BackColor = System.Drawing.SystemColors.Window
-        Appearance438.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance438
+        Appearance439.BackColor = System.Drawing.SystemColors.Window
+        Appearance439.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdASFBASEX.DisplayLayout.Appearance = Appearance439
         Me.grdASFBASEX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.CaptionVisible = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdASFBASEX.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdASFBASEX.DisplayLayout.MaxColScrollRegions = 1
         Me.grdASFBASEX.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance439.BackColor = System.Drawing.SystemColors.Window
-        Appearance439.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance439
-        Appearance440.BackColor = System.Drawing.SystemColors.Highlight
-        Appearance440.ForeColor = System.Drawing.SystemColors.HighlightText
-        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance440
+        Appearance440.BackColor = System.Drawing.SystemColors.Window
+        Appearance440.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveCellAppearance = Appearance440
+        Appearance441.BackColor = System.Drawing.SystemColors.Highlight
+        Appearance441.ForeColor = System.Drawing.SystemColors.HighlightText
+        Me.grdASFBASEX.DisplayLayout.Override.ActiveRowAppearance = Appearance441
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdASFBASEX.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance441.BackColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance441
-        Appearance442.BorderColor = System.Drawing.Color.Silver
-        Appearance442.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance442
+        Appearance442.BackColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.CardAreaAppearance = Appearance442
+        Appearance443.BorderColor = System.Drawing.Color.Silver
+        Appearance443.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdASFBASEX.DisplayLayout.Override.CellAppearance = Appearance443
         Me.grdASFBASEX.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdASFBASEX.DisplayLayout.Override.CellPadding = 0
-        Appearance443.BackColor = System.Drawing.SystemColors.Control
-        Appearance443.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance443.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance443.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance443.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance443
-        Appearance444.TextHAlignAsString = "Left"
-        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance444
+        Appearance444.BackColor = System.Drawing.SystemColors.Control
+        Appearance444.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance444.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance444.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance444.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdASFBASEX.DisplayLayout.Override.GroupByRowAppearance = Appearance444
+        Appearance445.TextHAlignAsString = "Left"
+        Me.grdASFBASEX.DisplayLayout.Override.HeaderAppearance = Appearance445
         Me.grdASFBASEX.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdASFBASEX.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance445.BackColor = System.Drawing.SystemColors.Window
-        Appearance445.BorderColor = System.Drawing.Color.Silver
-        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance445
+        Appearance446.BackColor = System.Drawing.SystemColors.Window
+        Appearance446.BorderColor = System.Drawing.Color.Silver
+        Me.grdASFBASEX.DisplayLayout.Override.RowAppearance = Appearance446
         Me.grdASFBASEX.DisplayLayout.Override.RowSelectors = Infragistics.Win.DefaultableBoolean.[False]
-        Appearance446.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance446
+        Appearance447.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdASFBASEX.DisplayLayout.Override.TemplateAddRowAppearance = Appearance447
         Me.grdASFBASEX.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -7567,6 +7570,8 @@ Partial Class ARFCINQ1
         '
         'SplitContainer2.Panel1
         '
+        Me.SplitContainer2.Panel1.Controls.Add(Me.UltraLabel51)
+        Me.SplitContainer2.Panel1.Controls.Add(Me.rdoOBRatingNone)
         Me.SplitContainer2.Panel1.Controls.Add(Me.UltraLabel50)
         Me.SplitContainer2.Panel1.Controls.Add(Me.UltraLabel49)
         Me.SplitContainer2.Panel1.Controls.Add(Me.UltraLabel48)
@@ -7609,10 +7614,89 @@ Partial Class ARFCINQ1
         Me.SplitContainer2.SplitterDistance = 429
         Me.SplitContainer2.TabIndex = 1
         '
-        'UltraLabel47
+        'UltraLabel50
+        '
+        Appearance413.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel50.Appearance = Appearance413
+        Me.UltraLabel50.AutoSize = True
+        Me.UltraLabel50.Location = New System.Drawing.Point(532, 300)
+        Me.UltraLabel50.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel50.Name = "UltraLabel50"
+        Me.UltraLabel50.Size = New System.Drawing.Size(45, 18)
+        Me.UltraLabel50.TabIndex = 216
+        Me.UltraLabel50.Text = "(91+)"
+        '
+        'UltraLabel49
+        '
+        Appearance414.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel49.Appearance = Appearance414
+        Me.UltraLabel49.AutoSize = True
+        Me.UltraLabel49.Location = New System.Drawing.Point(413, 300)
+        Me.UltraLabel49.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel49.Name = "UltraLabel49"
+        Me.UltraLabel49.Size = New System.Drawing.Size(57, 18)
+        Me.UltraLabel49.TabIndex = 215
+        Me.UltraLabel49.Text = "(31-90)"
+        '
+        'UltraLabel48
+        '
+        Appearance415.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel48.Appearance = Appearance415
+        Me.UltraLabel48.AutoSize = True
+        Me.UltraLabel48.Location = New System.Drawing.Point(321, 300)
+        Me.UltraLabel48.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel48.Name = "UltraLabel48"
+        Me.UltraLabel48.Size = New System.Drawing.Size(49, 18)
+        Me.UltraLabel48.TabIndex = 214
+        Me.UltraLabel48.Text = "(0-30)"
+        '
+        'rdoOBRatingUnsatisfactory
+        '
+        Me.rdoOBRatingUnsatisfactory.AutoSize = True
+        Me.rdoOBRatingUnsatisfactory.Location = New System.Drawing.Point(514, 282)
+        Me.rdoOBRatingUnsatisfactory.Name = "rdoOBRatingUnsatisfactory"
+        Me.rdoOBRatingUnsatisfactory.Size = New System.Drawing.Size(122, 20)
+        Me.rdoOBRatingUnsatisfactory.TabIndex = 213
+        Me.rdoOBRatingUnsatisfactory.Text = "Unsatisfactory"
+        Me.rdoOBRatingUnsatisfactory.UseVisualStyleBackColor = True
+        '
+        'rdoOBRatingSatisfactory
+        '
+        Me.rdoOBRatingSatisfactory.AutoSize = True
+        Me.rdoOBRatingSatisfactory.Location = New System.Drawing.Point(396, 282)
+        Me.rdoOBRatingSatisfactory.Name = "rdoOBRatingSatisfactory"
+        Me.rdoOBRatingSatisfactory.Size = New System.Drawing.Size(107, 20)
+        Me.rdoOBRatingSatisfactory.TabIndex = 212
+        Me.rdoOBRatingSatisfactory.Text = "Satisfactory"
+        Me.rdoOBRatingSatisfactory.UseVisualStyleBackColor = True
+        '
+        'rdoOBRatingPrompt
+        '
+        Me.rdoOBRatingPrompt.AutoSize = True
+        Me.rdoOBRatingPrompt.Checked = True
+        Me.rdoOBRatingPrompt.Location = New System.Drawing.Point(305, 282)
+        Me.rdoOBRatingPrompt.Name = "rdoOBRatingPrompt"
+        Me.rdoOBRatingPrompt.Size = New System.Drawing.Size(72, 20)
+        Me.rdoOBRatingPrompt.TabIndex = 211
+        Me.rdoOBRatingPrompt.Text = "Prompt"
+        Me.rdoOBRatingPrompt.UseVisualStyleBackColor = True
+        '
+        'UltraLabel36
         '
         Appearance416.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel47.Appearance = Appearance416
+        Me.UltraLabel36.Appearance = Appearance416
+        Me.UltraLabel36.AutoSize = True
+        Me.UltraLabel36.Location = New System.Drawing.Point(27, 284)
+        Me.UltraLabel36.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel36.Name = "UltraLabel36"
+        Me.UltraLabel36.Size = New System.Drawing.Size(48, 18)
+        Me.UltraLabel36.TabIndex = 210
+        Me.UltraLabel36.Text = "Rating"
+        '
+        'UltraLabel47
+        '
+        Appearance417.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel47.Appearance = Appearance417
         Me.UltraLabel47.AutoSize = True
         Me.UltraLabel47.Location = New System.Drawing.Point(324, 251)
         Me.UltraLabel47.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7623,8 +7707,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel46
         '
-        Appearance417.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel46.Appearance = Appearance417
+        Appearance418.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel46.Appearance = Appearance418
         Me.UltraLabel46.AutoSize = True
         Me.UltraLabel46.Location = New System.Drawing.Point(24, 251)
         Me.UltraLabel46.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7646,8 +7730,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel45
         '
-        Appearance418.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel45.Appearance = Appearance418
+        Appearance419.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel45.Appearance = Appearance419
         Me.UltraLabel45.AutoSize = True
         Me.UltraLabel45.Location = New System.Drawing.Point(24, 219)
         Me.UltraLabel45.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7669,8 +7753,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel44
         '
-        Appearance419.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel44.Appearance = Appearance419
+        Appearance420.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel44.Appearance = Appearance420
         Me.UltraLabel44.AutoSize = True
         Me.UltraLabel44.Location = New System.Drawing.Point(24, 187)
         Me.UltraLabel44.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7692,8 +7776,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel43
         '
-        Appearance420.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel43.Appearance = Appearance420
+        Appearance421.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel43.Appearance = Appearance421
         Me.UltraLabel43.AutoSize = True
         Me.UltraLabel43.Location = New System.Drawing.Point(168, 79)
         Me.UltraLabel43.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7724,8 +7808,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel42
         '
-        Appearance421.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel42.Appearance = Appearance421
+        Appearance422.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel42.Appearance = Appearance422
         Me.UltraLabel42.AutoSize = True
         Me.UltraLabel42.Location = New System.Drawing.Point(27, 9)
         Me.UltraLabel42.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7736,8 +7820,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel41
         '
-        Appearance422.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel41.Appearance = Appearance422
+        Appearance423.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel41.Appearance = Appearance423
         Me.UltraLabel41.AutoSize = True
         Me.UltraLabel41.Location = New System.Drawing.Point(24, 156)
         Me.UltraLabel41.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7748,8 +7832,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel40
         '
-        Appearance423.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel40.Appearance = Appearance423
+        Appearance424.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel40.Appearance = Appearance424
         Me.UltraLabel40.AutoSize = True
         Me.UltraLabel40.Location = New System.Drawing.Point(27, 79)
         Me.UltraLabel40.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7782,8 +7866,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel37
         '
-        Appearance424.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel37.Appearance = Appearance424
+        Appearance425.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel37.Appearance = Appearance425
         Me.UltraLabel37.AutoSize = True
         Me.UltraLabel37.Location = New System.Drawing.Point(22, 337)
         Me.UltraLabel37.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7813,8 +7897,8 @@ Partial Class ARFCINQ1
         '
         'UltraLabel35
         '
-        Appearance425.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel35.Appearance = Appearance425
+        Appearance426.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel35.Appearance = Appearance426
         Me.UltraLabel35.AutoSize = True
         Me.UltraLabel35.Location = New System.Drawing.Point(324, 10)
         Me.UltraLabel35.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -7822,6 +7906,28 @@ Partial Class ARFCINQ1
         Me.UltraLabel35.Size = New System.Drawing.Size(58, 18)
         Me.UltraLabel35.TabIndex = 144
         Me.UltraLabel35.Text = "Address"
+        '
+        'rdoOBEMAIL
+        '
+        Me.rdoOBEMAIL.AutoSize = True
+        Me.rdoOBEMAIL.Checked = True
+        Me.rdoOBEMAIL.Location = New System.Drawing.Point(552, 8)
+        Me.rdoOBEMAIL.Name = "rdoOBEMAIL"
+        Me.rdoOBEMAIL.Size = New System.Drawing.Size(105, 20)
+        Me.rdoOBEMAIL.TabIndex = 136
+        Me.rdoOBEMAIL.TabStop = True
+        Me.rdoOBEMAIL.Text = "Email / Print"
+        Me.rdoOBEMAIL.UseVisualStyleBackColor = True
+        '
+        'rdoOBFAX
+        '
+        Me.rdoOBFAX.AutoSize = True
+        Me.rdoOBFAX.Location = New System.Drawing.Point(677, 9)
+        Me.rdoOBFAX.Name = "rdoOBFAX"
+        Me.rdoOBFAX.Size = New System.Drawing.Size(48, 20)
+        Me.rdoOBFAX.TabIndex = 135
+        Me.rdoOBFAX.Text = "Fax"
+        Me.rdoOBFAX.UseVisualStyleBackColor = True
         '
         'chkBCCAR
         '
@@ -7895,9 +8001,9 @@ Partial Class ARFCINQ1
         '
         'grdARTOPENB
         '
-        Appearance426.BackColor = System.Drawing.SystemColors.Window
-        Appearance426.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdARTOPENB.DisplayLayout.Appearance = Appearance426
+        Appearance427.BackColor = System.Drawing.SystemColors.Window
+        Appearance427.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdARTOPENB.DisplayLayout.Appearance = Appearance427
         UltraGridColumn105.Header.Caption = "Customer"
         UltraGridColumn105.Header.VisiblePosition = 0
         UltraGridColumn105.RowLayoutColumnInfo.PreferredCellSize = New System.Drawing.Size(130, 20)
@@ -7911,57 +8017,57 @@ Partial Class ARFCINQ1
         UltraGridBand28.Columns.AddRange(New Object() {UltraGridColumn105, UltraGridColumn500, UltraGridColumn501, UltraGridColumn502, UltraGridColumn503, UltraGridColumn505})
         Me.grdARTOPENB.DisplayLayout.BandsSerializer.Add(UltraGridBand28)
         Me.grdARTOPENB.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance427.TextHAlignAsString = "Left"
-        Me.grdARTOPENB.DisplayLayout.CaptionAppearance = Appearance427
-        Appearance428.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance428.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance428.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance428.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdARTOPENB.DisplayLayout.GroupByBox.Appearance = Appearance428
-        Appearance429.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdARTOPENB.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance429
+        Appearance428.TextHAlignAsString = "Left"
+        Me.grdARTOPENB.DisplayLayout.CaptionAppearance = Appearance428
+        Appearance429.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance429.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance429.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance429.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdARTOPENB.DisplayLayout.GroupByBox.Appearance = Appearance429
+        Appearance430.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdARTOPENB.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance430
         Me.grdARTOPENB.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdARTOPENB.DisplayLayout.GroupByBox.Hidden = True
-        Appearance430.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance430.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance430.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance430.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdARTOPENB.DisplayLayout.GroupByBox.PromptAppearance = Appearance430
+        Appearance431.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance431.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance431.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance431.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdARTOPENB.DisplayLayout.GroupByBox.PromptAppearance = Appearance431
         Me.grdARTOPENB.DisplayLayout.MaxColScrollRegions = 1
         Me.grdARTOPENB.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance431.BackColor = System.Drawing.SystemColors.Window
-        Appearance431.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdARTOPENB.DisplayLayout.Override.ActiveCellAppearance = Appearance431
+        Appearance432.BackColor = System.Drawing.SystemColors.Window
+        Appearance432.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdARTOPENB.DisplayLayout.Override.ActiveCellAppearance = Appearance432
         Me.grdARTOPENB.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         Me.grdARTOPENB.DisplayLayout.Override.AllowColSizing = Infragistics.Win.UltraWinGrid.AllowColSizing.Free
         Me.grdARTOPENB.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdARTOPENB.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdARTOPENB.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdARTOPENB.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance432.BackColor = System.Drawing.SystemColors.Window
-        Me.grdARTOPENB.DisplayLayout.Override.CardAreaAppearance = Appearance432
-        Appearance433.BorderColor = System.Drawing.Color.Silver
-        Appearance433.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdARTOPENB.DisplayLayout.Override.CellAppearance = Appearance433
+        Appearance433.BackColor = System.Drawing.SystemColors.Window
+        Me.grdARTOPENB.DisplayLayout.Override.CardAreaAppearance = Appearance433
+        Appearance434.BorderColor = System.Drawing.Color.Silver
+        Appearance434.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdARTOPENB.DisplayLayout.Override.CellAppearance = Appearance434
         Me.grdARTOPENB.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdARTOPENB.DisplayLayout.Override.CellPadding = 0
-        Appearance434.BackColor = System.Drawing.SystemColors.Control
-        Appearance434.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance434.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance434.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance434.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdARTOPENB.DisplayLayout.Override.GroupByRowAppearance = Appearance434
-        Appearance435.TextHAlignAsString = "Left"
-        Me.grdARTOPENB.DisplayLayout.Override.HeaderAppearance = Appearance435
+        Appearance435.BackColor = System.Drawing.SystemColors.Control
+        Appearance435.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance435.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance435.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance435.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdARTOPENB.DisplayLayout.Override.GroupByRowAppearance = Appearance435
+        Appearance436.TextHAlignAsString = "Left"
+        Me.grdARTOPENB.DisplayLayout.Override.HeaderAppearance = Appearance436
         Me.grdARTOPENB.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdARTOPENB.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance436.BackColor = System.Drawing.SystemColors.Window
-        Appearance436.BorderColor = System.Drawing.Color.Silver
-        Me.grdARTOPENB.DisplayLayout.Override.RowAppearance = Appearance436
+        Appearance437.BackColor = System.Drawing.SystemColors.Window
+        Appearance437.BorderColor = System.Drawing.Color.Silver
+        Me.grdARTOPENB.DisplayLayout.Override.RowAppearance = Appearance437
         Me.grdARTOPENB.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
         Me.grdARTOPENB.DisplayLayout.Override.SummaryDisplayArea = Infragistics.Win.UltraWinGrid.SummaryDisplayAreas.BottomFixed
-        Appearance437.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdARTOPENB.DisplayLayout.Override.TemplateAddRowAppearance = Appearance437
+        Appearance438.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdARTOPENB.DisplayLayout.Override.TemplateAddRowAppearance = Appearance438
         Me.grdARTOPENB.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdARTOPENB.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdARTOPENB.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -8017,59 +8123,59 @@ Partial Class ARFCINQ1
         '
         'grdDETJOBMI
         '
-        Appearance447.BackColor = System.Drawing.SystemColors.Window
-        Appearance447.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdDETJOBMI.DisplayLayout.Appearance = Appearance447
+        Appearance448.BackColor = System.Drawing.SystemColors.Window
+        Appearance448.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdDETJOBMI.DisplayLayout.Appearance = Appearance448
         Me.grdDETJOBMI.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance448.TextHAlignAsString = "Left"
-        Me.grdDETJOBMI.DisplayLayout.CaptionAppearance = Appearance448
-        Appearance449.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance449.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance449.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance449.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdDETJOBMI.DisplayLayout.GroupByBox.Appearance = Appearance449
-        Appearance450.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdDETJOBMI.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance450
+        Appearance449.TextHAlignAsString = "Left"
+        Me.grdDETJOBMI.DisplayLayout.CaptionAppearance = Appearance449
+        Appearance450.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance450.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance450.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance450.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdDETJOBMI.DisplayLayout.GroupByBox.Appearance = Appearance450
+        Appearance451.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdDETJOBMI.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance451
         Me.grdDETJOBMI.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdDETJOBMI.DisplayLayout.GroupByBox.Hidden = True
-        Appearance451.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance451.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance451.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance451.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdDETJOBMI.DisplayLayout.GroupByBox.PromptAppearance = Appearance451
+        Appearance452.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance452.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance452.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance452.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdDETJOBMI.DisplayLayout.GroupByBox.PromptAppearance = Appearance452
         Me.grdDETJOBMI.DisplayLayout.MaxColScrollRegions = 1
         Me.grdDETJOBMI.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance452.BackColor = System.Drawing.SystemColors.Window
-        Appearance452.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdDETJOBMI.DisplayLayout.Override.ActiveCellAppearance = Appearance452
+        Appearance453.BackColor = System.Drawing.SystemColors.Window
+        Appearance453.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdDETJOBMI.DisplayLayout.Override.ActiveCellAppearance = Appearance453
         Me.grdDETJOBMI.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         Me.grdDETJOBMI.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdDETJOBMI.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdDETJOBMI.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdDETJOBMI.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance453.BackColor = System.Drawing.SystemColors.Window
-        Me.grdDETJOBMI.DisplayLayout.Override.CardAreaAppearance = Appearance453
-        Appearance454.BorderColor = System.Drawing.Color.Silver
-        Appearance454.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdDETJOBMI.DisplayLayout.Override.CellAppearance = Appearance454
+        Appearance454.BackColor = System.Drawing.SystemColors.Window
+        Me.grdDETJOBMI.DisplayLayout.Override.CardAreaAppearance = Appearance454
+        Appearance455.BorderColor = System.Drawing.Color.Silver
+        Appearance455.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdDETJOBMI.DisplayLayout.Override.CellAppearance = Appearance455
         Me.grdDETJOBMI.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdDETJOBMI.DisplayLayout.Override.CellPadding = 0
-        Appearance455.BackColor = System.Drawing.SystemColors.Control
-        Appearance455.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance455.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance455.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance455.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdDETJOBMI.DisplayLayout.Override.GroupByRowAppearance = Appearance455
-        Appearance456.TextHAlignAsString = "Left"
-        Me.grdDETJOBMI.DisplayLayout.Override.HeaderAppearance = Appearance456
+        Appearance456.BackColor = System.Drawing.SystemColors.Control
+        Appearance456.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance456.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance456.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance456.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdDETJOBMI.DisplayLayout.Override.GroupByRowAppearance = Appearance456
+        Appearance457.TextHAlignAsString = "Left"
+        Me.grdDETJOBMI.DisplayLayout.Override.HeaderAppearance = Appearance457
         Me.grdDETJOBMI.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdDETJOBMI.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance457.BackColor = System.Drawing.SystemColors.Window
-        Appearance457.BorderColor = System.Drawing.Color.Silver
-        Me.grdDETJOBMI.DisplayLayout.Override.RowAppearance = Appearance457
+        Appearance458.BackColor = System.Drawing.SystemColors.Window
+        Appearance458.BorderColor = System.Drawing.Color.Silver
+        Me.grdDETJOBMI.DisplayLayout.Override.RowAppearance = Appearance458
         Me.grdDETJOBMI.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Appearance458.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdDETJOBMI.DisplayLayout.Override.TemplateAddRowAppearance = Appearance458
+        Appearance459.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdDETJOBMI.DisplayLayout.Override.TemplateAddRowAppearance = Appearance459
         Me.grdDETJOBMI.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdDETJOBMI.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdDETJOBMI.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -8082,59 +8188,59 @@ Partial Class ARFCINQ1
         '
         'grdDETJOBMC
         '
-        Appearance459.BackColor = System.Drawing.SystemColors.Window
-        Appearance459.BorderColor = System.Drawing.SystemColors.InactiveCaption
-        Me.grdDETJOBMC.DisplayLayout.Appearance = Appearance459
+        Appearance460.BackColor = System.Drawing.SystemColors.Window
+        Appearance460.BorderColor = System.Drawing.SystemColors.InactiveCaption
+        Me.grdDETJOBMC.DisplayLayout.Appearance = Appearance460
         Me.grdDETJOBMC.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
-        Appearance460.TextHAlignAsString = "Left"
-        Me.grdDETJOBMC.DisplayLayout.CaptionAppearance = Appearance460
-        Appearance461.BackColor = System.Drawing.SystemColors.ActiveBorder
-        Appearance461.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance461.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
-        Appearance461.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdDETJOBMC.DisplayLayout.GroupByBox.Appearance = Appearance461
-        Appearance462.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdDETJOBMC.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance462
+        Appearance461.TextHAlignAsString = "Left"
+        Me.grdDETJOBMC.DisplayLayout.CaptionAppearance = Appearance461
+        Appearance462.BackColor = System.Drawing.SystemColors.ActiveBorder
+        Appearance462.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance462.BackGradientStyle = Infragistics.Win.GradientStyle.Vertical
+        Appearance462.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdDETJOBMC.DisplayLayout.GroupByBox.Appearance = Appearance462
+        Appearance463.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdDETJOBMC.DisplayLayout.GroupByBox.BandLabelAppearance = Appearance463
         Me.grdDETJOBMC.DisplayLayout.GroupByBox.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Me.grdDETJOBMC.DisplayLayout.GroupByBox.Hidden = True
-        Appearance463.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Appearance463.BackColor2 = System.Drawing.SystemColors.Control
-        Appearance463.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance463.ForeColor = System.Drawing.SystemColors.GrayText
-        Me.grdDETJOBMC.DisplayLayout.GroupByBox.PromptAppearance = Appearance463
+        Appearance464.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Appearance464.BackColor2 = System.Drawing.SystemColors.Control
+        Appearance464.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance464.ForeColor = System.Drawing.SystemColors.GrayText
+        Me.grdDETJOBMC.DisplayLayout.GroupByBox.PromptAppearance = Appearance464
         Me.grdDETJOBMC.DisplayLayout.MaxColScrollRegions = 1
         Me.grdDETJOBMC.DisplayLayout.MaxRowScrollRegions = 1
-        Appearance464.BackColor = System.Drawing.SystemColors.Window
-        Appearance464.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.grdDETJOBMC.DisplayLayout.Override.ActiveCellAppearance = Appearance464
+        Appearance465.BackColor = System.Drawing.SystemColors.Window
+        Appearance465.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.grdDETJOBMC.DisplayLayout.Override.ActiveCellAppearance = Appearance465
         Me.grdDETJOBMC.DisplayLayout.Override.AllowAddNew = Infragistics.Win.UltraWinGrid.AllowAddNew.No
         Me.grdDETJOBMC.DisplayLayout.Override.AllowDelete = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdDETJOBMC.DisplayLayout.Override.AllowUpdate = Infragistics.Win.DefaultableBoolean.[False]
         Me.grdDETJOBMC.DisplayLayout.Override.BorderStyleCell = Infragistics.Win.UIElementBorderStyle.Dotted
         Me.grdDETJOBMC.DisplayLayout.Override.BorderStyleRow = Infragistics.Win.UIElementBorderStyle.Dotted
-        Appearance465.BackColor = System.Drawing.SystemColors.Window
-        Me.grdDETJOBMC.DisplayLayout.Override.CardAreaAppearance = Appearance465
-        Appearance466.BorderColor = System.Drawing.Color.Silver
-        Appearance466.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
-        Me.grdDETJOBMC.DisplayLayout.Override.CellAppearance = Appearance466
+        Appearance466.BackColor = System.Drawing.SystemColors.Window
+        Me.grdDETJOBMC.DisplayLayout.Override.CardAreaAppearance = Appearance466
+        Appearance467.BorderColor = System.Drawing.Color.Silver
+        Appearance467.TextTrimming = Infragistics.Win.TextTrimming.EllipsisCharacter
+        Me.grdDETJOBMC.DisplayLayout.Override.CellAppearance = Appearance467
         Me.grdDETJOBMC.DisplayLayout.Override.CellClickAction = Infragistics.Win.UltraWinGrid.CellClickAction.EditAndSelectText
         Me.grdDETJOBMC.DisplayLayout.Override.CellPadding = 0
-        Appearance467.BackColor = System.Drawing.SystemColors.Control
-        Appearance467.BackColor2 = System.Drawing.SystemColors.ControlDark
-        Appearance467.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
-        Appearance467.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
-        Appearance467.BorderColor = System.Drawing.SystemColors.Window
-        Me.grdDETJOBMC.DisplayLayout.Override.GroupByRowAppearance = Appearance467
-        Appearance468.TextHAlignAsString = "Left"
-        Me.grdDETJOBMC.DisplayLayout.Override.HeaderAppearance = Appearance468
+        Appearance468.BackColor = System.Drawing.SystemColors.Control
+        Appearance468.BackColor2 = System.Drawing.SystemColors.ControlDark
+        Appearance468.BackGradientAlignment = Infragistics.Win.GradientAlignment.Element
+        Appearance468.BackGradientStyle = Infragistics.Win.GradientStyle.Horizontal
+        Appearance468.BorderColor = System.Drawing.SystemColors.Window
+        Me.grdDETJOBMC.DisplayLayout.Override.GroupByRowAppearance = Appearance468
+        Appearance469.TextHAlignAsString = "Left"
+        Me.grdDETJOBMC.DisplayLayout.Override.HeaderAppearance = Appearance469
         Me.grdDETJOBMC.DisplayLayout.Override.HeaderClickAction = Infragistics.Win.UltraWinGrid.HeaderClickAction.SortMulti
         Me.grdDETJOBMC.DisplayLayout.Override.HeaderStyle = Infragistics.Win.HeaderStyle.WindowsXPCommand
-        Appearance469.BackColor = System.Drawing.SystemColors.Window
-        Appearance469.BorderColor = System.Drawing.Color.Silver
-        Me.grdDETJOBMC.DisplayLayout.Override.RowAppearance = Appearance469
+        Appearance470.BackColor = System.Drawing.SystemColors.Window
+        Appearance470.BorderColor = System.Drawing.Color.Silver
+        Me.grdDETJOBMC.DisplayLayout.Override.RowAppearance = Appearance470
         Me.grdDETJOBMC.DisplayLayout.Override.RowSelectorHeaderStyle = Infragistics.Win.UltraWinGrid.RowSelectorHeaderStyle.SeparateElement
-        Appearance470.BackColor = System.Drawing.SystemColors.ControlLight
-        Me.grdDETJOBMC.DisplayLayout.Override.TemplateAddRowAppearance = Appearance470
+        Appearance471.BackColor = System.Drawing.SystemColors.ControlLight
+        Me.grdDETJOBMC.DisplayLayout.Override.TemplateAddRowAppearance = Appearance471
         Me.grdDETJOBMC.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdDETJOBMC.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdDETJOBMC.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
@@ -9000,107 +9106,27 @@ Partial Class ARFCINQ1
         Me.UltraTabSharedControlsPage12.Name = "UltraTabSharedControlsPage12"
         Me.UltraTabSharedControlsPage12.Size = New System.Drawing.Size(775, 537)
         '
-        'rdoOBFAX
-        '
-        Me.rdoOBFAX.AutoSize = True
-        Me.rdoOBFAX.Location = New System.Drawing.Point(677, 9)
-        Me.rdoOBFAX.Name = "rdoOBFAX"
-        Me.rdoOBFAX.Size = New System.Drawing.Size(48, 20)
-        Me.rdoOBFAX.TabIndex = 135
-        Me.rdoOBFAX.Text = "Fax"
-        Me.rdoOBFAX.UseVisualStyleBackColor = True
-        '
-        'rdoOBEMAIL
-        '
-        Me.rdoOBEMAIL.AutoSize = True
-        Me.rdoOBEMAIL.Checked = True
-        Me.rdoOBEMAIL.Location = New System.Drawing.Point(552, 8)
-        Me.rdoOBEMAIL.Name = "rdoOBEMAIL"
-        Me.rdoOBEMAIL.Size = New System.Drawing.Size(105, 20)
-        Me.rdoOBEMAIL.TabIndex = 136
-        Me.rdoOBEMAIL.TabStop = True
-        Me.rdoOBEMAIL.Text = "Email / Print"
-        Me.rdoOBEMAIL.UseVisualStyleBackColor = True
-        '
-        'UltraLabel36
-        '
-        Appearance415.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel36.Appearance = Appearance415
-        Me.UltraLabel36.AutoSize = True
-        Me.UltraLabel36.Location = New System.Drawing.Point(27, 284)
-        Me.UltraLabel36.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel36.Name = "UltraLabel36"
-        Me.UltraLabel36.Size = New System.Drawing.Size(48, 18)
-        Me.UltraLabel36.TabIndex = 210
-        Me.UltraLabel36.Text = "Rating"
-        '
-        'rdoOBRatingPrompt
-        '
-        Me.rdoOBRatingPrompt.AutoSize = True
-        Me.rdoOBRatingPrompt.Checked = True
-        Me.rdoOBRatingPrompt.Location = New System.Drawing.Point(168, 284)
-        Me.rdoOBRatingPrompt.Name = "rdoOBRatingPrompt"
-        Me.rdoOBRatingPrompt.Size = New System.Drawing.Size(72, 20)
-        Me.rdoOBRatingPrompt.TabIndex = 211
-        Me.rdoOBRatingPrompt.TabStop = True
-        Me.rdoOBRatingPrompt.Text = "Prompt"
-        Me.rdoOBRatingPrompt.UseVisualStyleBackColor = True
-        '
-        'rdoOBRatingSatisfactory
-        '
-        Me.rdoOBRatingSatisfactory.AutoSize = True
-        Me.rdoOBRatingSatisfactory.Location = New System.Drawing.Point(259, 284)
-        Me.rdoOBRatingSatisfactory.Name = "rdoOBRatingSatisfactory"
-        Me.rdoOBRatingSatisfactory.Size = New System.Drawing.Size(107, 20)
-        Me.rdoOBRatingSatisfactory.TabIndex = 212
-        Me.rdoOBRatingSatisfactory.Text = "Satisfactory"
-        Me.rdoOBRatingSatisfactory.UseVisualStyleBackColor = True
-        '
-        'rdoOBRatingUnsatisfactory
-        '
-        Me.rdoOBRatingUnsatisfactory.AutoSize = True
-        Me.rdoOBRatingUnsatisfactory.Location = New System.Drawing.Point(377, 284)
-        Me.rdoOBRatingUnsatisfactory.Name = "rdoOBRatingUnsatisfactory"
-        Me.rdoOBRatingUnsatisfactory.Size = New System.Drawing.Size(122, 20)
-        Me.rdoOBRatingUnsatisfactory.TabIndex = 213
-        Me.rdoOBRatingUnsatisfactory.Text = "Unsatisfactory"
-        Me.rdoOBRatingUnsatisfactory.UseVisualStyleBackColor = True
-        '
-        'UltraLabel48
-        '
-        Appearance414.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel48.Appearance = Appearance414
-        Me.UltraLabel48.AutoSize = True
-        Me.UltraLabel48.Location = New System.Drawing.Point(184, 302)
-        Me.UltraLabel48.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel48.Name = "UltraLabel48"
-        Me.UltraLabel48.Size = New System.Drawing.Size(49, 18)
-        Me.UltraLabel48.TabIndex = 214
-        Me.UltraLabel48.Text = "(0-30)"
-        '
-        'UltraLabel49
-        '
-        Appearance413.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel49.Appearance = Appearance413
-        Me.UltraLabel49.AutoSize = True
-        Me.UltraLabel49.Location = New System.Drawing.Point(276, 302)
-        Me.UltraLabel49.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel49.Name = "UltraLabel49"
-        Me.UltraLabel49.Size = New System.Drawing.Size(57, 18)
-        Me.UltraLabel49.TabIndex = 215
-        Me.UltraLabel49.Text = "(31-90)"
-        '
-        'UltraLabel50
+        'UltraLabel51
         '
         Appearance412.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel50.Appearance = Appearance412
-        Me.UltraLabel50.AutoSize = True
-        Me.UltraLabel50.Location = New System.Drawing.Point(395, 302)
-        Me.UltraLabel50.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel50.Name = "UltraLabel50"
-        Me.UltraLabel50.Size = New System.Drawing.Size(45, 18)
-        Me.UltraLabel50.TabIndex = 216
-        Me.UltraLabel50.Text = "(91+)"
+        Me.UltraLabel51.Appearance = Appearance412
+        Me.UltraLabel51.AutoSize = True
+        Me.UltraLabel51.Location = New System.Drawing.Point(176, 300)
+        Me.UltraLabel51.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel51.Name = "UltraLabel51"
+        Me.UltraLabel51.Size = New System.Drawing.Size(111, 18)
+        Me.UltraLabel51.TabIndex = 218
+        Me.UltraLabel51.Text = "(Will Not Show)"
+        '
+        'rdoOBRatingNone
+        '
+        Me.rdoOBRatingNone.AutoSize = True
+        Me.rdoOBRatingNone.Location = New System.Drawing.Point(168, 284)
+        Me.rdoOBRatingNone.Name = "rdoOBRatingNone"
+        Me.rdoOBRatingNone.Size = New System.Drawing.Size(119, 20)
+        Me.rdoOBRatingNone.TabIndex = 217
+        Me.rdoOBRatingNone.Text = "Do Not Report"
+        Me.rdoOBRatingNone.UseVisualStyleBackColor = True
         '
         'ARFCINQ1
         '
@@ -9731,4 +9757,6 @@ Partial Class ARFCINQ1
     Friend WithEvents rdoOBRatingSatisfactory As RadioButton
     Friend WithEvents rdoOBRatingPrompt As RadioButton
     Friend WithEvents UltraLabel36 As Misc.UltraLabel
+    Friend WithEvents UltraLabel51 As Misc.UltraLabel
+    Friend WithEvents rdoOBRatingNone As RadioButton
 End Class

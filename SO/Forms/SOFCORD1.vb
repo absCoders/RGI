@@ -85,7 +85,7 @@ Public Class SOFCORD1
             If ASCMAIN1.CLIENT = "VAN" Then
                 ASCMAIN1.sql &= " and SOTPCKP2.ORDR_GROUP_NO (+) = SOTORDR0.ORDR_GROUP_NO and SOTPCKP2.PACK_GROUP_STATUS (+) = 'A'"
             End If
-            ASCMAIN1.sql = "Select X.*, SOTORDR1.TERM_CODE, SOTORDR1.LAST_DATE, SOTORDR1.LAST_OPER, SOTORDR1.ORDR_SHIP_INSTR, SOTORDR1.ORDR_MESSAGE, ARTCCPA1.CUST_CREDIT_CARD_EXP_DATE, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCUST1.CUST_NAME, ARTCUST1.CUST_CITY, ARTCUST1.CUST_STATE, ARTCUST1.CUST_COUNTRY" & vbCrLf _
+            ASCMAIN1.sql = "Select X.*, SOTORDR1.TERM_CODE, SOTORDR1.LAST_DATE, SOTORDR1.LAST_OPER, SOTORDR1.ORDR_SHIP_INSTR, SOTORDR1.ORDR_MESSAGE, ARTCCPA1.CUST_CREDIT_CARD_EXP_DATE, ARTCCPA1.CUST_CREDIT_CARD_LAST4, ARTCUST1.CUST_NAME, ARTCUST1.CUST_CITY, ARTCUST1.CUST_STATE, ARTCUST1.CUST_COUNTRY, ARTCUST1.CUST_SALES_HOLD, ARTCUST1.CUST_CREDIT_HOLD" & vbCrLf _
                 & " from (" & ASCMAIN1.sql & ") X, ARTCUST1,SOTORDR1,ARTCCPA1" _
                 & " where ARTCUST1.CUST_CODE = X.CUST_CODE and SOTORDR1.ORDR_NO = X.ORDR_NO_MIN and ARTCCPA1.CCPA_NO (+) = SOTORDR1.CCPA_NO"
             SOTORDR0 = ASCMAIN1.Temp_Table
@@ -969,6 +969,9 @@ Public Class SOFCORD1
 
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("ORDR_TYPE_CODE").Hidden = Not (ASCMAIN1.CLIENT = "RGI")
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("ORDR_SOURCE").Hidden = Not (ASCMAIN1.CLIENT = "RGI")
+
+        grdSOTORDR0.DisplayLayout.Bands(0).Columns("CUST_SALES_HOLD").Hidden = Not (ASCMAIN1.CLIENT = "RGI")
+        grdSOTORDR0.DisplayLayout.Bands(0).Columns("CUST_CREDIT_HOLD").Hidden = Not (ASCMAIN1.CLIENT = "RGI")
 
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("WAVE_NO").Hidden = Not (ASCMAIN1.CLIENT = "VAN")
         grdSOTORDR0.DisplayLayout.Bands(0).Columns("EDI_LOAD_ID").Hidden = Not (ASCMAIN1.CLIENT = "VAN")
@@ -2802,7 +2805,7 @@ Public Class SOFCORD1
 
         ASCMAIN1.sql = "Select X.*, SOTORDR1.TERM_CODE, SOTORDR1.LAST_DATE, SOTORDR1.LAST_OPER, SOTORDR1.ORDR_SHIP_INSTR, SOTORDR1.ORDR_MESSAGE" & vbCrLf _
             & ", ARTCCPA1.CUST_CREDIT_CARD_EXP_DATE, ARTCCPA1.CUST_CREDIT_CARD_LAST4" & vbCrLf _
-            & ", ARTCUST1.CUST_NAME, ARTCUST1.CUST_CITY, ARTCUST1.CUST_STATE, ARTCUST1.CUST_COUNTRY" & vbCrLf _
+            & ", ARTCUST1.CUST_NAME, ARTCUST1.CUST_CITY, ARTCUST1.CUST_STATE, ARTCUST1.CUST_COUNTRY, ARTCUST1.CUST_SALES_HOLD, ARTCUST1.CUST_CREDIT_HOLD" & vbCrLf _
             & ", NULL WAVE_NO, NULL EDI_LOAD_ID" & vbCrLf _
             & ", SOTORDRS.ORDR_AMT_ALLO_CUR, SOTORDRS.ORDR_AMT_ALLO_FUT, SOTORDRS.ORDR_AMT_ALLO_CXL, SOTORDR1.EDI_PO_TYPE" & vbCrLf _
             & " from (" & ASCMAIN1.sql & ") X,ARTCUST1,SOTORDR1, ARTCCPA1, (" & sqlSOTORDRS & ") SOTORDRS" & vbCrLf _
@@ -2911,6 +2914,20 @@ Public Class SOFCORD1
                 grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_SHORT)
                 If ASCMAIN1.CLIENT = "RGI" Then
                     Create_Summary(grdSOTORDR0, New String() {"ORDR_AMT_ALLO_CUR", "ORDR_AMT_ALLO_FUT", "ORDR_AMT_ALLO_CXL"}, , , "#,##0")
+                    Dim POS As Int64 = grdSOTORDR0.DisplayLayout.Bands(0).Columns("ORDR_AMT").Header.VisiblePosition
+                    With grdSOTORDR0.DisplayLayout.Bands(0)
+                        .Columns("CUST_CREDIT_HOLD").Style = UltraWinGrid.ColumnStyle.CheckBox
+                        .Columns("CUST_CREDIT_HOLD").Header.Caption = "Credit Hold"
+                        .Columns("CUST_CREDIT_HOLD").Width = 90
+                        .Columns("CUST_CREDIT_HOLD").Hidden = False
+                        .Columns("CUST_CREDIT_HOLD").Header.VisiblePosition = POS - 1
+
+                        .Columns("CUST_SALES_HOLD").Style = UltraWinGrid.ColumnStyle.CheckBox
+                        .Columns("CUST_SALES_HOLD").Header.Caption = "Sales Hold"
+                        .Columns("CUST_SALES_HOLD").Width = 90
+                        .Columns("CUST_SALES_HOLD").Hidden = False
+                        .Columns("CUST_SALES_HOLD").Header.VisiblePosition = POS - 1
+                    End With
                 End If
             Else
                 grdSOTORDR0.DisplayLayout.LoadFromXml(SOFCORD1_LAYOUT_ORIG)
@@ -4444,6 +4461,9 @@ Public Class SOFCORD1
             COLUMN_NAMEs_Short.Add("ORDR_CANCEL_DATE")
             COLUMN_NAMEs_Short.Add("ORDR_QTY_OPEN")
             COLUMN_NAMEs_Short.Add("ORDR_AMT_OPEN")
+
+            COLUMN_NAMEs_Short.Add("CUST_SALES_HOLD")
+            COLUMN_NAMEs_Short.Add("CUST_CREDIT_HOLD")
 
 
         End If

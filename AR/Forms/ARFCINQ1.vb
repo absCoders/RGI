@@ -6174,13 +6174,17 @@ Public Class ARFCINQ1
             WEB_FIELDS.Add("{SendType}", "E-Mail:")
         End If
         '
-        If rdoOBRatingUnsatisfactory.Checked Then
-            WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Unsatisfactory")
+        If rdoOBRatingNone.Checked Then
+            WEB_FIELDS.Add("{PayRating}", "")
         Else
-            If rdoOBRatingSatisfactory.Checked Then
-                WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Satisfactory")
+            If rdoOBRatingUnsatisfactory.Checked Then
+                WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Unsatisfactory")
             Else
-                WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Prompt")
+                If rdoOBRatingSatisfactory.Checked Then
+                    WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Satisfactory")
+                Else
+                    WEB_FIELDS.Add("{PayRating}", "<li><bold>Pay Rating:</bold> Prompt")
+                End If
             End If
         End If
 
