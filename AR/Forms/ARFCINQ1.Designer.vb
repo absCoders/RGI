@@ -1066,6 +1066,7 @@ Partial Class ARFCINQ1
         Dim Appearance409 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance410 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance411 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
+        Dim Appearance412 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance413 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance414 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance415 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1146,6 +1147,9 @@ Partial Class ARFCINQ1
         Dim UltraGridColumn365 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONV_PROMISE_AMT")
         Dim UltraGridColumn366 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CONV_PROMISE_BY")
         Dim UltraGridColumn104 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_NAME")
+        Dim UltraGridColumn528 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_SALES_HOLD")
+        Dim UltraGridColumn529 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CUST_CREDIT_HOLD")
+        Dim UltraGridColumn530 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("INV_BALANCE_CURR")
         Dim Appearance48 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance49 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance50 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -1270,7 +1274,6 @@ Partial Class ARFCINQ1
         Dim UltraTab2 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab8 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Dim UltraTab10 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
-        Dim Appearance412 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.UltraGroupBox5 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.cmdPrintSelected = New Infragistics.Win.Misc.UltraButton()
@@ -1484,6 +1487,8 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl28 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl52 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.SplitContainer2 = New System.Windows.Forms.SplitContainer()
+        Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
+        Me.rdoOBRatingNone = New System.Windows.Forms.RadioButton()
         Me.UltraLabel50 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel49 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel48 = New Infragistics.Win.Misc.UltraLabel()
@@ -1584,8 +1589,6 @@ Partial Class ARFCINQ1
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage12 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.UltraLabel51 = New Infragistics.Win.Misc.UltraLabel()
-        Me.rdoOBRatingNone = New System.Windows.Forms.RadioButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit
         Me.UltraExplorerBar1.SuspendLayout
         Me.ASFBASE1_Fill_Panel.SuspendLayout
@@ -6524,7 +6527,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(771, 509)
         '
@@ -7557,7 +7560,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl52
         '
         Me.UltraTabPageControl52.Controls.Add(Me.SplitContainer2)
-        Me.UltraTabPageControl52.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl52.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl52.Name = "UltraTabPageControl52"
         Me.UltraTabPageControl52.Size = New System.Drawing.Size(771, 509)
         '
@@ -7613,6 +7616,28 @@ Partial Class ARFCINQ1
         Me.SplitContainer2.Size = New System.Drawing.Size(771, 509)
         Me.SplitContainer2.SplitterDistance = 429
         Me.SplitContainer2.TabIndex = 1
+        '
+        'UltraLabel51
+        '
+        Appearance412.BackColor = System.Drawing.Color.Transparent
+        Me.UltraLabel51.Appearance = Appearance412
+        Me.UltraLabel51.AutoSize = True
+        Me.UltraLabel51.Location = New System.Drawing.Point(176, 300)
+        Me.UltraLabel51.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.UltraLabel51.Name = "UltraLabel51"
+        Me.UltraLabel51.Size = New System.Drawing.Size(111, 18)
+        Me.UltraLabel51.TabIndex = 218
+        Me.UltraLabel51.Text = "(Will Not Show)"
+        '
+        'rdoOBRatingNone
+        '
+        Me.rdoOBRatingNone.AutoSize = True
+        Me.rdoOBRatingNone.Location = New System.Drawing.Point(168, 284)
+        Me.rdoOBRatingNone.Name = "rdoOBRatingNone"
+        Me.rdoOBRatingNone.Size = New System.Drawing.Size(119, 20)
+        Me.rdoOBRatingNone.TabIndex = 217
+        Me.rdoOBRatingNone.Text = "Do Not Report"
+        Me.rdoOBRatingNone.UseVisualStyleBackColor = True
         '
         'UltraLabel50
         '
@@ -7678,6 +7703,7 @@ Partial Class ARFCINQ1
         Me.rdoOBRatingPrompt.Name = "rdoOBRatingPrompt"
         Me.rdoOBRatingPrompt.Size = New System.Drawing.Size(72, 20)
         Me.rdoOBRatingPrompt.TabIndex = 211
+        Me.rdoOBRatingPrompt.TabStop = True
         Me.rdoOBRatingPrompt.Text = "Prompt"
         Me.rdoOBRatingPrompt.UseVisualStyleBackColor = True
         '
@@ -8254,7 +8280,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl44
         '
         Me.UltraTabPageControl44.Controls.Add(Me.grdARTCUSTT_FUPS)
-        Me.UltraTabPageControl44.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl44.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl44.Name = "UltraTabPageControl44"
         Me.UltraTabPageControl44.Size = New System.Drawing.Size(775, 537)
         '
@@ -8319,7 +8345,17 @@ Partial Class ARFCINQ1
         UltraGridColumn104.Header.Caption = "Name"
         UltraGridColumn104.Header.VisiblePosition = 3
         UltraGridColumn104.Width = 159
-        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn120, UltraGridColumn355, UltraGridColumn356, UltraGridColumn357, UltraGridColumn358, UltraGridColumn99, UltraGridColumn359, UltraGridColumn360, UltraGridColumn361, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn362, UltraGridColumn363, UltraGridColumn364, UltraGridColumn365, UltraGridColumn366, UltraGridColumn104})
+        UltraGridColumn528.Header.Caption = "Sales Hold"
+        UltraGridColumn528.Header.VisiblePosition = 19
+        UltraGridColumn528.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn528.Width = 82
+        UltraGridColumn529.Header.Caption = "Credit Hold"
+        UltraGridColumn529.Header.VisiblePosition = 20
+        UltraGridColumn529.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
+        UltraGridColumn529.Width = 90
+        UltraGridColumn530.Header.Caption = "Current Balance"
+        UltraGridColumn530.Header.VisiblePosition = 21
+        UltraGridBand4.Columns.AddRange(New Object() {UltraGridColumn120, UltraGridColumn355, UltraGridColumn356, UltraGridColumn357, UltraGridColumn358, UltraGridColumn99, UltraGridColumn359, UltraGridColumn360, UltraGridColumn361, UltraGridColumn100, UltraGridColumn101, UltraGridColumn102, UltraGridColumn103, UltraGridColumn362, UltraGridColumn363, UltraGridColumn364, UltraGridColumn365, UltraGridColumn366, UltraGridColumn104, UltraGridColumn528, UltraGridColumn529, UltraGridColumn530})
         Me.grdARTCUSTT_FUPS.DisplayLayout.BandsSerializer.Add(UltraGridBand4)
         Me.grdARTCUSTT_FUPS.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance48.TextHAlignAsString = "Left"
@@ -8598,7 +8634,7 @@ Partial Class ARFCINQ1
         'UltraTabPageControl46
         '
         Me.UltraTabPageControl46.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl46.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl46.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl46.Name = "UltraTabPageControl46"
         Me.UltraTabPageControl46.Size = New System.Drawing.Size(775, 537)
         '
@@ -9105,28 +9141,6 @@ Partial Class ARFCINQ1
         Me.UltraTabSharedControlsPage12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage12.Name = "UltraTabSharedControlsPage12"
         Me.UltraTabSharedControlsPage12.Size = New System.Drawing.Size(775, 537)
-        '
-        'UltraLabel51
-        '
-        Appearance412.BackColor = System.Drawing.Color.Transparent
-        Me.UltraLabel51.Appearance = Appearance412
-        Me.UltraLabel51.AutoSize = True
-        Me.UltraLabel51.Location = New System.Drawing.Point(176, 300)
-        Me.UltraLabel51.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraLabel51.Name = "UltraLabel51"
-        Me.UltraLabel51.Size = New System.Drawing.Size(111, 18)
-        Me.UltraLabel51.TabIndex = 218
-        Me.UltraLabel51.Text = "(Will Not Show)"
-        '
-        'rdoOBRatingNone
-        '
-        Me.rdoOBRatingNone.AutoSize = True
-        Me.rdoOBRatingNone.Location = New System.Drawing.Point(168, 284)
-        Me.rdoOBRatingNone.Name = "rdoOBRatingNone"
-        Me.rdoOBRatingNone.Size = New System.Drawing.Size(119, 20)
-        Me.rdoOBRatingNone.TabIndex = 217
-        Me.rdoOBRatingNone.Text = "Do Not Report"
-        Me.rdoOBRatingNone.UseVisualStyleBackColor = True
         '
         'ARFCINQ1
         '
