@@ -212,6 +212,7 @@ Partial Class ARFCALL1
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl8 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl9 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.chkOtherPending = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -380,6 +381,7 @@ Partial Class ARFCALL1
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.chkOtherPending)
         Me.Panel1.Controls.Add(Me.btnStartCall)
         Me.Panel1.Controls.Add(Me.lblMessage)
         Me.Panel1.Controls.Add(Me.btnBadCalls)
@@ -529,7 +531,7 @@ Partial Class ARFCALL1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.grdARTCUSTD)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1122, 483)
         '
@@ -650,7 +652,7 @@ Partial Class ARFCALL1
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.grdTATCONV1)
-        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
         Me.UltraTabPageControl10.Size = New System.Drawing.Size(1122, 483)
         '
@@ -758,7 +760,7 @@ Partial Class ARFCALL1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.panThisCall)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(1122, 483)
         '
@@ -1105,7 +1107,7 @@ Partial Class ARFCALL1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.Panel2)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(1126, 788)
         '
@@ -1130,7 +1132,7 @@ Partial Class ARFCALL1
         'UltraTabPageControl15
         '
         Me.UltraTabPageControl15.Controls.Add(Me.Panel3)
-        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl15.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl15.Name = "UltraTabPageControl15"
         Me.UltraTabPageControl15.Size = New System.Drawing.Size(1126, 788)
         '
@@ -1187,7 +1189,7 @@ Partial Class ARFCALL1
         '
         'UltraTabPageControl13
         '
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-8000, -8889)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1130, 816)
         '
@@ -1287,6 +1289,16 @@ Partial Class ARFCALL1
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(769, 278)
         '
+        'chkOtherPending
+        '
+        Me.chkOtherPending.AutoSize = True
+        Me.chkOtherPending.Location = New System.Drawing.Point(9, 35)
+        Me.chkOtherPending.Name = "chkOtherPending"
+        Me.chkOtherPending.Size = New System.Drawing.Size(129, 20)
+        Me.chkOtherPending.TabIndex = 178
+        Me.chkOtherPending.Text = "Include Non-AR"
+        Me.chkOtherPending.UseVisualStyleBackColor = True
+        '
         'ARFCALL1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1306,6 +1318,7 @@ Partial Class ARFCALL1
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.UltraTabPageControl4.ResumeLayout(False)
         CType(Me.grdPMTINVHX, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -1408,5 +1421,6 @@ Partial Class ARFCALL1
     Friend WithEvents UltraTabPageControl15 As Infragistics.Win.UltraWinTabControl.UltraTabPageControl
     Friend WithEvents Panel3 As System.Windows.Forms.Panel
     Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents chkOtherPending As CheckBox
     'Friend WithEvents ARDCALL1 As AR.ARDCALL1
 End Class

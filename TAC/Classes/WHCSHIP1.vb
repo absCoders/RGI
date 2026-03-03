@@ -4480,7 +4480,10 @@ Public Class WHCSHIP1
                     With requestedRateList(iLoop)
                         .ServiceType = objFedexRates.Services(iLoop).ServiceType
                         .ServiceTypeDescription = StrConv(objFedexRates.Services(iLoop).ServiceTypeDescription.Replace("_", " "), VbStrConv.ProperCase)
-                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty) ' + Val(objFedexRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
+
+                        ' Modified 03/02/2026
+                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty) + Val(objFedexRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
+
                         .DeliveryTime = objFedexRates.Services(iLoop).DeliveryTime
                         .DeliveryDate = objFedexRates.Services(iLoop).DeliveryDate
                         .ListNetCharge = Val(objFedexRates.Services(iLoop).ListNetCharge & String.Empty)

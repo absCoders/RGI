@@ -127,6 +127,7 @@ Partial Class WBFHORNT
         Me.dtFROM = New System.Windows.Forms.DateTimePicker()
         Me.UltraExplorerBarContainerControl4 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel6 = New System.Windows.Forms.Panel()
+        Me.chkWhseOther = New System.Windows.Forms.CheckBox()
         Me.chkWhseNY = New System.Windows.Forms.CheckBox()
         Me.chkWhseMS = New System.Windows.Forms.CheckBox()
         Me.chkWhseFE = New System.Windows.Forms.CheckBox()
@@ -157,7 +158,6 @@ Partial Class WBFHORNT
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
-        Me.chkWhseOther = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -314,7 +314,7 @@ Partial Class WBFHORNT
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel4)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, -121)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 130)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 275)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
@@ -474,7 +474,7 @@ Partial Class WBFHORNT
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 198)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 449)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl4.TabIndex = 4
@@ -492,6 +492,17 @@ Partial Class WBFHORNT
         Me.Panel6.Name = "Panel6"
         Me.Panel6.Size = New System.Drawing.Size(172, 150)
         Me.Panel6.TabIndex = 1
+        '
+        'chkWhseOther
+        '
+        Me.chkWhseOther.AutoSize = True
+        Me.chkWhseOther.Location = New System.Drawing.Point(29, 107)
+        Me.chkWhseOther.Name = "chkWhseOther"
+        Me.chkWhseOther.Size = New System.Drawing.Size(71, 20)
+        Me.chkWhseOther.TabIndex = 13
+        Me.chkWhseOther.Text = "Others"
+        Me.chkWhseOther.UseVisualStyleBackColor = True
+        Me.chkWhseOther.Visible = False
         '
         'chkWhseNY
         '
@@ -552,7 +563,7 @@ Partial Class WBFHORNT
         'UltraExplorerBarContainerControl3
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 392)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 643)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl3.TabIndex = 3
@@ -629,10 +640,11 @@ Partial Class WBFHORNT
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 586)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 250)
         Me.UltraExplorerBarContainerControl1.TabIndex = 2
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'Panel3
         '
@@ -1068,17 +1080,6 @@ Partial Class WBFHORNT
         'Timer1
         '
         Me.Timer1.Interval = 1000
-        '
-        'chkWhseOther
-        '
-        Me.chkWhseOther.AutoSize = True
-        Me.chkWhseOther.Location = New System.Drawing.Point(29, 107)
-        Me.chkWhseOther.Name = "chkWhseOther"
-        Me.chkWhseOther.Size = New System.Drawing.Size(71, 20)
-        Me.chkWhseOther.TabIndex = 13
-        Me.chkWhseOther.Text = "Others"
-        Me.chkWhseOther.UseVisualStyleBackColor = True
-        Me.chkWhseOther.Visible = False
         '
         'WBFHORNT
         '

@@ -146,7 +146,7 @@ Public Class SOFSHIP0
 
             Create_TDA(.Tables.Add, "SOTORDC1", "*", 1)
             Create_TDA(.Tables.Add, "SOTORDC2", "*", 1)
-            .Tables("SOTORDC2").Columns.Add("PICK_NO", GetType(System.String))
+            '       .Tables("SOTORDC2").Columns.Add("PICK_NO", GetType(System.String))
 
             ASCMAIN1.sql = sqlSOTSHIPX & " and ROWNUM < 1"
             Create_TDA(.Tables.Add, "SOTSHIP1", "**", 0, True, "", 1)
