@@ -334,7 +334,7 @@ Public Class ARFCINQ1
             sqlARTCUSTT_FUPS.AppendLine("(")
             sqlARTCUSTT_FUPS.AppendLine("    SELECT")
             sqlARTCUSTT_FUPS.AppendLine("    CUST_CODE,")
-            sqlARTCUSTT_FUPS.AppendLine("    SUM(NVL(INV_BALANCE_CURR,0)) AS INV_BALANCE_CURR")
+            sqlARTCUSTT_FUPS.AppendLine("    SUM(NVL(INV_BALANCE,0)) AS INV_BALANCE_CURR") 'Of Course there are 2 open items with null _CURR.  Enough of this maddness.
             sqlARTCUSTT_FUPS.AppendLine("    FROM ARTOPEN1")
             sqlARTCUSTT_FUPS.AppendLine("    GROUP BY CUST_CODE")
             sqlARTCUSTT_FUPS.AppendLine(") BL")
@@ -6070,7 +6070,7 @@ Public Class ARFCINQ1
             Dim ATTACHMENTs As New Dictionary(Of String, String)
             EMAIL_ADDRESSs.Add(txtOBSendEmail.Text, txtOBSendName.Text)
 
-            Dim TEMPLATE_NAME As String = "AR"
+            Dim TEMPLATE_NAME As String = "CREDIT"
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                 (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                  "Credit Reference Request", TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Credit Reference Request", content)
