@@ -712,6 +712,9 @@ Public Class WBFCUST1
             TempFolder = TempFolder & "\"
         End If
         Dim LocalFile As String = TempFolder & TAX_ID_DOC
+        If LocalFile.ToUpper.EndsWith(".HEIC") Then
+            LocalFile.ToUpper.Replace(".HEIC", ".jpg")
+        End If
         If System.IO.File.Exists(LocalFile) Then
             System.IO.File.Delete(LocalFile)
         End If
@@ -763,6 +766,9 @@ Public Class WBFCUST1
             TempFolder = TempFolder & "\"
         End If
         Dim LocalFile As String = TempFolder & TAX_ID_DOC
+        If LocalFile.ToUpper.EndsWith(".HEIC") Then
+            LocalFile.ToUpper.Replace(".HEIC", ".jpg")
+        End If
         Dim FtpShopSite As New nsoftware.IPWorks.Ftp
         With FtpShopSite
             Try

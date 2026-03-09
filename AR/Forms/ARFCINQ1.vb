@@ -46,6 +46,8 @@ Public Class ARFCINQ1
 
     Dim ARTSTMTR As String
 
+    Dim sqlARTCUSTT_FUPS As New Text.StringBuilder With {.Length = 0}
+
     Public Structure strTOTALS
         Public APPL_TOTAL As Decimal
         Public DISC_TOTAL As Decimal
@@ -316,12 +318,31 @@ Public Class ARFCINQ1
             'End If
 
 
-            ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
-            & " from TATCONV1,ARTCUST1 " _
-            & " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
-            & "   and TATCONV1.CONV_STATUS = '1'" _
-            & "   and TATCONV1.TABLE_NAME = 'ARTCUST1'" _
-            & "   and TATCONV1.CONV_FOLLOWUP_BY = '" & ASCMAIN1.USER_ID & "'"
+            'ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
+            '& " from TATCONV1,ARTCUST1 " _
+            '& " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
+            '& "   and TATCONV1.CONV_STATUS = '1'" _
+            '& "   and TATCONV1.TABLE_NAME = 'ARTCUST1'" _
+            '& "   and TATCONV1.CONV_FOLLOWUP_BY = '" & ASCMAIN1.USER_ID & "'"
+            sqlARTCUSTT_FUPS.Length = 0
+            sqlARTCUSTT_FUPS.AppendLine("SELECT TATCONV1.*,")
+            sqlARTCUSTT_FUPS.AppendLine("ARTCUST1.CUST_NAME,")
+            sqlARTCUSTT_FUPS.AppendLine("ARTCUST1.CUST_SALES_HOLD,")
+            sqlARTCUSTT_FUPS.AppendLine("ARTCUST1.CUST_CREDIT_HOLD,")
+            sqlARTCUSTT_FUPS.AppendLine("NVL(BL.INV_BALANCE_CURR,0) INV_BALANCE_CURR")
+            sqlARTCUSTT_FUPS.AppendLine("from TATCONV1, ARTCUST1,")
+            sqlARTCUSTT_FUPS.AppendLine("(")
+            sqlARTCUSTT_FUPS.AppendLine("    SELECT")
+            sqlARTCUSTT_FUPS.AppendLine("    CUST_CODE,")
+            sqlARTCUSTT_FUPS.AppendLine("    SUM(NVL(INV_BALANCE,0)) AS INV_BALANCE_CURR") 'Of Course there are 2 open items with null _CURR.  Enough of this maddness.
+            sqlARTCUSTT_FUPS.AppendLine("    FROM ARTOPEN1")
+            sqlARTCUSTT_FUPS.AppendLine("    GROUP BY CUST_CODE")
+            sqlARTCUSTT_FUPS.AppendLine(") BL")
+            sqlARTCUSTT_FUPS.AppendLine("where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY")
+            sqlARTCUSTT_FUPS.AppendLine("AND ARTCUST1.CUST_CODE = BL.CUST_CODE (+)")
+            sqlARTCUSTT_FUPS.AppendLine("and TATCONV1.CONV_STATUS = '1'")
+            sqlARTCUSTT_FUPS.AppendLine("and TATCONV1.TABLE_NAME = 'ARTCUST1'")
+            ASCMAIN1.sql = sqlARTCUSTT_FUPS.ToString & " and TATCONV1.CONV_FOLLOWUP_BY = '" & ASCMAIN1.USER_ID & "'"
             Create_TDA(.Tables.Add, "ARTCUSTT_FUPS", "**", 0, False, "", 1)
 
 
@@ -1218,7 +1239,9 @@ Public Class ARFCINQ1
             Next
         End With
 
-
+        With grdARTCUSTT_FUPS.DisplayLayout.Bands(0)
+            .Columns("INV_BALANCE_CURR").Format = "###,###,##0.00"
+        End With
 
         Set_Read_Only(grpARTCUST1, True)
         Set_Read_Only(grpCustomerOP, True)
@@ -4485,7 +4508,7 @@ Public Class ARFCINQ1
     Sub Refresh_FollowUps()
         Fill_Records("ARTCUSTT_FUPS")
         grdARTCUSTT_FUPS.Visible = True
-        chkALLFU.Visible = ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "andy"
+        chkALLFU.Visible = ASCMAIN1.CLIENT = "RGI" And (ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "wayne")
         grdARTCUST6.Visible = False
         ' grdARTOPENB.Visible = False
         tabChargebacks.Visible = False
@@ -5947,22 +5970,22 @@ Public Class ARFCINQ1
     Private Sub chkALLFU_CheckedChanged(sender As Object, e As EventArgs) Handles chkALLFU.CheckedChanged
         '    grdARTCUSTT_FUPS.Visible = True
         If chkALLFU.Checked Then
-            ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
-                & " from TATCONV1,ARTCUST1 " _
-                & " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
-                & "   and TATCONV1.CONV_STATUS = '1'" _
-                & "   and TATCONV1.INIT_OPER <> 'ana'" _
-                & "   and TATCONV1.TABLE_NAME = 'ARTCUST1'"
+            ASCMAIN1.sql = sqlARTCUSTT_FUPS.ToString & " and TATCONV1.INIT_OPER <> 'ana'"
+            'ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
+            '    & " from TATCONV1,ARTCUST1 " _
+            '    & " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
+            '    & "   and TATCONV1.CONV_STATUS = '1'" _
+            '    & "   and TATCONV1.INIT_OPER <> 'ana'" _
+            '    & "   and TATCONV1.TABLE_NAME = 'ARTCUST1'"
         Else
-            ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
-            & " from TATCONV1,ARTCUST1 " _
-            & " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
-            & "   and TATCONV1.CONV_STATUS = '1'" _
-            & "   and TATCONV1.TABLE_NAME = 'ARTCUST1'" _
-            & "   and TATCONV1.CONV_FOLLOWUP_BY = '" & ASCMAIN1.USER_ID & "'"
-
+            ASCMAIN1.sql = sqlARTCUSTT_FUPS.ToString & " and TATCONV1.CONV_FOLLOWUP_BY = '" & ASCMAIN1.USER_ID & "'"
+            'ASCMAIN1.sql = "SELECT TATCONV1.*, ARTCUST1.CUST_NAME " _
+            '& " from TATCONV1,ARTCUST1 " _
+            '& " where ARTCUST1.CUST_CODE = TATCONV1.TABLE_KEY " _
+            '& "   and TATCONV1.CONV_STATUS = '1'" _
+            '& "   and TATCONV1.TABLE_NAME = 'ARTCUST1'" _
+            '& "   and TATCONV1.CONV_FOLLOWUP_BY = '" & ASCMAIN1.USER_ID & "'"
         End If
-
         Fill_Records("ARTCUSTT_FUPS", "", True, ASCMAIN1.sql)
 
     End Sub
@@ -6047,7 +6070,7 @@ Public Class ARFCINQ1
             Dim ATTACHMENTs As New Dictionary(Of String, String)
             EMAIL_ADDRESSs.Add(txtOBSendEmail.Text, txtOBSendName.Text)
 
-            Dim TEMPLATE_NAME As String = "AR"
+            Dim TEMPLATE_NAME As String = "CREDIT"
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                 (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                  "Credit Reference Request", TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Credit Reference Request", content)

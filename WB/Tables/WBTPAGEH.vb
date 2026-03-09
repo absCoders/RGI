@@ -465,8 +465,10 @@ Public Class WBTPAGEH
     End Sub
 
     Private Sub grdWBTPAGED_BeforeCellActivate(sender As Object, e As CancelableCellEventArgs) Handles grdWBTPAGED.BeforeCellActivate
-        If Not e.Cell.Row.IsAddRow Then
-            e.Cancel = True
+        If Not e.Cell.Row.IsFilterRow Then
+            If Not e.Cell.Row.IsAddRow Then
+                e.Cancel = True
+            End If
         End If
     End Sub
 #End Region
