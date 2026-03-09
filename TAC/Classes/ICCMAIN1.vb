@@ -2517,6 +2517,16 @@ Public Class ICCMAIN1
 
         frm.dst.Tables("SOTINVH1").Rows.Add(rowSOTINVH1)
 
+        ' Requested by Darrin 3/6/2026
+        ' Rule: If there is an INV_STAX amount, there must be an STAX_CODE = ‘NY’ to update appropriate G/L Account at month end.
+        If ASCMAIN1.CLIENT = "VAN" Then
+            If Val(rowSOTINVH1.Item("INV_STAX") & String.Empty) <> 0 Then
+                If rowSOTINVH1.Item("STAX_CODE") = "" Then
+                    rowSOTINVH1.Item("STAX_CODE") = "NY"
+                End If
+            End If
+        End If
+
         ' RGI has tariffs for individual items as MISC charges
         If ASCMAIN1.CLIENT <> "RGI" Then
             Dim INV_MISC_CHG As Decimal = Val(rowSOTINVH1.Item("INV_MISC_CHG") & "")
@@ -2540,10 +2550,9 @@ Public Class ICCMAIN1
         End If
 
         Dim rowARTOPEN1 As DataRow = frm.dst.Tables("ARTOPEN1").NewRow
-        ' "STAX_CODE"
         For Each C As String In New String() _
         {"CUST_CODE", "INV_TYPE", "INV_DATE", "CUST_STORE_NO", "POST_CODE",
-         "TERM_CODE", "SREP_CODE", "INV_STAX",
+         "TERM_CODE", "SREP_CODE", "INV_STAX", "STAX_CODE",
          "ORDR_NO", "INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT",
          "REASON_CODE", "INIT_OPER", "INIT_DATE", "INV_MISC_CHG", "ORDR_TYPE_CODE", "SALES_DIVISION_CODE"}
             rowARTOPEN1.Item(C) = rowSOTINVH1.Item(C)
