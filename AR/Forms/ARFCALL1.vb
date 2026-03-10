@@ -1,6 +1,7 @@
 Imports System.Net.Mail
 Public Class ARFCALL1
     Dim SQLSB As New Text.StringBuilder
+    Dim TEMPX As String = ""
     Dim CallInProgress As Boolean
     Dim AllSelected As Boolean
     Dim IsFollowUpCall As Boolean
@@ -74,15 +75,50 @@ Public Class ARFCALL1
             SQLSB.AppendLine("'' AS CREDIT_PCT,")
             SQLSB.AppendLine("SYSDATE AS LAST_FU,")
             SQLSB.AppendLine("SYSDATE AS NEXT_FU,")
-            SQLSB.AppendLine("'MAP THIS!' AS EMP_NAME_FU")
-            SQLSB.AppendLine("FROM ARTOPEN1 O1, ARTCUST1 C1, ARTCUSTN N1")
+            SQLSB.AppendLine("'MAP THIS!' AS EMP_NAME_FU,")
+            SQLSB.AppendLine("T1.TERM_DESC")
+            SQLSB.AppendLine("FROM ARTOPEN1 O1, ARTCUST1 C1, ARTCUSTN N1, TATTERM1 T1")
             SQLSB.AppendLine("WHERE O1.CUST_CODE = C1.CUST_CODE")
             SQLSB.AppendLine("AND C1.CUST_CODE = N1.CUST_CODE (+)")
+            SQLSB.AppendLine("AND C1.TERM_CODE = T1.TERM_CODE (+)")
             SQLSB.AppendLine("AND O1.INV_BALANCE <> 0")
-            SQLSB.AppendLine("GROUP BY O1.CUST_CODE, C1.CUST_NAME, C1.SREP_CODE, C1.CUST_CREDIT_HOLD, C1.CUST_SALES_HOLD, C1.CUST_STATE, N1.NOTIFY_ACTION, N1.NOTIFY_DATE, NVL(C1.POST_CODE,'REG')")
+            SQLSB.AppendLine("GROUP BY O1.CUST_CODE, C1.CUST_NAME, C1.SREP_CODE, C1.CUST_CREDIT_HOLD, C1.CUST_SALES_HOLD, C1.CUST_STATE, N1.NOTIFY_ACTION, N1.NOTIFY_DATE, NVL(C1.POST_CODE,'REG'), T1.TERM_DESC")
             ASCMAIN1.sql = SQLSB.ToString
             Create_TDA(.Tables.Add, "ARTOPENX", "**", 0, False)
             .Tables("ARTOPENX").Columns.Add("UPDATED")
+
+            'Dim S As New Text.StringBuilder
+            'S.Length = 0
+            'S.AppendLine($"SELECT DISTINCT CUST_CODE FROM ({SQLSB})")
+            'ASCMAIN1.sql = S.ToString
+            'Dim TEMPX As String = ASCMAIN1.Temp_Table
+            If ASCMAIN1.CLIENT = "RGI" Then
+                Dim S As New Text.StringBuilder
+                S.Length = 0
+                S.AppendLine("SELECT")
+                S.AppendLine("S1.CUST_CODE,")
+                S.AppendLine("SUM(NVL(S2.ORDR_QTY_PICK,0)*NVL(S2.ORDR_UNIT_PRICE,0)) ORDS_RELD,")
+                S.AppendLine("SUM(NVL(S2.ORDR_QTY_OPEN,0)*NVL(S2.ORDR_UNIT_PRICE,0)) ORDS_PEND")
+                S.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
+                S.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
+                S.AppendLine("AND S1.ORDR_STATUS IN ('O','P')")
+                S.AppendLine("AND (S1.CUST_CODE NOT IN ")
+                S.AppendLine("(")
+                S.AppendLine($"SELECT DISTINCT CUST_CODE FROM ({SQLSB})")
+                S.AppendLine("))")
+                S.AppendLine("GROUP BY S1.CUST_CODE")
+                ASCMAIN1.sql = S.ToString
+                TEMPX = ASCMAIN1.Temp_Table
+
+                ASCDATA1.ExecuteSQL("Alter Table " & TEMPX & " add Primary Key (CUST_CODE)")
+
+                S.Length = 0
+                S.AppendLine($"DELETE FROM {TEMPX} WHERE (ORDS_RELD + ORDS_PEND) = 0")
+                ASCMAIN1.sql = S.ToString
+                ASCDATA1.ExecuteSQL()
+
+            End If
+
 
             SQLSB.Length = 0
             SQLSB.AppendLine("SELECT")
@@ -307,6 +343,7 @@ Public Class ARFCALL1
         grdTATCONV1.DataSource = dst.Tables("TATCONV1")
         grdARTCUSTD.DataSource = dst.Tables("ARTCUSTD")
 
+        Create_Summary(grdARTOPENX, "CUST_CODE", "Count")
         Create_Summary(grdARTOPENX, "INVOICE_CNT")
         Create_Summary(grdARTOPENX, "DAYS00")
         Create_Summary(grdARTOPENX, "DAYS30")
@@ -466,6 +503,9 @@ Public Class ARFCALL1
 
         Fill_Records("ARTOPENX")
         ComputeCreditSnapshot()
+        If ASCMAIN1.CLIENT = "RGI" Then
+            FillExtraCustomers()
+        End If
         Fill_Records("PMTEMPL1")
         Fill_Records("ARTCUSTD")
 
@@ -477,6 +517,70 @@ Public Class ARFCALL1
 
         ASCMAIN1.Progress("")
         Cursor = Cursors.Default
+    End Sub
+
+    Private Sub FillExtraCustomers()
+        If chkOtherPending.Checked Then
+            Dim s As New Text.StringBuilder With {.Length = 0}
+            s.AppendLine("SELECT")
+            s.AppendLine("C1.CUST_CODE,")
+            s.AppendLine("C1.CUST_NAME,")
+            s.AppendLine("C1.SREP_CODE,")
+            s.AppendLine("C1.CUST_STATE,")
+            s.AppendLine("C1.CUST_CREDIT_HOLD,")
+            s.AppendLine("C1.CUST_SALES_HOLD,")
+            s.AppendLine("NULL AS NOTIFY_ACTION,")
+            s.AppendLine("NULL AS NOTIFY_DATE,")
+            s.AppendLine("NVL(C1.POST_CODE,'REG') AS POST_CODE,")
+            s.AppendLine("MIN(O1.INV_DATE) AS INV_OLDEST,")
+            s.AppendLine("MAX(O1.INV_DATE) AS INV_NEWEST,")
+            s.AppendLine("COUNT(*) AS INVOICE_CNT,")
+            s.AppendLine("SUM(")
+            s.AppendLine("  CASE WHEN SYSDATE - INV_DUE_DATE <= 30 THEN")
+            s.AppendLine("    NVL(O1.INV_BALANCE,0)")
+            s.AppendLine("  ELSE")
+            s.AppendLine("    0")
+            s.AppendLine("  END ) AS DAYS00,")
+            s.AppendLine("SUM(")
+            s.AppendLine("  CASE WHEN (SYSDATE - INV_DUE_DATE > 30) AND (SYSDATE - INV_DUE_DATE <= 60) THEN")
+            s.AppendLine("    NVL(O1.INV_BALANCE,0)")
+            s.AppendLine("  ELSE")
+            s.AppendLine("    0")
+            s.AppendLine("  END ) AS DAYS30,")
+            s.AppendLine("SUM(")
+            s.AppendLine("  CASE WHEN (SYSDATE - INV_DUE_DATE > 60) AND (SYSDATE - INV_DUE_DATE <= 90) THEN")
+            s.AppendLine("    NVL(O1.INV_BALANCE,0)")
+            s.AppendLine("  ELSE")
+            s.AppendLine("    0")
+            s.AppendLine("  END ) AS DAYS60,")
+            s.AppendLine("SUM(")
+            s.AppendLine("  CASE WHEN (SYSDATE - INV_DUE_DATE > 90) AND (SYSDATE - INV_DUE_DATE <= 120) THEN")
+            s.AppendLine("    NVL(O1.INV_BALANCE,0)")
+            s.AppendLine("  ELSE")
+            s.AppendLine("    0")
+            s.AppendLine("  END ) AS DAYS90,")
+            s.AppendLine("SUM(")
+            s.AppendLine("  CASE WHEN (SYSDATE - INV_DUE_DATE > 120) THEN")
+            s.AppendLine("    NVL(O1.INV_BALANCE,0)")
+            s.AppendLine("  ELSE")
+            s.AppendLine("    0")
+            s.AppendLine("  END ) AS DAYS120,")
+            s.AppendLine("SUM(NVL(O1.INV_BALANCE,0)) AS TOTAL_BAL,")
+            s.AppendLine("TT.ORDS_RELD,")
+            s.AppendLine("TT.ORDS_PEND,")
+            s.AppendLine("C1.CUST_CREDIT_LIMIT,")
+            s.AppendLine("'' AS CREDIT_PCT,")
+            s.AppendLine("SYSDATE AS LAST_FU,")
+            s.AppendLine("SYSDATE AS NEXT_FU,")
+            s.AppendLine("'MAP THIS!' AS EMP_NAME_FU,")
+            s.AppendLine("T1.TERM_DESC")
+            s.AppendLine($"FROM ARTOPEN1 O1, ARTCUST1 C1, {TEMPX} TT, TATTERM1 T1")
+            s.AppendLine("WHERE O1.CUST_CODE (+) = C1.CUST_CODE")
+            s.AppendLine("AND C1.CUST_CODE = TT.CUST_CODE")
+            s.AppendLine("AND C1.TERM_CODE = T1.TERM_CODE (+)")
+            s.AppendLine("GROUP BY C1.CUST_CODE, C1.CUST_NAME, C1.SREP_CODE, C1.CUST_CREDIT_HOLD, C1.CUST_SALES_HOLD, C1.CUST_STATE, NVL(C1.POST_CODE,'REG'), TT.ORDS_RELD, TT.ORDS_PEND, C1.CUST_CREDIT_LIMIT, T1.TERM_DESC")
+            Fill_Records("ARTOPENX",, False, s.ToString)
+        End If
     End Sub
 
     Sub Print_Report()
@@ -499,6 +603,10 @@ Public Class ARFCALL1
         dst.Tables("ARTOPENX").Rows.Clear()
         Fill_Records("ARTOPENX")
         ComputeCreditSnapshot()
+        If ASCMAIN1.CLIENT = "RGI" Then
+            FillExtraCustomers()
+        End If
+
         'Fill_Records("PMTEMPL1")
         dst.EnforceConstraints = True
         SetFollowUpData()

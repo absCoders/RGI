@@ -876,7 +876,7 @@ AND SOTPICK2.PICK_NO = SOTINVH1.PICK_NO AND SOTPICK2.PICK_LNO = SOTINVH2.INV_LNO
         For YPs As Integer = 0 To 2
 
             Dim YP As String = ASCMAIN1.CYP
-            If YP > 0 Then
+            If YPs > 0 Then
                 YP = ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -1 * YPs)
             End If
 
