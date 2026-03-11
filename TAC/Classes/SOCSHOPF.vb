@@ -85,7 +85,7 @@ Public Class SOCSHOPF
 
             ShopifyUrl = rowECTECOMD.Item("ECOM_URL") & String.Empty
             If ShopifyUrl.Length = 0 Then
-                LastError = "Ecommerce Partner {ECOM_CODE} is not assigned a URL"
+                LastError = $"Ecommerce Partner {ECOM_CODE} is not assigned a URL"
                 Return creditCardTransaction
             End If
             ECOM_SITE_USER = rowECTECOMD.Item("ECOM_SITE_USER") & String.Empty
@@ -98,7 +98,17 @@ Public Class SOCSHOPF
                 Return creditCardTransaction
             End If
 
-            If IsPaymentCaptured(ShopifyOrderID, shopAccessToken) Then
+            Dim GiftCardAmount As Decimal = 0
+            If IsPaymentCaptured(ShopifyOrderID, shopAccessToken, GiftCardAmount) Then
+                creditCardTransaction.status = "SUCCESS"
+                Return creditCardTransaction
+            End If
+
+            If GiftCardAmount > 0 Then
+                amountToCapture -= GiftCardAmount
+            End If
+
+            If amountToCapture <= 0 Then
                 creditCardTransaction.status = "SUCCESS"
                 Return creditCardTransaction
             End If
@@ -173,7 +183,9 @@ Public Class SOCSHOPF
 
     End Function
 
-    Function IsPaymentCaptured(ShopifyOrderID As String, accessToken As String) As Boolean
+    Function IsPaymentCaptured(ShopifyOrderID As String, accessToken As String, ByRef GiftCardAmount As Decimal) As Boolean
+
+        IsPaymentCaptured = False
         Try
             Dim url As String = $"{ShopifyUrl}orders/{ShopifyOrderID}/transactions.json"
             Dim request As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)
@@ -183,17 +195,19 @@ Public Class SOCSHOPF
             Using response As HttpWebResponse = CType(request.GetResponse(), HttpWebResponse)
                 Using reader As New StreamReader(response.GetResponseStream())
                     Dim json As JObject = JObject.Parse(reader.ReadToEnd())
-                    For Each txn In json("transactions")
+                    For Each txn As JObject In json("transactions")
                         If txn("kind").ToString() = "capture" AndAlso txn("status").ToString() = "success" Then
-                            Return True
-                        ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" Then
-                            Return True
+                            IsPaymentCaptured = True
+                        ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() = "gift_card" Then
+                            GiftCardAmount += Val(txn("amount").ToString())
+                        ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() <> "gift_card" Then
+                            IsPaymentCaptured = True
                         End If
                     Next
                 End Using
             End Using
 
-            Return False
+            Return IsPaymentCaptured
         Catch ex As Exception
             MessageBox.Show(ex.Message, "Is Payment Captured", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return False
