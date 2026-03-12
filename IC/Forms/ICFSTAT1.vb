@@ -2969,11 +2969,7 @@ Public Class ICFSTAT1
                     Dim row As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", UPC_CODE)
                     If ASCMAIN1.DBS_SERVER = "VAN" Or ASCMAIN1.DBS_COMPANY = "VAN" Then
                         If row Is Nothing Then
-                            ASCMAIN1.sql = "Select STYLE_CODE from ICTSTYC4 where UPC_CODE = :PARM1"
-                            row = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", UPC_CODE)
-                        End If
-                        If row Is Nothing Then
-                            ASCMAIN1.sql = "Select STYLE_CODE from ICTSTYC2 where UPC_CODE = :PARM1"
+                            ASCMAIN1.sql = "Select STYLE_CODE from ICVLUPC1 where UPC_CODE = :PARM1"
                             row = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", UPC_CODE)
                         End If
                     End If
