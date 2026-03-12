@@ -1597,15 +1597,13 @@ Public Class SOFSHIPE
             End If
 
             ' Need To Capture Credit Card
-            Dim lstGiftCards As New List(Of TAC.SOCSHOPF.GiftCard)
-
             If dst.Tables("SOTINVH1").Rows.Count > 0 Then
                 Dim INV_TOTAL_AMOUNT As Decimal = Val(dst.Tables("SOTINVH1").Rows(0).Item("INV_TOTAL_AMOUNT") & String.Empty)
                 If INV_TOTAL_AMOUNT > 0 Then
                     Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
                     Dim clsSOCSHOPF As New TAC.SOCSHOPF()
                     Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
-                    ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT, lstGiftCards)
+                    ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT)
                     With ccResponse
                         ' If we charge the credit card and then get an error in code
                         ' the subsequent calls will result in ststus <> SUCCESS ?????
