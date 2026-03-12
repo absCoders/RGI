@@ -929,6 +929,17 @@
 
         End If
 
+        If chkIgnore.Checked Then
+            ASCMAIN1.sql = $"DELETE FROM {SOTINVP1} WHERE CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE CUST_XMIT_INV_VIA = 'E')"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+            ASCMAIN1.sql = $"DELETE FROM {SOTINVH1} WHERE CUST_CODE IN (SELECT CUST_CODE FROM ARTCUST1 WHERE CUST_XMIT_INV_VIA = 'E')"
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+
+            ASCMAIN1.sql = $"DELETE FROM {SOTINVH2} WHERE (INV_TYPE, INV_NO) NOT IN (SELECT INV_TYPE, INV_NO FROM {SOTINVH1}) "
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
+        End If
+
         EnforceConstraints(False)
         Fill_Records("SOTORDR1")
         Fill_Records("SOTORDR2")
@@ -983,7 +994,6 @@
                     GROUP BY SOTINVHM.INV_TYPE, SOTINVHM.INV_NO, SOTINVHM.INV_LNO"
             Fill_Records("SOTINVHT_TS",, True, sql)
         End If
-
 
         For Each rowSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Select("")
             Dim INV_NO As String = rowSOTINVH1.Item("INV_NO")
