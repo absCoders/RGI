@@ -113,6 +113,7 @@ Partial Class SORINVP1
         Me.grpBATCH_VAN = New Infragistics.Win.Misc.UltraGroupBox()
         Me.btnBATCH_VAN = New System.Windows.Forms.Button()
         Me.chkBATCH_VAN = New ABSCS.ABSCheckBox()
+        Me.chkIgnore = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -175,6 +176,7 @@ Partial Class SORINVP1
         CType(Me.grpBATCH_VAN, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.grpBATCH_VAN.SuspendLayout()
         CType(Me.chkBATCH_VAN, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkIgnore, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -193,6 +195,7 @@ Partial Class SORINVP1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkIgnore)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpBATCH_VAN)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox1)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpNotPrintedYet)
@@ -812,6 +815,14 @@ Partial Class SORINVP1
         Me.chkBATCH_VAN.TabIndex = 24
         Me.chkBATCH_VAN.Text = "Print Invoices In PDF Batches"
         '
+        'chkIgnore
+        '
+        Me.chkIgnore.Location = New System.Drawing.Point(304, 321)
+        Me.chkIgnore.Name = "chkIgnore"
+        Me.chkIgnore.Size = New System.Drawing.Size(294, 22)
+        Me.chkIgnore.TabIndex = 28
+        Me.chkIgnore.Text = "Ignore Customers Set to Email Invoices"
+        '
         'SORINVP1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -884,6 +895,7 @@ Partial Class SORINVP1
         CType(Me.grpBATCH_VAN, System.ComponentModel.ISupportInitialize).EndInit()
         Me.grpBATCH_VAN.ResumeLayout(False)
         CType(Me.chkBATCH_VAN, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkIgnore, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -912,4 +924,5 @@ Partial Class SORINVP1
     Friend WithEvents grpBATCH_VAN As Misc.UltraGroupBox
     Friend WithEvents btnBATCH_VAN As Button
     Friend WithEvents chkBATCH_VAN As ABSCS.ABSCheckBox
+    Friend WithEvents chkIgnore As ABSCS.ABSCheckBox
 End Class

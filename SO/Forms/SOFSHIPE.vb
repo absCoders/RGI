@@ -4307,23 +4307,52 @@ Public Class SOFSHIPE
                     Dim scanApplied As Boolean = False
 
                     Try
-                        For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND CUST_UPC = '{CUST_UPC}' AND ISNULL(PICK_QTY_SCAN, 0) < ISNULL(PICK_QTY_CONF, 0)")
-                            Dim PICK_QTY_SCAN As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty)
-                            Dim PICK_QTY_CONF As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
-                            If PICK_QTY_CONF = 0 Then
-                                Continue For
-                            End If
+                        If dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND CUST_UPC = '{CUST_UPC}'").Length > 0 Then
+                            For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND CUST_UPC = '{CUST_UPC}' AND ISNULL(PICK_QTY_SCAN, 0) < ISNULL(PICK_QTY_CONF, 0)")
+                                Dim PICK_QTY_SCAN As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty)
+                                Dim PICK_QTY_CONF As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                                If PICK_QTY_CONF = 0 Then
+                                    Continue For
+                                End If
 
-                            If PICK_QTY_SCAN >= PICK_QTY_CONF Then
-                                Continue For
-                            End If
+                                If PICK_QTY_SCAN >= PICK_QTY_CONF Then
+                                    Continue For
+                                End If
 
-                            rowSOTPICK2.Item("PICK_QTY_SCAN") = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty) + 1
-                            scanApplied = True
-                            Exit For
-                        Next
+                                rowSOTPICK2.Item("PICK_QTY_SCAN") = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty) + 1
+                                scanApplied = True
+                                Exit For
+                            Next
+                        Else
+                            ' UPCs are changing so this handles the same product with a different upc_code
+                            ' Use View ICVLUPC1
+                            Dim tblICVLUPC1 As DataTable = ASCDATA1.GetDataTable("SELECT * FROM ICVLUPC1 WHERE UPC_CODE = :PARM1", "ICVLUPC1", "V", {CUST_UPC})
+                            For Each drICVLUPC1 As DataRow In tblICVLUPC1.Select("")
+                                Dim STYLE_CODE As String = drICVLUPC1.Item("STYLE_CODE") & String.Empty
+                                Dim COLOR_CODE As String = drICVLUPC1.Item("COLOR_CODE") & String.Empty
+                                Dim COLOR_CODE_UPC As String = drICVLUPC1.Item("COLOR_CODE_UPC") & String.Empty
+                                Dim SIZE_CODE As String = drICVLUPC1.Item("SIZE_CODE") & String.Empty
+
+                                For Each rowSOTPICK2 As DataRow In dst.Tables("SOTPICK2").Select($"PICK_NO = '{PICK_NO}' AND STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}' AND ISNULL(PICK_QTY_SCAN, 0) < ISNULL(PICK_QTY_CONF, 0)")
+                                    Dim PICK_QTY_SCAN As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty)
+                                    Dim PICK_QTY_CONF As Int16 = Val(rowSOTPICK2.Item("PICK_QTY_CONF") & String.Empty)
+                                    If PICK_QTY_CONF = 0 Then
+                                        Continue For
+                                    End If
+
+                                    If PICK_QTY_SCAN >= PICK_QTY_CONF Then
+                                        Continue For
+                                    End If
+
+                                    rowSOTPICK2.Item("PICK_QTY_SCAN") = Val(rowSOTPICK2.Item("PICK_QTY_SCAN") & String.Empty) + 1
+                                    scanApplied = True
+                                    Exit For
+                                Next
+
+                                If scanApplied Then Exit For
+                            Next
+                        End If
                     Catch ex As Exception
-
                     End Try
 
                     If Not scanApplied Then
@@ -4656,6 +4685,43 @@ Public Class SOFSHIPE
             MessageBox.Show($"{ex.Message}", "Reprint Shipping Label", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
+
+    'Private Sub ProcessGiftCards()
+
+    '    If Not ASCMAIN1.Running_in_VS Then
+    '        Exit Sub
+    '    End If
+
+    '    If ASCMAIN1.USER_ID <> "edz" Then
+    '        Exit Sub
+    '    End If
+
+    '    Stop
+
+    '    ' Temp Code to Capture balance when a gift card recorded a Success Sale Transaction
+    '    For Each ORDR_CUST_PO As String In {"108533"}
+    '        Dim drSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_CUST_PO = :PARM1 AND CUST_CODE = 'SKINCOM'", "V", {ORDR_CUST_PO})
+    '        If drSOTORDR1 Is Nothing Then
+    '            Stop
+    '            Continue For
+    '        End If
+    '        Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
+    '        Dim ORDR_NO As String = drSOTORDR1.Item("ORDR_NO") & String.Empty
+
+    '        Dim drSOTINVH1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE INV_TYPE = 'I' AND ORDR_NO = :PARM1", "V", {ORDR_NO})
+    '        If drSOTINVH1 Is Nothing Then
+    '            Stop
+    '            Continue For
+    '        End If
+
+    '        Dim INV_TOTAL_AMOUNT As Decimal = Val(drSOTINVH1.Item("INV_TOTAL_AMOUNT") & String.Empty)
+    '        Dim clsSOCSHOPF As New TAC.SOCSHOPF()
+    '        Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
+    '        Dim lstGiftCards As New List(Of TAC.SOCSHOPF.GiftCard)
+    '        ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT, lstGiftCards)
+    '    Next
+    'End Sub
 
 #End Region
 

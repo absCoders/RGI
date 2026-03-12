@@ -879,7 +879,7 @@ Public Class TACMAIN1
         & IIf(USER_FAX <> "", "Fax: " & ASCMAIN1.FormatTel(USER_FAX) & vbCrLf, "") _
         & rowASTUSER1_EMAIL_FROM.Item("USER_EMAIL") & vbCrLf
 
-        If ASCMAIN1.CLIENT = "RGI" And EMAIL_KEY = "CREDIT" Then
+        If ASCMAIN1.CLIENT = "RGI" And (EMAIL_KEY = "CREDIT") Then
             USER_SIGNATURE = ""
         End If
 

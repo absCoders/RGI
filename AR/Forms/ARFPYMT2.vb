@@ -7999,7 +7999,7 @@ Optional ByVal key As String = "") As Object
                     End If
                     If RET_SHP_CHARGES_MERCH <> 0 Then
                         PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
-                        WRITE_GLOBAL_DEDUCTION("RET_SHP_CHARGES_MERCH", RET_SHP_CHARGES_MERCH * -1, PYMT_BATCH_DLNO_ctr, CURR_EXCH_RATE)
+                        WRITE_GLOBAL_DEDUCTION("RETSHP_CHARGES_MERCH", RET_SHP_CHARGES_MERCH * -1, PYMT_BATCH_DLNO_ctr, CURR_EXCH_RATE)
                         ctrShop2_matched = +1
                     End If
 
@@ -8079,7 +8079,7 @@ Optional ByVal key As String = "") As Object
             REASONCD = "GESHIP"
         ElseIf DEDUCT_TYPE = "DUTYTAXES_MERCH" Then
             REASONCD = "GETAX"
-        ElseIf DEDUCT_TYPE = "RET_SHP_CHARGES_MERCH" Then
+        ElseIf DEDUCT_TYPE = "RETSHP_CHARGES_MERCH" Then
             REASONCD = "GESHIP"
         ElseIf DEDUCT_TYPE = "SHIP_PAID_CUST" Then
             REASONCD = "GESPC"

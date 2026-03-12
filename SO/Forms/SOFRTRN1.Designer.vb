@@ -1391,7 +1391,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdSOTRTRNX)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(949, 473)
         '
@@ -2467,7 +2467,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl14
         '
         Me.UltraTabPageControl14.Controls.Add(Me.splWebReturns)
-        Me.UltraTabPageControl14.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
         Me.UltraTabPageControl14.Size = New System.Drawing.Size(949, 473)
         '
@@ -2743,7 +2743,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.grdSOTINVHX)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(949, 134)
         '
@@ -3183,7 +3183,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.splSCANS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(949, 134)
         '
@@ -3402,7 +3402,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.tab0)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(953, 501)
         '
@@ -3451,7 +3451,7 @@ Partial Class SOFRTRN1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.splHeader)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(953, 501)
         '
@@ -3555,7 +3555,7 @@ Partial Class SOFRTRN1
         '
         'UltraTextEditor8
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "INV_NO_RETURNED")
+        Me.Absx1.SetABSColumnName(Me.UltraTextEditor8, "INV_NO")
         Me.UltraTextEditor8.Location = New System.Drawing.Point(454, 32)
         Me.UltraTextEditor8.Name = "UltraTextEditor8"
         Me.UltraTextEditor8.ReadOnly = True
