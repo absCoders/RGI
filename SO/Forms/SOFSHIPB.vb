@@ -3083,6 +3083,23 @@ Public Class SOFSHIPB
                     End If
                 End If
 
+                If EMsg.Length = 0 AndAlso eItemKey = "Finalize" AndAlso ASCMAIN1.CLIENT = "RGI" AndAlso Not isEcommProcessing Then
+                    If commonCarrier Then
+                        If chkNoCarrierLabels.Checked Then
+                            ' ship ref number is required
+                            If Absx1.txtFor("SHIP_REF").TextLength = 0 Then
+                                EMsg &= vbCr & "Pro # is required when you choose a Common Carrier and choose to Not Request Carrier Labels."
+                            Else
+                                If numSHIP_FREIGHT.Value <= 0 Then
+                                    If MessageBox.Show("You chose to ship via a Common Carrier and selected to Not Request Carrier Labels. Do you want to provide a Freight Charge?", "Finalize", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
+                                        Exit Sub
+                                    End If
+                                End If
+                            End If
+                        End If
+                    End If
+                End If
+
                 ' Clean Up SOTINVHM
                 If EMsg.Length = 0 Then
                     dst.Tables("SOTINVHM").AcceptChanges()
@@ -4122,6 +4139,9 @@ Public Class SOFSHIPB
         ClearImage()
 
         isRegencyTransferShipment = False
+
+        chkNoCarrierLabels.Checked = False
+        chkNoCarrierLabels.Visible = Not isEcommProcessing
 
         clsShip.Reset()
 
@@ -16033,6 +16053,10 @@ Public Class SOFSHIPB
     ''' <returns></returns>
     ''' <remarks>Any errors or missing attributes will be returned in the ErrorMessage Parameter</remarks>
     Private Function RequestShippingLabel(ByRef ShippingLabels As List(Of String), ByRef ErrorMessage As String, ByVal PreScreenForErrorsOnly As Boolean) As Boolean
+
+        If chkNoCarrierLabels.Checked AndAlso Not isEcommProcessing Then
+            Return True
+        End If
 
         Dim createCarrierLabels As Boolean = False
         ErrorMessage = String.Empty
