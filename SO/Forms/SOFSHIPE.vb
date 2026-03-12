@@ -1597,13 +1597,15 @@ Public Class SOFSHIPE
             End If
 
             ' Need To Capture Credit Card
+            Dim lstGiftCards As New List(Of TAC.SOCSHOPF.GiftCard)
+
             If dst.Tables("SOTINVH1").Rows.Count > 0 Then
                 Dim INV_TOTAL_AMOUNT As Decimal = Val(dst.Tables("SOTINVH1").Rows(0).Item("INV_TOTAL_AMOUNT") & String.Empty)
                 If INV_TOTAL_AMOUNT > 0 Then
                     Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
                     Dim clsSOCSHOPF As New TAC.SOCSHOPF()
                     Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
-                    ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT)
+                    ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT, lstGiftCards)
                     With ccResponse
                         ' If we charge the credit card and then get an error in code
                         ' the subsequent calls will result in ststus <> SUCCESS ?????
@@ -4687,41 +4689,41 @@ Public Class SOFSHIPE
     End Sub
 
 
-    Private Sub ProcessGiftCards()
+    'Private Sub ProcessGiftCards()
 
-        If Not ASCMAIN1.Running_in_VS Then
-            Exit Sub
-        End If
+    '    If Not ASCMAIN1.Running_in_VS Then
+    '        Exit Sub
+    '    End If
 
-        If ASCMAIN1.USER_ID <> "edz" Then
-            Exit Sub
-        End If
+    '    If ASCMAIN1.USER_ID <> "edz" Then
+    '        Exit Sub
+    '    End If
 
-        Stop
+    '    Stop
 
-        ' Temp Code to Capture balance when a gift card recorded a Success Sale Transaction
-        For Each ORDR_CUST_PO As String In {"108533"}
-            Dim drSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_CUST_PO = :PARM1 AND CUST_CODE = 'SKINCOM'", "V", {ORDR_CUST_PO})
-            If drSOTORDR1 Is Nothing Then
-                Stop
-                Continue For
-            End If
-            Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
-            Dim ORDR_NO As String = drSOTORDR1.Item("ORDR_NO") & String.Empty
+    '    ' Temp Code to Capture balance when a gift card recorded a Success Sale Transaction
+    '    For Each ORDR_CUST_PO As String In {"108533"}
+    '        Dim drSOTORDR1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTORDR1 WHERE ORDR_CUST_PO = :PARM1 AND CUST_CODE = 'SKINCOM'", "V", {ORDR_CUST_PO})
+    '        If drSOTORDR1 Is Nothing Then
+    '            Stop
+    '            Continue For
+    '        End If
+    '        Dim ORDR_WEB_ID As String = drSOTORDR1.Item("ORDR_WEB_ID") & String.Empty
+    '        Dim ORDR_NO As String = drSOTORDR1.Item("ORDR_NO") & String.Empty
 
-            Dim drSOTINVH1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE INV_TYPE = 'I' AND ORDR_NO = :PARM1", "V", {ORDR_NO})
-            If drSOTINVH1 Is Nothing Then
-                Stop
-                Continue For
-            End If
+    '        Dim drSOTINVH1 As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTINVH1 WHERE INV_TYPE = 'I' AND ORDR_NO = :PARM1", "V", {ORDR_NO})
+    '        If drSOTINVH1 Is Nothing Then
+    '            Stop
+    '            Continue For
+    '        End If
 
-            Dim INV_TOTAL_AMOUNT As Decimal = Val(drSOTINVH1.Item("INV_TOTAL_AMOUNT") & String.Empty)
-            Dim clsSOCSHOPF As New TAC.SOCSHOPF()
-            Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
-            Dim lstGiftCards As New List(Of TAC.SOCSHOPF.GiftCard)
-            ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT, lstGiftCards)
-        Next
-    End Sub
+    '        Dim INV_TOTAL_AMOUNT As Decimal = Val(drSOTINVH1.Item("INV_TOTAL_AMOUNT") & String.Empty)
+    '        Dim clsSOCSHOPF As New TAC.SOCSHOPF()
+    '        Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
+    '        Dim lstGiftCards As New List(Of TAC.SOCSHOPF.GiftCard)
+    '        ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT, lstGiftCards)
+    '    Next
+    'End Sub
 
 #End Region
 
