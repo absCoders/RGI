@@ -96,26 +96,27 @@ Public Class ARFCALL1
                 Dim S As New Text.StringBuilder
                 S.Length = 0
                 S.AppendLine("SELECT")
-                S.AppendLine("S1.CUST_CODE,")
+                S.AppendLine("C1.CUST_CODE,")
                 S.AppendLine("SUM(NVL(S2.ORDR_QTY_PICK,0)*NVL(S2.ORDR_UNIT_PRICE,0)) ORDS_RELD,")
                 S.AppendLine("SUM(NVL(S2.ORDR_QTY_OPEN,0)*NVL(S2.ORDR_UNIT_PRICE,0)) ORDS_PEND")
-                S.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2")
-                S.AppendLine("WHERE S1.ORDR_NO = S2.ORDR_NO")
-                S.AppendLine("AND S1.ORDR_STATUS IN ('O','P')")
-                S.AppendLine("AND (S1.CUST_CODE NOT IN ")
+                S.AppendLine("FROM SOTORDR1 S1, SOTORDR2 S2, ARTCUST1 C1")
+                S.AppendLine("WHERE C1.CUST_CODE = S1.CUST_CODE")
+                S.AppendLine("AND S1.ORDR_NO = S2.ORDR_NO")
+                'S.AppendLine("AND S1.ORDR_STATUS IN ('O','P')")
+                S.AppendLine("AND (C1.CUST_CODE NOT IN ")
                 S.AppendLine("(")
                 S.AppendLine($"SELECT DISTINCT CUST_CODE FROM ({SQLSB})")
                 S.AppendLine("))")
-                S.AppendLine("GROUP BY S1.CUST_CODE")
+                S.AppendLine("GROUP BY C1.CUST_CODE")
                 ASCMAIN1.sql = S.ToString
                 TEMPX = ASCMAIN1.Temp_Table
 
                 ASCDATA1.ExecuteSQL("Alter Table " & TEMPX & " add Primary Key (CUST_CODE)")
 
-                S.Length = 0
-                S.AppendLine($"DELETE FROM {TEMPX} WHERE (ORDS_RELD + ORDS_PEND) = 0")
-                ASCMAIN1.sql = S.ToString
-                ASCDATA1.ExecuteSQL()
+                'S.Length = 0
+                'S.AppendLine($"DELETE FROM {TEMPX} WHERE (ORDS_RELD + ORDS_PEND) = 0")
+                'ASCMAIN1.sql = S.ToString
+                'ASCDATA1.ExecuteSQL()
 
             End If
 
@@ -401,7 +402,16 @@ Public Class ARFCALL1
                 End If
             Case "Refresh"
                 Dim iResult As MsgBoxResult
-                iResult = MsgBox("Refreshing Grid Will Lose Any un-Saved (O's) Changes.", vbOKCancel, "Refresh Grid")
+                Dim msg As New System.Text.StringBuilder With {.Length = 0}
+                msg.AppendLine("Refreshing Grid Will Lose Any un-Saved (O's) Changes.")
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    If chkOtherPending.Checked Then
+                        msg.AppendLine("")
+                        msg.AppendLine("Becuause You Are Including Non-AR")
+                        msg.AppendLine("This May Take A Minute.")
+                    End If
+                End If
+                iResult = MsgBox(msg.ToString, vbOKCancel, "Refresh Grid")
                 If iResult <> vbOK Then
                     EMsg &= "Refresh Canceled"
                 End If

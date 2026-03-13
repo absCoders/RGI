@@ -944,7 +944,7 @@ Partial Class ARFCALL1
         UltraGridColumn29.Header.Caption = "Account #"
         UltraGridColumn29.Header.VisiblePosition = 0
         UltraGridColumn29.Width = 84
-        UltraGridColumn30.Header.Caption = "Address"
+        UltraGridColumn30.Header.Caption = "Name"
         UltraGridColumn30.Header.VisiblePosition = 1
         UltraGridColumn30.Width = 176
         UltraGridColumn33.Header.Caption = "Oldest Invoice"
