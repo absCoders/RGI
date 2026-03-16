@@ -4713,6 +4713,9 @@ Public Class ASFBASE0
                                     End If
 
                                     Dim skip_formatting As Boolean = False ' True
+                                    If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne") And ASCMAIN1.CLIENT = "RGI") Then
+                                        skip_formatting = True
+                                    End If
 
                                     If Not skip_formatting Then
                                         If Not gcell.Appearance.ForeColor = Color.Empty Then

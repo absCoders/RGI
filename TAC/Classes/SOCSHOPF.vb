@@ -68,7 +68,18 @@ Public Class SOCSHOPF
         Public receipt As New Receipt
     End Class
 
-    Public Function CaptureAuthorizedCreditCard(ByVal ShopifyOrderID As String, ByVal amountToCapture As Decimal) As CreditCardTransaction
+    Public Class GiftCard
+        Public Property ID As Long
+        Public Property InitialValue As Decimal
+        Public Property Balance As Decimal
+        Public Property Currency As String
+        Public Property LastCharacters As String
+        Public Property CreatedAt As DateTime
+    End Class
+
+    Public Function CaptureAuthorizedCreditCard(ByVal ShopifyOrderID As String,
+                                                ByVal amountToCapture As Decimal,
+                                                ByRef lstGiftCards As List(Of GiftCard)) As CreditCardTransaction
 
         ' You can’t run this until the order is in authorized state (card already approved at checkout).
         ' The authorization hold is usually 7 days (sometimes up to 30 depending on gateway). Capture must happen before it expires.
@@ -79,7 +90,7 @@ Public Class SOCSHOPF
 
         Try
             If rowECTECOMD Is Nothing Then
-                LastError = "Ecommerce Partner {ECOM_CODE} does not have Shopify credentials"
+                LastError = $"Ecommerce Partner {ECOM_CODE} does not have Shopify credentials"
                 Return creditCardTransaction
             End If
 
@@ -99,10 +110,14 @@ Public Class SOCSHOPF
             End If
 
             Dim GiftCardAmount As Decimal = 0
-            If IsPaymentCaptured(ShopifyOrderID, shopAccessToken, GiftCardAmount) Then
+            If IsPaymentCaptured(ShopifyOrderID, shopAccessToken, lstGiftCards) Then
                 creditCardTransaction.status = "SUCCESS"
                 Return creditCardTransaction
             End If
+
+            For Each gc As GiftCard In lstGiftCards
+                GiftCardAmount += Val(gc.Balance & String.Empty)
+            Next
 
             If GiftCardAmount > 0 Then
                 amountToCapture -= GiftCardAmount
@@ -183,7 +198,9 @@ Public Class SOCSHOPF
 
     End Function
 
-    Function IsPaymentCaptured(ShopifyOrderID As String, accessToken As String, ByRef GiftCardAmount As Decimal) As Boolean
+    Function IsPaymentCaptured(ShopifyOrderID As String,
+                               accessToken As String,
+                               ByRef lstGiftcards As List(Of GiftCard)) As Boolean
 
         IsPaymentCaptured = False
         Try
@@ -199,7 +216,10 @@ Public Class SOCSHOPF
                         If txn("kind").ToString() = "capture" AndAlso txn("status").ToString() = "success" Then
                             IsPaymentCaptured = True
                         ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() = "gift_card" Then
-                            GiftCardAmount += Val(txn("amount").ToString())
+                            Dim gCard As New GiftCard
+                            gCard.ID = txn("receipt")("gift_card_id").ToString
+                            gCard.Balance = Val(txn("amount").ToString())
+                            lstGiftcards.Add(gCard)
                         ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() <> "gift_card" Then
                             IsPaymentCaptured = True
                         End If

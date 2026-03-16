@@ -984,8 +984,14 @@ Public Class ARFCINQ1
                     GCOL.Width = 120
                 ElseIf New String() {"ORDR_SHIP_DATE", "ORDR_CANCEL_DATE", "ORDR_ORIG_SHIP_DATE", "ORDR_ORIG_CANCEL_DATE"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.Gold
-                    GCOL.Format = "MM/dd"
-                    GCOL.Width = 60
+                    If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                        GCOL.Format = "MM/dd/yyyy"
+                        GCOL.Width = 120
+                    Else
+                        GCOL.Format = "MM/dd"
+                        GCOL.Width = 60
+                    End If
+
                 ElseIf New String() {"ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO_CUR", "PCT_ALLO_CUR", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
                     GCOL.Format = "#,##0.00"
@@ -1027,7 +1033,12 @@ Public Class ARFCINQ1
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGray
                 ElseIf New String() {"ORDR_SHIP_DATE", "ORDR_CANCEL_DATE", "ORDR_ORIG_SHIP_DATE", "ORDR_ORIG_CANCEL_DATE"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.Gold
-                    GCOL.Format = "MM/dd"
+                    If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                        GCOL.Format = "MM/dd/yyyy"
+                        GCOL.Width = 120
+                    Else
+                        GCOL.Format = "MM/dd"
+                    End If
                 ElseIf New String() {"SHIP_VIA_CODE", "ORDR_TYPE_CODE", "FRT_TERMS", "WHSE_CODE", "ORDR_SHIP_INSTR"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightPink
                 Else
@@ -1186,6 +1197,11 @@ Public Class ARFCINQ1
             With grdARTSTMT1.DisplayLayout.Bands(0)
                 .Columns("AGE_" & CStr(i)).Header.Caption = ROWs("ARTPARM1").Item("AR_PARM_AGE_CATG_DESC_" & CStr(i)) & ""
                 .Columns("DUE_" & CStr(i)).Header.Caption = ROWs("ARTPARM1").Item("AR_PARM_DUE_CATG_DESC_" & CStr(i)) & ""
+                If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    .Columns("AGE_" & CStr(i)).Hidden = True
+                Else
+                    .Columns("AGE_" & CStr(i)).Hidden = False
+                End If
             End With
         Next
 
@@ -1852,6 +1868,8 @@ Public Class ARFCINQ1
             Dim grd As UltraWinGrid.UltraGrid = GRDs(grdname)
             grd.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
         Next
+
+        ClearOBData()
 
     End Sub
 
@@ -6175,6 +6193,21 @@ Public Class ARFCINQ1
 
         txtOBNotes.Text = ""
 
+        txtOBSendName.Text = ""
+        txtOBSendEmail.Text = ""
+    End Sub
+
+    Private Sub ClearOBData()
+        txtOBAddress.Text = ""
+        txtOBTerms.Text = ""
+        dteOBFirstOrder.Value = Null
+        dteOBLastOrder.Value = Null
+        numOBCreditLimit.Value = Null
+        rdoOBRatingSatisfactory.Checked = True
+        numOBHightCredit.Value = Null
+        numOBCurrBal.Value = Null
+        numOBPastDue.Value = Null
+        txtOBNotes.Text = ""
         txtOBSendName.Text = ""
         txtOBSendEmail.Text = ""
     End Sub

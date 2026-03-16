@@ -1984,7 +1984,7 @@ Partial Class ARFCINQ1
         '
         Me.ASFBASE1_Fill_Panel.Controls.Add(Me.spl)
         Me.ASFBASE1_Fill_Panel.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(779, 646)
+        Me.ASFBASE1_Fill_Panel.Size = New System.Drawing.Size(824, 646)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.grdASFBASEX, 0)
         Me.ASFBASE1_Fill_Panel.Controls.SetChildIndex(Me.spl, 0)
         '
@@ -2041,17 +2041,20 @@ Partial Class ARFCINQ1
         '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1037, 0)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me._ASFBASE1_Toolbars_Dock_Area_Right.Size = New System.Drawing.Size(0, 646)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1037, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Location = New System.Drawing.Point(0, 646)
         Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1037, 0)
         '
         'tlb
         '
@@ -3022,14 +3025,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabPageControl50.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl50.Name = "UltraTabPageControl50"
-        Me.UltraTabPageControl50.Size = New System.Drawing.Size(428, 149)
+        Me.UltraTabPageControl50.Size = New System.Drawing.Size(454, 149)
         '
         'UltraTabPageControl41
         '
         Me.UltraTabPageControl41.Controls.Add(Me.grdARTPYMT4)
         Me.UltraTabPageControl41.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl41.Name = "UltraTabPageControl41"
-        Me.UltraTabPageControl41.Size = New System.Drawing.Size(428, 149)
+        Me.UltraTabPageControl41.Size = New System.Drawing.Size(454, 149)
         '
         'grdARTPYMT4
         '
@@ -3140,7 +3143,7 @@ Partial Class ARFCINQ1
         Me.grdARTPYMT4.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTPYMT4.Location = New System.Drawing.Point(0, 0)
         Me.grdARTPYMT4.Name = "grdARTPYMT4"
-        Me.grdARTPYMT4.Size = New System.Drawing.Size(428, 149)
+        Me.grdARTPYMT4.Size = New System.Drawing.Size(454, 149)
         Me.grdARTPYMT4.TabIndex = 15
         '
         'UltraTabPageControl12
@@ -3148,7 +3151,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl12.Controls.Add(Me.grdARTCUST2)
         Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
-        Me.UltraTabPageControl12.Size = New System.Drawing.Size(767, 331)
+        Me.UltraTabPageControl12.Size = New System.Drawing.Size(812, 331)
         '
         'grdARTCUST2
         '
@@ -3302,7 +3305,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUST2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST2.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST2.Name = "grdARTCUST2"
-        Me.grdARTCUST2.Size = New System.Drawing.Size(767, 331)
+        Me.grdARTCUST2.Size = New System.Drawing.Size(812, 331)
         Me.grdARTCUST2.TabIndex = 26
         Me.grdARTCUST2.Text = "Store & DC Address Records"
         '
@@ -3311,7 +3314,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl14.Controls.Add(Me.grdARTCUSTD)
         Me.UltraTabPageControl14.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl14.Name = "UltraTabPageControl14"
-        Me.UltraTabPageControl14.Size = New System.Drawing.Size(767, 331)
+        Me.UltraTabPageControl14.Size = New System.Drawing.Size(812, 331)
         '
         'grdARTCUSTD
         '
@@ -3414,7 +3417,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUSTD.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUSTD.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTD.Name = "grdARTCUSTD"
-        Me.grdARTCUSTD.Size = New System.Drawing.Size(767, 331)
+        Me.grdARTCUSTD.Size = New System.Drawing.Size(812, 331)
         Me.grdARTCUSTD.TabIndex = 25
         Me.grdARTCUSTD.Text = "Contacts"
         '
@@ -3423,7 +3426,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl25.Controls.Add(Me.grdARTCUSTS)
         Me.UltraTabPageControl25.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl25.Name = "UltraTabPageControl25"
-        Me.UltraTabPageControl25.Size = New System.Drawing.Size(767, 331)
+        Me.UltraTabPageControl25.Size = New System.Drawing.Size(812, 331)
         '
         'grdARTCUSTS
         '
@@ -3523,7 +3526,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUSTS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUSTS.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTS.Name = "grdARTCUSTS"
-        Me.grdARTCUSTS.Size = New System.Drawing.Size(767, 331)
+        Me.grdARTCUSTS.Size = New System.Drawing.Size(812, 331)
         Me.grdARTCUSTS.TabIndex = 5
         Me.grdARTCUSTS.Text = "All Customers referencing this Customer as a Bill-To or Credit Group"
         '
@@ -3532,7 +3535,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl13.Controls.Add(Me.grdTATEVNT1)
         Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
-        Me.UltraTabPageControl13.Size = New System.Drawing.Size(767, 331)
+        Me.UltraTabPageControl13.Size = New System.Drawing.Size(812, 331)
         '
         'grdTATEVNT1
         '
@@ -3630,7 +3633,7 @@ Partial Class ARFCINQ1
         Me.grdTATEVNT1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdTATEVNT1.Location = New System.Drawing.Point(0, 0)
         Me.grdTATEVNT1.Name = "grdTATEVNT1"
-        Me.grdTATEVNT1.Size = New System.Drawing.Size(767, 331)
+        Me.grdTATEVNT1.Size = New System.Drawing.Size(812, 331)
         Me.grdTATEVNT1.TabIndex = 163
         '
         'UltraTabPageControl3
@@ -3638,7 +3641,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl3.Controls.Add(Me.grpARCredit)
         Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
-        Me.UltraTabPageControl3.Size = New System.Drawing.Size(767, 172)
+        Me.UltraTabPageControl3.Size = New System.Drawing.Size(812, 172)
         '
         'grpARCredit
         '
@@ -3684,7 +3687,7 @@ Partial Class ARFCINQ1
         Me.grpARCredit.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpARCredit.Location = New System.Drawing.Point(0, 0)
         Me.grpARCredit.Name = "grpARCredit"
-        Me.grpARCredit.Size = New System.Drawing.Size(767, 172)
+        Me.grpARCredit.Size = New System.Drawing.Size(812, 172)
         Me.grpARCredit.TabIndex = 153
         '
         'chkSALES_HOLD
@@ -3833,7 +3836,7 @@ Partial Class ARFCINQ1
         '
         Me.chkEditCredit.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.chkEditCredit.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.chkEditCredit.Location = New System.Drawing.Point(705, 24)
+        Me.chkEditCredit.Location = New System.Drawing.Point(750, 24)
         Me.chkEditCredit.Name = "chkEditCredit"
         Me.chkEditCredit.Size = New System.Drawing.Size(55, 20)
         Me.chkEditCredit.TabIndex = 124
@@ -3941,7 +3944,7 @@ Partial Class ARFCINQ1
         '
         Me.btnCreditCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnCreditCancel.Enabled = False
-        Me.btnCreditCancel.Location = New System.Drawing.Point(686, 72)
+        Me.btnCreditCancel.Location = New System.Drawing.Point(731, 72)
         Me.btnCreditCancel.Name = "btnCreditCancel"
         Me.btnCreditCancel.Size = New System.Drawing.Size(75, 27)
         Me.btnCreditCancel.TabIndex = 158
@@ -3951,7 +3954,7 @@ Partial Class ARFCINQ1
         '
         Me.btnCreditUpdate.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnCreditUpdate.Enabled = False
-        Me.btnCreditUpdate.Location = New System.Drawing.Point(686, 45)
+        Me.btnCreditUpdate.Location = New System.Drawing.Point(731, 45)
         Me.btnCreditUpdate.Name = "btnCreditUpdate"
         Me.btnCreditUpdate.Size = New System.Drawing.Size(75, 27)
         Me.btnCreditUpdate.TabIndex = 157
@@ -4095,7 +4098,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl6.Controls.Add(Me.grdARTCUST5)
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
-        Me.UltraTabPageControl6.Size = New System.Drawing.Size(767, 172)
+        Me.UltraTabPageControl6.Size = New System.Drawing.Size(812, 172)
         '
         'grdARTCUST5
         '
@@ -4215,7 +4218,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUST5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST5.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST5.Name = "grdARTCUST5"
-        Me.grdARTCUST5.Size = New System.Drawing.Size(767, 172)
+        Me.grdARTCUST5.Size = New System.Drawing.Size(812, 172)
         Me.grdARTCUST5.TabIndex = 2
         '
         'UltraTabPageControl21
@@ -4223,7 +4226,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl21.Controls.Add(Me.splARTOPEN1)
         Me.UltraTabPageControl21.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl21.Name = "UltraTabPageControl21"
-        Me.UltraTabPageControl21.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl21.Size = New System.Drawing.Size(812, 481)
         '
         'splARTOPEN1
         '
@@ -4240,14 +4243,14 @@ Partial Class ARFCINQ1
         'splARTOPEN1.Panel2
         '
         Me.splARTOPEN1.Panel2.Controls.Add(Me.splARTSTMT1)
-        Me.splARTOPEN1.Size = New System.Drawing.Size(767, 481)
+        Me.splARTOPEN1.Size = New System.Drawing.Size(812, 481)
         Me.splARTOPEN1.SplitterDistance = 300
         Me.splARTOPEN1.TabIndex = 4
         '
         'chkEditNotes
         '
         Me.chkEditNotes.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chkEditNotes.Location = New System.Drawing.Point(661, 3)
+        Me.chkEditNotes.Location = New System.Drawing.Point(706, 3)
         Me.chkEditNotes.Name = "chkEditNotes"
         Me.chkEditNotes.Size = New System.Drawing.Size(103, 20)
         Me.chkEditNotes.TabIndex = 172
@@ -4566,7 +4569,7 @@ Partial Class ARFCINQ1
         Me.grdARTOPEN1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTOPEN1.Location = New System.Drawing.Point(0, 0)
         Me.grdARTOPEN1.Name = "grdARTOPEN1"
-        Me.grdARTOPEN1.Size = New System.Drawing.Size(767, 300)
+        Me.grdARTOPEN1.Size = New System.Drawing.Size(812, 300)
         Me.grdARTOPEN1.TabIndex = 4
         Me.grdARTOPEN1.Text = "Open AR Items"
         '
@@ -4583,8 +4586,8 @@ Partial Class ARFCINQ1
         'splARTSTMT1.Panel2
         '
         Me.splARTSTMT1.Panel2.Controls.Add(Me.tabCollections)
-        Me.splARTSTMT1.Size = New System.Drawing.Size(767, 177)
-        Me.splARTSTMT1.SplitterDistance = 331
+        Me.splARTSTMT1.Size = New System.Drawing.Size(812, 177)
+        Me.splARTSTMT1.SplitterDistance = 350
         Me.splARTSTMT1.TabIndex = 4
         '
         'grdARTSTMT1
@@ -4824,7 +4827,7 @@ Partial Class ARFCINQ1
         Me.grdARTSTMT1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTSTMT1.Location = New System.Drawing.Point(0, 0)
         Me.grdARTSTMT1.Name = "grdARTSTMT1"
-        Me.grdARTSTMT1.Size = New System.Drawing.Size(331, 177)
+        Me.grdARTSTMT1.Size = New System.Drawing.Size(350, 177)
         Me.grdARTSTMT1.TabIndex = 3
         Me.grdARTSTMT1.Text = "Aging History"
         '
@@ -4837,7 +4840,7 @@ Partial Class ARFCINQ1
         Me.tabCollections.Location = New System.Drawing.Point(0, 0)
         Me.tabCollections.Name = "tabCollections"
         Me.tabCollections.SharedControlsPage = Me.UltraTabSharedControlsPage6
-        Me.tabCollections.Size = New System.Drawing.Size(432, 177)
+        Me.tabCollections.Size = New System.Drawing.Size(458, 177)
         Me.tabCollections.TabIndex = 16
         Me.tabCollections.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab21.TabPage = Me.UltraTabPageControl50
@@ -4850,14 +4853,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage6.Name = "UltraTabSharedControlsPage6"
-        Me.UltraTabSharedControlsPage6.Size = New System.Drawing.Size(428, 149)
+        Me.UltraTabSharedControlsPage6.Size = New System.Drawing.Size(454, 149)
         '
         'UltraTabPageControl22
         '
         Me.UltraTabPageControl22.Controls.Add(Me.SplitContainer5)
         Me.UltraTabPageControl22.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl22.Name = "UltraTabPageControl22"
-        Me.UltraTabPageControl22.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl22.Size = New System.Drawing.Size(812, 481)
         '
         'SplitContainer5
         '
@@ -4873,7 +4876,7 @@ Partial Class ARFCINQ1
         'SplitContainer5.Panel2
         '
         Me.SplitContainer5.Panel2.Controls.Add(Me.grdARTPYMTX)
-        Me.SplitContainer5.Size = New System.Drawing.Size(767, 481)
+        Me.SplitContainer5.Size = New System.Drawing.Size(812, 481)
         Me.SplitContainer5.SplitterDistance = 299
         Me.SplitContainer5.TabIndex = 1
         '
@@ -5083,7 +5086,7 @@ Partial Class ARFCINQ1
         Me.grdARTPYMTY.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.grdARTPYMTY.Location = New System.Drawing.Point(0, 0)
         Me.grdARTPYMTY.Name = "grdARTPYMTY"
-        Me.grdARTPYMTY.Size = New System.Drawing.Size(767, 299)
+        Me.grdARTPYMTY.Size = New System.Drawing.Size(812, 299)
         Me.grdARTPYMTY.TabIndex = 2
         '
         'grdARTPYMTX
@@ -5226,7 +5229,7 @@ Partial Class ARFCINQ1
         Me.grdARTPYMTX.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTPYMTX.Location = New System.Drawing.Point(0, 0)
         Me.grdARTPYMTX.Name = "grdARTPYMTX"
-        Me.grdARTPYMTX.Size = New System.Drawing.Size(767, 178)
+        Me.grdARTPYMTX.Size = New System.Drawing.Size(812, 178)
         Me.grdARTPYMTX.TabIndex = 5
         Me.grdARTPYMTX.Text = "Payment Application Details"
         '
@@ -5235,7 +5238,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl27.Controls.Add(Me.splSOTORDR0)
         Me.UltraTabPageControl27.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl27.Name = "UltraTabPageControl27"
-        Me.UltraTabPageControl27.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl27.Size = New System.Drawing.Size(812, 481)
         '
         'splSOTORDR0
         '
@@ -5251,7 +5254,7 @@ Partial Class ARFCINQ1
         'splSOTORDR0.Panel2
         '
         Me.splSOTORDR0.Panel2.Controls.Add(Me.grdSOTORDR2)
-        Me.splSOTORDR0.Size = New System.Drawing.Size(767, 481)
+        Me.splSOTORDR0.Size = New System.Drawing.Size(812, 481)
         Me.splSOTORDR0.SplitterDistance = 289
         Me.splSOTORDR0.TabIndex = 1
         '
@@ -5495,7 +5498,7 @@ Partial Class ARFCINQ1
         Me.grdSOTORDR0.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDR0.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR0.Name = "grdSOTORDR0"
-        Me.grdSOTORDR0.Size = New System.Drawing.Size(767, 289)
+        Me.grdSOTORDR0.Size = New System.Drawing.Size(812, 289)
         Me.grdSOTORDR0.TabIndex = 0
         Me.grdSOTORDR0.Text = "Orders"
         '
@@ -5638,7 +5641,7 @@ Partial Class ARFCINQ1
         Me.grdSOTORDR2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTORDR2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTORDR2.Name = "grdSOTORDR2"
-        Me.grdSOTORDR2.Size = New System.Drawing.Size(767, 188)
+        Me.grdSOTORDR2.Size = New System.Drawing.Size(812, 188)
         Me.grdSOTORDR2.TabIndex = 23
         Me.grdSOTORDR2.TabStop = False
         Me.grdSOTORDR2.Text = "Order Details"
@@ -5648,7 +5651,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl7.Controls.Add(Me.splSOTINVH1)
         Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
-        Me.UltraTabPageControl7.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl7.Size = New System.Drawing.Size(812, 481)
         '
         'splSOTINVH1
         '
@@ -5664,7 +5667,7 @@ Partial Class ARFCINQ1
         'splSOTINVH1.Panel2
         '
         Me.splSOTINVH1.Panel2.Controls.Add(Me.grdSOTINVH2)
-        Me.splSOTINVH1.Size = New System.Drawing.Size(767, 481)
+        Me.splSOTINVH1.Size = New System.Drawing.Size(812, 481)
         Me.splSOTINVH1.SplitterDistance = 289
         Me.splSOTINVH1.TabIndex = 2
         '
@@ -5871,7 +5874,7 @@ Partial Class ARFCINQ1
         Me.grdSOTINVH1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTINVH1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTINVH1.Name = "grdSOTINVH1"
-        Me.grdSOTINVH1.Size = New System.Drawing.Size(767, 289)
+        Me.grdSOTINVH1.Size = New System.Drawing.Size(812, 289)
         Me.grdSOTINVH1.TabIndex = 0
         Me.grdSOTINVH1.Text = "Invoices"
         '
@@ -5982,7 +5985,7 @@ Partial Class ARFCINQ1
         Me.grdSOTINVH2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTINVH2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTINVH2.Name = "grdSOTINVH2"
-        Me.grdSOTINVH2.Size = New System.Drawing.Size(767, 188)
+        Me.grdSOTINVH2.Size = New System.Drawing.Size(812, 188)
         Me.grdSOTINVH2.TabIndex = 23
         Me.grdSOTINVH2.TabStop = False
         Me.grdSOTINVH2.Text = "Invoice Details"
@@ -5992,7 +5995,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl26.Controls.Add(Me.splSOTAEBP1)
         Me.UltraTabPageControl26.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl26.Name = "UltraTabPageControl26"
-        Me.UltraTabPageControl26.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl26.Size = New System.Drawing.Size(812, 481)
         '
         'splSOTAEBP1
         '
@@ -6008,7 +6011,7 @@ Partial Class ARFCINQ1
         'splSOTAEBP1.Panel2
         '
         Me.splSOTAEBP1.Panel2.Controls.Add(Me.grdSOTAEBP2)
-        Me.splSOTAEBP1.Size = New System.Drawing.Size(767, 481)
+        Me.splSOTAEBP1.Size = New System.Drawing.Size(812, 481)
         Me.splSOTAEBP1.SplitterDistance = 253
         Me.splSOTAEBP1.TabIndex = 0
         '
@@ -6138,7 +6141,7 @@ Partial Class ARFCINQ1
         Me.grdSOTAEBP1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTAEBP1.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTAEBP1.Name = "grdSOTAEBP1"
-        Me.grdSOTAEBP1.Size = New System.Drawing.Size(767, 253)
+        Me.grdSOTAEBP1.Size = New System.Drawing.Size(812, 253)
         Me.grdSOTAEBP1.TabIndex = 1
         Me.grdSOTAEBP1.Text = "All Ever Bought"
         '
@@ -6262,7 +6265,7 @@ Partial Class ARFCINQ1
         Me.grdSOTAEBP2.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSOTAEBP2.Location = New System.Drawing.Point(0, 0)
         Me.grdSOTAEBP2.Name = "grdSOTAEBP2"
-        Me.grdSOTAEBP2.Size = New System.Drawing.Size(767, 224)
+        Me.grdSOTAEBP2.Size = New System.Drawing.Size(812, 224)
         Me.grdSOTAEBP2.TabIndex = 2
         Me.grdSOTAEBP2.Text = "All Products ever Bought"
         '
@@ -6271,7 +6274,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl39.Controls.Add(Me.splSATCUSTS)
         Me.UltraTabPageControl39.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl39.Name = "UltraTabPageControl39"
-        Me.UltraTabPageControl39.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl39.Size = New System.Drawing.Size(812, 481)
         '
         'splSATCUSTS
         '
@@ -6287,7 +6290,7 @@ Partial Class ARFCINQ1
         'splSATCUSTS.Panel2
         '
         Me.splSATCUSTS.Panel2.Controls.Add(Me.grdSATCUSTI)
-        Me.splSATCUSTS.Size = New System.Drawing.Size(767, 481)
+        Me.splSATCUSTS.Size = New System.Drawing.Size(812, 481)
         Me.splSATCUSTS.SplitterDistance = 254
         Me.splSATCUSTS.TabIndex = 3
         '
@@ -6352,7 +6355,7 @@ Partial Class ARFCINQ1
         Me.grdSATCUSTS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSATCUSTS.Location = New System.Drawing.Point(0, 0)
         Me.grdSATCUSTS.Name = "grdSATCUSTS"
-        Me.grdSATCUSTS.Size = New System.Drawing.Size(767, 254)
+        Me.grdSATCUSTS.Size = New System.Drawing.Size(812, 254)
         Me.grdSATCUSTS.TabIndex = 2
         Me.grdSATCUSTS.Text = "12 Months"
         '
@@ -6417,7 +6420,7 @@ Partial Class ARFCINQ1
         Me.grdSATCUSTI.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdSATCUSTI.Location = New System.Drawing.Point(0, 0)
         Me.grdSATCUSTI.Name = "grdSATCUSTI"
-        Me.grdSATCUSTI.Size = New System.Drawing.Size(767, 223)
+        Me.grdSATCUSTI.Size = New System.Drawing.Size(812, 223)
         Me.grdSATCUSTI.TabIndex = 3
         Me.grdSATCUSTI.Text = "12 Months Detail"
         '
@@ -6426,7 +6429,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl36.Controls.Add(Me.grdARTSLSMA)
         Me.UltraTabPageControl36.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl36.Name = "UltraTabPageControl36"
-        Me.UltraTabPageControl36.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabPageControl36.Size = New System.Drawing.Size(812, 481)
         '
         'grdARTSLSMA
         '
@@ -6520,16 +6523,16 @@ Partial Class ARFCINQ1
         Me.grdARTSLSMA.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTSLSMA.Location = New System.Drawing.Point(0, 0)
         Me.grdARTSLSMA.Name = "grdARTSLSMA"
-        Me.grdARTSLSMA.Size = New System.Drawing.Size(767, 481)
+        Me.grdARTSLSMA.Size = New System.Drawing.Size(812, 481)
         Me.grdARTSLSMA.TabIndex = 4
         Me.grdARTSLSMA.Text = "Monthly Activity, TY & LY"
         '
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer3)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
-        Me.UltraTabPageControl1.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl1.Size = New System.Drawing.Size(816, 509)
         '
         'SplitContainer3
         '
@@ -6545,7 +6548,7 @@ Partial Class ARFCINQ1
         'SplitContainer3.Panel2
         '
         Me.SplitContainer3.Panel2.Controls.Add(Me.UltraTabControl2)
-        Me.SplitContainer3.Size = New System.Drawing.Size(771, 509)
+        Me.SplitContainer3.Size = New System.Drawing.Size(816, 509)
         Me.SplitContainer3.SplitterDistance = 146
         Me.SplitContainer3.TabIndex = 158
         '
@@ -6571,7 +6574,7 @@ Partial Class ARFCINQ1
         Me.grpARTCUST1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grpARTCUST1.Location = New System.Drawing.Point(0, 0)
         Me.grpARTCUST1.Name = "grpARTCUST1"
-        Me.grpARTCUST1.Size = New System.Drawing.Size(771, 146)
+        Me.grpARTCUST1.Size = New System.Drawing.Size(816, 146)
         Me.grpARTCUST1.TabIndex = 157
         '
         'UltraLabel15
@@ -6757,7 +6760,7 @@ Partial Class ARFCINQ1
         Me.UltraTabControl2.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl2.Name = "UltraTabControl2"
         Me.UltraTabControl2.SharedControlsPage = Me.UltraTabSharedControlsPage2
-        Me.UltraTabControl2.Size = New System.Drawing.Size(771, 359)
+        Me.UltraTabControl2.Size = New System.Drawing.Size(816, 359)
         Me.UltraTabControl2.TabIndex = 5
         UltraTab40.TabPage = Me.UltraTabPageControl12
         UltraTab40.Text = "Locations"
@@ -6773,14 +6776,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage2.Name = "UltraTabSharedControlsPage2"
-        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(767, 331)
+        Me.UltraTabSharedControlsPage2.Size = New System.Drawing.Size(812, 331)
         '
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.SplitContainer6)
         Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
-        Me.UltraTabPageControl5.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl5.Size = New System.Drawing.Size(816, 509)
         '
         'SplitContainer6
         '
@@ -6796,7 +6799,7 @@ Partial Class ARFCINQ1
         'SplitContainer6.Panel2
         '
         Me.SplitContainer6.Panel2.Controls.Add(Me.SplitContainer9)
-        Me.SplitContainer6.Size = New System.Drawing.Size(771, 509)
+        Me.SplitContainer6.Size = New System.Drawing.Size(816, 509)
         Me.SplitContainer6.SplitterDistance = 372
         Me.SplitContainer6.TabIndex = 168
         '
@@ -6814,7 +6817,7 @@ Partial Class ARFCINQ1
         'SplitContainer7.Panel2
         '
         Me.SplitContainer7.Panel2.Controls.Add(Me.UltraTabControl3)
-        Me.SplitContainer7.Size = New System.Drawing.Size(771, 372)
+        Me.SplitContainer7.Size = New System.Drawing.Size(816, 372)
         Me.SplitContainer7.SplitterDistance = 168
         Me.SplitContainer7.TabIndex = 0
         '
@@ -6831,8 +6834,8 @@ Partial Class ARFCINQ1
         'SplitContainer4.Panel2
         '
         Me.SplitContainer4.Panel2.Controls.Add(Me.grpCustomerOP)
-        Me.SplitContainer4.Size = New System.Drawing.Size(771, 168)
-        Me.SplitContainer4.SplitterDistance = 482
+        Me.SplitContainer4.Size = New System.Drawing.Size(816, 168)
+        Me.SplitContainer4.SplitterDistance = 510
         Me.SplitContainer4.TabIndex = 164
         '
         'grdARTCUST1_CODES
@@ -6925,7 +6928,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUST1_CODES.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST1_CODES.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST1_CODES.Name = "grdARTCUST1_CODES"
-        Me.grdARTCUST1_CODES.Size = New System.Drawing.Size(482, 168)
+        Me.grdARTCUST1_CODES.Size = New System.Drawing.Size(510, 168)
         Me.grdARTCUST1_CODES.TabIndex = 163
         Me.grdARTCUST1_CODES.Text = "Customer Master File Codes"
         '
@@ -6946,7 +6949,7 @@ Partial Class ARFCINQ1
         Me.grpCustomerOP.HeaderAppearance = Appearance313
         Me.grpCustomerOP.Location = New System.Drawing.Point(0, 0)
         Me.grpCustomerOP.Name = "grpCustomerOP"
-        Me.grpCustomerOP.Size = New System.Drawing.Size(285, 168)
+        Me.grpCustomerOP.Size = New System.Drawing.Size(302, 168)
         Me.grpCustomerOP.TabIndex = 161
         Me.grpCustomerOP.Text = "Sales Info"
         '
@@ -7062,7 +7065,7 @@ Partial Class ARFCINQ1
         Me.UltraTabControl3.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl3.Name = "UltraTabControl3"
         Me.UltraTabControl3.SharedControlsPage = Me.UltraTabSharedControlsPage4
-        Me.UltraTabControl3.Size = New System.Drawing.Size(771, 200)
+        Me.UltraTabControl3.Size = New System.Drawing.Size(816, 200)
         Me.UltraTabControl3.TabIndex = 154
         UltraTab16.TabPage = Me.UltraTabPageControl3
         UltraTab16.Text = "Credit Info"
@@ -7074,7 +7077,7 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
-        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(767, 172)
+        Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(812, 172)
         '
         'SplitContainer9
         '
@@ -7089,8 +7092,8 @@ Partial Class ARFCINQ1
         'SplitContainer9.Panel2
         '
         Me.SplitContainer9.Panel2.Controls.Add(Me.grdARTCUST1_FL)
-        Me.SplitContainer9.Size = New System.Drawing.Size(771, 133)
-        Me.SplitContainer9.SplitterDistance = 381
+        Me.SplitContainer9.Size = New System.Drawing.Size(816, 133)
+        Me.SplitContainer9.SplitterDistance = 403
         Me.SplitContainer9.TabIndex = 0
         '
         'grdARTCUST1_STATS
@@ -7184,7 +7187,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUST1_STATS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST1_STATS.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST1_STATS.Name = "grdARTCUST1_STATS"
-        Me.grdARTCUST1_STATS.Size = New System.Drawing.Size(381, 133)
+        Me.grdARTCUST1_STATS.Size = New System.Drawing.Size(403, 133)
         Me.grdARTCUST1_STATS.TabIndex = 162
         '
         'grdARTCUST1_FL
@@ -7294,7 +7297,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUST1_FL.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST1_FL.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST1_FL.Name = "grdARTCUST1_FL"
-        Me.grdARTCUST1_FL.Size = New System.Drawing.Size(386, 133)
+        Me.grdARTCUST1_FL.Size = New System.Drawing.Size(409, 133)
         Me.grdARTCUST1_FL.TabIndex = 159
         '
         'UltraTabPageControl2
@@ -7302,7 +7305,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl5)
         Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
-        Me.UltraTabPageControl2.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(816, 509)
         '
         'UltraTabControl5
         '
@@ -7313,7 +7316,7 @@ Partial Class ARFCINQ1
         Me.UltraTabControl5.Location = New System.Drawing.Point(0, 0)
         Me.UltraTabControl5.Name = "UltraTabControl5"
         Me.UltraTabControl5.SharedControlsPage = Me.UltraTabSharedControlsPage3
-        Me.UltraTabControl5.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabControl5.Size = New System.Drawing.Size(816, 509)
         Me.UltraTabControl5.TabIndex = 5
         Me.UltraTabControl5.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab3.Key = "Open AR && Aging History"
@@ -7328,14 +7331,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage3.Name = "UltraTabSharedControlsPage3"
-        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabSharedControlsPage3.Size = New System.Drawing.Size(812, 481)
         '
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.tabOrders)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
-        Me.UltraTabPageControl4.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl4.Size = New System.Drawing.Size(816, 509)
         '
         'tabOrders
         '
@@ -7347,7 +7350,7 @@ Partial Class ARFCINQ1
         Me.tabOrders.Location = New System.Drawing.Point(0, 0)
         Me.tabOrders.Name = "tabOrders"
         Me.tabOrders.SharedControlsPage = Me.UltraTabSharedControlsPage7
-        Me.tabOrders.Size = New System.Drawing.Size(771, 509)
+        Me.tabOrders.Size = New System.Drawing.Size(816, 509)
         Me.tabOrders.TabIndex = 175
         Me.tabOrders.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab1.TabPage = Me.UltraTabPageControl27
@@ -7362,14 +7365,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage7.Name = "UltraTabSharedControlsPage7"
-        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabSharedControlsPage7.Size = New System.Drawing.Size(812, 481)
         '
         'UltraTabPageControl38
         '
         Me.UltraTabPageControl38.Controls.Add(Me.tabSales)
         Me.UltraTabPageControl38.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl38.Name = "UltraTabPageControl38"
-        Me.UltraTabPageControl38.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl38.Size = New System.Drawing.Size(816, 509)
         '
         'tabSales
         '
@@ -7380,7 +7383,7 @@ Partial Class ARFCINQ1
         Me.tabSales.Location = New System.Drawing.Point(0, 0)
         Me.tabSales.Name = "tabSales"
         Me.tabSales.SharedControlsPage = Me.UltraTabSharedControlsPage10
-        Me.tabSales.Size = New System.Drawing.Size(771, 509)
+        Me.tabSales.Size = New System.Drawing.Size(816, 509)
         Me.tabSales.TabIndex = 0
         Me.tabSales.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab37.TabPage = Me.UltraTabPageControl39
@@ -7393,14 +7396,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage10.Name = "UltraTabSharedControlsPage10"
-        Me.UltraTabSharedControlsPage10.Size = New System.Drawing.Size(767, 481)
+        Me.UltraTabSharedControlsPage10.Size = New System.Drawing.Size(812, 481)
         '
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.splSummary)
         Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
-        Me.UltraTabPageControl9.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl9.Size = New System.Drawing.Size(816, 509)
         '
         'splSummary
         '
@@ -7416,7 +7419,7 @@ Partial Class ARFCINQ1
         'splSummary.Panel2
         '
         Me.splSummary.Panel2.Controls.Add(Me.grdARTCSUMB)
-        Me.splSummary.Size = New System.Drawing.Size(771, 509)
+        Me.splSummary.Size = New System.Drawing.Size(816, 509)
         Me.splSummary.SplitterDistance = 323
         Me.splSummary.TabIndex = 0
         '
@@ -7482,7 +7485,7 @@ Partial Class ARFCINQ1
         Me.grdARTCSUMA.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCSUMA.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCSUMA.Name = "grdARTCSUMA"
-        Me.grdARTCSUMA.Size = New System.Drawing.Size(771, 323)
+        Me.grdARTCSUMA.Size = New System.Drawing.Size(816, 323)
         Me.grdARTCSUMA.TabIndex = 3
         Me.grdARTCSUMA.Text = "12 Months"
         '
@@ -7547,7 +7550,7 @@ Partial Class ARFCINQ1
         Me.grdARTCSUMB.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCSUMB.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCSUMB.Name = "grdARTCSUMB"
-        Me.grdARTCSUMB.Size = New System.Drawing.Size(771, 182)
+        Me.grdARTCSUMB.Size = New System.Drawing.Size(816, 182)
         Me.grdARTCSUMB.TabIndex = 4
         Me.grdARTCSUMB.Text = "12 Months"
         '
@@ -7555,14 +7558,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabPageControl28.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl28.Name = "UltraTabPageControl28"
-        Me.UltraTabPageControl28.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl28.Size = New System.Drawing.Size(816, 509)
         '
         'UltraTabPageControl52
         '
         Me.UltraTabPageControl52.Controls.Add(Me.SplitContainer2)
         Me.UltraTabPageControl52.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl52.Name = "UltraTabPageControl52"
-        Me.UltraTabPageControl52.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl52.Size = New System.Drawing.Size(816, 509)
         '
         'SplitContainer2
         '
@@ -7613,7 +7616,7 @@ Partial Class ARFCINQ1
         Me.SplitContainer2.Panel2.Controls.Add(Me.Label1)
         Me.SplitContainer2.Panel2.Controls.Add(Me.btnRefresh)
         Me.SplitContainer2.Panel2.Controls.Add(Me.btnEmailOutbound)
-        Me.SplitContainer2.Size = New System.Drawing.Size(771, 509)
+        Me.SplitContainer2.Size = New System.Drawing.Size(816, 509)
         Me.SplitContainer2.SplitterDistance = 429
         Me.SplitContainer2.TabIndex = 1
         '
@@ -8023,7 +8026,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl18.Controls.Add(Me.grdARTOPENB)
         Me.UltraTabPageControl18.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl18.Name = "UltraTabPageControl18"
-        Me.UltraTabPageControl18.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl18.Size = New System.Drawing.Size(816, 509)
         '
         'grdARTOPENB
         '
@@ -8100,7 +8103,7 @@ Partial Class ARFCINQ1
         Me.grdARTOPENB.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTOPENB.Location = New System.Drawing.Point(0, 0)
         Me.grdARTOPENB.Name = "grdARTOPENB"
-        Me.grdARTOPENB.Size = New System.Drawing.Size(771, 509)
+        Me.grdARTOPENB.Size = New System.Drawing.Size(816, 509)
         Me.grdARTOPENB.TabIndex = 3
         Me.grdARTOPENB.Text = "Customers with Open Chargebacks Receivable"
         '
@@ -8108,13 +8111,13 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabPageControl19.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl19.Name = "UltraTabPageControl19"
-        Me.UltraTabPageControl19.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl19.Size = New System.Drawing.Size(816, 509)
         '
         'UltraTabPageControl51
         '
         Me.UltraTabPageControl51.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl51.Name = "UltraTabPageControl51"
-        Me.UltraTabPageControl51.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabPageControl51.Size = New System.Drawing.Size(816, 509)
         '
         'UltraTabPageControl34
         '
@@ -8280,9 +8283,9 @@ Partial Class ARFCINQ1
         'UltraTabPageControl44
         '
         Me.UltraTabPageControl44.Controls.Add(Me.grdARTCUSTT_FUPS)
-        Me.UltraTabPageControl44.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl44.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl44.Name = "UltraTabPageControl44"
-        Me.UltraTabPageControl44.Size = New System.Drawing.Size(775, 537)
+        Me.UltraTabPageControl44.Size = New System.Drawing.Size(820, 537)
         '
         'grdARTCUSTT_FUPS
         '
@@ -8414,7 +8417,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUSTT_FUPS.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUSTT_FUPS.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUSTT_FUPS.Name = "grdARTCUSTT_FUPS"
-        Me.grdARTCUSTT_FUPS.Size = New System.Drawing.Size(775, 537)
+        Me.grdARTCUSTT_FUPS.Size = New System.Drawing.Size(820, 537)
         Me.grdARTCUSTT_FUPS.TabIndex = 10
         Me.grdARTCUSTT_FUPS.Text = "My Follow Ups"
         '
@@ -8423,7 +8426,7 @@ Partial Class ARFCINQ1
         Me.UltraTabPageControl45.Controls.Add(Me.grdARTCUST6)
         Me.UltraTabPageControl45.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl45.Name = "UltraTabPageControl45"
-        Me.UltraTabPageControl45.Size = New System.Drawing.Size(775, 537)
+        Me.UltraTabPageControl45.Size = New System.Drawing.Size(820, 537)
         '
         'grdARTCUST6
         '
@@ -8626,7 +8629,7 @@ Partial Class ARFCINQ1
         Me.grdARTCUST6.Dock = System.Windows.Forms.DockStyle.Fill
         Me.grdARTCUST6.Location = New System.Drawing.Point(0, 0)
         Me.grdARTCUST6.Name = "grdARTCUST6"
-        Me.grdARTCUST6.Size = New System.Drawing.Size(775, 537)
+        Me.grdARTCUST6.Size = New System.Drawing.Size(820, 537)
         Me.grdARTCUST6.TabIndex = 2
         Me.grdARTCUST6.Text = "Customers with Activity"
         Me.grdARTCUST6.Visible = False
@@ -8634,9 +8637,9 @@ Partial Class ARFCINQ1
         'UltraTabPageControl46
         '
         Me.UltraTabPageControl46.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl46.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl46.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl46.Name = "UltraTabPageControl46"
-        Me.UltraTabPageControl46.Size = New System.Drawing.Size(775, 537)
+        Me.UltraTabPageControl46.Size = New System.Drawing.Size(820, 537)
         '
         'tabMain
         '
@@ -8653,7 +8656,7 @@ Partial Class ARFCINQ1
         Me.tabMain.Location = New System.Drawing.Point(0, 0)
         Me.tabMain.Name = "tabMain"
         Me.tabMain.SharedControlsPage = Me.UltraTabSharedControlsPage1
-        Me.tabMain.Size = New System.Drawing.Size(775, 537)
+        Me.tabMain.Size = New System.Drawing.Size(820, 537)
         Me.tabMain.TabIndex = 9
         UltraTab22.TabPage = Me.UltraTabPageControl1
         UltraTab22.Text = "General"
@@ -8677,14 +8680,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage1.Name = "UltraTabSharedControlsPage1"
-        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabSharedControlsPage1.Size = New System.Drawing.Size(816, 509)
         '
         'UltraTabPageControl10
         '
         Me.UltraTabPageControl10.Controls.Add(Me.tabChargebacks)
         Me.UltraTabPageControl10.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl10.Name = "UltraTabPageControl10"
-        Me.UltraTabPageControl10.Size = New System.Drawing.Size(775, 537)
+        Me.UltraTabPageControl10.Size = New System.Drawing.Size(820, 537)
         '
         'tabChargebacks
         '
@@ -8696,7 +8699,7 @@ Partial Class ARFCINQ1
         Me.tabChargebacks.Location = New System.Drawing.Point(0, 0)
         Me.tabChargebacks.Name = "tabChargebacks"
         Me.tabChargebacks.SharedControlsPage = Me.UltraTabSharedControlsPage5
-        Me.tabChargebacks.Size = New System.Drawing.Size(775, 537)
+        Me.tabChargebacks.Size = New System.Drawing.Size(820, 537)
         Me.tabChargebacks.TabIndex = 4
         Me.tabChargebacks.TabOrientation = Infragistics.Win.UltraWinTabs.TabOrientation.BottomLeft
         UltraTab13.TabPage = Me.UltraTabPageControl18
@@ -8711,7 +8714,7 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage5.Name = "UltraTabSharedControlsPage5"
-        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(771, 509)
+        Me.UltraTabSharedControlsPage5.Size = New System.Drawing.Size(816, 509)
         '
         'UltraTabPageControl48
         '
@@ -8993,7 +8996,7 @@ Partial Class ARFCINQ1
         Me.UltraGroupBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.UltraGroupBox1.Location = New System.Drawing.Point(0, 0)
         Me.UltraGroupBox1.Name = "UltraGroupBox1"
-        Me.UltraGroupBox1.Size = New System.Drawing.Size(779, 77)
+        Me.UltraGroupBox1.Size = New System.Drawing.Size(824, 77)
         Me.UltraGroupBox1.TabIndex = 0
         '
         'chkALLFU
@@ -9041,7 +9044,7 @@ Partial Class ARFCINQ1
         Me.grpContact.Controls.Add(Me.UltraTextEditor23)
         Me.grpContact.Controls.Add(Me.UltraMaskedEdit2)
         Me.grpContact.Dock = System.Windows.Forms.DockStyle.Right
-        Me.grpContact.Location = New System.Drawing.Point(373, 3)
+        Me.grpContact.Location = New System.Drawing.Point(418, 3)
         Me.grpContact.Name = "grpContact"
         Me.grpContact.Size = New System.Drawing.Size(403, 71)
         Me.grpContact.TabIndex = 149
@@ -9109,7 +9112,7 @@ Partial Class ARFCINQ1
         'spl.Panel2
         '
         Me.spl.Panel2.Controls.Add(Me.tab)
-        Me.spl.Size = New System.Drawing.Size(779, 646)
+        Me.spl.Size = New System.Drawing.Size(824, 646)
         Me.spl.SplitterDistance = 77
         Me.spl.TabIndex = 11
         '
@@ -9124,7 +9127,7 @@ Partial Class ARFCINQ1
         Me.tab.Location = New System.Drawing.Point(0, 0)
         Me.tab.Name = "tab"
         Me.tab.SharedControlsPage = Me.UltraTabSharedControlsPage12
-        Me.tab.Size = New System.Drawing.Size(779, 565)
+        Me.tab.Size = New System.Drawing.Size(824, 565)
         Me.tab.TabIndex = 6
         UltraTab17.TabPage = Me.UltraTabPageControl44
         UltraTab17.Text = "0"
@@ -9140,14 +9143,14 @@ Partial Class ARFCINQ1
         '
         Me.UltraTabSharedControlsPage12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage12.Name = "UltraTabSharedControlsPage12"
-        Me.UltraTabSharedControlsPage12.Size = New System.Drawing.Size(775, 537)
+        Me.UltraTabSharedControlsPage12.Size = New System.Drawing.Size(820, 537)
         '
         'ARFCINQ1
         '
         Me.Absx1.SetABSTableName(Me, "ARTCUST1")
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(992, 646)
+        Me.ClientSize = New System.Drawing.Size(1037, 646)
         Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Name = "ARFCINQ1"
         Me.Text = "ARFCINQ1"
