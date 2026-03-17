@@ -4357,7 +4357,6 @@ Partial Class SOFCORD1
         '
         'grdSOTORDR0
         '
-        Me.grdSOTORDR0.DataMember = Nothing
         Appearance25.BackColor = System.Drawing.SystemColors.Window
         Appearance25.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTORDR0.DisplayLayout.Appearance = Appearance25
@@ -4431,31 +4430,31 @@ Partial Class SOFCORD1
         UltraGridColumn456.Width = 75
         UltraGridColumn457.Format = "#,##0"
         UltraGridColumn457.Header.Caption = "$Canc"
-        UltraGridColumn457.Header.VisiblePosition = 29
+        UltraGridColumn457.Header.VisiblePosition = 28
         UltraGridColumn457.Width = 75
         UltraGridColumn458.Header.Caption = "#Ordr"
-        UltraGridColumn458.Header.VisiblePosition = 33
+        UltraGridColumn458.Header.VisiblePosition = 32
         UltraGridColumn458.Width = 65
         UltraGridColumn459.Header.Caption = "#Open"
-        UltraGridColumn459.Header.VisiblePosition = 34
+        UltraGridColumn459.Header.VisiblePosition = 33
         UltraGridColumn459.Width = 65
         UltraGridColumn460.Header.Caption = "#Pick"
-        UltraGridColumn460.Header.VisiblePosition = 36
+        UltraGridColumn460.Header.VisiblePosition = 35
         UltraGridColumn460.Width = 65
         UltraGridColumn461.Header.Caption = "#Ship"
-        UltraGridColumn461.Header.VisiblePosition = 37
+        UltraGridColumn461.Header.VisiblePosition = 36
         UltraGridColumn461.Width = 65
         UltraGridColumn462.Header.Caption = "#Canc"
         UltraGridColumn462.Header.VisiblePosition = 39
         UltraGridColumn462.Width = 65
         UltraGridColumn463.Header.Caption = "#"
-        UltraGridColumn463.Header.VisiblePosition = 30
+        UltraGridColumn463.Header.VisiblePosition = 29
         UltraGridColumn463.Width = 40
         UltraGridColumn464.Header.Caption = "Open"
-        UltraGridColumn464.Header.VisiblePosition = 31
+        UltraGridColumn464.Header.VisiblePosition = 30
         UltraGridColumn464.Width = 40
         UltraGridColumn465.Header.Caption = "Pick"
-        UltraGridColumn465.Header.VisiblePosition = 32
+        UltraGridColumn465.Header.VisiblePosition = 31
         UltraGridColumn465.Width = 40
         UltraGridColumn466.Header.Caption = "Recd"
         UltraGridColumn466.Header.VisiblePosition = 40
@@ -4564,7 +4563,7 @@ Partial Class SOFCORD1
         UltraGridColumn507.Width = 101
         UltraGridColumn508.Format = "#,##0"
         UltraGridColumn508.Header.Caption = "#3PL"
-        UltraGridColumn508.Header.VisiblePosition = 35
+        UltraGridColumn508.Header.VisiblePosition = 34
         UltraGridColumn508.Width = 57
         UltraGridColumn509.Format = "#,##0"
         UltraGridColumn509.Header.Caption = "$3PL"
@@ -4609,7 +4608,7 @@ Partial Class SOFCORD1
         UltraGridColumn362.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn362.Width = 89
         UltraGridColumn363.Header.Caption = "Weight"
-        UltraGridColumn363.Header.VisiblePosition = 28
+        UltraGridColumn363.Header.VisiblePosition = 37
         UltraGridColumn363.Width = 61
         UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn436, UltraGridColumn437, UltraGridColumn438, UltraGridColumn439, UltraGridColumn440, UltraGridColumn441, UltraGridColumn442, UltraGridColumn443, UltraGridColumn444, UltraGridColumn445, UltraGridColumn446, UltraGridColumn447, UltraGridColumn448, UltraGridColumn449, UltraGridColumn450, UltraGridColumn451, UltraGridColumn452, UltraGridColumn453, UltraGridColumn454, UltraGridColumn455, UltraGridColumn456, UltraGridColumn457, UltraGridColumn458, UltraGridColumn459, UltraGridColumn460, UltraGridColumn461, UltraGridColumn462, UltraGridColumn463, UltraGridColumn464, UltraGridColumn465, UltraGridColumn466, UltraGridColumn467, UltraGridColumn468, UltraGridColumn469, UltraGridColumn470, UltraGridColumn472, UltraGridColumn473, UltraGridColumn474, UltraGridColumn475, UltraGridColumn476, UltraGridColumn484, UltraGridColumn485, UltraGridColumn486, UltraGridColumn487, UltraGridColumn488, UltraGridColumn489, UltraGridColumn490, UltraGridColumn491, UltraGridColumn492, UltraGridColumn493, UltraGridColumn494, UltraGridColumn495, UltraGridColumn496, UltraGridColumn497, UltraGridColumn498, UltraGridColumn499, UltraGridColumn500, UltraGridColumn501, UltraGridColumn502, UltraGridColumn503, UltraGridColumn504, UltraGridColumn505, UltraGridColumn506, UltraGridColumn507, UltraGridColumn508, UltraGridColumn509, UltraGridColumn266, UltraGridColumn273, UltraGridColumn296, UltraGridColumn320, UltraGridColumn322, UltraGridColumn323, UltraGridColumn324, UltraGridColumn325, UltraGridColumn326, UltraGridColumn327, UltraGridColumn361, UltraGridColumn362, UltraGridColumn363})
         Me.grdSOTORDR0.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
