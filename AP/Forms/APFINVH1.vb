@@ -20,6 +20,7 @@ Public Class APFINVH1
     Dim POTSHIP3 As String
     Dim POTSHIP2 As String
     Dim GROUPINGs As New List(Of String)
+    Dim INV_PERIOD_SOFT As String
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -799,6 +800,23 @@ Public Class APFINVH1
                         End If
                     Next
 
+                    ' REM RGI LOOK FOR COST COMPLETE sHIPMENTS IN POTLCST1
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Select("")
+                            If rowAPTINVH7.Item("PO_SHIPMENT_NO") & "" <> "" Or rowAPTINVH7.Item("PO_ORDER_NO") & "" <> "" Then
+                                ' CHECK TO SEE IF GL PERIOD IS SOFT CLOSED OR HARD CLOSED
+                                If Not Check_for_COST_COMPLETE(rowAPTINVH7) Then
+                                    If EMsg = "" Then
+                                        Exit Sub
+                                    End If
+
+                                End If
+
+                            End If
+                        Next
+                    End If
+
+
                     If EMsg = "" Then
                         If Val(Absx1.numFor("INV_AMT_VEND").Value & "") <> Val(Absx1.numFor("INV_AMT").Value & "") Then
                             If MsgBox("Please Verify the Following Information:" & vbCr & vbCr & "Vendor Invoice Amount: " & Format(Val(Absx1.numFor("INV_AMT_VEND").Value & ""), "#,##0.00") & vbCr & "Invoice Payable: " & Format(Val(Absx1.numFor("INV_AMT").Value & ""), "#,##0.00") & vbCr & vbCr & "OK To Continue with Update?", vbQuestion + vbYesNo, "Verification: Invoice will be Booked with Adjustments") = vbNo Then
@@ -880,6 +898,16 @@ Public Class APFINVH1
                             End If
                         End If
                     End If
+                End If
+            Case "Delete"
+                If ASCMAIN1.CLIENT = "RGI" Then
+                    For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Select("")
+                        If rowAPTINVH7.Item("PO_SHIPMENT_NO") & "" <> "" Then
+                            If Not Check_for_COST_COMPLETE(rowAPTINVH7) Then
+                                Exit Sub
+                            End If
+                        End If
+                    Next
                 End If
 
         End Select
@@ -1385,6 +1413,10 @@ Public Class APFINVH1
             End If
         End If
 
+        If ASCMAIN1.CLIENT = "RGI" Then
+            tabMain.Tabs("Other Accruals").Text = "Accruals(Landed Cst)"
+        End If
+
         If Absx1.cbeFor("INV_TYPE").Value = "A" Then
             tabMain.Tabs("PO Receipts").Enabled = False
             tabMain.Tabs("Other Accruals").Enabled = False
@@ -1550,6 +1582,13 @@ Public Class APFINVH1
                     rowAPTINVH5.Item("RECEIPT_LNO") = DBNull.Value
                 End If
             Next
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Select("PO_SHIPMENT_NO <> '' OR PO_ORDER_NO <> ''")
+                    Check_for_COST_COMPLETE(rowAPTINVH7, True)
+                Next
+            End If
+
 
             If EntryMode = "N" Then
                 If rowAPTINVH1("INV_PAID_UPON_ENTRY") & "" = "1" Then
@@ -1772,6 +1811,24 @@ Public Class APFINVH1
                 Update_Record_TDA("APTINVH8")
                 Update_Record_TDA("APTINVH7")
             End If
+            If ASCMAIN1.CLIENT = "RGI" Then
+
+                For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Select("PO_SHIPMENT_NO <> ''  OR PO_ORDER_NO <> ''")
+                    Check_for_COST_COMPLETE(rowAPTINVH7, True)
+                Next
+                '''For Each rowAPTINVH7 As DataRow In dst.Tables("APTINVH7").Select("")
+                '''    If rowAPTINVH7.Item("PO_SHIPMENT_NO") & "" <> "" Then
+                '''        If Not Check_for_COST_COMPLETE(rowAPTINVH7) Then
+
+                '''            Check_for_COST_COMPLETE(rowAPTINVH7, True)
+                '''            '   Exit Sub
+                '''        End If
+
+                '''    End If
+                '''Next
+
+            End If
+
         End If
 
         X.ResumeBinding()
@@ -5422,6 +5479,166 @@ Public Class APFINVH1
         Next
 
     End Sub
+    Function Check_for_COST_COMPLETE(rowAPTINVH7 As DataRow, Optional update As Boolean = False) As Boolean
+        INV_PERIOD_SOFT = ""
+        Dim COST_COMPLETE As String = ""
 
+        If rowAPTINVH7 IsNot Nothing Then
+            Dim PO_SHIPMENT_NO As String = rowAPTINVH7.Item("PO_SHIPMENT_NO") & ""
+            Dim PO_ORDER_NO As String = rowAPTINVH7.Item("PO_ORDER_NO") & ""
+            If PO_SHIPMENT_NO <> "" Then
+                Dim rowPOTSHIP1 As DataRow = LookUp("POTSHIP1", PO_SHIPMENT_NO)
+                COST_COMPLETE = rowPOTSHIP1.Item("COST_COMPLETE")
+
+                If COST_COMPLETE = "1" Then
+
+                    ASCMAIN1.sql = "Select DISTINCT OPS_YYYYPP FROM POTSHIP2 WHERE PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'"
+                    Dim rowPOTSHIP2 As DataRow = ASCDATA1.GetDataRow
+                    Dim INV_PERIOD As String = rowPOTSHIP2.Item("OPS_YYYYPP") & ""
+
+                    ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                             & " where NVL(UPDATED,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & INV_PERIOD & "'"
+                    Dim rowICTCOSTP As DataRow = ASCDATA1.GetDataRow
+                    If Val(rowICTCOSTP.Item(0) & "") >= 1 Then
+                        EMsg &= vbCr & "FIFO G/L Has already been Closed for this period, Cannot Enter Accrued Costs"
+                        Return False
+                    End If
+
+                    If update Then
+                        ASCMAIN1.sql = "Update POTSHIP1 Set COST_COMPLETE = '0' where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'"
+                        ASCDATA1.ExecuteSQL()
+
+                        ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                        & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP >= '" & INV_PERIOD & "'"
+                        rowICTCOSTP = ASCDATA1.GetDataRow
+                        If Val(rowICTCOSTP.Item(0) & "") >= 1 Then
+                            ASCMAIN1.sql = "Update ICTCOSTP Set SOFT_CLOSE = '0' where ICTCOSTP.OPS_YYYYPP >= '" & INV_PERIOD & "'"
+                            ASCDATA1.ExecuteSQL()
+                        End If
+
+                    Else
+                        ' check to see if period is Soft Closed also 
+                        If MsgBox("This entry impacts a Shipment whose Costing has been Completed" _
+                                      & vbCrLf & "OK to Proceed with this Entry?", MsgBoxStyle.YesNo, "Shipments which have been Completed Costed will be Re-Opened") = MsgBoxResult.No Then
+                            Return False
+                        Else
+                            ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                         & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP >= '" & INV_PERIOD & "'"
+                            rowICTCOSTP = ASCDATA1.GetDataRow
+                            If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
+                                If Val(rowICTCOSTP.Item(0) & "") >= 1 Then
+                                    If MsgBox("FIFO G/L Journal Has already been Soft Closed for period " & INV_PERIOD & ", This will un-do the Soft Closed for this Period and any subsequent periods. Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
+                                        INV_PERIOD_SOFT = ""
+                                        Return False
+                                    Else
+                                        INV_PERIOD_SOFT = INV_PERIOD
+                                        Return True
+                                    End If
+                                End If
+                                ''If MsgBox("FIFO G/L Journal Has already been Soft Closed for this period, Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
+                                ''    EMsg &= vbCr & "FIFO G/L Journal Has already been Soft Closed for this period, Will Not Rebuild FIFO Lot Costs"
+                                ''End If
+                            End If
+                            Return True
+                        End If
+
+                    End If
+                Else
+                    Return True
+                End If
+            Else
+                ' PO MULTIPLE Shipments perhaps
+                Dim VALID_SHIPMENTS As Integer = 0
+                ASCMAIN1.sql = "Select POTSHIP3.PO_ORDER_NO,   POTSHIP2.PO_SHIPMENT_NO,OPS_YYYYPP, COUNT(*)" _
+                    & " From POTSHIP1, POTSHIP2, POTSHIP3" _
+                    & " Where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" _
+                    & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" _
+                    & " And POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" _
+                    & " And POTSHIP3.PO_ORDER_NO  = '" & PO_ORDER_NO & "'" _
+                    & " group BY POTSHIP3.PO_ORDER_NO, POTSHIP2.PO_SHIPMENT_NO, OPS_YYYYPP"
+                For Each rowPOTSHIPX As DataRow In ASCDATA1.GetDataTable.Rows
+                    PO_SHIPMENT_NO = rowPOTSHIPX.Item("PO_SHIPMENT_NO") & ""
+                    Dim OPS_YYYYPP As String = rowPOTSHIPX.Item("OPS_YYYYPP") & ""
+                    If OPS_YYYYPP >= "202601" Then
+                        ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                             & " where NVL(UPDATED,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & OPS_YYYYPP & "'"
+                        Dim rowICTCOSTP As DataRow = ASCDATA1.GetDataRow
+                        If Val(rowICTCOSTP.Item(0) & "") = 0 Then
+                            ' check shipmetns same as above
+
+                            Dim rowPOTSHIP1 As DataRow = LookUp("POTSHIP1", PO_SHIPMENT_NO)
+                            COST_COMPLETE = rowPOTSHIP1.Item("COST_COMPLETE")
+
+                            If COST_COMPLETE = "1" Then
+
+                                ASCMAIN1.sql = "Select DISTINCT OPS_YYYYPP FROM POTSHIP2 WHERE PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'"
+                                Dim rowPOTSHIP2 As DataRow = ASCDATA1.GetDataRow
+                                Dim INV_PERIOD As String = rowPOTSHIP2.Item("OPS_YYYYPP") & ""
+
+                                ''   ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                                ''& " where NVL(UPDATED,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & INV_PERIOD & "'"
+                                ''   rowICTCOSTP = ASCDATA1.GetDataRow
+                                ''   If Val(rowICTCOSTP.Item(0) & "") >= 1 Then
+                                ''       EMsg &= vbCr & "FIFO G/L Has already been Closed for this period, Cannot Enter Accrued Costs"
+                                ''       Return False
+                                ''   End If
+
+                                If update Then
+                                    ASCMAIN1.sql = "Update POTSHIP1 Set COST_COMPLETE = '0' where PO_SHIPMENT_NO = '" & PO_SHIPMENT_NO & "'"
+                                    ASCDATA1.ExecuteSQL()
+
+                                    ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                                     & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP >= '" & INV_PERIOD & "'"
+                                    rowICTCOSTP = ASCDATA1.GetDataRow
+                                    If Val(rowICTCOSTP.Item(0) & "") >= 1 Then
+                                        ASCMAIN1.sql = "Update ICTCOSTP Set SOFT_CLOSE = '0' where ICTCOSTP.OPS_YYYYPP >= '" & INV_PERIOD & "'"
+                                        ASCDATA1.ExecuteSQL()
+                                    End If
+
+                                Else
+                                    ' check to see if period is Soft Closed also 
+                                    If MsgBox("This entry impacts a Shipment whose Costing has been Completed" _
+                                      & vbCrLf & "OK to Proceed with this Entry?", MsgBoxStyle.YesNo, "Shipments which have been Completed Costed will be Re-Opened") = MsgBoxResult.No Then
+                                        Return False
+                                    Else
+                                        ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                                     & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP >= '" & INV_PERIOD & "'"
+                                        rowICTCOSTP = ASCDATA1.GetDataRow
+                                        If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
+                                            If Val(rowICTCOSTP.Item(0) & "") >= 1 Then
+                                                If MsgBox("FIFO G/L Journal Has already been Soft Closed for period " & INV_PERIOD & ", This will un-do the Soft Closed for this Period and any subsequent periods. Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
+                                                    INV_PERIOD_SOFT = ""
+                                                    Return False
+                                                Else
+                                                    INV_PERIOD_SOFT = INV_PERIOD
+                                                    Return True
+                                                End If
+                                            End If
+                                            ''If MsgBox("FIFO G/L Journal Has already been Soft Closed for this period, Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
+                                            ''    EMsg &= vbCr & "FIFO G/L Journal Has already been Soft Closed for this period, Will Not Rebuild FIFO Lot Costs"
+                                            ''End If
+                                        End If
+                                        Return True
+                                    End If
+
+                                End If
+                            Else
+                                Return True
+                            End If
+
+                        End If
+                    End If
+                    ' CHECK TO SEE IF SHIPMENT IS NOT gl updated
+                Next
+
+
+
+
+            End If
+
+
+        End If
+
+    End Function
 
 End Class

@@ -1,3 +1,5 @@
+Imports Infragistics.Win.UltraWinGrid
+
 Public Class ICRFIFO1
 
     Dim ICTCOSTA As String
@@ -20,6 +22,14 @@ Public Class ICRFIFO1
 
         If ASCMAIN1.CLIENT = "NYA" Then
             chk001.Visible = True
+        End If
+
+        If ASCMAIN1.CLIENT = "RGI" Then
+            chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+            chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+            chkGL.Text = "Prior FY Hard Close"
+        Else
+            chkGL.Text = "Record Inventory Journal Entries"
         End If
     End Sub
 
@@ -238,7 +248,7 @@ Public Class ICRFIFO1
                 ' STYLE_CLASS_CODE
 
             End If
-             Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
+            Dim workbook As SpreadsheetGear.IWorkbook = SpreadsheetGear.Factory.GetWorkbook() '(FILENAME)
             Dim worksheet As SpreadsheetGear.IWorksheet = workbook.Worksheets(0)
 
             Dim range As SpreadsheetGear.IRange = Nothing
@@ -276,6 +286,18 @@ Public Class ICRFIFO1
                 'worksheet.Cells(0, 11).Columns.Hidden = true
             End If
 
+            If ASCMAIN1.CLIENT = "RGI" Then
+                ' Insert a new column at column D (index 3)
+                '  worksheet.Cells.Columns(0, 14).Insert()
+
+                ' Add header
+                worksheet.Cells(0, 13).Value = "PO Ext"
+
+                '    Fill formula down (example: COLUMN B * Column C)
+                worksheet.Cells("N2:N20000").Formula = "=H2*K2"
+
+            End If
+
             'worksheet.Cells["B:B"].Columns.Hidden = true; 
 
             Dim XLS_FILENAME As String = Me.Name & "_" & XNO & ".XLSX"
@@ -303,7 +325,7 @@ Public Class ICRFIFO1
                 Dim row As DataRow = ASCDATA1.GetDataRow
                 If Val(row.Item(0) & "") <> 0 Then
                     lblWarning.Visible = True
-                    If chkGL.Checked Then
+                    If chkGL.Checked Or chkSoftClose.Checked Then
                         MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL with Incomplete Landed Costs Data")
                         lblWarning.Visible = False
                         EMsg &= vbCr & "Please review costs in PO Shipments Cost Entry(see Shipment " & row.Item(1) & ")"
@@ -313,7 +335,7 @@ Public Class ICRFIFO1
                         End If
                     End If
                 End If
-                If ASCMAIN1.CLIENT = "VAN" Then
+                If ASCMAIN1.CLIENT = "VAN" Or ASCMAIN1.CLIENT = "RGI" Then
                     ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
                     & " where NVL(ICTCOSTP.UPDATED,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & RYP & "'"
                     Dim rowICTCOSTP As DataRow = ASCDATA1.GetDataRow
@@ -333,6 +355,53 @@ Public Class ICRFIFO1
                             'MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL For this period")
                             'lblWarning.Visible = False
                             EMsg &= vbCr & "FIFO G/L Journal Has Not been Updated For Prior periods, Cannot Update GL For this period"
+                        End If
+                    End If
+
+
+                    If chkSoftClose.Checked And ASCMAIN1.CLIENT = "RGI" Then
+                        '  Make Sure previous period sOFT clOSE Updated before Updating GL for Period selected
+                        ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                    & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '0' and ICTCOSTP.OPS_YYYYPP < '" & RYP & "' And ICTCOSTP.OPS_YYYYPP > '202207'"
+                        rowICTCOSTP = ASCDATA1.GetDataRow
+                        If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
+                            'MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL For this period")
+                            'lblWarning.Visible = False
+                            EMsg &= vbCr & "FIFO Soft Close Has Not been Updated For Prior periods, Cannot Update Soft Close For this period"
+                        End If
+
+                    End If
+
+                    If chkGL.Checked And Not chkSoftClose.Checked And ASCMAIN1.CLIENT = "RGI" Then
+                        chkSoftClose.Checked = True
+                        ''    '  Make Sure previous period sOFT clOSE Updated before Updating GL for Period selected
+                        ''    ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                        ''& " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & RYP & "'"
+                        ''    rowICTCOSTP = ASCDATA1.GetDataRow
+                        ''    If Val(rowICTCOSTP.Item(0) & "") <> 1 Then
+                        ''        'MsgBox(lblWarning.Text, MsgBoxStyle.OkOnly, "You May Not Update GL For this period")
+                        ''        'lblWarning.Visible = False
+                        ''        EMsg &= vbCr & "FIFO Soft Close Has Not been Updated For This periods, Cannot Update GL without  Soft Close For this period"
+                        ''    End If
+
+                    End If
+
+
+                End If
+
+                If ASCMAIN1.CLIENT = "RGI" And EMsg = "" Then
+                    If chkRebuild_FIFO.Checked Then
+                        ASCMAIN1.sql = "Select Count (*) from ICTCOSTP" _
+                         & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & RYP & "'"
+                        Dim rowICTCOSTP As DataRow = ASCDATA1.GetDataRow
+                        If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
+                            If (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine") Then
+                                If MsgBox("FIFO G/L Journal Has already been Soft Closed for this period, Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
+                                    EMsg &= vbCr & "FIFO G/L DGJ Journal Has already been Soft Closed for this period, Will Not Rebuild FIFO Lot Costs"
+                                End If
+                            Else
+                                EMsg &= vbCr & "FIFO G/L Journal Has already been Soft Closed for this period, Cannot Rebuild FIFO Lot Costs"
+                            End If
                         End If
 
                     End If
@@ -450,7 +519,7 @@ Public Class ICRFIFO1
             Else
                 ASCMAIN1.sql = "Insert into ICTCOSTP" _
                     & " Select OPS_YYYYPP, COUNT (*), SUM (LOT_QTY_ONHD), SUM (LOT_AMT_ONHD), NULL" _
-                    & ", SYSDATE, '" & ASCMAIN1.USER_ID & "', NULL, NULL" _
+                    & ", SYSDATE, '" & ASCMAIN1.USER_ID & "', NULL, NULL, NULL" _
                     & " from ICTCOSTA where OPS_YYYYPP = '" & RYP & "' group by OPS_YYYYPP"
                 ASCDATA1.ExecuteSQL()
             End If
@@ -461,7 +530,7 @@ Public Class ICRFIFO1
 
         End If
 
-            If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
+        If ASCMAIN1.DBS_SERVER = "NYA" Or ASCMAIN1.DBS_COMPANY = "NYA" Then
             ASCMAIN1.sql = "" _
                 & "Begin Declare Cursor C1 is" & vbCrLf _
                 & "Select * from (Select X.*" & vbCrLf _
@@ -497,6 +566,20 @@ Public Class ICRFIFO1
                 & " where OPS_YYYYPP = '" & RYP & "'"
             ASCDATA1.ExecuteSQL()
         End If
+        If (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI") Then
+            Dim SOFT_CLOSE As String = ""
+            If chkSoftClose.Checked Then
+                SOFT_CLOSE = "1"
+            Else
+                SOFT_CLOSE = "0"
+            End If
+            ASCMAIN1.sql = "Update ICTCOSTP" _
+            & " Set SOFT_CLOSE = '" & SOFT_CLOSE & "'" _
+            & " where OPS_YYYYPP = '" & RYP & "'"
+            ASCDATA1.ExecuteSQL()
+        End If
+
+
 
     End Sub
 
@@ -597,9 +680,20 @@ Public Class ICRFIFO1
             Else
                 chkGL.Visible = True
             End If
+            If ASCMAIN1.CLIENT = "RGI" Then
+                chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+                chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+                chkGL.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+                chkGL.Enabled = True
+            Else
+                chkGL.Enabled = True
+            End If
+
         Else
             chkGL.Visible = False
             chkGL.Checked = False
+            chkSoftClose.Checked = False
+            chkSoftClose.Enabled = False
         End If
 
         chk001.Visible = Not chkRebuild_FIFO.Checked And ASCMAIN1.CLIENT = "NYA"
@@ -638,7 +732,7 @@ Public Class ICRFIFO1
         End If
 
         Select Case e.SourceControl.Name
-         
+
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -697,5 +791,35 @@ Public Class ICRFIFO1
             '    Context_Launch("Select Customer", CUST_CODE, e.Tool.Key, "ARFCINQ1")
         End Select
     End Sub
+
+    Private Sub grdICTCOSTP_InitializeRow(sender As Object, e As InitializeRowEventArgs) Handles grdICTCOSTP.InitializeRow
+
+
+        If e.Row.Cells("SOFT_CLOSE").Value & "" = "1" And ASCMAIN1.CLIENT = "RGI" Then
+            If e.Row.Cells("UPDATED").Value & "" = "" Then
+                e.Row.Appearance.BackColor = Color.RosyBrown
+            Else
+            End If
+        End If
+        If ASCMAIN1.CLIENT = "RGI" Then
+            Dim cell = e.Row.Cells("UPDATED")
+            If cell.Value IsNot Nothing Then
+                Select Case cell.Value.ToString()
+                    Case "1"
+                        e.Row.Cells("UPDATED").Appearance.BackColor = Color.Aquamarine
+                        e.Row.Cells("INIT_DATE").Appearance.BackColor = Color.Aquamarine
+                        e.Row.Cells("INIT_OPER").Appearance.BackColor = Color.Aquamarine
+                        e.Row.Cells("LAST_DATE").Appearance.BackColor = Color.Aquamarine
+                        e.Row.Cells("LAST_OPER").Appearance.BackColor = Color.Aquamarine
+                        ' cell.Appearance.BackColor = Color.RosyBrown
+                    Case Else
+                        '  cell.Appearance.BackColor = Color.White
+                End Select
+            End If
+        End If
+
+    End Sub
+
+
 #End Region
 End Class
