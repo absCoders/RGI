@@ -5549,6 +5549,7 @@ Public Class APFINVH1
             Else
                 ' PO MULTIPLE Shipments perhaps
                 Dim VALID_SHIPMENTS As Integer = 0
+
                 ASCMAIN1.sql = "Select POTSHIP3.PO_ORDER_NO,   POTSHIP2.PO_SHIPMENT_NO,OPS_YYYYPP, COUNT(*)" _
                     & " From POTSHIP1, POTSHIP2, POTSHIP3" _
                     & " Where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" _
@@ -5630,7 +5631,9 @@ Public Class APFINVH1
                     End If
                     ' CHECK TO SEE IF SHIPMENT IS NOT gl updated
                 Next
-
+                If PO_SHIPMENT_NO = "" Then
+                    Return True
+                End If
 
 
 
