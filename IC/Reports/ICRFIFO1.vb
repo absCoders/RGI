@@ -25,8 +25,8 @@ Public Class ICRFIFO1
         End If
 
         If ASCMAIN1.CLIENT = "RGI" Then
-            chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
-            chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+            chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
+            chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
             chkGL.Text = "Prior FY Hard Close"
         Else
             chkGL.Text = "Record Inventory Journal Entries"
@@ -395,7 +395,7 @@ Public Class ICRFIFO1
                          & " where NVL(ICTCOSTP.SOFT_CLOSE,'0') = '1' and ICTCOSTP.OPS_YYYYPP = '" & RYP & "'"
                         Dim rowICTCOSTP As DataRow = ASCDATA1.GetDataRow
                         If Val(rowICTCOSTP.Item(0) & "") <> 0 Then
-                            If (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine") Then
+                            If (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine") Then
                                 If MsgBox("FIFO G/L Journal Has already been Soft Closed for this period, Proceed Anyway?", MsgBoxStyle.YesNo, "Please Acknowledge") = MsgBoxResult.No Then
                                     EMsg &= vbCr & "FIFO G/L DGJ Journal Has already been Soft Closed for this period, Will Not Rebuild FIFO Lot Costs"
                                 End If
@@ -681,9 +681,9 @@ Public Class ICRFIFO1
                 chkGL.Visible = True
             End If
             If ASCMAIN1.CLIENT = "RGI" Then
-                chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
-                chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
-                chkGL.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "Andy" Or ASCMAIN1.USER_ID = "Elaine")
+                chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
+                chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
+                chkGL.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
                 chkGL.Enabled = True
             Else
                 chkGL.Enabled = True

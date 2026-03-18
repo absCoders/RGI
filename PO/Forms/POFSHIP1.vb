@@ -3921,7 +3921,7 @@ Public Class POFSHIP1
 
                 .Groups("Special Functions").Visible = (ScreenMode = False) And (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie" Or ASCMAIN1.USER_ID = "erodriguez")) And ship_entry
                 chkOrderDetails.Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie" Or ASCMAIN1.USER_ID = "erodriguez")) And ship_entry
-                If ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.USER_ID = "dgj" And (ScreenMode = False) And cost_calc Then
+                If ASCMAIN1.CLIENT = "RGI" And (ASCMAIN1.USER_ID = "elaine" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "dgj") And (ScreenMode = False) And cost_calc Then
                     .Groups("Special Functions").Visible = True
                     lblCostComplete.Visible = True
                     cbeCostComplete.Visible = True
