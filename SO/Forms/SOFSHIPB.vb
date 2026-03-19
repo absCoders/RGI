@@ -13812,10 +13812,6 @@ Public Class SOFSHIPB
             Dim SUBJECT As String = String.Empty
             SUBJECT = "Sales Invoice (" & INV_NO & ") for customer " & rowARTCUST1.Item("CUST_NAME")
 
-            If ASCMAIN1.CLIENT = "RGI" Then
-                SUBJECT = $"Regency International Sales Invoice ({INV_NO}), Date: {rowSOTINVH1.Item("INV_DATE")} for customer {rowARTCUST1.Item("CUST_NAME")}"
-            End If
-
             ' Concatentate and process all email addresses
             Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
             For Each emailAddress As String In (salesRepEmail).ToString.Split(";")
@@ -13829,17 +13825,22 @@ Public Class SOFSHIPB
                 Return True
             End If
 
+            ' 03/19/2026
+            ' AS per Andy via Mario they what the Invoice Subject and Body changed.
             Dim EMAIL_KEY As String = "INV"
+            Dim EMAIL_BODY As String = "Attached is your invoice."
+
             Select Case ASCMAIN1.CLIENT
                 Case "RGI"
                     EMAIL_KEY = "AUTOINV"
+                    SUBJECT = $"Regency International Sales Invoice ({INV_NO}), Customer ({rowARTCUST1.Item("CUST_CODE")}) {rowARTCUST1.Item("CUST_NAME")}"
+                    EMAIL_BODY = "Attached is your invoice." & Environment.NewLine & "Please reply to this email with any questions." & Environment.NewLine & "invoice@regency-rib.com"
             End Select
 
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                    (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                     SUBJECT, EMAIL_KEY,
-                    True, False, CUST_CODE, rowARTCUST1.Item("CUST_NAME"), "Customer")
-
+                    True, False, CUST_CODE, rowARTCUST1.Item("CUST_NAME"), "Customer", EMAIL_BODY)
 
             ' Mark email Only Invoices as Mailed
             Try
