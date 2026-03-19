@@ -584,6 +584,9 @@ Public Class ARFCUSTM
         S.AppendLine("C1.INIT_DATE,")
         S.AppendLine("C1.CUST_XMIT_INV_VIA,")
         S.AppendLine("C1.CUST_INV_EMAIL,")
+        S.AppendLine("C1.CUST_CONTACT,")
+        S.AppendLine("C1.CUST_EMAIL,")
+        S.AppendLine("C1.CUST_PHONE,")
         S.AppendLine("SUM(SALES.YR1) AS YR1,")
         S.AppendLine("SUM(SALES.YR2) AS YR2,")
         S.AppendLine("SUM(SALES.YR3) AS YR3,")
@@ -606,7 +609,10 @@ Public Class ARFCUSTM
         S.AppendLine("C1.SREP_CODE,")
         S.AppendLine("C1.INIT_DATE,")
         S.AppendLine("C1.CUST_XMIT_INV_VIA,")
-        S.AppendLine("C1.CUST_INV_EMAIL")
+        S.AppendLine("C1.CUST_INV_EMAIL,")
+        S.AppendLine("C1.CUST_CONTACT,")
+        S.AppendLine("C1.CUST_EMAIL,")
+        S.AppendLine("C1.CUST_PHONE")
         Return S.ToString
     End Function
     Private Function GetContactList() As String
@@ -671,12 +677,20 @@ Public Class ARFCUSTM
                 {"INIT_DATE", New KeyValuePair(Of String, String)("Began", "@")},
                 {"CUST_XMIT_INV_VIA", New KeyValuePair(Of String, String)("Inv Via", "@")},
                 {"CUST_INV_EMAIL", New KeyValuePair(Of String, String)("Inv E-mail", "@")},
+                {"CUST_CONTACT", New KeyValuePair(Of String, String)("Cust Contact", "@")},
+                {"CUST_EMAIL", New KeyValuePair(Of String, String)("Cust Email", "@")},
+                {"CUST_PHONE", New KeyValuePair(Of String, String)("Cust Phone", "@")},
                 {"YR1", New KeyValuePair(Of String, String)("Year 1", "#,##0")},
                 {"YR2", New KeyValuePair(Of String, String)("Year 2", "#,##0")},
                 {"YR3", New KeyValuePair(Of String, String)("Year 3", "#,##0")},
                 {"YR4", New KeyValuePair(Of String, String)("Year 4", "#,##0")},
                 {"YRT", New KeyValuePair(Of String, String)("Total", "#,##0")}
             }
+        If chkContactsC.Checked = False Then
+            map.Remove("CUST_CONTACT")
+            map.Remove("CUST_EMAIL")
+            map.Remove("CUST_PHONE")
+        End If
         For Each COL_INFO As KeyValuePair(Of KeyValuePair(Of String, Int64), List(Of String)) In CONTACT_COLS
             Dim COL_TYPE As String = COL_INFO.Key.Key
             Dim MAX_COLS As Int64 = COL_INFO.Key.Value
@@ -742,7 +756,12 @@ Public Class ARFCUSTM
         End If
         With grdARTLISTC.DisplayLayout.Bands(0)
             Dim G As UltraWinGrid.UltraGridGroup
-            Dim COLS As String() = {"CUST_CODE", "CUST_NAME", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", "CUST_STMT_IND", "CUST_STMT_EMAIL", "SREP_CODE", "INIT_DATE", "CUST_XMIT_INV_VIA", "CUST_INV_EMAIL", "YR1", "YR2", "YR3", "YR4"}
+            Dim COLS As String()
+            If chkContactsC.Checked Then
+                COLS = {"CUST_CODE", "CUST_NAME", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", "CUST_STMT_IND", "CUST_STMT_EMAIL", "SREP_CODE", "INIT_DATE", "CUST_XMIT_INV_VIA", "CUST_INV_EMAIL", "CUST_CONTACT", "CUST_EMAIL", "CUST_PHONE", "YR1", "YR2", "YR3", "YR4"}
+            Else
+                COLS = {"CUST_CODE", "CUST_NAME", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY", "CUST_STMT_IND", "CUST_STMT_EMAIL", "SREP_CODE", "INIT_DATE", "CUST_XMIT_INV_VIA", "CUST_INV_EMAIL", "YR1", "YR2", "YR3", "YR4"}
+            End If
             G = .Groups.Add("Customer", "Customer Information")
             G.Header.Appearance.TextHAlign = HAlign.Center
             G.Header.Appearance.BackColor2 = Drawing.Color.Transparent

@@ -879,7 +879,8 @@ Public Class TACMAIN1
         & IIf(USER_FAX <> "", "Fax: " & ASCMAIN1.FormatTel(USER_FAX) & vbCrLf, "") _
         & rowASTUSER1_EMAIL_FROM.Item("USER_EMAIL") & vbCrLf
 
-        If ASCMAIN1.CLIENT = "RGI" And (EMAIL_KEY = "CREDIT") Then
+        ' 03/19/2026 - Change requested by Andy via Mario - AUTOINV
+        If ASCMAIN1.CLIENT = "RGI" AndAlso (EMAIL_KEY = "CREDIT" OrElse EMAIL_KEY = "AUTOINV") Then
             USER_SIGNATURE = ""
         End If
 

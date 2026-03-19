@@ -78,6 +78,7 @@ Partial Class ICRFIFO1
         Dim UltraGridColumn14 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("CGR_VALUE", 3)
         Dim UltraGridColumn15 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ADJ_UNITS", 4)
         Dim UltraGridColumn16 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ADJ_VALUE", 5)
+        Dim UltraGridColumn10 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SOFT_CLOSE", 6)
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -96,6 +97,7 @@ Partial Class ICRFIFO1
         Me.lblWarning = New Infragistics.Win.Misc.UltraLabel()
         Me.grdICTCOSTP = New Infragistics.Win.UltraWinGrid.UltraGrid()
         Me.chk001 = New ABSCS.ABSCheckBox()
+        Me.chkSoftClose = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -134,6 +136,7 @@ Partial Class ICRFIFO1
         CType(Me.chkGL, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.grdICTCOSTP, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chk001, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkSoftClose, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -156,6 +159,7 @@ Partial Class ICRFIFO1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkSoftClose)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chk001)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grdICTCOSTP)
         Me.SplitContainer5.Panel1.Controls.Add(Me.lblWarning)
@@ -448,7 +452,7 @@ Partial Class ICRFIFO1
         Appearance52.ForeColor = System.Drawing.Color.Red
         Appearance52.ForeColorDisabled = System.Drawing.Color.Red
         Me.lblWarning.Appearance = Appearance52
-        Me.lblWarning.Location = New System.Drawing.Point(624, 17)
+        Me.lblWarning.Location = New System.Drawing.Point(685, 16)
         Me.lblWarning.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.lblWarning.Name = "lblWarning"
         Me.lblWarning.Size = New System.Drawing.Size(319, 53)
@@ -542,7 +546,9 @@ Partial Class ICRFIFO1
         UltraGridColumn15.Header.VisiblePosition = 13
         UltraGridColumn16.Header.Caption = "ADJ Value"
         UltraGridColumn16.Header.VisiblePosition = 14
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16})
+        UltraGridColumn10.Header.Caption = "Soft Close"
+        UltraGridColumn10.Header.VisiblePosition = 15
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn1, UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn11, UltraGridColumn12, UltraGridColumn13, UltraGridColumn14, UltraGridColumn15, UltraGridColumn16, UltraGridColumn10})
         UltraGridBand1.RowLayoutStyle = Infragistics.Win.UltraWinGrid.RowLayoutStyle.ColumnLayout
         Me.grdICTCOSTP.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTCOSTP.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
@@ -609,13 +615,24 @@ Partial Class ICRFIFO1
         'chk001
         '
         Me.Absx1.SetABSColumnName(Me.chk001, "CHK001")
-        Me.chk001.Location = New System.Drawing.Point(470, 18)
+        Me.chk001.Location = New System.Drawing.Point(720, 18)
         Me.chk001.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chk001.Name = "chk001"
         Me.chk001.Size = New System.Drawing.Size(150, 22)
         Me.chk001.TabIndex = 267
         Me.chk001.Text = "NYAG Canada"
         Me.chk001.Visible = False
+        '
+        'chkSoftClose
+        '
+        Me.chkSoftClose.Enabled = False
+        Me.chkSoftClose.Location = New System.Drawing.Point(470, 18)
+        Me.chkSoftClose.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkSoftClose.Name = "chkSoftClose"
+        Me.chkSoftClose.Size = New System.Drawing.Size(194, 22)
+        Me.chkSoftClose.TabIndex = 268
+        Me.chkSoftClose.Text = "Prior FY Soft Close"
+        Me.chkSoftClose.Visible = False
         '
         'ICRFIFO1
         '
@@ -664,6 +681,7 @@ Partial Class ICRFIFO1
         CType(Me.chkGL, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.grdICTCOSTP, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chk001, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkSoftClose, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -674,4 +692,5 @@ Partial Class ICRFIFO1
     Friend WithEvents lblWarning As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents grdICTCOSTP As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents chk001 As ABSCS.ABSCheckBox
+    Friend WithEvents chkSoftClose As ABSCS.ABSCheckBox
 End Class

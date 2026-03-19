@@ -690,7 +690,7 @@ Public Class TAFSEND1
 
             Dim logo As FileAttachment = Message.Attachments.AddFileAttachment(ASCMAIN1.Folders("Images") & "ABS\" & EMAIL_LOGO)
             logo.ContentId = "logo"
-            Message.Body = "<img src=cid:logo>" & "<p>" & Replace(SEND_BODY & LINKS & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>"
+            Message.Body = "<p>" & Replace(SEND_BODY & LINKS & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE, vbCrLf, "<br>") & "</p>" & vbCrLf & "<img src=cid:logo>"
 
         Else
             'htmlView = AlternateView.CreateAlternateViewFromString("<p>" & SEND_BODY & vbCrLf & vbCrLf & SEND_FROM_SIGNATURE & "</p>", Nothing, "text/html")

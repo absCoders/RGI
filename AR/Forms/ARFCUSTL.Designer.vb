@@ -212,8 +212,6 @@ Partial Class ARFCUSTL
         Me.Label6 = New System.Windows.Forms.Label()
         Me.btnSalesGreater = New System.Windows.Forms.Button()
         Me.cboCopyToList = New System.Windows.Forms.ComboBox()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.btnMakeMasterContacts = New System.Windows.Forms.Button()
         Me.UltraTabPageControl12 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabControl1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage1 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
@@ -469,7 +467,7 @@ Partial Class ARFCUSTL
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1119, 554)
         '
@@ -1003,7 +1001,7 @@ Partial Class ARFCUSTL
         'UltraTabPageControl4
         '
         Me.UltraTabPageControl4.Controls.Add(Me.Panel3)
-        Me.UltraTabPageControl4.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl4.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl4.Name = "UltraTabPageControl4"
         Me.UltraTabPageControl4.Size = New System.Drawing.Size(1119, 554)
         '
@@ -1011,8 +1009,6 @@ Partial Class ARFCUSTL
         '
         Me.Panel3.Controls.Add(Me.btnBuyerGroups)
         Me.Panel3.Controls.Add(Me.UltraGroupBox2)
-        Me.Panel3.Controls.Add(Me.Label2)
-        Me.Panel3.Controls.Add(Me.btnMakeMasterContacts)
         Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel3.Location = New System.Drawing.Point(0, 0)
         Me.Panel3.Name = "Panel3"
@@ -1252,26 +1248,6 @@ Partial Class ARFCUSTL
         Me.cboCopyToList.Size = New System.Drawing.Size(400, 24)
         Me.cboCopyToList.TabIndex = 255
         '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(230, 438)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(345, 16)
-        Me.Label2.TabIndex = 1
-        Me.Label2.Text = "Create Contacts From Missing Masterfile Contacts."
-        Me.Label2.Visible = False
-        '
-        'btnMakeMasterContacts
-        '
-        Me.btnMakeMasterContacts.Location = New System.Drawing.Point(148, 435)
-        Me.btnMakeMasterContacts.Name = "btnMakeMasterContacts"
-        Me.btnMakeMasterContacts.Size = New System.Drawing.Size(75, 23)
-        Me.btnMakeMasterContacts.TabIndex = 0
-        Me.btnMakeMasterContacts.Text = "Do"
-        Me.btnMakeMasterContacts.UseVisualStyleBackColor = True
-        Me.btnMakeMasterContacts.Visible = False
-        '
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.UltraTabControl1)
@@ -1434,7 +1410,6 @@ Partial Class ARFCUSTL
         CType(Me.grdARTLIST, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraTabPageControl4.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
-        Me.Panel3.PerformLayout()
         CType(Me.UltraGroupBox2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.UltraGroupBox2.ResumeLayout(False)
         Me.UltraGroupBox2.PerformLayout()
@@ -1491,8 +1466,6 @@ Partial Class ARFCUSTL
     Friend WithEvents chkListActiveOnly As ABSCS.ABSCheckBox
     Friend WithEvents UltraTabPageControl4 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents Panel3 As Panel
-    Friend WithEvents Label2 As Label
-    Friend WithEvents btnMakeMasterContacts As Button
     Friend WithEvents UltraGroupBox2 As Misc.UltraGroupBox
     Friend WithEvents Label9 As Label
     Friend WithEvents btnInitDate As Button
