@@ -416,6 +416,7 @@ Public Class ICFPHYC1
         With grdICTPHYCX.DisplayLayout.Bands("ICTPHYCX")
             .Columns("TICKET_NO").Header.Fixed = True
             .Columns("SELECTED").Header.Fixed = True
+            .Columns("LOCATION_CODE").Header.Fixed = True
             '.Columns("SELECTED"). = True
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Color.White
