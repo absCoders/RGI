@@ -24,7 +24,7 @@ Public Class ICRFIFO1
             chk001.Visible = True
         End If
 
-        If ASCMAIN1.CLIENT = "RGI" Then
+        If ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.DBS_SERVER = "RGIUAT" Then
             chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
             chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
             chkGL.Text = "Prior FY Hard Close"
@@ -680,7 +680,7 @@ Public Class ICRFIFO1
             Else
                 chkGL.Visible = True
             End If
-            If ASCMAIN1.CLIENT = "RGI" Then
+            If ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.DBS_SERVER = "RGIUAT" Then
                 chkSoftClose.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
                 chkSoftClose.Enabled = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
                 chkGL.Visible = (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "elaine")
