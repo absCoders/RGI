@@ -905,16 +905,20 @@ Public Class ICFPHYC1
         CommitTrans("Update Complete")
     End Sub
 
-    Sub Verify_Counts()
+    Sub Verify_Counts(Optional TICKET_NO = "")
         BeginTrans()
 
         ASCMAIN1.sql = "Update ICTPHYC1 " & vbCrLf _
             & " Set ICTPHYC1.VERIFIED_OPER = '" & ASCMAIN1.USER_ID & "', ICTPHYC1.VERIFIED_DATE = SYSDATE " & vbCrLf _
             & " Where ICTPHYC1.WHSE_CODE = '" & WHSE_CODE & "' and ICTPHYC1.TICKET_NO = :PARM1"
 
-        For Each row As DataRow In dst.Tables("ICTPHYCX").Select("SELECTED = '1'")
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", row.Item("TICKET_NO"))
-        Next
+        If TICKET_NO <> "" Then
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", TICKET_NO)
+        Else
+            For Each row As DataRow In dst.Tables("ICTPHYCX").Select("SELECTED = '1'")
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", row.Item("TICKET_NO"))
+            Next
+        End If
 
         CommitTrans("Update Complete, Records Verified")
     End Sub
@@ -974,7 +978,7 @@ Public Class ICFPHYC1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTPHYCX, "SSB", "Show Filter", "Show GroupBox", "Recount Location")
-        Load_Popup_Menu(grdICTPHYC2, "BS", "Style Status Inquiry", "Show Old Counts")
+        Load_Popup_Menu(grdICTPHYC2, "BS", "Style Status Inquiry", "Show Old Counts", "Verify Ticket", "Recount Location")
         Load_Popup_Menu(grdICTPHYCV, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
         Load_Popup_Menu(grdICTPHYCL, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdICTPHYCR, "SS", "Show Filter", "Show GroupBox")
@@ -1002,6 +1006,11 @@ Public Class ICFPHYC1
 
         Select Case grd.Name
             Case "grdICTPHYCX"
+                tlb_btn = DirectCast(tlb_pop.Tools("Recount Location"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "E")
+            Case "grdICTPHYC2"
+                tlb_btn = DirectCast(tlb_pop.Tools("Verify Ticket"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "E")
                 tlb_btn = DirectCast(tlb_pop.Tools("Recount Location"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E")
 
@@ -1059,8 +1068,17 @@ Public Class ICFPHYC1
             Case "Show Old Counts"
                 Set_ICTPHYC2_Filter()
 
+            Case "Verify Ticket"
+                Dim TICKET_NO = Absx1.txtFor("TICKET_NO").Text
+                Verify_Counts(TICKET_NO)
+
             Case "Recount Location"
-                Dim LOCATION_CODE As String = grd.ActiveRow.Cells("LOCATION_CODE").Value
+                Dim LOCATION_CODE As String
+                If grd.Name = "grdICTPHYC2" Then
+                    LOCATION_CODE = Absx1.txtFor("LOCATION_CODE").Text
+                Else
+                    LOCATION_CODE = grd.ActiveRow.Cells("LOCATION_CODE").Value
+                End If
                 ASCMAIN1.sql = "Select count(1) from ICTPHYC1_RECNT where LOCATION_CODE = :PARM1"
                 Dim recount = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", LOCATION_CODE)
                 If recount > 0 Then
