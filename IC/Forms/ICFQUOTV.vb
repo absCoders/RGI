@@ -304,6 +304,17 @@ Public Class ICFQUOTV
             '        Create_TDA(.Tables.Add, "ICTSTAT2", "**", 2, False)
             Create_TDA(.Tables.Add, "ICTSTAT2", "**", 0, False, "", 2)
 
+
+
+            ASCMAIN1.sql = "Select STYLE_CODE,COLOR_CODE,SUM(WHSE_QTY_ON_HAND) WHSE_QTY_ON_HAND,SUM(WHSE_QTY_ON_ORDER) WHSE_QTY_ON_ORDER,SUM(WHSE_QTY_TRAN) WHSE_QTY_TRAN," & vbCrLf _
+            & " SUM(WHSE_QTY_OPEN) WHSE_QTY_OPEN,SUM(WHSE_QTY_PICK) WHSE_QTY_PICK,SUM(WHSE_QTY_ALLO) WHSE_QTY_ALLO," & vbCrLf _
+            & " SUM(WHSE_QTY_COMM) WHSE_QTY_COMM, SUM(WHSE_QTY_PROD) WHSE_QTY_PROD" & vbCrLf _
+            & " from ICTSTAT2" & vbCrLf _
+             & " GROUP BY STYLE_CODE, COLOR_CODE"
+
+            '' ASCMAIN1.sql = "Select * from ICTSTAT2"
+            Create_TDA(.Tables.Add, "ICTSTAT2X", "**", 0, False, "", 2)
+
             ASCMAIN1.sql = "Select * from (" & vbCrLf _
             & " Select POTORDR2.STYLE_CODE, POTORDR2.COLOR_CODE, POTORDR1.INIT_DATE, POTSHIP1.WHSE_CODE, POTSHIP3.PO_ORDER_NO" & vbCrLf _
             & ", POTORDR1.PO_DATE_SHIP_BY PO_DATE_SHIP_BY_REQ, POTORDR2.PO_DATE_SHIP_BY" & vbCrLf _
@@ -1229,7 +1240,7 @@ Public Class ICFQUOTV
 
         EnforceConstraints(False)
         For Each TABLE_NAME As String In New String() _
-            {"ICTQUOT1", "ICTQUOT2", "ICTSTYC1", "ICTSTYLX", "ICTSTYCX", "SOTORDRC", "ICTQUOT3", "ICTSTYLS", "SOTSDIVC", "ICTQUOH1", "ICTQUOH2", "ICTQUOHF", "ICTSTAT2", "ICTSTATD"}
+            {"ICTQUOT1", "ICTQUOT2", "ICTSTYC1", "ICTSTYLX", "ICTSTYCX", "SOTORDRC", "ICTQUOT3", "ICTSTYLS", "SOTSDIVC", "ICTQUOH1", "ICTQUOH2", "ICTQUOHF", "ICTSTAT2", "ICTSTAT2X", "ICTSTATD"}
             dst.Tables(TABLE_NAME).Rows.Clear()
         Next
         EnforceConstraints(True)
@@ -2414,6 +2425,22 @@ Public Class ICFQUOTV
                 & " from ICTSTAT2" & vbCrLf _
                 & " where ICTSTAT2.STYLE_CODE = '" & STYLE_CODE & "'"
             Fill_Records("ICTSTAT2", "", False, ASCMAIN1.sql)
+
+            ''ASCMAIN1.sql = "Select *" & vbCrLf _
+            ''    & " from ICTSTAT2" & vbCrLf _
+            ''    & " where ICTSTAT2.STYLE_CODE = '" & STYLE_CODE & "'"
+            ''Fill_Records("ICTSTAT2X", "", False, ASCMAIN1.sql)
+
+            ASCMAIN1.sql = "Select STYLE_CODE,COLOR_CODE,SUM(WHSE_QTY_ON_HAND) WHSE_QTY_ON_HAND,SUM(WHSE_QTY_ON_ORDER) WHSE_QTY_ON_ORDER,SUM(WHSE_QTY_TRAN) WHSE_QTY_TRAN," & vbCrLf _
+            & " SUM(WHSE_QTY_OPEN) WHSE_QTY_OPEN,SUM(WHSE_QTY_PICK) WHSE_QTY_PICK,SUM(WHSE_QTY_ALLO) WHSE_QTY_ALLO," & vbCrLf _
+            & " SUM(WHSE_QTY_COMM) WHSE_QTY_COMM, SUM(WHSE_QTY_PROD) WHSE_QTY_PROD" & vbCrLf _
+            & " from ICTSTAT2" & vbCrLf _
+            & " where ICTSTAT2.STYLE_CODE = '" & STYLE_CODE & "'" & vbCrLf _
+            & " GROUP BY STYLE_CODE, COLOR_CODE"
+            Fill_Records("ICTSTAT2X", "", False, ASCMAIN1.sql)
+
+
+
 
 
             ASCMAIN1.sql = "Select * from (" & vbCrLf _
@@ -3611,7 +3638,7 @@ Public Class ICFQUOTV
 
             If chkStyleStats.Checked Then
 
-                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2X").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
                     worksheet.Cells("V" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
                     worksheet.Cells("V" & curRow.ToString).NumberFormat = "#,###,##0"
                     worksheet.Cells("W" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
@@ -4171,7 +4198,7 @@ Public Class ICFQUOTV
 
             If chkStyleStats.Checked Then
 
-                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2X").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
                     worksheet.Cells("V" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
                     worksheet.Cells("V" & curRow.ToString).NumberFormat = "#,###,##0"
                     worksheet.Cells("W" & curRow.ToString).Value = Val(rowICTSTAT2.Item("WHSE_QTY_PICK") & String.Empty)
@@ -5176,7 +5203,7 @@ Public Class ICFQUOTV
 
                     ' ASCMAIN1.sql = "Select * from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & String.Empty & "'"
                     '       For Each rowICTSTAT2 As DataRow In ASCDATA1.GetDataTable.Select("")
-                    For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & row2.Item("COLOR_CODE") & String.Empty & "'")
+                    For Each rowICTSTAT2 As DataRow In dst.Tables("ICTSTAT2X").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & row2.Item("COLOR_CODE") & String.Empty & "'")
 
 
                         worksheet.Cells(I + CI - 1, COL + chkcnt).Value = Val(rowICTSTAT2.Item("WHSE_QTY_ON_HAND") & String.Empty)
