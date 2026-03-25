@@ -28,8 +28,12 @@ Public Class ARRDEFI1
         SUBT = String.Empty
         Dim sqlw As String = String.Empty
 
-        sqlw &= SQL_in("REASON_CODE")
-        sqlw = sqlw.Replace(" REASON_CODE", " NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE)")
+        ''sqlw &= SQL_in("REASON_CODE")
+        ''sqlw = sqlw.Replace(" REASON_CODE", " NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE)")
+
+
+        sqlw &= SQL_in("RTV_REASON_CODE")
+        sqlw = sqlw.Replace(" RTV_REASON_CODE", " NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE)")
 
         sqlw &= SQL_in("VEND_CODE")
         sqlw = sqlw.Replace(" VEND_CODE", " ICTSTYL1.VEND_CODE")
