@@ -127,6 +127,7 @@ Partial Class ICFPHYC1
         Dim UltraGridColumn89 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BOOK_SCMAX")
         Dim UltraGridColumn90 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VARIANCE")
         Dim UltraGridColumn91 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VARIANCE_COST")
+        Dim UltraGridColumn106 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_USE")
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -885,6 +886,7 @@ Partial Class ICFPHYC1
         '
         'grdICTPHYCL
         '
+        Me.grdICTPHYCL.DataMember = Nothing
         Appearance25.BackColor = System.Drawing.SystemColors.Window
         Appearance25.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdICTPHYCL.DisplayLayout.Appearance = Appearance25
@@ -946,7 +948,10 @@ Partial Class ICFPHYC1
         UltraGridColumn91.Header.Caption = "$Variance"
         UltraGridColumn91.Header.VisiblePosition = 18
         UltraGridColumn91.Width = 90
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn70, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91})
+        UltraGridColumn106.Header.Caption = "Loc Type"
+        UltraGridColumn106.Header.VisiblePosition = 19
+        UltraGridColumn106.Width = 79
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn70, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn106})
         Me.grdICTPHYCL.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdICTPHYCL.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
