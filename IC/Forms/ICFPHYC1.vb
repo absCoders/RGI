@@ -45,6 +45,7 @@ Public Class ICFPHYC1
             '& "   and X.TICKET_NO (+) = ICTPHYC1.TICKET_NO"
 
             ASCMAIN1.sql = "Select ICTPHYC1.*, X.STYLE_CODE, X.SC, X.TOTAL_COUNT, UNIT_VARIANCE, ABSOLUTE_VARIANCE, nvl(LAST_ACTIVITY,'01-JAN-1999') LAST_ACTIVITY  " & vbCrLf _
+                & " , CASE WHEN REQUESTED IS NULL THEN '2' WHEN REQUESTED < LAST_DATE THEN '1' ELSE '0' END OPEN_STATUS" & vbCrLf _
                 & " from ICTPHYC1, (Select WHSE_CODE, TICKET_NO, Min (STYLE_CODE) STYLE_CODE, Min (STYLE_CODE || '-' || COLOR_CODE) SC" & vbCrLf _
                 & " , Sum (TOTAL_COUNT) TOTAL_COUNT, SUM(VARIANCE) UNIT_VARIANCE, SUM(ABS(VARIANCE)) ABSOLUTE_VARIANCE " & vbCrLf _
                 & " from( " & vbCrLf _
@@ -64,11 +65,13 @@ Public Class ICFPHYC1
                 & " from WHTLOCB2 " & vbCrLf _
                 & "where WHSE_CODE = :PARM1 " & vbCrLf _
                 & " group by whse_code, location_code) A " & vbCrLf _
+                & " , (SELECT LOCATION_CODE, MAX(REQUESTED) REQUESTED FROM ICTPHYC1_RECNT GROUP BY LOCATION_CODE) R1" & vbCrLf _
                 & " where ICTPHYC1.WHSE_CODE = :PARM1" & vbCrLf _
                 & "   and X.WHSE_CODE (+) = ICTPHYC1.WHSE_CODE" & vbCrLf _
                 & "   and X.TICKET_NO (+) = ICTPHYC1.TICKET_NO" & vbCrLf _
                 & "   and A.WHSE_CODE (+) = ICTPHYC1.WHSE_CODE" & vbCrLf _
-                & "   and A.LOCATION_CODE (+) = ICTPHYC1.LOCATION_CODE"
+                & "   and A.LOCATION_CODE (+) = ICTPHYC1.LOCATION_CODE" & vbCrLf _
+                & "   and R1.LOCATION_CODE (+) = ICTPHYC1.LOCATION_CODE"
             Create_TDA(.Tables.Add, "ICTPHYCX", "**", 0, False, "V")
             .Tables("ICTPHYCX").Columns("TOTAL_COUNT").DataType = GetType(System.Int64)
             .Tables("ICTPHYCX").Columns("UNIT_VARIANCE").DataType = GetType(System.Int64)
@@ -1418,23 +1421,24 @@ Public Class ICFPHYC1
     Private Sub grdICTPHYCX_InitializeRow(sender As Object, e As UltraWinGrid.InitializeRowEventArgs) Handles grdICTPHYCX.InitializeRow
         If e.Row.IsDataRow Then
             If e.Row.Cells("VERIFIED_OPER").Value & "" = "" Then
-                If (IsDBNull(e.Row.Cells("VERIFIED_DATE").Value)) Then
-                    e.Row.Cells("VERIFIED_OPER").Appearance = grdAttention_app
+                'If (IsDBNull(e.Row.Cells("VERIFIED_DATE").Value)) Then
+                '    e.Row.Cells("VERIFIED_OPER").Appearance = grdAttention_app
+                'Else
+                'ASCMAIN1.sql = "SELECT CASE WHEN REQUESTED IS NULL THEN '2' WHEN REQUESTED < LAST_DATE THEN '1' ELSE '0' END FROM ICTPHYC1 C1
+                '                    LEFT JOIN (SELECT LOCATION_CODE, MAX(REQUESTED) REQUESTED FROM ICTPHYC1_RECNT GROUP BY LOCATION_CODE) R1 ON C1.LOCATION_CODE = R1.LOCATION_CODE
+                '                    WHERE C1.WHSE_CODE = :PARM1 AND C1.LOCATION_CODE = :PARM2"
+                '    Dim open As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {WHSE_CODE, e.Row.Cells("LOCATION_CODE").Value})
+                If e.Row.Cells("OPEN_STATUS").Value & "" = "0" Then
+                    e.Row.Cells("VERIFIED_OPER").Appearance = grdOpenCnt_app
+                    e.Row.Cells("VERIFIED_OPER").ToolTipText = "Waiting for Count"
+                ElseIf e.Row.Cells("OPEN_STATUS").Value & "" = "1" Then
+                    e.Row.Cells("VERIFIED_OPER").Appearance = grdOpenVerify_app
+                    e.Row.Cells("VERIFIED_OPER").ToolTipText = "Waiting for Verify"
                 Else
-                    ASCMAIN1.sql = "SELECT CASE WHEN REQUESTED < LAST_DATE THEN '1' ELSE '0' END FROM ICTPHYC1 C1
-                                    LEFT JOIN (SELECT LOCATION_CODE, MAX(REQUESTED) REQUESTED FROM ICTPHYC1_RECNT GROUP BY LOCATION_CODE) R1 ON C1.LOCATION_CODE = R1.LOCATION_CODE
-                                    WHERE C1.WHSE_CODE = :PARM1 AND C1.LOCATION_CODE = :PARM2"
-                    Dim open As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {WHSE_CODE, e.Row.Cells("LOCATION_CODE").Value})
-                    If open = "0" Then
-                        e.Row.Cells("VERIFIED_OPER").Appearance = grdOpenCnt_app
-                        e.Row.Cells("VERIFIED_OPER").ToolTipText = "Waiting for Count"
-                    Else
-                        e.Row.Cells("VERIFIED_OPER").Appearance = grdOpenVerify_app
-                        e.Row.Cells("VERIFIED_OPER").ToolTipText = "Waiting for Verify"
-                    End If
-
-
+                    e.Row.Cells("VERIFIED_OPER").Appearance = grdAttention_app
+                    e.Row.Cells("VERIFIED_OPER").ToolTipText = "Not Verified"
                 End If
+                'End If
             End If
             If Not (IsDBNull(e.Row.Cells("LAST_DATE").Value)) AndAlso e.Row.Cells("LAST_ACTIVITY").Value > e.Row.Cells("LAST_DATE").Value Then
                     e.Row.Cells("LOCATION_CODE").Appearance = grdWARNING_app
