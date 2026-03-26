@@ -906,7 +906,7 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl6
         '
         Me.UltraExplorerBarContainerControl6.Controls.Add(Me.Panel6)
-        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 57)
+        Me.UltraExplorerBarContainerControl6.Location = New System.Drawing.Point(13, 643)
         Me.UltraExplorerBarContainerControl6.Name = "UltraExplorerBarContainerControl6"
         Me.UltraExplorerBarContainerControl6.Size = New System.Drawing.Size(172, 150)
         Me.UltraExplorerBarContainerControl6.TabIndex = 5
@@ -984,10 +984,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl5
         '
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel5)
-        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(13, 251)
+        Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
         Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 180)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
+        Me.UltraExplorerBarContainerControl5.Visible = False
         '
         'Panel5
         '
@@ -1131,10 +1132,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl1
         '
         Me.UltraExplorerBarContainerControl1.Controls.Add(Me.grpBatch)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 475)
+        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
         Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(172, 120)
         Me.UltraExplorerBarContainerControl1.TabIndex = 0
+        Me.UltraExplorerBarContainerControl1.Visible = False
         '
         'grpBatch
         '
@@ -1229,10 +1231,11 @@ Partial Class SOFORDRO
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpFindCustomer)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 639)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(172, 164)
         Me.UltraExplorerBarContainerControl2.TabIndex = 1
+        Me.UltraExplorerBarContainerControl2.Visible = False
         '
         'grpFindCustomer
         '

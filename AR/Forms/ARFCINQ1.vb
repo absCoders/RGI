@@ -140,6 +140,11 @@ Public Class ARFCINQ1
                 ROWs("ARTPARM1"),
                 Report_date, True)
 
+                Dim ORDRBY As String = ""
+                If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    ORDRBY = " ORDER BY ARTOPEN1.INV_DUE_DATE"
+                End If
+
                 ASCMAIN1.sql = "Select ARTOPEN1.* " & TAC.ARCMAIN2.DAYS_AND_BUCKETS _
                 & ", DECODE (ARTOPEN1.INV_TYPE,'B',ARTOPEN1.INV_BALANCE,0) CHARGEBACKS " & vbCrLf _
                 & ", CASE WHEN ARTOPEN1.INV_TYPE = 'C' OR ARTOPEN1.INV_TYPE = 'O' THEN ARTOPEN1.INV_BALANCE ELSE 0 END CREDITS" & vbCrLf _
@@ -147,7 +152,9 @@ Public Class ARFCINQ1
                 & " where ARTOPEN1.INV_BALANCE <> 0" & vbCrLf _
                 & " and ARTCUSTX.CUST_CODE = ARTOPEN1.CUST_CODE" & vbCrLf _
                 & " and TATTERM1.TERM_CODE = ARTOPEN1.TERM_CODE" & vbCrLf _
-                & " and ARTCUSTX.CUST_CODE = :PARM1"
+                & " and ARTCUSTX.CUST_CODE = :PARM1" _
+                & ORDRBY
+
                 Create_TDA(dst.Tables.Add, "ARTSTMTR", "**", 0, False, "V", 3)
                 Dim ADD_SQL As String = "(" & ASCMAIN1.sql & ")"
 
@@ -3755,7 +3762,12 @@ Public Class ARFCINQ1
         For Each rowARTOPEN1 As DataRow In dst.Tables("ARTOPEN1").Select("INV_BALANCE = 0")
             rowARTOPEN1.Item("AGE") = DBNull.Value
         Next
-        Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdARTOPEN1, "INV_DUE_DATE")
+        Else
+            Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
         Age_Open_Items_by_Date()
@@ -3786,8 +3798,12 @@ Public Class ARFCINQ1
                 dst.Tables("ARTOPEN1").Rows.Add(rowARTOPEN1)
             End If
         Next
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdARTOPEN1, "INV_DUE_DATE")
+        Else
+            Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        End If
 
-        Sort_grdColumns(grdARTOPEN1, "INV_DATE")
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
         Age_Open_Items_by_Date()
@@ -3820,7 +3836,12 @@ Public Class ARFCINQ1
             End If
         Next
 
-        Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdARTOPEN1, "INV_DUE_DATE")
+        Else
+            Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
         Age_Open_Items_by_Date()
