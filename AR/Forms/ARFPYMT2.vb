@@ -1185,6 +1185,8 @@ Public Class ARFPYMT2
                 End If
 
             Case "Process Shopify"
+                MsgBox("Processing a Shopify Payment is temporarily unavailable", MsgBoxStyle.OkOnly, "")
+                Exit Sub
 
                 If grdARTSHOPX.Selected.Rows.Count = 0 Then
                     If grdARTSHOPX.ActiveRow IsNot Nothing Then
@@ -1560,6 +1562,8 @@ Public Class ARFPYMT2
                 End If
             End With
         End If
+
+        btnDGJ.Visible = ASCMAIN1.Running_in_VS
 
         splARTPYMT2.Panel2Collapsed = (Not ScreenMode) Or (EntryMode <> "S")
         tabARTPYMT3.Tabs("EDI (820)").Visible = (ScreenMode AndAlso (edi_820_in_process Or (EntryMode = "V" And EDI_DOC_SEQ_NO <> "")))
@@ -2059,6 +2063,16 @@ Public Class ARFPYMT2
 
                 rowARTPYMT5.AcceptChanges()
                 rowARTPYMT5.SetAdded()
+
+                If shopify_in_process And rowARTPYMT5.Item("CHARGEBACK_IND") & "" = "1" Then
+                    Dim GIFT_CARD_ID As String = rowARTPYMT5.Item("CUST_REFERENCE") & ""
+                    Dim INV_NO_OA As String = rowARTPYMT5.Item("CHARGEBACK_NO") & ""
+                    If GIFT_CARD_ID <> "" Then
+                        ASCMAIN1.sql = "Update SOTGIFTC set INV_NO_OA  = '" & INV_NO_OA & "' WHERE GIFT_CARD_ID = '" & GIFT_CARD_ID & "'"
+                        ASCDATA1.ExecuteSQL()
+                    End If
+                End If
+
             Next
 
             Update_Record_TDA("ARTPYMT3")
@@ -3488,8 +3502,10 @@ Public Class ARFPYMT2
             ORDR_TYPE_CODE = ROWs("ARTPARM1").Item("AR_PARM_ORDR_TYPE_CB")
         End If
         rowSOTTYPE1 = dst.Tables("SOTTYPE1").Rows.Find(ORDR_TYPE_CODE)
-
         Dim POST_CODE As String = rowSOTTYPE1.Item("POST_CODE")
+        If shopify_in_process Then
+            POST_CODE = "GC"
+        End If
         Dim rowARTPOST1 As DataRow = dst.Tables("ARTPOST1").Rows.Find(POST_CODE)
 
         rowARTOPEN1.Item("SEG2_CODE") = rowARTPOST1.Item("SEG2_CODE")
@@ -6532,6 +6548,9 @@ Optional ByVal key As String = "") As Object
             End If
             rowSOTTYPE1 = dst.Tables("SOTTYPE1").Rows.Find(ORDR_TYPE_CODE)
             Dim POST_CODE As String = rowSOTTYPE1.Item("POST_CODE")
+            If shopify_in_process Then
+                POST_CODE = "GC"
+            End If
             Dim rowARTPOST1 As DataRow = dst.Tables("ARTPOST1").Rows.Find(POST_CODE)
 
             .Item("ACCT_CODE") = rowARTPOST1.Item("ACCT_CODE")
@@ -7132,10 +7151,18 @@ Optional ByVal key As String = "") As Object
                     Dim AMT_GROSS As Decimal = Val(rowARTSHOP2.Item("AMOUNT") & "")
                     Dim AMT_DISCOUNT As Decimal = Val(rowARTSHOP2.Item("FEE") & "")
 
-                    FEE_TOTAL = FEE_TOTAL + AMT_DISCOUNT
-                    INV_PMT = AMT_GROSS
+                    ' only add fees with Inv_no
                     Dim SHOPIFY_INVOICE_NO As String = rowARTSHOP2.Item("INV_NO") & ""
                     ASCMAIN1.Progress("-", SHOPIFY_INVOICE_NO)
+
+                    If TRANS_TYPE = "charge" And SHOPIFY_INVOICE_NO = "" Then
+                    Else
+                        FEE_TOTAL = FEE_TOTAL + AMT_DISCOUNT
+                    End If
+
+                    '              FEE_TOTAL = FEE_TOTAL + AMT_DISCOUNT
+                    INV_PMT = AMT_GROSS
+
 
                     Dim ORDR_WEB_ID As String = rowARTSHOP2.Item("ORDR_WEB_ID") & ""
                     Dim DDD As String = ""
@@ -7197,55 +7224,131 @@ Optional ByVal key As String = "") As Object
                     '  If rowARTPYMT3s.Length = 0 Or rowARTPYMT3s.Length <> 1 Then Stop
 
                     If rowARTPYMT3s.Length = 0 Then
-                        Dim Chargeback As String = "0"
-                        Dim GL_COMMENT As String = ""
-                        Dim SHOP_REASON_CODE As String = ""
-                        ctrShop2_nogo = ctrShop2_nogo + 1
-                        'Stop ' need to review amt_gross vs inv_pmt, and cust_code_so
+                        Dim GIFTCARD As Boolean = False
+                        If TRANS_TYPE = "charge" And SHOPIFY_INVOICE_NO = "" Then
 
-                        ' why are we not using Record_Chargeback?
+                            ASCMAIN1.sql = "Select * from SOTGIFTC WHERE ORDER_ID = '" & ORDR_WEB_ID & "'"
+                            Dim GCCount As Integer = ASCDATA1.GetDataTable.Rows.Count
 
-                        If rowARTSHOP2.Item("TRANS_TYPE") & "" = "debit" Then
-                            Chargeback = "0"
-                            SHOP_REASON_CODE = "SHOPD"
-                            '    GL_COMMENT = 
+                            For Each rowSOTGIFTC As DataRow In ASCDATA1.GetDataTable.Rows
+                                Dim GC_AMOUNT As Decimal = rowSOTGIFTC.Item("INITIAL_VALUE")
+                                Dim GC_ID As String = rowSOTGIFTC.Item("GIFT_CARD_ID") & ""
+                                Dim GC_DESC As String = "GIFT CARD#" & rowSOTGIFTC.Item("GIFT_CARD_ID") & ""
+
+
+                                '                      PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
+                                Record_Chargeback(PYMT_BATCH_DLNO_ctr, "ONACT", GC_AMOUNT, GC_ID, ORDR_WEB_ID, GC_DESC)
+                                GIFTCARD = True
+
+
+
+                                '    PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
+                                T3 = T3 + INV_PMT
+
+
+                                ' IF WE DECIDE TO INCLUDE ALL FEES IN ONE FEE DEDUCTION REMARK OUT THE WHOLE IF AMT_DISCOUNT <> 0 SECTION 
+                                ' AND Un Remark line 7223 to capture fee on that line
+                                Dim FEE_GC As Decimal = AMT_DISCOUNT / GCCount
+
+                                If FEE_GC <> 0 Then
+                                    'record Fee for Giftcard
+
+                                    ctrShop2_matched = +1
+
+                                    PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
+                                    Dim rowARTPYMT5 As DataRow = dst.Tables("ARTPYMT5").NewRow
+                                    With rowARTPYMT5
+                                        .Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                        .Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                        .Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO_ctr
+                                        .Item("REASON_CODE") = "GIFC"
+                                        rowARTREAS1 = dst.Tables("ARTREAS1").Rows.Find(.Item("REASON_CODE"))
+                                        If rowARTREAS1 IsNot Nothing Then .Item("REASON_DESC") = rowARTREAS1.Item("REASON_DESC")
+                                        .Item("ACCT_CODE") = DBNull.Value
+                                        .Item("GL_DIST_AMT") = FEE_GC * CURR_EXCH_RATE
+                                        .Item("GL_DIST_COMMENT") = GC_DESC
+                                        .Item("CHARGEBACK_IND") = "0"
+                                        .Item("CHARGEBACK_NO") = DBNull.Value
+                                        .Item("CUST_REFERENCE") = GC_ID
+
+                                        ''If rowEDTXREF2 IsNot Nothing Then
+                                        ''    .Item("CUST_CODE_SO") = rowEDTXREF2.Item("CUST_CODE_SO")
+                                        ''End If
+                                        .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
+                                        .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
+                                        .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
+                                        .Item("INV_TYPE_CB") = DBNull.Value
+                                        .Item("OUR_REFERENCE") = "Shopify GC Fee"
+                                        .Item("GL_DIST_AMT_CURR") = FEE_GC * CURR_EXCH_RATE
+                                        .Item("TRANSACTION_LEGEND") = "DR (Expense)"
+                                    End With
+                                    dst.Tables("ARTPYMT5").Rows.Add(rowARTPYMT5)
+
+                                    T3 = T3 + FEE_GC
+
+                                End If
+
+
+                            Next
+
+                        Else
                         End If
 
-                        If rowARTSHOP2.Item("TRANS_TYPE") & "" = "refund" Then
-                            Chargeback = "0"
-                            SHOP_REASON_CODE = "SHOPRE"
-                            '    GL_COMMENT = 
+                        If GIFTCARD Then
+                        Else
+
+                            Dim Chargeback As String = "0"
+                            Dim GL_COMMENT As String = ""
+                            Dim SHOP_REASON_CODE As String = ""
+                            ctrShop2_nogo = ctrShop2_nogo + 1
+                            'Stop ' need to review amt_gross vs inv_pmt, and cust_code_so
+
+                            ' why are we not using Record_Chargeback?
+
+                            If rowARTSHOP2.Item("TRANS_TYPE") & "" = "debit" Then
+                                Chargeback = "0"
+                                SHOP_REASON_CODE = "SHOPD"
+                                '    GL_COMMENT = 
+                            End If
+
+                            If rowARTSHOP2.Item("TRANS_TYPE") & "" = "refund" Then
+                                Chargeback = "0"
+                                SHOP_REASON_CODE = "SHOPRE"
+                                '    GL_COMMENT = 
+                            End If
+
+                            PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
+                            Dim rowARTPYMT5 As DataRow = dst.Tables("ARTPYMT5").NewRow
+                            With rowARTPYMT5
+                                .Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                .Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                .Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO_ctr
+                                .Item("REASON_CODE") = SHOP_REASON_CODE ' rowSOTTYPE1_OA.Item("REASON_CODE") ' ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_OA")
+                                rowARTREAS1 = dst.Tables("ARTREAS1").Rows.Find(.Item("REASON_CODE"))
+                                If rowARTREAS1 IsNot Nothing Then .Item("REASON_DESC") = rowARTREAS1.Item("REASON_DESC")
+                                .Item("ACCT_CODE") = DBNull.Value
+                                .Item("GL_DIST_AMT") = INV_PMT * CURR_EXCH_RATE * -1
+                                .Item("GL_DIST_COMMENT") = rowARTSHOP2.Item("TRANS_TYPE") & ""
+                                .Item("CHARGEBACK_IND") = Chargeback
+                                .Item("CHARGEBACK_NO") = DBNull.Value
+                                .Item("CUST_REFERENCE") = rowARTSHOP2.Item("TRANS_TYPE") & ""
+
+                                ''If rowEDTXREF2 IsNot Nothing Then
+                                ''    .Item("CUST_CODE_SO") = rowEDTXREF2.Item("CUST_CODE_SO")
+                                ''End If
+                                .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
+                                .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
+                                .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
+                                .Item("INV_TYPE_CB") = DBNull.Value
+                                .Item("OUR_REFERENCE") = SHOPIFY_INVOICE_NO
+                                .Item("GL_DIST_AMT_CURR") = INV_PMT * -1
+                            End With
+                            dst.Tables("ARTPYMT5").Rows.Add(rowARTPYMT5)
+
+                            T3 = T3 + INV_PMT
                         End If
+                        GIFTCARD = False
 
-                        PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
-                        Dim rowARTPYMT5 As DataRow = dst.Tables("ARTPYMT5").NewRow
-                        With rowARTPYMT5
-                            .Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
-                            .Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
-                            .Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO_ctr
-                            .Item("REASON_CODE") = SHOP_REASON_CODE ' rowSOTTYPE1_OA.Item("REASON_CODE") ' ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_OA")
-                            rowARTREAS1 = dst.Tables("ARTREAS1").Rows.Find(.Item("REASON_CODE"))
-                            If rowARTREAS1 IsNot Nothing Then .Item("REASON_DESC") = rowARTREAS1.Item("REASON_DESC")
-                            .Item("ACCT_CODE") = DBNull.Value
-                            .Item("GL_DIST_AMT") = INV_PMT * CURR_EXCH_RATE * -1
-                            .Item("GL_DIST_COMMENT") = rowARTSHOP2.Item("TRANS_TYPE") & ""
-                            .Item("CHARGEBACK_IND") = Chargeback
-                            .Item("CHARGEBACK_NO") = DBNull.Value
-                            .Item("CUST_REFERENCE") = rowARTSHOP2.Item("TRANS_TYPE") & ""
-
-                            ''If rowEDTXREF2 IsNot Nothing Then
-                            ''    .Item("CUST_CODE_SO") = rowEDTXREF2.Item("CUST_CODE_SO")
-                            ''End If
-                            .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
-                            .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
-                            .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
-                            .Item("INV_TYPE_CB") = DBNull.Value
-                            .Item("OUR_REFERENCE") = SHOPIFY_INVOICE_NO
-                            .Item("GL_DIST_AMT_CURR") = INV_PMT * -1
-                        End With
-                        dst.Tables("ARTPYMT5").Rows.Add(rowARTPYMT5)
-
-                        T3 = T3 + INV_PMT
 
                     Else
 
@@ -7255,7 +7358,7 @@ Optional ByVal key As String = "") As Object
 
                             With rowARTPYMT3
                                 Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
-
+                                Dim INV_MISC_CHG_CURR As Decimal = Val(.Item("INV_MISC_CHG_CURR") & "")
                                 Dim INV_PMT_invoice As Decimal = INV_PMT
                                 If rowARTPYMT3s.Length > 1 Then
                                     INV_PMT_invoice = INV_BALANCE
@@ -7268,15 +7371,27 @@ Optional ByVal key As String = "") As Object
                                 If CUST_CODE = "KOHLS" Then
                                     INV_WRITE_OFF = AMT_DISCOUNT
                                 End If
+                                Dim GOOD_RECORD As Boolean = True
+                                If TRANS_TYPE = "refund" And INV_BALANCE - INV_PMT_invoice <> 0 Then
+                                    If INV_BALANCE - INV_PMT_invoice - INV_MISC_CHG_CURR <> 0 Then
+                                        MsgBox("This Refund for Invoice No " & rowARTPYMT3.Item("INV_NUM") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
+                                        GOOD_RECORD = False
+                                    Else
+                                        MsgBox("Payment Applied for this Refund Causes an Open Balance. Invoice No " & rowARTPYMT3.Item("INV_NUM") & " has an open Balance Amount = to the Invoice Misc Charge", MsgBoxStyle.OkOnly, "This will Leave and Open Balance for the AR Item")
+                                        GOOD_RECORD = True
+                                    End If
+                                End If
 
-                                .Item("INV_PMT") = Val(.Item("INV_PMT") & "") + INV_PMT_invoice * CURR_EXCH_RATE
-                                .Item("INV_DISC_TAKEN") = INV_DISC_TAKEN
-                                .Item("INV_WRITE_OFF") = INV_WRITE_OFF
-                                .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - (INV_PMT_invoice + INV_WRITE_OFF) * CURR_EXCH_RATE
-                                .Item("INV_PMT_CURR") = Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice
-                                .Item("INV_DISC_TAKEN_CURR") = INV_DISC_TAKEN
-                                .Item("INV_WRITE_OFF_CURR") = INV_WRITE_OFF
-                                .Item("INV_BALANCE_NEW_CURR") = Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_WRITE_OFF)
+                                If GOOD_RECORD Then
+                                    .Item("INV_PMT") = Val(.Item("INV_PMT") & "") + INV_PMT_invoice * CURR_EXCH_RATE
+                                    .Item("INV_DISC_TAKEN") = INV_DISC_TAKEN
+                                    .Item("INV_WRITE_OFF") = INV_WRITE_OFF
+                                    .Item("INV_BALANCE_NEW") = Val(.Item("INV_BALANCE_NEW") & "") - (INV_PMT_invoice + INV_WRITE_OFF) * CURR_EXCH_RATE
+                                    .Item("INV_PMT_CURR") = Val(.Item("INV_PMT_CURR") & "") + INV_PMT_invoice
+                                    .Item("INV_DISC_TAKEN_CURR") = INV_DISC_TAKEN
+                                    .Item("INV_WRITE_OFF_CURR") = INV_WRITE_OFF
+                                    .Item("INV_BALANCE_NEW_CURR") = Val(.Item("INV_BALANCE_NEW_CURR") & "") - (INV_PMT_invoice + INV_WRITE_OFF)
+                                End If
 
 
                             End With
@@ -7322,7 +7437,7 @@ Optional ByVal key As String = "") As Object
                     .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
                     .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
                     .Item("INV_TYPE_CB") = DBNull.Value
-                    .Item("OUR_REFERENCE") = "Fee"
+                    .Item("OUR_REFERENCE") = "Shopify Fee"
                     .Item("GL_DIST_AMT_CURR") = FEE_TOTAL
                     .Item("TRANSACTION_LEGEND") = "DR (Expense)"
                 End With
@@ -7492,7 +7607,7 @@ Optional ByVal key As String = "") As Object
                     r = 1 ' NO HEADING
                     Do While oSheet.Cells(r, 0).Value & "" <> ""
 
-                        Dim GLOBAL_INVOICE_NO As String = Trim(oSheet.Cells(r, 10).Value & "")
+                        Dim GLOBAL_INVOICE_NO As String = Trim(oSheet.Cells(r, 1).Value & "")
                         Dim INV_CUST_PO As String = Trim(oSheet.Cells(r, 1).Value & "")
                         INV_CUST_PO = INV_CUST_PO.Substring(1)
 
@@ -7514,10 +7629,16 @@ Optional ByVal key As String = "") As Object
                         RET_SHP_CHARGES_MERCH = RET_SHP_CHARGES_MERCH + Val(Trim(oSheet.Cells(r, 21).Value & "")) ' NOT USED YET
                         GIFT_CARD = GIFT_CARD + Val(Trim(oSheet.Cells(r, 16).Value & ""))
 
-                        Dim TRANS_TYPE As String = ""
+                        Dim TRANS_TYPE As String = Trim(oSheet.Cells(r, 5).Value & "")
 
                         Dim AMT_NET_DUE As Decimal = Math.Round(Val(Trim(oSheet.Cells(r, 10).Value & "")), 2)
-                        Dim AMT_GROSS As Decimal = Val(Trim(oSheet.Cells(r, 11).Value & ""))
+
+                        Dim AMT_GROSS As Decimal = 0
+                        If TRANS_TYPE = "Refund" Then
+                            AMT_GROSS = Val(Trim(oSheet.Cells(r, 10).Value & ""))
+                        Else
+                            AMT_GROSS = Val(Trim(oSheet.Cells(r, 11).Value & ""))
+                        End If
 
 
                         '   Dim AMT_DISCOUNT As Decimal = Val(rowARTSHOP2.Item("FEE") & "")
@@ -7528,7 +7649,7 @@ Optional ByVal key As String = "") As Object
 
                         Dim rowARTPYMT3s() As DataRow
 
-                        Dim SQLC As String = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "'"
+                        Dim SQLC As String = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "' and INV_BALANCE = '" & INV_PMT & "'"
                         rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
 
                         If rowARTPYMT3s.Length = 0 Then
@@ -7913,6 +8034,10 @@ Optional ByVal key As String = "") As Object
 
         Return DDD
     End Function
+
+    Private Sub btnABSonly_Click(sender As Object, e As EventArgs)
+
+    End Sub
 
     'Private Sub OldWayfairApplyXLS()
     '    'OLD Wayfair Code.
