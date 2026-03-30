@@ -234,7 +234,19 @@ Public Class WHFSHIP1
 
         End With
 
-        ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1")
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = "SELECT * FROM
+                                    (
+                                    SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1 WHERE PKG_CODE NOT LIKE 'Y%'
+                                    union
+                                    SELECT DISTINCT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGMW
+                                    ) 
+                                    ORDER BY PKG_CODE"
+            ultraComboPackage.DataSource = ASCDATA1.GetDataTable(ASCMAIN1.sql)
+        Else
+            ultraComboPackage.DataSource = ASCDATA1.GetDataTable("SELECT PKG_CODE, PKG_DESC, PKG_L || ' x ' ||  PKG_W || ' x ' || PKG_H PKG_D FROM WHTPKGM1")
+        End If
+
         ultraComboPackage.ValueMember = "PKG_CODE"
         ultraComboPackage.DisplayMember = "PKG_DESC"
         grdWHTSHPC2.DisplayLayout.Bands(0).Columns("PKG_CODE").EditorComponent = ultraComboPackage
