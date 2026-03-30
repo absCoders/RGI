@@ -30,6 +30,11 @@ Public Class ARRSTMTR
         ROWs("ARTPARM1"),
         PRD_END_DATE, True)
 
+        Dim ORDRBY As String = ""
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            ORDRBY = " ORDER BY ARTOPEN1.INV_DUE_DATE"
+        End If
+
         ASCMAIN1.sql = "Select ARTOPEN1.* " & TAC.ARCMAIN2.DAYS_AND_BUCKETS _
         & ", DECODE (ARTOPEN1.INV_TYPE,'B',ARTOPEN1.INV_BALANCE,0) CHARGEBACKS " & vbCrLf _
         & ", CASE WHEN ARTOPEN1.INV_TYPE = 'C' OR ARTOPEN1.INV_TYPE = 'O' THEN ARTOPEN1.INV_BALANCE ELSE 0 END CREDITS" & vbCrLf _
@@ -40,6 +45,8 @@ Public Class ARRSTMTR
 
         ASCMAIN1.sql &= SQL_in("CUST_CODE", "ARTCUSTX.CUST_CODE")
         ASCMAIN1.sql &= SQL_in("SREP_CODE", "ARTCUSTX.SREP_CODE")
+
+        ASCMAIN1.sql &= ORDRBY
 
         ARTSTMTR = ASCMAIN1.Temp_Table
         Create_TDA(dst.Tables.Add, "ARTSTMTR", "**", 0, False, "", 3)

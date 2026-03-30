@@ -6731,8 +6731,8 @@ Public Class SOFORDR1
                     'I think the code above shouldn't overwrite the values calculated in the report class,
                     'there is lots of logic specific to proforma invoices, all that work gets overwritten.
                     'this is here because tariffs are calculated into INV_MISC_CHG, these need to be included on BTB invoices except 'FE'
-                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT") = rowSOTINVH1.Item("INV_SALES") + rowSOTINVH1.Item("INV_MISC_CHG")
-                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = rowSOTINVH1.Item("INV_SALES_CURR") + rowSOTINVH1.Item("INV_MISC_CHG_CURR")
+                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT") = rowSOTINVH1.Item("INV_SALES") + Val(rowSOTINVH1.Item("INV_MISC_CHG") & "")
+                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = rowSOTINVH1.Item("INV_SALES_CURR") + Val(rowSOTINVH1.Item("INV_MISC_CHG_CURR") & "")
                 End If
 
                 If rowSOTINVH1.Item("SHIP_BOL_NO") & "" = "" Then

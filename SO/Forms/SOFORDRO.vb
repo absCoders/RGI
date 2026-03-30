@@ -2678,6 +2678,8 @@ Public Class SOFORDRO
         Select Case optShowOrders.Value
             Case "M"
                 SQLD = String.Format(" ORDR_DATE >= '{0}'", Format(Now.AddMonths(-1), "dd-MMM-yy"))
+            Case "3"
+                SQLD = String.Format(" ORDR_DATE >= '{0}'", Format(Now.AddMonths(-3), "dd-MMM-yy"))
             Case "H"
                 SQLD = String.Format(" ORDR_DATE >= '{0}'", Format(Now.AddMonths(-6), "dd-MMM-yy"))
             Case "Y"

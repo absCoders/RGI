@@ -2396,55 +2396,55 @@ Public Class SOFXFER2
         'VersionInfo.AppendLine(VersionNo)
         'VersionInfo.AppendLine("* Change Order Printing To Show Sub-UPCs.")
 
-        VersionNo = "24.02.15.03"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* New Attribute Excel Feature Added to SSBA Screen.")
+        'VersionNo = "24.02.15.03"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* New Attribute Excel Feature Added to SSBA Screen.")
 
-        VersionNo = "24.03.06.02"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* New Order Entry Excel Features.")
+        'VersionNo = "24.03.06.02"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* New Order Entry Excel Features.")
 
-        VersionNo = "24.05.03.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* New Feature to Pull Images From Web.")
+        'VersionNo = "24.05.03.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* New Feature to Pull Images From Web.")
 
-        VersionNo = "24.05.30.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Changes to Web Images to Optionaly Use Only Active/Disc > 0.")
+        'VersionNo = "24.05.30.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Changes to Web Images to Optionaly Use Only Active/Disc > 0.")
 
-        VersionNo = "24.06.27.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change To Search By Attribute For Sorting And Discount Pricing When Printing.")
+        'VersionNo = "24.06.27.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change To Search By Attribute For Sorting And Discount Pricing When Printing.")
 
-        VersionNo = "24.07.25.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Change To Customer Matrix to show all orders.")
+        'VersionNo = "24.07.25.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Change To Customer Matrix to show all orders.")
 
-        VersionNo = "24.09.06.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Fix Issue With Search By Attribute To Ignore ECommerce When Running On Laptops.")
+        'VersionNo = "24.09.06.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Fix Issue With Search By Attribute To Ignore ECommerce When Running On Laptops.")
 
-        VersionNo = "24.10.24.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* New version to solve newtonsoft issues and have new full distribution.")
+        'VersionNo = "24.10.24.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* New version to solve newtonsoft issues and have new full distribution.")
 
-        VersionNo = "24.11.26.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Hang Tag Changes and Tariff Warnings.")
+        'VersionNo = "24.11.26.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Hang Tag Changes and Tariff Warnings.")
 
-        VersionNo = "24.12.08.01"
-        VersionInfo.AppendLine("")
-        VersionInfo.AppendLine(VersionNo)
-        VersionInfo.AppendLine("* Option To Show / Hide Discontinued Colors In Order Entry.")
+        'VersionNo = "24.12.08.01"
+        'VersionInfo.AppendLine("")
+        'VersionInfo.AppendLine(VersionNo)
+        'VersionInfo.AppendLine("* Option To Show / Hide Discontinued Colors In Order Entry.")
 
         VersionNo = "25.01.22.01"
         VersionInfo.AppendLine("")
@@ -2501,6 +2501,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine("")
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Changes To Order Excel.")
+
+        VersionNo = "26.03.26.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Add 3 Month Option To Orders Filter.")
 
         lblVersionNo.Text = VersionNo
     End Sub

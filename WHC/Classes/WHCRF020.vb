@@ -139,7 +139,9 @@
                                 & " where TICKET_NO = '" & row1.Item("TICKET_NO") & "'" & vbCrLf
                                 Fill_Records("ICTPHYC2", "", False, ASCMAIN1.sql)
                             Next
-                            TICKET_LNO = dst.Tables("ICTPHYC2").Compute("MAX(TICKET_LNO)", "TICKET_NO = '" & TICKET_NO1 & "'")
+                            Dim maxLnoObj As Object = dst.Tables("ICTPHYC2").Compute("MAX(TICKET_LNO)", "TICKET_NO = '" & TICKET_NO1 & "'")
+                            TICKET_LNO = If(IsDBNull(maxLnoObj), 0, CInt(maxLnoObj))
+                            'TICKET_LNO = dst.Tables("ICTPHYC2").Compute("MAX(TICKET_LNO)", "TICKET_NO = '" & TICKET_NO1 & "'")
                         End If
                     End If
 

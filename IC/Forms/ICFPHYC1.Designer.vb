@@ -74,6 +74,7 @@ Partial Class ICFPHYC1
         Dim UltraGridColumn51 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ABSOLUTE_VARIANCE")
         Dim UltraGridColumn52 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LAST_ACTIVITY")
         Dim UltraGridColumn58 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("SELECTED")
+        Dim UltraGridColumn107 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("OPEN_STATUS")
         Dim Appearance2 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance3 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -127,6 +128,7 @@ Partial Class ICFPHYC1
         Dim UltraGridColumn89 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("BOOK_SCMAX")
         Dim UltraGridColumn90 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VARIANCE")
         Dim UltraGridColumn91 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("VARIANCE_COST")
+        Dim UltraGridColumn106 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("LOCATION_USE")
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance27 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance28 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -648,12 +650,13 @@ Partial Class ICFPHYC1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdICTPHYCX)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(771, 548)
         '
         'grdICTPHYCX
         '
+        Me.grdICTPHYCX.DataMember = Nothing
         Appearance1.BackColor = System.Drawing.SystemColors.Window
         Appearance1.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdICTPHYCX.DisplayLayout.Appearance = Appearance1
@@ -706,7 +709,9 @@ Partial Class ICFPHYC1
         UltraGridColumn58.Header.VisiblePosition = 0
         UltraGridColumn58.Style = Infragistics.Win.UltraWinGrid.ColumnStyle.CheckBox
         UltraGridColumn58.Width = 61
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn1, UltraGridColumn83, UltraGridColumn33, UltraGridColumn41, UltraGridColumn71, UltraGridColumn42, UltraGridColumn72, UltraGridColumn39, UltraGridColumn21, UltraGridColumn64, UltraGridColumn22, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn51, UltraGridColumn52, UltraGridColumn58})
+        UltraGridColumn107.Header.VisiblePosition = 18
+        UltraGridColumn107.Width = 33
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn38, UltraGridColumn1, UltraGridColumn83, UltraGridColumn33, UltraGridColumn41, UltraGridColumn71, UltraGridColumn42, UltraGridColumn72, UltraGridColumn39, UltraGridColumn21, UltraGridColumn64, UltraGridColumn22, UltraGridColumn47, UltraGridColumn48, UltraGridColumn49, UltraGridColumn51, UltraGridColumn52, UltraGridColumn58, UltraGridColumn107})
         Me.grdICTPHYCX.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTPHYCX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance2.TextHAlignAsString = "Left"
@@ -879,7 +884,7 @@ Partial Class ICFPHYC1
         'UltraTabPageControl5
         '
         Me.UltraTabPageControl5.Controls.Add(Me.grdICTPHYCL)
-        Me.UltraTabPageControl5.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl5.Name = "UltraTabPageControl5"
         Me.UltraTabPageControl5.Size = New System.Drawing.Size(771, 548)
         '
@@ -946,7 +951,10 @@ Partial Class ICFPHYC1
         UltraGridColumn91.Header.Caption = "$Variance"
         UltraGridColumn91.Header.VisiblePosition = 18
         UltraGridColumn91.Width = 90
-        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn70, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91})
+        UltraGridColumn106.Header.Caption = "Loc Type"
+        UltraGridColumn106.Header.VisiblePosition = 19
+        UltraGridColumn106.Width = 79
+        UltraGridBand3.Columns.AddRange(New Object() {UltraGridColumn70, UltraGridColumn73, UltraGridColumn74, UltraGridColumn75, UltraGridColumn76, UltraGridColumn77, UltraGridColumn78, UltraGridColumn79, UltraGridColumn80, UltraGridColumn81, UltraGridColumn82, UltraGridColumn84, UltraGridColumn85, UltraGridColumn86, UltraGridColumn87, UltraGridColumn88, UltraGridColumn89, UltraGridColumn90, UltraGridColumn91, UltraGridColumn106})
         Me.grdICTPHYCL.DisplayLayout.BandsSerializer.Add(UltraGridBand3)
         Me.grdICTPHYCL.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance26.TextHAlignAsString = "Left"
