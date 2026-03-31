@@ -5,6 +5,7 @@ Public Class ARRSTMTR
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Get_PARM("ARTPARM1")
+        Get_PARM("ASTPARM1")
 
         Dim rowASTPCTL1 As DataRow = ASCDATA1.GetDataRow("Select * from ASTPCTL1")
         If rowASTPCTL1.Item("PRD_CLOSE_IND") & String.Empty = "1" Then
@@ -119,14 +120,14 @@ Public Class ARRSTMTR
             End If
             rowARTSTMTZ.Item("AR_PARM_DUNS_NO") = .Item("AR_PARM_DUNS_NO") & ""
             rowARTSTMTZ.Item("AR_PARM_FIN_CHG_RATE") = .Item("AR_PARM_FIN_CHG_RATE") & ""
-            rowARTSTMTZ.Item("ADDRESS_LINE") = ROWs("ARTPARM1").Item("AS_PARM_INST_ADDR1") _
-                    & IIf(ROWs("ARTPARM1").Item("AS_PARM_INST_ADDR2") & "" <> "", $", {ROWs("ARTPARM1").Item("AS_PARM_INST_ADDR2")}", "") _
+            rowARTSTMTZ.Item("ADDRESS_LINE") = ROWs("ASTPARM1").Item("AS_PARM_INST_ADDR1") _
+                    & IIf(ROWs("ASTPARM1").Item("AS_PARM_INST_ADDR2") & "" <> "", $", {ROWs("ASTPARM1").Item("AS_PARM_INST_ADDR2")}", "") _
                     & Environment.NewLine _
-                    & ROWs("ARTPARM1").Item("AS_PARM_INST_CITY") & ", " & ROWs("ARTPARM1").Item("AS_PARM_INST_STATE") & " " & ROWs("ARTPARM1").Item("AS_PARM_INST_ZIP_CODE") _
+                    & ROWs("ASTPARM1").Item("AS_PARM_INST_CITY") & ", " & ROWs("ASTPARM1").Item("AS_PARM_INST_STATE") & " " & ROWs("ASTPARM1").Item("AS_PARM_INST_ZIP_CODE") _
                     & Environment.NewLine _
-                    & IIf(ROWs("ARTPARM1").Item("AS_PARM_INST_PHONE") & "" <> "" AndAlso ROWs("ARTPARM1").Item("AS_PARM_INST_FAX") & "" <> "", "" _
-                          & "Tel " & ASCMAIN1.FormatTel(ROWs("ARTPARM1").Item("AS_PARM_INST_PHONE") & "") & Environment.NewLine _
-                          & "Fax " & ASCMAIN1.FormatTel(ROWs("ARTPARM1").Item("AS_PARM_INST_FAX") & ""), "")
+                    & IIf(ROWs("ASTPARM1").Item("AS_PARM_INST_PHONE") & "" <> "" AndAlso ROWs("ASTPARM1").Item("AS_PARM_INST_FAX") & "" <> "", "" _
+                          & "Tel " & ASCMAIN1.FormatTel(ROWs("ASTPARM1").Item("AS_PARM_INST_PHONE") & "") & Environment.NewLine _
+                          & "Fax " & ASCMAIN1.FormatTel(ROWs("ASTPARM1").Item("AS_PARM_INST_FAX") & ""), "")
         End With
         rowARTSTMTZ.Item("LOGO") = ASCMAIN1.GetImageData(ASCMAIN1.Folders("Images") & "\ABS\" & ASCMAIN1.DBS_COMPANY & ".PNG")
         rowARTSTMTZ.Item("STMT_DATE") = PRD_END_DATE
