@@ -1586,4 +1586,23 @@ Public Class ARTCUST1
         ViewTaxDoc()
     End Sub
 
+    Public Overrides Function Remote_Control(
+                    ByVal command As String,
+                    Optional ByVal key As String = "") As Object
+
+        Dim return_key As Object = Nothing
+        Application.DoEvents()
+
+        Select Case command
+            Case "Done"
+                'Click_Command("Done")
+
+            Case "View", "Edit"
+                Absx1.txtFor("CUST_CODE").Text = key
+                Click_Command("View")
+        End Select
+
+        Return return_key
+    End Function
+
 End Class
