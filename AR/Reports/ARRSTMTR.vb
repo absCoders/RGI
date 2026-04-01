@@ -14,12 +14,14 @@ Public Class ARRSTMTR
             chkPrintOnlyMailBoth.Checked = False
         End If
 
-        ' 03/13/2026 - Requested by Carmen
+        ' 03/13/2026 - Requested by Carmen and Rita
         If ASCMAIN1.CLIENT = "RGI" Then
             chkPrintOnlyMailBoth.Checked = True
             chkNoInternational.Checked = True
             chkSuppress.Checked = True
         End If
+
+        chkSuppress.Visible = ASCMAIN1.CLIENT = "RGI"
 
     End Sub
 
