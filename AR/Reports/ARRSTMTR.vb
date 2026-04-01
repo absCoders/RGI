@@ -149,8 +149,8 @@ Public Class ARRSTMTR
         End If
 
         Dim recordSelectioFormula As String = String.Empty
-        If chkSuppress.Checked Then
-            recordSelectioFormula = "{@DUE_NOW} > 0"
+        If chkSuppress.Checked AndAlso ASCMAIN1.CLIENT = "RGI" Then
+            recordSelectioFormula = "{@TOTAL_BALANCE} > 0"
         End If
 
         Generate_Report(RPT, , SUBT, recordSelectioFormula)
