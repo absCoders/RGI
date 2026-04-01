@@ -300,8 +300,6 @@ Public Class TACMAIN1
                     Else
                         .Open()
                     End If
-
-
                 End With
 
             Catch ex As Exception
@@ -880,7 +878,7 @@ Public Class TACMAIN1
         & rowASTUSER1_EMAIL_FROM.Item("USER_EMAIL") & vbCrLf
 
         ' 03/19/2026 - Change requested by Andy via Mario - AUTOINV
-        If ASCMAIN1.CLIENT = "RGI" AndAlso (EMAIL_KEY = "CREDIT" OrElse EMAIL_KEY = "AUTOINV") Then
+        If ASCMAIN1.CLIENT = "RGI" AndAlso (EMAIL_KEY = "CREDIT" OrElse EMAIL_KEY = "AUTOINV" OrElse EMAIL_KEY = "AUTOSTMT") Then
             USER_SIGNATURE = ""
         End If
 

@@ -49,6 +49,8 @@ Partial Class ARRSTMTR
         Dim Appearance25 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance26 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Me.chkPrintOnlyMailBoth = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.chkNoInternational = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.chkSuppress = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -81,6 +83,8 @@ Partial Class ARRSTMTR
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkPrintOnlyMailBoth, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkNoInternational, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkSuppress, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -99,6 +103,8 @@ Partial Class ARRSTMTR
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkSuppress)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkNoInternational)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkPrintOnlyMailBoth)
         '
         'grdASTRECAP
@@ -193,6 +199,10 @@ Partial Class ARRSTMTR
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
+        'tabDataExports
+        '
+        Me.tabDataExports.TabPageMargins.ForceSerialization = True
+        '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
@@ -273,6 +283,24 @@ Partial Class ARRSTMTR
         Me.chkPrintOnlyMailBoth.TabIndex = 8
         Me.chkPrintOnlyMailBoth.Text = "Print Only customers whose Statement Setting is set to Mail or Both."
         '
+        'chkNoInternational
+        '
+        Me.Absx1.SetABSColumnName(Me.chkNoInternational, "CHK_INTL")
+        Me.chkNoInternational.Location = New System.Drawing.Point(10, 56)
+        Me.chkNoInternational.Name = "chkNoInternational"
+        Me.chkNoInternational.Size = New System.Drawing.Size(565, 20)
+        Me.chkNoInternational.TabIndex = 9
+        Me.chkNoInternational.Text = "Do not include International customers. Customer Country not equal to USA"
+        '
+        'chkSuppress
+        '
+        Me.Absx1.SetABSColumnName(Me.chkSuppress, "CHK_Supp")
+        Me.chkSuppress.Location = New System.Drawing.Point(10, 84)
+        Me.chkSuppress.Name = "chkSuppress"
+        Me.chkSuppress.Size = New System.Drawing.Size(270, 20)
+        Me.chkSuppress.TabIndex = 10
+        Me.chkSuppress.Text = "Suppress Zero / Negative Total Due"
+        '
         'ARRSTMTR
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -312,9 +340,13 @@ Partial Class ARRSTMTR
         CType(Me.tblASFBASE1_Schema, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dst, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkPrintOnlyMailBoth, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkNoInternational, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkSuppress, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
 
     Friend WithEvents chkPrintOnlyMailBoth As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents chkSuppress As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents chkNoInternational As UltraWinEditors.UltraCheckEditor
 End Class

@@ -258,6 +258,12 @@
     <Compile Include="Forms\ARFCUSTL.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ARFSTMTE.Designer.vb">
+      <DependentUpon>ARFSTMTE.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ARFSTMTE.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Reports\ARRARAR1.Designer.vb">
       <DependentUpon>ARRARAR1.vb</DependentUpon>
     </Compile>
@@ -492,6 +498,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ARFCUSTL.resx">
       <DependentUpon>ARFCUSTL.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ARFSTMTE.resx">
+      <DependentUpon>ARFSTMTE.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
     <EmbeddedResource Include="Reports\ARRARAR1.resx">
