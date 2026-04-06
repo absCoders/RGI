@@ -47,6 +47,9 @@ Public Class SOFSHIPE
     Private WithEvents pd As New PrintDocument()
     Private AddressValidatedByUser As Boolean = False
 
+    Private EC_PARM_CHG_CODE_PRE As String = String.Empty
+    Private EC_PARM_CHG_CODE_MKTG As String = String.Empty
+
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
     Private Sub SOFSHIPE_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
@@ -88,6 +91,10 @@ Public Class SOFSHIPE
 
             Get_PARM("ASTPARM1")
             Get_PARM("SOTPARM1")
+            Get_PARM("ECTPARM1")
+
+            EC_PARM_CHG_CODE_PRE = ROWs("ECTPARM1").Item("EC_PARM_CHG_CODE_PRE") & String.Empty
+            EC_PARM_CHG_CODE_MKTG = ROWs("ECTPARM1").Item("EC_PARM_CHG_CODE_MKTG") & String.Empty
 
             ASCMAIN1.sql = $"SELECT SOTTRCK1.TRUCK_NO, SOTTRCK1.TRUCK_TYPE, SOTTRCK1.PICK_BATCH_NO, SOTTRCK1.WHSE_CODE, 
                                 SOTPICK0.PICK_BATCH_STATUS, SOTPICK0.INIT_DATE, SOTPICK0.INIT_OPER, SOTTOTE1X.NUM_TOTES
@@ -235,6 +242,7 @@ Public Class SOFSHIPE
 
             Create_TDA(.Tables.Add, "SOTINVH9", "*")
             Create_TDA(.Tables.Add, "SOTINVHM", "*")
+            Create_TDA(.Tables.Add, "SOTINVHC", "*")
             Create_TDA(.Tables.Add, "SOTRNGA1", "*")
 
             Create_TDA(.Tables.Add, "ICTWHSE1", "*", -1, False)
@@ -248,6 +256,9 @@ Public Class SOFSHIPE
 
             Create_TDA(.Tables.Add, "TATSTATE", "*", -1, False)
             Fill_Records("TATSTATE", String.Empty, True, "SELECT * FROM TATSTATE")
+
+            Create_TDA(.Tables.Add, "ARTREAS1", "*", -1, False)
+            Fill_Records("ARTREAS1", String.Empty, True, "SELECT * FROM ARTREAS1")
 
             Create_TDA(.Tables.Add, "SOTCARR1", "*")
             Fill_Records("SOTCARR1", String.Empty, True, "SELECT * FROM SOTCARR1")
@@ -415,6 +426,16 @@ Public Class SOFSHIPE
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
         EMsg = String.Empty
+
+        ' Used to test look at the credit card transactions for a sales order.
+        ' Web Order No: 108845, ID: 7467039719655, Name: gift card - test - $5.00 has an Invalid Variant ID 51894033613031, Product SKU: . Order was not imported.
+        'Dim ORDR_WEB_ID As String = "7478089548007"
+        'Dim INV_TOTAL_AMOUNT As Decimal = 25.19
+        'Dim lstGiftCards As New List(Of TAC.SOCSHOPF.GiftCard)
+
+        'Dim clsSOCSHOPF As New TAC.SOCSHOPF()
+        'Dim ccResponse As New TAC.SOCSHOPF.CreditCardTransaction
+        'ccResponse = clsSOCSHOPF.CaptureAuthorizedCreditCard(ORDR_WEB_ID, INV_TOTAL_AMOUNT, lstGiftCards)
 
         Select Case eItemKey
 
@@ -640,7 +661,7 @@ Public Class SOFSHIPE
     Private Sub Clear_Record()
 
         EnforceConstraints(False)
-        For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", "SOTRNGA1",
+        For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "SOTINVHC", "ARTOPEN1", "SOTRNGA1",
             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5",
             "WHTSHPCG", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTSHPCA",
             "SOTPICK0", "SOTPICK1", "SOTPICK2", "SOTORDR1", "SOTORDR2", "SOTORDR5", "SOTORDR6", "SOTORDRT", "TATEVNT1",
@@ -701,7 +722,7 @@ Public Class SOFSHIPE
         'grdWHTSHPC4.Text = ""
 
         EnforceConstraints(False)
-        For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", "SOTRNGA1",
+        For Each tableName As String In New String() {"SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "SOTINVHC", "ARTOPEN1", "SOTRNGA1",
             "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5",
             "WHTSHPCG", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTSHPCA", "TATEVNT1",
             "SOTSHIP1", "SOTCART1", "SOTCART2"}
@@ -748,8 +769,8 @@ Public Class SOFSHIPE
         End If
 
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
-        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
-        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+        'Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        'Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.SourceControl.Name
 
@@ -773,8 +794,8 @@ Public Class SOFSHIPE
         Dim grd As UltraWinGrid.UltraGrid = Nothing
 
         Me.Cursor = Cursors.WaitCursor
-        Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
-        Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
+        'Dim tlb_sbt As UltraWinToolbars.StateButtonTool = Nothing
+        'Dim tlb_btn As UltraWinToolbars.ButtonTool = Nothing
 
         Select Case e.Tool.Key
             Case "Add Carton"
@@ -917,7 +938,7 @@ Public Class SOFSHIPE
         ' Clear all Shipping and Invoice Tables for the scanned tote
         EnforceConstraints(False)
         For Each tableName As String In New String() {"TATEVNT1",
-                                    "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "ARTOPEN1", "SOTRNGA1",
+                                    "SOTINVH1", "SOTINVH2", "SOTINVH9", "SOTINVHM", "SOTINVHC", "ARTOPEN1", "SOTRNGA1",
                                     "WHTSHPC1", "WHTSHPC2", "WHTSHPC3", "WHTSHPC4", "WHTSHPC5",
                                     "WHTSHPCG", "WHTSHPCC", "WHTSHPCS", "WHTSHPCP", "WHTSHPCA",
                                     "SOTSHIP1", "SOTCART1", "SOTCART2"}
@@ -1340,6 +1361,7 @@ Public Class SOFSHIPE
             dst.Tables("SOTINVH2").Rows.Clear()
             dst.Tables("SOTINVH9").Rows.Clear()
             dst.Tables("SOTINVHM").Rows.Clear()
+            dst.Tables("SOTINVHC").Rows.Clear()
             dst.Tables("SOTSHIP1").Rows.Clear()
             dst.Tables("ARTOPEN1").Rows.Clear()
 
@@ -1583,9 +1605,9 @@ Public Class SOFSHIPE
                 drSOTPICK1.Item("PICK_STATUS") = "C"
             Else
                 SOCINVH1.CreateInvoices(SHIP_BOL_NO, RFIXMSG)
-                For Each drSOTINVH1 As DataRow In dst.Tables("SOTINVH1").Select("")
-                    drSOTINVH1.Item("INV_PRINTED") = DateTime.Now
-                    drSOTINVH1.Item("ORDR_WEB_IND") = "1"
+                For Each drSOTINVH1x As DataRow In dst.Tables("SOTINVH1").Select("")
+                    drSOTINVH1x.Item("INV_PRINTED") = DateTime.Now
+                    drSOTINVH1x.Item("ORDR_WEB_IND") = "1"
                 Next
             End If
 
@@ -1617,7 +1639,118 @@ Public Class SOFSHIPE
                 End If
             End If
 
-            ' Need to do something with Gift Cards. Do not know what.
+            ' If we short ship and the Gift Card(s) total amount is more than what we shipped 
+            ' then only use the total amount of INV_TOTAL_AMOUNT for the Misc Charges
+            Dim drSOTINVH1 As DataRow = dst.Tables("SOTINVH1").Rows(0)
+            ' Dim INV_TOTAL_AMOUNT As Decimal = Val(drSOTINVH1.Item("INV_TOTAL_AMOUNT") & String.Empty)
+
+            For Each gc As TAC.SOCSHOPF.GiftCard In lstGiftCards
+                'If INV_TOTAL_AMOUNT < Math.Abs(Val(gc.AmountApplied & String.Empty)) Then
+                '    gc.AmountApplied = INV_TOTAL_AMOUNT
+                '    If gc.AmountApplied < 0 Then
+                '        gc.AmountApplied = 0
+                '    End If
+                'End If
+
+                'INV_TOTAL_AMOUNT -= Math.Abs(Val(gc.AmountApplied & String.Empty))
+                If gc.GiftCardPre AndAlso Val(gc.AmountApplied & String.Empty) <> 0 Then
+                    If EC_PARM_CHG_CODE_PRE.Length = 0 Then
+                        MessageBox.Show("Ecom master table does not contain a value in EC_PARM_CHG_CODE_PRE", "Create SAles Order Invoice.", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return False
+                    End If
+
+                    Dim INV_TYPE As String = drSOTINVH1.Item("INV_TYPE")
+                    Dim INV_NO As String = drSOTINVH1.Item("INV_NO")
+                    Dim drSOTINVHM As DataRow = dst.Tables("SOTINVHM").NewRow
+                    drSOTINVHM.Item("INV_TYPE") = INV_TYPE
+                    drSOTINVHM.Item("INV_NO") = INV_NO
+                    drSOTINVHM.Item("INV_MNO") = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", $"INV_TYPE = '{INV_TYPE}' AND INV_NO = '{INV_NO}'") & String.Empty) + 1
+                    drSOTINVHM.Item("MISC_CHG_CODE") = EC_PARM_CHG_CODE_PRE
+                    Dim drARTREAS1 As DataRow = dst.Tables("ARTREAS1").Rows.Find(EC_PARM_CHG_CODE_PRE)
+                    If drARTREAS1 IsNot Nothing Then
+                        drSOTINVHM.Item("MISC_CHG_DESC") = drARTREAS1.Item("REASON_DESC")
+                    End If
+                    drSOTINVHM.Item("MISC_CHG_NOTE") = $"Gift Card No: {gc.ID}"
+                    drSOTINVHM.Item("INV_MISC_CHG") = Math.Abs(Val(gc.AmountApplied & String.Empty)) * -1
+                    drSOTINVHM.Item("CTL_NO") = gc.GiftCtlNo
+                    'drSOTINVHM.ITEM("PO_ORDER_NO") = ""
+                    'drSOTINVHM.ITEM("INV_LNO") = ""
+                    'drSOTINVHM.ITEM("COUNTRY_CODE") = ""
+                    'drSOTINVHM.ITEM("SURCHARGE_PERC") = ""
+                    'drSOTINVHM.ITEM("MISC_CHARGE_TYPE") = ""
+                    dst.Tables("SOTINVHM").Rows.Add(drSOTINVHM)
+
+                ElseIf gc.GiftCardType = "M" AndAlso Val(gc.AmountApplied & String.Empty) <> 0 Then
+                    If EC_PARM_CHG_CODE_MKTG.Length = 0 Then
+                        MessageBox.Show("Ecom master table does not contain a value in EC_PARM_CHG_CODE_MKTG.", "Create SAles Order Invoice", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Return False
+                    End If
+                    Dim INV_TYPE As String = drSOTINVH1.Item("INV_TYPE")
+                    Dim INV_NO As String = drSOTINVH1.Item("INV_NO")
+                    Dim drSOTINVHM As DataRow = dst.Tables("SOTINVHM").NewRow
+                    drSOTINVHM.Item("INV_TYPE") = INV_TYPE
+                    drSOTINVHM.Item("INV_NO") = INV_NO
+                    drSOTINVHM.Item("INV_MNO") = Val(dst.Tables("SOTINVHM").Compute("MAX(INV_MNO)", $"INV_TYPE = '{INV_TYPE}' AND INV_NO = '{INV_NO}'") & String.Empty) + 1
+                    drSOTINVHM.Item("MISC_CHG_CODE") = EC_PARM_CHG_CODE_MKTG
+                    Dim drARTREAS1 As DataRow = dst.Tables("ARTREAS1").Rows.Find(EC_PARM_CHG_CODE_MKTG)
+                    If drARTREAS1 IsNot Nothing Then
+                        drSOTINVHM.Item("MISC_CHG_DESC") = drARTREAS1.Item("REASON_DESC")
+                    End If
+                    drSOTINVHM.Item("MISC_CHG_NOTE") = $"Gift Card No: {gc.ID}"
+                    drSOTINVHM.Item("INV_MISC_CHG") = Math.Abs(Val(gc.AmountApplied & String.Empty)) * -1
+                    drSOTINVHM.Item("CTL_NO") = gc.GiftCtlNo
+                    'drSOTINVHM.ITEM("PO_ORDER_NO") = ""
+                    'drSOTINVHM.ITEM("INV_LNO") = ""
+                    'drSOTINVHM.ITEM("COUNTRY_CODE") = ""
+                    'drSOTINVHM.ITEM("SURCHARGE_PERC") = ""
+                    'drSOTINVHM.ITEM("MISC_CHARGE_TYPE") = ""
+                    dst.Tables("SOTINVHM").Rows.Add(drSOTINVHM)
+
+                ElseIf (gc.GiftCardType = "P" OrElse gc.GiftCardType = "R") AndAlso Val(gc.AmountApplied & String.Empty) <> 0 Then
+                    Dim INV_TYPE As String = drSOTINVH1.Item("INV_TYPE")
+                    Dim INV_NO As String = drSOTINVH1.Item("INV_NO")
+                    Dim drSOTINVHC As DataRow = dst.Tables("SOTINVHC").NewRow
+                    drSOTINVHC.Item("INV_TYPE") = INV_TYPE
+                    drSOTINVHC.Item("INV_NO") = INV_NO
+                    drSOTINVHC.Item("INV_CNO") = Val(dst.Tables("SOTINVHC").Compute("MAX(INV_CNO)", $"INV_TYPE = '{INV_TYPE}' AND INV_NO = '{INV_NO}'") & String.Empty) + 1
+                    drSOTINVHC.Item("GIFT_CTL_NO") = gc.GiftCtlNo
+                    drSOTINVHC.Item("GIFT_CARD_AMT") = Math.Abs(Val(gc.AmountApplied & String.Empty))
+                    drSOTINVHC.Item("STATUS") = "0"
+                    'drSOTINVHC.Item("INV_NO_OA") = ""
+                    dst.Tables("SOTINVHC").Rows.Add(drSOTINVHC)
+
+                ElseIf Val(gc.AmountApplied & String.Empty) <> 0 Then
+                    ' What happens here
+                    Throw New Exception($"Gift Card {gc.ID} failed validation against the financial business rules.")
+                End If
+            Next
+
+            If dst.Tables("SOTINVHM").Rows.Count > 0 Then
+                Dim INV_MISC_CHG As Decimal = Val(dst.Tables("SOTINVHM").Compute("SUM(INV_MISC_CHG)", "") & String.Empty)
+                ' .INV_TOTAL_AMOUNT = INV_SALES + INV_FREIGHT + INV_MISC_CHG + INV_STAX
+                drSOTINVH1.Item("INV_MISC_CHG") = INV_MISC_CHG
+                drSOTINVH1.Item("INV_TOTAL_AMOUNT") = Val(drSOTINVH1.Item("INV_SALES") & String.Empty) +
+                    Val(drSOTINVH1.Item("INV_FREIGHT") & String.Empty) +
+                    Val(drSOTINVH1.Item("INV_MISC_CHG") & String.Empty) +
+                    Val(drSOTINVH1.Item("INV_STAX") & String.Empty)
+
+                drSOTINVH1.Item("INV_MISC_CHG_CURR") = drSOTINVH1.Item("INV_MISC_CHG")
+                drSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = drSOTINVH1.Item("INV_TOTAL_AMOUNT")
+                drSOTINVH1.Item("INV_TOTAL_AMT_CURR") = drSOTINVH1.Item("INV_TOTAL_AMOUNT")
+
+                Dim drARTOPEN1 As DataRow = dst.Tables("ARTOPEN1").Select($"INV_NUM = '{drSOTINVH1.Item("INV_NO")}'")(0)
+                For Each fieldName As String In New String() {"INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT", "INV_MISC_CHG", "INV_STAX"}
+                    drARTOPEN1.Item(fieldName) = drSOTINVH1.Item(fieldName)
+                Next
+
+                drARTOPEN1.Item("INV_BALANCE") = drSOTINVH1.Item("INV_TOTAL_AMOUNT")
+                drARTOPEN1.Item("INV_DISC_CURR") = drARTOPEN1.Item("INV_DISC")
+                drARTOPEN1.Item("INV_FREIGHT_CURR") = drARTOPEN1.Item("INV_FREIGHT")
+                drARTOPEN1.Item("INV_STAX_CURR") = drARTOPEN1.Item("INV_STAX")
+                drARTOPEN1.Item("INV_MISC_CHG_CURR") = drARTOPEN1.Item("INV_MISC_CHG")
+                drARTOPEN1.Item("INV_BALANCE_CURR") = drARTOPEN1.Item("INV_BALANCE")
+                drARTOPEN1.Item("INV_TOTAL_AMOUNT_CURR") = drARTOPEN1.Item("INV_TOTAL_AMOUNT")
+            End If
 
             Try
                 BeginTrans()
@@ -1634,6 +1767,7 @@ Public Class SOFSHIPE
                 Update_Record_TDA("SOTINVH2")
                 Update_Record_TDA("SOTINVH9")
                 Update_Record_TDA("SOTINVHM")
+                Update_Record_TDA("SOTINVHC")
 
                 Update_Record_TDA("ARTOPEN1")
                 Update_Record_TDA("TATEVNT1")

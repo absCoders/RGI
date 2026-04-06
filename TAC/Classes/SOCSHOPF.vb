@@ -17,7 +17,6 @@ Public Class SOCSHOPF
     Private shopAccessToken As String = String.Empty
     Public LastError As String = String.Empty
 
-
     Public Sub New()
         Initialize()
     End Sub
@@ -71,10 +70,13 @@ Public Class SOCSHOPF
     Public Class GiftCard
         Public Property ID As Long
         Public Property InitialValue As Decimal
-        Public Property Balance As Decimal
+        Public Property AmountApplied As Decimal
         Public Property Currency As String
         Public Property LastCharacters As String
         Public Property CreatedAt As DateTime
+        Public Property GiftCardType As String
+        Public Property GiftCardPre As Boolean
+        Public Property GiftCtlNo As String
     End Class
 
     Public Function CaptureAuthorizedCreditCard(ByVal ShopifyOrderID As String,
@@ -116,7 +118,7 @@ Public Class SOCSHOPF
             End If
 
             For Each gc As GiftCard In lstGiftCards
-                GiftCardAmount += Val(gc.Balance & String.Empty)
+                GiftCardAmount += Val(gc.AmountApplied & String.Empty)
             Next
 
             If GiftCardAmount > 0 Then
@@ -203,36 +205,51 @@ Public Class SOCSHOPF
                                ByRef lstGiftcards As List(Of GiftCard)) As Boolean
 
         IsPaymentCaptured = False
-        Try
-            Dim url As String = $"{ShopifyUrl}orders/{ShopifyOrderID}/transactions.json"
-            Dim request As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)
-            request.Method = "GET"
-            request.Headers.Add("X-Shopify-Access-Token", accessToken)
 
-            Using response As HttpWebResponse = CType(request.GetResponse(), HttpWebResponse)
-                Using reader As New StreamReader(response.GetResponseStream())
-                    Dim json As JObject = JObject.Parse(reader.ReadToEnd())
-                    For Each txn As JObject In json("transactions")
-                        If txn("kind").ToString() = "capture" AndAlso txn("status").ToString() = "success" Then
-                            IsPaymentCaptured = True
-                        ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() = "gift_card" Then
-                            Dim gCard As New GiftCard
-                            gCard.ID = txn("receipt")("gift_card_id").ToString
-                            gCard.Balance = Val(txn("amount").ToString())
-                            lstGiftcards.Add(gCard)
-                        ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() <> "gift_card" Then
+        ' 04/03/2026 - This function needs to throw an error which will be trapped by the calling procedure
+
+        Dim url As String = $"{ShopifyUrl}orders/{ShopifyOrderID}/transactions.json"
+        Dim request As HttpWebRequest = CType(WebRequest.Create(url), HttpWebRequest)
+        request.Method = "GET"
+        request.Headers.Add("X-Shopify-Access-Token", accessToken)
+
+        Dim tblSOTGIFTC As DataTable = ASCDATA1.GetDataTable("SELECT * FROM SOTGIFTC WHERE ORDER_ID = :PARM1", "SOTGIFTC", "V", {ShopifyOrderID})
+
+        Using response As HttpWebResponse = CType(request.GetResponse(), HttpWebResponse)
+            Using reader As New StreamReader(response.GetResponseStream())
+                Dim json As JObject = JObject.Parse(reader.ReadToEnd())
+                For Each txn As JObject In json("transactions")
+                    If txn("kind").ToString() = "capture" AndAlso txn("status").ToString() = "success" Then
+                        ' See if this Capture is for a Gift Card.
+                        Dim CAPTURE_ID As String = txn("id").ToString()
+                        If tblSOTGIFTC.Select($"CAPTURE_ID = '{CAPTURE_ID}'").Length = 0 Then
                             IsPaymentCaptured = True
                         End If
-                    Next
-                End Using
+
+                    ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() = "gift_card" Then
+                        Dim gCard As New GiftCard With {
+                                .ID = txn("receipt")("gift_card_id").ToString,
+                                .AmountApplied = Val(txn("amount").ToString())
+                            }
+                        Dim drSOTGIFTC As DataRow = ASCDATA1.GetDataRow("SELECT * FROM SOTGIFTC WHERE GIFT_CARD_ID = :PARM1", "V", {gCard.ID})
+                        If drSOTGIFTC IsNot Nothing Then
+                            gCard.GiftCardType = drSOTGIFTC.Item("GIFT_CARD_TYPE") & String.Empty
+                            gCard.GiftCardPre = drSOTGIFTC.Item("GIFT_CARD_PRE") & String.Empty = "1"
+                            gCard.GiftCtlNo = drSOTGIFTC.Item("GIFT_CTL_NO") & String.Empty
+                        Else
+                            Throw New Exception($"Gift Card {gCard.ID} was redeemed for this sales order; however, no corresponding record exists in the Gift Card Master table.")
+                        End If
+                        lstGiftcards.Add(gCard)
+
+                    ElseIf txn("kind").ToString() = "sale" AndAlso txn("status").ToString() = "success" AndAlso txn("gateway").ToString() <> "gift_card" Then
+                        ' This means we captured the credit card
+                        IsPaymentCaptured = True
+                    End If
+                Next
             End Using
+        End Using
 
-            Return IsPaymentCaptured
-        Catch ex As Exception
-            MessageBox.Show(ex.Message, "Is Payment Captured", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return False
-        End Try
-
+        Return IsPaymentCaptured
     End Function
 
     Public Function GetShopifyProducts(ByRef NumItemsUpdated As Int16) As Boolean
@@ -694,7 +711,7 @@ Public Class SOCSHOPF
                             End If
 
                             Dim ORDR_WEB_ID As String = .Item("ORDR_WEB_ID") & String.Empty
-                            Dim INV_TOTAL_AMOUNT As Decimal = VAL(.Item("AMOUNT") & String.EMPTY)
+                            Dim INV_TOTAL_AMOUNT As Decimal = Val(.Item("AMOUNT") & String.Empty)
 
                             If ORDR_WEB_ID.Length > 0 Then
                                 Dim sql As String = "SELECT SOTINVH1.INV_NO, SOTINVH1.INV_TOTAL_AMOUNT
