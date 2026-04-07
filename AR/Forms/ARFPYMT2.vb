@@ -1578,6 +1578,7 @@ Public Class ARFPYMT2
         End If
 
         btnDGJ.Visible = ASCMAIN1.Running_in_VS
+        btnDGJ2.Visible = ASCMAIN1.Running_in_VS
 
         splARTPYMT2.Panel2Collapsed = (Not ScreenMode) Or (EntryMode <> "S")
         tabARTPYMT3.Tabs("EDI (820)").Visible = (ScreenMode AndAlso (edi_820_in_process Or (EntryMode = "V" And EDI_DOC_SEQ_NO <> "")))
