@@ -3474,6 +3474,34 @@ Public Class SOFSHIPB
 
     Sub Proceed(ByVal eItemKey As String)
 
+        'If ASCMAIN1.Running_in_VS Then
+        '    If ASCMAIN1.USER_ID = "edz" Then
+        '        Stop
+
+        '        ' "0001081827", "0001081521","0001081520", "0001081519", "0001081567", "0001081562"
+
+        '        For Each PICK_NO As String In {"0001081559"}
+        '            ASCMAIN1.sql = "SELECT SOTORDR1.CUST_CODE, SOTPICK1.INV_NO, SOTORDC1.*
+        '                            FROM SOTORDC1, SOTPICK1, SOTORDR1
+        '                            WHERE SOTORDC1.PICK_NO = SOTPICK1.PICK_NO
+        '                            AND SOTORDC1.TRANS_TYPE = 'D'
+        '                            AND SOTORDC1.CCPA_STATUS = 'A'
+        '                            AND SOTPICK1.PICK_STATUS = 'F'
+        '                            AND SOTORDC1.BALANCE > 0
+        '                            AND SOTORDC1.AMOUNT <> SOTORDC1.BALANCE
+        '                            AND SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO (+)
+        '                            AND SOTPICK1.PICK_NO = :PARM1"
+        '            Dim drSOTORDC1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {PICK_NO})
+        '            If drSOTORDC1 IsNot Nothing Then
+        '                Dim CCPA_NO As String = drSOTORDC1.Item("CCPA_NO") & String.Empty
+        '                If CCPA_NO.Length > 0 Then
+        '                    RefundCreditSaleBalance(drSOTORDC1)
+        '                End If
+        '            End If
+        '        Next
+        '    End If
+        'End If
+
         Select Case eItemKey
 
             Case "Select", "Master BOL"
@@ -6377,6 +6405,29 @@ Public Class SOFSHIPB
                         End If
 
                 End Select
+            End If
+
+            If Not isEcommProcessing Then
+                For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "")
+                    Dim PICK_NO As String = rowSOTPICK1.Item("PICK_NO") & String.Empty
+                    ASCMAIN1.sql = "SELECT SOTORDR1.CUST_CODE, SOTPICK1.INV_NO, SOTORDC1.*
+                                    FROM SOTORDC1, SOTPICK1, SOTORDR1
+                                    WHERE SOTORDC1.PICK_NO = SOTPICK1.PICK_NO
+                                    AND SOTORDC1.TRANS_TYPE = 'D'
+                                    AND SOTORDC1.CCPA_STATUS = 'A'
+                                    AND SOTPICK1.PICK_STATUS = 'F'
+                                    AND SOTORDC1.BALANCE > 0
+                                    AND SOTORDC1.AMOUNT <> SOTORDC1.BALANCE
+                                    AND SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO (+)
+                                    AND SOTPICK1.PICK_NO = :PARM1"
+                    Dim drSOTORDC1 As DataRow = ASCDATA1.GetDataRow(ASCMAIN1.sql, "V", {PICK_NO})
+                    If drSOTORDC1 IsNot Nothing Then
+                        Dim CCPA_NO As String = drSOTORDC1.Item("CCPA_NO") & String.Empty
+                        If CCPA_NO.Length > 0 Then
+                            RefundCreditSaleBalance(drSOTORDC1)
+                        End If
+                    End If
+                Next
             End If
 
             If isEcommProcessing Then
@@ -21581,6 +21632,200 @@ Public Class SOFSHIPB
         Next
 
     End Sub
+
+#End Region
+
+#Region "Credit Card Refund"
+
+    Private Sub RefundCreditSaleBalance(drSOTORDC1 As DataRow)
+        Try
+            Dim CCPA_NO As String = drSOTORDC1.Item("CCPA_NO") & String.Empty
+            Dim ORDR_NO As String = drSOTORDC1.Item("ORDR_NO") & String.Empty
+            Dim TRANS_NO As String = drSOTORDC1.Item("TRANS_NO") & String.Empty
+
+            If CCPA_NO.Length = 0 Then
+                Exit Sub
+            End If
+
+            Dim BALANCE As Decimal = Val(drSOTORDC1.Item("BALANCE") & String.Empty)
+            If BALANCE <= 0 Then
+                Exit Sub
+            End If
+
+            Fill_Records("ARTCCPA1", CCPA_NO)
+            If dst.Tables("ARTCCPA1").Rows.Count <> 1 Then
+                Exit Sub
+            End If
+
+            ' Need to issue a credit for the card used fro the sale.
+            If clsTACENCRY.UseEncryption Then
+                For Each rowARTCCPA1 As DataRow In dst.Tables("ARTCCPA1").Select("")
+                    For Each field As String In New String() {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_VER_CODE"} ' "CUST_CREDIT_CARD_EXP_DATE",
+                        rowARTCCPA1.Item(field) = clsTACENCRY.DecryptString(rowARTCCPA1.Item(field & "_E") & String.Empty)
+                        rowARTCCPA1.Item(field & "_E") = DBNull.Value
+                    Next
+                Next
+            End If
+
+            Dim drARTCCPA1 As DataRow = dst.Tables("ARTCCPA1").Rows(0)
+            dst.Tables("ARTCCPA2").Rows.Clear()
+            dst.Tables("ARTCCPDA").Rows.Clear()
+
+            'Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
+            'CreditCardInfo = CreateCreditCardInfo(drARTCCPA1)
+
+            drARTCCPA1.Item("CCPA_NO") = "XX" ' ASCMAIN1.Next_Control_No("ARTCCPA1.CCPA_NO")
+            'drARTCCPA1.Item("CUST_CODE") = ""
+            drARTCCPA1.Item("CCPA_STATUS") = "S"
+            drARTCCPA1.Item("CCPA_REASON") = "C"
+            drARTCCPA1.Item("CCPA_NOTE") = "Pre Release Sales Refund"
+            drARTCCPA1.Item("CCPA_AMT") = Math.Abs(BALANCE) * -1
+            drARTCCPA1.Item("CCPA_DATE_AUTH") = DBNull.Value
+            drARTCCPA1.Item("CCPA_DATE_SALE") = DBNull.Value
+            drARTCCPA1.Item("CCPA_AUTH") = DBNull.Value
+            drARTCCPA1.Item("INIT_OPER") = ASCMAIN1.USER_ID
+            drARTCCPA1.Item("INIT_DATE") = DateTime.Now
+            drARTCCPA1.Item("LAST_OPER") = ASCMAIN1.USER_ID
+            drARTCCPA1.Item("LAST_DATE") = DateTime.Now
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_NO") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_NAME") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_ADDR1") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_CITY") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_STATE") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_ZIP_CODE") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_LAST4") = ""
+            drARTCCPA1.Item("RESPONSE_RETRIEVAL_NO") = ""
+            drARTCCPA1.Item("RESPONSE_CODE") = ""
+            drARTCCPA1.Item("RESPONSE_BATCH_NO") = ""
+            drARTCCPA1.Item("RESPONSE_APPROVAL_CODE") = ""
+            drARTCCPA1.Item("RESPONSE_TEXT") = ""
+            drARTCCPA1.Item("CCPA_TYPE") = "C"
+            'drARTCCPA1.Item("ORDR_NO") = ""
+            'drARTCCPA1.Item("INV_NO") = ""
+            drARTCCPA1.Item("CCPA_DATE_VOID") = DBNull.Value
+            drARTCCPA1.Item("CCPA_REASON_VOID") = DBNull.Value
+            drARTCCPA1.Item("STMT_NO") = DBNull.Value
+            drARTCCPA1.Item("CCPA_NO_CREDITED") = CCPA_NO
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_TYPE") = ""
+            drARTCCPA1.Item("OPS_YYYYPP") = ASCMAIN1.CYP
+            drARTCCPA1.Item("LENS_BANK_INV_NO") = ""
+            drARTCCPA1.Item("CCPA_NO_AUTH") = ""
+            drARTCCPA1.Item("CCPA_NO_CAPTURE") = ""
+            drARTCCPA1.Item("CARD_LEVEL_RESULT") = ""
+            drARTCCPA1.Item("DATAWIRE_RETURN_CODE") = ""
+            drARTCCPA1.Item("DATAWIRE_STATUS") = ""
+            drARTCCPA1.Item("ACI_CODE") = ""
+            drARTCCPA1.Item("TRANSACTION_DATE") = ""
+            drARTCCPA1.Item("TRANS_ID") = ""
+            drARTCCPA1.Item("TRANS_NUM") = ""
+            drARTCCPA1.Item("VALIDATION_CODE") = ""
+            'drARTCCPA1.Item("WEB_PYMT_ID") = DBNull.Value
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_NO_E") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE_E") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE_E") = ""
+            'drARTCCPA1.Item("CUST_CREDIT_CARD_KEY") = ""
+            drARTCCPA1.Item("TRANSARMORTOKEN") = ""
+
+            Dim CUST_CREDIT_CARD_KEY As String = drARTCCPA1.Item("CUST_CREDIT_CARD_KEY") & String.Empty
+
+            'dst.Tables("ARTCCPA1").AcceptChanges()
+            'For Each dr As DataRow In dst.Tables("ARTCCPA1").Select("")
+            '    dr.SetAdded()
+            'Next
+
+            CreditCardProcessor = New TAC.TAFCARDF(Me)
+
+            With CreditCardProcessor
+                .ORDR_NO = drARTCCPA1.Item("ORDR_NO") & String.Empty
+                .INV_NO = drARTCCPA1.Item("INV_NO") & String.Empty
+
+                .objCCProcessor.TransactionNumber = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
+                .objCCProcessor.TransactionAmount = Math.Abs(BALANCE) * -1
+                .objCCProcessor.CustomerCreditCard.CardNumber = drARTCCPA1.Item("CUST_CREDIT_CARD_NO") & String.Empty
+
+                Dim CUST_CREDIT_CARD_EXP_DATE As String = drARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") & String.Empty
+                CUST_CREDIT_CARD_EXP_DATE = CUST_CREDIT_CARD_EXP_DATE.PadRight(4, "0")
+                .objCCProcessor.CustomerCreditCard.CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
+                .objCCProcessor.CustomerCreditCard.CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2)
+                .objCCProcessor.CustomerCreditCard.CardCVVData = drARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+                .objCCProcessor.ValidateCard()
+                .objCCProcessor.CustomerCreditCard.InvoiceNumber = String.Empty
+
+                .rowARTCCPA1 = drARTCCPA1
+
+                Dim CCPA_NO_CREDIT As String = .CC_Credit(BALANCE)
+                If CCPA_NO_CREDIT.Length = 0 Then
+                    If .responseErrorMessage.Length > 0 Then
+                        MessageBox.Show($"Could not Refund ${drSOTORDC1.Item("BALANCE")} On Pick Ticket {drSOTORDC1.Item("ORDR_NO")}. { .responseErrorMessage}", "Refund Credit Sale Balance", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                        Exit Sub
+                    End If
+                End If
+
+                Try
+                    BeginTrans()
+                    ASCDATA1.ExecuteSQL("UPDATE SOTORDC1 SET BALANCE = 0 WHERE ORDR_NO = :PARM1 AND TRANS_NO = :PARM2 AND CCPA_NO = :PARM3", "VNV", {ORDR_NO, TRANS_NO, CCPA_NO})
+                    ASCDATA1.ExecuteSQL($"UPDATE ARTCCPA1 SET CCPA_NOTE = 'Pre Release Sales Refund', 
+                                            CCPA_STATUS = 'S',
+                                            CCPA_REASON = 'C', 
+                                            CUST_CREDIT_CARD_KEY = '{CUST_CREDIT_CARD_KEY}'
+                                            WHERE CCPA_NO = :PARM1", "V", {CCPA_NO_CREDIT})
+                    CommitTrans()
+                Catch ex As Exception
+                    Rollback(ex.Message)
+                End Try
+            End With
+
+        Catch ex As Exception
+            MessageBox.Show($"Could not Refund ${drSOTORDC1.Item("BALANCE")} On Pick Ticket {drSOTORDC1.Item("ORDR_NO")}. {ex.Message}", "Refund Credit Sale Balance", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+    End Sub
+
+    Public Function CreateCreditCardInfo(ByRef rowARTCCPA1 As DataRow) As TAC.ARCCCARD.CreditCard
+        Dim CreditCardInfo As New TAC.ARCCCARD.CreditCard
+        With CreditCardInfo
+            .CardCVVData = rowARTCCPA1.Item("CUST_CREDIT_CARD_VER_CODE") & String.Empty
+
+            Dim CUST_CREDIT_CARD_EXP_DATE As String = rowARTCCPA1.Item("CUST_CREDIT_CARD_EXP_DATE") & String.Empty
+            CUST_CREDIT_CARD_EXP_DATE = CUST_CREDIT_CARD_EXP_DATE.PadLeft(4, "0")
+            .CardExpMonth = CUST_CREDIT_CARD_EXP_DATE.Substring(0, 2)
+            .CardExpYear = CUST_CREDIT_CARD_EXP_DATE.Substring(2, 2)
+
+            .CardHolderAddress = rowARTCCPA1.Item("CUST_CREDIT_CARD_ADDR1") & String.Empty
+            .CardHolderCity = rowARTCCPA1.Item("CUST_CREDIT_CARD_CITY") & String.Empty
+            .CardHolderCountry = rowARTCCPA1.Item("CUST_CREDIT_CARD_COUNTRY") & String.Empty
+            .CardHolderEmail = ""
+            .CardHolderFirstName = rowARTCCPA1.Item("CUST_CREDIT_CARD_NAME") & String.Empty
+            .CardHolderLastName = ""
+            .CardHolderState = rowARTCCPA1.Item("CUST_CREDIT_CARD_STATE") & String.Empty
+            .CardHolderTelephone = ""
+            .CardHolderZipCode = rowARTCCPA1.Item("CUST_CREDIT_CARD_ZIP_CODE") & String.Empty
+            .CardNumber = rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") & String.Empty
+            .CustomerID = rowARTCCPA1.Item("CUST_CODE") & String.Empty
+            .ResponseApprovalCode = rowARTCCPA1.Item("RESPONSE_APPROVAL_CODE") & String.Empty
+            .TransactionID = rowARTCCPA1.Item("TRANS_ID") & String.Empty
+
+            If IsDate(rowARTCCPA1.Item("CCPA_DATE_AUTH") & String.Empty) Then
+                .AuthorizationDate = CDate(rowARTCCPA1.Item("CCPA_DATE_AUTH") & String.Empty)
+            Else
+                .AuthorizationDate = DateTime.Now
+            End If
+
+            ' Default values
+            .CaptureAmount = 0
+            .invoiceDetailsTable = Nothing
+            .invoiceHeaderRow = Nothing
+            .Level2Data = Nothing
+            .Level3Data = Nothing
+            .RefundAmount = 0
+        End With
+
+        Return CreditCardInfo
+
+    End Function
 
 #End Region
 
