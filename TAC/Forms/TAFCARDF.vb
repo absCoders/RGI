@@ -1968,12 +1968,17 @@ Public Class TAFCARDF
             Return String.Empty
         End If
 
-        BeginTrans()
-        EncryptARTCCPA1()
-        Update_Record_TDA("ARTCCPA1")
-        Update_Record_TDA("ARTCCPA2")
-        Update_Record_TDA("ARTCCPDA")
-        CommitTrans()
+        Try
+            BeginTrans()
+            EncryptARTCCPA1()
+            Update_Record_TDA("ARTCCPA1")
+            Update_Record_TDA("ARTCCPA2")
+            Update_Record_TDA("ARTCCPDA")
+            CommitTrans()
+        Catch ex As Exception
+            Rollback(ex.Message)
+            responseErrorMessage = ex.Message
+        End Try
 
         Return CCPA_NO_CREDIT
 
