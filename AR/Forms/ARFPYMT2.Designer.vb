@@ -1119,6 +1119,7 @@ Partial Class ARFPYMT2
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.UltraTabPageControl19 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl26 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.btnDGJ2 = New Infragistics.Win.Misc.UltraButton()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -6020,6 +6021,7 @@ Partial Class ARFPYMT2
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.btnDGJ2)
         Me.UltraGroupBox1.Controls.Add(Me.btnDGJ)
         Me.UltraGroupBox1.Controls.Add(Me.grpLockBox)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor10)
@@ -6038,12 +6040,12 @@ Partial Class ARFPYMT2
         '
         'btnDGJ
         '
-        Me.btnDGJ.Location = New System.Drawing.Point(431, -2)
+        Me.btnDGJ.Location = New System.Drawing.Point(184, 0)
         Me.btnDGJ.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnDGJ.Name = "btnDGJ"
-        Me.btnDGJ.Size = New System.Drawing.Size(274, 26)
+        Me.btnDGJ.Size = New System.Drawing.Size(175, 26)
         Me.btnDGJ.TabIndex = 135
-        Me.btnDGJ.Text = "DGJ  CODE"
+        Me.btnDGJ.Text = "DGJ  CODE Btn 1"
         '
         'UltraTextEditor10
         '
@@ -6317,6 +6319,15 @@ Partial Class ARFPYMT2
         Me.UltraTabPageControl26.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl26.Name = "UltraTabPageControl26"
         Me.UltraTabPageControl26.Size = New System.Drawing.Size(552, 289)
+        '
+        'btnDGJ2
+        '
+        Me.btnDGJ2.Location = New System.Drawing.Point(367, -2)
+        Me.btnDGJ2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnDGJ2.Name = "btnDGJ2"
+        Me.btnDGJ2.Size = New System.Drawing.Size(175, 26)
+        Me.btnDGJ2.TabIndex = 136
+        Me.btnDGJ2.Text = "DGJ  CODE Btn 2"
         '
         'ARFPYMT2
         '
@@ -6687,4 +6698,5 @@ Partial Class ARFPYMT2
     Friend WithEvents UltraTabPageControl30 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdTATEVNT1 As UltraWinGrid.UltraGrid
     Friend WithEvents btnDGJ As Misc.UltraButton
+    Friend WithEvents btnDGJ2 As Misc.UltraButton
 End Class
