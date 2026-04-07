@@ -3997,7 +3997,12 @@ Public Class ARFCINQ1
 
         ASCMAIN1.sql = "Select SOTORDR1.* from SOTORDR1 where ORDR_GROUP_NO in (" & Replace(subQuery, ".*", ".ORDR_GROUP_NO") & ")"
         Fill_Records("SOTORDR1", "", , ASCMAIN1.sql)
-        Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdSOTORDR0, "ORDR_SHIP_DATE")
+        Else
+            Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
 
