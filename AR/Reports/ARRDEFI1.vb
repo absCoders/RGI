@@ -75,6 +75,11 @@ Public Class ARRDEFI1
         ElseIf sqlWarehouse.Contains("(") Then
             SUBT &= " - Warehouses: " & sqlWarehouse.Split("(")(1).Replace("'", "").Replace(")", "").Trim
         End If
+        If optDS.Value = "S" Then
+            SUBT &= " Stock Qty Returns "
+        Else
+            SUBT &= " Destoyed Qty Returns "
+        End If
         Generate_Report(RPT, , SUBT)
     End Sub
 
@@ -174,22 +179,44 @@ Public Class ARRDEFI1
 
         ASCMAIN1.Progress("Gather Returns", "")
         ' Get all the details for the current year that have returns
-        sql = " SELECT NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
-        sql &= ", 0.00 MTD_NET_SALES, 0.00 YTD_NET_SALES"
-        sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END MTD_DEF_CLAIMS"
-        'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
-        sql &= ", CASE WHEN SOTRTRN2.OPS_YYYYPP  BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
-        sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN SOTRTRN2.RTRN_QTY_3  ELSE 0 END MTD_DEF_UNITS"
-        'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN SOTRTRN2.RTRN_QTY_3  ELSE 0 END YTD_DEF_UNITS"
-        sql &= ", CASE  WHEN SOTRTRN2.OPS_YYYYPP  BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "' THEN SOTRTRN2.RTRN_QTY_3  ELSE 0 END YTD_DEF_UNITS"
-        sql &= ", ICTSTYV1.PO_COST STYLE_COST"
-        sql &= " FROM SOTRTRN1, SOTRTRN2, ICTSTYL1, ICTSTYV1"
-        sql &= " WHERE SOTRTRN1.RTRN_NO = SOTRTRN2.RTRN_NO"
-        sql &= " AND SOTRTRN2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)"
-        sql &= " AND SOTRTRN2.STYLE_CODE = ICTSTYV1.STYLE_CODE (+)"
-        sql &= " AND SOTRTRN2.RTRN_QTY_3 > 0"
-        'sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0.Substring(0, 4) & "01' AND '" & xRYP0 & "'"
-        sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "'"
+
+
+        If optDS.Value = "S" Then
+            sql = " SELECT NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
+            sql &= ", 0.00 MTD_NET_SALES, 0.00 YTD_NET_SALES"
+            sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN (SOTRTRN2.RTRN_QTY_1 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END MTD_DEF_CLAIMS"
+            'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN (SOTRTRN2.RTRN_QTY_1 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
+            sql &= ", CASE WHEN SOTRTRN2.OPS_YYYYPP  BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "' THEN (SOTRTRN2.RTRN_QTY_1 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
+            sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN SOTRTRN2.RTRN_QTY_1  ELSE 0 END MTD_DEF_UNITS"
+            'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN SOTRTRN2.RTRN_QTY_1  ELSE 0 END YTD_DEF_UNITS"
+            sql &= ", CASE  WHEN SOTRTRN2.OPS_YYYYPP  BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "' THEN SOTRTRN2.RTRN_QTY_1  ELSE 0 END YTD_DEF_UNITS"
+            sql &= ", ICTSTYV1.PO_COST STYLE_COST"
+            sql &= " FROM SOTRTRN1, SOTRTRN2, ICTSTYL1, ICTSTYV1"
+            sql &= " WHERE SOTRTRN1.RTRN_NO = SOTRTRN2.RTRN_NO"
+            sql &= " AND SOTRTRN2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)"
+            sql &= " AND SOTRTRN2.STYLE_CODE = ICTSTYV1.STYLE_CODE (+)"
+            sql &= " AND SOTRTRN2.RTRN_QTY_1 <> 0"
+            'sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0.Substring(0, 4) & "01' AND '" & xRYP0 & "'"
+            sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "'"
+        Else
+
+            sql = " SELECT NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
+            sql &= ", 0.00 MTD_NET_SALES, 0.00 YTD_NET_SALES"
+            sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END MTD_DEF_CLAIMS"
+            'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
+            sql &= ", CASE WHEN SOTRTRN2.OPS_YYYYPP  BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
+            sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN SOTRTRN2.RTRN_QTY_3  ELSE 0 END MTD_DEF_UNITS"
+            'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN SOTRTRN2.RTRN_QTY_3  ELSE 0 END YTD_DEF_UNITS"
+            sql &= ", CASE  WHEN SOTRTRN2.OPS_YYYYPP  BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "' THEN SOTRTRN2.RTRN_QTY_3  ELSE 0 END YTD_DEF_UNITS"
+            sql &= ", ICTSTYV1.PO_COST STYLE_COST"
+            sql &= " FROM SOTRTRN1, SOTRTRN2, ICTSTYL1, ICTSTYV1"
+            sql &= " WHERE SOTRTRN1.RTRN_NO = SOTRTRN2.RTRN_NO"
+            sql &= " AND SOTRTRN2.STYLE_CODE = ICTSTYL1.STYLE_CODE (+)"
+            sql &= " AND SOTRTRN2.STYLE_CODE = ICTSTYV1.STYLE_CODE (+)"
+            sql &= " AND SOTRTRN2.RTRN_QTY_3 > 0"
+            'sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0.Substring(0, 4) & "01' AND '" & xRYP0 & "'"
+            sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "'"
+        End If
 
         sql &= parms(0)
         Dim wktable As String = ASCMAIN1.Temp_Table(sql)
@@ -238,7 +265,7 @@ Public Class ARRDEFI1
         sql &= "END LOOP; END; END;"
         ASCDATA1.ExecuteSQL(sql)
 
-        For Each field As String In New String() {"MTD_NET_SALES", "YTD_NET_SALES", "MTD_DEF_CLAIMS", "YTD_DEF_CLAIMS", _
+        For Each field As String In New String() {"MTD_NET_SALES", "YTD_NET_SALES", "MTD_DEF_CLAIMS", "YTD_DEF_CLAIMS",
                                                   "MTD_NET_UNITS", "YTD_NET_UNITS", "MTD_DEF_UNITS", "YTD_DEF_UNITS", "MTD_PER_UNITS", "YTD_PER_UNITS"}
             ASCDATA1.ExecuteSQL("Update " & ARTDEFI1 & " set " & field & " = 0 where " & field & " is null")
         Next
