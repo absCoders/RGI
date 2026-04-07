@@ -1099,6 +1099,7 @@ Partial Class ARFPYMT2
         Me.UltraTabPageControl14 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraTabPageControl4 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.UltraGroupBox1 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnDGJ2 = New Infragistics.Win.Misc.UltraButton()
         Me.btnDGJ = New Infragistics.Win.Misc.UltraButton()
         Me.UltraTextEditor10 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
@@ -6020,6 +6021,7 @@ Partial Class ARFPYMT2
         '
         'UltraGroupBox1
         '
+        Me.UltraGroupBox1.Controls.Add(Me.btnDGJ2)
         Me.UltraGroupBox1.Controls.Add(Me.btnDGJ)
         Me.UltraGroupBox1.Controls.Add(Me.grpLockBox)
         Me.UltraGroupBox1.Controls.Add(Me.UltraTextEditor10)
@@ -6036,14 +6038,25 @@ Partial Class ARFPYMT2
         Me.UltraGroupBox1.Size = New System.Drawing.Size(1267, 71)
         Me.UltraGroupBox1.TabIndex = 10
         '
+        'btnDGJ2
+        '
+        Me.btnDGJ2.Location = New System.Drawing.Point(367, -2)
+        Me.btnDGJ2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.btnDGJ2.Name = "btnDGJ2"
+        Me.btnDGJ2.Size = New System.Drawing.Size(175, 26)
+        Me.btnDGJ2.TabIndex = 136
+        Me.btnDGJ2.Text = "DGJ  CODE Btn 2"
+        Me.btnDGJ2.Visible = False
+        '
         'btnDGJ
         '
-        Me.btnDGJ.Location = New System.Drawing.Point(431, -2)
+        Me.btnDGJ.Location = New System.Drawing.Point(184, 0)
         Me.btnDGJ.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.btnDGJ.Name = "btnDGJ"
-        Me.btnDGJ.Size = New System.Drawing.Size(274, 26)
+        Me.btnDGJ.Size = New System.Drawing.Size(175, 26)
         Me.btnDGJ.TabIndex = 135
-        Me.btnDGJ.Text = "DGJ  CODE"
+        Me.btnDGJ.Text = "DGJ  CODE Btn 1"
+        Me.btnDGJ.Visible = False
         '
         'UltraTextEditor10
         '
@@ -6687,4 +6700,5 @@ Partial Class ARFPYMT2
     Friend WithEvents UltraTabPageControl30 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdTATEVNT1 As UltraWinGrid.UltraGrid
     Friend WithEvents btnDGJ As Misc.UltraButton
+    Friend WithEvents btnDGJ2 As Misc.UltraButton
 End Class
