@@ -52,7 +52,7 @@ Public Class ARRSTMTR
         ' Added on 03/19/2026
         If chkPrintOnlyMailBoth.Checked Then
             ' This allows for Email Only without an Email to be printed.
-            ASCMAIN1.sql &= " AND ( ARTCUSTX.CUST_STMT_IND IN ('M', 'B') or (ARTCUSTX.CUST_STMT_IND = 'E' AND CUST_STMT_EMAIL IS NULL) )"
+            ASCMAIN1.sql &= " AND (NVL(ARTCUSTX.CUST_STMT_IND, 'M') IN ('M', 'B') OR (ARTCUSTX.CUST_STMT_IND = 'E' AND ARTCUSTX.CUST_STMT_EMAIL IS NULL))"
         End If
 
         If chkNoInternational.Checked Then
