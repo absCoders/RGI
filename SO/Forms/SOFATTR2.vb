@@ -698,16 +698,28 @@ Public Class SOFATTR2
             End If
         Next
 
-        '2025 Tariff Notice
+        'CC Notice
         r += 3
         oSheet.Range($"A{r}:N{r}").Merge()
-        'oSheet.Range($"A{r}:N{r}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        'oSheet.Range($"A{r}:N{r}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
-        oSheet.Range($"A{r}:N{r}").Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
+        oSheet.Range($"A{r}:N{r}").Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
         oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
         oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
         oSheet.Range($"A{r}:N{r}").Font.Bold = True
         oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
+        oSheet.Range($"A{r}:N{r}").RowHeight = oSheet.Range($"A{r}:N{r}").RowHeight * 2
+        oSheet.Range($"A{r}:N{r}").WrapText = True
+        'oSheet.Range($"A{r}:N{r}").Font.Size = 8
+
+        '2025 Tariff Notice
+        r += 1
+        oSheet.Range($"A{r}:N{r}").Merge()
+        oSheet.Range($"A{r}:N{r}").Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
+        oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+        oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+        oSheet.Range($"A{r}:N{r}").Font.Bold = True
+        oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
+        oSheet.Range($"A{r}:N{r}").RowHeight = oSheet.Range($"A{r}:N{r}").RowHeight * 2
+        oSheet.Range($"A{r}:N{r}").WrapText = True
         'oSheet.Range($"A{r}:N{r}").Font.Size = 8
 
         oSheet.Range(0, 0).Select()
@@ -3239,16 +3251,28 @@ Public Class SOFATTR2
             rng.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight
         End If
 
+        'CC Notice
+        R += 1
+        rng = XWS.Range($"A{R}:N{R}")
+        rng.Merge()
+        rng.Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
+        rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
+        rng.Font.Bold = True
+        rng.Font.Color = Color.Red
+        rng.RowHeight = rng.RowHeight * 2
+        rng.WrapText = True
+
+
         '2025 Tariff Notice
         R += 1
         rng = XWS.Range($"A{R}:N{R}")
         rng.Merge()
-        'rng.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        'rng.Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
-        rng.Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
+        rng.Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
         rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
         rng.Font.Bold = True
         rng.Font.Color = Color.Red
+        rng.RowHeight = rng.RowHeight * 2
+        rng.WrapText = True
         'With XWS.Range(Excel_Cell(R, 1), Excel_Cell(R, 14))
         '    .Merge()
         '    .Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."

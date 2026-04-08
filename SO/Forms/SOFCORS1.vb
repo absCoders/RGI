@@ -492,16 +492,27 @@
         range.Cells(RX, 13 + CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
         ' range.Cells(RX, 13 + CX).NumberFormat = “###,###.00”
 
-        '2025 Tariff Notice
+        'CC Message
         RX += 3
         oSheet.Range($"A{RX}:N{RX}").Merge()
-        'oSheet.Range($"A{RX}:N{RX}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        'oSheet.Range($"A{RX}:N{RX}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
-        oSheet.Range($"A{RX}:N{RX}").Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
+        oSheet.Range($"A{RX}:N{RX}").Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
+        oSheet.Range($"A{RX}:N{RX}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+        oSheet.Range($"A{RX}:N{RX}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+        oSheet.Range($"A{RX}:N{RX}").Font.Bold = False
+        oSheet.Range($"A{RX}:N{RX}").Font.Color = SpreadsheetGear.Colors.Red
+        oSheet.Range($"A{RX}:N{RX}").RowHeight = oSheet.Range($"A{RX}:N{RX}").RowHeight * 2
+        oSheet.Range($"A{RX}:N{RX}").WrapText = True
+
+        '2025 Tariff Notice
+        RX += 1
+        oSheet.Range($"A{RX}:N{RX}").Merge()
+        oSheet.Range($"A{RX}:N{RX}").Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
         oSheet.Range($"A{RX}:N{RX}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
         oSheet.Range($"A{RX}:N{RX}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
         oSheet.Range($"A{RX}:N{RX}").Font.Bold = True
         oSheet.Range($"A{RX}:N{RX}").Font.Color = SpreadsheetGear.Colors.Red
+        oSheet.Range($"A{RX}:N{RX}").RowHeight = oSheet.Range($"A{RX}:N{RX}").RowHeight * 2
+        oSheet.Range($"A{RX}:N{RX}").WrapText = True
 
         Dim SFX As String = ASCMAIN1.Next_Control_No("ExportDocuments")
         Dim XLS_FILE As String = Replace(xls_filename, "ExportDocuments", "ExportDocuments" & "_" & SFX)

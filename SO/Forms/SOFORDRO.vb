@@ -4641,21 +4641,36 @@ Public Class SOFORDRO
                 oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
             End With
         Next i
-        '2025 Tariff Notice
+
+        'CC Message
         Dim LastRow As Int64 = SCD + RowCount + 2
         With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
             .Merge()
-            '.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-            '.Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
-            .Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
+            .Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
             .Font.Bold = True
             .Font.Color = Color.Red
             .Font.Size = 9
-            '.RowHeight = 45
+            .RowHeight = .RowHeight * 2
             .WrapText = True
             .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
             .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
         End With
+
+
+        '2025 Tariff Notice
+        LastRow += 1
+        With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
+            .Merge()
+            .Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
+            .Font.Bold = True
+            .Font.Color = Color.Red
+            .Font.Size = 9
+            .RowHeight = .RowHeight * 2
+            .WrapText = True
+            .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
+            .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
+        End With
+
 
         'Begin - tariff Notification
         'Removed 10:30AM on a dark and rainy day April 16th 2020
