@@ -21767,8 +21767,9 @@ Public Class SOFSHIPB
                 Try
                     BeginTrans()
                     ASCDATA1.ExecuteSQL("UPDATE SOTORDC1 SET BALANCE = 0 WHERE ORDR_NO = :PARM1 AND TRANS_NO = :PARM2 AND CCPA_NO = :PARM3", "VNV", {ORDR_NO, TRANS_NO, CCPA_NO})
+                    ' Update fields to the proper values. 
                     ASCDATA1.ExecuteSQL($"UPDATE ARTCCPA1 SET CCPA_NOTE = 'Pre Release Sales Refund', 
-                                            CCPA_STATUS = 'S',
+                                            CCPA_STATUS = 'A',
                                             CCPA_REASON = 'C', 
                                             CUST_CREDIT_CARD_KEY = '{CUST_CREDIT_CARD_KEY}'
                                             WHERE CCPA_NO = :PARM1", "V", {CCPA_NO_CREDIT})
