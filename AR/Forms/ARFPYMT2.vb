@@ -8547,14 +8547,14 @@ Optional ByVal key As String = "") As Object
 
 
             If INV_NO_OA = "" Then
-                Stop
                 ASCMAIN1.sql = "Select INV_NO_OA from SOTGIFTC WHERE GIFT_CTL_NO = '" & GIFT_CTL_NO & "'"
                 INV_NO_OA = ASCDATA1.GetDataValue
                 If INV_NO_OA = "" Then
-                    MsgBox("Problem Applying Gift Card - (please call ABS)")
-                    Rollback()
-                    Clear_Record()
-                    Exit Sub
+                    Continue For
+                    ''MsgBox("Problem Applying Gift Card - (please call ABS)")
+                    ''Rollback()
+                    ''Clear_Record()
+                    ''Exit Sub
                 Else
                     ASCMAIN1.sql = "Update SOTINVHC set INV_NO_OA  = '" & INV_NO_OA & "' WHERE GIFT_CTL_NO = '" & GIFT_CTL_NO & "' AND INV_NO_OA IS NULL"
                     ASCDATA1.ExecuteSQL()
