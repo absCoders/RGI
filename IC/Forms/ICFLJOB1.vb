@@ -1150,7 +1150,7 @@ Public Class ICFLJOB1
                 & "   and EDT850T2.EDI_DOC_SEQ_NO (+) = SOTORDR2.EDI_DOC_SEQ_NO" & vbCrLf _
                 & "   and EDT850T2.EDI_DTL_SEQ (+) = SOTORDR2.EDI_DTL_SEQ" & vbCrLf _
                 & "   and ICTSTYL1.STYLE_CODE = SOTORDR2.STYLE_CODE" & vbCrLf _
-                & "" & IIf(USE_PICK, "   and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
+                & "" & IIf(USE_PICK, "   and SOTPICK1.PICK_STATUS <> 'D' and SOTPICK1.ORDR_NO = SOTORDR1.ORDR_NO" & vbCrLf _
                 & "   and SOTPICK2.PICK_NO = SOTPICK1.PICK_NO" & vbCrLf _
                 & "   and SOTPICK2.ORDR_NO = SOTORDR2.ORDR_NO" & vbCrLf _
                 & "   and SOTPICK2.ORDR_LNO = SOTORDR2.ORDR_LNO" & vbCrLf, "") _
