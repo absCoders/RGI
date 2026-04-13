@@ -2262,11 +2262,15 @@ Public Class SORCUSTQ
                     End If
 
                     ' CHANGE PO_COST FIRST TO PO_COST_VCOST FOB A PER GABE 03/05/2025 DGJ
+                    Dim STYLE_COST_DZ As Decimal = 0
+                    Dim FOB_COST As Decimal = 0
+
+
                     If STYLE_COST = 0 Then
-                        ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST_VCOST) STYLE_COST, PO_COST_VCOST,PO_COST_LANDED,PO_SHIPMENT_NO" & vbCrLf _
+                        ASCMAIN1.sql = "Select NVL(PO_COST_LANDED,PO_COST_VCOST) STYLE_COST, PO_COST_VCOST,PO_COST_VCOST_DZ,PO_COST_LANDED,PO_SHIPMENT_NO" & vbCrLf _
                                 & " from (" & vbCrLf _
                                 & " Select POTSHIP3.PO_SHIPMENT_NO, POTORDR2.PO_ORDER_NO, " & vbCrLf _
-                                & " POTORDR2.PO_COST_VCOST, POTSHIP3.PO_COST_LANDED, POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
+                                & " POTORDR2.PO_COST_VCOST, POTSHIP3.PO_COST_LANDED, POTORDR2.PO_COST_VCOST_DZ,POTSHIP2.PO_DATE_RECEIVED, POTSHIP1.PO_DATE_SHIPPED" & vbCrLf _
                                 & " from POTORDR2,POTSHIP3,POTSHIP2,POTSHIP1" & vbCrLf _
                                 & " where POTORDR2.STYLE_CODE = '" & STYLE_CODE & "' and POTORDR2.COLOR_CODE = '" & rowSOTCUSTQ.Item("COLOR_CODE") & "'" & vbCrLf _
                                 & "   and POTSHIP3.PO_ORDER_NO (+) = POTORDR2.PO_ORDER_NO" & vbCrLf _
@@ -2279,6 +2283,8 @@ Public Class SORCUSTQ
                         '  STYLE_COST = Val(ASCDATA1.GetDataValue)
                         For Each rowPOTSHIP3 As DataRow In ASCDATA1.GetDataTable(ASCMAIN1.sql).Select("")
                             STYLE_COST = Val(rowPOTSHIP3.Item("STYLE_COST") & "")
+                            STYLE_COST_DZ = Val(rowPOTSHIP3.Item("PO_COST_VCOST_DZ") & "")
+                            FOB_COST = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
                             If chkCostCode.Checked Then
                                 If STYLE_COST = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "") Then
                                     COSTTYPE = "FOB"
@@ -2306,29 +2312,34 @@ Public Class SORCUSTQ
                         COSTTYPE = ""
                     End If
                     STYLE_COST = Format$(STYLE_COST, "$#,##0.00")
+                    FOB_COST = Format$(FOB_COST, "$#,##0.00")
+                    If COSTTYPE <> "FOB" And COSTTYPE <> "PC(TI)" And COSTTYPE <> "PC(TNA)" Then
+                        STYLE_COST_DZ = 0
+                    End If
+                    If STYLE_COST_DZ <> 0 Then
+                        STYLE_COST_DZ = Format$(STYLE_COST_DZ, "$#,##0.00")
+                    End If
 
                     If chkCostCode.Checked = True Then
                         COSTTYPE = " - " & COSTTYPE & " " & TPERC
                     Else
                         COSTTYPE = ""
                     End If
-                    .Value = STYLE_COST & COSTTYPE
+                    If STYLE_COST_DZ = 0 Then
+                        .Value = STYLE_COST & COSTTYPE
+                    Else
+                        .Value = STYLE_COST & ", Dz-" & STYLE_COST_DZ & COSTTYPE
+                    End If
+                    If COSTTYPE = " - PC(TI) " Or COSTTYPE = " - PC(TNA) " Then
+                        .Value = STYLE_COST & COSTTYPE & ", " & FOB_COST & " Dz-" & STYLE_COST_DZ & " - FOB"
+                    End If
+
+                    '        .Value = STYLE_COST & COSTTYPE
                     ' .NumberFormat = "$#,##0.00"
                     .Font.Size = 12
                     .Font.Color = SpreadsheetGear.Colors.Red
                 End With
             End If
-
-
-
-
-
-
-
-
-
-
-
 
             worksheet.Cells(i + CI - 1, COL + 1).Value = rowSOTCUSTQ.Item("ORDR_CUST_PO") & String.Empty
             worksheet.Cells(i + CI - 1, COL + 2).Value = rowSOTCUSTQ.Item("ORDR_DATE") & String.Empty

@@ -14,12 +14,14 @@ Public Class ARRSTMTR
             chkPrintOnlyMailBoth.Checked = False
         End If
 
-        ' 03/13/2026 - Requested by Carmen
+        ' 03/13/2026 - Requested by Carmen and Rita
         If ASCMAIN1.CLIENT = "RGI" Then
             chkPrintOnlyMailBoth.Checked = True
             chkNoInternational.Checked = True
             chkSuppress.Checked = True
         End If
+
+        chkSuppress.Visible = ASCMAIN1.CLIENT = "RGI"
 
     End Sub
 
@@ -50,7 +52,7 @@ Public Class ARRSTMTR
         ' Added on 03/19/2026
         If chkPrintOnlyMailBoth.Checked Then
             ' This allows for Email Only without an Email to be printed.
-            ASCMAIN1.sql &= " AND ( ARTCUSTX.CUST_STMT_IND IN ('M', 'B') or (ARTCUSTX.CUST_STMT_IND = 'E' AND CUST_STMT_EMAIL IS NULL) )"
+            ASCMAIN1.sql &= " AND (NVL(ARTCUSTX.CUST_STMT_IND, 'M') IN ('M', 'B') OR (ARTCUSTX.CUST_STMT_IND = 'E' AND ARTCUSTX.CUST_STMT_EMAIL IS NULL))"
         End If
 
         If chkNoInternational.Checked Then
@@ -149,8 +151,8 @@ Public Class ARRSTMTR
         End If
 
         Dim recordSelectioFormula As String = String.Empty
-        If chkSuppress.Checked Then
-            recordSelectioFormula = "{@DUE_NOW} > 0"
+        If chkSuppress.Checked AndAlso ASCMAIN1.CLIENT = "RGI" Then
+            recordSelectioFormula = "{@TOTAL_BALANCE} > 0"
         End If
 
         Generate_Report(RPT, , SUBT, recordSelectioFormula)

@@ -192,6 +192,12 @@
     <Compile Include="Forms\ARFCINQ2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ARFCUSTV.Designer.vb">
+      <DependentUpon>ARFCUSTV.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ARFCUSTV.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\ARFECOMS.Designer.vb">
       <DependentUpon>ARFECOMS.vb</DependentUpon>
     </Compile>
@@ -458,6 +464,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ARFCINQ2.resx">
       <DependentUpon>ARFCINQ2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ARFCUSTV.resx">
+      <DependentUpon>ARFCUSTV.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ARFECOMS.resx">
       <DependentUpon>ARFECOMS.vb</DependentUpon>

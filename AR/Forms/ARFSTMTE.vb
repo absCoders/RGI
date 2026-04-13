@@ -94,8 +94,8 @@ Public Class ARFSTMTE
         Fill_Records("ARTSTMTE", txtOPS_YYYYPP.Text)
         EnforceConstraints(True)
 
-        grdARTSTMTE.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
         Sort_grdColumns(grdARTSTMTE, "CUST_CODE")
+        grdARTSTMTE.DisplayLayout.PerformAutoResizeColumns(False, PerformAutoSizeType.AllRowsInBand, True)
 
         ASCMAIN1.Progress(String.Empty, String.Empty)
     End Sub
@@ -117,7 +117,7 @@ Public Class ARFSTMTE
 #Region "Popup Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdARTSTMTE, "SSB", "Show Filter", "Show GroupBox", "Customer Master File")
+        Load_Popup_Menu(grdARTSTMTE, "SSBB", "Show Filter", "Show GroupBox", "Customer Master File", "View Statement")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -169,6 +169,22 @@ Public Class ARFSTMTE
                 If CUST_CODE.Length > 0 Then
                     Context_Launch("View", Column_Values("CUST_CODE", CUST_CODE), e.Tool.Key, "ARTCUST1")
                 End If
+
+            Case "View Statement"
+                Dim FILE_NAME As String = grd.ActiveRow.Cells.Item("FILE_NAME").Text
+                If FILE_NAME.Trim.Length = 0 Then
+                    MessageBox.Show("No statement to show", e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Exit Sub
+                End If
+
+                Try
+                    Dim psi As New ProcessStartInfo()
+                    psi.FileName = FILE_NAME
+                    psi.UseShellExecute = True
+                    Process.Start(psi)
+                Catch ex As Exception
+                    MessageBox.Show(ex.Message, e.Tool.Key, MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
         End Select
     End Sub
 
