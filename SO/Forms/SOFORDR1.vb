@@ -7237,6 +7237,10 @@ Public Class SOFORDR1
             Dim SUBT As String = ""
             .CR_params.Add("SUBT", SUBT)
             If ASCMAIN1.CLIENT = "RGI" Then
+                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text.ToString & String.Empty
+                Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs(CUST_CODE)
+                .CR_params.Add("CMSG", msgs("C"))
+                .CR_params.Add("TMSG", msgs("T"))
                 REPORT_NAME = "SORORDRR"
             End If
             .Generate_Report(REPORT_NAME, "Sales Order", SUBT, True, , , , , False)

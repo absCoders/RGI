@@ -698,29 +698,33 @@ Public Class SOFATTR2
             End If
         Next
 
-        'CC Notice
-        r += 3
-        oSheet.Range($"A{r}:N{r}").Merge()
-        oSheet.Range($"A{r}:N{r}").Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
-        oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
-        oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
-        oSheet.Range($"A{r}:N{r}").Font.Bold = True
-        oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
-        oSheet.Range($"A{r}:N{r}").RowHeight = oSheet.Range($"A{r}:N{r}").RowHeight * 2
-        oSheet.Range($"A{r}:N{r}").WrapText = True
-        'oSheet.Range($"A{r}:N{r}").Font.Size = 8
+        Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs("")
 
-        '2025 Tariff Notice
-        r += 1
-        oSheet.Range($"A{r}:N{r}").Merge()
-        oSheet.Range($"A{r}:N{r}").Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
-        oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
-        oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
-        oSheet.Range($"A{r}:N{r}").Font.Bold = True
-        oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
-        oSheet.Range($"A{r}:N{r}").RowHeight = oSheet.Range($"A{r}:N{r}").RowHeight * 2
-        oSheet.Range($"A{r}:N{r}").WrapText = True
-        'oSheet.Range($"A{r}:N{r}").Font.Size = 8
+        ''CC Notice
+        'r += 3
+        'oSheet.Range($"A{r}:N{r}").Merge()
+        'oSheet.Range($"A{r}:N{r}").Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
+        'oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+        'oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+        'oSheet.Range($"A{r}:N{r}").Font.Bold = True
+        'oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
+        'oSheet.Range($"A{r}:N{r}").RowHeight = oSheet.Range($"A{r}:N{r}").RowHeight * 2
+        'oSheet.Range($"A{r}:N{r}").WrapText = True
+        ''oSheet.Range($"A{r}:N{r}").Font.Size = 8
+
+        If msgs("T").Length > 0 Then
+            '2025 Tariff Notice
+            r += 3
+            oSheet.Range($"A{r}:N{r}").Merge()
+            oSheet.Range($"A{r}:N{r}").Value = msgs("T")
+            oSheet.Range($"A{r}:N{r}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            oSheet.Range($"A{r}:N{r}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+            oSheet.Range($"A{r}:N{r}").Font.Bold = True
+            oSheet.Range($"A{r}:N{r}").Font.Color = SpreadsheetGear.Colors.Red
+            oSheet.Range($"A{r}:N{r}").RowHeight = oSheet.Range($"A{r}:N{r}").RowHeight * 2
+            oSheet.Range($"A{r}:N{r}").WrapText = True
+            'oSheet.Range($"A{r}:N{r}").Font.Size = 8
+        End If
 
         oSheet.Range(0, 0).Select()
         oSheet.WindowInfo.FreezePanes = True
@@ -3251,38 +3255,32 @@ Public Class SOFATTR2
             rng.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignRight
         End If
 
-        'CC Notice
-        R += 1
-        rng = XWS.Range($"A{R}:N{R}")
-        rng.Merge()
-        rng.Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
-        rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
-        rng.Font.Bold = True
-        rng.Font.Color = Color.Red
-        rng.RowHeight = rng.RowHeight * 2
-        rng.WrapText = True
+        Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs("")
 
+        'Not doing this for attribute printing per Andy -4/9/26 W.R.
+        ''CC Notice
+        'R += 1
+        'rng = XWS.Range($"A{R}:N{R}")
+        'rng.Merge()
+        'rng.Value = "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately."
+        'rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
+        'rng.Font.Bold = True
+        'rng.Font.Color = Color.Red
+        'rng.RowHeight = rng.RowHeight * 2
+        'rng.WrapText = True
 
         '2025 Tariff Notice
-        R += 1
-        rng = XWS.Range($"A{R}:N{R}")
-        rng.Merge()
-        rng.Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
-        rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
-        rng.Font.Bold = True
-        rng.Font.Color = Color.Red
-        rng.RowHeight = rng.RowHeight * 2
-        rng.WrapText = True
-        'With XWS.Range(Excel_Cell(R, 1), Excel_Cell(R, 14))
-        '    .Merge()
-        '    .Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        '    '.Font.Bold = True
-        '    '.Font.Color = Color.Red
-        '    '.RowHeight = 45
-        '    .WrapText = True
-        '    '.VerticalAlignment = excel.XlVAlign.xlVAlignTop
-        '    .BorderAround(excel.XlLineStyle.xlContinuous, excel.XlBorderWeight.xlThin)
-        'End With
+        If msgs("T").Length > 0 Then
+            R += 1
+            rng = XWS.Range($"A{R}:N{R}")
+            rng.Merge()
+            rng.Value = msgs("T")
+            rng.BorderAround(Microsoft.Office.Interop.Excel.XlLineStyle.xlContinuous, Microsoft.Office.Interop.Excel.XlBorderWeight.xlThin, Microsoft.Office.Interop.Excel.XlColorIndex.xlColorIndexAutomatic)
+            rng.Font.Bold = True
+            rng.Font.Color = Color.Red
+            rng.RowHeight = rng.RowHeight * 2
+            rng.WrapText = True
+        End If
 
         rng = XWS.Range("D:E")
         rng.EntireColumn.AutoFit()

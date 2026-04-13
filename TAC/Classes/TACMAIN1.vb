@@ -2387,6 +2387,31 @@ Public Class TACMAIN1
         Return RetVal
     End Function
 
+
+    Public Shared Function getSalesDocMsgs(ByVal CUST_CODE As String) As Dictionary(Of String, String)
+        '"T" = Tariff Message
+        '"C" = Credit Card Message - Only for CRED & CBD
+        'This needs to be paramaterized one day with a maint screen. - W.R.
+        Dim retVal As New Dictionary(Of String, String)
+        Dim TERM_CODE As String = ""
+
+        If CUST_CODE.Length > 0 Then
+            Dim SQLS As New System.Text.StringBuilder With {.Length = 0}
+            SQLS.AppendLine("SELECT TERM_CODE")
+            SQLS.AppendLine("FROM ARTCUST1")
+            SQLS.AppendLine($"WHERE CUST_CODE = '{CUST_CODE}'")
+            ASCMAIN1.sql = SQLS.ToString()
+            TERM_CODE = ASCDATA1.GetDataValue
+        End If
+
+        If TERM_CODE = "CRED" Or TERM_CODE = "CBD" Then
+            retVal.Add("C", "We accept MasterCard, Visa, and Discover. Credit cards are charged approximately one week prior to shipment for the product and estimated shipping charges. Any difference at the time of shipment will be charged or credited to the same card. Each shipment will be charged separately.")
+        Else
+            retVal.Add("C", "")
+        End If
+        retVal.Add("T", "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information.")
+        Return retVal
+    End Function
 #Region "EWS Email"
 
     Public Shared Function Get_EWS_Service(USER_EMAIL As String) As ExchangeService
