@@ -2409,7 +2409,7 @@ Public Class TACMAIN1
         Else
             retVal.Add("C", "")
         End If
-        retVal.Add("T", "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information.")
+        retVal.Add("T", "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visit https://www.regency-rib.com/tariffinfo.html for detailed information.")
         Return retVal
     End Function
 #Region "EWS Email"
