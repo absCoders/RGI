@@ -24,6 +24,7 @@
     Dim Styles As String = ""
     Dim RESCAN As Boolean = False
     Dim OpenTickect As Boolean = False
+    Dim seen As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
 
     Sub New(ByVal g As GunEnvironment)
         MyBase.New(g)
@@ -111,6 +112,7 @@
 
                     dst.Tables("ICTPHYC2").Rows.Clear()
                     dst.Tables("ICTPHYC1").Rows.Clear()
+                    seen.Clear()
                     TICKET_LNO = 0
 
                     If Chk_RESCAN() = False Then
@@ -325,10 +327,18 @@
                     If SCANTEXT = "Y" Then
 
                         If RESCAN = True Then
-                            For Each row2 As DataRow In dst.Tables("ICTPHYC2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
-                                row2.Item("STATUS") = "V"
-                                row2.Item("NEW_TICKET") = G.USER_ID
-                            Next
+                            ' Build a unique key for the pair
+                            Dim key As String = STYLE_CODE & "|" & COLOR_CODE
+                            ' If we haven't seen this pair yet, process it
+                            If Not seen.Contains(key) Then
+                                ' Add to the set so we don't process it again
+                                seen.Add(key)
+                                For Each row2 As DataRow In dst.Tables("ICTPHYC2").Select("STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'")
+                                    row2.Item("STATUS") = "V"
+                                    row2.Item("NEW_TICKET") = G.USER_ID
+                                Next
+                            End If
+
                         End If
 
                         Dim rowICTPHYC2 As DataRow ' = dst.Tables("ICTPHYC2").Rows.Find(New Object() {G.WHSE_CODE, TICKET_NO1, "1"})
