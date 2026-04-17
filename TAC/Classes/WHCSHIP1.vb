@@ -5368,7 +5368,7 @@ Public Class WHCSHIP1
                     If isGroundFreight AndAlso .ServiceType = "43" Then
                         .ServiceTypeDescription = "UPS Ground Freight"
                     End If
-                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty) ' + Val(objUpsRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
+                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty) + Val(objUpsRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
                     .DeliveryTime = objUpsRates.Services(iLoop).DeliveryTime
                     .ListNetCharge = Val(objUpsRates.Services(iLoop).ListNetCharge & String.Empty)
                     .TransitTime = objUpsRates.Services(iLoop).TransitTime
