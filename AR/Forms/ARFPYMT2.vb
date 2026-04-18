@@ -1185,8 +1185,8 @@ Public Class ARFPYMT2
                 End If
 
             Case "Process Shopify"
-                ''MsgBox("Processing a Shopify Payment is temporarily unavailable", MsgBoxStyle.OkOnly, "")
-                ''Exit Sub
+                MsgBox("Processing a Shopify Payment is temporarily unavailable", MsgBoxStyle.OkOnly, "")
+                Exit Sub
 
                 If grdARTSHOPX.Selected.Rows.Count = 0 Then
                     If grdARTSHOPX.ActiveRow IsNot Nothing Then
@@ -7408,6 +7408,7 @@ Optional ByVal key As String = "") As Object
                             With rowARTPYMT3
                                 Dim INV_BALANCE_CURR As Decimal = Val(.Item("INV_BALANCE_CURR") & "")
                                 Dim INV_MISC_CHG_CURR As Decimal = Val(.Item("INV_MISC_CHG_CURR") & "")
+                                Dim INV_PMT_CURR As Decimal = Val(.Item("INV_PMT_CURR") & "")
                                 Dim INV_PMT_invoice As Decimal = INV_PMT
                                 If rowARTPYMT3s.Length > 1 Then
                                     INV_PMT_invoice = INV_BALANCE_CURR
@@ -7422,13 +7423,24 @@ Optional ByVal key As String = "") As Object
                                 End If
                                 Dim GOOD_RECORD As Boolean = True
                                 If TRANS_TYPE = "refund" And INV_BALANCE_CURR - INV_PMT_invoice <> 0 Then
-                                    If INV_BALANCE_CURR - INV_PMT_invoice - INV_MISC_CHG_CURR <> 0 Then
-                                        MsgBox("This Refund for Invoice No " & rowARTPYMT3.Item("INV_NUM") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
-                                        GOOD_RECORD = False
+                                    If INV_BALANCE_CURR - INV_PMT_CURR <> 0 Then
+                                        If (INV_BALANCE_CURR - INV_PMT_CURR) - INV_PMT_invoice - INV_MISC_CHG_CURR <> 0 Then
+                                            MsgBox("This Refund for Invoice No " & rowARTPYMT3.Item("INV_NUM") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
+                                            GOOD_RECORD = False
+                                        Else
+                                            MsgBox("Payment Applied for this Refund Causes an Open Balance. Invoice No " & rowARTPYMT3.Item("INV_NUM") & " has an open Balance Amount = to the Invoice Misc Charge", MsgBoxStyle.OkOnly, "This will Leave and Open Balance for the AR Item")
+                                            GOOD_RECORD = True
+                                        End If
                                     Else
-                                        MsgBox("Payment Applied for this Refund Causes an Open Balance. Invoice No " & rowARTPYMT3.Item("INV_NUM") & " has an open Balance Amount = to the Invoice Misc Charge", MsgBoxStyle.OkOnly, "This will Leave and Open Balance for the AR Item")
-                                        GOOD_RECORD = True
+                                        If INV_PMT_invoice < 0 Then
+                                            Stop
+                                            ' WRITE OUT CREDIT FOR INV_PMT_invoice
+                                            GOOD_RECORD = False
+                                        End If
                                     End If
+
+
+
                                 End If
 
                                 If GOOD_RECORD Then
