@@ -7425,7 +7425,7 @@ Optional ByVal key As String = "") As Object
                                 If TRANS_TYPE = "refund" And INV_BALANCE_CURR - INV_PMT_invoice <> 0 Then
                                     If INV_BALANCE_CURR - INV_PMT_CURR <> 0 Then
                                         If (INV_BALANCE_CURR - INV_PMT_CURR) - INV_PMT_invoice - INV_MISC_CHG_CURR <> 0 Then
-                                            MsgBox("This Refund for Invoice No " & rowARTPYMT3.Item("INV_NUM") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
+                                            MsgBox("This Refund for Invoice No: " & rowARTPYMT3.Item("INV_NUM") & " - Cust PO: " & rowARTPYMT3.Item("INV_CUST_PO") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
                                             GOOD_RECORD = False
                                         Else
                                             MsgBox("Payment Applied for this Refund Causes an Open Balance. Invoice No " & rowARTPYMT3.Item("INV_NUM") & " has an open Balance Amount = to the Invoice Misc Charge", MsgBoxStyle.OkOnly, "This will Leave and Open Balance for the AR Item")
