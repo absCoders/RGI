@@ -1185,8 +1185,8 @@ Public Class ARFPYMT2
                 End If
 
             Case "Process Shopify"
-                MsgBox("Processing a Shopify Payment is temporarily unavailable", MsgBoxStyle.OkOnly, "")
-                Exit Sub
+                ''MsgBox("Processing a Shopify Payment is temporarily unavailable", MsgBoxStyle.OkOnly, "")
+                ''Exit Sub
 
                 If grdARTSHOPX.Selected.Rows.Count = 0 Then
                     If grdARTSHOPX.ActiveRow IsNot Nothing Then
@@ -7434,6 +7434,39 @@ Optional ByVal key As String = "") As Object
                                     Else
                                         If INV_PMT_invoice < 0 Then
                                             Stop
+                                            ' WRITE OUT CREDIT FOR INV_PMT_invoice
+
+
+                                            PYMT_BATCH_DLNO_ctr = PYMT_BATCH_DLNO_ctr + 1
+                                            Dim rowARTPYMT5 As DataRow = dst.Tables("ARTPYMT5").NewRow
+                                            With rowARTPYMT5
+                                                .Item("PYMT_BATCH_NO") = PYMT_BATCH_NO
+                                                .Item("PYMT_BATCH_LNO") = PYMT_BATCH_LNO
+                                                .Item("PYMT_BATCH_DLNO") = PYMT_BATCH_DLNO_ctr
+                                                .Item("REASON_CODE") = "SHOPRE" ' rowSOTTYPE1_OA.Item("REASON_CODE") ' ROWs("ARTPARM1").Item("AR_PARM_REASON_CODE_OA")
+                                                rowARTREAS1 = dst.Tables("ARTREAS1").Rows.Find(.Item("REASON_CODE"))
+                                                If rowARTREAS1 IsNot Nothing Then .Item("REASON_DESC") = rowARTREAS1.Item("REASON_DESC")
+                                                .Item("ACCT_CODE") = DBNull.Value
+                                                .Item("GL_DIST_AMT") = INV_PMT_invoice * CURR_EXCH_RATE * -1
+                                                .Item("GL_DIST_COMMENT") = rowARTSHOP2.Item("TRANS_TYPE") & ""
+                                                .Item("CHARGEBACK_IND") = "0"
+                                                .Item("CHARGEBACK_NO") = DBNull.Value
+                                                .Item("CUST_REFERENCE") = rowARTSHOP2.Item("TRANS_TYPE") & ""
+
+                                                ''If rowEDTXREF2 IsNot Nothing Then
+                                                ''    .Item("CUST_CODE_SO") = rowEDTXREF2.Item("CUST_CODE_SO")
+                                                ''End If
+                                                .Item("SEG2_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG2")
+                                                .Item("SEG3_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG3")
+                                                .Item("SEG4_CODE") = ROWs("GLTPARM1").Item("GL_PARM_DEF_SEG4")
+                                                .Item("INV_TYPE_CB") = DBNull.Value
+                                                .Item("OUR_REFERENCE") = SHOPIFY_INVOICE_NO
+                                                .Item("GL_DIST_AMT_CURR") = INV_PMT_invoice * -1
+                                            End With
+                                            dst.Tables("ARTPYMT5").Rows.Add(rowARTPYMT5)
+
+                                            T3 = T3 + INV_PMT
+
                                             ' WRITE OUT CREDIT FOR INV_PMT_invoice
                                             GOOD_RECORD = False
                                         End If
