@@ -7433,7 +7433,7 @@ Optional ByVal key As String = "") As Object
                                         End If
                                     Else
                                         If INV_PMT_invoice < 0 Then
-                                            Stop
+                                            ' Stop
                                             ' WRITE OUT CREDIT FOR INV_PMT_invoice
 
 
