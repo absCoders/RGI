@@ -75,6 +75,13 @@
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O6", "*")
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDT855O7", "*")
             clsASCBASE1.Create_TDA(clsASCBASE1.dst.Tables.Add, "EDTSYSIH", "*")
+            If ASCMAIN1.CLIENT = "VAN" Then
+                With clsASCBASE1.dst.Tables("EDTSYSIH").Columns
+                    .Add("COMPANY_CODE", GetType(String))
+                    .Add("INIT_DATE", GetType(Date))
+                    .Add("INIT_OPER", GetType(String))
+                End With
+            End If
         End If
 
         If ASCMAIN1.CLIENT = "RGI" Then
@@ -89,6 +96,9 @@
         & " And R1.ORDR_GROUP_NO = R0.ORDR_GROUP_NO " _
         & " And R1.EDI_DOC_SEQ_NO is Not Null" _
         & " And R1.EDI_DOC_SEQ_NO = T1.EDI_DOC_SEQ_NO"
+        If ASCMAIN1.CLIENT = "VAN" Then
+            ASCMAIN1.sql = Replace(ASCMAIN1.sql, "t1.EDI_ARRIVAL_DATE", "'' EDI_ARRIVAL_DATE")
+        End If
         Dim rowSOTORDR1 As DataRow = ASCDATA1.GetDataRow
 
         If rowSOTORDR1 IsNot Nothing Then
@@ -102,7 +112,13 @@
             tblICTSTYC1 = ASCDATA1.GetDataTable(ASCMAIN1.sql)
 
             EDI_DOC_SEQ_NO = rowSOTORDR1.Item("EDI_DOC_SEQ_NO") & ""
-            Dim EDI_Outbound_Doc_No As String = ASCMAIN1.Next_Control_No("EDTSYSIH.EDI_OUTBOUND_DOC_NO")
+            Dim EDI_Outbound_Doc_No As String = ""
+            If ASCMAIN1.CLIENT = "VAN" Then
+                EDI_Outbound_Doc_No = ASCMAIN1.Next_Control_No("EDI_OUTBOUND_DOC_NO")
+            Else
+                EDI_Outbound_Doc_No = ASCMAIN1.Next_Control_No("EDTSYSIH.EDI_OUTBOUND_DOC_NO")
+            End If
+
             EDI_OUR_ID = Replace(rowSOTORDR1.Item("EDI_OUR_ID"), " ", "")
 
             ASCMAIN1.sql = "Select * from EDTTRPM1 M1" & vbCrLf _
@@ -121,6 +137,13 @@
                 & " And O1.COMPANY_CODE = IH.COMPANY_CODE" & vbCrLf _
                 & " And O1.EDI_OUTBOUND_DOC_NO = IH.EDI_OUTBOUND_DOC_NO" & vbCrLf _
                 & " AND EDI_TP_ID NOT IN (SELECT EDI_TP_ID FROM EDTTRPM1 WHERE CUST_CODE = '" & FactorCode & "')"
+                If ASCMAIN1.CLIENT = "VAN" Then
+                    ASCMAIN1.sql = "Select IH.* from EDT855O1 O1, EDTSYSIH IH" & vbCrLf _
+                    & " Where ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" & vbCrLf _
+                    & " and O1.COMPANY_CODE = '" & ASCMAIN1.DBS_COMPANY & "'" & vbCrLf _
+                    & " And O1.EDI_OUTBOUND_DOC_NO = IH.EDI_OUTBOUND_DOC_NO" & vbCrLf _
+                    & " AND EDI_TP_ID NOT IN (SELECT EDI_TP_ID FROM EDTTRPM1 WHERE CUST_CODE = '" & FactorCode & "')"
+                End If
                 Dim rowEDT855OC As DataRow = ASCDATA1.GetDataRow
 
                 If rowEDT855OC IsNot Nothing Then
@@ -223,7 +246,9 @@
                         .Item("SAH_UOM_CODE") = rowEDT850T7.Item("SAH_UOM_CODE") & ""
                         .Item("SAH_QTY") = rowEDT850T7.Item("SAH_QTY")
                         .Item("SAH_HANDLING_CODE") = rowEDT850T7.Item("SAH_HANDLING_CODE") & ""
-                        .Item("SAH_DESC") = rowEDT850T7.Item("SAH_DESC") & ""
+                        If ASCMAIN1.CLIENT <> "VAN" Then
+                            .Item("SAH_DESC") = rowEDT850T7.Item("SAH_DESC") & ""
+                        End If
                     End With
                     clsASCBASE1.dst.Tables("EDT855O7").Rows.Add(rowEDT855O7)
                 Next
@@ -299,21 +324,38 @@
                 End If
             End If
 
+            Dim EDI_PRICE_UOM As String = ""
+            Dim EDI_PO4_INNER As Int16 = 0
+            Dim EDI_ITEM As String = ""
+            Dim EDI_ITEM_DESC As String = ""
+            Dim EDI_PO_LNO As Int16 = 0
+            If ASCMAIN1.CLIENT = "VAN" Then
+                EDI_ITEM = rowEDT850T2.Item("EDI_STYLE")
+                EDI_ITEM_DESC = rowEDT850T2.Item("EDI_STYLE_NAME") & ""
+                EDI_PO_LNO = rowEDT850T2.Item("EDI_DTL_SEQ")
+            Else
+                EDI_PRICE_UOM = rowEDT850T2.Item("EDI_PRICE_UOM") & ""
+                EDI_PO4_INNER = rowEDT850T2.Item("EDI_PO4_INNER")
+                EDI_ITEM = rowEDT850T2.Item("EDI_ITEM") & ""
+                EDI_ITEM_DESC = rowEDT850T2.Item("EDI_ITEM_DESC") & ""
+                EDI_PO_LNO = rowEDT850T2.Item("EDI_PO_LNO")
+            End If
+
             .Item("COMPANY_CODE") = ASCMAIN1.DBS_COMPANY
             .Item("EDI_OUTBOUND_DOC_NO") = EDI_Outbound_Doc_No
             .Item("EDI_DTL_SEQ") = rowEDT850T2.Item("EDI_DTL_SEQ")
             .Item("EDI_TOTAL_QTY") = rowEDT850T2.Item("EDI_TOTAL_QTY")
-            .Item("EDI_UOM") = rowEDT850T2.Item("EDI_PRICE_UOM") & ""
+            .Item("EDI_UOM") = EDI_PRICE_UOM
             .Item("EDI_PRICE") = rowEDT850T2.Item("EDI_PRICE")
             .Item("EDI_PO4_QTY") = rowEDT850T2.Item("EDI_PO4_QTY")
-            .Item("EDI_PO4_INNER") = rowEDT850T2.Item("EDI_PO4_INNER")
+            .Item("EDI_PO4_INNER") = EDI_PO4_INNER
             .Item("EDI_PO4_UOM") = rowEDT850T2.Item("EDI_PO4_UOM")
-            .Item("EDI_ITEM") = rowEDT850T2.Item("EDI_ITEM")
+            .Item("EDI_ITEM") = EDI_ITEM
             .Item("EDI_UPC") = rowEDT850T2.Item("EDI_UPC")
             .Item("EDI_SKU") = rowEDT850T2.Item("EDI_SKU")
             .Item("EDI_GTIN") = rowEDT850T2.Item("EDI_GTIN")
-            .Item("EDI_ITEM_DESC") = rowEDT850T2.Item("EDI_ITEM_DESC")
-            .Item("EDI_PO_LNO") = rowEDT850T2.Item("EDI_PO_LNO")
+            .Item("EDI_ITEM_DESC") = EDI_ITEM_DESC
+            .Item("EDI_PO_LNO") = EDI_PO_LNO
             .Item("EDI_PRICE_ACTUAL") = EDI_PRICE_ACTUAL
             .Item("EDI_QTY_OPEN") = EDI_QTY_OPEN
             .Item("EDI_QTY_PICK") = EDI_QTY_PICK
@@ -332,7 +374,7 @@
         Dim EDI_SDQ_SEQ As Int32 = 0
         Dim fieldNum As Int16 = 0
         Dim UPC_CODE As String = rowEDT850T2.Item("EDI_UPC") & String.Empty
-        If UPC_CODE.Length = 0 Then
+        If UPC_CODE.Length = 0 AndAlso ASCMAIN1.CLIENT <> "VAN" Then
             UPC_CODE = rowEDT850T2.Item("EDI_EAN") & String.Empty
         End If
 
