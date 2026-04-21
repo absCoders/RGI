@@ -2528,7 +2528,7 @@ Public Class ICCMAIN1
         ' Rule: If there is an INV_STAX amount, there must be an STAX_CODE = ‘NY’ to update appropriate G/L Account at month end.
         If ASCMAIN1.CLIENT = "VAN" Then
             If Val(rowSOTINVH1.Item("INV_STAX") & String.Empty) <> 0 Then
-                If rowSOTINVH1.Item("STAX_CODE") = "" Then
+                If rowSOTINVH1.Item("STAX_CODE") & String.Empty = "" Then
                     rowSOTINVH1.Item("STAX_CODE") = "NY"
                 End If
             End If

@@ -12,6 +12,7 @@ Public Class ARRDEFI1
         Set_cmbYP("RYP0", ASCMAIN1.CYP, -60, 0, 0)
         Set_cmbYP("RYP1", ASCMAIN1.CYP, -60, 0, 0)
         UltraTabControl1.Tabs.Item(5).Visible = False
+        chkWHSE.Checked = False
         UltraTabControl1.Tabs.Item(5).Text = "Matrix"
         If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
             Create_Summary(grdMATRIX, "YTD_NET_UNITS", "Sum", "", "###,##0")
@@ -65,7 +66,12 @@ Public Class ARRDEFI1
             'Create_Summary(grdMATRIX, "MTRX_TWO_PCT", "Sum", "", "###,##0.00")
             'Load_Popup_Menu(grdMATRIX, "SSB", "Show Filter", "Show GroupBox")
         End If
-        RPT = "ARRDEFI2" ' IIf(MENU_ITEM_FORM = "", MENU_ITEM_OBJECT, MENU_ITEM_FORM)
+        If chkWHSE.Checked Then
+            RPT = "ARRDEFI3" ' IIf(MENU_ITEM_FORM = "", MENU_ITEM_OBJECT, MENU_ITEM_FORM)
+        Else
+            RPT = "ARRDEFI2" ' IIf(MENU_ITEM_FORM = "", MENU_ITEM_OBJECT, MENU_ITEM_FORM)
+
+        End If
         SUBT = "For Period: " & Absx1.cmbFor("RYP0").SelectedRow.Cells("LEGEND").Value & " Thru " & Absx1.cmbFor("RYP1").SelectedRow.Cells("LEGEND").Value
 
         If sqlWarehouse.Length = 0 Then
@@ -98,9 +104,10 @@ Public Class ARRDEFI1
 
     End Sub
 
-    Overrides Function Prepare_dst( _
-    ByVal perform_fill As Boolean, _
+    Overrides Function Prepare_dst(
+    ByVal perform_fill As Boolean,
     ByVal ParamArray parms() As Object) As ASCBASE1
+
 
         If Not Me.Visible Then Clear_dst()
 
@@ -111,7 +118,7 @@ Public Class ARRDEFI1
         Dim sqlw As String = CStr(parms(0))
         If sqlw = "" Then sqlw = ""
 
-        sql = " SELECT NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE"
+        sql = " SELECT NVL(SOTRTRN1.WHSE_CODE, '?') WHSE_CODE, NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE"
         sql &= ", ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, SOTRTRN2.RTV_REASON_CODE REASON_CODE"
         sql &= ", 0.00 MTD_NET_SALES, 0.00 YTD_NET_SALES"
         sql &= ", 0 MTD_NET_UNITS, 0 YTD_NET_UNITS"
@@ -147,7 +154,7 @@ Public Class ARRDEFI1
         ASCDATA1.ExecuteSQL("Alter Table " & ARTDEFI1 & " MODIFY STYLE_COST NUMBER(13,2)")
         ASCDATA1.ExecuteSQL("Alter Table " & ARTDEFI1 & " MODIFY STYLE_COST_EXT NUMBER(13,2)")
 
-        ASCDATA1.ExecuteSQL("Alter Table " & ARTDEFI1 & " ADD PRIMARY KEY (VEND_CODE, STYLE_CODE, COLOR_CODE, REASON_CODE)")
+        ASCDATA1.ExecuteSQL("Alter Table " & ARTDEFI1 & " ADD PRIMARY KEY (WHSE_CODE, VEND_CODE, STYLE_CODE, COLOR_CODE, REASON_CODE)")
 
         sql = "SELECT * FROM " & ARTDEFI1
         Create_TDA(dst.Tables.Add("ARTDEFI1"), ARTDEFI1, "*")
@@ -182,7 +189,7 @@ Public Class ARRDEFI1
 
 
         If optDS.Value = "S" Then
-            sql = " SELECT NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
+            sql = " SELECT  NVL(SOTRTRN1.WHSE_CODE, '?') WHSE_CODE,NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
             sql &= ", 0.00 MTD_NET_SALES, 0.00 YTD_NET_SALES"
             sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN (SOTRTRN2.RTRN_QTY_1 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END MTD_DEF_CLAIMS"
             'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN (SOTRTRN2.RTRN_QTY_1 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
@@ -200,7 +207,7 @@ Public Class ARRDEFI1
             sql &= " AND SOTRTRN1.OPS_YYYYPP BETWEEN '" & xRYP0 & "' AND '" & xRYP1 & "'"
         Else
 
-            sql = " SELECT NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
+            sql = " SELECT  NVL(SOTRTRN1.WHSE_CODE, '?') WHSE_CODE,NVL(ICTSTYL1.VEND_CODE, '?') VEND_CODE, SOTRTRN2.STYLE_CODE, SOTRTRN2.COLOR_CODE, ICTSTYL1.STYLE_UOM, ICTSTYL1.STYLE_DESC, NVL(SOTRTRN2.RTV_REASON_CODE, SOTRTRN1.REASON_CODE) REASON_CODE"
             sql &= ", 0.00 MTD_NET_SALES, 0.00 YTD_NET_SALES"
             sql &= ", CASE SOTRTRN2.OPS_YYYYPP WHEN '" & xRYP0 & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END MTD_DEF_CLAIMS"
             'sql &= ", CASE SUBSTR(SOTRTRN2.OPS_YYYYPP, 1, 4) WHEN '" & xRYP0.Substring(0, 4) & "' THEN (SOTRTRN2.RTRN_QTY_3 * NVL(SOTRTRN2.RTRN_PRICE, 0)) ELSE 0 END YTD_DEF_CLAIMS"
@@ -226,7 +233,7 @@ Public Class ARRDEFI1
         ASCMAIN1.Progress("Sum Data", "")
         ASCDATA1.ExecuteSQL("TRUNCATE TABLE " & ARTDEFI1)
         sql = "INSERT INTO " & ARTDEFI1
-        sql &= " SELECT VEND_CODE, STYLE_CODE, COLOR_CODE, STYLE_UOM, STYLE_DESC, REASON_CODE"
+        sql &= " SELECT WHSE_CODE,VEND_CODE, STYLE_CODE, COLOR_CODE, STYLE_UOM, STYLE_DESC, REASON_CODE"
         sql &= ", SUM(0) MTD_NET_SALES, SUM(0) YTD_NET_SALES"
         sql &= ", SUM(0) MTD_NET_UNITS, SUM(0) YTD_NET_UNITS"
         sql &= ", SUM(MTD_DEF_CLAIMS) MTD_DEF_CLAIMS"
@@ -240,7 +247,7 @@ Public Class ARRDEFI1
         sql &= ", STYLE_COST"
         sql &= ", SUM(0) STYLE_COST_EXT"
         sql &= " from " & wktable
-        sql &= " group by VEND_CODE, STYLE_CODE, COLOR_CODE, STYLE_UOM, STYLE_DESC, REASON_CODE, STYLE_COST"
+        sql &= " group by WHSE_CODE, VEND_CODE, STYLE_CODE, COLOR_CODE, STYLE_UOM, STYLE_DESC, REASON_CODE, STYLE_COST"
         ASCDATA1.ExecuteSQL(sql)
 
         ASCMAIN1.Progress("Update Monthly Sales/Units", "")
@@ -293,6 +300,10 @@ Public Class ARRDEFI1
         ASCDATA1.ExecuteSQL(sql)
 
         Fill_Records("ARTDEFI1", String.Empty, True, "SELECT * FROM " & ARTDEFI1)
+
+
+        ' Repeat above for ARTDEFI2 for WHSE_CODE
+
 
         EnforceConstraints(True)
 
