@@ -330,7 +330,7 @@
             Dim EDI_ITEM_DESC As String = ""
             Dim EDI_PO_LNO As Int16 = 0
             If ASCMAIN1.CLIENT = "VAN" Then
-                EDI_ITEM = rowEDT850T2.Item("EDI_STYLE")
+                EDI_ITEM = rowEDT850T2.Item("EDI_STYLE") & ""
                 EDI_ITEM_DESC = rowEDT850T2.Item("EDI_STYLE_NAME") & ""
                 EDI_PO_LNO = rowEDT850T2.Item("EDI_DTL_SEQ")
             Else
