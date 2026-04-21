@@ -123,6 +123,7 @@ Partial Class ARRDEFI1
         Me.chkStock = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.optDS = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
+        Me.chkWHSE = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -163,6 +164,7 @@ Partial Class ARRDEFI1
         CType(Me.chkDestroy, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStock, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optDS, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkWHSE, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -191,6 +193,7 @@ Partial Class ARRDEFI1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkWHSE)
         Me.SplitContainer5.Panel1.Controls.Add(Me.optDS)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraLabel3)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkStock)
@@ -732,6 +735,15 @@ Partial Class ARRDEFI1
         Me.optDS.TabIndex = 144
         Me.optDS.Text = "Destroy Only"
         '
+        'chkWHSE
+        '
+        Me.chkWHSE.Location = New System.Drawing.Point(25, 147)
+        Me.chkWHSE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkWHSE.Name = "chkWHSE"
+        Me.chkWHSE.Size = New System.Drawing.Size(221, 22)
+        Me.chkWHSE.TabIndex = 145
+        Me.chkWHSE.Text = "Sort By Warehouse"
+        '
         'ARRDEFI1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
@@ -782,6 +794,7 @@ Partial Class ARRDEFI1
         CType(Me.chkDestroy, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStock, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optDS, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkWHSE, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -797,4 +810,5 @@ Partial Class ARRDEFI1
     Friend WithEvents chkStock As UltraWinEditors.UltraCheckEditor
     Friend WithEvents UltraLabel3 As Misc.UltraLabel
     Friend WithEvents optDS As UltraWinEditors.UltraOptionSet
+    Friend WithEvents chkWHSE As UltraWinEditors.UltraCheckEditor
 End Class
