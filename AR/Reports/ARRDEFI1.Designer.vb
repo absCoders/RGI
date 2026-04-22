@@ -119,11 +119,11 @@ Partial Class ARRDEFI1
         Me.Label1 = New System.Windows.Forms.Label()
         Me.UltraCombo2 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.UltraCombo1 = New Infragistics.Win.UltraWinGrid.UltraCombo()
-        Me.chkDestroy = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
-        Me.chkStock = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
         Me.UltraLabel3 = New Infragistics.Win.Misc.UltraLabel()
         Me.optDS = New Infragistics.Win.UltraWinEditors.UltraOptionSet()
         Me.chkWHSE = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.chkConsolidate = New Infragistics.Win.UltraWinEditors.UltraCheckEditor()
+        Me.txtCONS_CODES = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -161,10 +161,10 @@ Partial Class ARRDEFI1
         Me.grpPERIOD_RANGE.SuspendLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkDestroy, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.chkStock, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.optDS, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkWHSE, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkConsolidate, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtCONS_CODES, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -193,11 +193,11 @@ Partial Class ARRDEFI1
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.txtCONS_CODES)
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkConsolidate)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkWHSE)
         Me.SplitContainer5.Panel1.Controls.Add(Me.optDS)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraLabel3)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.chkStock)
-        Me.SplitContainer5.Panel1.Controls.Add(Me.chkDestroy)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpPERIOD_RANGE)
         Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
         '
@@ -684,28 +684,6 @@ Partial Class ARRDEFI1
         Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo1.TabIndex = 0
         '
-        'chkDestroy
-        '
-        Me.chkDestroy.Checked = True
-        Me.chkDestroy.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkDestroy.Location = New System.Drawing.Point(595, 169)
-        Me.chkDestroy.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.chkDestroy.Name = "chkDestroy"
-        Me.chkDestroy.Size = New System.Drawing.Size(221, 22)
-        Me.chkDestroy.TabIndex = 9
-        Me.chkDestroy.Text = " Include Destroy"
-        Me.chkDestroy.Visible = False
-        '
-        'chkStock
-        '
-        Me.chkStock.Location = New System.Drawing.Point(595, 197)
-        Me.chkStock.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me.chkStock.Name = "chkStock"
-        Me.chkStock.Size = New System.Drawing.Size(247, 22)
-        Me.chkStock.TabIndex = 10
-        Me.chkStock.Text = " Include Stock"
-        Me.chkStock.Visible = False
-        '
         'UltraLabel3
         '
         Me.UltraLabel3.AutoSize = True
@@ -743,6 +721,30 @@ Partial Class ARRDEFI1
         Me.chkWHSE.Size = New System.Drawing.Size(221, 22)
         Me.chkWHSE.TabIndex = 145
         Me.chkWHSE.Text = "Sort By Warehouse"
+        '
+        'chkConsolidate
+        '
+        Me.chkConsolidate.Location = New System.Drawing.Point(25, 175)
+        Me.chkConsolidate.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkConsolidate.Name = "chkConsolidate"
+        Me.chkConsolidate.Size = New System.Drawing.Size(718, 22)
+        Me.chkConsolidate.TabIndex = 146
+        Me.chkConsolidate.Text = "Consolidate all factory reason codes to Code 56 (based on 4/21/26 List)"
+        '
+        'txtCONS_CODES
+        '
+        Me.Absx1.SetABSColumnName(Me.txtCONS_CODES, "TERM_DESC")
+        Me.txtCONS_CODES.Enabled = False
+        Me.txtCONS_CODES.Location = New System.Drawing.Point(13, 204)
+        Me.txtCONS_CODES.Margin = New System.Windows.Forms.Padding(4)
+        Me.txtCONS_CODES.Multiline = True
+        Me.txtCONS_CODES.Name = "txtCONS_CODES"
+        Me.txtCONS_CODES.Size = New System.Drawing.Size(1006, 49)
+        Me.txtCONS_CODES.TabIndex = 147
+        Me.txtCONS_CODES.Text = "28,29,31,36,37,38,39,44,56,BADGLU,BADLTS,BADPNT,CRACKE,CRKBER,DFSMPL,DISCOL,DISEN" &
+    "T,DMGBRK,DMGCRS,DMGGLS,DMGRUB,FALLIN,FDADJ,MISSPT,MNDFCT,PA,POOR,RECALL,SCRATC,S" &
+    "MASHE"
+        Me.txtCONS_CODES.Visible = False
         '
         'ARRDEFI1
         '
@@ -791,10 +793,10 @@ Partial Class ARRDEFI1
         Me.grpPERIOD_RANGE.PerformLayout()
         CType(Me.UltraCombo2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.UltraCombo1, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkDestroy, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.chkStock, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.optDS, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkWHSE, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkConsolidate, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtCONS_CODES, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -806,9 +808,9 @@ Partial Class ARRDEFI1
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents UltraCombo2 As Infragistics.Win.UltraWinGrid.UltraCombo
-    Friend WithEvents chkDestroy As UltraWinEditors.UltraCheckEditor
-    Friend WithEvents chkStock As UltraWinEditors.UltraCheckEditor
     Friend WithEvents UltraLabel3 As Misc.UltraLabel
     Friend WithEvents optDS As UltraWinEditors.UltraOptionSet
     Friend WithEvents chkWHSE As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents chkConsolidate As UltraWinEditors.UltraCheckEditor
+    Friend WithEvents txtCONS_CODES As UltraWinEditors.UltraTextEditor
 End Class
