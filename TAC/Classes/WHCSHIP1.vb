@@ -4482,7 +4482,7 @@ Public Class WHCSHIP1
                         .ServiceTypeDescription = StrConv(objFedexRates.Services(iLoop).ServiceTypeDescription.Replace("_", " "), VbStrConv.ProperCase)
 
                         ' Modified 03/02/2026
-                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty) + Val(objFedexRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
+                        .AccountNetCharge = Val(objFedexRates.Services(iLoop).AccountNetCharge & String.Empty) '+ Val(objFedexRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
 
                         .DeliveryTime = objFedexRates.Services(iLoop).DeliveryTime
                         .DeliveryDate = objFedexRates.Services(iLoop).DeliveryDate
@@ -5368,7 +5368,7 @@ Public Class WHCSHIP1
                     If isGroundFreight AndAlso .ServiceType = "43" Then
                         .ServiceTypeDescription = "UPS Ground Freight"
                     End If
-                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty) + Val(objUpsRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
+                    .AccountNetCharge = Val(objUpsRates.Services(iLoop).AccountNetCharge & String.Empty) ' + Val(objUpsRates.Services(iLoop).AccountTotalSurcharge & String.Empty)
                     .DeliveryTime = objUpsRates.Services(iLoop).DeliveryTime
                     .ListNetCharge = Val(objUpsRates.Services(iLoop).ListNetCharge & String.Empty)
                     .TransitTime = objUpsRates.Services(iLoop).TransitTime
