@@ -8928,6 +8928,9 @@ Public Class SOFORDR1
             If rowICTSTYL1.Item("SALES_DIVISION_CODE") & "" = "" Then
                 E = "Style does not have a valid Division Code" & vbCrLf
             End If
+            If rowICTSTYL1.Item("SALES_DIVISION_CODE") & "" = "30" Then
+                E = "Division 30 Prohibited currently in Order Entry" & vbCrLf
+            End If
         End If
 
         If E = "" Then
