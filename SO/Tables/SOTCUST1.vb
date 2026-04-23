@@ -967,7 +967,6 @@ Public Class SOTCUST1
 
     Private Sub MakeARTCUST2()
         Dim NextCUST_ADDR_CODE As String = GetNextCUST_ADDR_CODE()
-
         Dim newARTCUST2 As DataRow = dst.Tables("ARTCUST2").NewRow()
         newARTCUST2.Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
         newARTCUST2.Item("CUST_ADDR_TYPE") = "MK"
@@ -977,9 +976,9 @@ Public Class SOTCUST1
         newARTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
         newARTCUST2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
         newARTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-        newARTCUST2.Item("CUST_CONTACT") = Absx1.txtFor("CUST_CONTACT").Text
+        newARTCUST2.Item("CUST_CONTACT") = txtCUST_CONTACT_RGI.Text
         newARTCUST2.Item("CUST_PHONE") = txtCUST_PHONE_RGI.Text
-        newARTCUST2.Item("CUST_EXT") = Absx1.txtFor("CUST_EXT").Text
+        newARTCUST2.Item("CUST_EXT") = txtCUST_EXT_RGI.Text
         newARTCUST2.Item("CUST_FAX") = txtCUST_FAX_RGI.Text
         newARTCUST2.Item("CUST_EMAIL") = txtCUST_EMAIL_RGI.Text
         For Each COLNAME As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY"}
@@ -1223,15 +1222,25 @@ Public Class SOTCUST1
             txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
             txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
             txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+
+            rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+            rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+            rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+            rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+            rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
         End If
     End Sub
 
     Private Sub grdARTCUSTD_AfterRowUpdate(sender As Object, e As UltraWinGrid.RowEventArgs) Handles grdARTCUSTD.AfterRowUpdate
-        Dim CONTACT_TYPE As String = e.Row.Cells("CONTACT_TYPE").Value
-        Dim CONTACT_PRIMARY As String = e.Row.Cells("CONTACT_PRIMARY").Value
+        Dim CONTACT_TYPE As String = e.Row.Cells("CONTACT_TYPE").Value & String.Empty
+        Dim CONTACT_PRIMARY As String = e.Row.Cells("CONTACT_PRIMARY").Value & String.Empty
         If CONTACT_TYPE = "L" And CONTACT_PRIMARY = "1" Then
             setRGIContacts()
         End If
+    End Sub
+
+    Private Sub grdARTCUSTD_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdARTCUSTD.InitializeLayout
+
     End Sub
 #End Region
 

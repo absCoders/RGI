@@ -1674,26 +1674,36 @@ Public Class ARTCUST1
     End Sub
 
     Private Sub setRGIContacts()
-        Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Rows(0)
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Rows(0)
 
-        Dim fltr As String = "CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
-        Dim rowARTCUSTD As DataRow = dst.Tables("ARTCUSTD").Select(fltr).FirstOrDefault
+            Dim fltr As String = "CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+            Dim rowARTCUSTD As DataRow = dst.Tables("ARTCUSTD").Select(fltr).FirstOrDefault
 
-        If IsNothing(rowARTCUSTD) Or IsNothing(rowARTCUST1) Then
-            txtCUST_CONTACT_RGI.Text = ""
-            txtCUST_EMAIL_RGI.Text = ""
-            txtCUST_PHONE_RGI.Text = ""
-            txtCUST_EXT_RGI.Text = ""
-            txtCUST_FAX_RGI.Text = ""
-            txtCUST_URL_RGI.Text = ""
-        Else
-            txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
-            txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
-            txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
-            txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
-            txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
-            txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
+            If IsNothing(rowARTCUSTD) Or IsNothing(rowARTCUST1) Then
+                txtCUST_CONTACT_RGI.Text = ""
+                txtCUST_EMAIL_RGI.Text = ""
+                txtCUST_PHONE_RGI.Text = ""
+                txtCUST_EXT_RGI.Text = ""
+                txtCUST_FAX_RGI.Text = ""
+                txtCUST_URL_RGI.Text = ""
+            Else
+                txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
+
+                rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+
+            End If
         End If
+
     End Sub
 
     Private Sub txtCUST_URL_RGI_Leave(sender As Object, e As EventArgs) Handles txtCUST_URL_RGI.Leave
@@ -1713,11 +1723,6 @@ Public Class ARTCUST1
             End If
         End If
     End Sub
-
-    Private Sub btnPullFromWeb_Click_1(sender As Object, e As EventArgs) Handles btnPullFromWeb.Click
-
-    End Sub
-
 
 #End Region
 

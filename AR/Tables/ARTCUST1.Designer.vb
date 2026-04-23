@@ -368,6 +368,7 @@ Partial Class ARTCUST1
         Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox7 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.grpRGIContactInfo = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.btnPullFromWeb = New System.Windows.Forms.Button()
         Me.UltraLabel73 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel90 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCUST_PHONE_RGI = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
@@ -610,7 +611,6 @@ Partial Class ARTCUST1
         Me.tabARTCUST1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
-        Me.btnPullFromWeb = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2145,7 +2145,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1079, 331)
         '
@@ -2384,6 +2384,16 @@ Partial Class ARTCUST1
         Me.grpRGIContactInfo.Size = New System.Drawing.Size(384, 153)
         Me.grpRGIContactInfo.TabIndex = 297
         Me.grpRGIContactInfo.Text = "Lead Contacts"
+        '
+        'btnPullFromWeb
+        '
+        Me.btnPullFromWeb.Location = New System.Drawing.Point(250, 123)
+        Me.btnPullFromWeb.Name = "btnPullFromWeb"
+        Me.btnPullFromWeb.Size = New System.Drawing.Size(94, 23)
+        Me.btnPullFromWeb.TabIndex = 67
+        Me.btnPullFromWeb.Text = "Web Import"
+        Me.btnPullFromWeb.UseVisualStyleBackColor = True
+        Me.btnPullFromWeb.Visible = False
         '
         'UltraLabel73
         '
@@ -4255,7 +4265,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdARTCUSTD)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1079, 331)
         '
@@ -5397,16 +5407,6 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(772, 472)
-        '
-        'btnPullFromWeb
-        '
-        Me.btnPullFromWeb.Location = New System.Drawing.Point(250, 123)
-        Me.btnPullFromWeb.Name = "btnPullFromWeb"
-        Me.btnPullFromWeb.Size = New System.Drawing.Size(94, 23)
-        Me.btnPullFromWeb.TabIndex = 67
-        Me.btnPullFromWeb.Text = "Web Import"
-        Me.btnPullFromWeb.UseVisualStyleBackColor = True
-        Me.btnPullFromWeb.Visible = False
         '
         'ARTCUST1
         '

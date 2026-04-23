@@ -622,7 +622,7 @@ Partial Class SOTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(940, 293)
         '
@@ -1120,7 +1120,7 @@ Partial Class SOTCUST1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdARTCUSTD)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(940, 293)
         '
