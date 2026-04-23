@@ -90,6 +90,8 @@ Public Class ARTCUST1
 
         End If
 
+        setContactView()
+
         With grdARTCUST2.DisplayLayout.Bands(0)
             '.Columns("CUST_STORE_NO").Header.Fixed = True
             '.Columns("CUST_STORE_NAME").Header.Fixed = True
@@ -189,7 +191,7 @@ Public Class ARTCUST1
         Load_Popup_Menu(grdARTSREP1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(CreditCardQueue1.UserControlGrid, "B", "Use Customer Address")
         Load_Popup_Menu(grdARTCUST2, "SSB", "Show Filter", "Show GroupBox", "Add Ship-to From Master")
-        Load_Popup_Menu(grdARTCUSTD, "SSB", "Show Filter", "Show GroupBox", "Make Contact From Main")
+        Load_Popup_Menu(grdARTCUSTD, "SSB", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdARTCUSTM, "SS", "Show Filter", "Show GroupBox")
     End Sub
 
@@ -226,8 +228,8 @@ Public Class ARTCUST1
                 tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
 
             Case "grdARTCUSTD"
-                tlb_btn = DirectCast(tlb_pop.Tools("Make Contact From Main"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New") And ASCMAIN1.DBS_COMPANY = "RGI"
+                'tlb_btn = DirectCast(tlb_pop.Tools("Make Contact From Main"), UltraWinToolbars.ButtonTool)
+                'tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New") And ASCMAIN1.DBS_COMPANY = "RGI"
 
             Case "grdARTCUST2"
                 tlb_btn = DirectCast(tlb_pop.Tools("Add Ship-to From Master"), UltraWinToolbars.ButtonTool)
@@ -269,7 +271,7 @@ Public Class ARTCUST1
                     MakeARTCUST2()
                 End If
             Case "Make Contact From Main"
-                MakeContactFromMain()
+                'MakeContactFromMain()
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -542,6 +544,7 @@ Public Class ARTCUST1
         If ASCMAIN1.DBS_COMPANY = "RGI" Then
             Fill_Records("SOTCARRS_FEDEX", New String() {Absx1.txtFor("CUST_CODE").Text, "FEDEX"})
             Fill_Records("SOTCARRS_UPS", New String() {Absx1.txtFor("CUST_CODE").Text, "UPS"})
+            setRGIContacts()
         End If
 
         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
@@ -636,6 +639,7 @@ Public Class ARTCUST1
                 chkAPPOINTMENT_REQUIRED.Text = ""
                 txtAPPOINTMENT_REQUIRED_NOTE.Enabled = False
                 txtAPPOINTMENT_REQUIRED_NOTE.Text = ""
+                clearRGIContacts()
             End If
 
             If ASCMAIN1.CLIENT = "RGI" Then
@@ -691,6 +695,7 @@ Public Class ARTCUST1
             Else
                 CreditCardQueue1.AllowEdit = False
             End If
+            lockRGIContacts()
         End If
         CreditCardQueue1.SetUpScreen()
 
@@ -704,7 +709,10 @@ Public Class ARTCUST1
             grdSOTCARRS_UPS.DisplayLayout.Override.AllowDelete = DefaultableBoolean.False
             grdSOTCARRS_UPS.DisplayLayout.Bands(0).Override.AllowAddNew = AllowAddNew.No
             grdSOTCARRS_UPS.DisplayLayout.Bands(0).Override.AllowDelete = DefaultableBoolean.False
+
         End If
+
+
 
     End Sub
 
@@ -1199,11 +1207,13 @@ Public Class ARTCUST1
 
     Private Sub btnPullFromWeb_Click(sender As System.Object, e As System.EventArgs) Handles btnPullFromWeb.Click
         'Stop
-        Dim EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+
+        'Dim EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+        Dim EMAIL As String = InputBox("Enter the EMail", "EMail")
         Dim ErrorMsg As String = ""
         Dim rowWBTCUST1 As DataRow
         If EMAIL.Length = 0 Then
-            ErrorMsg &= vbCr & "You Must Provide A "
+            ErrorMsg &= vbCr & "You Must Provide An EMail "
         Else
             Fill_Records("WBTCUST1", EMAIL)
             If dst.Tables.Item("WBTCUST1").Rows.Count <> 1 Then
@@ -1226,7 +1236,7 @@ Public Class ARTCUST1
         rowWBTCUST1.Item("LAST_DATE") = DATETIME_STAMP
         rowWBTCUST1.Item("STATUS") = "M"
 
-        Absx1.txtFor("CUST_CONTACT").Value = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
+        'Absx1.txtFor("CUST_CONTACT").Value = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
         txtCUST_NAME.Value = rowWBTCUST1.Item("COMPANY").ToString.ToUpper
 
         If (rowWBTCUST1.Item("STREET").ToString & String.Empty).Length <= 60 Then
@@ -1267,15 +1277,6 @@ Public Class ARTCUST1
             MsgBox(rowWBTCUST1.Item("STATE").ToString & " Can Not Be Added To State", MsgBoxStyle.Critical, "State")
         End If
         Absx1.txtFor("CUST_ZIP_CODE").Value = rowWBTCUST1.Item("ZIP_CODE").ToString.ToUpper
-        Dim TELEPHONE As String = rowWBTCUST1.Item("TELEPHONE").ToString.Replace("-", "").Replace("(", "").Replace(")", "")
-        If Not IsNumeric(TELEPHONE) Then
-            MsgBox(TELEPHONE & " Can Not Be Added To Telephone", MsgBoxStyle.Critical, "Telephone")
-        Else
-            If TELEPHONE.Length = 11 Then
-                TELEPHONE = TELEPHONE.Substring(1, 10)
-            End If
-            medCUST_PHONE.Value = Val(TELEPHONE)
-        End If
 
         If dst.Tables.Item("ARTCUST2").Rows.Count = 0 Then
             Dim newARTCUST2 As DataRow = dst.Tables.Item("ARTCUST2").NewRow
@@ -1332,9 +1333,37 @@ Public Class ARTCUST1
             dst.Tables.Item("ARTCUSTQ").Rows.Add(newARTCUSTQ)
         End If
 
+        Dim newARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").NewRow
+        Dim CONTACT_NO As Integer = Val(dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", "") & "") + 1
+
+        newARTCUSTD.Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
+        newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
+        newARTCUSTD.Item("CONTACT_NAME") = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
+        newARTCUSTD.Item("CONTACT_EMAIL") = EMAIL
+        Dim TELEPHONE As String = rowWBTCUST1.Item("TELEPHONE").ToString.Replace("-", "").Replace("(", "").Replace(")", "")
+        If Not IsNumeric(TELEPHONE) Then
+            MsgBox(TELEPHONE & " Can Not Be Added To Telephone", MsgBoxStyle.Critical, "Telephone")
+        Else
+            If TELEPHONE.Length = 11 Then
+                TELEPHONE = TELEPHONE.Substring(1, 10)
+            End If
+            newARTCUSTD.Item("CONTACT_PHONE") = Val(TELEPHONE)
+        End If
+        'newARTCUSTD.Item("CONTACT_EXT") = Absx1.txtFor("CUST_EXT").Text
+        'newARTCUSTD.Item("CONTACT_FAX") = medCUST_FAX.Text
+        newARTCUSTD.Item("CONTACT_TYPE") = "L"
+        newARTCUSTD.Item("CONTACT_PRIMARY") = "1"
+        newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
+        newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
+        dst.Tables.Item("ARTCUSTD").Rows.Add(newARTCUSTD)
+
         btnPullFromWeb.Visible = False
 
         btnWebTaxId.Visible = ShowWebTaxIDBtn()
+
+        setRGIContacts()
     End Sub
 
     Private Sub MakeARTCUST2()
@@ -1378,35 +1407,35 @@ Public Class ARTCUST1
         Return RetVal
     End Function
 
-    Private Sub MakeContactFromMain()
-        Dim newARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").NewRow
-        Dim CONTACT_NO As Integer = Val(dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", "") & "") + 1
-        With newARTCUSTD
-            .Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
-            .Item("CONTACT_NO") = CONTACT_NO
-            .Item("CONTACT_NAME") = Absx1.txtFor("CUST_CONTACT").Text
-            .Item("CONTACT_EMAIL") = Absx1.txtFor("CUST_EMAIL").Text
-            .Item("CONTACT_PHONE") = medCUST_PHONE.Text
-            .Item("CONTACT_EXT") = Absx1.txtFor("CUST_EXT").Text
-            .Item("CONTACT_FAX") = medCUST_FAX.Text
-            If CONTACT_NO = 1 Then
-                .Item("CONTACT_TYPE") = "B"
-                .Item("CONTACT_PRIMARY") = "1"
-            Else
-                .Item("CONTACT_TYPE") = "M"
-                .Item("CONTACT_PRIMARY") = "0"
-            End If
-            .Item("INIT_OPER") = ASCMAIN1.USER_ID
-            .Item("LAST_DATE") = DATETIME_STAMP
-            .Item("LAST_OPER") = ASCMAIN1.USER_ID
-            .Item("INIT_DATE") = DATETIME_STAMP
-        End With
-        dst.Tables.Item("ARTCUSTD").Rows.Add(newARTCUSTD)
-        grdARTCUSTD.Refresh()
-        grdARTCUSTD.PerformAction(UltraWinGrid.UltraGridAction.ExitEditMode)
-        grdARTCUSTD.Update()
-        SendKeys.Send(Chr(27))
-    End Sub
+    'Private Sub MakeContactFromMain()
+    '    Dim newARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").NewRow
+    '    Dim CONTACT_NO As Integer = Val(dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", "") & "") + 1
+    '    With newARTCUSTD
+    '        .Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
+    '        .Item("CONTACT_NO") = CONTACT_NO
+    '        .Item("CONTACT_NAME") = Absx1.txtFor("CUST_CONTACT").Text
+    '        .Item("CONTACT_EMAIL") = Absx1.txtFor("CUST_EMAIL").Text
+    '        .Item("CONTACT_PHONE") = medCUST_PHONE.Text
+    '        .Item("CONTACT_EXT") = Absx1.txtFor("CUST_EXT").Text
+    '        .Item("CONTACT_FAX") = medCUST_FAX.Text
+    '        If CONTACT_NO = 1 Then
+    '            .Item("CONTACT_TYPE") = "B"
+    '            .Item("CONTACT_PRIMARY") = "1"
+    '        Else
+    '            .Item("CONTACT_TYPE") = "M"
+    '            .Item("CONTACT_PRIMARY") = "0"
+    '        End If
+    '        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+    '        .Item("LAST_DATE") = DATETIME_STAMP
+    '        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+    '        .Item("INIT_DATE") = DATETIME_STAMP
+    '    End With
+    '    dst.Tables.Item("ARTCUSTD").Rows.Add(newARTCUSTD)
+    '    grdARTCUSTD.Refresh()
+    '    grdARTCUSTD.PerformAction(UltraWinGrid.UltraGridAction.ExitEditMode)
+    '    grdARTCUSTD.Update()
+    '    SendKeys.Send(Chr(27))
+    'End Sub
 
     Private Sub chkLIMITED_ACCESS_CheckedChanged(sender As Object, e As EventArgs) Handles chkLIMITED_ACCESS.CheckedChanged
         If chkLIMITED_ACCESS.Checked Then
@@ -1604,5 +1633,92 @@ Public Class ARTCUST1
 
         Return return_key
     End Function
+
+#Region "RGI Changes to Contacts"
+    Private Sub setContactView()
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            grpRGIContactInfo.Parent = splUpperRight.Panel1
+            grpRGIContactInfo.Dock = DockStyle.Fill
+            grpRGIContactInfo.Visible = True
+            grpContactInfo.Visible = False
+        Else
+            grpRGIContactInfo.Visible = False
+            grpContactInfo.Visible = True
+        End If
+    End Sub
+
+    Private Sub lockRGIContacts()
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI" OrElse ASCMAIN1.DBS_SERVER = "RGO" OrElse ASCMAIN1.DBS_COMPANY = "RGO") Then
+            txtCUST_CONTACT_RGI.ReadOnly = True
+            txtCUST_EMAIL_RGI.ReadOnly = True
+            txtCUST_PHONE_RGI.ReadOnly = True
+            txtCUST_EXT_RGI.ReadOnly = True
+            txtCUST_FAX_RGI.ReadOnly = True
+        End If
+    End Sub
+
+    Private Sub clearRGIContacts()
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            txtCUST_CONTACT_RGI.ReadOnly = True
+            txtCUST_EMAIL_RGI.ReadOnly = True
+            txtCUST_PHONE_RGI.ReadOnly = True
+            txtCUST_EXT_RGI.ReadOnly = True
+            txtCUST_FAX_RGI.ReadOnly = True
+            txtCUST_CONTACT_RGI.Text = ""
+            txtCUST_EMAIL_RGI.Text = ""
+            txtCUST_PHONE_RGI.Text = ""
+            txtCUST_EXT_RGI.Text = ""
+            txtCUST_FAX_RGI.Text = ""
+            txtCUST_URL_RGI.Text = ""
+        End If
+    End Sub
+
+    Private Sub setRGIContacts()
+        Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Rows(0)
+
+        Dim fltr As String = "CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+        Dim rowARTCUSTD As DataRow = dst.Tables("ARTCUSTD").Select(fltr).FirstOrDefault
+
+        If IsNothing(rowARTCUSTD) Or IsNothing(rowARTCUST1) Then
+            txtCUST_CONTACT_RGI.Text = ""
+            txtCUST_EMAIL_RGI.Text = ""
+            txtCUST_PHONE_RGI.Text = ""
+            txtCUST_EXT_RGI.Text = ""
+            txtCUST_FAX_RGI.Text = ""
+            txtCUST_URL_RGI.Text = ""
+        Else
+            txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+            txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+            txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+            txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+            txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+            txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
+        End If
+    End Sub
+
+    Private Sub txtCUST_URL_RGI_Leave(sender As Object, e As EventArgs) Handles txtCUST_URL_RGI.Leave
+        If (EntryMode = "Edit" Or EntryMode = "New") Then
+            If dst.Tables.Item("ARTCUST1").Rows.Count = 1 Then
+                dst.Tables.Item("ARTCUST1").Rows(0).Item("CUST_URL") = txtCUST_URL_RGI.Text
+            End If
+        End If
+    End Sub
+
+    Private Sub grdARTCUSTD_AfterRowUpdate(sender As Object, e As RowEventArgs) Handles grdARTCUSTD.AfterRowUpdate
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            Dim CONTACT_TYPE As String = e.Row.Cells("CONTACT_TYPE").Value
+            Dim CONTACT_PRIMARY As String = e.Row.Cells("CONTACT_PRIMARY").Value
+            If CONTACT_TYPE = "L" And CONTACT_PRIMARY = "1" Then
+                setRGIContacts()
+            End If
+        End If
+    End Sub
+
+    Private Sub btnPullFromWeb_Click_1(sender As Object, e As EventArgs) Handles btnPullFromWeb.Click
+
+    End Sub
+
+
+#End Region
 
 End Class
