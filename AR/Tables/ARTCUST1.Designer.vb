@@ -368,7 +368,6 @@ Partial Class ARTCUST1
         Me.AbsCheckBox2 = New ABSCS.ABSCheckBox()
         Me.UltraGroupBox7 = New Infragistics.Win.Misc.UltraGroupBox()
         Me.grpRGIContactInfo = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.Button1 = New System.Windows.Forms.Button()
         Me.UltraLabel73 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel90 = New Infragistics.Win.Misc.UltraLabel()
         Me.txtCUST_PHONE_RGI = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
@@ -597,7 +596,6 @@ Partial Class ARTCUST1
         Me.UltraTextEditor8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.splUpperRight = New System.Windows.Forms.SplitContainer()
         Me.grpContactInfo = New Infragistics.Win.Misc.UltraGroupBox()
-        Me.btnPullFromWeb = New System.Windows.Forms.Button()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
         Me.medCUST_PHONE = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
@@ -612,6 +610,7 @@ Partial Class ARTCUST1
         Me.tabARTCUST1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
+        Me.btnPullFromWeb = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.tbl, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -2146,7 +2145,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(1079, 331)
         '
@@ -2366,7 +2365,7 @@ Partial Class ARTCUST1
         'grpRGIContactInfo
         '
         Me.grpRGIContactInfo.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.grpRGIContactInfo.Controls.Add(Me.Button1)
+        Me.grpRGIContactInfo.Controls.Add(Me.btnPullFromWeb)
         Me.grpRGIContactInfo.Controls.Add(Me.UltraLabel73)
         Me.grpRGIContactInfo.Controls.Add(Me.UltraLabel90)
         Me.grpRGIContactInfo.Controls.Add(Me.txtCUST_PHONE_RGI)
@@ -2385,16 +2384,6 @@ Partial Class ARTCUST1
         Me.grpRGIContactInfo.Size = New System.Drawing.Size(384, 153)
         Me.grpRGIContactInfo.TabIndex = 297
         Me.grpRGIContactInfo.Text = "Lead Contacts"
-        '
-        'Button1
-        '
-        Me.Button1.Location = New System.Drawing.Point(236, 126)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(94, 23)
-        Me.Button1.TabIndex = 66
-        Me.Button1.Text = "Web Import"
-        Me.Button1.UseVisualStyleBackColor = True
-        Me.Button1.Visible = False
         '
         'UltraLabel73
         '
@@ -4266,7 +4255,7 @@ Partial Class ARTCUST1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdARTCUSTD)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1079, 331)
         '
@@ -5212,7 +5201,6 @@ Partial Class ARTCUST1
         'grpContactInfo
         '
         Me.grpContactInfo.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.grpContactInfo.Controls.Add(Me.btnPullFromWeb)
         Me.grpContactInfo.Controls.Add(Me.UltraLabel4)
         Me.grpContactInfo.Controls.Add(Me.UltraLabel5)
         Me.grpContactInfo.Controls.Add(Me.medCUST_PHONE)
@@ -5232,16 +5220,6 @@ Partial Class ARTCUST1
         Me.grpContactInfo.Size = New System.Drawing.Size(384, 153)
         Me.grpContactInfo.TabIndex = 74
         Me.grpContactInfo.Text = "Contact Info"
-        '
-        'btnPullFromWeb
-        '
-        Me.btnPullFromWeb.Location = New System.Drawing.Point(236, 126)
-        Me.btnPullFromWeb.Name = "btnPullFromWeb"
-        Me.btnPullFromWeb.Size = New System.Drawing.Size(94, 23)
-        Me.btnPullFromWeb.TabIndex = 66
-        Me.btnPullFromWeb.Text = "Web Import"
-        Me.btnPullFromWeb.UseVisualStyleBackColor = True
-        Me.btnPullFromWeb.Visible = False
         '
         'UltraLabel4
         '
@@ -5419,6 +5397,16 @@ Partial Class ARTCUST1
         Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(772, 472)
+        '
+        'btnPullFromWeb
+        '
+        Me.btnPullFromWeb.Location = New System.Drawing.Point(250, 123)
+        Me.btnPullFromWeb.Name = "btnPullFromWeb"
+        Me.btnPullFromWeb.Size = New System.Drawing.Size(94, 23)
+        Me.btnPullFromWeb.TabIndex = 67
+        Me.btnPullFromWeb.Text = "Web Import"
+        Me.btnPullFromWeb.UseVisualStyleBackColor = True
+        Me.btnPullFromWeb.Visible = False
         '
         'ARTCUST1
         '
@@ -5982,7 +5970,6 @@ Partial Class ARTCUST1
     Friend WithEvents UltraNumericEditor2 As Infragistics.Win.UltraWinEditors.UltraNumericEditor
     Friend WithEvents UltraLabel68 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents AbsCheckBox6 As ABSCS.ABSCheckBox
-    Friend WithEvents btnPullFromWeb As System.Windows.Forms.Button
     Friend WithEvents chkCUST_ORDR_CALL_B4_SHIPPING As ABSCS.ABSCheckBox
     Friend WithEvents UltraDateTimeEditor8 As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents UltraLabel74 As Misc.UltraLabel
@@ -6062,7 +6049,6 @@ Partial Class ARTCUST1
     Friend WithEvents splUPSTP As SplitContainer
     Friend WithEvents grdSOTCARRS_UPS As UltraWinGrid.UltraGrid
     Friend WithEvents grpRGIContactInfo As Misc.UltraGroupBox
-    Friend WithEvents Button1 As Button
     Friend WithEvents UltraLabel73 As Misc.UltraLabel
     Friend WithEvents UltraLabel90 As Misc.UltraLabel
     Friend WithEvents txtCUST_PHONE_RGI As UltraWinMaskedEdit.UltraMaskedEdit
@@ -6074,4 +6060,5 @@ Partial Class ARTCUST1
     Friend WithEvents txtCUST_EXT_RGI As UltraWinEditors.UltraTextEditor
     Friend WithEvents txtCUST_CONTACT_RGI As UltraWinEditors.UltraTextEditor
     Friend WithEvents txtCUST_EMAIL_RGI As UltraWinEditors.UltraTextEditor
+    Friend WithEvents btnPullFromWeb As Button
 End Class

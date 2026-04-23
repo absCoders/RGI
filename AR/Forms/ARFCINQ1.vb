@@ -2561,10 +2561,23 @@ Public Class ARFCINQ1
                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
-                Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
-                Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
-                If CUST_EMAIL <> "" Then
-                    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                    If Not IsNothing(rowARTCUSTD) Then
+                        Dim CUST_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                        Dim CUST_CONTACT As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                        If CUST_EMAIL <> "" Then
+                            EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                        End If
+                    End If
+                Else
+                    Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+                    Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
+                    If CUST_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                    End If
                 End If
 
                 Dim ATTACHMENTs As New Dictionary(Of String, String)
@@ -2645,14 +2658,35 @@ Public Class ARFCINQ1
 
                 '  Show_Document(ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
 
+
                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
-                Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
-                Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
-                If CUST_EMAIL <> "" Then
-                    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                    If Not IsNothing(rowARTCUSTD) Then
+                        Dim CUST_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                        Dim CUST_CONTACT As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                        If CUST_EMAIL <> "" Then
+                            EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                        End If
+                    End If
+                Else
+                    Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+                    Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
+                    If CUST_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                    End If
                 End If
+                'Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+                'Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
+                'Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+                'Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
+                'If CUST_EMAIL <> "" Then
+                '    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                'End If
 
                 Dim ATTACHMENTs As New Dictionary(Of String, String)
                 ATTACHMENTs.Add(FILENAME & ".pdf", ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
@@ -2891,6 +2925,14 @@ Public Class ARFCINQ1
                 End If
 
                 Dim CUST_EMAIL_AR As String = Absx1.txtFor("CUST_EMAIL").Text
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                    If Not IsNothing(rowARTCUSTD) Then
+                        CUST_EMAIL_AR = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                        'Dim CUST_CONTACT As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                    End If
+                End If
 
                 If ASCMAIN1.CLIENT = "VAN" Then
                     If rowARTCUST1.Item("CUST_XMIT_INV_VIA") & "" = "E" And rowARTCUST1.Item("CUST_INV_EMAIL") & "" <> "" Then

@@ -1207,11 +1207,13 @@ Public Class ARTCUST1
 
     Private Sub btnPullFromWeb_Click(sender As System.Object, e As System.EventArgs) Handles btnPullFromWeb.Click
         'Stop
-        Dim EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+
+        'Dim EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+        Dim EMAIL As String = InputBox("Enter the EMail", "EMail")
         Dim ErrorMsg As String = ""
         Dim rowWBTCUST1 As DataRow
         If EMAIL.Length = 0 Then
-            ErrorMsg &= vbCr & "You Must Provide A "
+            ErrorMsg &= vbCr & "You Must Provide An EMail "
         Else
             Fill_Records("WBTCUST1", EMAIL)
             If dst.Tables.Item("WBTCUST1").Rows.Count <> 1 Then
@@ -1234,7 +1236,7 @@ Public Class ARTCUST1
         rowWBTCUST1.Item("LAST_DATE") = DATETIME_STAMP
         rowWBTCUST1.Item("STATUS") = "M"
 
-        Absx1.txtFor("CUST_CONTACT").Value = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
+        'Absx1.txtFor("CUST_CONTACT").Value = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
         txtCUST_NAME.Value = rowWBTCUST1.Item("COMPANY").ToString.ToUpper
 
         If (rowWBTCUST1.Item("STREET").ToString & String.Empty).Length <= 60 Then
@@ -1275,15 +1277,6 @@ Public Class ARTCUST1
             MsgBox(rowWBTCUST1.Item("STATE").ToString & " Can Not Be Added To State", MsgBoxStyle.Critical, "State")
         End If
         Absx1.txtFor("CUST_ZIP_CODE").Value = rowWBTCUST1.Item("ZIP_CODE").ToString.ToUpper
-        Dim TELEPHONE As String = rowWBTCUST1.Item("TELEPHONE").ToString.Replace("-", "").Replace("(", "").Replace(")", "")
-        If Not IsNumeric(TELEPHONE) Then
-            MsgBox(TELEPHONE & " Can Not Be Added To Telephone", MsgBoxStyle.Critical, "Telephone")
-        Else
-            If TELEPHONE.Length = 11 Then
-                TELEPHONE = TELEPHONE.Substring(1, 10)
-            End If
-            medCUST_PHONE.Value = Val(TELEPHONE)
-        End If
 
         If dst.Tables.Item("ARTCUST2").Rows.Count = 0 Then
             Dim newARTCUST2 As DataRow = dst.Tables.Item("ARTCUST2").NewRow
@@ -1340,9 +1333,37 @@ Public Class ARTCUST1
             dst.Tables.Item("ARTCUSTQ").Rows.Add(newARTCUSTQ)
         End If
 
+        Dim newARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").NewRow
+        Dim CONTACT_NO As Integer = Val(dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", "") & "") + 1
+
+        newARTCUSTD.Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
+        newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
+        newARTCUSTD.Item("CONTACT_NAME") = String.Format("{0} {1}", rowWBTCUST1.Item("GIVENNAME").ToString.ToUpper, rowWBTCUST1.Item("FAMILYNAME").ToString.ToUpper)
+        newARTCUSTD.Item("CONTACT_EMAIL") = EMAIL
+        Dim TELEPHONE As String = rowWBTCUST1.Item("TELEPHONE").ToString.Replace("-", "").Replace("(", "").Replace(")", "")
+        If Not IsNumeric(TELEPHONE) Then
+            MsgBox(TELEPHONE & " Can Not Be Added To Telephone", MsgBoxStyle.Critical, "Telephone")
+        Else
+            If TELEPHONE.Length = 11 Then
+                TELEPHONE = TELEPHONE.Substring(1, 10)
+            End If
+            newARTCUSTD.Item("CONTACT_PHONE") = Val(TELEPHONE)
+        End If
+        'newARTCUSTD.Item("CONTACT_EXT") = Absx1.txtFor("CUST_EXT").Text
+        'newARTCUSTD.Item("CONTACT_FAX") = medCUST_FAX.Text
+        newARTCUSTD.Item("CONTACT_TYPE") = "L"
+        newARTCUSTD.Item("CONTACT_PRIMARY") = "1"
+        newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+        newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
+        newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+        newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
+        dst.Tables.Item("ARTCUSTD").Rows.Add(newARTCUSTD)
+
         btnPullFromWeb.Visible = False
 
         btnWebTaxId.Visible = ShowWebTaxIDBtn()
+
+        setRGIContacts()
     End Sub
 
     Private Sub MakeARTCUST2()
@@ -1692,6 +1713,12 @@ Public Class ARTCUST1
             End If
         End If
     End Sub
+
+    Private Sub btnPullFromWeb_Click_1(sender As Object, e As EventArgs) Handles btnPullFromWeb.Click
+
+    End Sub
+
+
 #End Region
 
 End Class
