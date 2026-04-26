@@ -28,7 +28,6 @@ Partial Class ARFCUSTV
         Dim UltraExplorerBarItem4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem1 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
-        Dim UltraExplorerBarGroup3 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim Appearance42 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance43 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance44 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -159,11 +158,6 @@ Partial Class ARFCUSTV
         Me.chkNoActivity = New System.Windows.Forms.CheckBox()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.chkOnlySales = New System.Windows.Forms.CheckBox()
-        Me.UltraExplorerBarContainerControl1 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
-        Me.Panel3 = New System.Windows.Forms.Panel()
-        Me.rdoTestRita = New System.Windows.Forms.RadioButton()
-        Me.rdoTestAndy = New System.Windows.Forms.RadioButton()
-        Me.rdoTestWayne = New System.Windows.Forms.RadioButton()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.chkSaveFinalized = New System.Windows.Forms.CheckBox()
@@ -239,7 +233,8 @@ Partial Class ARFCUSTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.btnDev001 = New System.Windows.Forms.Button()
+        Me.chkEmailLead_P = New System.Windows.Forms.CheckBox()
+        Me.chkEmailLead = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -252,8 +247,6 @@ Partial Class ARFCUSTV
         Me.UltraExplorerBarContainerControl2.SuspendLayout()
         Me.Panel1.SuspendLayout()
         CType(Me.dteInitDate, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraExplorerBarContainerControl1.SuspendLayout()
-        Me.Panel3.SuspendLayout()
         Me.UltraTabPageControl6.SuspendLayout()
         Me.Panel4.SuspendLayout()
         Me.UltraTabPageControl8.SuspendLayout()
@@ -317,7 +310,6 @@ Partial Class ARFCUSTV
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl2)
-        Me.UltraExplorerBar1.Controls.Add(Me.UltraExplorerBarContainerControl1)
         UltraExplorerBarItem2.Key = "Refresh"
         UltraExplorerBarItem2.Text = "Refresh"
         UltraExplorerBarItem3.Key = "Cancel"
@@ -334,10 +326,7 @@ Partial Class ARFCUSTV
         UltraExplorerBarGroup2.Settings.ContainerHeight = 150
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Customer Filters"
-        UltraExplorerBarGroup3.Container = Me.UltraExplorerBarContainerControl1
-        UltraExplorerBarGroup3.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
-        UltraExplorerBarGroup3.Text = "Testing"
-        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2, UltraExplorerBarGroup3})
+        Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2})
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
         Me.UltraExplorerBar1.Margins.Bottom = 0
@@ -507,63 +496,10 @@ Partial Class ARFCUSTV
         Me.chkOnlySales.Text = "Only Sales"
         Me.chkOnlySales.UseVisualStyleBackColor = True
         '
-        'UltraExplorerBarContainerControl1
-        '
-        Me.UltraExplorerBarContainerControl1.Controls.Add(Me.Panel3)
-        Me.UltraExplorerBarContainerControl1.Location = New System.Drawing.Point(13, 378)
-        Me.UltraExplorerBarContainerControl1.Name = "UltraExplorerBarContainerControl1"
-        Me.UltraExplorerBarContainerControl1.Size = New System.Drawing.Size(189, 150)
-        Me.UltraExplorerBarContainerControl1.TabIndex = 7
-        '
-        'Panel3
-        '
-        Me.Panel3.Controls.Add(Me.btnDev001)
-        Me.Panel3.Controls.Add(Me.rdoTestRita)
-        Me.Panel3.Controls.Add(Me.rdoTestAndy)
-        Me.Panel3.Controls.Add(Me.rdoTestWayne)
-        Me.Panel3.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.Panel3.Location = New System.Drawing.Point(0, 0)
-        Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(189, 150)
-        Me.Panel3.TabIndex = 0
-        '
-        'rdoTestRita
-        '
-        Me.rdoTestRita.AutoSize = True
-        Me.rdoTestRita.Location = New System.Drawing.Point(12, 46)
-        Me.rdoTestRita.Name = "rdoTestRita"
-        Me.rdoTestRita.Size = New System.Drawing.Size(51, 20)
-        Me.rdoTestRita.TabIndex = 5
-        Me.rdoTestRita.TabStop = True
-        Me.rdoTestRita.Text = "Rita"
-        Me.rdoTestRita.UseVisualStyleBackColor = True
-        '
-        'rdoTestAndy
-        '
-        Me.rdoTestAndy.AutoSize = True
-        Me.rdoTestAndy.Location = New System.Drawing.Point(12, 27)
-        Me.rdoTestAndy.Name = "rdoTestAndy"
-        Me.rdoTestAndy.Size = New System.Drawing.Size(59, 20)
-        Me.rdoTestAndy.TabIndex = 4
-        Me.rdoTestAndy.TabStop = True
-        Me.rdoTestAndy.Text = "Andy"
-        Me.rdoTestAndy.UseVisualStyleBackColor = True
-        '
-        'rdoTestWayne
-        '
-        Me.rdoTestWayne.AutoSize = True
-        Me.rdoTestWayne.Location = New System.Drawing.Point(12, 7)
-        Me.rdoTestWayne.Name = "rdoTestWayne"
-        Me.rdoTestWayne.Size = New System.Drawing.Size(70, 20)
-        Me.rdoTestWayne.TabIndex = 3
-        Me.rdoTestWayne.TabStop = True
-        Me.rdoTestWayne.Text = "Wayne"
-        Me.rdoTestWayne.UseVisualStyleBackColor = True
-        '
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(401, 257)
         '
@@ -644,12 +580,14 @@ Partial Class ARFCUSTV
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.Panel5)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(401, 257)
         '
         'Panel5
         '
+        Me.Panel5.Controls.Add(Me.chkEmailLead_P)
+        Me.Panel5.Controls.Add(Me.chkEmailLead)
         Me.Panel5.Controls.Add(Me.chkEmailMisc_P)
         Me.Panel5.Controls.Add(Me.chkEmailWhse_P)
         Me.Panel5.Controls.Add(Me.chkEmailAP_P)
@@ -673,7 +611,7 @@ Partial Class ARFCUSTV
         Me.chkEmailMisc_P.AutoSize = True
         Me.chkEmailMisc_P.Checked = True
         Me.chkEmailMisc_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEmailMisc_P.Location = New System.Drawing.Point(196, 92)
+        Me.chkEmailMisc_P.Location = New System.Drawing.Point(196, 110)
         Me.chkEmailMisc_P.Name = "chkEmailMisc_P"
         Me.chkEmailMisc_P.Size = New System.Drawing.Size(75, 20)
         Me.chkEmailMisc_P.TabIndex = 46
@@ -685,7 +623,7 @@ Partial Class ARFCUSTV
         Me.chkEmailWhse_P.AutoSize = True
         Me.chkEmailWhse_P.Checked = True
         Me.chkEmailWhse_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEmailWhse_P.Location = New System.Drawing.Point(196, 110)
+        Me.chkEmailWhse_P.Location = New System.Drawing.Point(196, 128)
         Me.chkEmailWhse_P.Name = "chkEmailWhse_P"
         Me.chkEmailWhse_P.Size = New System.Drawing.Size(75, 20)
         Me.chkEmailWhse_P.TabIndex = 45
@@ -697,7 +635,7 @@ Partial Class ARFCUSTV
         Me.chkEmailAP_P.AutoSize = True
         Me.chkEmailAP_P.Checked = True
         Me.chkEmailAP_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEmailAP_P.Location = New System.Drawing.Point(196, 39)
+        Me.chkEmailAP_P.Location = New System.Drawing.Point(196, 57)
         Me.chkEmailAP_P.Name = "chkEmailAP_P"
         Me.chkEmailAP_P.Size = New System.Drawing.Size(75, 20)
         Me.chkEmailAP_P.TabIndex = 44
@@ -709,7 +647,7 @@ Partial Class ARFCUSTV
         Me.chkEmailBuyer_P.AutoSize = True
         Me.chkEmailBuyer_P.Checked = True
         Me.chkEmailBuyer_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEmailBuyer_P.Location = New System.Drawing.Point(196, 56)
+        Me.chkEmailBuyer_P.Location = New System.Drawing.Point(196, 74)
         Me.chkEmailBuyer_P.Name = "chkEmailBuyer_P"
         Me.chkEmailBuyer_P.Size = New System.Drawing.Size(75, 20)
         Me.chkEmailBuyer_P.TabIndex = 43
@@ -721,7 +659,7 @@ Partial Class ARFCUSTV
         Me.chkEmailMain_P.AutoSize = True
         Me.chkEmailMain_P.Checked = True
         Me.chkEmailMain_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEmailMain_P.Location = New System.Drawing.Point(196, 74)
+        Me.chkEmailMain_P.Location = New System.Drawing.Point(196, 92)
         Me.chkEmailMain_P.Name = "chkEmailMain_P"
         Me.chkEmailMain_P.Size = New System.Drawing.Size(75, 20)
         Me.chkEmailMain_P.TabIndex = 42
@@ -731,7 +669,7 @@ Partial Class ARFCUSTV
         'chkEmailMisc
         '
         Me.chkEmailMisc.AutoSize = True
-        Me.chkEmailMisc.Location = New System.Drawing.Point(133, 92)
+        Me.chkEmailMisc.Location = New System.Drawing.Point(133, 110)
         Me.chkEmailMisc.Name = "chkEmailMisc"
         Me.chkEmailMisc.Size = New System.Drawing.Size(56, 20)
         Me.chkEmailMisc.TabIndex = 41
@@ -741,7 +679,7 @@ Partial Class ARFCUSTV
         'chkEmailWhse
         '
         Me.chkEmailWhse.AutoSize = True
-        Me.chkEmailWhse.Location = New System.Drawing.Point(133, 110)
+        Me.chkEmailWhse.Location = New System.Drawing.Point(133, 128)
         Me.chkEmailWhse.Name = "chkEmailWhse"
         Me.chkEmailWhse.Size = New System.Drawing.Size(63, 20)
         Me.chkEmailWhse.TabIndex = 40
@@ -751,7 +689,7 @@ Partial Class ARFCUSTV
         'chkEmailAP
         '
         Me.chkEmailAP.AutoSize = True
-        Me.chkEmailAP.Location = New System.Drawing.Point(133, 39)
+        Me.chkEmailAP.Location = New System.Drawing.Point(133, 57)
         Me.chkEmailAP.Name = "chkEmailAP"
         Me.chkEmailAP.Size = New System.Drawing.Size(50, 20)
         Me.chkEmailAP.TabIndex = 39
@@ -761,7 +699,7 @@ Partial Class ARFCUSTV
         'chkEmailBuyer
         '
         Me.chkEmailBuyer.AutoSize = True
-        Me.chkEmailBuyer.Location = New System.Drawing.Point(133, 56)
+        Me.chkEmailBuyer.Location = New System.Drawing.Point(133, 74)
         Me.chkEmailBuyer.Name = "chkEmailBuyer"
         Me.chkEmailBuyer.Size = New System.Drawing.Size(64, 20)
         Me.chkEmailBuyer.TabIndex = 38
@@ -780,7 +718,7 @@ Partial Class ARFCUSTV
         'chkEmailMain
         '
         Me.chkEmailMain.AutoSize = True
-        Me.chkEmailMain.Location = New System.Drawing.Point(133, 74)
+        Me.chkEmailMain.Location = New System.Drawing.Point(133, 92)
         Me.chkEmailMain.Name = "chkEmailMain"
         Me.chkEmailMain.Size = New System.Drawing.Size(57, 20)
         Me.chkEmailMain.TabIndex = 36
@@ -1705,14 +1643,27 @@ Partial Class ARFCUSTV
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
         '
-        'btnDev001
+        'chkEmailLead_P
         '
-        Me.btnDev001.Location = New System.Drawing.Point(12, 118)
-        Me.btnDev001.Name = "btnDev001"
-        Me.btnDev001.Size = New System.Drawing.Size(171, 23)
-        Me.btnDev001.TabIndex = 6
-        Me.btnDev001.Text = "Fix Contacts"
-        Me.btnDev001.UseVisualStyleBackColor = True
+        Me.chkEmailLead_P.AutoSize = True
+        Me.chkEmailLead_P.Checked = True
+        Me.chkEmailLead_P.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkEmailLead_P.Location = New System.Drawing.Point(196, 40)
+        Me.chkEmailLead_P.Name = "chkEmailLead_P"
+        Me.chkEmailLead_P.Size = New System.Drawing.Size(75, 20)
+        Me.chkEmailLead_P.TabIndex = 48
+        Me.chkEmailLead_P.Text = "Primary"
+        Me.chkEmailLead_P.UseVisualStyleBackColor = True
+        '
+        'chkEmailLead
+        '
+        Me.chkEmailLead.AutoSize = True
+        Me.chkEmailLead.Location = New System.Drawing.Point(133, 40)
+        Me.chkEmailLead.Name = "chkEmailLead"
+        Me.chkEmailLead.Size = New System.Drawing.Size(58, 20)
+        Me.chkEmailLead.TabIndex = 47
+        Me.chkEmailLead.Text = "Lead"
+        Me.chkEmailLead.UseVisualStyleBackColor = True
         '
         'ARFCUSTV
         '
@@ -1734,9 +1685,6 @@ Partial Class ARFCUSTV
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         CType(Me.dteInitDate, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraExplorerBarContainerControl1.ResumeLayout(False)
-        Me.Panel3.ResumeLayout(False)
-        Me.Panel3.PerformLayout()
         Me.UltraTabPageControl6.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel4.PerformLayout()
@@ -1836,11 +1784,6 @@ Partial Class ARFCUSTV
     Friend WithEvents UltraTabPageControl4 As UltraWinTabControl.UltraTabPageControl
     Friend WithEvents grdARTCUSV1 As UltraWinGrid.UltraGrid
     Friend WithEvents chkExcludeHold As CheckBox
-    Friend WithEvents UltraExplorerBarContainerControl1 As UltraWinExplorerBar.UltraExplorerBarContainerControl
-    Friend WithEvents Panel3 As Panel
-    Friend WithEvents rdoTestRita As RadioButton
-    Friend WithEvents rdoTestAndy As RadioButton
-    Friend WithEvents rdoTestWayne As RadioButton
     Friend WithEvents dteInitDate As UltraWinEditors.UltraDateTimeEditor
     Friend WithEvents Label10 As Label
     Friend WithEvents Label9 As Label
@@ -1899,5 +1842,6 @@ Partial Class ARFCUSTV
     Friend WithEvents UltraTextEditor6 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor7 As UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor8 As UltraWinEditors.UltraTextEditor
-    Friend WithEvents btnDev001 As Button
+    Friend WithEvents chkEmailLead_P As CheckBox
+    Friend WithEvents chkEmailLead As CheckBox
 End Class
