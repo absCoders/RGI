@@ -5903,24 +5903,45 @@ Public Class SOFSHIPB
             Update_Record_TDA("SOTORDC2")
 
             For Each drSOTORDC1 As DataRow In dst.Tables("SOTORDC1").Select("")
+                Dim success As Boolean = False
+
                 ASCMAIN1.sql = "UPDATE SOTORDC1 C1
                                     SET BALANCE =
                                         GREATEST(
-                                          C1.AMOUNT -
-                                          NVL((
+                                            C1.AMOUNT -
+                                            NVL((
                                             SELECT SUM(C2.AMOUNT_APPLIED)
                                             FROM SOTORDC2 C2
                                             WHERE C2.ORDR_NO  = C1.ORDR_NO
-                                              AND C2.TRANS_NO = C1.TRANS_NO
-                                          ), 0),
-                                          0
+                                            AND C2.TRANS_NO = C1.TRANS_NO
+                                            ), 0),
+                                            0
                                         )
-                                    WHERE C1.ORDR_NO = :PARM1"
+                                    WHERE C1.TRANS_TYPE = 'D'
+                                    AND C1.ORDR_NO = :PARM1"
                 Dim ORDR_NO As String = drSOTORDC1.Item("ORDR_NO")
                 Try
                     ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", {ORDR_NO})
+                    success = True
                 Catch ex As Exception
                 End Try
+
+                ' Modified on 04/23/2026 - There were other entries in SOTORDC1 causing a ORA-01722: invalid number
+                If Not success Then
+                    Try
+                        ASCMAIN1.sql = "BEGIN DECLARE CURSOR C1 IS
+                                            SELECT C1.*, GREATEST(0, NVL(C1.AMOUNT, 0) - NVL(C2.AMOUNT_APPLIED, 0)) DIFF
+                                            FROM SOTORDC1 C1, (SELECT ORDR_NO, TRANS_NO, SUM(AMOUNT_APPLIED) AMOUNT_APPLIED FROM SOTORDC2 WHERE ORDR_NO = :PARM1 GROUP BY ORDR_NO, TRANS_NO) C2
+                                            WHERE C2.ORDR_NO  = C1.ORDR_NO
+                                            AND C2.TRANS_NO = C1.TRANS_NO
+                                            AND C1.ORDR_NO = :PARM1;
+                                        BEGIN FOR R1 IN C1 LOOP
+                                            UPDATE SOTORDC1 SET BALANCE = R1.DIFF WHERE ORDR_NO = R1.ORDR_NO AND TRANS_NO = R1.TRANS_NO;
+                                        END LOOP; END; END;"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", {ORDR_NO})
+                    Catch ex As Exception
+                    End Try
+                End If
             Next
 
             If RFIXMSG = True Then

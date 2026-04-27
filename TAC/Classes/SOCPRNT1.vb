@@ -558,6 +558,7 @@ Public Class CartonLabel
         rowSOTCART1.Table.Columns.Add("SHIP_VIA_DESC", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("BILL_OF_LADING_NO", GetType(System.String))
         rowSOTCART1.Table.Columns.Add("SHIP_REF", GetType(System.String))
+        rowSOTCART1.Table.Columns.Add("PRE_PACK", GetType(System.String))
 
         Dim CUST_CODE As String = rowSOTCART1.Item("CUST_CODE") & String.Empty
         Dim STYLE_CODE As String = rowSOTCART1.Item("STYLE_CODE") & String.Empty
@@ -1264,7 +1265,7 @@ Public Class CartonLabel
                 If EDI_MERCH_TYPE <> "J1" Or EDI_TP_ID = "6111250011" Then
                     CartonError = String.Format("Not An EDI J1 Order!  Use ABSolution V1!")
                 End If
-            Case Is = "STEINM"
+            Case Is = "BEALLS"
                 Dim CUST_STORE_NO As String = Row.Item("CUST_STORE_NO").ToString
                 If CUST_STORE_NO.Length = 6 Then
                     CUST_STORE_NO = CUST_STORE_NO.Substring(2, 4)
@@ -1272,6 +1273,13 @@ Public Class CartonLabel
                     CartonError = String.Format("Customer Store Number{0} Not 6 Digits Long!", CUST_STORE_NO)
                 End If
                 Row.Item("CUST_STORE_NO") = CUST_STORE_NO
+                Row.Item("INNER_PACK_QTY") = 5
+                Row.Item("CARTON_PACK_QTY") = 200
+                Row.Item("PRE_PACK") = "131"
+                If ASCMAIN1.Running_in_VS = False Then
+                    CartonError = "Bealls PRE_PACK logic needs to be resolved"
+                End If
+
             Case Is = "TARGET"
                 If Row.Item("EDI_SKU").ToString.Length = 0 Then
                     Dim CART_NO As String = Row.Item("CART_NO").ToString

@@ -355,19 +355,19 @@ Partial Class SOTCUST1
         Me.txtCUST_STATE = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraTextEditor8 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.splUpperRight = New System.Windows.Forms.SplitContainer()
-        Me.UltraGroupBox10 = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.grdContactInfo = New Infragistics.Win.Misc.UltraGroupBox()
         Me.btnEMail = New System.Windows.Forms.Button()
         Me.UltraLabel4 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel5 = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtCUST_PHONE = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
+        Me.txtCUST_PHONE_RGI = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
         Me.UltraLabel10 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel28 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraLabel11 = New Infragistics.Win.Misc.UltraLabel()
-        Me.txtCUST_FAX = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
+        Me.txtCUST_FAX_RGI = New Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit()
         Me.UltraTextEditor19 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor12 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.UltraTextEditor10 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
-        Me.txtCustEmail = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtCUST_EXT_RGI = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtCUST_CONTACT_RGI = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
+        Me.txtCUST_EMAIL_RGI = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.tabARTCUST1 = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage3 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
@@ -469,12 +469,12 @@ Partial Class SOTCUST1
         Me.splUpperRight.Panel1.SuspendLayout()
         Me.splUpperRight.Panel2.SuspendLayout()
         Me.splUpperRight.SuspendLayout()
-        CType(Me.UltraGroupBox10, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.UltraGroupBox10.SuspendLayout()
+        CType(Me.grdContactInfo, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.grdContactInfo.SuspendLayout()
         CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.txtCustEmail, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtCUST_EXT_RGI, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtCUST_CONTACT_RGI, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.txtCUST_EMAIL_RGI, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tabARTCUST1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tabARTCUST1.SuspendLayout()
         Me.SuspendLayout()
@@ -1120,7 +1120,7 @@ Partial Class SOTCUST1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.grdARTCUSTD)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(940, 293)
         '
@@ -1721,7 +1721,7 @@ Partial Class SOTCUST1
         'UltraTabPageControl11
         '
         Me.UltraTabPageControl11.Controls.Add(Me.SplitContainer8)
-        Me.UltraTabPageControl11.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl11.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl11.Name = "UltraTabPageControl11"
         Me.UltraTabPageControl11.Size = New System.Drawing.Size(940, 293)
         '
@@ -2261,7 +2261,7 @@ Partial Class SOTCUST1
         '
         'splUpperRight.Panel1
         '
-        Me.splUpperRight.Panel1.Controls.Add(Me.UltraGroupBox10)
+        Me.splUpperRight.Panel1.Controls.Add(Me.grdContactInfo)
         '
         'splUpperRight.Panel2
         '
@@ -2270,29 +2270,29 @@ Partial Class SOTCUST1
         Me.splUpperRight.SplitterDistance = 323
         Me.splUpperRight.TabIndex = 75
         '
-        'UltraGroupBox10
+        'grdContactInfo
         '
-        Me.UltraGroupBox10.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
-        Me.UltraGroupBox10.Controls.Add(Me.btnEMail)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraLabel4)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraLabel5)
-        Me.UltraGroupBox10.Controls.Add(Me.txtCUST_PHONE)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraLabel10)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraLabel28)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraLabel11)
-        Me.UltraGroupBox10.Controls.Add(Me.txtCUST_FAX)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraTextEditor19)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraTextEditor12)
-        Me.UltraGroupBox10.Controls.Add(Me.UltraTextEditor10)
-        Me.UltraGroupBox10.Controls.Add(Me.txtCustEmail)
-        Me.UltraGroupBox10.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.grdContactInfo.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.Rectangular3D
+        Me.grdContactInfo.Controls.Add(Me.btnEMail)
+        Me.grdContactInfo.Controls.Add(Me.UltraLabel4)
+        Me.grdContactInfo.Controls.Add(Me.UltraLabel5)
+        Me.grdContactInfo.Controls.Add(Me.txtCUST_PHONE_RGI)
+        Me.grdContactInfo.Controls.Add(Me.UltraLabel10)
+        Me.grdContactInfo.Controls.Add(Me.UltraLabel28)
+        Me.grdContactInfo.Controls.Add(Me.UltraLabel11)
+        Me.grdContactInfo.Controls.Add(Me.txtCUST_FAX_RGI)
+        Me.grdContactInfo.Controls.Add(Me.UltraTextEditor19)
+        Me.grdContactInfo.Controls.Add(Me.txtCUST_EXT_RGI)
+        Me.grdContactInfo.Controls.Add(Me.txtCUST_CONTACT_RGI)
+        Me.grdContactInfo.Controls.Add(Me.txtCUST_EMAIL_RGI)
+        Me.grdContactInfo.Dock = System.Windows.Forms.DockStyle.Fill
         Appearance15.ForeColor = System.Drawing.Color.Blue
-        Me.UltraGroupBox10.HeaderAppearance = Appearance15
-        Me.UltraGroupBox10.Location = New System.Drawing.Point(0, 0)
-        Me.UltraGroupBox10.Name = "UltraGroupBox10"
-        Me.UltraGroupBox10.Size = New System.Drawing.Size(323, 192)
-        Me.UltraGroupBox10.TabIndex = 74
-        Me.UltraGroupBox10.Text = "Contact Info"
+        Me.grdContactInfo.HeaderAppearance = Appearance15
+        Me.grdContactInfo.Location = New System.Drawing.Point(0, 0)
+        Me.grdContactInfo.Name = "grdContactInfo"
+        Me.grdContactInfo.Size = New System.Drawing.Size(323, 192)
+        Me.grdContactInfo.TabIndex = 74
+        Me.grdContactInfo.Text = "Lead Contact"
         '
         'btnEMail
         '
@@ -2327,17 +2327,18 @@ Partial Class SOTCUST1
         Me.UltraLabel5.TabIndex = 48
         Me.UltraLabel5.Text = "email"
         '
-        'txtCUST_PHONE
+        'txtCUST_PHONE_RGI
         '
-        Me.Absx1.SetABSColumnName(Me.txtCUST_PHONE, "CUST_PHONE")
-        Me.txtCUST_PHONE.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
-        Me.txtCUST_PHONE.InputMask = "(###) ###-####"
-        Me.txtCUST_PHONE.Location = New System.Drawing.Point(66, 99)
-        Me.txtCUST_PHONE.Name = "txtCUST_PHONE"
-        Me.txtCUST_PHONE.NonAutoSizeHeight = 20
-        Me.txtCUST_PHONE.Size = New System.Drawing.Size(122, 23)
-        Me.txtCUST_PHONE.TabIndex = 39
-        Me.txtCUST_PHONE.Text = "UltraMaskedEdit1"
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_PHONE_RGI, False)
+        Me.txtCUST_PHONE_RGI.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
+        Me.txtCUST_PHONE_RGI.InputMask = "(###) ###-####"
+        Me.txtCUST_PHONE_RGI.Location = New System.Drawing.Point(66, 99)
+        Me.txtCUST_PHONE_RGI.Name = "txtCUST_PHONE_RGI"
+        Me.txtCUST_PHONE_RGI.NonAutoSizeHeight = 20
+        Me.txtCUST_PHONE_RGI.ReadOnly = True
+        Me.txtCUST_PHONE_RGI.Size = New System.Drawing.Size(122, 23)
+        Me.txtCUST_PHONE_RGI.TabIndex = 39
+        Me.txtCUST_PHONE_RGI.Text = "UltraMaskedEdit1"
         '
         'UltraLabel10
         '
@@ -2375,17 +2376,18 @@ Partial Class SOTCUST1
         Me.UltraLabel11.TabIndex = 42
         Me.UltraLabel11.Text = "Fax"
         '
-        'txtCUST_FAX
+        'txtCUST_FAX_RGI
         '
-        Me.Absx1.SetABSColumnName(Me.txtCUST_FAX, "CUST_FAX")
-        Me.txtCUST_FAX.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
-        Me.txtCUST_FAX.InputMask = "(###) ###-####"
-        Me.txtCUST_FAX.Location = New System.Drawing.Point(66, 122)
-        Me.txtCUST_FAX.Name = "txtCUST_FAX"
-        Me.txtCUST_FAX.NonAutoSizeHeight = 20
-        Me.txtCUST_FAX.Size = New System.Drawing.Size(122, 23)
-        Me.txtCUST_FAX.TabIndex = 41
-        Me.txtCUST_FAX.Text = "UltraMaskedEdit2"
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_FAX_RGI, False)
+        Me.txtCUST_FAX_RGI.EditAs = Infragistics.Win.UltraWinMaskedEdit.EditAsType.UseSpecifiedMask
+        Me.txtCUST_FAX_RGI.InputMask = "(###) ###-####"
+        Me.txtCUST_FAX_RGI.Location = New System.Drawing.Point(66, 122)
+        Me.txtCUST_FAX_RGI.Name = "txtCUST_FAX_RGI"
+        Me.txtCUST_FAX_RGI.NonAutoSizeHeight = 20
+        Me.txtCUST_FAX_RGI.ReadOnly = True
+        Me.txtCUST_FAX_RGI.Size = New System.Drawing.Size(122, 23)
+        Me.txtCUST_FAX_RGI.TabIndex = 41
+        Me.txtCUST_FAX_RGI.Text = "UltraMaskedEdit2"
         '
         'UltraTextEditor19
         '
@@ -2398,14 +2400,15 @@ Partial Class SOTCUST1
         Me.UltraTextEditor19.Size = New System.Drawing.Size(257, 25)
         Me.UltraTextEditor19.TabIndex = 64
         '
-        'UltraTextEditor12
+        'txtCUST_EXT_RGI
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor12, "CUST_EXT")
-        Me.UltraTextEditor12.Location = New System.Drawing.Point(194, 99)
-        Me.UltraTextEditor12.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraTextEditor12.Name = "UltraTextEditor12"
-        Me.UltraTextEditor12.Size = New System.Drawing.Size(52, 25)
-        Me.UltraTextEditor12.TabIndex = 49
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_EXT_RGI, False)
+        Me.txtCUST_EXT_RGI.Location = New System.Drawing.Point(194, 99)
+        Me.txtCUST_EXT_RGI.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtCUST_EXT_RGI.Name = "txtCUST_EXT_RGI"
+        Me.txtCUST_EXT_RGI.ReadOnly = True
+        Me.txtCUST_EXT_RGI.Size = New System.Drawing.Size(52, 25)
+        Me.txtCUST_EXT_RGI.TabIndex = 49
         UltraToolTipInfo8.ToolTipImage = Infragistics.Win.ToolTipImage.Info
         UltraToolTipInfo8.ToolTipText = "123 on ext"
         UltraToolTipInfo8.ToolTipTextFormatted = resources.GetString("UltraToolTipInfo8.ToolTipTextFormatted")
@@ -2414,29 +2417,29 @@ Partial Class SOTCUST1
         Appearance14.BackColor2 = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer))
         Appearance14.ForeColor = System.Drawing.Color.White
         UltraToolTipInfo8.ToolTipTitleAppearance = Appearance14
-        Me.tip.SetUltraToolTip(Me.UltraTextEditor12, UltraToolTipInfo8)
+        Me.tip.SetUltraToolTip(Me.txtCUST_EXT_RGI, UltraToolTipInfo8)
         '
-        'UltraTextEditor10
+        'txtCUST_CONTACT_RGI
         '
-        Me.Absx1.SetABSColumnName(Me.UltraTextEditor10, "CUST_CONTACT")
-        Me.Absx1.SetABSLookUpTableName(Me.UltraTextEditor10, "ARTCUST1")
-        Me.UltraTextEditor10.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper
-        Me.UltraTextEditor10.Location = New System.Drawing.Point(73, 18)
-        Me.UltraTextEditor10.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.UltraTextEditor10.Name = "UltraTextEditor10"
-        Me.UltraTextEditor10.Size = New System.Drawing.Size(257, 25)
-        Me.UltraTextEditor10.TabIndex = 44
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_CONTACT_RGI, False)
+        Me.txtCUST_CONTACT_RGI.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper
+        Me.txtCUST_CONTACT_RGI.Location = New System.Drawing.Point(73, 18)
+        Me.txtCUST_CONTACT_RGI.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtCUST_CONTACT_RGI.Name = "txtCUST_CONTACT_RGI"
+        Me.txtCUST_CONTACT_RGI.ReadOnly = True
+        Me.txtCUST_CONTACT_RGI.Size = New System.Drawing.Size(257, 25)
+        Me.txtCUST_CONTACT_RGI.TabIndex = 44
         '
-        'txtCustEmail
+        'txtCUST_EMAIL_RGI
         '
-        Me.Absx1.SetABSColumnName(Me.txtCustEmail, "CUST_EMAIL")
-        Me.Absx1.SetABSLookUpTableName(Me.txtCustEmail, "ARTCUST1")
-        Me.txtCustEmail.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper
-        Me.txtCustEmail.Location = New System.Drawing.Point(73, 42)
-        Me.txtCustEmail.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
-        Me.txtCustEmail.Name = "txtCustEmail"
-        Me.txtCustEmail.Size = New System.Drawing.Size(257, 25)
-        Me.txtCustEmail.TabIndex = 45
+        Me.Absx1.SetABSBindToTable(Me.txtCUST_EMAIL_RGI, False)
+        Me.txtCUST_EMAIL_RGI.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper
+        Me.txtCUST_EMAIL_RGI.Location = New System.Drawing.Point(73, 42)
+        Me.txtCUST_EMAIL_RGI.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
+        Me.txtCUST_EMAIL_RGI.Name = "txtCUST_EMAIL_RGI"
+        Me.txtCUST_EMAIL_RGI.ReadOnly = True
+        Me.txtCUST_EMAIL_RGI.Size = New System.Drawing.Size(257, 25)
+        Me.txtCUST_EMAIL_RGI.TabIndex = 45
         '
         'tabARTCUST1
         '
@@ -2596,13 +2599,13 @@ Partial Class SOTCUST1
         Me.splUpperRight.Panel2.ResumeLayout(False)
         CType(Me.splUpperRight, System.ComponentModel.ISupportInitialize).EndInit()
         Me.splUpperRight.ResumeLayout(False)
-        CType(Me.UltraGroupBox10, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.UltraGroupBox10.ResumeLayout(False)
-        Me.UltraGroupBox10.PerformLayout()
+        CType(Me.grdContactInfo, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.grdContactInfo.ResumeLayout(False)
+        Me.grdContactInfo.PerformLayout()
         CType(Me.UltraTextEditor19, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor12, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.UltraTextEditor10, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.txtCustEmail, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtCUST_EXT_RGI, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtCUST_CONTACT_RGI, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.txtCUST_EMAIL_RGI, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tabARTCUST1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabARTCUST1.ResumeLayout(False)
         Me.ResumeLayout(False)
@@ -2631,18 +2634,18 @@ Partial Class SOTCUST1
     Friend WithEvents UltraTextEditor6 As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents txtCUST_STATE As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents UltraTextEditor8 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraGroupBox10 As Infragistics.Win.Misc.UltraGroupBox
+    Friend WithEvents grdContactInfo As Infragistics.Win.Misc.UltraGroupBox
     Friend WithEvents UltraLabel4 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel5 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents txtCUST_PHONE As Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit
+    Friend WithEvents txtCUST_PHONE_RGI As Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit
     Friend WithEvents UltraLabel10 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel28 As Infragistics.Win.Misc.UltraLabel
     Friend WithEvents UltraLabel11 As Infragistics.Win.Misc.UltraLabel
-    Friend WithEvents txtCUST_FAX As Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit
+    Friend WithEvents txtCUST_FAX_RGI As Infragistics.Win.UltraWinMaskedEdit.UltraMaskedEdit
     Friend WithEvents UltraTextEditor19 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraTextEditor12 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents UltraTextEditor10 As Infragistics.Win.UltraWinEditors.UltraTextEditor
-    Friend WithEvents txtCustEmail As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtCUST_EXT_RGI As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtCUST_CONTACT_RGI As Infragistics.Win.UltraWinEditors.UltraTextEditor
+    Friend WithEvents txtCUST_EMAIL_RGI As Infragistics.Win.UltraWinEditors.UltraTextEditor
     Friend WithEvents grdARTSREP1 As Infragistics.Win.UltraWinGrid.UltraGrid
     Friend WithEvents splUpperRight As System.Windows.Forms.SplitContainer
     Friend WithEvents tabARTCUST1 As Infragistics.Win.UltraWinTabControl.UltraTabControl

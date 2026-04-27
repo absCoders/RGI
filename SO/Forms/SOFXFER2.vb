@@ -2507,6 +2507,11 @@ Public Class SOFXFER2
         VersionInfo.AppendLine(VersionNo)
         VersionInfo.AppendLine("* Add 3 Month Option To Orders Filter.")
 
+        VersionNo = "26.04.22.01"
+        VersionInfo.AppendLine("")
+        VersionInfo.AppendLine(VersionNo)
+        VersionInfo.AppendLine("* Changes to Contacts to Create Lead Contacts.")
+
         lblVersionNo.Text = VersionNo
     End Sub
 End Class

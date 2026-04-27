@@ -618,6 +618,7 @@ Public Class TACMAIN1
                 VL.Add("W", "Whse")
                 VL.Add("M", "Misc")
                 VL.Add("X", "Main")
+                VL.Add("L", "Lead")
 
             Case "GROUP_STATUS"
                 VL.Add("A", "Active")

@@ -332,13 +332,13 @@
             If ASCMAIN1.CLIENT = "VAN" Then
                 EDI_ITEM = rowEDT850T2.Item("EDI_STYLE") & ""
                 EDI_ITEM_DESC = rowEDT850T2.Item("EDI_STYLE_NAME") & ""
-                EDI_PO_LNO = rowEDT850T2.Item("EDI_DTL_SEQ")
+                EDI_PO_LNO = If(rowEDT850T2("EDI_DTL_SEQ") Is DBNull.Value, CShort(0), CShort(rowEDT850T2("EDI_DTL_SEQ")))
             Else
                 EDI_PRICE_UOM = rowEDT850T2.Item("EDI_PRICE_UOM") & ""
-                EDI_PO4_INNER = rowEDT850T2.Item("EDI_PO4_INNER")
+                EDI_PO4_INNER = If(rowEDT850T2("EDI_PO4_INNER") Is DBNull.Value, CShort(0), CShort(rowEDT850T2("EDI_PO4_INNER")))
                 EDI_ITEM = rowEDT850T2.Item("EDI_ITEM") & ""
                 EDI_ITEM_DESC = rowEDT850T2.Item("EDI_ITEM_DESC") & ""
-                EDI_PO_LNO = rowEDT850T2.Item("EDI_PO_LNO")
+                EDI_PO_LNO = If(rowEDT850T2("EDI_PO_LNO") Is DBNull.Value, CShort(0), CShort(rowEDT850T2("EDI_PO_LNO")))
             End If
 
             .Item("COMPANY_CODE") = ASCMAIN1.DBS_COMPANY
