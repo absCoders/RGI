@@ -5631,9 +5631,9 @@ Public Class APFINVH1
                     End If
                     ' CHECK TO SEE IF SHIPMENT IS NOT gl updated
                 Next
-                If PO_SHIPMENT_NO = "" Then
-                    Return True
-                End If
+                '  If PO_SHIPMENT_NO = "" Then
+                Return True
+                '  End If
 
 
 
