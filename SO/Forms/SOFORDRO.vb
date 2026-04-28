@@ -1644,6 +1644,15 @@ Public Class SOFORDRO
                         'CHANGES FOR SHIPTO QUESTION - Dim dstChangesQ As DataTable = dst.Tables.Item("ARTCUSTQ").GetChanges
                         'CHANGES FOR SHIPTO QUESTION - 
                         'If Not IsNothing(dstChanges) Or Not IsNothing(dstChangesQ) Then
+                        Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                        Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                        If Not IsNothing(rowARTCUSTD) Then
+                            rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                        End If
                         If Not IsNothing(dstChanges) Then
                             Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                             Update_Record_TDA("ARTCUSTD")

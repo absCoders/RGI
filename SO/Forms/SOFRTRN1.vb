@@ -3589,15 +3589,19 @@ Public Class SOFRTRN1
 
         ' Create Adjustmenst for the destroyed quantities.
 
-        If ASCMAIN1.CLIENT <> "RGI" Then
-            Exit Sub
-        End If
+        ' 04/22/2026 - Do this for Vandale
+        Select Case ASCMAIN1.CLIENT
+            Case "RGI", "VAN"
+
+            Case Else
+                Exit Sub
+        End Select
 
         If dst.Tables("SOTRTRN2").Select("RTRN_NO = '" & RTRN_NO & "' and ISNULL(RTRN_QTY_3, 0) > 0").Length = 0 Then
             Exit Sub
         End If
 
-        Dim ADJ_NO As String = String.Empty
+        Dim ADJ_NO As String
         Dim rowICTIADJ1 As DataRow = dst.Tables("ICTIADJ1").NewRow
 
         If ASCMAIN1.DBS_COMPANY = "VAN" Or ASCMAIN1.DBS_SERVER = "VAN" Then
@@ -3609,7 +3613,15 @@ Public Class SOFRTRN1
         rowICTIADJ1.Item("ADJ_NO") = ADJ_NO
         rowICTIADJ1.Item("ADJ_DATE") = DateTime.Now.ToShortDateString
         rowICTIADJ1.Item("WHSE_CODE") = Absx1.txtFor("WHSE_CODE").Text
-        rowICTIADJ1.Item("REASON_CODE") = "WHADJ"
+
+        Select Case ASCMAIN1.CLIENT
+            Case "RGI"
+                rowICTIADJ1.Item("REASON_CODE") = "WHADJ"
+            Case "VAN"
+                ' Need a Reason code
+                rowICTIADJ1.Item("REASON_CODE") = "STK"
+        End Select
+
         rowICTIADJ1.Item("ADJ_NOTE") = "Return Number " & RTRN_NO
         rowICTIADJ1.Item("INIT_OPER") = ASCMAIN1.USER_ID
         rowICTIADJ1.Item("INIT_DATE") = DateTime.Now
@@ -3656,7 +3668,6 @@ Public Class SOFRTRN1
         ICCMAIN1.Update_Adjustment(Me)
 
         If location_support Then
-
             ASCDATA1.ExecuteSP("WHPLOCB2", "VVV",
                      New Object() {"A", rowICTIADJ1.Item("ADJ_NO"), ASCMAIN1.SESSION_NO},
                      New String() {"WHSE_TRAN_TYPE_in", "WHSE_TRAN_NO_in", "SESSION_NO_in"})
@@ -4538,6 +4549,5 @@ Public Class SOFRTRN1
     End Sub
 
 #End Region
-
 
 End Class
