@@ -9007,7 +9007,7 @@ Optional ByVal key As String = "") As Object
         Dim PYMT_BATCH_NO_CURR As String
         Dim rowARTPYMT1 As DataRow
         Dim rowARTPYMT2 As DataRow
-        Dim PYMT_BATCH_DATE As Date = DateTime.Now
+        Dim PYMT_BATCH_DATE As Date = DateTime.Now.Date
         Dim PYMT_BATCH_ILNO As Integer = 0
         Dim GIFT_CTL_NO As String = ""
 
