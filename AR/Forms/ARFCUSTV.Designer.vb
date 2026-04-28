@@ -160,6 +160,7 @@ Partial Class ARFCUSTV
         Me.chkOnlySales = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.lblCUST_NAME = New System.Windows.Forms.Label()
         Me.chkSaveFinalized = New System.Windows.Forms.CheckBox()
         Me.txtACTIVITY_NOTE_EDIT = New System.Windows.Forms.TextBox()
         Me.btnEditContacts = New System.Windows.Forms.Button()
@@ -169,6 +170,8 @@ Partial Class ARFCUSTV
         Me.btnApprove = New System.Windows.Forms.Button()
         Me.UltraTabPageControl9 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.chkEmailLead_P = New System.Windows.Forms.CheckBox()
+        Me.chkEmailLead = New System.Windows.Forms.CheckBox()
         Me.chkEmailMisc_P = New System.Windows.Forms.CheckBox()
         Me.chkEmailWhse_P = New System.Windows.Forms.CheckBox()
         Me.chkEmailAP_P = New System.Windows.Forms.CheckBox()
@@ -233,8 +236,7 @@ Partial Class ARFCUSTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkEmailLead_P = New System.Windows.Forms.CheckBox()
-        Me.chkEmailLead = New System.Windows.Forms.CheckBox()
+        Me.btnCancelEdit = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -499,12 +501,14 @@ Partial Class ARFCUSTV
         'UltraTabPageControl6
         '
         Me.UltraTabPageControl6.Controls.Add(Me.Panel4)
-        Me.UltraTabPageControl6.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl6.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl6.Name = "UltraTabPageControl6"
         Me.UltraTabPageControl6.Size = New System.Drawing.Size(401, 257)
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.btnCancelEdit)
+        Me.Panel4.Controls.Add(Me.lblCUST_NAME)
         Me.Panel4.Controls.Add(Me.chkSaveFinalized)
         Me.Panel4.Controls.Add(Me.txtACTIVITY_NOTE_EDIT)
         Me.Panel4.Controls.Add(Me.btnEditContacts)
@@ -514,10 +518,22 @@ Partial Class ARFCUSTV
         Me.Panel4.Size = New System.Drawing.Size(401, 257)
         Me.Panel4.TabIndex = 0
         '
+        'lblCUST_NAME
+        '
+        Me.lblCUST_NAME.AutoSize = True
+        Me.lblCUST_NAME.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblCUST_NAME.ForeColor = System.Drawing.Color.Red
+        Me.lblCUST_NAME.Location = New System.Drawing.Point(17, 11)
+        Me.lblCUST_NAME.Name = "lblCUST_NAME"
+        Me.lblCUST_NAME.Size = New System.Drawing.Size(102, 16)
+        Me.lblCUST_NAME.TabIndex = 30
+        Me.lblCUST_NAME.Text = "Now Editing: "
+        Me.lblCUST_NAME.Visible = False
+        '
         'chkSaveFinalized
         '
         Me.chkSaveFinalized.AutoSize = True
-        Me.chkSaveFinalized.Location = New System.Drawing.Point(186, 17)
+        Me.chkSaveFinalized.Location = New System.Drawing.Point(187, 37)
         Me.chkSaveFinalized.Name = "chkSaveFinalized"
         Me.chkSaveFinalized.Size = New System.Drawing.Size(119, 20)
         Me.chkSaveFinalized.TabIndex = 29
@@ -527,7 +543,7 @@ Partial Class ARFCUSTV
         '
         'txtACTIVITY_NOTE_EDIT
         '
-        Me.txtACTIVITY_NOTE_EDIT.Location = New System.Drawing.Point(13, 40)
+        Me.txtACTIVITY_NOTE_EDIT.Location = New System.Drawing.Point(14, 60)
         Me.txtACTIVITY_NOTE_EDIT.Multiline = True
         Me.txtACTIVITY_NOTE_EDIT.Name = "txtACTIVITY_NOTE_EDIT"
         Me.txtACTIVITY_NOTE_EDIT.ReadOnly = True
@@ -536,7 +552,7 @@ Partial Class ARFCUSTV
         '
         'btnEditContacts
         '
-        Me.btnEditContacts.Location = New System.Drawing.Point(13, 14)
+        Me.btnEditContacts.Location = New System.Drawing.Point(14, 34)
         Me.btnEditContacts.Name = "btnEditContacts"
         Me.btnEditContacts.Size = New System.Drawing.Size(167, 25)
         Me.btnEditContacts.TabIndex = 22
@@ -580,7 +596,7 @@ Partial Class ARFCUSTV
         'UltraTabPageControl9
         '
         Me.UltraTabPageControl9.Controls.Add(Me.Panel5)
-        Me.UltraTabPageControl9.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl9.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl9.Name = "UltraTabPageControl9"
         Me.UltraTabPageControl9.Size = New System.Drawing.Size(401, 257)
         '
@@ -605,6 +621,28 @@ Partial Class ARFCUSTV
         Me.Panel5.Name = "Panel5"
         Me.Panel5.Size = New System.Drawing.Size(401, 257)
         Me.Panel5.TabIndex = 0
+        '
+        'chkEmailLead_P
+        '
+        Me.chkEmailLead_P.AutoSize = True
+        Me.chkEmailLead_P.Checked = True
+        Me.chkEmailLead_P.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkEmailLead_P.Location = New System.Drawing.Point(196, 40)
+        Me.chkEmailLead_P.Name = "chkEmailLead_P"
+        Me.chkEmailLead_P.Size = New System.Drawing.Size(75, 20)
+        Me.chkEmailLead_P.TabIndex = 48
+        Me.chkEmailLead_P.Text = "Primary"
+        Me.chkEmailLead_P.UseVisualStyleBackColor = True
+        '
+        'chkEmailLead
+        '
+        Me.chkEmailLead.AutoSize = True
+        Me.chkEmailLead.Location = New System.Drawing.Point(133, 40)
+        Me.chkEmailLead.Name = "chkEmailLead"
+        Me.chkEmailLead.Size = New System.Drawing.Size(58, 20)
+        Me.chkEmailLead.TabIndex = 47
+        Me.chkEmailLead.Text = "Lead"
+        Me.chkEmailLead.UseVisualStyleBackColor = True
         '
         'chkEmailMisc_P
         '
@@ -1479,6 +1517,7 @@ Partial Class ARFCUSTV
         Me.grdARTCUSTD.Name = "grdARTCUSTD"
         Me.grdARTCUSTD.Size = New System.Drawing.Size(706, 157)
         Me.grdARTCUSTD.TabIndex = 19
+        Me.grdARTCUSTD.Text = "Contacts For: "
         '
         'UltraTabControl2
         '
@@ -1643,27 +1682,15 @@ Partial Class ARFCUSTV
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
         '
-        'chkEmailLead_P
+        'btnCancelEdit
         '
-        Me.chkEmailLead_P.AutoSize = True
-        Me.chkEmailLead_P.Checked = True
-        Me.chkEmailLead_P.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEmailLead_P.Location = New System.Drawing.Point(196, 40)
-        Me.chkEmailLead_P.Name = "chkEmailLead_P"
-        Me.chkEmailLead_P.Size = New System.Drawing.Size(75, 20)
-        Me.chkEmailLead_P.TabIndex = 48
-        Me.chkEmailLead_P.Text = "Primary"
-        Me.chkEmailLead_P.UseVisualStyleBackColor = True
-        '
-        'chkEmailLead
-        '
-        Me.chkEmailLead.AutoSize = True
-        Me.chkEmailLead.Location = New System.Drawing.Point(133, 40)
-        Me.chkEmailLead.Name = "chkEmailLead"
-        Me.chkEmailLead.Size = New System.Drawing.Size(58, 20)
-        Me.chkEmailLead.TabIndex = 47
-        Me.chkEmailLead.Text = "Lead"
-        Me.chkEmailLead.UseVisualStyleBackColor = True
+        Me.btnCancelEdit.Location = New System.Drawing.Point(14, 122)
+        Me.btnCancelEdit.Name = "btnCancelEdit"
+        Me.btnCancelEdit.Size = New System.Drawing.Size(167, 25)
+        Me.btnCancelEdit.TabIndex = 31
+        Me.btnCancelEdit.Text = "Cancel Edit"
+        Me.btnCancelEdit.UseVisualStyleBackColor = True
+        Me.btnCancelEdit.Visible = False
         '
         'ARFCUSTV
         '
@@ -1844,4 +1871,6 @@ Partial Class ARFCUSTV
     Friend WithEvents UltraTextEditor8 As UltraWinEditors.UltraTextEditor
     Friend WithEvents chkEmailLead_P As CheckBox
     Friend WithEvents chkEmailLead As CheckBox
+    Friend WithEvents lblCUST_NAME As Label
+    Friend WithEvents btnCancelEdit As Button
 End Class
