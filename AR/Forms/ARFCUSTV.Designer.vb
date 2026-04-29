@@ -160,6 +160,7 @@ Partial Class ARFCUSTV
         Me.chkOnlySales = New System.Windows.Forms.CheckBox()
         Me.UltraTabPageControl6 = New Infragistics.Win.UltraWinTabControl.UltraTabPageControl()
         Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.btnCancelEdit = New System.Windows.Forms.Button()
         Me.lblCUST_NAME = New System.Windows.Forms.Label()
         Me.chkSaveFinalized = New System.Windows.Forms.CheckBox()
         Me.txtACTIVITY_NOTE_EDIT = New System.Windows.Forms.TextBox()
@@ -236,7 +237,6 @@ Partial Class ARFCUSTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.btnCancelEdit = New System.Windows.Forms.Button()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -517,6 +517,16 @@ Partial Class ARFCUSTV
         Me.Panel4.Name = "Panel4"
         Me.Panel4.Size = New System.Drawing.Size(401, 257)
         Me.Panel4.TabIndex = 0
+        '
+        'btnCancelEdit
+        '
+        Me.btnCancelEdit.Location = New System.Drawing.Point(14, 122)
+        Me.btnCancelEdit.Name = "btnCancelEdit"
+        Me.btnCancelEdit.Size = New System.Drawing.Size(167, 25)
+        Me.btnCancelEdit.TabIndex = 31
+        Me.btnCancelEdit.Text = "Cancel Edit"
+        Me.btnCancelEdit.UseVisualStyleBackColor = True
+        Me.btnCancelEdit.Visible = False
         '
         'lblCUST_NAME
         '
@@ -1681,16 +1691,6 @@ Partial Class ARFCUSTV
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
-        '
-        'btnCancelEdit
-        '
-        Me.btnCancelEdit.Location = New System.Drawing.Point(14, 122)
-        Me.btnCancelEdit.Name = "btnCancelEdit"
-        Me.btnCancelEdit.Size = New System.Drawing.Size(167, 25)
-        Me.btnCancelEdit.TabIndex = 31
-        Me.btnCancelEdit.Text = "Cancel Edit"
-        Me.btnCancelEdit.UseVisualStyleBackColor = True
-        Me.btnCancelEdit.Visible = False
         '
         'ARFCUSTV
         '

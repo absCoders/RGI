@@ -56,8 +56,8 @@ Public Class ARFCUSTV
             S.AppendLine("ARTCUST1.CUST_STATE,")
             S.AppendLine("ARTCUST1.CUST_ZIP_CODE,")
             S.AppendLine("ARTCUST1.CUST_COUNTRY,")
-            S.AppendLine("ARTCUST1.CUST_CONTACT,")
-            S.AppendLine("ARTCUST1.CUST_EMAIL,")
+            S.AppendLine("LD.CUST_CONTACT,")
+            S.AppendLine("LD.CUST_EMAIL,")
             S.AppendLine("ARTCUST1.SREP_CODE,")
             S.AppendLine("ARTCUST1.INIT_DATE,")
             S.AppendLine("ARTCUST1.CUST_SALES_HOLD,")
@@ -77,9 +77,18 @@ Public Class ARFCUSTV
             S.AppendLine("SUM(SALES.YR4) AS YR4,")
             S.AppendLine("'0' AS HAS_SALES")
             S.AppendLine($"FROM ARTCUST1, {TEMP_SALES} SALES, TATTERM1, {TEMP_MAX} V1")
+            S.AppendLine(",(")
+            S.AppendLine("    SELECT ")
+            S.AppendLine("    CUST_CODE,")
+            S.AppendLine("    CONTACT_NAME AS CUST_CONTACT,")
+            S.AppendLine("    CONTACT_EMAIL AS CUST_EMAIL")
+            S.AppendLine("    FROM ARTCUSTD")
+            S.AppendLine("    WHERE CONTACT_PRIMARY = '1' AND CONTACT_TYPE = 'L'")
+            S.AppendLine(") LD")
             S.AppendLine("WHERE ARTCUST1.CUST_CODE = SALES.CUST_CODE (+)")
             S.AppendLine("AND ARTCUST1.TERM_CODE = TATTERM1.TERM_CODE (+)")
             S.AppendLine("AND ARTCUST1.CUST_CODE = V1.CUST_CODE (+)")
+            S.AppendLine("AND ARTCUST1.CUST_CODE = LD.CUST_CODE (+)")
             S.AppendLine("GROUP BY")
             S.AppendLine("ARTCUST1.CUST_CODE,")
             S.AppendLine("ARTCUST1.CUST_NAME,")
@@ -90,8 +99,8 @@ Public Class ARFCUSTV
             S.AppendLine("ARTCUST1.CUST_STATE,")
             S.AppendLine("ARTCUST1.CUST_ZIP_CODE,")
             S.AppendLine("ARTCUST1.CUST_COUNTRY,")
-            S.AppendLine("ARTCUST1.CUST_CONTACT,")
-            S.AppendLine("ARTCUST1.CUST_EMAIL,")
+            S.AppendLine("LD.CUST_CONTACT,")
+            S.AppendLine("LD.CUST_EMAIL,")
             S.AppendLine("ARTCUST1.SREP_CODE,")
             S.AppendLine("ARTCUST1.INIT_DATE,")
             S.AppendLine("ARTCUST1.CUST_SALES_HOLD,")
@@ -385,7 +394,7 @@ Public Class ARFCUSTV
                 Me.Close()
             Case "Refresh"
                 RefreshTempActivity()
-                Setup_Summary()
+                Setup_Summary("Refreshing Data")
                 'UltraExplorerBar1.Groups("Screen Control").Items("Refresh").Settings.Enabled = DefaultableBoolean.False
             Case "Save"
                 Update_Record("Your Data Is Saved", False)
@@ -429,6 +438,13 @@ Public Class ARFCUSTV
         With grdARTCUSTX.DisplayLayout.Bands(0)
             .Columns("INIT_DATE").Format = "MM/dd/yy"
             .Columns("ACTIVITY_DATE").Format = "MM/dd/yy"
+        End With
+
+        With grdARTCUSTD.DisplayLayout.Bands(0)
+            For Each C As String In New String() {"CONTACT_PHONE", "CONTACT_FAX", "CONTACT_CELL"}
+                .Columns(C).MaskInput = "" ' "(###) ###-####"
+                .Columns(C).CellDisplayStyle = UltraWinGrid.CellDisplayStyle.Default ' UltraWinGrid.CellDisplayStyle.FormattedText
+            Next
         End With
 
     End Sub
@@ -594,7 +610,7 @@ Public Class ARFCUSTV
                 grd.UpdateData()
                 Update_Record_TDA("ARTCUSV1")
                 RefreshTempActivity()
-                Setup_Summary()
+                Setup_Summary("Refreshing Data")
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -642,10 +658,15 @@ Public Class ARFCUSTV
 
 #End Region
 
-    Sub Setup_Summary()
-        ASCMAIN1.Progress("Now Loading Data")
+    Sub Setup_Summary(Optional msgShow As String = "")
+        If msgShow = "" Then
+            msgShow = "Now Loading Data"
+        End If
+        ASCMAIN1.Progress(msgShow)
         Me.Cursor = Cursors.WaitCursor
         Update_Record("", True)
+        ASCMAIN1.Progress(msgShow)
+        Me.Cursor = Cursors.WaitCursor
 
         dst.Tables("ARTCUSTX").Rows.Clear()
         'dst.Tables("ARTCUSTD").Rows.Clear()
@@ -783,22 +804,22 @@ Public Class ARFCUSTV
         Return RetVal
     End Function
 
-    Private Sub cboCLIST_CODE_SelectedIndexChanged(sender As Object, e As EventArgs)
-        If Not Loading Then
-            RefreshList()
-        End If
-    End Sub
+    'Private Sub cboCLIST_CODE_SelectedIndexChanged(sender As Object, e As EventArgs)
+    '    If Not Loading Then
+    '        RefreshList()
+    '    End If
+    'End Sub
 
-    Private Sub RefreshList()
-        ASCMAIN1.Progress("Now Loading List")
-        Me.Cursor = Cursors.WaitCursor
-        Update_Record("", True)
+    'Private Sub RefreshList()
+    '    ASCMAIN1.Progress("Now Loading List")
+    '    Me.Cursor = Cursors.WaitCursor
+    '    Update_Record("", True)
 
-        dst.EnforceConstraints = False
+    '    dst.EnforceConstraints = False
 
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-    End Sub
+    '    Me.Cursor = Cursors.Default
+    '    ASCMAIN1.Progress("")
+    'End Sub
 
     Private Sub btnSendSelected_Click(sender As Object, e As EventArgs) Handles btnSendSelected.Click
         Dim emsg As New Text.StringBuilder With {.Length = 0}
@@ -1264,7 +1285,7 @@ Public Class ARFCUSTV
                 UpdateContacts()
                 'refreshMax()
                 RefreshTempActivity()
-                Setup_Summary()
+                Setup_Summary("Refreshing Data")
                 lblCUST_NAME.Visible = False
                 chkSaveFinalized.Visible = False
                 chkSaveFinalized.Checked = False
@@ -1506,7 +1527,7 @@ Public Class ARFCUSTV
                 AddARTCUSTV(CUST_CODE, ACTIVITY_TYPE, txtACTIVITY_NOTE_APPROVE.Text)
                 'refreshMax()
                 RefreshTempActivity()
-                Setup_Summary()
+                Setup_Summary("Refreshing Data")
                 txtACTIVITY_NOTE_APPROVE.Text = ""
             End If
         End If
