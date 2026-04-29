@@ -1007,37 +1007,41 @@ Public Class ARFCUSTV
         TYPES.Add("Whse")
         TYPES.Add("Misc")
         TYPES.Add("Master")
-        TYPES.Add("Lead")
+        'TYPES.Add("Lead")
+        Dim rowLEAD As DataRow = Nothing
         If TBL IsNot Nothing Then
             For Each dr As DataRow In TBL.Select("", "CONTACT_TYPE")
 
                 Dim contactTypeCode As String = GetString(dr, "CONTACT_TYPE").Trim().ToUpper()
                 Dim contactType As String = GetContactTypeText(contactTypeCode)
-                If TYPES.Contains(contactType) Then
-                    TYPES.Remove(contactType)
-                End If
-                Dim contactName As String = HtmlEncode(GetString(dr, "CONTACT_NAME"))
-                Dim contactTitle As String = HtmlEncode(GetString(dr, "CONTACT_TITLE"))
-                Dim contactPrimary As String = HtmlEncode(GetString(dr, "CONTACT_PRIMARY"))
-                If contactPrimary = "1" Then
-                    contactPrimary = "Yes"
+                If contactType = "Lead" Then
+                    rowLEAD = dr
                 Else
-                    contactPrimary = "No"
+                    If TYPES.Contains(contactType) Then
+                        TYPES.Remove(contactType)
+                    End If
+                    Dim contactName As String = HtmlEncode(GetString(dr, "CONTACT_NAME"))
+                    Dim contactTitle As String = HtmlEncode(GetString(dr, "CONTACT_TITLE"))
+                    Dim contactPrimary As String = HtmlEncode(GetString(dr, "CONTACT_PRIMARY"))
+                    If contactPrimary = "1" Then
+                        contactPrimary = "Yes"
+                    Else
+                        contactPrimary = "No"
+                    End If
+                    Dim contactEmail As String = HtmlEncode(GetString(dr, "CONTACT_EMAIL"))
+                    Dim contactPhone As String = HtmlEncode(GetString(dr, "CONTACT_PHONE"))
+                    Dim contactCell As String = HtmlEncode(GetString(dr, "CONTACT_CELL"))
+
+                    tableHtml.Append("<tr>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(contactType) & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactName & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactTitle & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPrimary & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactEmail & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPhone & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactCell & "</td>")
+                    tableHtml.Append("</tr>")
                 End If
-                Dim contactEmail As String = HtmlEncode(GetString(dr, "CONTACT_EMAIL"))
-                Dim contactPhone As String = HtmlEncode(GetString(dr, "CONTACT_PHONE"))
-                Dim contactCell As String = HtmlEncode(GetString(dr, "CONTACT_CELL"))
-
-                tableHtml.Append("<tr>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(contactType) & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactName & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactTitle & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPrimary & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactEmail & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPhone & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactCell & "</td>")
-                tableHtml.Append("</tr>")
-
             Next
             For Each TYPE As String In TYPES
                 tableHtml.Append("<tr>")
@@ -1050,6 +1054,33 @@ Public Class ARFCUSTV
                 tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
                 tableHtml.Append("</tr>")
             Next
+            If IsNothing(rowLEAD) Then
+                tableHtml.Append("<tr>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>Lead * (required)</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("</tr>")
+            Else
+                tableHtml.Append("<tr>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>Lead * (required)</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_NAME").ToString & String.Empty) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_TITLE").ToString & String.Empty) & "</td>")
+                Dim contactPrimary As String = HtmlEncode(GetString(rowLEAD, "CONTACT_PRIMARY"))
+                If contactPrimary = "1" Then
+                    contactPrimary = "Yes"
+                Else
+                    contactPrimary = "No"
+                End If
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPrimary & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_EMAIL").ToString & String.Empty) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_PHONE").ToString & String.Empty) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_CELL").ToString & String.Empty) & "</td>")
+                tableHtml.Append("</tr>")
+            End If
         End If
 
         tableHtml.Append("</table>")
