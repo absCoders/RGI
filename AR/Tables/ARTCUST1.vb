@@ -364,6 +364,15 @@ Public Class ARTCUST1
 
 
                 If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    If EntryMode = "New" Then
+                        Absx1.chkFor("CUST_ALLOW_BACKORDER").Checked = True
+                    End If
+
+                    Dim c As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", "CONTACT_TYPE = 'L'") & "")
+                    If c <> 1 Then
+                        EMsg &= vbCr & "You Must Have 1 And Only 1 Lead Contact."
+                    End If
+
                     If optCUST_PRICE_TIER.Value = "SP" Then
                         Dim DISC_PCT_MSG As String = DISC_PCT_CHECK()
                         If DISC_PCT_MSG.Length > 0 Then

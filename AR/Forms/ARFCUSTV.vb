@@ -1,3 +1,4 @@
+Imports System.ComponentModel
 Imports System.Net.Mail
 Imports System.Security.Cryptography.X509Certificates
 Imports System.Text
@@ -1379,6 +1380,10 @@ Public Class ARFCUSTV
                 End If
             End If
         Next
+        Dim c2 As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", "CONTACT_TYPE = 'L'") & "")
+        If c2 <> 1 Then
+            RetVal.AppendLine("You Must Have 1 And Only 1 Lead Contact.")
+        End If
         Return RetVal.ToString
     End Function
 
@@ -1714,6 +1719,12 @@ Public Class ARFCUSTV
             .Override.AllowUpdate = DefaultableBoolean.True
         End With
         grdARTCUSTD.Update()
+    End Sub
+
+    Private Sub grdARTCUSTD_BeforeEnterEditMode(sender As Object, e As CancelEventArgs) Handles grdARTCUSTD.BeforeEnterEditMode
+        If EditingContacts = False Then
+            e.Cancel = True
+        End If
     End Sub
 
 

@@ -152,6 +152,8 @@ Partial Class ARFCUSTV
         Dim UltraTab5 As Infragistics.Win.UltraWinTabControl.UltraTab = New Infragistics.Win.UltraWinTabControl.UltraTab()
         Me.UltraExplorerBarContainerControl2 = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarContainerControl()
         Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.chkExcludeFinished = New System.Windows.Forms.CheckBox()
         Me.dteInitDate = New Infragistics.Win.UltraWinEditors.UltraDateTimeEditor()
         Me.chkExcludeHold = New System.Windows.Forms.CheckBox()
         Me.Label10 = New System.Windows.Forms.Label()
@@ -237,8 +239,6 @@ Partial Class ARFCUSTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
-        Me.chkExcludeFinished = New System.Windows.Forms.CheckBox()
-        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -439,6 +439,27 @@ Partial Class ARFCUSTV
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(189, 200)
         Me.Panel1.TabIndex = 0
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(28, 67)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(94, 16)
+        Me.Label2.TabIndex = 267
+        Me.Label2.Text = "And Finalized"
+        '
+        'chkExcludeFinished
+        '
+        Me.chkExcludeFinished.AutoSize = True
+        Me.chkExcludeFinished.Checked = True
+        Me.chkExcludeFinished.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkExcludeFinished.Location = New System.Drawing.Point(12, 51)
+        Me.chkExcludeFinished.Name = "chkExcludeFinished"
+        Me.chkExcludeFinished.Size = New System.Drawing.Size(144, 20)
+        Me.chkExcludeFinished.TabIndex = 266
+        Me.chkExcludeFinished.Text = "Exclude Approved"
+        Me.chkExcludeFinished.UseVisualStyleBackColor = True
         '
         'dteInitDate
         '
@@ -1695,27 +1716,6 @@ Partial Class ARFCUSTV
         Me.UltraTabSharedControlsPage4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
-        '
-        'chkExcludeFinished
-        '
-        Me.chkExcludeFinished.AutoSize = True
-        Me.chkExcludeFinished.Checked = True
-        Me.chkExcludeFinished.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkExcludeFinished.Location = New System.Drawing.Point(12, 51)
-        Me.chkExcludeFinished.Name = "chkExcludeFinished"
-        Me.chkExcludeFinished.Size = New System.Drawing.Size(144, 20)
-        Me.chkExcludeFinished.TabIndex = 266
-        Me.chkExcludeFinished.Text = "Exclude Approved"
-        Me.chkExcludeFinished.UseVisualStyleBackColor = True
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(28, 67)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(94, 16)
-        Me.Label2.TabIndex = 267
-        Me.Label2.Text = "And Finalized"
         '
         'ARFCUSTV
         '

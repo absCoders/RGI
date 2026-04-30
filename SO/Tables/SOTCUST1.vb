@@ -285,6 +285,11 @@ Public Class SOTCUST1
                     End If
                 Next
 
+                Dim c2 As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", "CONTACT_TYPE = 'L'") & "")
+                If c2 <> 1 Then
+                    EMsg &= vbCr & "You Must Have 1 And Only 1 Lead Contact."
+                End If
+
                 Dim BadStates As Boolean = False
                 Dim BadCountries As Boolean = False
                 For Each rowARTCUST2 As DataRow In dst.Tables("ARTCUST2").Select()

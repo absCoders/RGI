@@ -762,22 +762,55 @@ Public Class ARFCALL1
                     Dim CONTACT_EMAIL As String = ""
                     Dim CONTACT_NAME As String = ""
                     Dim Emgs As String = ""
-                    If grdARTCUSTD.Selected.Rows.Count = 1 Then
-                        CONTACT_EMAIL = grdARTCUSTD.Selected.Rows(0).Cells.Item("CONTACT_EMAIL").Text
-                        CONTACT_NAME = Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(grdARTCUSTD.Selected.Rows(0).Cells.Item("CONTACT_NAME").Text.ToLower())
-                        If CONTACT_EMAIL.Length = 0 Then
-                            Emgs += "Invalid E-Mail For Selected Contact." & vbCrLf
-                        Else
-                            If Not CONTACT_EMAIL.Contains("@") Then
-                                Emgs += "Invalid E-Mail For Selected Contact." & vbCrLf
+
+                    Dim CUST_INV_EMAIL As String = ""
+                    Dim CUST_INV_CC As String = ""
+
+                    If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+                        If Not IsNothing(rowARTCUST1) Then
+                            CUST_INV_EMAIL = rowARTCUST1.Item("CUST_INV_EMAIL").ToString & String.Empty
+                            CUST_INV_CC = rowARTCUST1.Item("CUST_INV_CC").ToString & String.Empty
+                            If CUST_INV_EMAIL.Length = 0 And CUST_INV_CC.Length = 0 Then
+                                Dim iResult As MsgBoxResult
+                                Dim iTitle As String = "Missing E-mails"
+                                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                                iMSG.AppendLine("There Is No Invoice Or CC E-Mail")
+                                iMSG.AppendLine("Set Up For This Customer.")
+                                iMSG.AppendLine("")
+                                iMSG.AppendLine("Would You Like Me To Use The")
+                                iMSG.AppendLine("Lead?")
+                                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                                If iResult = MsgBoxResult.Yes Then
+                                    Dim fltr As String = $"CUST_CODE = '{CUST_CODE}' AND CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                                    If Not IsNothing(rowARTCUSTD) Then
+                                        CUST_INV_EMAIL = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                                    End If
+                                End If
                             End If
-                        End If
-                        If CONTACT_NAME.Length = 0 Then
-                            Emgs += "Invalid Name For Selected Contact." & vbCrLf
+                        Else
+                            Emgs += "Can Not Find Customer Infor For: " & CUST_CODE & vbCrLf
                         End If
                     Else
-                        Emgs += "You Must Select A Contact To E-mail" & vbCrLf
+                        If grdARTCUSTD.Selected.Rows.Count = 1 Then
+                            CONTACT_EMAIL = grdARTCUSTD.Selected.Rows(0).Cells.Item("CONTACT_EMAIL").Text
+                            CONTACT_NAME = Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(grdARTCUSTD.Selected.Rows(0).Cells.Item("CONTACT_NAME").Text.ToLower())
+                            If CONTACT_EMAIL.Length = 0 Then
+                                Emgs += "Invalid E-Mail For Selected Contact." & vbCrLf
+                            Else
+                                If Not CONTACT_EMAIL.Contains("@") Then
+                                    Emgs += "Invalid E-Mail For Selected Contact." & vbCrLf
+                                End If
+                            End If
+                            If CONTACT_NAME.Length = 0 Then
+                                Emgs += "Invalid Name For Selected Contact." & vbCrLf
+                            End If
+                        Else
+                            Emgs += "You Must Select A Contact To E-mail" & vbCrLf
+                        End If
                     End If
+
                     If Emgs.Length <> 0 Then
                         MsgBox(Emgs.ToString(), vbOKOnly, "Error With Selection")
                         Exit Sub
@@ -792,12 +825,21 @@ Public Class ARFCALL1
                     End If
                     FILENAME = SOCMAIN1.Create_Invoice(Me, INV_NO)
                     SUBJECT = "Invoice " & INV_NO
-                    SOCMAIN1.email_Invoice(Me,
+                    If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                        SOCMAIN1.email_Invoice(Me,
+                        CUST_CODE,
+                        CUST_NAME,
+                        CUST_INV_EMAIL,
+                        CUST_INV_EMAIL,
+                        FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO,, CUST_INV_CC, CUST_INV_CC)
+                    Else
+                        SOCMAIN1.email_Invoice(Me,
                         CUST_CODE,
                         CUST_NAME,
                         CONTACT_EMAIL,
                         CONTACT_NAME,
                         FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO)
+                    End If
 
                 End If
 
@@ -821,21 +863,51 @@ Public Class ARFCALL1
                 '  Show_Document(ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
 
                 Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
-                If rowARTCUST1 IsNot Nothing Then
-                    ' Context_Launch("Select", CUST_CODE, e.Tool.Key, "ARFCINQ1")
-                End If
-
-
-
-
-
-                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
-                '    Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+                'If rowARTCUST1 IsNot Nothing Then
+                '    ' Context_Launch("Select", CUST_CODE, e.Tool.Key, "ARFCINQ1")
+                'End If
                 Dim CUST_NAME As String = rowARTCUST1.Item("CUST_NAME") & ""
                 Dim CUST_EMAIL As String = rowARTCUST1.Item("CUST_EMAIL") & ""
                 Dim CUST_CONTACT As String = rowARTCUST1.Item("CUST_CONTACT") & ""
-                If CUST_EMAIL <> "" Then
-                    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+
+                Dim CUST_STMT_EMAIL As String = ""
+                Dim CUST_STMT_CC As String = ""
+                Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
+                '    Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    If Not IsNothing(rowARTCUST1) Then
+                        CUST_STMT_EMAIL = rowARTCUST1.Item("CUST_STMT_EMAIL").ToString & String.Empty
+                        CUST_STMT_CC = rowARTCUST1.Item("CUST_STMT_CC").ToString & String.Empty
+                        If CUST_STMT_EMAIL.Length = 0 And CUST_STMT_CC.Length = 0 Then
+                            Dim iResult As MsgBoxResult
+                            Dim iTitle As String = "Missing E-mails"
+                            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                            iMSG.AppendLine("There Is No Statement Or CC E-Mail")
+                            iMSG.AppendLine("Set Up For This Customer.")
+                            iMSG.AppendLine("")
+                            iMSG.AppendLine("Would You Like Me To Use The")
+                            iMSG.AppendLine("Lead?")
+                            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                            If iResult = MsgBoxResult.Yes Then
+                                Dim fltr As String = $"CUST_CODE = '{CUST_CODE}' AND CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                                Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                                If Not IsNothing(rowARTCUSTD) Then
+                                    CUST_STMT_EMAIL = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                                End If
+                            End If
+                        End If
+                        If CUST_STMT_EMAIL <> "" Then
+                            EMAIL_ADDRESSs.Add(CUST_STMT_EMAIL, CUST_STMT_EMAIL)
+                        End If
+                        If CUST_STMT_CC <> "" Then
+                            EMAIL_ADDRESSs.Add(CUST_STMT_CC, CUST_STMT_CC)
+                        End If
+                    End If
+                Else
+                    If CUST_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                    End If
                 End If
 
                 Dim ATTACHMENTs As New Dictionary(Of String, String)
@@ -844,10 +916,8 @@ Public Class ARFCALL1
                 Dim SUBJECT As String = "Statement " & " - Customer No " & CUST_CODE
                 Dim BODY As String = "Attached is your statement.  Thank you for the opportunity to do business with you."
 
-
                 Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
-               (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
-                SUBJECT, "AR", False, True, CUST_CODE, CUST_NAME, "Customer", BODY)
+                        (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs, SUBJECT, "AR", False, True, CUST_CODE, CUST_NAME, "Customer", BODY)
 
                 DATETIME_STAMP = Now + ASCMAIN1.NowTSD
                 If SEND_NO <> "" Then

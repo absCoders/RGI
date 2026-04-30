@@ -3798,11 +3798,18 @@
                       ByVal ATTACHMENT As String,
                       ByVal SUBJECT As String,
                       ByVal INV_NO As String,
-                      Optional ByVal ORDR_NO As String = "") As String
+                      Optional ByVal ORDR_NO As String = "",
+                      Optional ByVal CUST_EMAIL2 As String = "",
+                      Optional ByVal CUST_CONTACT2 As String = "") As String
 
         Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
         If CUST_EMAIL <> "" Then
             EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+        End If
+        If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+            If CUST_EMAIL2 <> "" Then
+                EMAIL_ADDRESSs.Add(CUST_EMAIL2, IIf(CUST_CONTACT2 = "", CUST_EMAIL2, CUST_CONTACT2))
+            End If
         End If
 
         Dim ATTACHMENTs As New Dictionary(Of String, String)
