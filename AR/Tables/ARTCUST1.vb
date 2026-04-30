@@ -1695,11 +1695,18 @@ Public Class ARTCUST1
                 txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
                 txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
 
-                rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
-                rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
-                rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
-                rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
-                rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
+
+                'rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
 
             End If
         End If

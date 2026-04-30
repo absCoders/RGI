@@ -701,6 +701,12 @@ Public Class ARFCUSTV
                 flt += $"{flta}CUST_SALES_HOLD = '0'"
                 flta = " AND "
             End If
+            If chkExcludeFinished.Checked Then
+                flt += $"{flta}(ACTIVITY_TYPE IS NULL or ACTIVITY_TYPE <> 'Finalized')"
+                flta = " AND "
+                flt += $"{flta}(ACTIVITY_TYPE IS NULL or ACTIVITY_TYPE <> 'Approved')"
+                'flt += $"{flta}(ACTIVITY_TYPE IS NULL)"
+            End If
             If chkNoActivity.Checked Then
                 flt += $"{flta}(ACTIVITY_TYPE IS NULL or ACTIVITY_TYPE = '')"
                 flta = " AND "
@@ -915,7 +921,7 @@ Public Class ARFCUSTV
                 Next
                 If EMAIL_ADDRESSs.Count > 0 Then
                     Dim content As String = MakeHTMLBody(WEB_FIELDS)
-                    Dim subject As String = "Quick Check to Keep Your Account Information Up to Date"
+                    Dim subject As String = "Quick Check to Keep Your Account Information Up to Date - #" & CUST_CODE
                     Dim fileName As String = ASCMAIN1.Folders("Temp") & "ContactVerfy.html"
                     If System.IO.File.Exists(fileName) Then
                         System.IO.File.Delete(fileName)
@@ -1512,6 +1518,10 @@ Public Class ARFCUSTV
         FilterARTCUSTX()
     End Sub
 
+    Private Sub chkExcludeFinished_CheckedChanged(sender As Object, e As EventArgs) Handles chkExcludeFinished.CheckedChanged
+        FilterARTCUSTX()
+    End Sub
+
     Private Sub btnApprove_Click(sender As Object, e As EventArgs) Handles btnApprove.Click
         If Not IsNothing(grdARTCUSTX.ActiveRow) Then
             Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
@@ -1705,6 +1715,8 @@ Public Class ARFCUSTV
         End With
         grdARTCUSTD.Update()
     End Sub
+
+
 #Region "Space Code"
     'Private Sub btnMakeMasterContacts_Click(sender As Object, e As EventArgs)
     '    Dim iResult As MsgBoxResult

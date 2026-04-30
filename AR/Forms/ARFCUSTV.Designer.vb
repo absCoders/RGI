@@ -237,6 +237,8 @@ Partial Class ARFCUSTV
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkExcludeFinished = New System.Windows.Forms.CheckBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -325,7 +327,7 @@ Partial Class ARFCUSTV
         UltraExplorerBarGroup1.Text = "Screen Control"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl2
         UltraExplorerBarGroup2.Key = "Customer Filters"
-        UltraExplorerBarGroup2.Settings.ContainerHeight = 150
+        UltraExplorerBarGroup2.Settings.ContainerHeight = 200
         UltraExplorerBarGroup2.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup2.Text = "Customer Filters"
         Me.UltraExplorerBar1.Groups.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup() {UltraExplorerBarGroup1, UltraExplorerBarGroup2})
@@ -419,11 +421,13 @@ Partial Class ARFCUSTV
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.Panel1)
         Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 184)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
-        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 150)
+        Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(189, 200)
         Me.UltraExplorerBarContainerControl2.TabIndex = 6
         '
         'Panel1
         '
+        Me.Panel1.Controls.Add(Me.Label2)
+        Me.Panel1.Controls.Add(Me.chkExcludeFinished)
         Me.Panel1.Controls.Add(Me.dteInitDate)
         Me.Panel1.Controls.Add(Me.chkExcludeHold)
         Me.Panel1.Controls.Add(Me.Label10)
@@ -433,14 +437,14 @@ Partial Class ARFCUSTV
         Me.Panel1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(189, 150)
+        Me.Panel1.Size = New System.Drawing.Size(189, 200)
         Me.Panel1.TabIndex = 0
         '
         'dteInitDate
         '
         Me.Absx1.SetABSBindToTable(Me.dteInitDate, False)
         Me.dteInitDate.DateTime = New Date(2007, 1, 27, 0, 0, 0, 0)
-        Me.dteInitDate.Location = New System.Drawing.Point(12, 119)
+        Me.dteInitDate.Location = New System.Drawing.Point(12, 165)
         Me.dteInitDate.Name = "dteInitDate"
         Me.dteInitDate.Size = New System.Drawing.Size(120, 25)
         Me.dteInitDate.TabIndex = 265
@@ -461,7 +465,7 @@ Partial Class ARFCUSTV
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(9, 100)
+        Me.Label10.Location = New System.Drawing.Point(9, 146)
         Me.Label10.Name = "Label10"
         Me.Label10.Size = New System.Drawing.Size(57, 16)
         Me.Label10.TabIndex = 264
@@ -470,7 +474,7 @@ Partial Class ARFCUSTV
         'chkNoActivity
         '
         Me.chkNoActivity.AutoSize = True
-        Me.chkNoActivity.Location = New System.Drawing.Point(12, 50)
+        Me.chkNoActivity.Location = New System.Drawing.Point(12, 86)
         Me.chkNoActivity.Name = "chkNoActivity"
         Me.chkNoActivity.Size = New System.Drawing.Size(100, 20)
         Me.chkNoActivity.TabIndex = 1
@@ -480,7 +484,7 @@ Partial Class ARFCUSTV
         'Label9
         '
         Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(9, 84)
+        Me.Label9.Location = New System.Drawing.Point(9, 130)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(113, 16)
         Me.Label9.TabIndex = 263
@@ -1692,6 +1696,27 @@ Partial Class ARFCUSTV
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
         '
+        'chkExcludeFinished
+        '
+        Me.chkExcludeFinished.AutoSize = True
+        Me.chkExcludeFinished.Checked = True
+        Me.chkExcludeFinished.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkExcludeFinished.Location = New System.Drawing.Point(12, 51)
+        Me.chkExcludeFinished.Name = "chkExcludeFinished"
+        Me.chkExcludeFinished.Size = New System.Drawing.Size(144, 20)
+        Me.chkExcludeFinished.TabIndex = 266
+        Me.chkExcludeFinished.Text = "Exclude Approved"
+        Me.chkExcludeFinished.UseVisualStyleBackColor = True
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(28, 67)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(94, 16)
+        Me.Label2.TabIndex = 267
+        Me.Label2.Text = "And Finalized"
+        '
         'ARFCUSTV
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -1873,4 +1898,6 @@ Partial Class ARFCUSTV
     Friend WithEvents chkEmailLead As CheckBox
     Friend WithEvents lblCUST_NAME As Label
     Friend WithEvents btnCancelEdit As Button
+    Friend WithEvents Label2 As Label
+    Friend WithEvents chkExcludeFinished As CheckBox
 End Class
