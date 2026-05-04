@@ -4046,9 +4046,6 @@ Public Class WHCSHIP1
                 GetPackageCosts(objFedexShip.Packages(ictr), objFedexShip)
             Next
 
-            ' Third party does not return a cost
-            'ShipmentNetCharge(1) = Val(objFedexShip.TotalNetCharge & String.Empty)
-
             If objFedexShip.Packages.Count = 1 Then
                 cMasterTrackingNumber = objFedexShip.Packages(0).TrackingNumber
             Else
@@ -4058,6 +4055,48 @@ Public Class WHCSHIP1
             If cMasterTrackingNumber.Length = 0 Then
                 LastError = "Shipper did not return a tracking number"
                 Return False
+            End If
+
+            ' New way to get the Shipment Charges. FedEx is not aligned with the Carton Charges and Total Shipment Charge
+            Dim TotalShipmentCharge As Decimal = Math.Round(Val(objFedexShip.TotalNetCharge & String.Empty), 2)
+            Try
+                If TotalShipmentCharge <= 0 Then
+
+                    Dim jsonString As String = objFedexShip.Config("RawResponse")
+                    Dim doc As XmlDocument = JsonConvert.DeserializeXmlNode(jsonString, "Root")
+                    Dim ds As New DataSet()
+                    Using reader As New XmlNodeReader(doc)
+                        ds.ReadXml(reader)
+                    End Using
+
+                    If ds.Tables.Contains("ShipmentRateDetails") Then
+                        If ds.Tables("ShipmentRateDetails").Select("rateType = 'PAYOR_ACCOUNT_SHIPMENT'").Length > 0 Then
+                            TotalShipmentCharge = Val(ds.Tables("ShipmentRateDetails").Select("rateType = 'PAYOR_ACCOUNT_SHIPMENT'")(0).Item("totalNetCharge") & String.Empty)
+                        End If
+
+                    End If
+                End If
+            Catch ex As Exception
+
+            End Try
+
+            If TotalShipmentCharge > 0 Then
+                Dim CartonCharges As Decimal = 0
+                For Each item As KeyValuePair(Of Integer, Decimal) In ShipmentBaseCharge
+                    CartonCharges += item.Value
+                Next
+
+                If CartonCharges - TotalShipmentCharge > 3 Then
+                    Dim averageCharge As Decimal = Math.Round(TotalShipmentCharge / objFedexShip.Packages.Count, 2)
+
+                    For Each key As Integer In ShipmentBaseCharge.Keys.ToList()
+                        ShipmentBaseCharge(key) = averageCharge
+                    Next
+
+                    For Each key As Integer In ShipmentNetCharge.Keys.ToList()
+                        ShipmentNetCharge(key) = averageCharge
+                    Next
+                End If
             End If
 
             Dim smartShipTracking As String = objFedexShip.Config("SmartPostTrackingNumbers")
