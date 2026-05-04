@@ -1,3 +1,4 @@
+Imports System.ComponentModel
 Imports System.Net.Mail
 Imports System.Security.Cryptography.X509Certificates
 Imports System.Text
@@ -27,12 +28,6 @@ Public Class ARFCUSTV
 
         Check_Form_Options()
 
-        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
-            btnDev001.Visible = True
-        Else
-            btnDev001.Visible = False
-        End If
-
         dteInitDate.DateTime = DateSerial(2026, 1, 1)
 
         Dim BaseYear As Int64 = Now().Year
@@ -46,7 +41,8 @@ Public Class ARFCUSTV
 
         'Fill In The Gaps
 
-        RefreshTempTables()
+        RefreshTempSales()
+        RefreshTempActivity()
 
         With dst
             S.Length = 0
@@ -61,8 +57,8 @@ Public Class ARFCUSTV
             S.AppendLine("ARTCUST1.CUST_STATE,")
             S.AppendLine("ARTCUST1.CUST_ZIP_CODE,")
             S.AppendLine("ARTCUST1.CUST_COUNTRY,")
-            S.AppendLine("ARTCUST1.CUST_CONTACT,")
-            S.AppendLine("ARTCUST1.CUST_EMAIL,")
+            S.AppendLine("LD.CUST_CONTACT,")
+            S.AppendLine("LD.CUST_EMAIL,")
             S.AppendLine("ARTCUST1.SREP_CODE,")
             S.AppendLine("ARTCUST1.INIT_DATE,")
             S.AppendLine("ARTCUST1.CUST_SALES_HOLD,")
@@ -82,9 +78,18 @@ Public Class ARFCUSTV
             S.AppendLine("SUM(SALES.YR4) AS YR4,")
             S.AppendLine("'0' AS HAS_SALES")
             S.AppendLine($"FROM ARTCUST1, {TEMP_SALES} SALES, TATTERM1, {TEMP_MAX} V1")
+            S.AppendLine(",(")
+            S.AppendLine("    SELECT ")
+            S.AppendLine("    CUST_CODE,")
+            S.AppendLine("    CONTACT_NAME AS CUST_CONTACT,")
+            S.AppendLine("    CONTACT_EMAIL AS CUST_EMAIL")
+            S.AppendLine("    FROM ARTCUSTD")
+            S.AppendLine("    WHERE CONTACT_PRIMARY = '1' AND CONTACT_TYPE = 'L'")
+            S.AppendLine(") LD")
             S.AppendLine("WHERE ARTCUST1.CUST_CODE = SALES.CUST_CODE (+)")
             S.AppendLine("AND ARTCUST1.TERM_CODE = TATTERM1.TERM_CODE (+)")
             S.AppendLine("AND ARTCUST1.CUST_CODE = V1.CUST_CODE (+)")
+            S.AppendLine("AND ARTCUST1.CUST_CODE = LD.CUST_CODE (+)")
             S.AppendLine("GROUP BY")
             S.AppendLine("ARTCUST1.CUST_CODE,")
             S.AppendLine("ARTCUST1.CUST_NAME,")
@@ -95,8 +100,8 @@ Public Class ARFCUSTV
             S.AppendLine("ARTCUST1.CUST_STATE,")
             S.AppendLine("ARTCUST1.CUST_ZIP_CODE,")
             S.AppendLine("ARTCUST1.CUST_COUNTRY,")
-            S.AppendLine("ARTCUST1.CUST_CONTACT,")
-            S.AppendLine("ARTCUST1.CUST_EMAIL,")
+            S.AppendLine("LD.CUST_CONTACT,")
+            S.AppendLine("LD.CUST_EMAIL,")
             S.AppendLine("ARTCUST1.SREP_CODE,")
             S.AppendLine("ARTCUST1.INIT_DATE,")
             S.AppendLine("ARTCUST1.CUST_SALES_HOLD,")
@@ -197,7 +202,7 @@ Public Class ARFCUSTV
 
     End Sub
 
-    Private Sub RefreshTempTables()
+    Private Sub RefreshTempSales()
         S.Length = 0
         S.AppendLine("SELECT CUST_CODE,")
         S.AppendLine("SUM(YR1) AS YR1,")
@@ -273,46 +278,73 @@ Public Class ARFCUSTV
         ASCMAIN1.sql = S.ToString
         TEMP_SALES = ASCMAIN1.Temp_Table
         ASCDATA1.ExecuteSQL("Create Index I_" & TEMP_SALES & "_IND on " & TEMP_SALES & " (CUST_CODE)")
-
-        S.Length = 0
-        S.AppendLine("SELECT V1.*")
-        S.AppendLine("FROM ARTCUSV1 V1,")
-        S.AppendLine("(")
-        S.AppendLine("    SELECT")
-        S.AppendLine("    CUST_CODE,")
-        S.AppendLine("    MAX(ACTIVITY_NO) AS MAX_ACTIVITY_NO")
-        S.AppendLine("    FROM ARTCUSV1")
-        S.AppendLine("    GROUP BY CUST_CODE")
-        S.AppendLine(") MX")
-        S.AppendLine("WHERE V1.CUST_CODE = MX.CUST_CODE")
-        S.AppendLine("AND V1.ACTIVITY_NO = MX.MAX_ACTIVITY_NO")
-        ASCMAIN1.sql = S.ToString
-        TEMP_MAX = ASCMAIN1.Temp_Table
-        ASCDATA1.ExecuteSQL("Create Index I_" & TEMP_MAX & "_IND on " & TEMP_MAX & " (CUST_CODE)")
     End Sub
 
-    Sub refreshMax()
-        S.Length = 0
-        S.AppendLine($"DELETE FROM {TEMP_MAX}")
-        ASCMAIN1.sql = S.ToString
-        ASCDATA1.ExecuteSQL()
+    Private Sub RefreshTempActivity()
+        If TEMP_MAX.Length = 0 Then
+            S.Length = 0
+            S.AppendLine("SELECT V1.*")
+            S.AppendLine("FROM ARTCUSV1 V1,")
+            S.AppendLine("(")
+            S.AppendLine("    SELECT")
+            S.AppendLine("    CUST_CODE,")
+            S.AppendLine("    MAX(ACTIVITY_NO) AS MAX_ACTIVITY_NO")
+            S.AppendLine("    FROM ARTCUSV1")
+            S.AppendLine("    GROUP BY CUST_CODE")
+            S.AppendLine(") MX")
+            S.AppendLine("WHERE V1.CUST_CODE = MX.CUST_CODE")
+            S.AppendLine("AND V1.ACTIVITY_NO = MX.MAX_ACTIVITY_NO")
+            ASCMAIN1.sql = S.ToString
+            TEMP_MAX = ASCMAIN1.Temp_Table
+            ASCDATA1.ExecuteSQL("Create Index I_" & TEMP_MAX & "_IND on " & TEMP_MAX & " (CUST_CODE)")
+        Else
+            S.Length = 0
+            S.AppendLine("DELETE")
+            S.AppendLine($"FROM {TEMP_MAX}")
+            ASCMAIN1.sql = S.ToString
+            ASCDATA1.ExecuteSQL()
 
-        S.Length = 0
-        S.AppendLine($"INSERT INTO {TEMP_MAX}")
-        S.AppendLine("SELECT V1.*")
-        S.AppendLine("FROM ARTCUSV1 V1,")
-        S.AppendLine("(")
-        S.AppendLine("    SELECT")
-        S.AppendLine("    CUST_CODE,")
-        S.AppendLine("    MAX(ACTIVITY_NO) AS MAX_ACTIVITY_NO")
-        S.AppendLine("    FROM ARTCUSV1")
-        S.AppendLine("    GROUP BY CUST_CODE")
-        S.AppendLine(") MX")
-        S.AppendLine("WHERE V1.CUST_CODE = MX.CUST_CODE")
-        S.AppendLine("AND V1.ACTIVITY_NO = MX.MAX_ACTIVITY_NO")
-        ASCMAIN1.sql = S.ToString
-        ASCDATA1.ExecuteSQL()
+            S.Length = 0
+            S.AppendLine($"INSERT INTO {TEMP_MAX}")
+            S.AppendLine("SELECT V1.*")
+            S.AppendLine("FROM ARTCUSV1 V1,")
+            S.AppendLine("(")
+            S.AppendLine("    SELECT")
+            S.AppendLine("    CUST_CODE,")
+            S.AppendLine("    MAX(ACTIVITY_NO) AS MAX_ACTIVITY_NO")
+            S.AppendLine("    FROM ARTCUSV1")
+            S.AppendLine("    GROUP BY CUST_CODE")
+            S.AppendLine(") MX")
+            S.AppendLine("WHERE V1.CUST_CODE = MX.CUST_CODE")
+            S.AppendLine("AND V1.ACTIVITY_NO = MX.MAX_ACTIVITY_NO")
+            ASCMAIN1.sql = S.ToString
+            ASCDATA1.ExecuteSQL()
+        End If
+
     End Sub
+
+    'Sub refreshMax()
+    '    S.Length = 0
+    '    S.AppendLine($"DELETE FROM {TEMP_MAX}")
+    '    ASCMAIN1.sql = S.ToString
+    '    ASCDATA1.ExecuteSQL()
+
+    '    S.Length = 0
+    '    S.AppendLine($"INSERT INTO {TEMP_MAX}")
+    '    S.AppendLine("SELECT V1.*")
+    '    S.AppendLine("FROM ARTCUSV1 V1,")
+    '    S.AppendLine("(")
+    '    S.AppendLine("    SELECT")
+    '    S.AppendLine("    CUST_CODE,")
+    '    S.AppendLine("    MAX(ACTIVITY_NO) AS MAX_ACTIVITY_NO")
+    '    S.AppendLine("    FROM ARTCUSV1")
+    '    S.AppendLine("    GROUP BY CUST_CODE")
+    '    S.AppendLine(") MX")
+    '    S.AppendLine("WHERE V1.CUST_CODE = MX.CUST_CODE")
+    '    S.AppendLine("AND V1.ACTIVITY_NO = MX.MAX_ACTIVITY_NO")
+    '    ASCMAIN1.sql = S.ToString
+    '    ASCDATA1.ExecuteSQL()
+    'End Sub
 
     Sub Check_Inquiry_Mode()
         If InquiryMode Then
@@ -362,7 +394,8 @@ Public Class ARFCUSTV
                 Call Mode_Settings(False)
                 Me.Close()
             Case "Refresh"
-                Setup_Summary()
+                RefreshTempActivity()
+                Setup_Summary("Refreshing Data")
                 'UltraExplorerBar1.Groups("Screen Control").Items("Refresh").Settings.Enabled = DefaultableBoolean.False
             Case "Save"
                 Update_Record("Your Data Is Saved", False)
@@ -392,14 +425,27 @@ Public Class ARFCUSTV
             Clear_Record()
         End If
 
-        With grdARTCUSV1.DisplayLayout.Bands(0)
-            .Columns("ACTIVITY_NO").Format = "##0"
-            .Columns("ACTIVITY_DATE").Format = "MM/dd/yy"
+        With grdARTCUSV1.DisplayLayout
+            .Override.AllowAddNew = AllowAddNew.No
+            .Override.AllowDelete = DefaultableBoolean.True
+            .Override.AllowUpdate = DefaultableBoolean.True
+            For i As Integer = 0 To .Bands(0).Columns.Count - 1
+                .Bands(0).Columns(i).CellActivation = Activation.NoEdit
+            Next i
+            .Bands(0).Columns("ACTIVITY_NO").Format = "##0"
+            .Bands(0).Columns("ACTIVITY_DATE").Format = "MM/dd/yy"
         End With
 
         With grdARTCUSTX.DisplayLayout.Bands(0)
             .Columns("INIT_DATE").Format = "MM/dd/yy"
             .Columns("ACTIVITY_DATE").Format = "MM/dd/yy"
+        End With
+
+        With grdARTCUSTD.DisplayLayout.Bands(0)
+            For Each C As String In New String() {"CONTACT_PHONE", "CONTACT_FAX", "CONTACT_CELL"}
+                .Columns(C).MaskInput = "" ' "(###) ###-####"
+                .Columns(C).CellDisplayStyle = UltraWinGrid.CellDisplayStyle.Default ' UltraWinGrid.CellDisplayStyle.FormattedText
+            Next
         End With
 
     End Sub
@@ -456,6 +502,8 @@ Public Class ARFCUSTV
 
     Overrides Sub Load_Popup_Menus()
         Call Load_Popup_Menu(grdARTCUSTX, "SSB", "Show Filter", "Show GroupBox", "Customer Master File", "Customer Inquiry", "Send Email")
+        Call Load_Popup_Menu(grdARTCUSV1, "SSB", "Show Filter", "Show GroupBox", "Delete Approved")
+        '
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -473,7 +521,7 @@ Public Class ARFCUSTV
 
         Dim tlb_pop As UltraWinToolbars.PopupMenuTool = DirectCast(e.Tool, UltraWinToolbars.PopupMenuTool)
         Dim tlb_sbt As UltraWinToolbars.StateButtonTool
-        'Dim tlb_btn As UltraWinToolbars.ButtonTool
+        Dim tlb_btn As UltraWinToolbars.ButtonTool
 
         If tlb_pop.Tools.Exists("Show Filter") Then
             tlb_sbt = DirectCast(tlb_pop.Tools("Show Filter"), UltraWinToolbars.StateButtonTool)
@@ -483,6 +531,24 @@ Public Class ARFCUSTV
             tlb_sbt = DirectCast(tlb_pop.Tools("Show GroupBox"), UltraWinToolbars.StateButtonTool)
             tlb_sbt.Checked = Not grd.DisplayLayout.GroupByBox.Hidden
         End If
+
+        If tlb_pop.Tools.Exists("Delete Approved") Then
+            tlb_btn = DirectCast(tlb_pop.Tools("Delete Approved"), UltraWinToolbars.ButtonTool)
+            If IsNothing(grd.ActiveRow) Then
+                tlb_btn.SharedProps.Visible = False
+            Else
+                Dim ACTIVITY_TYPE As String = grd.ActiveRow.Cells.Item("ACTIVITY_TYPE").Value & String.Empty
+                If ACTIVITY_TYPE = "Approved" Then
+                    tlb_btn.SharedProps.Visible = True
+                Else
+                    tlb_btn.SharedProps.Visible = False
+                End If
+            End If
+
+
+
+        End If
+
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
             e.Cancel = True
@@ -540,6 +606,12 @@ Public Class ARFCUSTV
                     Next
 
                 End If
+            Case "Delete Approved"
+                grd.ActiveRow.Delete()
+                grd.UpdateData()
+                Update_Record_TDA("ARTCUSV1")
+                RefreshTempActivity()
+                Setup_Summary("Refreshing Data")
         End Select
 
         If grd.ActiveRow Is Nothing OrElse grd.ActiveRow.IsAddRow Then
@@ -587,10 +659,15 @@ Public Class ARFCUSTV
 
 #End Region
 
-    Sub Setup_Summary()
-        ASCMAIN1.Progress("Now Loading Data")
+    Sub Setup_Summary(Optional msgShow As String = "")
+        If msgShow = "" Then
+            msgShow = "Now Loading Data"
+        End If
+        ASCMAIN1.Progress(msgShow)
         Me.Cursor = Cursors.WaitCursor
         Update_Record("", True)
+        ASCMAIN1.Progress(msgShow)
+        Me.Cursor = Cursors.WaitCursor
 
         dst.Tables("ARTCUSTX").Rows.Clear()
         'dst.Tables("ARTCUSTD").Rows.Clear()
@@ -605,6 +682,9 @@ Public Class ARFCUSTV
         grdARTCUSTX.Update()
         grdARTCUSTX.Refresh()
 
+        grdARTCUSTX.ActiveRow = grdARTCUSTX.Rows(0)
+        grdARTCUSTX.Selected.Rows.Clear()
+        grdARTCUSTX.ActiveRow.Selected = True
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
     End Sub
@@ -621,6 +701,12 @@ Public Class ARFCUSTV
             If chkExcludeHold.Checked Then
                 flt += $"{flta}CUST_SALES_HOLD = '0'"
                 flta = " AND "
+            End If
+            If chkExcludeFinished.Checked Then
+                flt += $"{flta}(ACTIVITY_TYPE IS NULL or ACTIVITY_TYPE <> 'Finalized')"
+                flta = " AND "
+                flt += $"{flta}(ACTIVITY_TYPE IS NULL or ACTIVITY_TYPE <> 'Approved')"
+                'flt += $"{flta}(ACTIVITY_TYPE IS NULL)"
             End If
             If chkNoActivity.Checked Then
                 flt += $"{flta}(ACTIVITY_TYPE IS NULL or ACTIVITY_TYPE = '')"
@@ -684,6 +770,7 @@ Public Class ARFCUSTV
         'dst.Tables("ARTCUSTO").Rows.Clear()
         If Not (grdARTCUSTX.ActiveRow Is Nothing OrElse (Not grdARTCUSTX.ActiveRow.IsDataRow)) Then
             Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells("CUST_CODE").Value & String.Empty
+            Dim CUST_NAME As String = grdARTCUSTX.ActiveRow.Cells("CUST_NAME").Value & String.Empty
             Fill_Records("ARTCUSTD", CUST_CODE)
             Fill_Records("ARTCUSTD_O", CUST_CODE)
 
@@ -691,6 +778,7 @@ Public Class ARFCUSTV
             Fill_Records("ARTCUST1_O", CUST_CODE)
 
             Fill_Records("ARTCUSV1", CUST_CODE)
+            grdARTCUSTD.Text = $"Contacts For: {CUST_NAME}"
         End If
     End Sub
 
@@ -723,22 +811,22 @@ Public Class ARFCUSTV
         Return RetVal
     End Function
 
-    Private Sub cboCLIST_CODE_SelectedIndexChanged(sender As Object, e As EventArgs)
-        If Not Loading Then
-            RefreshList()
-        End If
-    End Sub
+    'Private Sub cboCLIST_CODE_SelectedIndexChanged(sender As Object, e As EventArgs)
+    '    If Not Loading Then
+    '        RefreshList()
+    '    End If
+    'End Sub
 
-    Private Sub RefreshList()
-        ASCMAIN1.Progress("Now Loading List")
-        Me.Cursor = Cursors.WaitCursor
-        Update_Record("", True)
+    'Private Sub RefreshList()
+    '    ASCMAIN1.Progress("Now Loading List")
+    '    Me.Cursor = Cursors.WaitCursor
+    '    Update_Record("", True)
 
-        dst.EnforceConstraints = False
+    '    dst.EnforceConstraints = False
 
-        Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
-    End Sub
+    '    Me.Cursor = Cursors.Default
+    '    ASCMAIN1.Progress("")
+    'End Sub
 
     Private Sub btnSendSelected_Click(sender As Object, e As EventArgs) Handles btnSendSelected.Click
         Dim emsg As New Text.StringBuilder With {.Length = 0}
@@ -762,93 +850,79 @@ Public Class ARFCUSTV
                 Fill_Records("ARTCUST1_O", CUST_CODE)
                 Dim WEB_FIELDS As New Dictionary(Of String, String)
                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
-                Dim isTesting As Boolean = False
-                If rdoTestWayne.Checked Then
-                    EMAILS.Add("whr@waynerichmond.net")
-                    WEB_FIELDS.Add("{SendName}", "Wayne Richmond")
-                    EMAIL_ADDRESSs.Add("whr@waynerichmond.net", "Wayne Richmond")
-                    isTesting = True
-                End If
-                If rdoTestAndy.Checked Then
-                    EMAILS.Add("andy@regency-rib.com")
-                    WEB_FIELDS.Add("{SendName}", "Andy Neiterman")
-                    EMAIL_ADDRESSs.Add("andy@regency-rib.com", "Andy Neiterman")
-                    isTesting = True
-                End If
-                If rdoTestRita.Checked Then
-                    EMAILS.Add("rita@regency-rib.com")
-                    WEB_FIELDS.Add("{SendName}", "Rita Rivera")
-                    EMAIL_ADDRESSs.Add("rita@regency-rib.com", "Rita Rivera")
-                    isTesting = True
-                End If
-                If Not isTesting Then
-                    MsgBox("We Are Still Testing", vbOKOnly, "Select A Tester")
-                    Stop
-                    'Exit Sub
-                    For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select()
-                        Dim CONTACT_NAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
-                        Dim CONTACT_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
-                        Dim CONTACT_TYPE As String = rowARTCUSTD.Item("CONTACT_TYPE").ToString & String.Empty
-                        Dim CONTACT_PRIMARY As String = rowARTCUSTD.Item("CONTACT_PRIMARY").ToString & String.Empty
-                        If CONTACT_EMAIL.Length > 0 And Not EMAIL_ADDRESSs.ContainsKey(CONTACT_EMAIL.ToUpper) Then
-                            Select Case CONTACT_TYPE
-                                Case "B"
-                                    If chkEmailBuyer.Checked Then
-                                        If chkEmailBuyer_P.Checked Then
-                                            If CONTACT_PRIMARY = "1" Then
-                                                EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
-                                            End If
-                                        Else
+                For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select()
+                    Dim CONTACT_NAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                    Dim CONTACT_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                    Dim CONTACT_TYPE As String = rowARTCUSTD.Item("CONTACT_TYPE").ToString & String.Empty
+                    Dim CONTACT_PRIMARY As String = rowARTCUSTD.Item("CONTACT_PRIMARY").ToString & String.Empty
+                    If CONTACT_EMAIL.Length > 0 And Not EMAIL_ADDRESSs.ContainsKey(CONTACT_EMAIL.ToUpper) Then
+                        Select Case CONTACT_TYPE
+                            Case "L"
+                                If chkEmailLead.Checked Then
+                                    If chkEmailLead_P.Checked Then
+                                        If CONTACT_PRIMARY = "1" Then
                                             EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                         End If
+                                    Else
+                                        EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                     End If
-                                Case "P"
-                                    If chkEmailAP.Checked Then
-                                        If chkEmailAP_P.Checked Then
-                                            If CONTACT_PRIMARY = "1" Then
-                                                EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
-                                            End If
-                                        Else
+                                End If
+                            Case "B"
+                                If chkEmailBuyer.Checked Then
+                                    If chkEmailBuyer_P.Checked Then
+                                        If CONTACT_PRIMARY = "1" Then
                                             EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                         End If
+                                    Else
+                                        EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                     End If
-                                Case "W"
-                                    If chkEmailWhse.Checked Then
-                                        If chkEmailWhse_P.Checked Then
-                                            If CONTACT_PRIMARY = "1" Then
-                                                EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
-                                            End If
-                                        Else
+                                End If
+                            Case "P"
+                                If chkEmailAP.Checked Then
+                                    If chkEmailAP_P.Checked Then
+                                        If CONTACT_PRIMARY = "1" Then
                                             EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                         End If
+                                    Else
+                                        EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                     End If
-                                Case "M"
-                                    If chkEmailMisc.Checked Then
-                                        If chkEmailMisc_P.Checked Then
-                                            If CONTACT_PRIMARY = "1" Then
-                                                EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
-                                            End If
-                                        Else
+                                End If
+                            Case "W"
+                                If chkEmailWhse.Checked Then
+                                    If chkEmailWhse_P.Checked Then
+                                        If CONTACT_PRIMARY = "1" Then
                                             EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                         End If
+                                    Else
+                                        EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                     End If
-                                Case "X"
-                                    If chkEmailMain.Checked Then
-                                        If chkEmailMain_P.Checked Then
-                                            If CONTACT_PRIMARY = "1" Then
-                                                EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
-                                            End If
-                                        Else
+                                End If
+                            Case "M"
+                                If chkEmailMisc.Checked Then
+                                    If chkEmailMisc_P.Checked Then
+                                        If CONTACT_PRIMARY = "1" Then
                                             EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                         End If
+                                    Else
+                                        EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
                                     End If
-                            End Select
-                        End If
-                    Next
-                End If
+                                End If
+                            Case "X"
+                                If chkEmailMain.Checked Then
+                                    If chkEmailMain_P.Checked Then
+                                        If CONTACT_PRIMARY = "1" Then
+                                            EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
+                                        End If
+                                    Else
+                                        EMAIL_ADDRESSs.Add(CONTACT_EMAIL.ToUpper, CONTACT_NAME)
+                                    End If
+                                End If
+                        End Select
+                    End If
+                Next
                 If EMAIL_ADDRESSs.Count > 0 Then
                     Dim content As String = MakeHTMLBody(WEB_FIELDS)
-                    Dim subject As String = "Quick Check to Keep Your Account Information Up to Date"
+                    Dim subject As String = "Quick Check to Keep Your Account Information Up to Date - #" & CUST_CODE
                     Dim fileName As String = ASCMAIN1.Folders("Temp") & "ContactVerfy.html"
                     If System.IO.File.Exists(fileName) Then
                         System.IO.File.Delete(fileName)
@@ -955,36 +1029,86 @@ Public Class ARFCUSTV
         tableHtml.Append("<th style='border:1px solid #ccc; padding:6px;'>Phone</th>")
         tableHtml.Append("<th style='border:1px solid #ccc; padding:6px;'>Cell</th>")
         tableHtml.Append("</tr>")
-
+        Dim TYPES As New List(Of String)
+        TYPES.Add("Buyer")
+        TYPES.Add("A/P")
+        TYPES.Add("Whse")
+        TYPES.Add("Misc")
+        TYPES.Add("Master")
+        'TYPES.Add("Lead")
+        Dim rowLEAD As DataRow = Nothing
         If TBL IsNot Nothing Then
-            For Each dr As DataRow In TBL.Rows
+            For Each dr As DataRow In TBL.Select("", "CONTACT_TYPE")
 
                 Dim contactTypeCode As String = GetString(dr, "CONTACT_TYPE").Trim().ToUpper()
                 Dim contactType As String = GetContactTypeText(contactTypeCode)
+                If contactType = "Lead" Then
+                    rowLEAD = dr
+                Else
+                    If TYPES.Contains(contactType) Then
+                        TYPES.Remove(contactType)
+                    End If
+                    Dim contactName As String = HtmlEncode(GetString(dr, "CONTACT_NAME"))
+                    Dim contactTitle As String = HtmlEncode(GetString(dr, "CONTACT_TITLE"))
+                    Dim contactPrimary As String = HtmlEncode(GetString(dr, "CONTACT_PRIMARY"))
+                    If contactPrimary = "1" Then
+                        contactPrimary = "Yes"
+                    Else
+                        contactPrimary = "No"
+                    End If
+                    Dim contactEmail As String = HtmlEncode(GetString(dr, "CONTACT_EMAIL"))
+                    Dim contactPhone As String = HtmlEncode(GetString(dr, "CONTACT_PHONE"))
+                    Dim contactCell As String = HtmlEncode(GetString(dr, "CONTACT_CELL"))
 
-                Dim contactName As String = HtmlEncode(GetString(dr, "CONTACT_NAME"))
-                Dim contactTitle As String = HtmlEncode(GetString(dr, "CONTACT_TITLE"))
-                Dim contactPrimary As String = HtmlEncode(GetString(dr, "CONTACT_PRIMARY"))
+                    tableHtml.Append("<tr>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(contactType) & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactName & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactTitle & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPrimary & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactEmail & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPhone & "</td>")
+                    tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactCell & "</td>")
+                    tableHtml.Append("</tr>")
+                End If
+            Next
+            For Each TYPE As String In TYPES
+                tableHtml.Append("<tr>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(TYPE) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("</tr>")
+            Next
+            If IsNothing(rowLEAD) Then
+                tableHtml.Append("<tr>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>Lead * (required)</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'></td>")
+                tableHtml.Append("</tr>")
+            Else
+                tableHtml.Append("<tr>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>Lead * (required)</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_NAME").ToString & String.Empty) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_TITLE").ToString & String.Empty) & "</td>")
+                Dim contactPrimary As String = HtmlEncode(GetString(rowLEAD, "CONTACT_PRIMARY"))
                 If contactPrimary = "1" Then
                     contactPrimary = "Yes"
                 Else
                     contactPrimary = "No"
                 End If
-                Dim contactEmail As String = HtmlEncode(GetString(dr, "CONTACT_EMAIL"))
-                Dim contactPhone As String = HtmlEncode(GetString(dr, "CONTACT_PHONE"))
-                Dim contactCell As String = HtmlEncode(GetString(dr, "CONTACT_CELL"))
-
-                tableHtml.Append("<tr>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(contactType) & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactName & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactTitle & "</td>")
                 tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPrimary & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactEmail & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactPhone & "</td>")
-                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & contactCell & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_EMAIL").ToString & String.Empty) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_PHONE").ToString & String.Empty) & "</td>")
+                tableHtml.Append("<td style='border:1px solid #ccc; padding:6px;'>" & HtmlEncode(rowLEAD("CONTACT_CELL").ToString & String.Empty) & "</td>")
                 tableHtml.Append("</tr>")
-
-            Next
+            End If
         End If
 
         tableHtml.Append("</table>")
@@ -1139,6 +1263,8 @@ Public Class ARFCUSTV
                 Return "Whse"
             Case "M"
                 Return "Misc"
+            Case "L"
+                Return "Lead"
             Case Else
                 Return "Other"
         End Select
@@ -1156,34 +1282,47 @@ Public Class ARFCUSTV
 
     Private Sub btnEditContacts_Click(sender As Object, e As EventArgs) Handles btnEditContacts.Click
         Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
+        Dim CUST_NAME As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_NAME").Text
         If EditingContacts Then
-            UpdateContacts()
-            refreshMax()
-            Setup_Summary()
-            chkSaveFinalized.Visible = False
-            chkSaveFinalized.Checked = False
-            EditingContacts = False
-            btnEditContacts.Text = "Edit Contacts"
-            txtACTIVITY_NOTE_EDIT.ReadOnly = True
-            txtACTIVITY_NOTE_EDIT.Text = ""
-            btnSendSelected.Enabled = False
-            chkEmailAP.Enabled = False
-            chkEmailBuyer.Enabled = False
-            chkEmailMain.Enabled = False
-            chkEmailMisc.Enabled = False
-            chkEmailWhse.Enabled = False
-            tabActivities.Tabs.Item("Activities").Enabled = True
-            tabActivities2.Tabs.Item("Approve").Enabled = True
-            tabActivities2.Tabs.Item("Send").Enabled = True
-            tabActivities2.Tabs.Item("Edit").Enabled = True
-            ASCMAIN1.MultiTask_Release(, , )
+            Dim msg As String = validateContacts()
+            If msg.Length > 0 Then
+                MsgBox(msg, vbCritical, "Can Not Update")
+                Exit Sub
+            Else
+                UpdateContacts()
+                'refreshMax()
+                RefreshTempActivity()
+                Setup_Summary("Refreshing Data")
+                lblCUST_NAME.Visible = False
+                chkSaveFinalized.Visible = False
+                chkSaveFinalized.Checked = False
+                EditingContacts = False
+                btnEditContacts.Text = "Edit Contacts"
+                btnCancelEdit.Visible = False
+                txtACTIVITY_NOTE_EDIT.ReadOnly = True
+                txtACTIVITY_NOTE_EDIT.Text = ""
+                btnSendSelected.Enabled = False
+                chkEmailAP.Enabled = False
+                chkEmailBuyer.Enabled = False
+                chkEmailMain.Enabled = False
+                chkEmailMisc.Enabled = False
+                chkEmailWhse.Enabled = False
+                tabActivities.Tabs.Item("Activities").Enabled = True
+                tabActivities2.Tabs.Item("Approve").Enabled = True
+                tabActivities2.Tabs.Item("Send").Enabled = True
+                tabActivities2.Tabs.Item("Edit").Enabled = True
+                ASCMAIN1.MultiTask_Release(, , )
+            End If
         Else
             If Not ASCMAIN1.Logical_Lock("ARTCUST1", CUST_CODE) Then
                 Exit Sub
             End If
+            btnCancelEdit.Visible = True
+            lblCUST_NAME.Text = $"Editing: {CUST_NAME}"
+            lblCUST_NAME.Visible = True
             chkSaveFinalized.Visible = True
             chkSaveFinalized.Checked = False
-            grdARTCUSTX.ActiveRow.Selected = True
+            'grdARTCUSTX.ActiveRow.Selected = True
             EditingContacts = True
             btnEditContacts.Text = "Save Changes"
             txtACTIVITY_NOTE_EDIT.ReadOnly = False
@@ -1224,28 +1363,50 @@ Public Class ARFCUSTV
         grdARTCUSTD.Update()
     End Sub
 
+    Private Function validateContacts() As String
+        Dim RetVal As New StringBuilder With {.Length = 0}
+        For Each ROW As DataRow In ASCDATA1.SelectDistinct(dst.Tables("ARTCUSTD"), New String() {"CONTACT_TYPE"}).Rows
+            Dim CONTACT_TYPE As String = ROW.Item("CONTACT_TYPE") & ""
+            Dim sqlw As String = "CONTACT_TYPE = '" & CONTACT_TYPE & "'"
+            Dim c As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", sqlw & " and CONTACT_PRIMARY = '1'") & "")
+            If c > 1 Then
+                RetVal.AppendLine("Cannot have > 1 Primary Contact of any Type (see Type " & CONTACT_TYPE & ")")
+            ElseIf c = 0 Then
+                Dim rows() As DataRow = dst.Tables("ARTCUSTD").Select(sqlw)
+                If rows.Length = 1 Then
+                    rows(0).Item("CONTACT_PRIMARY") = "1"
+                Else
+                    RetVal.AppendLine("You must select a Primary Contact for each Type of Contact (see Type " & CONTACT_TYPE & ")")
+                End If
+            End If
+        Next
+        Dim c2 As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", "CONTACT_TYPE = 'L'") & "")
+        If c2 <> 1 Then
+            RetVal.AppendLine("You Must Have 1 And Only 1 Lead Contact.")
+        End If
+        Return RetVal.ToString
+    End Function
+
     Private Sub UpdateContacts()
-        If grdARTCUSTX.Selected.Rows.Count = 1 Then
+        If Not IsNothing(grdARTCUSTX.ActiveRow) Then
             Dim ACTIVITY_TYPE As String = "Edited"
-            Dim CUST_CODE As String = grdARTCUSTX.Selected.Rows(0).Cells.Item("CUST_CODE").Text
+            Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
             If chkSaveFinalized.Checked Then
                 ACTIVITY_TYPE = "Finalized"
             End If
             AddARTCUSTV(CUST_CODE, ACTIVITY_TYPE, txtACTIVITY_NOTE_EDIT.Text)
+            Dim fltrD As String = "CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+            Dim rowARTCUSTD As DataRow = dst.Tables("ARTCUSTD").Select(fltrD).FirstOrDefault
+            Dim fltrC As String = $"CUST_CODE = '{CUST_CODE}'"
+            Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Select(fltrC).FirstOrDefault
+            If Not (IsNothing(rowARTCUSTD) Or IsNothing(rowARTCUST1)) Then
+                rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+            End If
 
-            'For Each rowARTCUST1 As DataRow In dst.Tables("ARTCUST1").Select()
-            '    Write_Audit_Trail(rowARTCUST1, "E")
-            'Next
-
-            'If dst.Tables.Item("ARTCUST1").Rows.Count = 0 And dst.Tables.Item("ARTCUST1_O").Rows.Count = 0 Then
-            '    Write_Audit_Trail(dst.Tables.Item("ARTCUST1").Rows(0), dst.Tables.Item("ARTCUST1_O").Rows(0), "E")
-            'End If
-
-            'For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select()
-            '    Write_Audit_Trail(rowARTCUSTD, "E")
-            'Next
-            'WriteAuditTrail("ARTCUST1")
-            'WriteAuditTrail("ARTCUSTD")
 
             auditARTCUST1()
             auditARTCUSTD()
@@ -1297,23 +1458,29 @@ Public Class ARFCUSTV
             Dim CONTACT_NO As Int64 = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty)
             Dim fltr As String = $"CUST_CODE = '{CUST_CODE}' AND CONTACT_NO = {CONTACT_NO}"
             Dim rowARTCUSTD_O As DataRow = dst.Tables.Item("ARTCUSTD_O").Select(fltr).FirstOrDefault
+            Dim SKIP_COLS As New List(Of String)
+            SKIP_COLS.Add("ISDUP")
+            SKIP_COLS.Add("ISDEL")
+            SKIP_COLS.Add("CUST_NAME")
             If Not IsNothing(rowARTCUSTD_O) Then
                 For Each dc As DataColumn In dst.Tables.Item("ARTCUSTD").Columns
                     Dim name As String = dc.ColumnName
-                    If rowARTCUSTD.Item(name).ToString & String.Empty <> rowARTCUSTD_O.Item(name).ToString & String.Empty Then
-                        Dim rowASTAUDT1 As DataRow = dst.Tables.Item("ASTAUDT1").NewRow
-                        rowASTAUDT1.Item("OLD_VALUE") = rowARTCUSTD_O.Item(name).ToString & String.Empty
-                        rowASTAUDT1.Item("NEW_VALUE") = rowARTCUSTD.Item(name).ToString & String.Empty
-                        rowASTAUDT1.Item("TABLE_NAME") = "ARTCUSTD"
-                        rowASTAUDT1.Item("KEY_VALUE") = $"{CUST_CODE}:{CONTACT_NO}"
-                        rowASTAUDT1.Item("COLUMN_NAME") = name
-                        rowASTAUDT1.Item("USER_ID") = ASCMAIN1.USER_ID
-                        rowASTAUDT1.Item("INIT_DATE") = EDIT_TIME
-                        rowASTAUDT1.Item("FM_MODE") = "E"
-                        rowASTAUDT1.Item("SESSION_NO") = ASCMAIN1.SESSION_NO
-                        rowASTAUDT1.Item("SELECTION_NO") = SELECTION_NO
-                        rowASTAUDT1.Item("XNO") = XNO
-                        dst.Tables("ASTAUDT1").Rows.Add(rowASTAUDT1)
+                    If Not SKIP_COLS.Contains(name) Then
+                        If rowARTCUSTD.Item(name).ToString & String.Empty <> rowARTCUSTD_O.Item(name).ToString & String.Empty Then
+                            Dim rowASTAUDT1 As DataRow = dst.Tables.Item("ASTAUDT1").NewRow
+                            rowASTAUDT1.Item("OLD_VALUE") = rowARTCUSTD_O.Item(name).ToString & String.Empty
+                            rowASTAUDT1.Item("NEW_VALUE") = rowARTCUSTD.Item(name).ToString & String.Empty
+                            rowASTAUDT1.Item("TABLE_NAME") = "ARTCUSTD"
+                            rowASTAUDT1.Item("KEY_VALUE") = $"{CUST_CODE}:{CONTACT_NO}"
+                            rowASTAUDT1.Item("COLUMN_NAME") = name
+                            rowASTAUDT1.Item("USER_ID") = ASCMAIN1.USER_ID
+                            rowASTAUDT1.Item("INIT_DATE") = EDIT_TIME
+                            rowASTAUDT1.Item("FM_MODE") = "E"
+                            rowASTAUDT1.Item("SESSION_NO") = ASCMAIN1.SESSION_NO
+                            rowASTAUDT1.Item("SELECTION_NO") = SELECTION_NO
+                            rowASTAUDT1.Item("XNO") = XNO
+                            dst.Tables("ASTAUDT1").Rows.Add(rowASTAUDT1)
+                        End If
                     End If
                 Next
             End If
@@ -1356,14 +1523,28 @@ Public Class ARFCUSTV
         FilterARTCUSTX()
     End Sub
 
+    Private Sub chkExcludeFinished_CheckedChanged(sender As Object, e As EventArgs) Handles chkExcludeFinished.CheckedChanged
+        FilterARTCUSTX()
+    End Sub
+
     Private Sub btnApprove_Click(sender As Object, e As EventArgs) Handles btnApprove.Click
         If Not IsNothing(grdARTCUSTX.ActiveRow) Then
-            Dim ACTIVITY_TYPE As String = "Approved"
             Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text
-            AddARTCUSTV(CUST_CODE, ACTIVITY_TYPE, txtACTIVITY_NOTE_APPROVE.Text)
-            refreshMax()
-            Setup_Summary()
-            txtACTIVITY_NOTE_APPROVE.Text = ""
+            Dim CUST_NAME As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_NAME").Text
+            Dim iResult As MsgBoxResult
+            Dim iTitle As String = "Approve?"
+            Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+            iMSG.AppendLine("Do You Want To Approve:")
+            iMSG.AppendLine($"{CUST_NAME} ?")
+            iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+            If iResult = MsgBoxResult.Yes Then
+                Dim ACTIVITY_TYPE As String = "Approved"
+                AddARTCUSTV(CUST_CODE, ACTIVITY_TYPE, txtACTIVITY_NOTE_APPROVE.Text)
+                'refreshMax()
+                RefreshTempActivity()
+                Setup_Summary("Refreshing Data")
+                txtACTIVITY_NOTE_APPROVE.Text = ""
+            End If
         End If
     End Sub
 
@@ -1409,7 +1590,7 @@ Public Class ARFCUSTV
         End If
     End Sub
 
-    Private Sub btnDev001_Click(sender As Object, e As EventArgs) Handles btnDev001.Click
+    Private Sub btnDev001_Click(sender As Object, e As EventArgs)
         Dim iResult As MsgBoxResult
         Dim iTitle As String = "Ready?"
         Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
@@ -1488,6 +1669,65 @@ Public Class ARFCUSTV
             MsgBox("Man, That Was Close!", vbCritical, "Whow")
         End If
     End Sub
+
+    Private Sub grdARTCUSV1_BeforeRowsDeleted(sender As Object, e As BeforeRowsDeletedEventArgs) Handles grdARTCUSV1.BeforeRowsDeleted
+        'Dim Msg As New StringBuilder With {.Length = 0}
+
+        'If grdARTCUSV1.Selected.Rows.Count <> 1 Then
+        '    Msg.AppendLine("You Must Select Only One Line To Delete.")
+        'Else
+        '    If grdARTCUSV1.Selected.Rows(0).Cells.Item("ACTIVITY_TYPE").Value <> "Approved" Then
+        '        Msg.AppendLine("You May Only Delete Approved.")
+        '    End If
+        'End If
+
+        'If Msg.Length > 0 Then
+        '    MsgBox(Msg.ToString(), vbCritical, "No Deletion Allowed")
+        '    e.Cancel = True
+        '    Exit sub
+        'End If
+    End Sub
+
+    Private Sub btnCancelEdit_Click(sender As Object, e As EventArgs) Handles btnCancelEdit.Click
+        lblCUST_NAME.Visible = False
+        chkSaveFinalized.Visible = False
+        chkSaveFinalized.Checked = False
+        EditingContacts = False
+        btnEditContacts.Text = "Edit Contacts"
+        btnCancelEdit.Visible = False
+        txtACTIVITY_NOTE_EDIT.ReadOnly = True
+        txtACTIVITY_NOTE_EDIT.Text = ""
+        btnSendSelected.Enabled = False
+        chkEmailAP.Enabled = False
+        chkEmailBuyer.Enabled = False
+        chkEmailMain.Enabled = False
+        chkEmailMisc.Enabled = False
+        chkEmailWhse.Enabled = False
+        tabActivities.Tabs.Item("Activities").Enabled = True
+        tabActivities2.Tabs.Item("Approve").Enabled = True
+        tabActivities2.Tabs.Item("Send").Enabled = True
+        tabActivities2.Tabs.Item("Edit").Enabled = True
+        ASCMAIN1.MultiTask_Release(, , )
+        grdARTCUSTX.Enabled = True
+        Dim EDITCOLS As String() = {"CONTACT_NAME", "CONTACT_TITLE", "CONTACT_PHONE", "CONTACT_EXT", "CONTACT_TYPE", "CONTACT_PRIMARY", "CONTACT_CELL", "CONTACT_EMAIL"}
+        With grdARTCUSTD.DisplayLayout
+            For i As Integer = 0 To .Bands(0).Columns.Count - 1
+                .Bands(0).Columns(i).CellActivation = Activation.NoEdit
+            Next i
+            .Override.AllowAddNew = AllowAddNew.No
+            .Override.AllowDelete = DefaultableBoolean.False
+            .Override.AllowUpdate = DefaultableBoolean.True
+        End With
+        grdARTCUSTD.Update()
+    End Sub
+
+    Private Sub grdARTCUSTD_BeforeEnterEditMode(sender As Object, e As CancelEventArgs) Handles grdARTCUSTD.BeforeEnterEditMode
+        If EditingContacts = False Then
+            e.Cancel = True
+        End If
+    End Sub
+
+
 #Region "Space Code"
     'Private Sub btnMakeMasterContacts_Click(sender As Object, e As EventArgs)
     '    Dim iResult As MsgBoxResult

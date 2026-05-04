@@ -364,6 +364,15 @@ Public Class ARTCUST1
 
 
                 If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    If EntryMode = "New" Then
+                        Absx1.chkFor("CUST_ALLOW_BACKORDER").Checked = True
+                    End If
+
+                    Dim c As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", "CONTACT_TYPE = 'L'") & "")
+                    If c <> 1 Then
+                        EMsg &= vbCr & "You Must Have 1 And Only 1 Lead Contact."
+                    End If
+
                     If optCUST_PRICE_TIER.Value = "SP" Then
                         Dim DISC_PCT_MSG As String = DISC_PCT_CHECK()
                         If DISC_PCT_MSG.Length > 0 Then
@@ -1695,11 +1704,18 @@ Public Class ARTCUST1
                 txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
                 txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
 
-                rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
-                rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
-                rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
-                rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
-                rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                txtCUST_URL_RGI.Text = rowARTCUST1.Item("CUST_URL").ToString & String.Empty
+
+                'rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                'rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
 
             End If
         End If

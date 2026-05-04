@@ -3330,7 +3330,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.grdSOTORDRX)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(956, 538)
         '
@@ -3552,7 +3552,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabORDERS)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(956, 538)
         '

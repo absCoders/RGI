@@ -2662,16 +2662,32 @@ Public Class ARFCINQ1
                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
-
+                Dim CUST_STMT_EMAIL As String = rowARTCUST1.Item("CUST_STMT_EMAIL").ToString & String.Empty
+                Dim CUST_STMT_CC As String = rowARTCUST1.Item("CUST_STMT_CC").ToString & String.Empty
                 If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
-                    Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
-                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
-                    If Not IsNothing(rowARTCUSTD) Then
-                        Dim CUST_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
-                        Dim CUST_CONTACT As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
-                        If CUST_EMAIL <> "" Then
-                            EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                    If CUST_STMT_EMAIL.Length = 0 And CUST_STMT_CC.Length = 0 Then
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Missing E-mails"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("There Is No Statement Or CC E-Mail")
+                        iMSG.AppendLine("Set Up For This Customer.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Would You Like Me To Use The")
+                        iMSG.AppendLine("Lead?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                            Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                            If Not IsNothing(rowARTCUSTD) Then
+                                CUST_STMT_EMAIL = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                            End If
                         End If
+                    End If
+                    If CUST_STMT_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_STMT_EMAIL, CUST_STMT_EMAIL)
+                    End If
+                    If CUST_STMT_CC <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_STMT_CC, CUST_STMT_CC)
                     End If
                 Else
                     Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
@@ -2925,13 +2941,28 @@ Public Class ARFCINQ1
                 End If
 
                 Dim CUST_EMAIL_AR As String = Absx1.txtFor("CUST_EMAIL").Text
+                Dim CUST_INV_EMAIL As String = rowARTCUST1.Item("CUST_INV_EMAIL").ToString & String.Empty
+                Dim CUST_INV_CC As String = rowARTCUST1.Item("CUST_INV_CC").ToString & String.Empty
                 If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
-                    Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
-                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
-                    If Not IsNothing(rowARTCUSTD) Then
-                        CUST_EMAIL_AR = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
-                        'Dim CUST_CONTACT As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                    If CUST_INV_EMAIL.Length = 0 And CUST_INV_CC.Length = 0 Then
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Missing E-mails"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("There Is No Invoice Or CC E-Mail")
+                        iMSG.AppendLine("Set Up For This Customer.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Would You Like Me To Use The")
+                        iMSG.AppendLine("Lead?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                            Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                            If Not IsNothing(rowARTCUSTD) Then
+                                CUST_INV_EMAIL = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                            End If
+                        End If
                     End If
+                    CUST_EMAIL_AR = CUST_INV_EMAIL
                 End If
 
                 If ASCMAIN1.CLIENT = "VAN" Then
@@ -2940,13 +2971,24 @@ Public Class ARFCINQ1
                     End If
                 End If
                 If e.Tool.Key Like "email*" Then
-                    TAC.SOCMAIN1.email_Invoice(Me,
+
+                    If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                        If CUST_INV_EMAIL.Length > 0 Then
+                            TAC.SOCMAIN1.email_Invoice(Me,
+                                                       Absx1.txtFor("CUST_CODE").Text,
+                                                       Absx1.txtFor("CUST_NAME").Text,
+                                                       CUST_INV_EMAIL,
+                                                       CUST_INV_EMAIL,
+                                                       FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO, , CUST_INV_CC, CUST_INV_CC)
+                        End If
+                    Else
+                        TAC.SOCMAIN1.email_Invoice(Me,
                         Absx1.txtFor("CUST_CODE").Text,
                         Absx1.txtFor("CUST_NAME").Text,
                         CUST_EMAIL_AR,
                         CUST_EMAIL_AR,
                         FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO)
-
+                    End If
                 ElseIf e.Tool.Key Like "Fax*" Then
                     Send_fax(FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT)
                 ElseIf e.Tool.Key Like "*clipboard" Then

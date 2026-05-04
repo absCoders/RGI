@@ -105,6 +105,9 @@ Partial Class ICTROYL1
         Dim UltraGridColumn37 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PRICE_ROY")
         Dim UltraGridColumn38 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PRICE_NEW")
         Dim UltraGridColumn39 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("STYLE_PRICE_VAR")
+        Dim UltraGridColumn41 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_BEGIN")
+        Dim UltraGridColumn42 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_END")
+        Dim UltraGridColumn43 As Infragistics.Win.UltraWinGrid.UltraGridColumn = New Infragistics.Win.UltraWinGrid.UltraGridColumn("ROYALTY_PCT")
         Dim Appearance4 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance5 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance6 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
@@ -464,7 +467,7 @@ Partial Class ICTROYL1
         'UltraTabPageControl3
         '
         Me.UltraTabPageControl3.Controls.Add(Me.Panel2)
-        Me.UltraTabPageControl3.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl3.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl3.Name = "UltraTabPageControl3"
         Me.UltraTabPageControl3.Size = New System.Drawing.Size(1155, 505)
         '
@@ -947,7 +950,7 @@ Partial Class ICTROYL1
         'UltraTabPageControl7
         '
         Me.UltraTabPageControl7.Controls.Add(Me.UltraTabControl3)
-        Me.UltraTabPageControl7.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl7.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl7.Name = "UltraTabPageControl7"
         Me.UltraTabPageControl7.Size = New System.Drawing.Size(1155, 505)
         '
@@ -1033,7 +1036,7 @@ Partial Class ICTROYL1
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.grdICTSTROX)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(1159, 533)
         '
@@ -1066,39 +1069,48 @@ Partial Class ICTROYL1
         UltraGridColumn9.Header.VisiblePosition = 7
         UltraGridColumn9.Width = 156
         UltraGridColumn10.Header.Caption = "Designer Addr 1"
-        UltraGridColumn10.Header.VisiblePosition = 8
+        UltraGridColumn10.Header.VisiblePosition = 11
         UltraGridColumn11.Header.Caption = "Designer Addr 2"
-        UltraGridColumn11.Header.VisiblePosition = 9
+        UltraGridColumn11.Header.VisiblePosition = 12
         UltraGridColumn12.Header.Caption = "Designer City"
-        UltraGridColumn12.Header.VisiblePosition = 10
+        UltraGridColumn12.Header.VisiblePosition = 13
         UltraGridColumn18.Header.Caption = "Designer State"
-        UltraGridColumn18.Header.VisiblePosition = 11
+        UltraGridColumn18.Header.VisiblePosition = 14
         UltraGridColumn19.Header.Caption = "Designer Zip"
-        UltraGridColumn19.Header.VisiblePosition = 12
+        UltraGridColumn19.Header.VisiblePosition = 15
         UltraGridColumn20.Header.Caption = "Agent Name"
-        UltraGridColumn20.Header.VisiblePosition = 13
+        UltraGridColumn20.Header.VisiblePosition = 16
         UltraGridColumn20.Width = 218
         UltraGridColumn21.Header.Caption = "Agent Addr 1"
-        UltraGridColumn21.Header.VisiblePosition = 14
+        UltraGridColumn21.Header.VisiblePosition = 17
         UltraGridColumn22.Header.Caption = "Agent Addr 2"
-        UltraGridColumn22.Header.VisiblePosition = 15
+        UltraGridColumn22.Header.VisiblePosition = 18
         UltraGridColumn23.Header.Caption = "Agent City"
-        UltraGridColumn23.Header.VisiblePosition = 16
+        UltraGridColumn23.Header.VisiblePosition = 19
         UltraGridColumn24.Header.Caption = "Agent State"
-        UltraGridColumn24.Header.VisiblePosition = 17
+        UltraGridColumn24.Header.VisiblePosition = 20
         UltraGridColumn25.Header.Caption = "Agent Zip"
-        UltraGridColumn25.Header.VisiblePosition = 18
+        UltraGridColumn25.Header.VisiblePosition = 21
         UltraGridColumn35.Header.Caption = "Curr List Price"
-        UltraGridColumn35.Header.VisiblePosition = 19
+        UltraGridColumn35.Header.VisiblePosition = 22
         UltraGridColumn36.Header.Caption = "Calc list Price"
-        UltraGridColumn36.Header.VisiblePosition = 20
+        UltraGridColumn36.Header.VisiblePosition = 23
         UltraGridColumn37.Header.Caption = "Royalty Addition"
-        UltraGridColumn37.Header.VisiblePosition = 21
+        UltraGridColumn37.Header.VisiblePosition = 24
         UltraGridColumn38.Header.Caption = "New List Price"
-        UltraGridColumn38.Header.VisiblePosition = 22
+        UltraGridColumn38.Header.VisiblePosition = 25
         UltraGridColumn39.Header.Caption = "Variance"
-        UltraGridColumn39.Header.VisiblePosition = 23
-        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39})
+        UltraGridColumn39.Header.VisiblePosition = 26
+        UltraGridColumn41.Header.Caption = "Begin Date"
+        UltraGridColumn41.Header.VisiblePosition = 8
+        UltraGridColumn41.Width = 108
+        UltraGridColumn42.Header.Caption = "End Date"
+        UltraGridColumn42.Header.VisiblePosition = 9
+        UltraGridColumn42.Width = 107
+        UltraGridColumn43.Header.Caption = "Percentage"
+        UltraGridColumn43.Header.VisiblePosition = 10
+        UltraGridColumn43.Width = 93
+        UltraGridBand1.Columns.AddRange(New Object() {UltraGridColumn2, UltraGridColumn3, UltraGridColumn4, UltraGridColumn5, UltraGridColumn6, UltraGridColumn7, UltraGridColumn8, UltraGridColumn9, UltraGridColumn10, UltraGridColumn11, UltraGridColumn12, UltraGridColumn18, UltraGridColumn19, UltraGridColumn20, UltraGridColumn21, UltraGridColumn22, UltraGridColumn23, UltraGridColumn24, UltraGridColumn25, UltraGridColumn35, UltraGridColumn36, UltraGridColumn37, UltraGridColumn38, UltraGridColumn39, UltraGridColumn41, UltraGridColumn42, UltraGridColumn43})
         Me.grdICTSTROX.DisplayLayout.BandsSerializer.Add(UltraGridBand1)
         Me.grdICTSTROX.DisplayLayout.BorderStyle = Infragistics.Win.UIElementBorderStyle.Solid
         Appearance4.TextHAlignAsString = "Left"
@@ -1168,7 +1180,7 @@ Partial Class ICTROYL1
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraTabControl2)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(1159, 533)
         '
