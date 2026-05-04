@@ -38,7 +38,7 @@ Public Class TAFCARDF
 
     Dim COLs() As String = {"CUST_CREDIT_CARD_NO", "CUST_CREDIT_CARD_LAST4", "CUST_CREDIT_CARD_KEY" _
     , "CUST_CREDIT_CARD_EXP_DATE", "CUST_CREDIT_CARD_VER_CODE" _
-    , "CUST_CREDIT_CARD_NAME", "CUST_CREDIT_CARD_ADDR1" _
+    , "CUST_CREDIT_CARD_NAME", "CUST_CREDIT_CARD_ADDR1", "CUST_CREDIT_CARD_PREFERRED" _
     , "CUST_CREDIT_CARD_CITY", "CUST_CREDIT_CARD_STATE", "CUST_CREDIT_CARD_ZIP_CODE", "CUST_CREDIT_CARD_COUNTRY"}
 
     Public objCCProcessor As TAC.ARCCCARD = New TAC.ARCCCARD()
@@ -130,6 +130,8 @@ Public Class TAFCARDF
             End If
         Next
 
+        Dim CUST_CREDIT_CARD_KEY As String = String.Empty
+
         Dim rowARTCUSTC As DataRow = Nothing
         If rowARTCCPA1 Is Nothing OrElse rowARTCCPA1.Item("CUST_CREDIT_CARD_NO") & String.Empty <> "" Then
             ' If we pass in credit card data then use it
@@ -152,8 +154,10 @@ Public Class TAFCARDF
 
             ' As per Mario and per Danny - Update the CC Data and Save New Entries
             For Each COLUMN_NAME As String In COLs
-                If COLUMN_NAME <> "CUST_CREDIT_CARD_KEY" Then
-                    rowARTCUSTC.Item(COLUMN_NAME) = rowARTCCPA1.Item(COLUMN_NAME)
+                If rowARTCUSTC.Table.Columns.Contains(COLUMN_NAME) Then
+                    If rowARTCCPA1.Table.Columns.Contains(COLUMN_NAME) Then
+                        rowARTCUSTC.Item(COLUMN_NAME) = rowARTCCPA1.Item(COLUMN_NAME)
+                    End If
                 End If
             Next
 
@@ -168,18 +172,28 @@ Public Class TAFCARDF
         Else
             For Each row As DataRow In dst.Tables("ARTCUSTC").Select("", "CUST_CREDIT_CARD_PREFERRED DESC, EXP DESC")
                 CUST_CREDIT_CARD_NO = row.Item("CUST_CREDIT_CARD_NO") & String.Empty
+                CUST_CREDIT_CARD_KEY = row.Item("CUST_CREDIT_CARD_KEY") & String.Empty
                 Exit For
             Next
         End If
 
         If CUST_CREDIT_CARD_NO.Length > 0 Then
-            If dst.Tables("ARTCUSTC").Select("CUST_CREDIT_CARD_NO = '" & CUST_CREDIT_CARD_NO & "'").Length > 0 Then
-                rowARTCUSTC = dst.Tables("ARTCUSTC").Select("CUST_CREDIT_CARD_NO = '" & CUST_CREDIT_CARD_NO & "'")(0)
+            If dst.Tables("ARTCUSTC").Select("CUST_CREDIT_CARD_KEY = '" & CUST_CREDIT_CARD_KEY & "'").Length > 0 Then
+                rowARTCUSTC = dst.Tables("ARTCUSTC").Select("CUST_CREDIT_CARD_KEY = '" & CUST_CREDIT_CARD_KEY & "'")(0)
                 For Each COLUMN_NAME As String In COLs
-                    rowARTCCPA1.Item(COLUMN_NAME) = rowARTCUSTC.Item(COLUMN_NAME)
+                    If rowARTCCPA1.Table.Columns.Contains(COLUMN_NAME) Then
+                        If rowARTCUSTC.Table.Columns.Contains(COLUMN_NAME) Then
+                            rowARTCCPA1.Item(COLUMN_NAME) = rowARTCUSTC.Item(COLUMN_NAME)
+                        End If
+                    End If
                 Next
                 optCC.Value = "X"
                 MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = CUST_CREDIT_CARD_NO
+                If rowARTCUSTC.Item("CUST_CREDIT_CARD_PREFERRED") & String.Empty = "1" Then
+                    Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked = True
+                Else
+                    Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked = False
+                End If
                 LoadCCDataIntoRow(rowARTCUSTC)
                 Try
                     txt_ValueChanged(MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO"), Nothing)
@@ -213,7 +227,11 @@ Public Class TAFCARDF
 
                     CUST_CREDIT_CARD_NO = rowARTCCPA1_CUST.Item("CUST_CREDIT_CARD_NO") & String.Empty
                     For Each COLUMN_NAME As String In COLs
-                        rowARTCCPA1.Item(COLUMN_NAME) = rowARTCCPA1_CUST.Item(COLUMN_NAME)
+                        If rowARTCCPA1.Table.Columns.Contains(COLUMN_NAME) Then
+                            If rowARTCCPA1_CUST.Table.Columns.Contains(COLUMN_NAME) Then
+                                rowARTCCPA1.Item(COLUMN_NAME) = rowARTCCPA1_CUST.Item(COLUMN_NAME)
+                            End If
+                        End If
                     Next
                     optCC.Value = "X"
                     MyBase.Absx1.txtFor("CUST_CREDIT_CARD_NO").Text = CUST_CREDIT_CARD_NO
@@ -309,9 +327,7 @@ Public Class TAFCARDF
         lblCVV2.BringToFront()
         txtCUST_CREDIT_CARD_VER_CODE.BringToFront()
 
-        'If ASCMAIN1.USER_ID = "edz" Then
-        '    UltraButton1.Visible = True
-        'End If
+        Absx1.txtFor("CUST_CREDIT_CARD_KEY").Visible = ASCMAIN1.Running_in_VS
 
     End Sub
 
@@ -503,9 +519,6 @@ Public Class TAFCARDF
         End If
 
         If ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER Then
-            If ASCMAIN1.Running_in_VS Then
-                Stop
-            End If
 
             Dim uMsg As String = "READ CAREFULLY" & Environment.NewLine & Environment.NewLine
             uMsg &= "You are running in a Test Environment. The customer's credit card will be processed." & Environment.NewLine & Environment.NewLine
@@ -517,10 +530,11 @@ Public Class TAFCARDF
         End If
 
         Dim TransactionNumber As String = ASCMAIN1.Next_Control_No("ARTCCPA1.TRANS_NUM")
-        Dim CUST_CREDIT_CARD_KEY As String = ""
+        Dim CUST_CREDIT_CARD_KEY As String = MyBase.Absx1.txtFor("CUST_CREDIT_CARD_KEY").Text
+
         If optCC.Value = "N" Then
-            CUST_CREDIT_CARD_KEY = ASCMAIN1.Next_Control_No("ARTCUSTC.CUST_CREDIT_CARD_KEY")
             If MyBase.Absx1.txtFor("CUST_CREDIT_CARD_KEY").TextLength = 0 Then
+                CUST_CREDIT_CARD_KEY = ASCMAIN1.Next_Control_No("ARTCUSTC.CUST_CREDIT_CARD_KEY")
                 MyBase.Absx1.txtFor("CUST_CREDIT_CARD_KEY").Text = CUST_CREDIT_CARD_KEY
             End If
         End If
@@ -593,16 +607,15 @@ Public Class TAFCARDF
                 dst.Tables("ARTCUSTC").AcceptChanges()
 
                 If optCC.Value = "E" Then
-
-                    rowARTCUSTC = dst.Tables("ARTCUSTC").Rows.Find(New Object() {CUST_CODE, CUST_CREDIT_CARD_NO})
+                    rowARTCUSTC = dst.Tables("ARTCUSTC").Rows.Find(New Object() {CUST_CODE, CUST_CREDIT_CARD_KEY})
                     If rowARTCUSTC IsNot Nothing Then
                         LoadCCDataIntoRow(rowARTCUSTC)
                         rowARTCUSTC.Item("CUST_CREDIT_CARD_STATUS") = "A"
                         rowARTCUSTC.Item("LAST_DATE") = LAST_DATE
                         rowARTCUSTC.Item("LAST_OPER") = ASCMAIN1.USER_ID
-                        DecryptARTCUSTC()
-                        Update_Record_TDA("ARTCUSTC")
                         EncryptARTCUSTC()
+                        Update_Record_TDA("ARTCUSTC")
+                        DecryptARTCUSTC()
                     End If
                 ElseIf optCC.Value = "N" Then
                     rowARTCUSTC = dst.Tables("ARTCUSTC").NewRow
@@ -616,6 +629,15 @@ Public Class TAFCARDF
                     EncryptARTCUSTC()
                     Update_Record_TDA("ARTCUSTC")
                     DecryptARTCUSTC()
+                End If
+
+                ' Added 04/30/2026 - Requested by Andy
+                If Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked AndAlso CUST_CREDIT_CARD_KEY.Length > 0 Then
+                    ASCMAIN1.sql = "UPDATE ARTCUSTC SET CUST_CREDIT_CARD_PREFERRED = '0' WHERE CUST_CODE = :PARM1"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", {CUST_CODE})
+
+                    ASCMAIN1.sql = "UPDATE ARTCUSTC SET CUST_CREDIT_CARD_PREFERRED = '1' WHERE CUST_CODE = :PARM1 AND CUST_CREDIT_CARD_KEY = :PARM2"
+                    ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", {CUST_CODE, CUST_CREDIT_CARD_KEY})
                 End If
             End If
         End If
@@ -966,6 +988,17 @@ Public Class TAFCARDF
                     If row.Item(COL) & "" <> Absx1.txtFor(COL).Text Then
                         If Absx1.txtFor(COL).TextLength > 0 Then
                             row.Item(COL) = Absx1.txtFor(COL).Text
+                        ElseIf row.Item(COL) & String.Empty <> String.Empty Then
+                            Absx1.txtFor(COL).Text = row.Item(COL) & ""
+                        End If
+                    End If
+
+                Case "CUST_CREDIT_CARD_PREFERRED"
+                    If row.Table.Columns.Contains("CUST_CREDIT_CARD_PREFERRED") Then
+                        If Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked Then
+                            row.Item(COL) = "1"
+                        Else
+                            row.Item(COL) = "0"
                         End If
                     End If
 
@@ -983,6 +1016,9 @@ Public Class TAFCARDF
             Select Case COL
                 Case "CUST_CREDIT_CARD_COUNTRY"
                     cbeCountry.Value = String.Empty
+
+                Case "CUST_CREDIT_CARD_PREFERRED"
+                    Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked = False
 
                 Case Else
                     Absx1.txtFor(COL).Clear()
@@ -1019,7 +1055,7 @@ Public Class TAFCARDF
         cbeCountry.ReadOnly = Not tf
         Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").ReadOnly = Not tf
         Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").ReadOnly = Not tf
-
+        Set_Read_Only_for_ctl(Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED"), Not tf)
         Absx1.txtFor("CUST_CREDIT_CARD_NO").PasswordChar = "*"
         cmdUseCustomerAddress.Visible = tf
     End Sub
@@ -1167,6 +1203,13 @@ Public Class TAFCARDF
             cbeCountry.Value = .Item("CUST_CREDIT_CARD_COUNTRY") & ""
             Absx1.txtFor("CUST_CREDIT_CARD_EXP_DATE").Text = .Item("CUST_CREDIT_CARD_EXP_DATE") & ""
             Absx1.txtFor("CUST_CREDIT_CARD_VER_CODE").Text = .Item("CUST_CREDIT_CARD_VER_CODE") & ""
+            Absx1.txtFor("CUST_CREDIT_CARD_KEY").Text = .Item("CUST_CREDIT_CARD_KEY") & ""
+
+            If .Item("CUST_CREDIT_CARD_PREFERRED") & "" = "1" Then
+                Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked = True
+            Else
+                Absx1.chkFor("CUST_CREDIT_CARD_PREFERRED").Checked = False
+            End If
         End With
     End Sub
 
@@ -2231,6 +2274,7 @@ Public Class TAFCARDF
         If ASCMAIN1.Running_in_VS Then
             Stop
             ' C:\Temp\RGI\Archive\CC_TRANS
+            CC_PROC_FOLDER = "C:\Temp\RGI\Archive\CC_TRANS"
             ' Change the value of CC_PROC_FOLDER if not connected to the customer.
         End If
 
@@ -2374,40 +2418,6 @@ Public Class TAFCARDF
                 rowARTCUSTC.Item(field) = DBNull.Value
             Next
         Next
-    End Sub
-
-    Private Sub UltraButton1_Click(sender As System.Object, e As System.EventArgs) Handles UltraButton1.Click
-
-        Dim sql As String = String.Empty
-
-        If Not ASCMAIN1.Running_in_VS Then
-            Exit Sub
-        End If
-
-        Stop
-
-        'If 1 = 1 Then Exit Sub
-
-        Try
-            BeginTrans()
-
-            sql = "Select * from ARTCCPA1 WHERE CUST_CREDIT_CARD_NO IS NOT NULL"
-            Fill_Records("ARTCCPA1", String.Empty, True, sql)
-            EncryptARTCCPA1()
-
-            sql = "Select * from ARTCUSTC WHERE CUST_CREDIT_CARD_NO IS NOT NULL"
-            Fill_Records("ARTCUSTC", String.Empty, True, sql)
-            EncryptARTCUSTC()
-
-            Update_Record_TDA("ARTCCPA1")
-            Update_Record_TDA("ARTCUSTC")
-
-            CommitTrans("Data Converted")
-
-        Catch ex As Exception
-            Rollback(ex.Message)
-        End Try
-
     End Sub
 
     Public Function CreateCreditCardInfo(ByRef rowARTCCPA1 As DataRow) As TAC.ARCCCARD.CreditCard
