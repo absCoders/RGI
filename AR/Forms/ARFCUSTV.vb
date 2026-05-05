@@ -1727,6 +1727,28 @@ Public Class ARFCUSTV
         End If
     End Sub
 
+    Private Sub grdARTCUSTD_BeforeRowUpdate(sender As Object, e As CancelableRowEventArgs) Handles grdARTCUSTD.BeforeRowUpdate
+        Dim CUST_CODE As String = grdARTCUSTX.ActiveRow.Cells.Item("CUST_CODE").Text.ToString & String.Empty
+        If e.Row.Cells("CUST_CODE").Text = "" Then
+            e.Row.Cells("CUST_CODE").Value = CUST_CODE
+        End If
+        If e.Row.Cells("CONTACT_NO").Text = "" Then
+            Dim fltr As String = $"CUST_CODE = '{CUST_CODE}'"
+            Dim CONTACT_NO As Int64 = dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", fltr)
+            If IsNothing(CONTACT_NO) Then
+                CONTACT_NO = 1
+            Else
+                CONTACT_NO += 1
+            End If
+            e.Row.Cells("CONTACT_NO").Value = CONTACT_NO
+        End If
+            If e.Row.Cells("CONTACT_TYPE").Text = "" Then
+            MsgBox("You Must Select A Type.", MsgBoxStyle.OkOnly, "Update Error")
+            e.Cancel = True
+        End If
+
+    End Sub
+
 
 #Region "Space Code"
     'Private Sub btnMakeMasterContacts_Click(sender As Object, e As EventArgs)
