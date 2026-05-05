@@ -882,121 +882,6 @@ Public Class ARFCUSTL
         End If
     End Sub
 
-    Private Sub btnMakeMasterContacts_Click(sender As Object, e As EventArgs) Handles btnMakeMasterContacts.Click
-        Dim iResult As MsgBoxResult
-        Dim iTitle As String = "Make Masterfile Contacts?"
-        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
-        iMSG.AppendLine("Are You Sure You Want To Do This?")
-        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
-        If iResult <> MsgBoxResult.Yes Then
-            Exit Sub
-        End If
-
-        Setup_Summary()
-        Me.Cursor = Cursors.WaitCursor
-        For Each rowARTCUSTX As DataRow In dst.Tables("ARTCUSTX").Select()
-            Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
-            Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
-            If dst.Tables.Item("ARTCUSTD").Select(FILTER).Count = 0 Then
-                AddMasterfileContact(rowARTCUSTX, False)
-            Else
-                Dim MFNAME As String = rowARTCUSTX.Item("CUST_CONTACT").ToString & String.Empty
-                If MFNAME.Length > 0 Then
-                    MFNAME = MFNAME.ToUpper
-                    Dim MFFOUND As Boolean = False
-                    For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER)
-                        Dim CTNAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
-                        If CTNAME.Length > 0 Then
-                            CTNAME = CTNAME.ToUpper
-                        End If
-                        If MFNAME = CTNAME Then
-                            MFFOUND = True
-                        End If
-                    Next
-                    If Not MFFOUND Then
-                        AddMasterfileContact(rowARTCUSTX, False)
-                    End If
-                End If
-            End If
-        Next
-        Me.Cursor = Cursors.Default
-    End Sub
-
-    Private Sub AddMasterfileContact(ByRef rowARTCUSTX As DataRow, ByVal isPrimary As Boolean)
-        Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
-        Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
-        Dim CONTACT_NO As Long = 1
-        For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER, "CONTACT_NO")
-            If Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) >= CONTACT_NO Then
-                CONTACT_NO = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) + 1
-            End If
-        Next
-
-        Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
-
-        Dim newARTCUSTD As DataRow = dst.Tables("ARTCUSTD").NewRow
-        newARTCUSTD.Item("CUST_CODE") = CUST_CODE
-        newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
-        newARTCUSTD.Item("CONTACT_NAME") = rowARTCUST1.Item("CUST_CONTACT").ToString & String.Empty
-        newARTCUSTD.Item("CONTACT_TITLE") = "Master Contact"
-        newARTCUSTD.Item("CONTACT_EMAIL") = rowARTCUST1.Item("CUST_EMAIL").ToString & String.Empty
-        newARTCUSTD.Item("CONTACT_PHONE") = rowARTCUST1.Item("CUST_PHONE").ToString & String.Empty
-        newARTCUSTD.Item("CONTACT_EXT") = rowARTCUST1.Item("CUST_EXT").ToString & String.Empty
-        newARTCUSTD.Item("CONTACT_FAX") = rowARTCUST1.Item("CUST_FAX").ToString & String.Empty
-        newARTCUSTD.Item("CONTACT_TYPE") = "X"
-        If isPrimary Then
-            newARTCUSTD.Item("CONTACT_PRIMARY") = "1"
-        Else
-            newARTCUSTD.Item("CONTACT_PRIMARY") = "0"
-        End If
-        newARTCUSTD.Item("CONTACT_NOTE") = "Added By Cont Maint"
-        newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
-        newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
-        newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
-        newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
-
-        newARTCUSTD.Item("CONTACT_CELL") = Null
-        dst.Tables("ARTCUSTD").Rows.Add(newARTCUSTD)
-    End Sub
-
-    Private Sub btnBuyerGroups_Click(sender As Object, e As EventArgs) Handles btnBuyerGroups.Click
-        'Stop
-        'Dim CUST_CODE As String = "200138"
-        'Dim sql As New Text.StringBuilder With {.Length = 0}
-        'Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
-        'Dim CONTACT_NO As Long = 1
-        'For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER, "CONTACT_NO")
-        '    If Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) >= CONTACT_NO Then
-        '        CONTACT_NO = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) + 1
-        '    End If
-        'Next
-
-        'sql.AppendLine("SELECT *")
-        'sql.AppendLine("FROM ARTCUST2")
-        'sql.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
-        'Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString())
-        'For Each rowARTCUST2 As DataRow In tbl.Rows
-        '    Dim newARTCUSTD As DataRow = dst.Tables("ARTCUSTD").NewRow
-        '    newARTCUSTD.Item("CUST_CODE") = CUST_CODE
-        '    newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
-        '    newARTCUSTD.Item("CONTACT_NAME") = rowARTCUST1.Item("CUST_CONTACT").ToString & String.Empty
-        '    newARTCUSTD.Item("CONTACT_TITLE") = "Ship To Contact"
-        '    newARTCUSTD.Item("CONTACT_EMAIL") = rowARTCUST1.Item("CUST_EMAIL").ToString & String.Empty
-        '    newARTCUSTD.Item("CONTACT_PHONE") = rowARTCUST1.Item("CUST_PHONE").ToString & String.Empty
-        '    newARTCUSTD.Item("CONTACT_EXT") = rowARTCUST1.Item("CUST_EXT").ToString & String.Empty
-        '    newARTCUSTD.Item("CONTACT_FAX") = rowARTCUST1.Item("CUST_FAX").ToString & String.Empty
-        '    newARTCUSTD.Item("CONTACT_TYPE") = "X"
-        '    newARTCUSTD.Item("CONTACT_PRIMARY") = "0"
-        '    newARTCUSTD.Item("CONTACT_NOTE") = "Added By Cont Maint"
-        '    newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
-        '    newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
-        '    newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
-        '    newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
-        '    newARTCUSTD.Item("CONTACT_CELL") = Null
-        '    dst.Tables("ARTCUSTD").Rows.Add(newARTCUSTD)
-        'Next
-    End Sub
-
     Private Sub btnManualUpdate_Click(sender As Object, e As EventArgs) Handles btnManualUpdate.Click
         Dim ToList As String = cboCopyToList.SelectedValue.ToString()
         Dim S As New Text.StringBuilder With {.Length = 0}
@@ -1361,7 +1246,120 @@ Public Class ARFCUSTL
         ASCMAIN1.Progress("")
     End Sub
 
-    Private Sub grdARTCUSTX_InitializeLayout(sender As Object, e As InitializeLayoutEventArgs) Handles grdARTCUSTX.InitializeLayout
+#Region "Space Code"
+    'Private Sub btnMakeMasterContacts_Click(sender As Object, e As EventArgs)
+    '    Dim iResult As MsgBoxResult
+    '    Dim iTitle As String = "Make Masterfile Contacts?"
+    '    Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+    '    iMSG.AppendLine("Are You Sure You Want To Do This?")
+    '    iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+    '    If iResult <> MsgBoxResult.Yes Then
+    '        Exit Sub
+    '    End If
 
-    End Sub
+    '    Setup_Summary()
+    '    Me.Cursor = Cursors.WaitCursor
+    '    For Each rowARTCUSTX As DataRow In dst.Tables("ARTCUSTX").Select()
+    '        Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
+    '        Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+    '        If dst.Tables.Item("ARTCUSTD").Select(FILTER).Count = 0 Then
+    '            AddMasterfileContact(rowARTCUSTX, False)
+    '        Else
+    '            Dim MFNAME As String = rowARTCUSTX.Item("CUST_CONTACT").ToString & String.Empty
+    '            If MFNAME.Length > 0 Then
+    '                MFNAME = MFNAME.ToUpper
+    '                Dim MFFOUND As Boolean = False
+    '                For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER)
+    '                    Dim CTNAME As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+    '                    If CTNAME.Length > 0 Then
+    '                        CTNAME = CTNAME.ToUpper
+    '                    End If
+    '                    If MFNAME = CTNAME Then
+    '                        MFFOUND = True
+    '                    End If
+    '                Next
+    '                If Not MFFOUND Then
+    '                    AddMasterfileContact(rowARTCUSTX, False)
+    '                End If
+    '            End If
+    '        End If
+    '    Next
+    '    Me.Cursor = Cursors.Default
+    'End Sub
+
+    'Private Sub AddMasterfileContact(ByRef rowARTCUSTX As DataRow, ByVal isPrimary As Boolean)
+    '    Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
+    '    Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+    '    Dim CONTACT_NO As Long = 1
+    '    For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER, "CONTACT_NO")
+    '        If Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) >= CONTACT_NO Then
+    '            CONTACT_NO = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) + 1
+    '        End If
+    '    Next
+
+    '    Dim rowARTCUST1 As DataRow = LookUp("ARTCUST1", CUST_CODE)
+
+    '    Dim newARTCUSTD As DataRow = dst.Tables("ARTCUSTD").NewRow
+    '    newARTCUSTD.Item("CUST_CODE") = CUST_CODE
+    '    newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
+    '    newARTCUSTD.Item("CONTACT_NAME") = rowARTCUST1.Item("CUST_CONTACT").ToString & String.Empty
+    '    newARTCUSTD.Item("CONTACT_TITLE") = "Master Contact"
+    '    newARTCUSTD.Item("CONTACT_EMAIL") = rowARTCUST1.Item("CUST_EMAIL").ToString & String.Empty
+    '    newARTCUSTD.Item("CONTACT_PHONE") = rowARTCUST1.Item("CUST_PHONE").ToString & String.Empty
+    '    newARTCUSTD.Item("CONTACT_EXT") = rowARTCUST1.Item("CUST_EXT").ToString & String.Empty
+    '    newARTCUSTD.Item("CONTACT_FAX") = rowARTCUST1.Item("CUST_FAX").ToString & String.Empty
+    '    newARTCUSTD.Item("CONTACT_TYPE") = "X"
+    '    If isPrimary Then
+    '        newARTCUSTD.Item("CONTACT_PRIMARY") = "1"
+    '    Else
+    '        newARTCUSTD.Item("CONTACT_PRIMARY") = "0"
+    '    End If
+    '    newARTCUSTD.Item("CONTACT_NOTE") = "Added By Cont Maint"
+    '    newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+    '    newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
+    '    newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+    '    newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
+
+    '    newARTCUSTD.Item("CONTACT_CELL") = Null
+    '    dst.Tables("ARTCUSTD").Rows.Add(newARTCUSTD)
+    'End Sub
+
+    'Private Sub btnBuyerGroups_Click(sender As Object, e As EventArgs) Handles btnBuyerGroups.Click
+    '    'Stop
+    '    'Dim CUST_CODE As String = "200138"
+    '    'Dim sql As New Text.StringBuilder With {.Length = 0}
+    '    'Dim FILTER As String = String.Format("CUST_CODE = '{0}'", CUST_CODE)
+    '    'Dim CONTACT_NO As Long = 1
+    '    'For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select(FILTER, "CONTACT_NO")
+    '    '    If Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) >= CONTACT_NO Then
+    '    '        CONTACT_NO = Val(rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty) + 1
+    '    '    End If
+    '    'Next
+
+    '    'sql.AppendLine("SELECT *")
+    '    'sql.AppendLine("FROM ARTCUST2")
+    '    'sql.AppendLine(String.Format("WHERE CUST_CODE = '{0}'", CUST_CODE))
+    '    'Dim tbl As DataTable = ASCDATA1.GetDataTable(sql.ToString())
+    '    'For Each rowARTCUST2 As DataRow In tbl.Rows
+    '    '    Dim newARTCUSTD As DataRow = dst.Tables("ARTCUSTD").NewRow
+    '    '    newARTCUSTD.Item("CUST_CODE") = CUST_CODE
+    '    '    newARTCUSTD.Item("CONTACT_NO") = CONTACT_NO
+    '    '    newARTCUSTD.Item("CONTACT_NAME") = rowARTCUST1.Item("CUST_CONTACT").ToString & String.Empty
+    '    '    newARTCUSTD.Item("CONTACT_TITLE") = "Ship To Contact"
+    '    '    newARTCUSTD.Item("CONTACT_EMAIL") = rowARTCUST1.Item("CUST_EMAIL").ToString & String.Empty
+    '    '    newARTCUSTD.Item("CONTACT_PHONE") = rowARTCUST1.Item("CUST_PHONE").ToString & String.Empty
+    '    '    newARTCUSTD.Item("CONTACT_EXT") = rowARTCUST1.Item("CUST_EXT").ToString & String.Empty
+    '    '    newARTCUSTD.Item("CONTACT_FAX") = rowARTCUST1.Item("CUST_FAX").ToString & String.Empty
+    '    '    newARTCUSTD.Item("CONTACT_TYPE") = "X"
+    '    '    newARTCUSTD.Item("CONTACT_PRIMARY") = "0"
+    '    '    newARTCUSTD.Item("CONTACT_NOTE") = "Added By Cont Maint"
+    '    '    newARTCUSTD.Item("INIT_OPER") = ASCMAIN1.USER_ID
+    '    '    newARTCUSTD.Item("LAST_DATE") = DATETIME_STAMP
+    '    '    newARTCUSTD.Item("LAST_OPER") = ASCMAIN1.USER_ID
+    '    '    newARTCUSTD.Item("INIT_DATE") = DATETIME_STAMP
+    '    '    newARTCUSTD.Item("CONTACT_CELL") = Null
+    '    '    dst.Tables("ARTCUSTD").Rows.Add(newARTCUSTD)
+    '    'Next
+    'End Sub
+#End Region
 End Class

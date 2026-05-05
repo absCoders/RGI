@@ -7,6 +7,7 @@ Public Class POFSHIP1
     ' warehouse receipt currently piggy backs on code flow around LP_STATUS, and not all of the code is proper - ie nadine should not be able to recall a shipment that has been "sent" to the warehouse
 
     Dim automated_cost_complete As Boolean = False
+    Dim automated_cost_complete_check As String = ""
 
     Dim PO_SHIPMENT_NO As String
     Dim rowPOTSHIP1 As DataRow
@@ -73,6 +74,7 @@ Public Class POFSHIP1
     Dim POTVBKG2_RECORDS As Boolean = False
     Dim Shipment_Invoiced As Boolean = False
     Dim COST_CATGY_CODE_T As Boolean = False
+    Dim CONTON As String = ""
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
 
@@ -420,6 +422,7 @@ Public Class POFSHIP1
                 .Columns.Add("PO_REFERENCE2")
                 .Columns.Add("PO_ORDER_NO2")
                 .Columns.Add("QTY_OPEN_PO_ORDER_NO2", GetType(System.Int64))
+                .Columns.Add("FIX")
             End With
 
             With .Tables.Add("POTSHPXL")
@@ -2006,6 +2009,11 @@ Public Class POFSHIP1
         cbeReceipts2.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, PrdsBack) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
         cbeReceipts2.SelectedItem = cbeReceipts2.Items(0)
 
+
+        cbeCostComplete.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -60) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
+        cbeCostComplete.SelectedItem = cbeCostComplete.Items(0) ' cbeYPSFrom.Items(Val(Mid(ASCMAIN1.CYP, 5, 2)) - 1)
+
+
         Bind_Controls(grpShipment, "POTSHIP1")
 
         'Show_Filter(grdWHT3PLR2, True)
@@ -2388,7 +2396,11 @@ Public Class POFSHIP1
 
                 ' If eItemKey = "Edit" Then
                 If EMsg = "" Then
-                    If Not ASCMAIN1.Logical_Lock("POTSHIP1", PO_SHIPMENT_NO) Then Exit Sub
+                    If Not ASCMAIN1.Logical_Lock("POTSHIP1", PO_SHIPMENT_NO) Then
+                        automated_cost_complete_check = "B"
+                        Exit Sub
+                    End If
+
                 End If
 
                 'Lock all PO's on this shipment for exclusive use.
@@ -3364,16 +3376,16 @@ Public Class POFSHIP1
                             Dim LANDING_COST_F As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_F)", "") & "")
                             Dim LANDING_COST_W As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_W)", "") & "")
 
-                            If System.Math.Abs(TOTAL_TRUCKING - LANDING_COST_T) > TOLERANCE Then
+                            If System.Math.Abs(TOTAL_TRUCKING - LANDING_COST_T) > TOLERANCE And rowPOTSHIP1.Item("WHSE_CODE") & "" <> "FE" And rowPOTSHIP1.Item("WHSE_CODE") & "" <> "FD" Then
                                 EMsg &= vbCr & "Trucking Costs Distribution is Out of Balance (by more than " & Format(TOLERANCE, "#.00") & ")"
                             End If
-                            If System.Math.Abs(TOTAL_MISC - LANDING_COST_M) > TOLERANCE Then
+                            If System.Math.Abs(TOTAL_MISC - LANDING_COST_M) > TOLERANCE And rowPOTSHIP1.Item("WHSE_CODE") & "" <> "FE" And rowPOTSHIP1.Item("WHSE_CODE") & "" <> "FD" Then
                                 EMsg &= vbCr & "Misc Costs Distribution is Out of Balance (by more than " & Format(TOLERANCE, "#.00") & ")"
                             End If
                             If System.Math.Abs(TOTAL_FREIGHT - LANDING_COST_F) > TOLERANCE Then
                                 EMsg &= vbCr & "Freight Costs Distribution is Out of Balance (by more than " & Format(TOLERANCE, "#.00") & ")"
                             End If
-                            If System.Math.Abs(TOTAL_CUSTOMS - LANDING_COST_W) > TOLERANCE Then
+                            If System.Math.Abs(TOTAL_CUSTOMS - LANDING_COST_W) > TOLERANCE And rowPOTSHIP1.Item("WHSE_CODE") & "" <> "FE" And rowPOTSHIP1.Item("WHSE_CODE") & "" <> "FD" Then
                                 EMsg &= vbCr & "Customs Costs Distribution is Out of Balance (by more than " & Format(TOLERANCE, "#.00") & ")"
                             End If
 
@@ -3526,7 +3538,6 @@ Public Class POFSHIP1
                                 packingListPOs.Add(PO_ORDER_NO8)
                             End If
                             ' dgj new
-
                         Next
                         'Book2ShiP(VBKG_NO, PO_SHIPMENT_NO)
                     Next
@@ -3735,6 +3746,12 @@ Public Class POFSHIP1
                 Load_Record()
                 Mode_Settings(True)
 
+                If MENU_ITEM_OBJECT = "POFSHIPC" And ASCMAIN1.CLIENT = "RGI" Then
+                    Calculate_Landed_Cost()
+                End If
+
+
+
             Case "View"
                 EntryMode = "V"
                 Load_Record()
@@ -3902,7 +3919,18 @@ Public Class POFSHIP1
                 .Groups("Receipt Type").Visible = Not ScreenMode And receipt_mode
                 .Groups("Packing Slips").Visible = False
 
-                .Groups("Special Functions").Visible = ScreenMode And (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie" Or ASCMAIN1.USER_ID = "erodriguez")) And ship_entry
+                .Groups("Special Functions").Visible = (ScreenMode = False) And (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie" Or ASCMAIN1.USER_ID = "erodriguez")) And ship_entry
+                chkOrderDetails.Visible = (ASCMAIN1.CLIENT = "VAN" And (ASCMAIN1.USER_ID = "dgj" Or ASCMAIN1.USER_ID = "kala" Or ASCMAIN1.USER_ID = "gabe" Or ASCMAIN1.USER_ID = "jimmie" Or ASCMAIN1.USER_ID = "erodriguez")) And ship_entry
+                If ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.DBS_SERVER = "RGIUAT" And (ASCMAIN1.USER_ID = "elaine" Or ASCMAIN1.USER_ID = "andy" Or ASCMAIN1.USER_ID = "dgj") And (ScreenMode = False) And cost_calc Then
+                    .Groups("Special Functions").Visible = True
+                    lblCostComplete.Visible = True
+                    cbeCostComplete.Visible = True
+                    btnCostComplete.Visible = True
+                Else
+                    lblCostComplete.Visible = False
+                    cbeCostComplete.Visible = False
+                    btnCostComplete.Visible = False
+                End If
 
 
 
@@ -4136,6 +4164,10 @@ Public Class POFSHIP1
         dicWorksheetPOs.Clear()
         dicWorkbooks.Clear()
 
+        'automated_cost_complete = False
+        'automated_cost_complete_check = ""
+
+
         '   fix_ICTSTYL1_packs = False
         WH_REC_NOsInProcess.Clear()
 
@@ -4169,6 +4201,7 @@ Public Class POFSHIP1
 
         AT_Packing = False
         AT_Packing_Errors = ""
+        CONTON = ""
 
         If ASCMAIN1.CLIENT = "VAN" Then
             dicPOTORDR1.Clear()
@@ -4219,7 +4252,9 @@ Public Class POFSHIP1
     Sub Load_Record()
 
         Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Loading Shipment")
+
+        If Not automated_cost_complete Then ASCMAIN1.Progress("Now Loading Shipment")
+
 
         Save_Header_Fields(UltraGroupBox1)
 
@@ -4344,6 +4379,25 @@ Public Class POFSHIP1
                         COST_FACTOR = Val(ASCDATA1.GetDataValue) / 100
                     End If
 
+                    ' REM CHECK FOR MULTIPLE SHIPMENTS - SAME po
+
+                    Dim COST_FACTOR_MULTI_SHIP As Decimal = 1
+                    If rowPOTLCST1.Item("PO_SHIPMENT_NO") & "" = "" Then
+                        Dim PO_ORDER_NO As String = rowPOTLCST1.Item("PO_ORDER_NO") ' THERE BETTER BE A PO IF THERE IS NO SHIPMENT
+                        ASCMAIN1.sql = "" _
+                            & "Select  COUNT(*) FROM ( " & vbCrLf _
+                            & " Select DISTINCT POTSHIP2.PO_SHIPMENT_NO" & vbCrLf _
+                            & "From POTSHIP1, POTSHIP2, POTSHIP3" & vbCrLf _
+                            & "Where POTSHIP1.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                            & " And POTSHIP2.PO_SHIPMENT_NO = POTSHIP3.PO_SHIPMENT_NO" & vbCrLf _
+                            & "And POTSHIP2.PO_SHIPMENT_LNO = POTSHIP3.PO_SHIPMENT_LNO" & vbCrLf _
+                            & "And POTSHIP3.PO_ORDER_NO =  '" & PO_ORDER_NO & "')"
+                        If Val(ASCDATA1.GetDataValue) > 1 Then
+                            COST_FACTOR_MULTI_SHIP = 1 / Val(ASCDATA1.GetDataValue)
+                        End If
+                    End If
+
+
                     rowPOTSHIP5 = dst.Tables("POTSHIP5").NewRow
                     With rowPOTSHIP5
                         .Item("PO_SHIPMENT_NO") = PO_SHIPMENT_NO
@@ -4351,8 +4405,9 @@ Public Class POFSHIP1
                         .Item("PO_SHIPMENT_LNO") = PO_SHIPMENT_LNO
 
                         Dim rowPOTCATG1 As DataRow = LookUp("POTCATG1", rowPOTLCST1.Item("COST_CATGY_CODE"))
+                        .Item("COST_CATGY_CODE") = rowPOTCATG1.Item("COST_CATGY_CODE")
                         .Item("COST_CATGY_DESC") = rowPOTCATG1.Item("COST_CATGY_DESC")
-                        .Item("LANDING_COST_AMT") = Val(rowPOTLCST1.Item("COST_ACT") & "") * COST_FACTOR
+                        .Item("LANDING_COST_AMT") = (Val(rowPOTLCST1.Item("COST_ACT") & "") * COST_FACTOR_MULTI_SHIP) * COST_FACTOR
                         .Item("LANDING_COST_DIST") = rowPOTCATG1.Item("LANDING_COST_DIST")
                         .Item("LANDING_COST_COMMENT") = "Vendor Invoice"
                         .Item("CTL_NO") = rowPOTLCST1.Item("CTL_NO")
@@ -4554,7 +4609,7 @@ Public Class POFSHIP1
         ChangesMade = False
 
         Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("")
+        If Not automated_cost_complete Then ASCMAIN1.Progress("")
 
     End Sub
 
@@ -7051,7 +7106,7 @@ Public Class POFSHIP1
                 Context_Launch("View", PO_ORDER_NO, e.Tool.Key, "POFORDRI", "F", "POE")
 
             Case "Voucher Inquiry"
-                Dim VOUCHER_NO As String = grd.ActiveRow.Cells("VOUCHER_NO").Value
+                Dim VOUCHER_NO As String = grd.ActiveRow.Cells("VOUCHER_NO").Value & ""
                 Dim rowAPTINVH1 As DataRow = LookUp("APTINVH1", VOUCHER_NO)
                 If rowAPTINVH1 IsNot Nothing Then
                     Context_Launch("Load", VOUCHER_NO, e.Tool.Key, "APFINVHI")
@@ -8545,7 +8600,9 @@ Public Class POFSHIP1
     Sub Load_POTSHIPX()
 
         Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Loading Data")
+
+
+        If Not automated_cost_complete Then ASCMAIN1.Progress("Now Loading Data")
 
         If receipt_mode Then Get_Receipt_Data_from_3PL()
 
@@ -8610,7 +8667,7 @@ Public Class POFSHIP1
         End If
 
         Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
+        If Not automated_cost_complete Then ASCMAIN1.Progress("")
     End Sub
 
     Private Sub tabPOTSHIP1_SelectedTabChanged(sender As System.Object, e As Infragistics.Win.UltraWinTabControl.SelectedTabChangedEventArgs)
@@ -8625,7 +8682,7 @@ Public Class POFSHIP1
     Sub Calculate_Landed_Cost()
 
         Me.Cursor = Cursors.WaitCursor
-        ASCMAIN1.Progress("Now Calculating Landed Costs")
+        If Not automated_cost_complete Then ASCMAIN1.Progress("Now Calculating Landed Costs")
 
         Synch_TABLE_NAME("POTSHIP1")
 
@@ -8662,7 +8719,10 @@ Public Class POFSHIP1
         Dim TOTAL_MISC_INVOICED_NOT_TARIFF As Decimal = Math.Abs(TOTAL_MISC_INVOICED_TARRIFF - TOTAL_MISC_INVOICED)
 
         Dim TOTAL_DUTY_INVOICED_TARIFF As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_D)", sqlP & sqlp2 & " AND COST_CATGY_CODE = 'TARIFF'") & "")
+        Dim TOTAL_DUTY_INVOICED_DUTY As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_AMT)", sqlP & sqlp2 & " AND LANDING_COST_DIST = 'D'") & "")
+
         Dim TOTAL_DUTY_INVOICED As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_D)", sqlP & sqlp2) & "")
+        Dim TOTAL_DUTY_INVOICED_CHARGEDBACK As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(CHARGEBACK_AMT)", sqlP & sqlp2 & " AND LANDING_COST_DIST = 'D'") & "")
         Dim TOTAL_CUSTOMS_INVOICED As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_W)", sqlP & sqlp2) & "")
         Dim TOTAL_DUTY_INVOICED_NOT_TARIFF As Decimal = Math.Abs(TOTAL_DUTY_INVOICED_TARIFF - TOTAL_DUTY_INVOICED)
 
@@ -8783,7 +8843,10 @@ Public Class POFSHIP1
                         ' The 2% is a fee we charge to the supplier to cover our overhead costs for JA. 
                         ' We will pay less duty
 
-                        If TOTAL_DUTY_INVOICED <> 0 And ASCMAIN1.CLIENT = "RGI" Then
+                        '    If TOTAL_DUTY_INVOICED <> 0 And ASCMAIN1.CLIENT = "RGI" Then
+
+
+                        If ASCMAIN1.CLIENT = "RGI" Then
                             .Item("PO_COST_DUTY") = 0
                         Else
                             .Item("PO_COST_DUTY") = PO_COST_DUTY
@@ -8812,22 +8875,43 @@ Public Class POFSHIP1
                             ' Add Duty from Grid 
                             ' 2ND PASS DGJ
                             Dim e As Decimal = 0
-                            If ASCMAIN1.CLIENT = "RGI" And TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE <> 0 And TOTAL_DUTY_INVOICED <> 0 Then
-                                e = TOTAL_DUTY_INVOICED / TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE
-                                For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
-                                    If rowPOTSHIP3.Item("DUTY_RATE") <> 0 Then
+                            If ASCMAIN1.CLIENT = "RGI" And TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE <> 0 Then
+                                ' JUST RGI
+                                Dim DUTY_DIST As Decimal = TOTAL_DUTY_INVOICED_DUTY - TOTAL_DUTY_INVOICED_CHARGEDBACK
+                                If TOTAL_DUTY_INVOICED <> 0 And DUTY_DIST > 0 Then
+                                    e = TOTAL_DUTY_INVOICED / TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE
+                                    For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                        If rowPOTSHIP3.Item("DUTY_RATE") <> 0 Then
 
-                                        Dim a As Decimal = Val(rowPOTSHIP3.Item("DUTY_RATE") & "") / 100
-                                        Dim b As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
+                                            Dim a As Decimal = Val(rowPOTSHIP3.Item("DUTY_RATE") & "") / 100
+                                            Dim b As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
 
-                                        e = System.Math.Round(a * b, 6)
-                                        rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(e, 6)
-                                        rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(e, 6)
+                                            e = System.Math.Round(a * b, 6)
+                                            rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(e, 6)
+                                            rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(e, 6)
 
+                                        End If
+                                    Next '
+                                Else
+                                    If TOTAL_DUTY_INVOICED_CHARGEDBACK = 0 Then
+                                        ' e = TOTAL_DUTY_INVOICED / TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE
+                                        For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                            If rowPOTSHIP3.Item("DUTY_RATE") <> 0 Then
+
+                                                Dim a As Decimal = Val(rowPOTSHIP3.Item("DUTY_RATE") & "") / 100
+                                                Dim b As Decimal = Val(rowPOTSHIP3.Item("PO_COST_VCOST") & "")
+
+                                                e = System.Math.Round(a * b, 6)
+                                                rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(e, 6)
+                                                rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(e, 6)
+
+                                            End If
+                                        Next
                                     End If
-                                Next
-                            Else
+                                End If
 
+                            Else
+                                ' RGI & VAN (Add Tariff Duty by First Cost)
                                 Dim dutyRate As Decimal = TOTAL_DUTY_INVOICED_TARIFF / TOTAL_FC_THIS_SHIPMENT
 
                                 For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
@@ -8839,25 +8923,38 @@ Public Class POFSHIP1
                                     rowPOTSHIP3.Item("PO_COST_LANDED") += allocatedDuty
                                 Next
 
-                                If TOTAL_DUTY_INVOICED_NOT_TARIFF <> 0 Then
-                                    dutyRate = TOTAL_DUTY_INVOICED_NOT_TARIFF / TOTAL_QTY_THIS_SHIPMENT
-                                    For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
-                                        If ASCMAIN1.CLIENT = "VAN" Or ASCMAIN1.CLIENT = "RGI" Then
-                                            rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(dutyRate, 6)
-                                            rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(dutyRate, 6)
-                                        Else
-                                        End If
-                                    Next
+                                If TOTAL_DUTY_INVOICED_NOT_TARIFF <> 0 And ASCMAIN1.CLIENT <> "RGI" Then
+                                    Dim CONTON As Boolean = True
+                                    If CONTON = True Then
+                                        dutyRate = TOTAL_DUTY_INVOICED_NOT_TARIFF / TOTAL_QTY_THIS_SHIPMENT
+                                        For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                            If ASCMAIN1.CLIENT = "VAN" Then
+                                                rowPOTSHIP3.Item("PO_COST_DUTY") += System.Math.Round(dutyRate, 6)
+                                                rowPOTSHIP3.Item("PO_COST_LANDED") += System.Math.Round(dutyRate, 6)
+                                            Else
+                                            End If
+                                        Next
+                                    End If
+
 
                                 End If
-
-
                             End If
+                            If ASCMAIN1.CLIENT = "RGI" Then
+                                Dim dutyRate As Decimal = TOTAL_MISC_INVOICED_TARRIFF / TOTAL_FC_THIS_SHIPMENT
 
+                                For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
+                                    Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
+                                    Dim EXT_FIRST_DET As Decimal = Val(rowPOTSHIP3.Item("EXT_FIRST") & "")
+                                    Dim allocatedDuty As Decimal = System.Math.Round(dutyRate * EXT_FIRST_DET, 6)
+                                    allocatedDuty = allocatedDuty / PO_QTY_SR
+                                    rowPOTSHIP3.Item("PO_COST_MISC") += allocatedDuty
+                                    rowPOTSHIP3.Item("PO_COST_LANDED") += allocatedDuty
+                                Next
+                            End If
                         End If
                     Else
 
-                        '  CALCULATE MISC
+                        '  CALCULATE MISC Tariff Duty for VAN & RGI NO Duty Checked goes to Misc
                         Dim dutyRate As Decimal = TOTAL_MISC_INVOICED_TARRIFF / TOTAL_FC_THIS_SHIPMENT
 
                         For Each rowPOTSHIP3 As DataRow In rowPOTSHIP2.GetChildRows("POTSHIP2_POTSHIP3")
@@ -8903,10 +9000,11 @@ Public Class POFSHIP1
             Else
 
             End If
-            ' RGI DUTY TARIFF CALC
+            ' RGI DUTY CALC FO LINES WITH NO DUTY TO DISTRIBUTE TO LINES WITH DUTY Rate
             If ASCMAIN1.CLIENT = "RGI" And TOTAL_DUTY_INVOICED <> 0 Then
                 Dim TOTAL_DUTY_RATE_OTHER As Decimal = Val(dst.Tables("POTSHIP3").Compute("SUM(EXT_DUTY)", "DUTY_RATE <> 0") & "")
                 Dim F As Decimal = TOTAL_DUTY_INVOICED - TOTAL_DUTY_RATE_OTHER
+                ' If F > 0 Then
                 For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
                     If rowPOTSHIP3.Item("DUTY_RATE") <> 0 Then
                         Dim e As Decimal = (F * (Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "") / TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE)) / Val(rowPOTSHIP3.Item("PO_QTY_SHP") & "")
@@ -8915,18 +9013,53 @@ Public Class POFSHIP1
                     End If
                 Next
 
+                '  End If
             End If
 
+            If ASCMAIN1.CLIENT = "RGI" And TOTAL_QTY_THIS_SHIPMENT_WITH_DUTY_RATE = 0 And TOTAL_DUTY_INVOICED_NOT_TARIFF <> 0 Then
+                If CONTON = "" Then
+                    If ASCMAIN1.CLIENT = "RGI" Then
+                        If automated_cost_complete Then
+                            CONTON = "Y"
+                        Else
+                            If MsgBox("There are no Duty Rates for Any Styles on this Shipment, But there is a Duty Amount that has been entered in AP, Do You want to to prorate duty based on first cost" + vbCrLf & "Continue?", MsgBoxStyle.YesNo + MsgBoxStyle.Critical, "Generate Negative Invoice?") = MsgBoxResult.No Then
+                                CONTON = "N"
+                            Else
+                                CONTON = "Y"
+                            End If
+                        End If
+                    End If
+                End If
+
+                ''If ASCMAIN1.CLIENT = "RGI" Then
+                ''    If MsgBox("There are no Duty Rates for Any Styles on this Shipment, But there is a Duty Amount that has been entered in AP, Do You want to to prorate duty based on first cost" + vbCrLf & "Continue?", MsgBoxStyle.YesNo + MsgBoxStyle.Critical, "Generate Negative Invoice?") = MsgBoxResult.No Then
+                ''        CONTON = False
+                ''    End If
+                ''End If
+                If CONTON = "Y" Then
+                    Dim dutyRate As Decimal = TOTAL_DUTY_INVOICED_NOT_TARIFF / TOTAL_FC_THIS_SHIPMENT
+                    For Each rowPOTSHIP3 As DataRow In dst.Tables("POTSHIP3").Select("")
+                        If ASCMAIN1.CLIENT = "RGI" Then
+                            Dim PO_QTY_SR As Int64 = Val(rowPOTSHIP3.Item("PO_QTY_SR") & "")
+                            Dim EXT_FIRST_DET As Decimal = Val(rowPOTSHIP3.Item("EXT_FIRST") & "")
+                            Dim allocatedDuty As Decimal = System.Math.Round(dutyRate * EXT_FIRST_DET, 6)
+                            allocatedDuty = allocatedDuty / PO_QTY_SR
+                            rowPOTSHIP3.Item("PO_COST_DUTY") += allocatedDuty
+                            rowPOTSHIP3.Item("PO_COST_LANDED") += allocatedDuty
+                        End If
+                    Next
+                End If
+            End If
 
         End If
 
-            rowPOTSHIP1.Item("COST_IND") = "1"
+        rowPOTSHIP1.Item("COST_IND") = "1"
         Set_Landed_Cost_Needs_to_be_Calculated_Indicator(True)
 
         '  Calculate_DUTY_DIST()
 
         Me.Cursor = Cursors.Default
-        ASCMAIN1.Progress("")
+        If Not automated_cost_complete Then ASCMAIN1.Progress("")
 
     End Sub
 
@@ -9453,6 +9586,9 @@ Public Class POFSHIP1
 
         STYLE_CODEs_No_Duty.Clear()
 
+        Dim TOTAL_MISC_INVOICED_TARRIFF As Decimal = Val(dst.Tables("POTSHIP5").Compute("SUM(LANDING_COST_M)", " COST_CATGY_CODE = 'TARIFF'") & "")
+
+
         Dim rowICTWHSE1 As DataRow = LookUp("ICTWHSE1", Absx1.txtFor("WHSE_CODE").Text)
         Dim WHSE_COUNTRY As String = rowICTWHSE1.Item("WHSE_COUNTRY") & ""
         Dim COUNTRY_CODE As String = ""
@@ -9524,8 +9660,8 @@ Public Class POFSHIP1
                             ASCMAIN1.sql = "Select * from ICTDUTY4" & vbCrLf _
                                 & " where DUTY_RATE_CODE = '" & DUTY_RATE_CODE & "'" & vbCrLf _
                                 & "   and COUNTRY_CODE = '" & COUNTRY_CODE_import_from & "'" & vbCrLf _
-                                & "   and DUTY_RATE_BEGIN <= '" & DATE_RECEIVED_IN_PORT_sql & "'" & vbCrLf _
-                                & "   and (DUTY_RATE_END is Null or DUTY_RATE_END >= '" & DATE_RECEIVED_IN_PORT_sql & "')"
+                                & "   and DUTY_RATE_BEGIN <='" & DATE_RECEIVED_IN_PORT_sql & "'" & vbCrLf _
+                                & " and (DUTY_RATE_END is Null or DUTY_RATE_END >= '" & DATE_RECEIVED_IN_PORT_sql & "')"
                             Dim row As DataRow = ASCDATA1.GetDataRow
 
                             If row Is Nothing Then
@@ -9543,7 +9679,10 @@ Public Class POFSHIP1
                         Dim DUTY_RATE_ADD As String = rowICTDUTY4.Item("DUTY_RATE_ADD") & ""
                         If DUTY_RATE_ADD = "1" Then
                             TARIFF_1 = DUTY_RATE
-                            DUTY_RATE += DUTY_RATE_ICTSTYLD
+                            ' TOTAL_MISC_INVOICED_TARRIFF
+                            If ASCMAIN1.DBS_COMPANY <> "RGI" Or TOTAL_MISC_INVOICED_TARRIFF = 0 Then
+                                DUTY_RATE += DUTY_RATE_ICTSTYLD
+                            End If
                         End If
 
                         If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
@@ -9578,7 +9717,9 @@ Public Class POFSHIP1
                                                 End If
                                                 If GOODT = "Y" Then
                                                     Dim DUTY_RATE_ICTTARF2 As Decimal = Val(rowICTTARF2.Item("TARIFF_PCT") & "")
-                                                    DUTY_RATE += DUTY_RATE_ICTTARF2
+                                                    If ASCMAIN1.DBS_COMPANY <> "RGI" Or TOTAL_MISC_INVOICED_TARRIFF = 0 Then
+                                                        DUTY_RATE += DUTY_RATE_ICTTARF2
+                                                    End If
                                                     TARIFF_2 = DUTY_RATE_ICTTARF2
                                                     Exit For
                                                 End If
@@ -9623,8 +9764,12 @@ Public Class POFSHIP1
 
                             '''End If
                         End If
-
-                        rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE
+                        If ASCMAIN1.DBS_COMPANY = "RGI" And TOTAL_MISC_INVOICED_TARRIFF <> 0 Then
+                            rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE_PERC
+                        Else
+                            rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE
+                        End If
+                        ' rowICTSTYLD.Item("DUTY_RATE") = DUTY_RATE
                         rowICTSTYLD.Item("DUTY_RATE_PERC") = DUTY_RATE_PERC
                         rowICTSTYLD.Item("TARIFF_1") = TARIFF_1
                         rowICTSTYLD.Item("TARIFF_2") = TARIFF_2
@@ -14653,12 +14798,39 @@ Public Class POFSHIP1
                     End If
 
                     If PO_QTY_SHP > PO_QTY_OPN Then
+
+                        ' get total shipped , total available
+                        ''Dim sqlw As String = "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
+                        ''Dim expr As String = "SUM(IIF(True, CARTON_COUNT * CARTON_PACK, 0))"
+                        ''Dim PO_QTY_SHP_STYLE As Int64 = Convert.ToInt64(dst.Tables("POTPACK3").Compute(expr, sqlw))
+
+                        Dim rows() = dst.Tables("POTPACK3").Select($"STYLE_CODE = '{STYLE_CODE}' AND COLOR_CODE = '{COLOR_CODE}'")
+                        Dim PO_QTY_SHP_STYLE As Long = rows.Sum(Function(r) CLng(r("CARTON_COUNT")) * CLng(r("CARTON_PACK")))
+
+
+
+                        Dim PO_QTY_OPN_TOT As Int64 = 0
+                        Dim FIX As String = ""
+                        For Each rowPOTORDR2x As DataRow In TBLPOTORDR2.Select($"PO_ORDER_NO = '{PO_ORDER_NO}' and STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}' AND PO_QTY_OPN > 0") ' GREATER THAN OR = SHIP
+
+                            PO_QTY_OPN_TOT = PO_QTY_OPN_TOT + Val(rowPOTORDR2x.Item("PO_QTY_OPN") & "")
+                        Next
+                        If PO_QTY_OPN_TOT >= PO_QTY_SHP_STYLE Then
+                            FIX = $"Please Consolidate PO {PO_ORDER_NO} for Style " & STYLE_CODE & "-" & COLOR_CODE
+                        Else
+                            FIX = "Over-shipment"
+                        End If
+
+
                         Dim rowPOTSHPIE As DataRow = dst.Tables("POTSHPIE").NewRow
                         With rowPOTSHPIE
                             .Item("WORKBOOK") = "Bk# " & VBKG_NO
                             .Item("WORKSHEET") = "PL# " & PACK_LIST_NO
                             .Item("IE_LNO") = PACK_LIST_SHEET_NO
-                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
+                            '               .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
+                            .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} Is greater than Qty Open {PO_QTY_OPN} Total Avail In PO {PO_QTY_OPN_TOT} Total Packed {PO_QTY_SHP_STYLE}"
+                            .Item("FIX") = FIX
+
                             '  .Item("ERROR_MSG") = $"Pack Qty {PO_QTY_SHP} is greater than Qty Open {PO_QTY_OPN}"
                             '.Item("XLS_REF") = xlsRef
 
@@ -15880,7 +16052,7 @@ Public Class POFSHIP1
             End If
 
         End If
-            Return True
+        Return True
     End Function
     Private Sub UpdateFor3PL()
         If WHSE_CODE <> WHSE_CODE_ORIG AndAlso (WHSE_CODE = "US" Or WHSE_CODE_ORIG = "US") Then
@@ -15942,11 +16114,11 @@ Public Class POFSHIP1
                 worksheet.Cells(0, 2).EntireColumn.NumberFormat = "@" ' PO_NUMBER
                 worksheet.Cells(0, 8).EntireColumn.NumberFormat = "@" 'UPC
                 Dim range As SpreadsheetGear.IRange = worksheet.Cells("A1")
-            range.CopyFromDataTable(tblEXPORT, SpreadsheetGear.Data.SetDataFlags.None)
-            workbook.SaveAs(WorkDir & csvFileName, SpreadsheetGear.FileFormat.UnicodeText)
-            range = Nothing
-            worksheet = Nothing
-            workbook = Nothing
+                range.CopyFromDataTable(tblEXPORT, SpreadsheetGear.Data.SetDataFlags.None)
+                workbook.SaveAs(WorkDir & csvFileName, SpreadsheetGear.FileFormat.UnicodeText)
+                range = Nothing
+                worksheet = Nothing
+                workbook = Nothing
 
                 'Copy to sftp EDI machine for transmitting
                 My.Computer.FileSystem.CopyFile(WorkDir & csvFileName, ED_PARM_3PL_FTP_DIR & csvFileName, True)
@@ -16006,6 +16178,85 @@ Public Class POFSHIP1
             MessageBox.Show("Error emailing Warehouse receipts." & ex.Message, "Email Error", MessageBoxButtons.OK)
             Rollback()
         End Try
+
+    End Sub
+
+    Private Sub btnCostComplete_Click(sender As Object, e As EventArgs) Handles btnCostComplete.Click
+        automated_cost_complete = True
+        Dim COST_PERIOD As String = ""
+        COST_PERIOD = cbeCostComplete.Value
+
+        ''ASCMAIN1.sql = "SELECT PO_SHIPMENT_NO FROM POTSHIP1 WHERE PO_SHIPMENT_NO IN (" & vbCrLf _
+        ''    & "SELECT DISTINCT PO_SHIPMENT_NO FROM POTSHIP2 WHERE OPS_YYYYPP <= '201512')" & vbCrLf _
+        ''    & "AND NVL(COST_COMPLETE,'0') = '0'" '  and PO_SHIPMENT_NO IN ('000422','000668','000372','000150','000177','000178','000421')"
+
+        ASCMAIN1.sql = "SELECT PO_SHIPMENT_NO FROM POTSHIP1 WHERE PO_SHIPMENT_NO IN (" & vbCrLf _
+            & "SELECT DISTINCT PO_SHIPMENT_NO FROM POTSHIP2 WHERE OPS_YYYYPP >= '" & COST_PERIOD & "' AND OPS_YYYYPP <= '" & COST_PERIOD & "')" & vbCrLf _
+            & "AND NVL(COST_COMPLETE,'0') = '0'"
+        ''  Dim CCTEMP As String = ASCMAIN1.Temp_Table()
+
+        ' And PO_SHIPMENT_NO Not In ('010733','011084','011085','011147','011204','011207','011225','011227','011397','011622','010285')"
+
+        Dim tbl As DataTable = ASCDATA1.GetDataTable
+        Dim rowCount As Integer = tbl.Rows.Count
+        Dim SHIPMENT_CTR As Integer = 0
+        For Each row As DataRow In tbl.Select("", "PO_SHIPMENT_NO")
+            SHIPMENT_CTR += 1
+
+            ASCMAIN1.Progress("Shipments Cost Completed", SHIPMENT_CTR & " of " & rowCount)
+            Dim PO_SHIPMENT_NO As String = row.Item("PO_SHIPMENT_NO")
+
+            Absx1.txtFor("PO_SHIPMENT_NO").Text = PO_SHIPMENT_NO
+            rowPOTSHIP1 = Fill_Record("POTSHIP1", PO_SHIPMENT_NO)
+
+            Click_Command("Edit")
+            If automated_cost_complete_check <> "" Then
+                Exit Sub
+            End If
+
+            Dim FRT_TERMS As String = ""
+            If grdPOTSHIP2.ActiveRow.Cells("ORDR_NO").Value & "" <> "" Then
+                Dim ORDR_NO As String = grdPOTSHIP2.ActiveRow.Cells("ORDR_NO").Value & ""
+                Dim rowSOTORDR1 As DataRow = Fill_Record("SOTORDR1", ORDR_NO)
+                FRT_TERMS = rowSOTORDR1.Item("FRT_TERMS")
+            End If
+
+            If ASCMAIN1.CLIENT = "RGI" Then
+                If rowPOTSHIP1.Item("WHSE_CODE") & "" = "FE" And FRT_TERMS = "COL" Then
+                    chkNoDuty.Checked = True
+                End If
+            End If
+
+
+            chkCostComplete.Checked = True
+
+            Calculate_Landed_Cost()
+
+            'If Val(numDuty.Value & "") = 0 And Val(numDutyNotDist.Value & "") <> 0 Then
+            '    numDuty.Value = -1 * (Val(numDutyNotDist.Value & ""))
+            '    Absx1.txtFor("CUSTOMS_ENTRY_NO").Text = "X"
+            '    If Val(numDutyNotDist.Value & "") <> 0 Then
+            '        DutyBalance()
+            '    End If
+            'End If
+
+            Click_Command("Update")
+            If ScreenMode Then
+                If EMsg.Contains("Some Styles have no Duty") Then
+                    ASCDATA1.ExecuteSQL("Insert into POTSHIP1_EMSG values ('" & PO_SHIPMENT_NO & "','No Containers Entered')")
+                    Click_Command("Cancel")
+                Else
+                    Exit For
+                End If
+            End If
+            'If ScreenMode Then Exit For
+        Next
+
+        MsgBox("Period Cost Complete Update has Completed", MsgBoxStyle.OkOnly, "Success")
+
+        automated_cost_complete = False
+        automated_cost_complete_check = ""
+        ASCMAIN1.Progress("")
 
     End Sub
 

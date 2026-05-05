@@ -2354,15 +2354,14 @@ Public Class SOFPICKS
 
         ASCMAIN1.sql = $"Select Y.*, Z.PRI, Z.OSL, Z.PAL, Z.CRT, Z.TRK, Z.LNF from ({ASCMAIN1.sql}) Y, ({sqlLoc}) Z" & vbCrLf _
             & " where Z.STYLE_CODE (+) = Y.STYLE_CODE and Z.COLOR_CODE (+) = Y.COLOR_CODE"
-        ASCMAIN1.sql = $"Select Distinct X.*" & vbCrLf _
+        ASCMAIN1.sql = $"Select X.*" & vbCrLf _
             & ", NVL(WHSE_QTY_ON_HAND,0) - NVL(WHSE_QTY_PICK,0)" & vbCrLf _
-            & " - CASE WHEN NVL(WHTLOCB1.LOCATION_QTY,0) > 0 THEN WHTLOCB1.LOCATION_QTY ELSE 0 END QTY_AVA" & vbCrLf _
+            & " - CASE WHEN NVL(LNF,0) > 0 THEN LNF ELSE 0 END QTY_AVA" & vbCrLf _
             & $", LEAST(0, NVL(ORDR_QTY_ALLO,0)" & vbCrLf _
             & " - NVL(ORDR_QTY_OPEN,0)) QTY_SHORT" & vbCrLf _
-            & $", ICTSTYD1.LOCATION_CODE, WHTLOCB1.LOCATION_QTY LNF" & vbCrLf _
-            & $" from ({ASCMAIN1.sql}) X, ICTSTYD1, WHTLOCB1" & vbCrLf _
-            & $" where WHTLOCB1.WHSE_CODE (+) = '{WHSE_CODE}' and WHTLOCB1.LOCATION_CODE (+) = '{LNF_LOC}' and WHTLOCB1.STYLE_CODE (+) = X.STYLE_CODE and WHTLOCB1.COLOR_CODE (+) = X.COLOR_CODE" & vbCrLf _
-            & $"   And ICTSTYD1.WHSE_CODE (+) = '{WHSE_CODE}' and ICTSTYD1.STYLE_CODE (+) = X.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = X.COLOR_CODE"
+            & $", ICTSTYD1.LOCATION_CODE" & vbCrLf _
+            & $" from ({ASCMAIN1.sql}) X, ICTSTYD1 " & vbCrLf _
+            & $" where ICTSTYD1.WHSE_CODE (+) = '{WHSE_CODE}' and ICTSTYD1.STYLE_CODE (+) = X.STYLE_CODE and ICTSTYD1.COLOR_CODE (+) = X.COLOR_CODE"
 
         'ASCMAIN1.sql = $"Select * from ({ASCMAIN1.sql}) X where X.ORDR_QTY_OPEN <> 0 OR X.ORDR_QTY_BACK <> 0"
         ' INVTY REQUIREMENTS SHOULD ONLY LOOK AT PRIMARY - this was not exactly how it was implemented above

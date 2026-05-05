@@ -81,6 +81,7 @@ Partial Class ARFCUSTM
         Me.spl = New System.Windows.Forms.SplitContainer()
         Me.tab = New Infragistics.Win.UltraWinTabControl.UltraTabControl()
         Me.UltraTabSharedControlsPage4 = New Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage()
+        Me.chkContactsC = New System.Windows.Forms.CheckBox()
         CType(Me.UltraExplorerBar1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraExplorerBar1.SuspendLayout()
         Me.ASFBASE1_Fill_Panel.SuspendLayout()
@@ -243,6 +244,7 @@ Partial Class ARFCUSTM
         '
         'SplitContainer1.Panel1
         '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.chkContactsC)
         Me.SplitContainer1.Panel1.Controls.Add(Me.btnOpen)
         Me.SplitContainer1.Panel1.Controls.Add(Me.Label11)
         Me.SplitContainer1.Panel1.Controls.Add(Me.txtFileLoc)
@@ -332,7 +334,7 @@ Partial Class ARFCUSTM
         Me.chkContactsM.AutoSize = True
         Me.chkContactsM.Checked = True
         Me.chkContactsM.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContactsM.Location = New System.Drawing.Point(439, 10)
+        Me.chkContactsM.Location = New System.Drawing.Point(575, 9)
         Me.chkContactsM.Name = "chkContactsM"
         Me.chkContactsM.Size = New System.Drawing.Size(56, 20)
         Me.chkContactsM.TabIndex = 279
@@ -344,7 +346,7 @@ Partial Class ARFCUSTM
         Me.chkContactsW.AutoSize = True
         Me.chkContactsW.Checked = True
         Me.chkContactsW.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContactsW.Location = New System.Drawing.Point(356, 10)
+        Me.chkContactsW.Location = New System.Drawing.Point(489, 9)
         Me.chkContactsW.Name = "chkContactsW"
         Me.chkContactsW.Size = New System.Drawing.Size(63, 20)
         Me.chkContactsW.TabIndex = 278
@@ -356,7 +358,7 @@ Partial Class ARFCUSTM
         Me.chkContactsP.AutoSize = True
         Me.chkContactsP.Checked = True
         Me.chkContactsP.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContactsP.Location = New System.Drawing.Point(291, 10)
+        Me.chkContactsP.Location = New System.Drawing.Point(417, 9)
         Me.chkContactsP.Name = "chkContactsP"
         Me.chkContactsP.Size = New System.Drawing.Size(50, 20)
         Me.chkContactsP.TabIndex = 277
@@ -368,7 +370,7 @@ Partial Class ARFCUSTM
         Me.chkContactsX.AutoSize = True
         Me.chkContactsX.Checked = True
         Me.chkContactsX.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContactsX.Location = New System.Drawing.Point(129, 10)
+        Me.chkContactsX.Location = New System.Drawing.Point(242, 9)
         Me.chkContactsX.Name = "chkContactsX"
         Me.chkContactsX.Size = New System.Drawing.Size(57, 20)
         Me.chkContactsX.TabIndex = 276
@@ -380,7 +382,7 @@ Partial Class ARFCUSTM
         Me.chkContactsB.AutoSize = True
         Me.chkContactsB.Checked = True
         Me.chkContactsB.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkContactsB.Location = New System.Drawing.Point(197, 10)
+        Me.chkContactsB.Location = New System.Drawing.Point(320, 9)
         Me.chkContactsB.Name = "chkContactsB"
         Me.chkContactsB.Size = New System.Drawing.Size(71, 20)
         Me.chkContactsB.TabIndex = 275
@@ -571,6 +573,18 @@ Partial Class ARFCUSTM
         Me.UltraTabSharedControlsPage4.Name = "UltraTabSharedControlsPage4"
         Me.UltraTabSharedControlsPage4.Size = New System.Drawing.Size(1123, 582)
         '
+        'chkContactsC
+        '
+        Me.chkContactsC.AutoSize = True
+        Me.chkContactsC.Checked = True
+        Me.chkContactsC.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkContactsC.Location = New System.Drawing.Point(137, 9)
+        Me.chkContactsC.Name = "chkContactsC"
+        Me.chkContactsC.Size = New System.Drawing.Size(89, 20)
+        Me.chkContactsC.TabIndex = 292
+        Me.chkContactsC.Text = "Customer"
+        Me.chkContactsC.UseVisualStyleBackColor = True
+        '
         'ARFCUSTM
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
@@ -645,4 +659,5 @@ Partial Class ARFCUSTM
     Friend WithEvents btnOpen As Button
     Friend WithEvents Label11 As Label
     Friend WithEvents txtFileLoc As TextBox
+    Friend WithEvents chkContactsC As CheckBox
 End Class

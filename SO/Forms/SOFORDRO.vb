@@ -1426,6 +1426,11 @@ Public Class SOFORDRO
             Dim FACTORY_CODE As String = GetVendorData(rowICTSTYL1.Item("VEND_CODE").ToString, "VEND_SUPPLIER_ID")
             rowSOTORDP2.Item("FACTORY_CODE") = FACTORY_CODE
         Next
+
+        Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs(CUST_CODE)
+        CR_params.Add("CMSG", msgs("C"))
+        CR_params.Add("TMSG", msgs("T"))
+
         Generate_Report("SORORDRO")
         If PrintToDefault Then
             Dim PS As New System.Drawing.Printing.PrinterSettings
@@ -1639,6 +1644,15 @@ Public Class SOFORDRO
                         'CHANGES FOR SHIPTO QUESTION - Dim dstChangesQ As DataTable = dst.Tables.Item("ARTCUSTQ").GetChanges
                         'CHANGES FOR SHIPTO QUESTION - 
                         'If Not IsNothing(dstChanges) Or Not IsNothing(dstChangesQ) Then
+                        Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                        Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                        If Not IsNothing(rowARTCUSTD) Then
+                            rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+                            rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+                        End If
                         If Not IsNothing(dstChanges) Then
                             Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                             Update_Record_TDA("ARTCUSTD")
@@ -2678,6 +2692,8 @@ Public Class SOFORDRO
         Select Case optShowOrders.Value
             Case "M"
                 SQLD = String.Format(" ORDR_DATE >= '{0}'", Format(Now.AddMonths(-1), "dd-MMM-yy"))
+            Case "3"
+                SQLD = String.Format(" ORDR_DATE >= '{0}'", Format(Now.AddMonths(-3), "dd-MMM-yy"))
             Case "H"
                 SQLD = String.Format(" ORDR_DATE >= '{0}'", Format(Now.AddMonths(-6), "dd-MMM-yy"))
             Case "Y"
@@ -4639,21 +4655,48 @@ Public Class SOFORDRO
                 oSheet.Range(Excel_Cell(SCD + RowCount + 1, i + ap), Excel_Cell(SCD + RowCount + 1, i + ap)).BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
             End With
         Next i
-        '2025 Tariff Notice
-        Dim LastRow As Int64 = SCD + RowCount + 2
-        With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
-            .Merge()
-            '.Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-            '.Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
-            .Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
-            .Font.Bold = True
-            .Font.Color = Color.Red
-            .Font.Size = 9
-            '.RowHeight = 45
-            .WrapText = True
-            .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
-            .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
-        End With
+
+        If dst.Tables.Item("SOTORDX1").Rows.Count = 1 Then
+            Dim CUST_CODE As String = dst.Tables.Item("SOTORDX1").Rows(0).Item("CUST_CODE").ToString
+            Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs(CUST_CODE)
+
+            Dim LastRow As Int64 = SCD + RowCount + 1
+            'CC Message
+            If msgs("C").Length > 0 Then
+                LastRow += 1
+                With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
+                    .Merge()
+                    .Value = msgs("C")
+                    .Font.Bold = True
+                    .Font.Color = Color.Red
+                    .Font.Size = 9
+                    .RowHeight = .RowHeight * 2
+                    .WrapText = True
+                    .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
+                    .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
+                End With
+            End If
+
+            If msgs("T").Length > 0 Then
+                '2025 Tariff Notice
+                LastRow += 1
+                With oSheet.Range(Excel_Cell(LastRow, 1), Excel_Cell(LastRow, EndMark))
+                    .Merge()
+                    .Value = "No surcharges on any NEW domestic orders unless there are any changes to the current trade deal. Please visithttps://www.regency-rib.com/tariffinfo.html for detailed information."
+                    .Font.Bold = True
+                    .Font.Color = Color.Red
+                    .Font.Size = 9
+                    .RowHeight = .RowHeight * 2
+                    .WrapText = True
+                    .VerticalAlignment = Excel.XlVAlign.xlVAlignTop
+                    .BorderAround(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThin)
+                End With
+            End If
+        End If
+
+
+
+
 
         'Begin - tariff Notification
         'Removed 10:30AM on a dark and rainy day April 16th 2020

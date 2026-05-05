@@ -492,16 +492,35 @@
         range.Cells(RX, 13 + CX).HorizontalAlignment = SpreadsheetGear.HAlign.Center
         ' range.Cells(RX, 13 + CX).NumberFormat = “###,###.00”
 
-        '2025 Tariff Notice
-        RX += 3
-        oSheet.Range($"A{RX}:N{RX}").Merge()
-        'oSheet.Range($"A{RX}:N{RX}").Value = "Tariffs may come into effect on all imported items; if the US Government imposes them, a surcharge will be added to the bottom of the invoice."
-        'oSheet.Range($"A{RX}:N{RX}").Value = "Effective Immediately: A temporary 18% surcharge now applies to all warehouse shipments; future adjustments may occur."
-        oSheet.Range($"A{RX}:N{RX}").Value = "Tariffs are in effect for all imported items.  Please visit https://www.regency-rib.com/tariffinfo.html for detailed information."
-        oSheet.Range($"A{RX}:N{RX}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
-        oSheet.Range($"A{RX}:N{RX}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
-        oSheet.Range($"A{RX}:N{RX}").Font.Bold = True
-        oSheet.Range($"A{RX}:N{RX}").Font.Color = SpreadsheetGear.Colors.Red
+        RX += 2
+        Dim CUST_CODE As String = rowSOTORDR1.Item("CUST_CODE")
+        Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs(CUST_CODE)
+
+        If msgs("C").Length > 0 Then
+            'CC Message
+            RX += 1
+            oSheet.Range($"A{RX}:N{RX}").Merge()
+            oSheet.Range($"A{RX}:N{RX}").Value = msgs("C")
+            oSheet.Range($"A{RX}:N{RX}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            oSheet.Range($"A{RX}:N{RX}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+            oSheet.Range($"A{RX}:N{RX}").Font.Bold = False
+            oSheet.Range($"A{RX}:N{RX}").Font.Color = SpreadsheetGear.Colors.Red
+            oSheet.Range($"A{RX}:N{RX}").RowHeight = oSheet.Range($"A{RX}:N{RX}").RowHeight * 2
+            oSheet.Range($"A{RX}:N{RX}").WrapText = True
+        End If
+
+        If msgs("T").Length > 0 Then
+            '2025 Tariff Notice
+            RX += 1
+            oSheet.Range($"A{RX}:N{RX}").Merge()
+            oSheet.Range($"A{RX}:N{RX}").Value = msgs("T")
+            oSheet.Range($"A{RX}:N{RX}").Borders.LineStyle = SpreadsheetGear.LineStyle.Continous
+            oSheet.Range($"A{RX}:N{RX}").Borders.Weight = SpreadsheetGear.BorderWeight.Thin
+            oSheet.Range($"A{RX}:N{RX}").Font.Bold = True
+            oSheet.Range($"A{RX}:N{RX}").Font.Color = SpreadsheetGear.Colors.Red
+            oSheet.Range($"A{RX}:N{RX}").RowHeight = oSheet.Range($"A{RX}:N{RX}").RowHeight * 2
+            oSheet.Range($"A{RX}:N{RX}").WrapText = True
+        End If
 
         Dim SFX As String = ASCMAIN1.Next_Control_No("ExportDocuments")
         Dim XLS_FILE As String = Replace(xls_filename, "ExportDocuments", "ExportDocuments" & "_" & SFX)

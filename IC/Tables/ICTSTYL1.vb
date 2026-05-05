@@ -17,6 +17,7 @@ Public Class ICTSTYL1
     Dim MAX_SIZES As Int32 = 50     ' this may be set to a higher value if need be
     Dim SO_PARM_UPC_VENDOR_ID As String = ""
     Dim rowSOTPARM1 As DataRow
+    Private _upcColumns As List(Of Infragistics.Win.UltraWinGrid.UltraGridColumn)
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
@@ -31,6 +32,10 @@ Public Class ICTSTYL1
                 End With
             End With
         End If
+
+        lblSkinUPCMsg.Visible = False
+        grpSKINUPC.Visible = False
+        btnRick1.Visible = False '(ASCMAIN1.USER_ID = "rick" And ASCMAIN1.Running_in_VS)
 
         If ASCMAIN1.Running_in_VS And ASCMAIN1.USER_ID = "wjz" Then
             btnAutomatic.Visible = True
@@ -640,7 +645,7 @@ Public Class ICTSTYL1
                 tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
                 If grd.Name = "grdICTSTYC1" Then
                     tlb_btn = DirectCast(tlb_pop.Tools("Generate UPCs"), UltraWinToolbars.ButtonTool)
-                    tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
+                    tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New") AndAlso ASCMAIN1.CLIENT <> "VAN"
                     tlb_btn = DirectCast(tlb_pop.Tools("Allow Edit to this UPC"), UltraWinToolbars.ButtonTool)
                     tlb_btn.SharedProps.Visible = (EntryMode = "Edit")
                     tlb_btn = DirectCast(tlb_pop.Tools("Generate Carton ID"), UltraWinToolbars.ButtonTool)
@@ -2303,8 +2308,49 @@ Public Class ICTSTYL1
         End If
 
     End Sub
+    Private Sub grdICTSTYCX_InitializeLayout(sender As Object, e As Infragistics.Win.UltraWinGrid.InitializeLayoutEventArgs) Handles grdICTSTYCX.InitializeLayout
+        _upcColumns = New List(Of Infragistics.Win.UltraWinGrid.UltraGridColumn)()
 
+        For Each col As Infragistics.Win.UltraWinGrid.UltraGridColumn In e.Layout.Bands(0).Columns
+            If col.Key.StartsWith("UPC_CODE_", StringComparison.OrdinalIgnoreCase) Then
+                _upcColumns.Add(col)
+            End If
+        Next
+
+    End Sub
+
+    Private Sub grdICTSTYCX_InitializeRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.InitializeRowEventArgs) Handles grdICTSTYCX.InitializeRow
+        If ASCMAIN1.CLIENT <> "VAN" Then Exit Sub
+        If Absx1.txtFor("SALES_DIVISION_CODE").Text <> "30" Then Exit Sub
+        If _upcColumns Is Nothing OrElse _upcColumns.Count = 0 Then Exit Sub
+
+        Dim row = e.Row
+        Dim isSkinUPC As Boolean = False
+
+        For Each col As UltraGridColumn In _upcColumns
+            Dim value As String = Convert.ToString(row.GetCellValue(col.Key))
+
+            If Not String.IsNullOrWhiteSpace(value) Then
+                If Not value.StartsWith(SO_PARM_UPC_VENDOR_ID) Then
+                    isSkinUPC = True
+                    row.Cells(col.Key).ToolTipText = "This is a SKIN UPC, To change click UPC button in the Cell"
+
+                    Exit For
+                End If
+            End If
+        Next
+        If isSkinUPC Then
+            row.RowSelectorAppearance.BackColor = Color.LightSalmon
+            row.RowSelectorAppearance.BackColor2 = Color.Salmon
+        End If
+
+    End Sub
     Private Sub grdICTSTYCX_AfterRowActivate(sender As Object, e As System.EventArgs) Handles grdICTSTYCX.AfterRowActivate
+        lblSkinUPCMsg.Visible = False
+        grpSKINUPC.Visible = False
+        Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
+        Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
+
         With grdICTSTYCX.DisplayLayout.Bands(0).Columns("COLOR_CODE_UPC")
             If grdICTSTYCX.ActiveRow.IsAddRow Then
                 .CellActivation = UltraWinGrid.Activation.AllowEdit
@@ -2312,11 +2358,46 @@ Public Class ICTSTYL1
                 .CellActivation = UltraWinGrid.Activation.NoEdit
             End If
         End With
+
+        If ASCMAIN1.CLIENT = "VAN" AndAlso Absx1.txtFor("SALES_DIVISION_CODE").Text = "30" Then
+            Dim hasSkinUPC As Boolean = False
+            With grdICTSTYCX.DisplayLayout.Bands(0)
+                For Each col As Infragistics.Win.UltraWinGrid.UltraGridColumn In .Columns
+                    If col.Key.StartsWith("UPC_CODE_") Then
+                        If grdICTSTYCX.ActiveRow IsNot Nothing Then
+                            Dim cellValue = Convert.ToString(grdICTSTYCX.ActiveRow.GetCellValue(col.Key))
+                            If Not String.IsNullOrWhiteSpace(cellValue) Then
+                                If Not cellValue.Startswith(SO_PARM_UPC_VENDOR_ID) Then
+                                    hasSkinUPC = True
+                                    Exit For
+                                End If
+                            End If
+                        End If
+                    End If
+                Next
+            End With
+            lblSkinUPCMsg.Visible = hasSkinUPC
+            If Not hasSkinUPC Then
+                ASCMAIN1.sql = $"Select UPC_CODE from ICTSTYC5 where STYLE_CODE = '{STYLE_CODE}' and COLOR_CODE = '{COLOR_CODE}'"
+                lblSkinUpcCode.Text = ASCDATA1.GetDataValue & ""
+                grpSKINUPC.Visible = (lblSkinUpcCode.Text <> "")
+            End If
+        End If
+
     End Sub
 
     Private Sub grdICTSTYCX_ClickCellButton(sender As Object, e As Infragistics.Win.UltraWinGrid.CellEventArgs) Handles grdICTSTYCX.ClickCellButton
         Dim STYLE_CODE As String = grdICTSTYC1.ActiveRow.Cells("STYLE_CODE").Value
         Dim COLOR_CODE As String = grdICTSTYC1.ActiveRow.Cells("COLOR_CODE").Value
+
+        If ASCMAIN1.CLIENT = "VAN" AndAlso Absx1.txtFor("SALES_DIVISION_CODE").Text = "30" Then
+            If Absx1.txtFor("SIZE_CODE").Text <> "" And e.Cell.Column.Key = "UPC_CODE_00" Then
+                MsgBox("This Style has a Size code, cannot create a no size UPC",
+                   MsgBoxStyle.OkOnly, "Cannot Create UPC")
+                Exit Sub
+            End If
+        End If
+
 
         If e.Cell.Column.Key = "COLOR_CODE_UPC" Then
             Dim sqlw As String = "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
@@ -2324,10 +2405,27 @@ Public Class ICTSTYL1
             grdClickCellButton(grdICTSTYC1, sql_where, True)
 
         ElseIf e.Cell.Column.Key.StartsWith("UPC_CODE_") Then
-            If EntryMode = "New" Or EntryMode = "Edit" And e.Cell.Value & "" = "" Then
-                e.Cell.Value = Get_UPC_Code(STYLE_CODE, COLOR_CODE)
+            If EntryMode = "New" Or EntryMode = "Edit" Then
+                If e.Cell.Value & "" = "" Then
+                    e.Cell.Value = Get_UPC_Code(STYLE_CODE, COLOR_CODE)
+                End If
+                If Not e.Cell.Value.Startswith(SO_PARM_UPC_VENDOR_ID) Then
+                    Dim SKINUPC = e.Cell.Value
+                    Dim Clmn As String = e.Cell.Column.Key
+                    Dim SizeIndex As Int16 = Val(Clmn.Substring(Clmn.Length - 2))
+                    e.Cell.Value = Get_UPC_Code(STYLE_CODE, COLOR_CODE)
+                    If SizeIndex = 0 Then
+                        ASCMAIN1.sql = "Insert into ICTSTYC5 (UPC_CODE,STYLE_CODE,COLOR_CODE,COLOR_CODE_UPC,INIT_DATE,INIT_OPER) 
+                                    values (:PARM1,:PARM2,:PARM3,:PARM3,SYSDATE,:PARM4)"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVV", New Object() {SKINUPC, STYLE_CODE, COLOR_CODE, ASCMAIN1.USER_ID})
+                    Else
+                        ASCMAIN1.sql = "Insert into ICTSTYC5 (UPC_CODE,STYLE_CODE,COLOR_CODE,COLOR_CODE_UPC,SIZE_INDEX,INIT_DATE,INIT_OPER) 
+                                    values (:PARM1,:PARM2,:PARM3,:PARM3,:PARM4,SYSDATE,:PARM5)"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVVV", New Object() {SKINUPC, STYLE_CODE, COLOR_CODE, SizeIndex, ASCMAIN1.USER_ID})
+                    End If
+                End If
             End If
-        End If
+            End If
     End Sub
 
     Sub Add_Single_Colors()
@@ -3529,5 +3627,35 @@ Public Class ICTSTYL1
         End If
     End Sub
 
+    ''' this is a temp process - initially created for updating SKIN merchandise in table SKIN_DON to replace initital UPCs with new VAN UPCs
+    '''
+    Private Sub btnRick1_Click(sender As Object, e As EventArgs) Handles btnRick1.Click
+        Stop
+        Return
 
+
+        Dim VANUPC As String
+        Dim SKINUPC As String
+        Dim count As Int16 = 0
+        Create_TDA(dst.Tables.Add, "SKIN_DON3", "*", 0, True, "")
+
+        Fill_Records("SKIN_DON3")
+
+        BeginTrans()
+        For Each trow As DataRow In dst.Tables("SKIN_DON3").Select("UPC_CODE_VAN is null")
+            count += 1
+            SKINUPC = trow("UPC_NUMBER")
+            VANUPC = Get_UPC_Code(trow("STYLE_CODE"), trow("COLOR_CODE"))
+            trow("UPC_CODE_VAN") = VANUPC
+            If SKINUPC.Length = 12 Then
+                ASCMAIN1.sql = "Insert into ICTSTYC5 (UPC_CODE,STYLE_CODE,COLOR_CODE,COLOR_CODE_UPC,SIZE_INDEX,INIT_DATE,INIT_OPER) 
+                                    values (:PARM1,:PARM2,:PARM3,:PARM3,:PARM4,SYSDATE,:PARM5)"
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VVVVV", New Object() {SKINUPC, trow("STYLE_CODE"), trow("COLOR_CODE"), 1, ASCMAIN1.USER_ID})
+            End If
+        Next
+
+        Update_Record_TDA("SKIN_DON3")
+        CommitTrans($"Done! {count} records updated")
+
+    End Sub
 End Class

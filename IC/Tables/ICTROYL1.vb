@@ -48,12 +48,33 @@ Public Class ICTROYL1
                 SQL.AppendLine("AV.VEND_CITY AS AGENT_CITY,")
                 SQL.AppendLine("AV.VEND_STATE AS AGENT_STATE,")
                 SQL.AppendLine("AV.VEND_ZIP_CODE AS AGENT_ZIP_CODE,")
-                SQL.AppendLine("I1.STYLE_PRICE")
-                SQL.AppendLine("FROM ICTSTYL1 I1, APTVEND1 A1, ICTROYL1 R1, APTVEND1 AV")
+                SQL.AppendLine("I1.STYLE_PRICE,")
+                SQL.AppendLine("R2.ROYALTY_BEGIN,")
+                SQL.AppendLine("R2.ROYALTY_END,")
+                SQL.AppendLine("R2.ROYALTY_PCT")
+                SQL.AppendLine("FROM ICTSTYL1 I1, APTVEND1 A1, ICTROYL1 R1, APTVEND1 AV,")
+                SQL.AppendLine("(")
+                SQL.AppendLine("    SELECT")
+                SQL.AppendLine("    R2M.ROYALTY_CODE,")
+                SQL.AppendLine("    R2M.ROYALTY_BEGIN,")
+                SQL.AppendLine("    R2M.ROYALTY_END,")
+                SQL.AppendLine("    R2M.ROYALTY_PCT")
+                SQL.AppendLine("    FROM ICTROYL2 R2M,")
+                SQL.AppendLine("    (")
+                SQL.AppendLine("        SELECT")
+                SQL.AppendLine("        ROYALTY_CODE,")
+                SQL.AppendLine("        MAX(ROYALTY_BEGIN) AS ROYALTY_BEGIN")
+                SQL.AppendLine("        FROM  ICTROYL2")
+                SQL.AppendLine("        GROUP BY ROYALTY_CODE")
+                SQL.AppendLine("    ) MX")
+                SQL.AppendLine("    WHERE R2M.ROYALTY_CODE = MX.ROYALTY_CODE")
+                SQL.AppendLine("    AND R2M.ROYALTY_BEGIN = MX.ROYALTY_BEGIN")
+                SQL.AppendLine(") R2")
                 SQL.AppendLine("WHERE NVL(I1.ROYALTY_CODE,'NAN') <> 'NAN'")
                 SQL.AppendLine("AND I1.VEND_CODE = A1.VEND_CODE")
                 SQL.AppendLine("AND I1.ROYALTY_CODE = R1.ROYALTY_CODE")
                 SQL.AppendLine("AND R1.VEND_CODE = AV.VEND_CODE")
+                SQL.AppendLine("AND R1.ROYALTY_CODE = R2.ROYALTY_CODE (+)")
                 ASCMAIN1.sql = SQL.ToString
                 Create_TDA(.Tables.Add, "ICTSTROX", "**", 0, False, "", 1)
                 With .Tables("ICTSTROX")
@@ -130,6 +151,11 @@ Public Class ICTROYL1
                 .Columns.Item("ROYALTY_END").Format = "MM/dd/yy"
                 .Columns.Item("ROYALTY_PCT").Format = "###,##0.0"
 
+            End With
+            With grdICTSTROX.DisplayLayout.Bands(0)
+                .Columns.Item("ROYALTY_BEGIN").Format = "MM/dd/yy"
+                .Columns.Item("ROYALTY_END").Format = "MM/dd/yy"
+                .Columns.Item("ROYALTY_PCT").Format = "###,##0.0"
             End With
             With grdICTSTROY.DisplayLayout.Override
                 .AllowUpdate = DefaultableBoolean.False

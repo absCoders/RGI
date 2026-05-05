@@ -96,6 +96,7 @@ Public Class SOFCORD1
             ASCDATA1.ExecuteSQL("Alter Table " & SOTORDR0 & " Add ORDR_AMT_ALLO_CXL NUMBER(13,2)")
             ASCDATA1.ExecuteSQL("Alter Table " & SOTORDR0 & " Add Primary Key (ORDR_TYPE, ORDR_GROUP_NO)")
             ASCDATA1.ExecuteSQL("Alter Table " & SOTORDR0 & " Add EDI_PO_TYPE VARCHAR2(2)")
+            ASCDATA1.ExecuteSQL("Alter Table " & SOTORDR0 & " Add SHIP_TOTAL_WGT NUMBER(13,2)")
             ASCMAIN1.sql = "Select * from " & SOTORDR0
             'Create_TDA(.Tables.Add, "SOTORDR0", "**", 0, False, "V", 2)
             Create_TDA(.Tables.Add, "SOTORDR0", "**", 0, False, "", 2)
@@ -805,6 +806,7 @@ Public Class SOFCORD1
             Next
 
             .Columns("EDI_CONS_NO").Hidden = Not (ASCMAIN1.CLIENT = "VAN")
+            .Columns("SHIP_TOTAL_WGT").Hidden = True
         End With
 
 
@@ -895,6 +897,7 @@ Public Class SOFCORD1
 
         Create_Summary(grdSOTORDR0, "ORDR_GROUP_NO", "Count")
         Create_Summary(grdSOTORDR0, New String() {"ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC", "ORDR_QTY", "ORDR_QTY_OPEN", "ORDR_QTY_PICK", "ORDR_QTY_SHIP", "ORDR_QTY_CANC", "ORDR_CNT", "ORDR_CNT_OPEN", "ORDR_CNT_PICK"}, , , "#,##0")
+        Create_Summary(grdSOTORDR0, New String() {"SHIP_TOTAL_WGT"}, , , "#,##0.00")
 
         If ASCMAIN1.CLIENT = "RGI" Then
             Create_Summary(grdSOTORDR0, New String() {"ORDR_AMT_ALLO_CUR", "ORDR_AMT_ALLO_FUT", "ORDR_AMT_ALLO_CXL"}, , , "#,##0")
@@ -2807,7 +2810,7 @@ Public Class SOFCORD1
             & ", ARTCCPA1.CUST_CREDIT_CARD_EXP_DATE, ARTCCPA1.CUST_CREDIT_CARD_LAST4" & vbCrLf _
             & ", ARTCUST1.CUST_NAME, ARTCUST1.CUST_CITY, ARTCUST1.CUST_STATE, ARTCUST1.CUST_COUNTRY, ARTCUST1.CUST_SALES_HOLD, ARTCUST1.CUST_CREDIT_HOLD" & vbCrLf _
             & ", NULL WAVE_NO, NULL EDI_LOAD_ID" & vbCrLf _
-            & ", SOTORDRS.ORDR_AMT_ALLO_CUR, SOTORDRS.ORDR_AMT_ALLO_FUT, SOTORDRS.ORDR_AMT_ALLO_CXL, SOTORDR1.EDI_PO_TYPE" & vbCrLf _
+            & ", SOTORDRS.ORDR_AMT_ALLO_CUR, SOTORDRS.ORDR_AMT_ALLO_FUT, SOTORDRS.ORDR_AMT_ALLO_CXL, SOTORDR1.EDI_PO_TYPE, 0 SHIP_TOTAL_WGT" & vbCrLf _
             & " from (" & ASCMAIN1.sql & ") X,ARTCUST1,SOTORDR1, ARTCCPA1, (" & sqlSOTORDRS & ") SOTORDRS" & vbCrLf _
             & " where ARTCUST1.CUST_CODE = X.CUST_CODE" & vbCrLf _
             & "   and SOTORDR1.ORDR_NO (+) = X.ORDR_NO_MIN" & vbCrLf _
@@ -2827,13 +2830,13 @@ Public Class SOFCORD1
             ASCMAIN1.sql = "" _
                 & "Begin " & vbCrLf _
                 & " Declare Cursor C1 is" & vbCrLf _
-                & "  Select ORDR_GROUP_NO, MIN (WAVE_NO) WAVE_NO, MIN (EDI_LOAD_ID) EDI_LOAD_ID" & vbCrLf _
+                & "  Select ORDR_GROUP_NO, MIN (WAVE_NO) WAVE_NO, MIN (EDI_LOAD_ID) EDI_LOAD_ID, sum(SHIP_TOTAL_WGT) SHIP_TOTAL_WGT" & vbCrLf _
                 & "   from SOTSHIP1 where ORDR_GROUP_NO in " & vbCrLf _
                 & "    (Select ORDR_GROUP_NO from " & SOTORDR0 & " where ORDR_TYPE = 'O')" & vbCrLf _
                 & "   group by ORDR_GROUP_NO;" & vbCrLf _
                 & " Begin" & vbCrLf _
                 & "  For R1 in C1 Loop" & vbCrLf _
-                & "   Update " & SOTORDR0 & " Set WAVE_NO = R1.WAVE_NO, EDI_LOAD_ID = R1.EDI_LOAD_ID" & vbCrLf _
+                & "   Update " & SOTORDR0 & " Set WAVE_NO = R1.WAVE_NO, EDI_LOAD_ID = R1.EDI_LOAD_ID, SHIP_TOTAL_WGT = R1.SHIP_TOTAL_WGT" & vbCrLf _
                 & "    where ORDR_TYPE = 'O' and ORDR_GROUP_NO = R1.ORDR_GROUP_NO;" & vbCrLf _
                 & "  End Loop;" & vbCrLf _
                 & " End;" & vbCrLf _
@@ -2868,6 +2871,14 @@ Public Class SOFCORD1
             Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
         Else
             Sort_grdColumns(grdSOTORDR0, "ORDR_CANCEL_DATE")
+        End If
+
+        If ASCMAIN1.CLIENT = "VAN" And optOrders.Value = "S" And CUST_CODE = "SKINCOM" Then
+
+
+
+
+            grdSOTORDR0.DisplayLayout.Bands(0).Columns("SHIP_TOTAL_WGT").Hidden = False
         End If
 
         grdSOTORDR0.Visible = True

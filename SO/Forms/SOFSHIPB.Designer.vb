@@ -1554,6 +1554,7 @@ Partial Class SOFSHIPB
         Me.UltraTextEditor53 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.UltraLabel36 = New Infragistics.Win.Misc.UltraLabel()
         Me.frmCodes = New Infragistics.Win.Misc.UltraGroupBox()
+        Me.chkNoCarrierLabels = New ABSCS.ABSCheckBox()
         Me.UltraLabel62 = New Infragistics.Win.Misc.UltraLabel()
         Me.UltraTextEditor4 = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.chkInsureShipment = New ABSCS.ABSCheckBox()
@@ -1850,6 +1851,7 @@ Partial Class SOFSHIPB
         CType(Me.UltraTextEditor53, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.frmCodes, System.ComponentModel.ISupportInitialize).BeginInit
         Me.frmCodes.SuspendLayout
+        CType(Me.chkNoCarrierLabels, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.chkInsureShipment, System.ComponentModel.ISupportInitialize).BeginInit
         CType(Me.numInsureValue, System.ComponentModel.ISupportInitialize).BeginInit
@@ -6886,13 +6888,12 @@ Partial Class SOFSHIPB
         'UltraTabPageControl24
         '
         Me.UltraTabPageControl24.Controls.Add(Me.grdSOTPICK2_SC)
-        Me.UltraTabPageControl24.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl24.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl24.Name = "UltraTabPageControl24"
         Me.UltraTabPageControl24.Size = New System.Drawing.Size(1005, 243)
         '
         'grdSOTPICK2_SC
         '
-        Me.grdSOTPICK2_SC.DataMember = Nothing
         Appearance286.BackColor = System.Drawing.SystemColors.Window
         Appearance286.BorderColor = System.Drawing.SystemColors.InactiveCaption
         Me.grdSOTPICK2_SC.DisplayLayout.Appearance = Appearance286
@@ -7932,6 +7933,7 @@ Partial Class SOFSHIPB
         'frmCodes
         '
         Me.frmCodes.BorderStyle = Infragistics.Win.Misc.GroupBoxBorderStyle.None
+        Me.frmCodes.Controls.Add(Me.chkNoCarrierLabels)
         Me.frmCodes.Controls.Add(Me.UltraLabel62)
         Me.frmCodes.Controls.Add(Me.UltraTextEditor4)
         Me.frmCodes.Controls.Add(Me.chkInsureShipment)
@@ -7957,6 +7959,15 @@ Partial Class SOFSHIPB
         Me.frmCodes.Size = New System.Drawing.Size(553, 137)
         Me.frmCodes.TabIndex = 178
         '
+        'chkNoCarrierLabels
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkNoCarrierLabels, False)
+        Me.chkNoCarrierLabels.Location = New System.Drawing.Point(324, 66)
+        Me.chkNoCarrierLabels.Name = "chkNoCarrierLabels"
+        Me.chkNoCarrierLabels.Size = New System.Drawing.Size(226, 19)
+        Me.chkNoCarrierLabels.TabIndex = 200
+        Me.chkNoCarrierLabels.Text = "Do Not Request Carrier Labels"
+        '
         'UltraLabel62
         '
         Me.UltraLabel62.AutoSize = True
@@ -7980,7 +7991,7 @@ Partial Class SOFSHIPB
         'chkInsureShipment
         '
         Me.Absx1.SetABSColumnName(Me.chkInsureShipment, "INSURED_SHIPMENT")
-        Me.chkInsureShipment.Location = New System.Drawing.Point(324, 90)
+        Me.chkInsureShipment.Location = New System.Drawing.Point(324, 113)
         Me.chkInsureShipment.Name = "chkInsureShipment"
         Me.chkInsureShipment.Size = New System.Drawing.Size(127, 19)
         Me.chkInsureShipment.TabIndex = 14
@@ -8006,7 +8017,7 @@ Partial Class SOFSHIPB
         '
         'chkFactored
         '
-        Me.chkFactored.Location = New System.Drawing.Point(324, 59)
+        Me.chkFactored.Location = New System.Drawing.Point(324, 91)
         Me.chkFactored.Name = "chkFactored"
         Me.chkFactored.Size = New System.Drawing.Size(86, 19)
         Me.chkFactored.TabIndex = 13
@@ -8937,7 +8948,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl12
         '
         Me.UltraTabPageControl12.Controls.Add(Me.tabSelect)
-        Me.UltraTabPageControl12.Location = New System.Drawing.Point(1, 25)
+        Me.UltraTabPageControl12.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl12.Name = "UltraTabPageControl12"
         Me.UltraTabPageControl12.Size = New System.Drawing.Size(1013, 570)
         '
@@ -8970,7 +8981,7 @@ Partial Class SOFSHIPB
         'UltraTabPageControl13
         '
         Me.UltraTabPageControl13.Controls.Add(Me.tabMain)
-        Me.UltraTabPageControl13.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl13.Location = New System.Drawing.Point(1, 25)
         Me.UltraTabPageControl13.Name = "UltraTabPageControl13"
         Me.UltraTabPageControl13.Size = New System.Drawing.Size(1013, 570)
         '
@@ -9508,6 +9519,7 @@ Partial Class SOFSHIPB
         CType(Me.frmCodes, System.ComponentModel.ISupportInitialize).EndInit
         Me.frmCodes.ResumeLayout(False)
         Me.frmCodes.PerformLayout
+        CType(Me.chkNoCarrierLabels, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.UltraTextEditor4, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.chkInsureShipment, System.ComponentModel.ISupportInitialize).EndInit
         CType(Me.numInsureValue, System.ComponentModel.ISupportInitialize).EndInit
@@ -9881,4 +9893,5 @@ Partial Class SOFSHIPB
     Friend WithEvents UltraLabel62 As Misc.UltraLabel
     Friend WithEvents UltraTextEditor4 As UltraWinEditors.UltraTextEditor
     Friend WithEvents btnReSendInvoices As Misc.UltraButton
+    Friend WithEvents chkNoCarrierLabels As ABSCS.ABSCheckBox
 End Class

@@ -98,7 +98,7 @@ Public Class SOTCUST1
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdARTSREP1, "SSSB", "Show Filter", "Show GroupBox", "Show Pins", "Add Codes")
         Load_Popup_Menu(grdARTCUST2, "SSSBB", "Show Filter", "Show GroupBox", "Show Pins", "Add Ship-to From Master", "Verify Ship-tos")
-        Load_Popup_Menu(grdARTCUSTD, "BB", "Send E-mail", "Make Contact From Main")
+        Load_Popup_Menu(grdARTCUSTD, "BB", "Send E-mail")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -125,8 +125,8 @@ Public Class SOTCUST1
                 tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
 
             Case "grdARTCUSTD"
-                tlb_btn = DirectCast(tlb_pop.Tools("Make Contact From Main"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
+                'tlb_btn = DirectCast(tlb_pop.Tools("Make Contact From Main"), UltraWinToolbars.ButtonTool)
+                'tlb_btn.SharedProps.Visible = (EntryMode = "Edit" Or EntryMode = "New")
 
             Case "grdARTCUST2"
                 tlb_btn = DirectCast(tlb_pop.Tools("Add Ship-to From Master"), UltraWinToolbars.ButtonTool)
@@ -167,7 +167,7 @@ Public Class SOTCUST1
                     End If
                 End If
             Case "Make Contact From Main"
-                MakeContactFromMain()
+                'MakeContactFromMain()
             Case "Verify Ship-tos"
                 If grdARTCUST2.ActiveRow.Cells("CUST_ADDR_CODE").Text.Length > 0 Then
                     shipToVerify(True, grdARTCUST2.ActiveRow.Cells("CUST_ADDR_CODE").Text)
@@ -183,8 +183,8 @@ Public Class SOTCUST1
 
 #Region "Overrides"
 
-    Public Overrides Function Remote_Control( _
-        ByVal command As String, _
+    Public Overrides Function Remote_Control(
+        ByVal command As String,
         Optional ByVal key As String = "") As Object
 
         Dim return_key As Object = Nothing
@@ -253,16 +253,16 @@ Public Class SOTCUST1
                         EMsg &= vbCr & "The Customer Zip Code Must Be At Least 5 Digits"
                     End If
                 End If
-                NoBlanks.Add("CUST_CONTACT", "Contact Name")
-                NoBlanks.Add("CUST_NAME", "Customer Name")
-                For Each NoBlanksItem As KeyValuePair(Of String, String) In NoBlanks
-                    If Absx1.txtFor(NoBlanksItem.Key).Text.Trim().Length = 0 Then
-                        EMsg &= vbCr & String.Format("The {0} Field Can Not Be Left Blank", NoBlanksItem.Value)
-                    End If
-                Next
-                If Absx1.CtlFor("CUST_PHONE").Text.Trim().Length = 0 Then
-                    EMsg &= vbCr & "The Contact Phone Number Field Can Not Be Left Blank"
-                End If
+                'NoBlanks.Add("CUST_CONTACT", "Contact Name")
+                'NoBlanks.Add("CUST_NAME", "Customer Name")
+                'For Each NoBlanksItem As KeyValuePair(Of String, String) In NoBlanks
+                '    If Absx1.txtFor(NoBlanksItem.Key).Text.Trim().Length = 0 Then
+                '        EMsg &= vbCr & String.Format("The {0} Field Can Not Be Left Blank", NoBlanksItem.Value)
+                '    End If
+                'Next
+                'If Absx1.CtlFor("CUST_PHONE").Text.Trim().Length = 0 Then
+                '    EMsg &= vbCr & "The Contact Phone Number Field Can Not Be Left Blank"
+                'End If
 
                 Dim rowSOTSREP1 = LookUp("SOTSREP1", Absx1.txtFor("SREP_CODE").Text)
                 If rowSOTSREP1 Is Nothing Then
@@ -284,6 +284,11 @@ Public Class SOTCUST1
                         End If
                     End If
                 Next
+
+                Dim c2 As Integer = Val(dst.Tables("ARTCUSTD").Compute("COUNT(CONTACT_NO)", "CONTACT_TYPE = 'L'") & "")
+                If c2 <> 1 Then
+                    EMsg &= vbCr & "You Must Have 1 And Only 1 Lead Contact."
+                End If
 
                 Dim BadStates As Boolean = False
                 Dim BadCountries As Boolean = False
@@ -444,6 +449,7 @@ Public Class SOTCUST1
         Fill_Records("ARTSREP1", Absx1.txtFor("CUST_CODE").Text)
         Fill_Records("SOTORDRX", Absx1.txtFor("CUST_CODE").Text)
         Fill_Records("ARTCUSCC", Absx1.txtFor("CUST_CODE").Text)
+        setRGIContacts()
         CalculateOrderTotalX()
         SetVerified()
 
@@ -485,6 +491,7 @@ Public Class SOTCUST1
                 dst.Tables(TABLE_NAME).Rows.Clear()
             Next
             EnforceConstraints(True)
+            clearRGIContacts()
         End If
     End Sub
 
@@ -552,6 +559,7 @@ Public Class SOTCUST1
             panRGI_Pricing.Enabled = False
             DiscountsLocked = True
         End If
+        lockRGIContacts()
     End Sub
 
     Public Overrides Sub isDeleteAllowed()
@@ -839,8 +847,8 @@ Public Class SOTCUST1
 
 #Region "Buttons"
     Private Sub btnEMail_Click(sender As System.Object, e As System.EventArgs) Handles btnEMail.Click
-        If txtCustEmail.Text.Length > 0 Then
-            SendEmail(txtCustEmail.Text)
+        If txtCUST_EMAIL_RGI.Text.Length > 0 Then
+            SendEmail(txtCUST_EMAIL_RGI.Text)
         Else
             MsgBox("No E-Mail Address Specified", MsgBoxStyle.Critical, "E-MAil")
         End If
@@ -888,8 +896,8 @@ Public Class SOTCUST1
             IsUSA = False
             PhoneFormat = "##########"
         End If
-        txtCUST_PHONE.InputMask = PhoneFormat
-        txtCUST_FAX.InputMask = PhoneFormat
+        txtCUST_PHONE_RGI.InputMask = PhoneFormat
+        txtCUST_FAX_RGI.InputMask = PhoneFormat
     End Sub
 
     Private Sub txtCUST_STATE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCUST_STATE.LostFocus
@@ -964,7 +972,6 @@ Public Class SOTCUST1
 
     Private Sub MakeARTCUST2()
         Dim NextCUST_ADDR_CODE As String = GetNextCUST_ADDR_CODE()
-
         Dim newARTCUST2 As DataRow = dst.Tables("ARTCUST2").NewRow()
         newARTCUST2.Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
         newARTCUST2.Item("CUST_ADDR_TYPE") = "MK"
@@ -974,11 +981,11 @@ Public Class SOTCUST1
         newARTCUST2.Item("LAST_OPER") = ASCMAIN1.USER_ID
         newARTCUST2.Item("INIT_DATE") = Now + ASCMAIN1.NowTSD
         newARTCUST2.Item("LAST_DATE") = Now + ASCMAIN1.NowTSD
-        newARTCUST2.Item("CUST_CONTACT") = Absx1.txtFor("CUST_CONTACT").Text
-        newARTCUST2.Item("CUST_PHONE") = txtCUST_PHONE.Text
-        newARTCUST2.Item("CUST_EXT") = Absx1.txtFor("CUST_EXT").Text
-        newARTCUST2.Item("CUST_FAX") = txtCUST_FAX.Text
-        newARTCUST2.Item("CUST_EMAIL") = txtCustEmail.Text
+        newARTCUST2.Item("CUST_CONTACT") = txtCUST_CONTACT_RGI.Text
+        newARTCUST2.Item("CUST_PHONE") = txtCUST_PHONE_RGI.Text
+        newARTCUST2.Item("CUST_EXT") = txtCUST_EXT_RGI.Text
+        newARTCUST2.Item("CUST_FAX") = txtCUST_FAX_RGI.Text
+        newARTCUST2.Item("CUST_EMAIL") = txtCUST_EMAIL_RGI.Text
         For Each COLNAME As String In New String() {"CUST_NAME", "CUST_ADDR1", "CUST_ADDR2", "CUST_CITY", "CUST_STATE", "CUST_ZIP_CODE", "CUST_COUNTRY"}
             newARTCUST2.Item(COLNAME) = Absx1.txtFor(COLNAME).Text
         Next
@@ -995,45 +1002,45 @@ Public Class SOTCUST1
         End If
     End Sub
 
-    Private Sub MakeContactFromMain()
-        Dim RowCount = grdARTCUSTD.Rows.Count
-        Dim newARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").NewRow
-        Dim CONTACT_NO As Integer = Val(dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", "") & "") + 1
-        With newARTCUSTD
-            .Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
-            .Item("CONTACT_NO") = CONTACT_NO
-            .Item("CONTACT_NAME") = Absx1.txtFor("CUST_CONTACT").Text
-            .Item("CONTACT_EMAIL") = Absx1.txtFor("CUST_EMAIL").Text
-            .Item("CONTACT_PHONE") = txtCUST_PHONE.Text
-            .Item("CONTACT_EXT") = Absx1.txtFor("CUST_EXT").Text
-            .Item("CONTACT_FAX") = txtCUST_FAX.Text
-            If CONTACT_NO = 1 Then
-                .Item("CONTACT_TYPE") = "B"
-                .Item("CONTACT_PRIMARY") = "1"
-            Else
-                .Item("CONTACT_TYPE") = "M"
-                .Item("CONTACT_PRIMARY") = "0"
-            End If
-            .Item("INIT_OPER") = ASCMAIN1.USER_ID
-            .Item("LAST_DATE") = DATETIME_STAMP
-            .Item("LAST_OPER") = ASCMAIN1.USER_ID
-            .Item("INIT_DATE") = DATETIME_STAMP
-            '.Item("CONTACT_CELL") = "XXXXXX"
-            '.Item("CONTACT_TITLE") = "XXXXXX"
-            '.Item("CONTACT_NOTE") = "XXXXXX"
-        End With
-        dst.Tables.Item("ARTCUSTD").Rows.Add(newARTCUSTD)
-        grdARTCUSTD.Refresh()
-        grdARTCUSTD.PerformAction(UltraWinGrid.UltraGridAction.ExitEditMode)
-        grdARTCUSTD.Update()
-        If Not IsNothing(grdARTCUSTD.ActiveRow) Then
-            If Not grdARTCUSTD.ActiveRow Is Nothing AndAlso grdARTCUSTD.ActiveRow.DataChanged Then
-                grdARTCUSTD.ActiveRow.CancelUpdate()
-            ElseIf Not grdARTCUSTD.ActiveRow IsNot Nothing AndAlso grdARTCUSTD.ActiveRow.DataChanged Then
-                grdARTCUSTD.ActiveRow.Update()
-            End If
-        End If
-    End Sub
+    'Private Sub MakeContactFromMain()
+    '    Dim RowCount = grdARTCUSTD.Rows.Count
+    '    Dim newARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").NewRow
+    '    Dim CONTACT_NO As Integer = Val(dst.Tables("ARTCUSTD").Compute("MAX(CONTACT_NO)", "") & "") + 1
+    '    With newARTCUSTD
+    '        .Item("CUST_CODE") = Absx1.txtFor("CUST_CODE").Text
+    '        .Item("CONTACT_NO") = CONTACT_NO
+    '        .Item("CONTACT_NAME") = Absx1.txtFor("CUST_CONTACT").Text
+    '        .Item("CONTACT_EMAIL") = Absx1.txtFor("CUST_EMAIL").Text
+    '        .Item("CONTACT_PHONE") = txtCUST_PHONE.Text
+    '        .Item("CONTACT_EXT") = Absx1.txtFor("CUST_EXT").Text
+    '        .Item("CONTACT_FAX") = txtCUST_FAX.Text
+    '        If CONTACT_NO = 1 Then
+    '            .Item("CONTACT_TYPE") = "B"
+    '            .Item("CONTACT_PRIMARY") = "1"
+    '        Else
+    '            .Item("CONTACT_TYPE") = "M"
+    '            .Item("CONTACT_PRIMARY") = "0"
+    '        End If
+    '        .Item("INIT_OPER") = ASCMAIN1.USER_ID
+    '        .Item("LAST_DATE") = DATETIME_STAMP
+    '        .Item("LAST_OPER") = ASCMAIN1.USER_ID
+    '        .Item("INIT_DATE") = DATETIME_STAMP
+    '        '.Item("CONTACT_CELL") = "XXXXXX"
+    '        '.Item("CONTACT_TITLE") = "XXXXXX"
+    '        '.Item("CONTACT_NOTE") = "XXXXXX"
+    '    End With
+    '    dst.Tables.Item("ARTCUSTD").Rows.Add(newARTCUSTD)
+    '    grdARTCUSTD.Refresh()
+    '    grdARTCUSTD.PerformAction(UltraWinGrid.UltraGridAction.ExitEditMode)
+    '    grdARTCUSTD.Update()
+    '    If Not IsNothing(grdARTCUSTD.ActiveRow) Then
+    '        If Not grdARTCUSTD.ActiveRow Is Nothing AndAlso grdARTCUSTD.ActiveRow.DataChanged Then
+    '            grdARTCUSTD.ActiveRow.CancelUpdate()
+    '        ElseIf Not grdARTCUSTD.ActiveRow IsNot Nothing AndAlso grdARTCUSTD.ActiveRow.DataChanged Then
+    '            grdARTCUSTD.ActiveRow.Update()
+    '        End If
+    '    End If
+    'End Sub
 
     Private Sub SendEmail(ByVal EAddress As String)
         Dim OutlookEmail As New Email()
@@ -1178,6 +1185,68 @@ Public Class SOTCUST1
     End Function
 
 #End Region
+#End Region
+
+#Region "RGI Changes to Contacts"
+    Private Sub lockRGIContacts()
+        txtCUST_CONTACT_RGI.ReadOnly = True
+        txtCUST_EMAIL_RGI.ReadOnly = True
+        txtCUST_PHONE_RGI.ReadOnly = True
+        txtCUST_EXT_RGI.ReadOnly = True
+        txtCUST_FAX_RGI.ReadOnly = True
+    End Sub
+
+    Private Sub clearRGIContacts()
+        txtCUST_CONTACT_RGI.ReadOnly = True
+        txtCUST_EMAIL_RGI.ReadOnly = True
+        txtCUST_PHONE_RGI.ReadOnly = True
+        txtCUST_EXT_RGI.ReadOnly = True
+        txtCUST_FAX_RGI.ReadOnly = True
+        txtCUST_CONTACT_RGI.Text = ""
+        txtCUST_EMAIL_RGI.Text = ""
+        txtCUST_PHONE_RGI.Text = ""
+        txtCUST_EXT_RGI.Text = ""
+        txtCUST_FAX_RGI.Text = ""
+    End Sub
+
+    Private Sub setRGIContacts()
+        Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Rows(0)
+
+        Dim fltr As String = "CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+        Dim rowARTCUSTD As DataRow = dst.Tables("ARTCUSTD").Select(fltr).FirstOrDefault
+
+        If IsNothing(rowARTCUSTD) Or IsNothing(rowARTCUST1) Then
+            txtCUST_CONTACT_RGI.Text = ""
+            txtCUST_EMAIL_RGI.Text = ""
+            txtCUST_PHONE_RGI.Text = ""
+            txtCUST_EXT_RGI.Text = ""
+            txtCUST_FAX_RGI.Text = ""
+        Else
+            txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+            txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+            txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+            txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+            txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+
+            rowARTCUST1.Item("CUST_CONTACT") = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+            rowARTCUST1.Item("CUST_EMAIL") = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+            rowARTCUST1.Item("CUST_PHONE") = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+            rowARTCUST1.Item("CUST_EXT") = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+            rowARTCUST1.Item("CUST_FAX") = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+        End If
+    End Sub
+
+    Private Sub grdARTCUSTD_AfterRowUpdate(sender As Object, e As UltraWinGrid.RowEventArgs) Handles grdARTCUSTD.AfterRowUpdate
+        Dim CONTACT_TYPE As String = e.Row.Cells("CONTACT_TYPE").Value & String.Empty
+        Dim CONTACT_PRIMARY As String = e.Row.Cells("CONTACT_PRIMARY").Value & String.Empty
+        If CONTACT_TYPE = "L" And CONTACT_PRIMARY = "1" Then
+            setRGIContacts()
+        End If
+    End Sub
+
+    Private Sub grdARTCUSTD_InitializeLayout(sender As Object, e As UltraWinGrid.InitializeLayoutEventArgs) Handles grdARTCUSTD.InitializeLayout
+
+    End Sub
 #End Region
 
 End Class

@@ -1125,22 +1125,25 @@ Public Class ICCMAIN1
         adding_cost = False
 
         Dim RGITEMP As String = ", NVL(POTSHIP3.PO_COST_LANDED,0)"
+        Dim RGITEMP2 As String = ", NVL(POTSHIP3.PO_COST,0)"
 
         If ASCMAIN1.CLIENT = "RGI" And ASCMAIN1.DBS_SERVER <> "RGIUAT" Then
             RGITEMP = ", NVL(POTSHIP3.PO_COST,0)"
+        Else
+            '   RGITEMP2 = ""
         End If
 
         Dim sqlICTCOSTL As String = "Select" & vbCrLf _
             & " STYLE_CODE, COLOR_CODE, OPS_YYYYPP, TRAN_DATE, TRAN_NO, TRAN_TYPE, TRAN_REF, TRAN_QTY, TRAN_COST, TRAN_LNO" & vbCrLf _
             & ", INIT_DATE, INIT_OPER, LAST_DATE, LAST_OPER" & vbCrLf _
-            & ", WHSE_CODE, ORDR_NO, TRAN_STATUS, TARIFF_UNIT_COST, TARIFF_FLAG" & vbCrLf _
+            & ", WHSE_CODE, ORDR_NO, TRAN_STATUS, TARIFF_UNIT_COST, TARIFF_FLAG, PO_COST_SHIP3" & vbCrLf _
             & ", TRIM(TO_CHAR(ROWNUM,'0000000000')) RECORD_NO" & vbCrLf _
             & " from (" & vbCrLf _
             & " Select ICTCOST1.STYLE_CODE, ICTCOST1.COLOR_CODE, ICTCOST1.TRAN_DATE, ICTCOST1.OPS_YYYYPP" & vbCrLf _
             & ", ICTCOST1.TRAN_NO, ICTCOST1.TRAN_TYPE, ICTCOST1.TRAN_REF, ICTCOST1.TRAN_QTY, ICTCOST1.TRAN_COST, 0 TRAN_LNO" & vbCrLf _
             & ", ICTCOST1.INIT_DATE, ICTCOST1.INIT_OPER, ICTCOST1.LAST_DATE, ICTCOST1.LAST_OPER" & vbCrLf _
-            & ", NULL WHSE_CODE, NULL ORDR_NO, NULL TRAN_STATUS, 0 TARIFF_UNIT_COST, NULL TARIFF_FLAG" & vbCrLf _
-            & " from ICTCOST1, " & ICTCOSTA & " ICTCOSTA" & vbCrLf _
+            & ", NULL WHSE_CODE, NULL ORDR_NO, NULL TRAN_STATUS, 0 TARIFF_UNIT_COST, NULL TARIFF_FLAG, 0 PO_COST_SHIP3" & vbCrLf _
+             & " from ICTCOST1, " & ICTCOSTA & " ICTCOSTA" & vbCrLf _
             & " where ICTCOST1.OPS_YYYYPP >= ICTCOSTA.OPS_YYYYPP_BASE" & vbCrLf _
             & "   and ICTCOST1.OPS_YYYYPP <= '" & YP & "'" & vbCrLf _
             & "   and ICTCOST1.STYLE_CODE = ICTCOSTA.STYLE_CODE" & vbCrLf _
@@ -1154,6 +1157,7 @@ Public Class ICCMAIN1
             & ", ICTIREC1.INIT_DATE, ICTIREC1.INIT_OPER, ICTIREC1.LAST_DATE, ICTIREC1.LAST_OPER" & vbCrLf _
             & ", ICTIREC1.WHSE_CODE, POTSHIP2.ORDR_NO, CASE WHEN ICTIREC1.REVERSED_BY_RECEIPT_NO IS NOT NULL THEN 'D' ELSE CASE WHEN REVERSES_RECEIPT_NO IS NOT NULL THEN 'S' ELSE NULL END END TRAN_STATUS" & vbCrLf _
             & ", 0 TARIFF_UNIT_COST, NULL TARIFF_FLAG" & vbCrLf _
+            & RGITEMP2 & vbCrLf _
             & " from POTSHIP1, POTSHIP2, POTSHIP3, POTORDR2, ICTIREC1, ICTIREC2, " & ICTCOSTA & " ICTCOSTA" & vbCrLf _
             & " where ICTIREC1.RECEIPT_NO = ICTIREC2.RECEIPT_NO" & vbCrLf _
             & "   and ICTIREC2.STYLE_CODE = ICTCOSTA.STYLE_CODE" & vbCrLf _
@@ -1178,6 +1182,7 @@ Public Class ICCMAIN1
             & ", X.WHSE_CODE, X.ORDR_NO, X.TRAN_STATUS" & vbCrLf _
             & IIf(calculate_usage, ", POTSHIP5_DTL.TARIFF_UNIT_COST", ", X.TARIFF_UNIT_COST") & vbCrLf _
             & IIf(calculate_usage, ", TO_CHAR(X.TRAN_DATE,'YYYYMMDD') || SUBSTR(TRIM(TO_CHAR(NVL(POTSHIP5_DTL.TPCT,0)-.01,'00')),-2,2) TARIFF_FLAG", ", X.TARIFF_FLAG") & vbCrLf _
+            & ", X.PO_COST_SHIP3" & vbCrLf _
             & " from (" & sqlICTCOSTL & ") X" & vbCrLf _
             & IIf(calculate_usage, ", " & POTSHIP5_DTL & " POTSHIP5_DTL, ICTIREC2" & vbCrLf, "") _
             & IIf(calculate_usage, " where ICTIREC2.RECEIPT_NO (+) = DECODE(X.TRAN_TYPE,'R',X.TRAN_NO,'~')" & vbCrLf _
@@ -1269,6 +1274,7 @@ Public Class ICCMAIN1
             Dim LOT_DAYS As Int64 = 0
             Dim TRAN_COST_M As Decimal = -1
             Dim TRAN_COST As Decimal = 0
+            Dim PO_COST_SHIP3 As Decimal = 0
 
             Dim sqlw As String = "STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & COLOR_CODE & "'"
             Dim sqlw_no_BTB = " and ORDR_NO is Null" ' do not want to FIFO OH anything from a BTB shipment receipt
@@ -1294,7 +1300,7 @@ Public Class ICCMAIN1
 
                 Dim ORDR_NO As String = rowICTCOSTL.Item("ORDR_NO") & ""
                 Dim WHSE_CODE As String = rowICTCOSTL.Item("WHSE_CODE") & ""
-
+                PO_COST_SHIP3 = Val(rowICTCOSTL.Item("PO_COST_SHIP3") & "")
                 If TRAN_TYPE = "M" Then
                     If TRAN_COST_M < 0 Then
                         TRAN_COST = Val(rowICTCOSTL.Item("TRAN_COST") & "")
@@ -1397,6 +1403,7 @@ Public Class ICCMAIN1
             rowICTCOSTA.Item("LOT_QTY_ONHD") = LOT_QTY_ONHD
             rowICTCOSTA.Item("LOT_AMT_ONHD") = LOT_AMT_ONHD
             rowICTCOSTA.Item("STYLE_COST") = STYLE_COST
+            rowICTCOSTA.Item("PO_COST_SHIP3") = PO_COST_SHIP3
 
             If LOT_AMT_ONHD = 0 Then
                 LOT_DAYS = 0
@@ -1465,7 +1472,7 @@ Public Class ICCMAIN1
 
 
                                 Dim LOT_COST As Decimal = 0
-                                Dim LOT_QTY_REMAINING As Int32 =0
+                                Dim LOT_QTY_REMAINING As Int32 = 0
                                 ' LOT_QTY_USED is negative for returns and positive adjustments
                                 ' LOT_QTY_USED is positive for shipments and negative adjustments
                                 '   Dim LOT_QTY_REMAINING_NEW As Int32 = LOT_QTY_REMAINING + TRAN_QTY_REMAININ
@@ -2517,6 +2524,16 @@ Public Class ICCMAIN1
 
         frm.dst.Tables("SOTINVH1").Rows.Add(rowSOTINVH1)
 
+        ' Requested by Darrin 3/6/2026
+        ' Rule: If there is an INV_STAX amount, there must be an STAX_CODE = ‘NY’ to update appropriate G/L Account at month end.
+        If ASCMAIN1.CLIENT = "VAN" Then
+            If Val(rowSOTINVH1.Item("INV_STAX") & String.Empty) <> 0 Then
+                If rowSOTINVH1.Item("STAX_CODE") & String.Empty = "" Then
+                    rowSOTINVH1.Item("STAX_CODE") = "NY"
+                End If
+            End If
+        End If
+
         ' RGI has tariffs for individual items as MISC charges
         If ASCMAIN1.CLIENT <> "RGI" Then
             Dim INV_MISC_CHG As Decimal = Val(rowSOTINVH1.Item("INV_MISC_CHG") & "")
@@ -2540,10 +2557,9 @@ Public Class ICCMAIN1
         End If
 
         Dim rowARTOPEN1 As DataRow = frm.dst.Tables("ARTOPEN1").NewRow
-        ' "STAX_CODE"
         For Each C As String In New String() _
         {"CUST_CODE", "INV_TYPE", "INV_DATE", "CUST_STORE_NO", "POST_CODE",
-         "TERM_CODE", "SREP_CODE", "INV_STAX",
+         "TERM_CODE", "SREP_CODE", "INV_STAX", "STAX_CODE",
          "ORDR_NO", "INV_SALES", "INV_FREIGHT", "INV_TOTAL_AMOUNT",
          "REASON_CODE", "INIT_OPER", "INIT_DATE", "INV_MISC_CHG", "ORDR_TYPE_CODE", "SALES_DIVISION_CODE"}
             rowARTOPEN1.Item(C) = rowSOTINVH1.Item(C)

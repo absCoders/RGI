@@ -5679,7 +5679,7 @@ Public Class SOFORDR1
                 tlb_btn = DirectCast(tlb_pop.Tools("Customer Order Status"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count <> 0) And (ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI")
                 tlb_btn = DirectCast(tlb_pop.Tools("Acknowledge EDI Ord"), UltraWinToolbars.ButtonTool)
-                tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count = 1) And (ASCMAIN1.CLIENT = "RGI") And Can_Acknowledge(grdSOTORDRX.ActiveRow)
+                tlb_btn.SharedProps.Visible = Not ScreenMode And (grdSOTORDRX.ActiveRow IsNot Nothing Or grdSOTORDRX.Selected.Rows.Count = 1) And Can_Acknowledge(grdSOTORDRX.ActiveRow)
 
 
             Case "grdSOTORDRI"
@@ -6731,8 +6731,8 @@ Public Class SOFORDR1
                     'I think the code above shouldn't overwrite the values calculated in the report class,
                     'there is lots of logic specific to proforma invoices, all that work gets overwritten.
                     'this is here because tariffs are calculated into INV_MISC_CHG, these need to be included on BTB invoices except 'FE'
-                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT") = rowSOTINVH1.Item("INV_SALES") + rowSOTINVH1.Item("INV_MISC_CHG")
-                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = rowSOTINVH1.Item("INV_SALES_CURR") + rowSOTINVH1.Item("INV_MISC_CHG_CURR")
+                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT") = rowSOTINVH1.Item("INV_SALES") + Val(rowSOTINVH1.Item("INV_MISC_CHG") & "")
+                    rowSOTINVH1.Item("INV_TOTAL_AMOUNT_CURR") = rowSOTINVH1.Item("INV_SALES_CURR") + Val(rowSOTINVH1.Item("INV_MISC_CHG_CURR") & "")
                 End If
 
                 If rowSOTINVH1.Item("SHIP_BOL_NO") & "" = "" Then
@@ -7237,6 +7237,10 @@ Public Class SOFORDR1
             Dim SUBT As String = ""
             .CR_params.Add("SUBT", SUBT)
             If ASCMAIN1.CLIENT = "RGI" Then
+                Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text.ToString & String.Empty
+                Dim msgs As Dictionary(Of String, String) = TAC.TACMAIN1.getSalesDocMsgs(CUST_CODE)
+                .CR_params.Add("CMSG", msgs("C"))
+                .CR_params.Add("TMSG", msgs("T"))
                 REPORT_NAME = "SORORDRR"
             End If
             .Generate_Report(REPORT_NAME, "Sales Order", SUBT, True, , , , , False)
@@ -8923,6 +8927,9 @@ Public Class SOFORDR1
             End If
             If rowICTSTYL1.Item("SALES_DIVISION_CODE") & "" = "" Then
                 E = "Style does not have a valid Division Code" & vbCrLf
+            End If
+            If rowICTSTYL1.Item("SALES_DIVISION_CODE") & "" = "30" Then
+                E = "Division 30 Prohibited currently in Order Entry" & vbCrLf
             End If
         End If
 
@@ -11950,6 +11957,13 @@ Public Class SOFORDR1
                 & "   and EDTSYSIH.COMPANY_CODE = EDT855O1.COMPANY_CODE" _
                 & "   and EDTSYSIH.EDI_OUTBOUND_DOC_NO = EDT855O1.EDI_OUTBOUND_DOC_NO" _
                 & "   and TRIM(EDTSYSIH.EDI_TP_ID) = '" & Trim(rowEDTTRPM1.Item("EDI_TP_ID")) & "'"
+            If ASCMAIN1.CLIENT = "VAN" Then
+                ASCMAIN1.sql = "Select EDT855O1.* from EDT855O1,EDTSYSIH" _
+                & " where EDT855O1.COMPANY_CODE = '" & ASCMAIN1.DBS_COMPANY & "'" _
+                & "   and EDT855O1.ORDR_GROUP_NO = '" & ORDR_GROUP_NO & "'" _
+                & "   and EDTSYSIH.EDI_OUTBOUND_DOC_NO = EDT855O1.EDI_OUTBOUND_DOC_NO" _
+                & "   and TRIM(EDTSYSIH.EDI_TP_ID) = '" & Trim(rowEDTTRPM1.Item("EDI_TP_ID")) & "'"
+            End If
             Dim rowEDT855O1 As DataRow = ASCDATA1.GetDataRow
             If rowEDT855O1 Is Nothing Then
                 Return True

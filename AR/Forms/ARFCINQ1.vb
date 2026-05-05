@@ -74,6 +74,8 @@ Public Class ARFCINQ1
         '    collections_mode = True
         'End If
 
+        setContactView()
+
         AUDIT.Add("ARTOPEN1", "*")
 
         With dst
@@ -140,6 +142,11 @@ Public Class ARFCINQ1
                 ROWs("ARTPARM1"),
                 Report_date, True)
 
+                Dim ORDRBY As String = ""
+                If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    ORDRBY = " ORDER BY ARTOPEN1.INV_DUE_DATE"
+                End If
+
                 ASCMAIN1.sql = "Select ARTOPEN1.* " & TAC.ARCMAIN2.DAYS_AND_BUCKETS _
                 & ", DECODE (ARTOPEN1.INV_TYPE,'B',ARTOPEN1.INV_BALANCE,0) CHARGEBACKS " & vbCrLf _
                 & ", CASE WHEN ARTOPEN1.INV_TYPE = 'C' OR ARTOPEN1.INV_TYPE = 'O' THEN ARTOPEN1.INV_BALANCE ELSE 0 END CREDITS" & vbCrLf _
@@ -147,7 +154,9 @@ Public Class ARFCINQ1
                 & " where ARTOPEN1.INV_BALANCE <> 0" & vbCrLf _
                 & " and ARTCUSTX.CUST_CODE = ARTOPEN1.CUST_CODE" & vbCrLf _
                 & " and TATTERM1.TERM_CODE = ARTOPEN1.TERM_CODE" & vbCrLf _
-                & " and ARTCUSTX.CUST_CODE = :PARM1"
+                & " and ARTCUSTX.CUST_CODE = :PARM1" _
+                & ORDRBY
+
                 Create_TDA(dst.Tables.Add, "ARTSTMTR", "**", 0, False, "V", 3)
                 Dim ADD_SQL As String = "(" & ASCMAIN1.sql & ")"
 
@@ -334,7 +343,7 @@ Public Class ARFCINQ1
             sqlARTCUSTT_FUPS.AppendLine("(")
             sqlARTCUSTT_FUPS.AppendLine("    SELECT")
             sqlARTCUSTT_FUPS.AppendLine("    CUST_CODE,")
-            sqlARTCUSTT_FUPS.AppendLine("    SUM(NVL(INV_BALANCE_CURR,0)) AS INV_BALANCE_CURR")
+            sqlARTCUSTT_FUPS.AppendLine("    SUM(NVL(INV_BALANCE,0)) AS INV_BALANCE_CURR") 'Of Course there are 2 open items with null _CURR.  Enough of this maddness.
             sqlARTCUSTT_FUPS.AppendLine("    FROM ARTOPEN1")
             sqlARTCUSTT_FUPS.AppendLine("    GROUP BY CUST_CODE")
             sqlARTCUSTT_FUPS.AppendLine(") BL")
@@ -984,8 +993,14 @@ Public Class ARFCINQ1
                     GCOL.Width = 120
                 ElseIf New String() {"ORDR_SHIP_DATE", "ORDR_CANCEL_DATE", "ORDR_ORIG_SHIP_DATE", "ORDR_ORIG_CANCEL_DATE"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.Gold
-                    GCOL.Format = "MM/dd"
-                    GCOL.Width = 60
+                    If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                        GCOL.Format = "MM/dd/yyyy"
+                        GCOL.Width = 120
+                    Else
+                        GCOL.Format = "MM/dd"
+                        GCOL.Width = 60
+                    End If
+
                 ElseIf New String() {"ORDR_AMT", "ORDR_AMT_OPEN", "ORDR_AMT_ALLO_CUR", "PCT_ALLO_CUR", "ORDR_AMT_PICK", "ORDR_AMT_SHIP", "ORDR_AMT_CANC"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGreen
                     GCOL.Format = "#,##0.00"
@@ -1027,7 +1042,12 @@ Public Class ARFCINQ1
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightGray
                 ElseIf New String() {"ORDR_SHIP_DATE", "ORDR_CANCEL_DATE", "ORDR_ORIG_SHIP_DATE", "ORDR_ORIG_CANCEL_DATE"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.Gold
-                    GCOL.Format = "MM/dd"
+                    If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                        GCOL.Format = "MM/dd/yyyy"
+                        GCOL.Width = 120
+                    Else
+                        GCOL.Format = "MM/dd"
+                    End If
                 ElseIf New String() {"SHIP_VIA_CODE", "ORDR_TYPE_CODE", "FRT_TERMS", "WHSE_CODE", "ORDR_SHIP_INSTR"}.Contains(GCOL.Key) Then
                     GCOL.Header.Appearance.BackColor2 = Drawing.Color.LightPink
                 Else
@@ -1186,6 +1206,11 @@ Public Class ARFCINQ1
             With grdARTSTMT1.DisplayLayout.Bands(0)
                 .Columns("AGE_" & CStr(i)).Header.Caption = ROWs("ARTPARM1").Item("AR_PARM_AGE_CATG_DESC_" & CStr(i)) & ""
                 .Columns("DUE_" & CStr(i)).Header.Caption = ROWs("ARTPARM1").Item("AR_PARM_DUE_CATG_DESC_" & CStr(i)) & ""
+                If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+                    .Columns("AGE_" & CStr(i)).Hidden = True
+                Else
+                    .Columns("AGE_" & CStr(i)).Hidden = False
+                End If
             End With
         Next
 
@@ -1677,7 +1702,8 @@ Public Class ARFCINQ1
 
         SetControlPanel()
 
-        grpContact.Visible = ScreenMode
+        'rpContact.Visible = ScreenMode
+        setContactView()
         lblSREP.Visible = ScreenMode
 
         If ScreenMode Then
@@ -1804,6 +1830,8 @@ Public Class ARFCINQ1
             tabMain.Tabs("Outbound").Visible = False
         End If
 
+        lockRGIContacts()
+
     End Sub
 
     Sub Clear_Record()
@@ -1852,6 +1880,10 @@ Public Class ARFCINQ1
             Dim grd As UltraWinGrid.UltraGrid = GRDs(grdname)
             grd.DisplayLayout.Bands(0).ColumnFilters.ClearAllFilters()
         Next
+
+        ClearOBData()
+
+        clearRGIContacts()
 
     End Sub
 
@@ -1909,6 +1941,8 @@ Public Class ARFCINQ1
         Else
             Fill_Records("ARTCUSTD", HFs("CUST_CODE"))
             Sort_grdColumns(grdARTCUSTD, "CUST_CODE")
+            setRGIContacts()
+
             Fill_Records("ARTCUSTS")
             Sort_grdColumns(grdARTCUSTS, "CUST_CODE")
 
@@ -2527,10 +2561,23 @@ Public Class ARFCINQ1
                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
-                Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
-                Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
-                If CUST_EMAIL <> "" Then
-                    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                    Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                    If Not IsNothing(rowARTCUSTD) Then
+                        Dim CUST_EMAIL As String = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                        Dim CUST_CONTACT As String = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+                        If CUST_EMAIL <> "" Then
+                            EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                        End If
+                    End If
+                Else
+                    Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+                    Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
+                    If CUST_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                    End If
                 End If
 
                 Dim ATTACHMENTs As New Dictionary(Of String, String)
@@ -2611,14 +2658,51 @@ Public Class ARFCINQ1
 
                 '  Show_Document(ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
 
+
                 Dim EMAIL_ADDRESSs As New Dictionary(Of String, String)
                 Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
                 Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
-                Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
-                Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
-                If CUST_EMAIL <> "" Then
-                    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                Dim CUST_STMT_EMAIL As String = rowARTCUST1.Item("CUST_STMT_EMAIL").ToString & String.Empty
+                Dim CUST_STMT_CC As String = rowARTCUST1.Item("CUST_STMT_CC").ToString & String.Empty
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    If CUST_STMT_EMAIL.Length = 0 And CUST_STMT_CC.Length = 0 Then
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Missing E-mails"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("There Is No Statement Or CC E-Mail")
+                        iMSG.AppendLine("Set Up For This Customer.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Would You Like Me To Use The")
+                        iMSG.AppendLine("Lead?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                            Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                            If Not IsNothing(rowARTCUSTD) Then
+                                CUST_STMT_EMAIL = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                            End If
+                        End If
+                    End If
+                    If CUST_STMT_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_STMT_EMAIL, CUST_STMT_EMAIL)
+                    End If
+                    If CUST_STMT_CC <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_STMT_CC, CUST_STMT_CC)
+                    End If
+                Else
+                    Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+                    Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
+                    If CUST_EMAIL <> "" Then
+                        EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                    End If
                 End If
+                'Dim CUST_CODE As String = Absx1.txtFor("CUST_CODE").Text
+                'Dim CUST_NAME As String = Absx1.txtFor("CUST_NAME").Text
+                'Dim CUST_EMAIL As String = Absx1.txtFor("CUST_EMAIL").Text
+                'Dim CUST_CONTACT As String = Absx1.txtFor("CUST_CONTACT").Text
+                'If CUST_EMAIL <> "" Then
+                '    EMAIL_ADDRESSs.Add(CUST_EMAIL, IIf(CUST_CONTACT = "", CUST_EMAIL, CUST_CONTACT))
+                'End If
 
                 Dim ATTACHMENTs As New Dictionary(Of String, String)
                 ATTACHMENTs.Add(FILENAME & ".pdf", ASCMAIN1.Folders("Temp") & FILENAME & ".PDF")
@@ -2857,6 +2941,29 @@ Public Class ARFCINQ1
                 End If
 
                 Dim CUST_EMAIL_AR As String = Absx1.txtFor("CUST_EMAIL").Text
+                Dim CUST_INV_EMAIL As String = rowARTCUST1.Item("CUST_INV_EMAIL").ToString & String.Empty
+                Dim CUST_INV_CC As String = rowARTCUST1.Item("CUST_INV_CC").ToString & String.Empty
+                If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                    If CUST_INV_EMAIL.Length = 0 And CUST_INV_CC.Length = 0 Then
+                        Dim iResult As MsgBoxResult
+                        Dim iTitle As String = "Missing E-mails"
+                        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                        iMSG.AppendLine("There Is No Invoice Or CC E-Mail")
+                        iMSG.AppendLine("Set Up For This Customer.")
+                        iMSG.AppendLine("")
+                        iMSG.AppendLine("Would You Like Me To Use The")
+                        iMSG.AppendLine("Lead?")
+                        iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                        If iResult = MsgBoxResult.Yes Then
+                            Dim fltr As String = $"CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+                            Dim rowARTCUSTD As DataRow = dst.Tables.Item("ARTCUSTD").Select(fltr).FirstOrDefault
+                            If Not IsNothing(rowARTCUSTD) Then
+                                CUST_INV_EMAIL = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+                            End If
+                        End If
+                    End If
+                    CUST_EMAIL_AR = CUST_INV_EMAIL
+                End If
 
                 If ASCMAIN1.CLIENT = "VAN" Then
                     If rowARTCUST1.Item("CUST_XMIT_INV_VIA") & "" = "E" And rowARTCUST1.Item("CUST_INV_EMAIL") & "" <> "" Then
@@ -2864,13 +2971,24 @@ Public Class ARFCINQ1
                     End If
                 End If
                 If e.Tool.Key Like "email*" Then
-                    TAC.SOCMAIN1.email_Invoice(Me,
+
+                    If (ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI") Then
+                        If CUST_INV_EMAIL.Length > 0 Then
+                            TAC.SOCMAIN1.email_Invoice(Me,
+                                                       Absx1.txtFor("CUST_CODE").Text,
+                                                       Absx1.txtFor("CUST_NAME").Text,
+                                                       CUST_INV_EMAIL,
+                                                       CUST_INV_EMAIL,
+                                                       FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO, , CUST_INV_CC, CUST_INV_CC)
+                        End If
+                    Else
+                        TAC.SOCMAIN1.email_Invoice(Me,
                         Absx1.txtFor("CUST_CODE").Text,
                         Absx1.txtFor("CUST_NAME").Text,
                         CUST_EMAIL_AR,
                         CUST_EMAIL_AR,
                         FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT, INV_NO)
-
+                    End If
                 ElseIf e.Tool.Key Like "Fax*" Then
                     Send_fax(FILENAME, IIf(ATTACHMENT = "", FILENAME, ATTACHMENT), SUBJECT)
                 ElseIf e.Tool.Key Like "*clipboard" Then
@@ -3737,7 +3855,12 @@ Public Class ARFCINQ1
         For Each rowARTOPEN1 As DataRow In dst.Tables("ARTOPEN1").Select("INV_BALANCE = 0")
             rowARTOPEN1.Item("AGE") = DBNull.Value
         Next
-        Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdARTOPEN1, "INV_DUE_DATE")
+        Else
+            Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
         Age_Open_Items_by_Date()
@@ -3768,8 +3891,12 @@ Public Class ARFCINQ1
                 dst.Tables("ARTOPEN1").Rows.Add(rowARTOPEN1)
             End If
         Next
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdARTOPEN1, "INV_DUE_DATE")
+        Else
+            Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        End If
 
-        Sort_grdColumns(grdARTOPEN1, "INV_DATE")
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
         Age_Open_Items_by_Date()
@@ -3802,7 +3929,12 @@ Public Class ARFCINQ1
             End If
         Next
 
-        Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdARTOPEN1, "INV_DUE_DATE")
+        Else
+            Sort_grdColumns(grdARTOPEN1, "INV_DATE")
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
         Age_Open_Items_by_Date()
@@ -3958,7 +4090,12 @@ Public Class ARFCINQ1
 
         ASCMAIN1.sql = "Select SOTORDR1.* from SOTORDR1 where ORDR_GROUP_NO in (" & Replace(subQuery, ".*", ".ORDR_GROUP_NO") & ")"
         Fill_Records("SOTORDR1", "", , ASCMAIN1.sql)
-        Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Sort_grdColumns(grdSOTORDR0, "ORDR_SHIP_DATE")
+        Else
+            Sort_grdColumns(grdSOTORDR0, "ORDR_GROUP_NO".ToLower)
+        End If
+
         Me.Cursor = Cursors.Default
         ASCMAIN1.Progress("")
 
@@ -6070,7 +6207,7 @@ Public Class ARFCINQ1
             Dim ATTACHMENTs As New Dictionary(Of String, String)
             EMAIL_ADDRESSs.Add(txtOBSendEmail.Text, txtOBSendName.Text)
 
-            Dim TEMPLATE_NAME As String = "AR"
+            Dim TEMPLATE_NAME As String = "CREDIT"
             Dim SEND_NO As String = ASCMAIN1.TACMAIN1.Send_email _
                 (ASCMAIN1.ActiveForm, EMAIL_ADDRESSs, ATTACHMENTs,
                  "Credit Reference Request", TEMPLATE_NAME, True, False, TEMPLATE_NAME, TEMPLATE_NAME, "Credit Reference Request", content)
@@ -6175,6 +6312,21 @@ Public Class ARFCINQ1
 
         txtOBNotes.Text = ""
 
+        txtOBSendName.Text = ""
+        txtOBSendEmail.Text = ""
+    End Sub
+
+    Private Sub ClearOBData()
+        txtOBAddress.Text = ""
+        txtOBTerms.Text = ""
+        dteOBFirstOrder.Value = Null
+        dteOBLastOrder.Value = Null
+        numOBCreditLimit.Value = Null
+        rdoOBRatingSatisfactory.Checked = True
+        numOBHightCredit.Value = Null
+        numOBCurrBal.Value = Null
+        numOBPastDue.Value = Null
+        txtOBNotes.Text = ""
         txtOBSendName.Text = ""
         txtOBSendEmail.Text = ""
     End Sub
@@ -6305,5 +6457,66 @@ Public Class ARFCINQ1
         End If
     End Sub
 #End Region
+#Region "RGI Changes to Contacts"
+    Private Sub setContactView()
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            grpRGIContactInfo.Top = grpContact.Top
+            grpRGIContactInfo.Height = grpContact.Height
+            grpRGIContactInfo.Width = grpContact.Width
+            grpRGIContactInfo.Dock = DockStyle.Right
+            'grpRGIContactInfo.Dock = DockStyle.Fill
+            grpRGIContactInfo.Visible = ScreenMode
+            grpContact.Visible = False
+        Else
+            grpRGIContactInfo.Visible = False
+            grpContact.Visible = ScreenMode
+        End If
+    End Sub
 
+    Private Sub lockRGIContacts()
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            txtCUST_CONTACT_RGI.ReadOnly = True
+            txtCUST_EMAIL_RGI.ReadOnly = True
+            txtCUST_PHONE_RGI.ReadOnly = True
+            txtCUST_EXT_RGI.ReadOnly = True
+            txtCUST_FAX_RGI.ReadOnly = True
+        End If
+    End Sub
+
+    Private Sub clearRGIContacts()
+        If (ASCMAIN1.DBS_SERVER = "RGI" OrElse ASCMAIN1.DBS_COMPANY = "RGI") Then
+            txtCUST_CONTACT_RGI.ReadOnly = True
+            txtCUST_EMAIL_RGI.ReadOnly = True
+            txtCUST_PHONE_RGI.ReadOnly = True
+            txtCUST_EXT_RGI.ReadOnly = True
+            txtCUST_FAX_RGI.ReadOnly = True
+            txtCUST_CONTACT_RGI.Text = ""
+            txtCUST_EMAIL_RGI.Text = ""
+            txtCUST_PHONE_RGI.Text = ""
+            txtCUST_EXT_RGI.Text = ""
+            txtCUST_FAX_RGI.Text = ""
+        End If
+    End Sub
+
+    Private Sub setRGIContacts()
+        Dim rowARTCUST1 As DataRow = dst.Tables("ARTCUST1").Rows(0)
+
+        Dim fltr As String = "CONTACT_TYPE = 'L' AND CONTACT_PRIMARY = '1'"
+        Dim rowARTCUSTD As DataRow = dst.Tables("ARTCUSTD").Select(fltr).FirstOrDefault
+
+        If IsNothing(rowARTCUSTD) Or IsNothing(rowARTCUST1) Then
+            txtCUST_CONTACT_RGI.Text = ""
+            txtCUST_EMAIL_RGI.Text = ""
+            txtCUST_PHONE_RGI.Text = ""
+            txtCUST_EXT_RGI.Text = ""
+            txtCUST_FAX_RGI.Text = ""
+        Else
+            txtCUST_CONTACT_RGI.Text = rowARTCUSTD.Item("CONTACT_NAME").ToString & String.Empty
+            txtCUST_EMAIL_RGI.Text = rowARTCUSTD.Item("CONTACT_EMAIL").ToString & String.Empty
+            txtCUST_PHONE_RGI.Text = rowARTCUSTD.Item("CONTACT_PHONE").ToString & String.Empty
+            txtCUST_EXT_RGI.Text = rowARTCUSTD.Item("CONTACT_EXT").ToString & String.Empty
+            txtCUST_FAX_RGI.Text = rowARTCUSTD.Item("CONTACT_FAX").ToString & String.Empty
+        End If
+    End Sub
+#End Region
 End Class

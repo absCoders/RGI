@@ -24,6 +24,9 @@ Public Class ARRATBR1
             Absx1.chkFor("INV_TYPE_R").Visible = True
             Absx1.optFor("OPTID").Value = "D"
         End If
+        If ASCMAIN1.DBS_COMPANY = "RGI" Or ASCMAIN1.DBS_SERVER = "RGI" Then
+            Absx1.optFor("OPTID").Value = "D"
+        End If
 
         If ASCMAIN1.CLIENT = "RGI" Then grpSREP.Visible = True
 

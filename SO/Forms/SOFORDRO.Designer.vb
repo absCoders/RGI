@@ -61,6 +61,7 @@ Partial Class SOFORDRO
         Dim Appearance101 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim Appearance13 As Infragistics.Win.Appearance = New Infragistics.Win.Appearance()
         Dim ValueListItem5 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
+        Dim ValueListItem4 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem8 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem1 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
         Dim ValueListItem3 As Infragistics.Win.ValueListItem = New Infragistics.Win.ValueListItem()
@@ -787,7 +788,7 @@ Partial Class SOFORDRO
         UltraExplorerBarGroup7.Text = "Settings"
         UltraExplorerBarGroup6.Container = Me.UltraExplorerBarContainerControl5
         UltraExplorerBarGroup6.Key = "Filter"
-        UltraExplorerBarGroup6.Settings.ContainerHeight = 150
+        UltraExplorerBarGroup6.Settings.ContainerHeight = 180
         UltraExplorerBarGroup6.Settings.Style = Infragistics.Win.UltraWinExplorerBar.GroupStyle.ControlContainer
         UltraExplorerBarGroup6.Text = "Filter"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
@@ -985,7 +986,7 @@ Partial Class SOFORDRO
         Me.UltraExplorerBarContainerControl5.Controls.Add(Me.Panel5)
         Me.UltraExplorerBarContainerControl5.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl5.Name = "UltraExplorerBarContainerControl5"
-        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 150)
+        Me.UltraExplorerBarContainerControl5.Size = New System.Drawing.Size(172, 180)
         Me.UltraExplorerBarContainerControl5.TabIndex = 4
         Me.UltraExplorerBarContainerControl5.Visible = False
         '
@@ -1005,7 +1006,7 @@ Partial Class SOFORDRO
         Me.Panel5.Dock = System.Windows.Forms.DockStyle.Fill
         Me.Panel5.Location = New System.Drawing.Point(0, 0)
         Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(172, 150)
+        Me.Panel5.Size = New System.Drawing.Size(172, 180)
         Me.Panel5.TabIndex = 0
         '
         'chkLapQuote
@@ -1023,7 +1024,7 @@ Partial Class SOFORDRO
         'chkLIVEDATA
         '
         Me.chkLIVEDATA.AutoSize = True
-        Me.chkLIVEDATA.Location = New System.Drawing.Point(83, 108)
+        Me.chkLIVEDATA.Location = New System.Drawing.Point(83, 131)
         Me.chkLIVEDATA.Name = "chkLIVEDATA"
         Me.chkLIVEDATA.Size = New System.Drawing.Size(89, 20)
         Me.chkLIVEDATA.TabIndex = 184
@@ -1033,7 +1034,7 @@ Partial Class SOFORDRO
         '
         'btnFEOverride
         '
-        Me.btnFEOverride.Location = New System.Drawing.Point(141, 124)
+        Me.btnFEOverride.Location = New System.Drawing.Point(141, 147)
         Me.btnFEOverride.Name = "btnFEOverride"
         Me.btnFEOverride.Size = New System.Drawing.Size(28, 23)
         Me.btnFEOverride.TabIndex = 183
@@ -1042,7 +1043,7 @@ Partial Class SOFORDRO
         '
         'btnCustOverride
         '
-        Me.btnCustOverride.Location = New System.Drawing.Point(141, 86)
+        Me.btnCustOverride.Location = New System.Drawing.Point(141, 109)
         Me.btnCustOverride.Name = "btnCustOverride"
         Me.btnCustOverride.Size = New System.Drawing.Size(28, 23)
         Me.btnCustOverride.TabIndex = 182
@@ -1053,7 +1054,7 @@ Partial Class SOFORDRO
         '
         Me.chkFEOverride.AutoSize = True
         Me.chkFEOverride.Enabled = False
-        Me.chkFEOverride.Location = New System.Drawing.Point(125, 129)
+        Me.chkFEOverride.Location = New System.Drawing.Point(125, 152)
         Me.chkFEOverride.Name = "chkFEOverride"
         Me.chkFEOverride.Size = New System.Drawing.Size(15, 14)
         Me.chkFEOverride.TabIndex = 181
@@ -1061,7 +1062,7 @@ Partial Class SOFORDRO
         '
         'txtFEOverride
         '
-        Me.txtFEOverride.Location = New System.Drawing.Point(7, 124)
+        Me.txtFEOverride.Location = New System.Drawing.Point(7, 147)
         Me.txtFEOverride.Name = "txtFEOverride"
         Me.txtFEOverride.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtFEOverride.Size = New System.Drawing.Size(117, 23)
@@ -1070,7 +1071,7 @@ Partial Class SOFORDRO
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(4, 109)
+        Me.Label4.Location = New System.Drawing.Point(4, 132)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(107, 16)
         Me.Label4.TabIndex = 179
@@ -1080,7 +1081,7 @@ Partial Class SOFORDRO
         '
         Me.chkCustOverride.AutoSize = True
         Me.chkCustOverride.Enabled = False
-        Me.chkCustOverride.Location = New System.Drawing.Point(125, 91)
+        Me.chkCustOverride.Location = New System.Drawing.Point(125, 114)
         Me.chkCustOverride.Name = "chkCustOverride"
         Me.chkCustOverride.Size = New System.Drawing.Size(15, 14)
         Me.chkCustOverride.TabIndex = 178
@@ -1088,7 +1089,7 @@ Partial Class SOFORDRO
         '
         'txtCustOverride
         '
-        Me.txtCustOverride.Location = New System.Drawing.Point(7, 86)
+        Me.txtCustOverride.Location = New System.Drawing.Point(7, 109)
         Me.txtCustOverride.Name = "txtCustOverride"
         Me.txtCustOverride.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtCustOverride.Size = New System.Drawing.Size(117, 23)
@@ -1097,7 +1098,7 @@ Partial Class SOFORDRO
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(4, 70)
+        Me.Label3.Location = New System.Drawing.Point(4, 93)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(130, 16)
         Me.Label3.TabIndex = 176
@@ -1107,8 +1108,11 @@ Partial Class SOFORDRO
         '
         Me.optShowOrders.BorderStyle = Infragistics.Win.UIElementBorderStyle.None
         Me.optShowOrders.CheckedIndex = 0
+        ValueListItem5.CheckState = System.Windows.Forms.CheckState.Checked
         ValueListItem5.DataValue = "M"
         ValueListItem5.DisplayText = "1 Mth"
+        ValueListItem4.DataValue = "3"
+        ValueListItem4.DisplayText = "3 Mths"
         ValueListItem8.CheckState = System.Windows.Forms.CheckState.Checked
         ValueListItem8.DataValue = "H"
         ValueListItem8.DisplayText = "6 Mths"
@@ -1118,10 +1122,10 @@ Partial Class SOFORDRO
         ValueListItem3.DisplayText = "2 Yrs"
         ValueListItem2.DataValue = "A"
         ValueListItem2.DisplayText = "All"
-        Me.optShowOrders.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem5, ValueListItem8, ValueListItem1, ValueListItem3, ValueListItem2})
+        Me.optShowOrders.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem5, ValueListItem4, ValueListItem8, ValueListItem1, ValueListItem3, ValueListItem2})
         Me.optShowOrders.Location = New System.Drawing.Point(3, 3)
         Me.optShowOrders.Name = "optShowOrders"
-        Me.optShowOrders.Size = New System.Drawing.Size(166, 64)
+        Me.optShowOrders.Size = New System.Drawing.Size(166, 87)
         Me.optShowOrders.TabIndex = 175
         Me.optShowOrders.Text = "1 Mth"
         '
@@ -1708,7 +1712,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl1
         '
         Me.UltraTabPageControl1.Controls.Add(Me.SplitContainer1)
-        Me.UltraTabPageControl1.Location = New System.Drawing.Point(-10000, -10000)
+        Me.UltraTabPageControl1.Location = New System.Drawing.Point(1, 1)
         Me.UltraTabPageControl1.Name = "UltraTabPageControl1"
         Me.UltraTabPageControl1.Size = New System.Drawing.Size(952, 510)
         '
@@ -2199,7 +2203,7 @@ Partial Class SOFORDRO
         'UltraTabPageControl2
         '
         Me.UltraTabPageControl2.Controls.Add(Me.UltraPanel1)
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(1, 1)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraTabPageControl2.Name = "UltraTabPageControl2"
         Me.UltraTabPageControl2.Size = New System.Drawing.Size(952, 510)
         '

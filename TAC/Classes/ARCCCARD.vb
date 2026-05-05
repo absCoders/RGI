@@ -695,6 +695,7 @@ Public Class ARCCCARD
 
     Private rawRequest As String = String.Empty
     Private rawResponse As String = String.Empty
+    Private rawTransferredData As String = String.Empty
 
     Private clsLastError As String = String.Empty
 
@@ -795,7 +796,7 @@ Public Class ARCCCARD
             If ASCMAIN1.Running_in_VS Then
                 Stop
                 ' If not connected to the custimer then chnage the value of cXmlDirectory
-                ' C:\Temp\RGI\Archive\CC_TRANS
+                cXmlDirectory = "C:\Temp\RGI\Archive\CC_TRANS"
             End If
 
             If Not My.Computer.FileSystem.DirectoryExists(cXmlDirectory) Then
@@ -1046,6 +1047,13 @@ Public Class ARCCCARD
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
+
+            Try
+                rawTransferredData = String.Empty
+                rawTransferredData = clsIcharge.Config("TransferredData") & String.Empty
+            Catch ex As Exception
+
+            End Try
         End Try
 
         ExportSerializedObject()
@@ -1131,6 +1139,13 @@ Public Class ARCCCARD
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
+
+            Try
+                rawTransferredData = String.Empty
+                rawTransferredData = clsIcharge.Config("TransferredData") & String.Empty
+            Catch ex As Exception
+
+            End Try
         End Try
 
         ExportSerializedObject()
@@ -1197,6 +1212,13 @@ Public Class ARCCCARD
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
+
+            Try
+                rawTransferredData = String.Empty
+                rawTransferredData = clsIcharge.Config("TransferredData") & String.Empty
+            Catch ex As Exception
+
+            End Try
         End Try
 
         ExportSerializedObject()
@@ -1279,6 +1301,13 @@ Public Class ARCCCARD
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
+
+            Try
+                rawTransferredData = String.Empty
+                rawTransferredData = clsIcharge.Config("TransferredData") & String.Empty
+            Catch ex As Exception
+
+            End Try
         End Try
 
         ExportSerializedObject()
@@ -1435,6 +1464,13 @@ Public Class ARCCCARD
         Finally
             rawRequest = clsIcharge.Config("RawRequest")
             rawResponse = clsIcharge.Config("RawResponse")
+
+            Try
+                rawTransferredData = String.Empty
+                rawTransferredData = clsIcharge.Config("TransferredData") & String.Empty
+            Catch ex As Exception
+
+            End Try
         End Try
 
         ExportSerializedObject()
@@ -1706,9 +1742,16 @@ Public Class ARCCCARD
                 clsLastError = "AuthOnlySale: " & rawResponse
             End If
 
-            ExportSerializedObject()
-            ExportRequestResponse()
+            Try
+                rawTransferredData = String.Empty
+                rawTransferredData = clsIcharge.Config("TransferredData") & String.Empty
+            Catch ex As Exception
+
+            End Try
         End Try
+
+        ExportSerializedObject()
+        ExportRequestResponse()
     End Function
 
     ''' <summary>
@@ -2068,6 +2111,13 @@ Public Class ARCCCARD
             If rawResponse.Length > 0 Then
                 Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_Response.xml"), False)
                     writer.WriteLine(rawResponse)
+                    writer.Close()
+                End Using
+            End If
+
+            If rawTransferredData.Length > 0 Then
+                Using writer As StreamWriter = New StreamWriter(System.IO.Path.Combine(cXmlDirectory, filename & "_ResponseTransferredData.xml"), False)
+                    writer.WriteLine(rawTransferredData)
                     writer.Close()
                 End Using
             End If

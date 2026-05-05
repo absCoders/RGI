@@ -9,6 +9,8 @@ Public Class ICFPHYC1
     Dim TICKET_NO As String
     Dim grdAttention_app As New Infragistics.Win.Appearance
     Dim grdWARNING_app As New Infragistics.Win.Appearance
+    Dim grdOpenCnt_app As New Infragistics.Win.Appearance
+    Dim grdOpenVerify_app As New Infragistics.Win.Appearance
     Dim SelUser As String
 
     ' NOTE THAT IF WE DO NOT INITIALIZE COUNTS TABLES AT MONTH END, THAT THIS SCREEN WILL SHOW COUNTS (WHICH IS USEFUL) AFTER THE PI HAS BEEN POSTED
@@ -43,6 +45,7 @@ Public Class ICFPHYC1
             '& "   and X.TICKET_NO (+) = ICTPHYC1.TICKET_NO"
 
             ASCMAIN1.sql = "Select ICTPHYC1.*, X.STYLE_CODE, X.SC, X.TOTAL_COUNT, UNIT_VARIANCE, ABSOLUTE_VARIANCE, nvl(LAST_ACTIVITY,'01-JAN-1999') LAST_ACTIVITY  " & vbCrLf _
+                & " , CASE WHEN REQUESTED IS NULL THEN '2' WHEN REQUESTED < LAST_DATE THEN '1' ELSE '0' END OPEN_STATUS" & vbCrLf _
                 & " from ICTPHYC1, (Select WHSE_CODE, TICKET_NO, Min (STYLE_CODE) STYLE_CODE, Min (STYLE_CODE || '-' || COLOR_CODE) SC" & vbCrLf _
                 & " , Sum (TOTAL_COUNT) TOTAL_COUNT, SUM(VARIANCE) UNIT_VARIANCE, SUM(ABS(VARIANCE)) ABSOLUTE_VARIANCE " & vbCrLf _
                 & " from( " & vbCrLf _
@@ -62,11 +65,13 @@ Public Class ICFPHYC1
                 & " from WHTLOCB2 " & vbCrLf _
                 & "where WHSE_CODE = :PARM1 " & vbCrLf _
                 & " group by whse_code, location_code) A " & vbCrLf _
+                & " , (SELECT LOCATION_CODE, MAX(REQUESTED) REQUESTED FROM ICTPHYC1_RECNT GROUP BY LOCATION_CODE) R1" & vbCrLf _
                 & " where ICTPHYC1.WHSE_CODE = :PARM1" & vbCrLf _
                 & "   and X.WHSE_CODE (+) = ICTPHYC1.WHSE_CODE" & vbCrLf _
                 & "   and X.TICKET_NO (+) = ICTPHYC1.TICKET_NO" & vbCrLf _
                 & "   and A.WHSE_CODE (+) = ICTPHYC1.WHSE_CODE" & vbCrLf _
-                & "   and A.LOCATION_CODE (+) = ICTPHYC1.LOCATION_CODE"
+                & "   and A.LOCATION_CODE (+) = ICTPHYC1.LOCATION_CODE" & vbCrLf _
+                & "   and R1.LOCATION_CODE (+) = ICTPHYC1.LOCATION_CODE"
             Create_TDA(.Tables.Add, "ICTPHYCX", "**", 0, False, "V")
             .Tables("ICTPHYCX").Columns("TOTAL_COUNT").DataType = GetType(System.Int64)
             .Tables("ICTPHYCX").Columns("UNIT_VARIANCE").DataType = GetType(System.Int64)
@@ -188,7 +193,7 @@ Public Class ICFPHYC1
             ASCMAIN1.sql = "Select WHTLOCM1.WHSE_CODE, WHTLOCM1.LOCATION_CODE" & vbCrLf _
                 & ", A.TICKETS, A.PHYS_INIT, A.PHYS_LAST, A.VOIDED, A.EMPTY" & vbCrLf _
                 & ", B.PHYS_UNITS, B.PHYS_VALUE, B.PHYS_STYLE_COLORS, B.PHYS_SCMIN, B.PHYS_SCMAX" & vbCrLf _
-                & ", C.BOOK_UNITS, C.BOOK_VALUE, C.BOOK_STYLE_COLORS, C.BOOK_SCMIN, C.BOOK_SCMAX" & vbCrLf _
+                & ", C.BOOK_UNITS, C.BOOK_VALUE, C.BOOK_STYLE_COLORS, C.BOOK_SCMIN, C.BOOK_SCMAX, WHTLOCM1.LOCATION_USE" & vbCrLf _
                 & " from WHTLOCM1," & vbCrLf _
                 & "  (Select ICTPHYC1.WHSE_CODE, ICTPHYC1.LOCATION_CODE" & vbCrLf _
                 & ", COUNT (*) TICKETS, MIN (INIT_DATE) PHYS_INIT, MAX (INIT_DATE) PHYS_LAST" & vbCrLf _
@@ -416,6 +421,7 @@ Public Class ICFPHYC1
         With grdICTPHYCX.DisplayLayout.Bands("ICTPHYCX")
             .Columns("TICKET_NO").Header.Fixed = True
             .Columns("SELECTED").Header.Fixed = True
+            .Columns("LOCATION_CODE").Header.Fixed = True
             '.Columns("SELECTED"). = True
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
                 gcol.Header.Appearance.BackColor = Color.White
@@ -440,6 +446,8 @@ Public Class ICFPHYC1
         End With
         grdAttention_app.BackColor = Drawing.Color.Yellow
         grdWARNING_app.ForeColor = Drawing.Color.Red
+        grdOpenCnt_app.BackColor = Drawing.Color.Orange
+        grdOpenVerify_app.BackColor = Drawing.Color.Blue
 
         With grdICTPHYCI.DisplayLayout.Bands("ICTPHYCI")
 
@@ -631,7 +639,7 @@ Public Class ICFPHYC1
                     End If
                 End If
             Case "Delete"
-                If MessageBox.Show("Are you sure you want to Delete this Entry?", "Confirm Deletion", _
+                If MessageBox.Show("Are you sure you want to Delete this Entry?", "Confirm Deletion",
                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.No Then
                     Exit Sub
                 End If
@@ -904,16 +912,20 @@ Public Class ICFPHYC1
         CommitTrans("Update Complete")
     End Sub
 
-    Sub Verify_Counts()
+    Sub Verify_Counts(Optional TICKET_NO = "")
         BeginTrans()
 
         ASCMAIN1.sql = "Update ICTPHYC1 " & vbCrLf _
             & " Set ICTPHYC1.VERIFIED_OPER = '" & ASCMAIN1.USER_ID & "', ICTPHYC1.VERIFIED_DATE = SYSDATE " & vbCrLf _
             & " Where ICTPHYC1.WHSE_CODE = '" & WHSE_CODE & "' and ICTPHYC1.TICKET_NO = :PARM1"
 
-        For Each row As DataRow In dst.Tables("ICTPHYCX").Select("SELECTED = '1'")
-            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", row.Item("TICKET_NO"))
-        Next
+        If TICKET_NO <> "" Then
+            ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", TICKET_NO)
+        Else
+            For Each row As DataRow In dst.Tables("ICTPHYCX").Select("SELECTED = '1'")
+                ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", row.Item("TICKET_NO"))
+            Next
+        End If
 
         CommitTrans("Update Complete, Records Verified")
     End Sub
@@ -923,10 +935,10 @@ Public Class ICFPHYC1
         Dim TACMAIN1 As New TAC.TACMAIN1
 
         BeginTrans()
-        ASCMAIN1.sql = "Insert into ICTPHYC1_RECNT Values(:PARM1)"
+        ASCMAIN1.sql = "Insert into ICTPHYC1_RECNT Values(:PARM1, sysdate)"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", Location)
 
-        ASCMAIN1.sql = "Update ICTPHYC1 set VERIFIED_OPER = '' where LOCATION_CODE = :PARM1"
+        ASCMAIN1.sql = "Update ICTPHYC1 set VERIFIED_OPER = '',TICKET_STATUS = '' where LOCATION_CODE = :PARM1"
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "V", Location)
 
         ASCMAIN1.sql = "Update WHTLOCM1 " & vbCrLf _
@@ -973,7 +985,7 @@ Public Class ICFPHYC1
 
     Overrides Sub Load_Popup_Menus()
         Load_Popup_Menu(grdICTPHYCX, "SSB", "Show Filter", "Show GroupBox", "Recount Location")
-        Load_Popup_Menu(grdICTPHYC2, "BS", "Style Status Inquiry", "Show Old Counts")
+        Load_Popup_Menu(grdICTPHYC2, "BS", "Style Status Inquiry", "Show Old Counts", "Verify Ticket", "Recount Location")
         Load_Popup_Menu(grdICTPHYCV, "SSB", "Show Filter", "Show GroupBox", "Style Status Inquiry")
         Load_Popup_Menu(grdICTPHYCL, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdICTPHYCR, "SS", "Show Filter", "Show GroupBox")
@@ -1001,6 +1013,11 @@ Public Class ICFPHYC1
 
         Select Case grd.Name
             Case "grdICTPHYCX"
+                tlb_btn = DirectCast(tlb_pop.Tools("Recount Location"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "E")
+            Case "grdICTPHYC2"
+                tlb_btn = DirectCast(tlb_pop.Tools("Verify Ticket"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (EntryMode = "E")
                 tlb_btn = DirectCast(tlb_pop.Tools("Recount Location"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (EntryMode = "E")
 
@@ -1058,8 +1075,17 @@ Public Class ICFPHYC1
             Case "Show Old Counts"
                 Set_ICTPHYC2_Filter()
 
+            Case "Verify Ticket"
+                Dim TICKET_NO = Absx1.txtFor("TICKET_NO").Text
+                Verify_Counts(TICKET_NO)
+
             Case "Recount Location"
-                Dim LOCATION_CODE As String = grd.ActiveRow.Cells("LOCATION_CODE").Value
+                Dim LOCATION_CODE As String
+                If grd.Name = "grdICTPHYC2" Then
+                    LOCATION_CODE = Absx1.txtFor("LOCATION_CODE").Text
+                Else
+                    LOCATION_CODE = grd.ActiveRow.Cells("LOCATION_CODE").Value
+                End If
                 ASCMAIN1.sql = "Select count(1) from ICTPHYC1_RECNT where LOCATION_CODE = :PARM1"
                 Dim recount = ASCDATA1.GetDataValue(ASCMAIN1.sql, "V", LOCATION_CODE)
                 If recount > 0 Then
@@ -1274,7 +1300,7 @@ Public Class ICFPHYC1
             Else
                 LookUp("ICTSTYL1", e.Row.Cells("STYLE_CODE").Text)
                 If cdr Is Nothing Then
-                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")", _
+                    MsgBox("Invalid Value entered for Style Code (" & e.Row.Cells("STYLE_CODE").Text & ")",
                            MsgBoxStyle.OkOnly, "Cannot Update Row")
                     e.Cancel = True
                 End If
@@ -1395,15 +1421,32 @@ Public Class ICFPHYC1
     Private Sub grdICTPHYCX_InitializeRow(sender As Object, e As UltraWinGrid.InitializeRowEventArgs) Handles grdICTPHYCX.InitializeRow
         If e.Row.IsDataRow Then
             If e.Row.Cells("VERIFIED_OPER").Value & "" = "" Then
-                e.Row.Cells("VERIFIED_OPER").Appearance = grdAttention_app
+                'If (IsDBNull(e.Row.Cells("VERIFIED_DATE").Value)) Then
+                '    e.Row.Cells("VERIFIED_OPER").Appearance = grdAttention_app
+                'Else
+                'ASCMAIN1.sql = "SELECT CASE WHEN REQUESTED IS NULL THEN '2' WHEN REQUESTED < LAST_DATE THEN '1' ELSE '0' END FROM ICTPHYC1 C1
+                '                    LEFT JOIN (SELECT LOCATION_CODE, MAX(REQUESTED) REQUESTED FROM ICTPHYC1_RECNT GROUP BY LOCATION_CODE) R1 ON C1.LOCATION_CODE = R1.LOCATION_CODE
+                '                    WHERE C1.WHSE_CODE = :PARM1 AND C1.LOCATION_CODE = :PARM2"
+                '    Dim open As String = ASCDATA1.GetDataValue(ASCMAIN1.sql, "VV", New Object() {WHSE_CODE, e.Row.Cells("LOCATION_CODE").Value})
+                If e.Row.Cells("OPEN_STATUS").Value & "" = "0" Then
+                    e.Row.Cells("VERIFIED_OPER").Appearance = grdOpenCnt_app
+                    e.Row.Cells("VERIFIED_OPER").ToolTipText = "Waiting for Count"
+                ElseIf e.Row.Cells("OPEN_STATUS").Value & "" = "1" Then
+                    e.Row.Cells("VERIFIED_OPER").Appearance = grdOpenVerify_app
+                    e.Row.Cells("VERIFIED_OPER").ToolTipText = "Waiting for Verify"
+                Else
+                    e.Row.Cells("VERIFIED_OPER").Appearance = grdAttention_app
+                    e.Row.Cells("VERIFIED_OPER").ToolTipText = "Not Verified"
+                End If
+                'End If
             End If
             If Not (IsDBNull(e.Row.Cells("LAST_DATE").Value)) AndAlso e.Row.Cells("LAST_ACTIVITY").Value > e.Row.Cells("LAST_DATE").Value Then
-                e.Row.Cells("LOCATION_CODE").Appearance = grdWARNING_app
-                e.Row.Cells("LOCATION_CODE").ToolTipText = "Location had activity after the count."
-                e.Row.Cells("LAST_ACTIVITY").Appearance = grdWARNING_app
-                e.Row.Cells("LAST_ACTIVITY").ToolTipText = "Location had activity after the count."
+                    e.Row.Cells("LOCATION_CODE").Appearance = grdWARNING_app
+                    e.Row.Cells("LOCATION_CODE").ToolTipText = "Location had activity after the count."
+                    e.Row.Cells("LAST_ACTIVITY").Appearance = grdWARNING_app
+                    e.Row.Cells("LAST_ACTIVITY").ToolTipText = "Location had activity after the count."
+                End If
             End If
-        End If
     End Sub
     Private Sub grdICTPHYCX_DoubleClickRow(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinGrid.DoubleClickRowEventArgs) Handles grdICTPHYCX.DoubleClickRow
         If EntryMode = "E" Then Exit Sub

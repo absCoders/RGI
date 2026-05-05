@@ -5,6 +5,7 @@ Public Class ARRSTMTR
 
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         Get_PARM("ARTPARM1")
+        Get_PARM("ASTPARM1")
 
         Dim rowASTPCTL1 As DataRow = ASCDATA1.GetDataRow("Select * from ASTPCTL1")
         If rowASTPCTL1.Item("PRD_CLOSE_IND") & String.Empty = "1" Then
@@ -12,6 +13,16 @@ Public Class ARRSTMTR
         Else
             chkPrintOnlyMailBoth.Checked = False
         End If
+
+        ' 03/13/2026 - Requested by Carmen and Rita
+        If ASCMAIN1.CLIENT = "RGI" Then
+            chkPrintOnlyMailBoth.Checked = True
+            chkNoInternational.Checked = True
+            chkSuppress.Checked = True
+        End If
+
+        chkSuppress.Visible = ASCMAIN1.CLIENT = "RGI"
+
     End Sub
 
     Overrides Sub Clear_Record()
@@ -38,6 +49,16 @@ Public Class ARRSTMTR
         & " and ARTCUSTX.CUST_CODE = ARTOPEN1.CUST_CODE" & vbCrLf _
         & " and TATTERM1.TERM_CODE = ARTOPEN1.TERM_CODE"
 
+        ' Added on 03/19/2026
+        If chkPrintOnlyMailBoth.Checked Then
+            ' This allows for Email Only without an Email to be printed.
+            ASCMAIN1.sql &= " AND (NVL(ARTCUSTX.CUST_STMT_IND, 'M') IN ('M', 'B') OR (ARTCUSTX.CUST_STMT_IND = 'E' AND ARTCUSTX.CUST_STMT_EMAIL IS NULL))"
+        End If
+
+        If chkNoInternational.Checked Then
+            ASCMAIN1.sql &= " AND NVL(ARTCUSTX.CUST_COUNTRY, 'USA') = 'USA'"
+        End If
+
         ASCMAIN1.sql &= SQL_in("CUST_CODE", "ARTCUSTX.CUST_CODE")
         ASCMAIN1.sql &= SQL_in("SREP_CODE", "ARTCUSTX.SREP_CODE")
 
@@ -46,7 +67,6 @@ Public Class ARRSTMTR
         dst.Tables("ARTSTMTR").Columns.Add("AR_PARM_KEY")
         dst.Tables("ARTSTMTR").Columns("AR_PARM_KEY").DefaultValue = "Z"
         Fill_Records("ARTSTMTR")
-
 
         ASCMAIN1.sql = "Select ARTCUST1.* from ARTCUST1 where CUST_CODE in (Select CUST_CODE from " & ARTSTMTR & ")"
         Create_TDA(dst.Tables.Add, "ARTCUST1", "**", 0, False, "", 1)
@@ -66,7 +86,6 @@ Public Class ARRSTMTR
             & " from " & ARTSTMTR & " ARTSTMTR group by CUST_CODE"
         Create_TDA(dst.Tables.Add, "ARTCUSTA", "**", 0, False, "", 1)
         Fill_Records("ARTCUSTA")
-
 
         With dst.Tables.Add("ARTSTMTZ")
             .Columns.Add("AR_PARM_KEY")
@@ -103,15 +122,14 @@ Public Class ARRSTMTR
             End If
             rowARTSTMTZ.Item("AR_PARM_DUNS_NO") = .Item("AR_PARM_DUNS_NO") & ""
             rowARTSTMTZ.Item("AR_PARM_FIN_CHG_RATE") = .Item("AR_PARM_FIN_CHG_RATE") & ""
-            rowARTSTMTZ.Item("ADDRESS_LINE") = "" _
-                & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_ADDR1") _
-                & ", " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_CITY") _
-                & ", " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_STATE") _
-                & " " & ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_ZIP_CODE") _
-                & IIf(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_PHONE") & "" <> "" _
-                  And ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_FAX") & "" <> "", "" _
-                      & ", Tel " & ASCMAIN1.FormatTel(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_PHONE") & "") _
-                      & ", Fax " & ASCMAIN1.FormatTel(ASCMAIN1.rowASTPARM1.Item("AS_PARM_INST_FAX") & ""), "")
+            rowARTSTMTZ.Item("ADDRESS_LINE") = ROWs("ASTPARM1").Item("AS_PARM_INST_ADDR1") _
+                    & IIf(ROWs("ASTPARM1").Item("AS_PARM_INST_ADDR2") & "" <> "", $", {ROWs("ASTPARM1").Item("AS_PARM_INST_ADDR2")}", "") _
+                    & Environment.NewLine _
+                    & ROWs("ASTPARM1").Item("AS_PARM_INST_CITY") & ", " & ROWs("ASTPARM1").Item("AS_PARM_INST_STATE") & " " & ROWs("ASTPARM1").Item("AS_PARM_INST_ZIP_CODE") _
+                    & Environment.NewLine _
+                    & IIf(ROWs("ASTPARM1").Item("AS_PARM_INST_PHONE") & "" <> "" AndAlso ROWs("ASTPARM1").Item("AS_PARM_INST_FAX") & "" <> "", "" _
+                          & "Tel " & ASCMAIN1.FormatTel(ROWs("ASTPARM1").Item("AS_PARM_INST_PHONE") & "") & Environment.NewLine _
+                          & "Fax " & ASCMAIN1.FormatTel(ROWs("ASTPARM1").Item("AS_PARM_INST_FAX") & ""), "")
         End With
         rowARTSTMTZ.Item("LOGO") = ASCMAIN1.GetImageData(ASCMAIN1.Folders("Images") & "\ABS\" & ASCMAIN1.DBS_COMPANY & ".PNG")
         rowARTSTMTZ.Item("STMT_DATE") = PRD_END_DATE
@@ -132,7 +150,12 @@ Public Class ARRSTMTR
             CR_params.Add("MONTH_END", "0")
         End If
 
-        Generate_Report(RPT, , SUBT)
+        Dim recordSelectioFormula As String = String.Empty
+        If chkSuppress.Checked AndAlso ASCMAIN1.CLIENT = "RGI" Then
+            recordSelectioFormula = "{@TOTAL_BALANCE} > 0"
+        End If
+
+        Generate_Report(RPT, , SUBT, recordSelectioFormula)
     End Sub
 
     Overrides Sub Verify_Special(ByVal eItemKey As String)
