@@ -1905,12 +1905,21 @@ Public Class SOFPICKS
                     sql1k &= "   and SOTORDR1.ORDR_STATUS = 'O'" & vbCrLf
                 End If
 
+                'If chkShowHolds.Checked Then
+                '    sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') = '1'" _
+                '& " or (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '1' and NVL(SOTORDRG.ORDR_REL_SHORT,'0') <> '1' and NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '0'))"
+                'Else
+                '    sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') <> '1'" _
+                '& " and (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '0' or NVL(SOTORDRG.ORDR_REL_SHORT,'0') = '1' or NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '1'))"
+                'End If
+
+                'temp coding to make all ship complete orders on hold (for now, until we resolve the qty 0 issue)
                 If chkShowHolds.Checked Then
                     sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') = '1'" _
-                & " or (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '1' and NVL(SOTORDRG.ORDR_REL_SHORT,'0') <> '1' and NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '0'))"
+                & " or NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '1')"
                 Else
                     sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') <> '1'" _
-                & " and (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '0' or NVL(SOTORDRG.ORDR_REL_SHORT,'0') = '1' or NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '1'))"
+                & " and NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '0')"
                 End If
 
                 sql1k &= " and X.ORDR_NO = SOTORDR1.ORDR_NO"
