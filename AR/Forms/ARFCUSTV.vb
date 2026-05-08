@@ -1600,6 +1600,7 @@ Public Class ARFCUSTV
             SKIP_COLS.Add("ISDUP")
             SKIP_COLS.Add("ISDEL")
             SKIP_COLS.Add("CUST_NAME")
+            SKIP_COLS.Add("BOUNCE")
             If Not IsNothing(rowARTCUSTD_O) Then
                 For Each dc As DataColumn In dst.Tables.Item("ARTCUSTD").Columns
                     Dim name As String = dc.ColumnName
