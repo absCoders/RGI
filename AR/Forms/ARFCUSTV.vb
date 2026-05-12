@@ -20,6 +20,7 @@ Public Class ARFCUSTV
     Dim YRFR As String = ""
     Dim YRTO As String = ""
     Dim EditingContacts As Boolean = False
+    Dim BounceFolder As String = ""
 
 
 #Region "ABS Standard Routines" ' These Routines should be found in all Forms which Launch from the Menu.
@@ -27,6 +28,11 @@ Public Class ARFCUSTV
     Private Sub Form_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         Check_Form_Options()
+
+        BounceFolder = $"{If(ASCMAIN1.useUNCPath, ASCMAIN1.Folders("SharedRoot"), "S:")}\Archive\emailBounces\"
+        If (ASCMAIN1.Running_in_VS And (ASCMAIN1.USER_ID = "whr" Or ASCMAIN1.USER_ID = "wayne")) Then
+            BounceFolder = "C:\Users\Wayne\Dropbox\Regency International\emailBounces\"
+        End If
 
         dteInitDate.DateTime = DateSerial(2026, 1, 1)
 
@@ -117,9 +123,10 @@ Public Class ARFCUSTV
             S.AppendLine("V1.LAST_OPER")
             ASCMAIN1.sql = S.ToString
             Create_TDA(.Tables.Add, "ARTCUSTX", "**", 0, False)
-            'With .Tables("ARFCUSTX").Columns
-            '    .Add("XXX", GetType(String))
-            'End With
+            With .Tables("ARTCUSTX").Columns
+                .Add("BOUNCE", GetType(String))
+            End With
+
             S.Length = 0
             S.AppendLine("SELECT *")
             S.AppendLine("FROM ARTCUST1")
@@ -139,7 +146,24 @@ Public Class ARFCUSTV
                 .Add("ISDUP", GetType(String))
                 .Add("ISDEL", GetType(String))
                 .Add("CUST_NAME", GetType(String))
+                .Add("BOUNCE", GetType(String))
             End With
+
+            S.Length = 0
+            S.AppendLine("SELECT *")
+            S.AppendLine("FROM ARTEBONC")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add, "ARTEBONC", "**", 0, True, "V")
+
+            S.Length = 0
+            S.AppendLine("SELECT")
+            S.AppendLine("CD.CUST_CODE,")
+            S.AppendLine("CD.CONTACT_NO,")
+            S.AppendLine("CD.CONTACT_EMAIL")
+            S.AppendLine("FROM ARTCUSTD CD, ARTEBONC CB")
+            S.AppendLine("WHERE CD.CONTACT_EMAIL = CB.CONTACT_EMAIL")
+            ASCMAIN1.sql = S.ToString
+            Create_TDA(.Tables.Add("ARTCUSTB"), "ARTCUSTD", "**", 0, False)
 
             S.Length = 0
             S.AppendLine("SELECT *")
@@ -192,6 +216,8 @@ Public Class ARFCUSTV
         TABLE_NAME = "ARFCUSTL"
 
         EntryMode = "E"
+
+        refreshARTEBONC()
 
         'Call Load_Record()
         Loading = False
@@ -358,14 +384,30 @@ Public Class ARFCUSTV
     Overrides Sub Proceed_PreReq(ByVal eItemKey As String)
 
         EMsg = ""
+        Dim iResult As MsgBoxResult
+        Dim iTitle As String = ""
+        Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
 
         Select Case eItemKey
             Case "Refresh"
             Case "Cancel"
-                Dim iResult As MsgBoxResult
-                Dim iTitle As String = "Cancel?"
-                Dim iMSG As New System.Text.StringBuilder With {.Length = 0}
+                iTitle = eItemKey
+                iMSG.Length = 0
                 iMSG.AppendLine("Are You Sure You Want To Cancel?")
+                iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
+                If iResult <> MsgBoxResult.Yes Then
+                    EMsg += "Cancel Aboorted."
+                End If
+            Case "Bounce File"
+                iTitle = eItemKey
+                iMSG.Length = 0
+                iMSG.AppendLine("This Will Ask You To Select A TXT File")
+                iMSG.AppendLine("To Upload A List Of Bounced E-Mails.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("After Uploading, You Will Need To Get")
+                iMSG.AppendLine("Out Of This Screen And Come Back In.")
+                iMSG.AppendLine("")
+                iMSG.AppendLine("Are You Ready?")
                 iResult = MsgBox(iMSG.ToString(), MsgBoxStyle.YesNo, iTitle)
                 If iResult <> MsgBoxResult.Yes Then
                     EMsg += "Cancel Aboorted."
@@ -399,6 +441,31 @@ Public Class ARFCUSTV
                 'UltraExplorerBar1.Groups("Screen Control").Items("Refresh").Settings.Enabled = DefaultableBoolean.False
             Case "Save"
                 Update_Record("Your Data Is Saved", False)
+            Case "Bounce File"
+                ' Make sure destination folder exists
+                If Not IO.Directory.Exists(BounceFolder) Then
+                    IO.Directory.CreateDirectory(BounceFolder)
+                End If
+
+                Using ofd As New OpenFileDialog()
+                    ofd.Title = "Select TXT File"
+                    ofd.Filter = "Text Files (*.txt)|*.txt"
+                    ofd.Multiselect = False
+                    If ofd.ShowDialog() = DialogResult.OK Then
+                        Dim sourceFile As String = ofd.FileName
+                        Dim sourceFileNEW As String = Now.ToString("yyyyMMddHHmmss") & ".txt"
+                        ' Build destination filename
+
+                        Dim destFile As String = IO.Path.Combine(BounceFolder, IO.Path.GetFileName(sourceFileNEW))
+
+                        ' Copy file
+                        IO.File.Copy(sourceFile, destFile, True)
+
+                        MessageBox.Show("File copied to:" & vbCrLf & destFile, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Else
+                        MessageBox.Show("No file selected.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    End If
+                End Using
         End Select
 
     End Sub
@@ -413,6 +480,7 @@ Public Class ARFCUSTV
             .Groups("Screen Control").Items("Cancel").Settings.Enabled = not_iScreenMode
             .Groups("Screen Control").Items("Save").Settings.Enabled = not_iScreenMode
             .Groups("Screen Control").Items("Done").Settings.Enabled = not_iScreenMode
+            .Groups("Screen Control").Items("Bounce File").Settings.Enabled = not_iScreenMode
         End With
 
         UltraExplorerBar1.Groups("Customer Filters").Visible = True
@@ -731,6 +799,15 @@ Public Class ARFCUSTV
                 SALES = "1"
             End If
             rowARTCUSTX.Item("HAS_SALES") = SALES
+
+            Dim CUST_CODE As String = rowARTCUSTX.Item("CUST_CODE").ToString & String.Empty
+            Dim fltr As String = $"CUST_CODE = '{CUST_CODE}'"
+            Dim rowARTTEST As DataRow = dst.Tables.Item("ARTCUSTB").Select(fltr).FirstOrDefault
+            If IsNothing(rowARTTEST) Then
+                rowARTCUSTX.Item("BOUNCE") = "0"
+            Else
+                rowARTCUSTX.Item("BOUNCE") = "1"
+            End If
         Next
     End Sub
 
@@ -774,6 +851,16 @@ Public Class ARFCUSTV
             Fill_Records("ARTCUSTD", CUST_CODE)
             Fill_Records("ARTCUSTD_O", CUST_CODE)
 
+            For Each rowARTCUSTD As DataRow In dst.Tables("ARTCUSTD").Select()
+                Dim CONTACT_NO As String = rowARTCUSTD.Item("CONTACT_NO").ToString & String.Empty
+                Dim fltr As String = $"CUST_CODE = '{CUST_CODE}' AND CONTACT_NO = {CONTACT_NO}"
+                Dim rowARTTEST As DataRow = dst.Tables.Item("ARTCUSTB").Select(fltr).FirstOrDefault
+                If IsNothing(rowARTTEST) Then
+                    rowARTCUSTD.Item("BOUNCE") = "0"
+                Else
+                    rowARTCUSTD.Item("BOUNCE") = "1"
+                End If
+            Next
             Fill_Records("ARTCUST1", CUST_CODE)
             Fill_Records("ARTCUST1_O", CUST_CODE)
 
@@ -977,6 +1064,57 @@ Public Class ARFCUSTV
         End If
         Return retval.ToString
     End Function
+
+    Private Sub refreshARTEBONC()
+        Fill_Records("ARTEBONC")
+
+        Dim emailPattern As String = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$"
+        Dim regex As New RegularExpressions.Regex(emailPattern, RegularExpressions.RegexOptions.IgnoreCase)
+
+        ' Loop through all .txt files in folder and subfolders
+        Dim bounceEmails As New List(Of String)
+        For Each fileName As String In IO.Directory.GetFiles(BounceFolder, "*.txt", IO.SearchOption.AllDirectories)
+            'Console.WriteLine("Processing: " & fileName)
+
+            Dim lines() As String = IO.File.ReadAllLines(fileName)
+
+            For Each line As String In lines
+                ' Split line using common delimiters
+                Dim parts() As String = line.Split(New Char() {" "c, ","c, ";"c, vbTab}, StringSplitOptions.RemoveEmptyEntries)
+                ' Keep only valid email addresses
+                For Each item As String In parts
+                    Dim cleaned As String = item.Trim().Trim("."c).Trim(","c).Trim(";"c).Trim(":"c).Trim("("c).Trim(")"c)
+                    If regex.IsMatch(cleaned) Then
+                        bounceEmails.Add(cleaned.ToUpper())
+                    End If
+                Next
+            Next
+        Next
+
+        bounceEmails = bounceEmails.Distinct().ToList()
+
+        For Each rowARTEBONC As DataRow In dst.Tables("ARTEBONC").Select()
+            If Not bounceEmails.Contains((rowARTEBONC.Item("CONTACT_EMAIL").ToString & String.Empty).ToUpper) Then
+                rowARTEBONC.Delete()
+            End If
+        Next
+
+        For Each bounceEmail As String In bounceEmails
+            Dim fltr As String = $"CONTACT_EMAIL = '{bounceEmail.ToUpper}'"
+            Dim rowARTEBONC As DataRow = dst.Tables("ARTEBONC").Select(fltr).FirstOrDefault
+            If IsNothing(rowARTEBONC) Then
+                Dim newARTEBONC As DataRow = dst.Tables("ARTEBONC").NewRow
+                newARTEBONC.Item("CONTACT_EMAIL") = bounceEmail.ToUpper
+                newARTEBONC.Item("BOUNCE_DATE") = Now()
+                dst.Tables("ARTEBONC").Rows.Add(newARTEBONC)
+            End If
+        Next
+
+        Update_Record_TDA("ARTEBONC")
+
+        Fill_Records("ARTCUSTB")
+
+    End Sub
 
     Private Function MakeHTMLBody(ByVal WEB_FIELDS As Dictionary(Of String, String)) As String
         Dim RetVal As String
@@ -1462,6 +1600,7 @@ Public Class ARFCUSTV
             SKIP_COLS.Add("ISDUP")
             SKIP_COLS.Add("ISDEL")
             SKIP_COLS.Add("CUST_NAME")
+            SKIP_COLS.Add("BOUNCE")
             If Not IsNothing(rowARTCUSTD_O) Then
                 For Each dc As DataColumn In dst.Tables.Item("ARTCUSTD").Columns
                     Dim name As String = dc.ColumnName

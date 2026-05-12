@@ -15,6 +15,7 @@ Public Class SOTPARMR
             For Each UCOL As String In New String() {"SO_PARM_CONCOST", "SO_PARM_DUTY", "SO_PARM_INLANDFRT", "SO_PARM_OCEANFRTCONS", "SO_PARM_OCEANFRT"}
                 dst.Tables.Item("SOTPARMR").Rows(0).Item(UCOL) = dst.Tables.Item("SOTPARM2").Rows(0).Item(UCOL).ToString & String.Empty
             Next
+            Absx1.numFor("SO_PARM_FEFACT").Value = Val(dst.Tables.Item("SOTPARM2").Rows(0).Item("SO_PARM_FEFACT").ToString & String.Empty)
         End If
     End Sub
     Overrides Sub Proceed_Update_Special_Pre()
@@ -22,6 +23,7 @@ Public Class SOTPARMR
             For Each UCOL As String In New String() {"SO_PARM_CONCOST", "SO_PARM_DUTY", "SO_PARM_INLANDFRT", "SO_PARM_OCEANFRTCONS", "SO_PARM_OCEANFRT"}
                 dst.Tables.Item("SOTPARM2").Rows(0).Item(UCOL) = dst.Tables.Item("SOTPARMR").Rows(0).Item(UCOL).ToString & String.Empty
             Next
+            dst.Tables.Item("SOTPARM2").Rows(0).Item("SO_PARM_FEFACT") = Val(Absx1.numFor("SO_PARM_FEFACT").Value & String.Empty)
         End If
 
         Update_Record_TDA("SOTPARM2")
