@@ -894,7 +894,7 @@ Partial Class SOFPICKS
         UltraGridColumn131.Header.VisiblePosition = 29
         UltraGridColumn131.Hidden = True
         UltraGridColumn131.Width = 104
-        UltraGridColumn63.Format = "MM/dd/yy/HH:mm:ss"
+        UltraGridColumn63.Format = "MM/dd/yy HH:mm:ss"
         UltraGridColumn63.Header.Caption = "FIFO Date"
         UltraGridColumn63.Header.VisiblePosition = 14
         UltraGridColumn63.Width = 150
