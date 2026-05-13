@@ -1430,6 +1430,7 @@ Public Class ARFCUSTV
                 UpdateContacts()
                 'refreshMax()
                 RefreshTempActivity()
+                refreshARTEBONC()
                 Setup_Summary("Refreshing Data")
                 lblCUST_NAME.Visible = False
                 chkSaveFinalized.Visible = False
