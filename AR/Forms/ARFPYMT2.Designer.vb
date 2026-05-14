@@ -40,6 +40,7 @@ Partial Class ARFPYMT2
         Dim UltraExplorerBarItem28 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem29 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarItem31 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
+        Dim UltraExplorerBarItem32 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
         Dim UltraExplorerBarGroup2 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarGroup4 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarGroup()
         Dim UltraExplorerBarItem16 As Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem = New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem()
@@ -1330,7 +1331,6 @@ Partial Class ARFPYMT2
         UltraExplorerBarItem24.Text = "Cancel"
         UltraExplorerBarGroup10.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem4, UltraExplorerBarItem26, UltraExplorerBarItem25, UltraExplorerBarItem24})
         UltraExplorerBarGroup10.Text = "EDI (820)"
-        UltraExplorerBarGroup12.Expanded = False
         UltraExplorerBarItem27.Key = "Process Shopify"
         UltraExplorerBarItem27.Text = "Process"
         UltraExplorerBarItem30.Key = "Delete Shopify"
@@ -1341,7 +1341,9 @@ Partial Class ARFPYMT2
         UltraExplorerBarItem29.Text = "Cancel"
         UltraExplorerBarItem31.Key = "Upload Global"
         UltraExplorerBarItem31.Text = "Apply Global Excel File"
-        UltraExplorerBarGroup12.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem27, UltraExplorerBarItem30, UltraExplorerBarItem28, UltraExplorerBarItem29, UltraExplorerBarItem31})
+        UltraExplorerBarItem32.Key = "Upload TikTok"
+        UltraExplorerBarItem32.Text = "Apply TikTok Excel File"
+        UltraExplorerBarGroup12.Items.AddRange(New Infragistics.Win.UltraWinExplorerBar.UltraExplorerBarItem() {UltraExplorerBarItem27, UltraExplorerBarItem30, UltraExplorerBarItem28, UltraExplorerBarItem29, UltraExplorerBarItem31, UltraExplorerBarItem32})
         UltraExplorerBarGroup12.Text = "Shopify"
         UltraExplorerBarGroup2.Container = Me.UltraExplorerBarContainerControl1
         UltraExplorerBarGroup2.Expanded = False
@@ -1567,7 +1569,7 @@ Partial Class ARFPYMT2
         'UltraExplorerBarContainerControl2
         '
         Me.UltraExplorerBarContainerControl2.Controls.Add(Me.grpPaymentInfo)
-        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 203)
+        Me.UltraExplorerBarContainerControl2.Location = New System.Drawing.Point(13, 408)
         Me.UltraExplorerBarContainerControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl2.Name = "UltraExplorerBarContainerControl2"
         Me.UltraExplorerBarContainerControl2.Size = New System.Drawing.Size(168, 125)
@@ -1693,7 +1695,7 @@ Partial Class ARFPYMT2
         '
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.cmdLeaveOA)
         Me.UltraExplorerBarContainerControl3.Controls.Add(Me.grdARTPYMTT)
-        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 375)
+        Me.UltraExplorerBarContainerControl3.Location = New System.Drawing.Point(13, 580)
         Me.UltraExplorerBarContainerControl3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl3.Name = "UltraExplorerBarContainerControl3"
         Me.UltraExplorerBarContainerControl3.Size = New System.Drawing.Size(168, 220)
@@ -1805,11 +1807,12 @@ Partial Class ARFPYMT2
         'UltraExplorerBarContainerControl4
         '
         Me.UltraExplorerBarContainerControl4.Controls.Add(Me.UltraGroupBox2)
-        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(13, 698)
+        Me.UltraExplorerBarContainerControl4.Location = New System.Drawing.Point(-10000, -10000)
         Me.UltraExplorerBarContainerControl4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraExplorerBarContainerControl4.Name = "UltraExplorerBarContainerControl4"
         Me.UltraExplorerBarContainerControl4.Size = New System.Drawing.Size(168, 99)
         Me.UltraExplorerBarContainerControl4.TabIndex = 3
+        Me.UltraExplorerBarContainerControl4.Visible = False
         '
         'UltraGroupBox2
         '

@@ -224,6 +224,9 @@ Public Class SOFPICKS
                 .Columns.Add("PICK_SEQ", GetType(System.String), "IIF(ISNULL(STYLE_CLASS_CODE,'??')='OP','A','Z')")
             End With
 
+            Create_TDA(.Tables.Add, "SOTORDRG", "*", 1)
+            AUDIT.Add("SOTORDRG", "*")
+
             With .Tables.Add("ICTSTATZ")
                 .Columns.Add("STYLE_CODE")
                 .Columns.Add("COLOR_CODE")
@@ -393,6 +396,9 @@ Public Class SOFPICKS
                         c.CellActivation = UltraWinGrid.Activation.AllowEdit
                     Else
                         c.CellActivation = UltraWinGrid.Activation.NoEdit
+                        If c.Key = "BO" Then
+                            c.Header.Caption = "Inc"
+                        End If
                     End If
                 Next
             End With
@@ -483,7 +489,8 @@ Public Class SOFPICKS
         'ASCMAIN1.Add_Value_List(grdSOTPICK1, "PICK_STATUS",, New String() {":", "F:Invoiced", "C:Cancelled", "D:Deleted", "P:In Pick"})
         ASCMAIN1.Add_Value_List(grdSOTPICK1, "PICK_STATUS")
 
-        ASCMAIN1.Add_Value_List(grdICTSTATO, "ACTION_IF_SHORT",, New String() {":", "B:Back-Order", "C:Cancel"})
+        'ASCMAIN1.Add_Value_List(grdICTSTATO, "ACTION_IF_SHORT",, New String() {":", "B:Back-Order", "C:Cancel"})
+        ASCMAIN1.Add_Value_List(grdICTSTATO, "ACTION_IF_SHORT",, New String() {":", "C:Cancel"})
 
         MakeTransparent(chkIgnoreInvtyShort)
         MakeTransparent(lblSEL)
@@ -681,7 +688,8 @@ Public Class SOFPICKS
         lblRESOLUTION.Visible = ScreenMode And (EntryMode = "R")
 
         If ScreenMode Then
-            If Not InquiryMode Then Set_Read_Only_for_ctl(chkShowHolds, False)
+            'If Not InquiryMode Then Set_Read_Only_for_ctl(chkShowHolds, False)
+            Set_Read_Only_for_ctl(chkShowHolds, False)
 
             tabMain.Tabs("Orders").Enabled = Not (EntryMode = "R")
             tabMain.Tabs("Ship Vias").Enabled = Not (EntryMode = "R")
@@ -1003,7 +1011,7 @@ Public Class SOFPICKS
 #Region "Popup_Menus"
 
     Overrides Sub Load_Popup_Menus()
-        Load_Popup_Menu(grdSOTORDQ1, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Select Selected", "Release Selected Orders", "Show Inventory Requirements", "Sales Order Inquiry") ' , "De-Select All Orders with Shortages"
+        Load_Popup_Menu(grdSOTORDQ1, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Select Selected", "Release Selected Orders", "Show Inventory Requirements", "Sales Order Inquiry", "Set Release Short", "UnSet Release Short") ' , "De-Select All Orders with Shortages"
         Load_Popup_Menu(grdICTSTATO, "SBBBB", "Show Filter", "Style Status Inquiry", "De-Select Order", "Cancel if Short - All Items", "Back-Order if Short - All Items")
         'Load_Popup_Menu(grdSOTORDQ0, "SBBBBBB", "Show Filter", "Select All", "De-Select All", "Release Selected Orders", "Show Inventory Requirements", "Calculate Short", "Combine Groups")
         Load_Popup_Menu(grdSOTORDQ0, "SBBB", "Show Filter", "Release Selected Order Groups", "Calculate Short", "Combine Groups")
@@ -1080,6 +1088,13 @@ Public Class SOFPICKS
                 tlb_btn = DirectCast(tlb_pop.Tools("Release Selected Orders"), UltraWinToolbars.ButtonTool)
                 tlb_btn.SharedProps.Visible = (MENU_ITEM_OBJECT = "SOFPICKS") And Not InquiryMode And Not chkShowHolds.Checked
 
+                tlb_btn = DirectCast(tlb_pop.Tools("Set Release Short"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (MENU_ITEM_OBJECT = "SOFPICKT") And InquiryMode And ASCMAIN1.USER_SECURITY_CODEs.Contains("S1")
+                tlb_btn = DirectCast(tlb_pop.Tools("UnSet Release Short"), UltraWinToolbars.ButtonTool)
+                tlb_btn.SharedProps.Visible = (MENU_ITEM_OBJECT = "SOFPICKT") And InquiryMode And ASCMAIN1.USER_SECURITY_CODEs.Contains("S1")
+
+
+
             Case "grdICTSTATO"
 
                 tlb_btn = DirectCast(tlb_pop.Tools("De-Select Order"), UltraWinToolbars.ButtonTool)
@@ -1131,6 +1146,59 @@ Public Class SOFPICKS
 
                 Stop ' CancelSelectedOrders()
 
+            Case "Set Release Short", "UnSet Release Short"
+
+                If grd.Selected.Rows.Count = 0 AndAlso grd.ActiveRow IsNot Nothing AndAlso grd.ActiveRow.IsDataRow Then
+                    grd.Selected.Rows.Clear()
+                    grd.ActiveRow.Selected = True
+                End If
+
+                If MsgBox($"OK to { e.Tool.Key} for the {CStr(grd.Selected.Rows.Count)} orders selected?", MsgBoxStyle.YesNo, "Verification") = MsgBoxResult.No Then
+                    Exit Sub
+                End If
+
+                Dim ORDR_REL_SHORT As String = "0"
+                If e.Tool.Key = "Set Release Short" Then
+                    ORDR_REL_SHORT = "1"
+                End If
+
+                'dst.Tables("SOTORDRG").Rows.Clear()
+                Dim ORDR_GROUP_NO_ORDR_NOs As New Dictionary(Of String, String)
+                Dim ORDR_NOs As New List(Of String)
+                Dim ORDR_GROUP_NOs As New List(Of String)
+                For Each grow As UltraWinGrid.UltraGridRow In grd.Selected.Rows
+                    Dim ORDR_NO As String = grow.Cells("ORDR_NO").Value
+                    Dim ORDR_GROUP_NO As String = ASCDATA1.GetDataValue($"Select Min(ORDR_GROUP_NO) ORDR_GROUP_NO from SOTORDR1 where ORDR_NO = '{ORDR_NO}'")
+                    ORDR_GROUP_NO_ORDR_NOs.Add(ORDR_GROUP_NO, ORDR_NO)
+                    ORDR_GROUP_NOs.Add($"'{ORDR_GROUP_NO}'")
+                    ORDR_NOs.Add($"'{ORDR_NO}'")
+                    'ASCMAIN1.sql = "Update SOTORDRG Set ORDR_REL_SHORT = :PARM1 where ORDR_GROUP_NO = :PARM2"
+                    'ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {ORDR_REL_SHORT, ORDR_GROUP_NO})
+                Next
+
+                BeginTrans()
+
+                ASCMAIN1.sql = $"Select SOTORDRG.* from SOTORDRG where ORDR_GROUP_NO in (Select ORDR_GROUP_NO from SOTORDR1 where ORDR_NO in ({Join(ORDR_NOs.ToArray, ",")}))"
+                Fill_Records("SOTORDRG", ,, ASCMAIN1.sql)
+                For Each rowSOTORDRG As DataRow In dst.Tables("SOTORDRG").Select()
+                    If rowSOTORDRG.Item("ORDR_REL_SHORT") & "" = ORDR_REL_SHORT Or (rowSOTORDRG.Item("ORDR_REL_SHORT") & "" = "" And ORDR_REL_SHORT = "0") Then
+                        ' NOTHING TO CHANGE
+                    Else
+                        Dim ORDR_GROUP_NO As String = rowSOTORDRG.Item("ORDR_GROUP_NO")
+                        Dim ORDR_REL_SHORT_orig As String = rowSOTORDRG.Item("ORDR_REL_SHORT") & ""
+                        rowSOTORDRG.Item("ORDR_REL_SHORT") = ORDR_REL_SHORT
+                        Dim ORDR_NO As String = ORDR_GROUP_NO_ORDR_NOs(ORDR_GROUP_NO)
+                        ASCMAIN1.sql = "Insert into SOTORDXR (ORDR_NO, INIT_DATE, INIT_OPER, COLUMN_NAME, OLD_VALUE, NEW_VALUE, EMODE)" & vbCrLf _
+                            & $" Values ('{ORDR_NO}', SYSDATE, '{ASCMAIN1.USER_ID}', 'ORDR_REL_SHORT', '{ORDR_REL_SHORT_orig}', '{ORDR_REL_SHORT}', 'R' )"
+                        ASCDATA1.ExecuteSQL(ASCMAIN1.sql, "VV", New String() {ORDR_REL_SHORT, ORDR_GROUP_NO})
+
+                    End If
+                Next
+                Update_Record_TDA("SOTORDRG")
+
+                CommitTrans()
+
+                Click_Command("Refresh")
 
             Case "De-Pick Pick Tickets"
 
@@ -1691,8 +1759,8 @@ Public Class SOFPICKS
                 & ", SOTORDR1.ORDR_PICK_SEQ, SOTORDR1.SHIP_VIA_CODE" & vbCrLf _
                 & ", 'X' DESTINATION" & vbCrLf _
                 & ", SOTORDR2.STYLE_CODE, SOTORDR2.COLOR_CODE, ICTSTYC1.UPC_CODE, ICTSTYL1.STYLE_DESC, 'X' ORDR_XFR_BATCH_NO" & vbCrLf _
-                & ", SOTORDR1.INIT_DATE, SOTORDR1.ORDR_HOLD, SOTORDR1.ORDR_SHIP_COMPLETE, SOTORDR1.ORDR_SHIP_COMPLETE ORDR_ALLO_COMPLETE, '0' BO" & vbCrLf _
-                & " from SOTORDR1,SOTORDR2,ICTSTYL1,ICTSTYC1,ICTSTYLD" & vbCrLf _
+                & ", SOTORDR1.INIT_DATE, SOTORDR1.ORDR_HOLD, SOTORDR1.ORDR_SHIP_COMPLETE, SOTORDR1.ORDR_SHIP_COMPLETE ORDR_ALLO_COMPLETE, '0' BO, SOTORDRG.ORDR_REL_SHORT" & vbCrLf _
+                & " from SOTORDR1,SOTORDR2,ICTSTYL1,ICTSTYC1,ICTSTYLD,SOTORDRG" & vbCrLf _
                 & " where ROWNUM < 1"
             SOTORDQ1 = ASCMAIN1.Temp_Table(sqlGK(ASCMAIN1.sql))
             ASCDATA1.ExecuteSQL($"Alter Table {SOTORDQ1} Add Primary Key (ORDR_NO)")
@@ -1823,11 +1891,13 @@ Public Class SOFPICKS
                     & ", SOTORDR1.ORDR_PICK_SEQ, SOTORDR1.SHIP_VIA_CODE" & vbCrLf _
                     & ", 'C' DESTINATION" & vbCrLf _
                     & ", NULL STYLE_CODE, NULL COLOR_CODE, NULL UPC_CODE, NULL STYLE_DESC, NULL ORDR_XFR_BATCH_NO" & vbCrLf _
-                    & ", SOTORDR1.INIT_DATE, SOTORDR1.ORDR_HOLD, SOTORDR1.ORDR_SHIP_COMPLETE, SOTORDR1.ORDR_ALLO_COMPLETE, '0' BO" & vbCrLf _
-                    & $" from {SOTORDR1} SOTORDR1, ({sqlICTSTAT2}) X" & vbCrLf _
+                    & ", SOTORDR1.INIT_DATE, SOTORDR1.ORDR_HOLD, SOTORDR1.ORDR_SHIP_COMPLETE, SOTORDR1.ORDR_ALLO_COMPLETE, '0' BO, SOTORDRG.ORDR_REL_SHORT" & vbCrLf _
+                    & $" from {SOTORDR1} SOTORDR1, ({sqlICTSTAT2}) X, SOTORDRG" & vbCrLf _
                     & " where SOTORDR1.ORDR_SOURCE in ('W')" & vbCrLf
 
                 '& " where SOTORDR1.ORDR_SOURCE in ('K', 'C', 'E', 'L', 'W','P')" & vbCrLf
+
+                sql1k &= $" and SOTORDRG.ORDR_GROUP_NO (+) = SOTORDR1.ORDR_GROUP_NO"
 
                 If inquirySingleSalesOrder Then
                     sql1k &= $" AND SOTORDR1.ORDR_NO = '{txtORDR_NO.Text}'"
@@ -1835,12 +1905,21 @@ Public Class SOFPICKS
                     sql1k &= "   and SOTORDR1.ORDR_STATUS = 'O'" & vbCrLf
                 End If
 
+                'If chkShowHolds.Checked Then
+                '    sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') = '1'" _
+                '& " or (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '1' and NVL(SOTORDRG.ORDR_REL_SHORT,'0') <> '1' and NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '0'))"
+                'Else
+                '    sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') <> '1'" _
+                '& " and (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '0' or NVL(SOTORDRG.ORDR_REL_SHORT,'0') = '1' or NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '1'))"
+                'End If
+
+                'temp coding to make all ship complete orders on hold (for now, until we resolve the qty 0 issue)
                 If chkShowHolds.Checked Then
                     sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') = '1'" _
-                & " or ((NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '1' and NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '0')))"
+                & " or NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '1')"
                 Else
                     sql1k &= "and (NVL(SOTORDR1.ORDR_HOLD,'0') <> '1'" _
-                & " and (NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '0' or NVL(SOTORDR1.ORDR_ALLO_COMPLETE,'0') = '1'))"
+                & " and NVL(SOTORDR1.ORDR_SHIP_COMPLETE,'0') = '0')"
                 End If
 
                 sql1k &= " and X.ORDR_NO = SOTORDR1.ORDR_NO"
@@ -1848,8 +1927,10 @@ Public Class SOFPICKS
                 ASCDATA1.ExecuteSQL($"Insert into {SOTORDQ1} {sqlGK(sql1k)}")
                 ASCDATA1.ExecuteSQL($"Insert into {SOTORDQ0} {sqlSOTORDQ0}")
 
-                ASCMAIN1.sql = $"Update {SOTORDQ1} SOTORDQ1 Set BO = '1' where NVL(SOTORDQ1.ORDR_QTY_ALLO,0) <= 0 
-                or not (NVL(SOTORDQ1.ORDR_QTY_ALLO,0) > SOTORDQ1.ORDR_QTY_ALLO_NC or NVL(SOTORDQ1.ORDR_QTY_OPEN,0) = NVL(SOTORDQ1.ORDR_QTY_ALLO,0))"
+                'ASCMAIN1.sql = $"Update {SOTORDQ1} SOTORDQ1 Set BO = '1' where NVL(SOTORDQ1.ORDR_QTY_ALLO,0) <= 0 
+                'or not (NVL(SOTORDQ1.ORDR_QTY_ALLO,0) > SOTORDQ1.ORDR_QTY_ALLO_NC or NVL(SOTORDQ1.ORDR_QTY_OPEN,0) = NVL(SOTORDQ1.ORDR_QTY_ALLO,0))"
+                'ASCMAIN1.sql = $"Update {SOTORDQ1} SOTORDQ1 Set BO = '1' where NVL(SOTORDQ1.ORDR_QTY_ALLO,0) <= NVL(SOTORDQ1.ORDR_QTY_OPEN,0) and NVL(ORDR_SHIP_COMPLETE,'0') = '1' and NVL(ORDR_REL_SHORT,'0') <> '1'"
+                ASCMAIN1.sql = $"Update {SOTORDQ1} SOTORDQ1 Set BO = '1' where NVL(SOTORDQ1.ORDR_QTY_ALLO,0) < NVL(SOTORDQ1.ORDR_QTY_OPEN,0) and NVL(ORDR_SHIP_COMPLETE,'0') = '1'"
                 ASCDATA1.ExecuteSQL()
 
             End If
@@ -2027,9 +2108,11 @@ Public Class SOFPICKS
                 If .Value & "" = "1" Then
                     .Appearance.BackColor = System.Drawing.Color.Red
                     '.Appearance = Appearance_Red
+                    .ToolTipText = "Cannot Ship Order Complete"
                 Else
                     .Appearance.BackColor = System.Drawing.Color.Empty
                     '.Appearance = Appearance_Empty
+                    .ToolTipText = ""
                 End If
             End With
 
@@ -3457,7 +3540,7 @@ Public Class SOFPICKS
 
     Sub Release_Selected_Orders(GROUP_KEY As String)
 
-        Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"GROUP_KEY = '{GROUP_KEY}' AND SEL='1'").Length
+        Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"GROUP_KEY = '{GROUP_KEY}' AND SEL='1' AND (ISNULL(BO,'0') <> '1' or ISNULL(ORDR_REL_SHORT,'0') = '1')").Length
         'Dim ORDRs_Selected As Integer = dst.Tables("SOTORDQ1").Select($"SEL='1'").Length
         If ORDRs_Selected = 0 Then
             MsgBox("No Orders Selected", MsgBoxStyle.OkOnly, "Cannot Release")
