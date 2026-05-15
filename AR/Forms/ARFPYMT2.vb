@@ -1539,6 +1539,7 @@ Public Class ARFPYMT2
                         .Items("Update Shopify").Visible = ScreenMode And ASCMAIN1.CLIENT = "VAN"
                         .Items("Cancel Shopify").Visible = ScreenMode And ASCMAIN1.CLIENT = "VAN"
                         .Items("Upload Global").Visible = Not ScreenMode And ASCMAIN1.CLIENT = "VAN"
+                        .Items("Upload TikTok").Visible = False
                     End With
 
                     With .Groups("Post Application Options")
@@ -7425,7 +7426,7 @@ Optional ByVal key As String = "") As Object
                                 If TRANS_TYPE = "refund" And INV_BALANCE_CURR - INV_PMT_invoice <> 0 Then
                                     If INV_BALANCE_CURR - INV_PMT_CURR <> 0 Then
                                         If (INV_BALANCE_CURR - INV_PMT_CURR) - INV_PMT_invoice - INV_MISC_CHG_CURR <> 0 Then
-                                            MsgBox("This Refund for Invoice No: " & rowARTPYMT3.Item("INV_NUM") & " - Cust PO: " & rowARTPYMT3.Item("INV_CUST_PO") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
+                                            MsgBox("This Refund " & Format(INV_PMT_invoice, "$###,##0.00") & " for Invoice No: " & rowARTPYMT3.Item("INV_NUM") & " - Cust PO: " & rowARTPYMT3.Item("INV_CUST_PO") & " is out of Balance in Payment Application", MsgBoxStyle.OkOnly, "Cannot Apply Refund Automatically")
                                             GOOD_RECORD = False
                                         Else
                                             MsgBox("Payment Applied for this Refund Causes an Open Balance. Invoice No " & rowARTPYMT3.Item("INV_NUM") & " has an open Balance Amount = to the Invoice Misc Charge", MsgBoxStyle.OkOnly, "This will Leave and Open Balance for the AR Item")
@@ -7783,7 +7784,7 @@ Optional ByVal key As String = "") As Object
 
                         Dim rowARTPYMT3s() As DataRow
 
-                        Dim SQLC As String = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "' and INV_BALANCE = '" & INV_PMT & "'"
+                        Dim SQLC As String = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "' and INV_BALANCE = '" & Math.Round(INV_PMT, 2) & "'"
                         rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
 
                         If rowARTPYMT3s.Length = 0 Then
@@ -7796,26 +7797,38 @@ Optional ByVal key As String = "") As Object
                                                 row.Item("PYMT_BATCH_ILNO")})
                                 rowARTPYMT3s = New DataRow() {rowARTPYMT3}
                             Else
-                                SQLC = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "'"
-                                rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
-                                If rowARTPYMT3s.Length = 0 Then
-                                    SQLC = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "'"
+                                If TRANS_TYPE = "Refund" Then
+
+                                    SQLC = "(INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "'"
                                     rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
-                                End If
-                                If rowARTPYMT3s.Length = 0 Then
-                                    SQLC = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and PARTNER_ORDR_NO = '" & INV_CUST_PO & "'"
-                                    rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
-                                End If
-                                If rowARTPYMT3s.Length = 0 Then
-                                    SQLC = "INV_TYPE = 'B' and INV_CUST_PO LIKE '*" & INV_CUST_PO & "'"
-                                    rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
-                                End If
-                                If rowARTPYMT3s.Length = 0 Then
-                                    If Val(INV_CUST_PO) <> 0 Then
-                                        SQLC = "INV_TYPE = 'B' and INV_CUST_PO LIKE '*" & CStr(Val(INV_CUST_PO)) & "'"
+                                    '  stop
+                                    '  iNV_CUST_PO = INV_CUST_PO & "R"
+                                Else
+                                    If rowARTPYMT3s.Length = 0 Then
+                                        SQLC = "(INV_TYPE = 'I') and INV_CUST_PO = '" & INV_CUST_PO & "'"
                                         rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
                                     End If
+
                                 End If
+
+                                ''If rowARTPYMT3s.Length = 0 Then
+                                ''    SQLC = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and INV_CUST_PO = '" & INV_CUST_PO & "'"
+                                ''    rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
+                                ''End If
+                                ''If rowARTPYMT3s.Length = 0 Then
+                                ''    SQLC = "(INV_TYPE = 'I' OR INV_TYPE = 'R') and PARTNER_ORDR_NO = '" & INV_CUST_PO & "'"
+                                ''    rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
+                                ''End If
+                                ''If rowARTPYMT3s.Length = 0 Then
+                                ''    SQLC = "INV_TYPE = 'B' and INV_CUST_PO LIKE '*" & INV_CUST_PO & "'"
+                                ''    rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
+                                ''End If
+                                ''If rowARTPYMT3s.Length = 0 Then
+                                ''    If Val(INV_CUST_PO) <> 0 Then
+                                ''        SQLC = "INV_TYPE = 'B' and INV_CUST_PO LIKE '*" & CStr(Val(INV_CUST_PO)) & "'"
+                                ''        rowARTPYMT3s = dst.Tables("ARTPYMT3").Select(SQLC)
+                                ''    End If
+                                ''End If
                             End If
                         End If
 
@@ -7877,6 +7890,7 @@ Optional ByVal key As String = "") As Object
 
                                 With rowARTPYMT3
                                     Dim INV_BALANCE As Decimal = Val(.Item("INV_BALANCE") & "")
+                                    Dim INV_BALANCE_NEW As Decimal = Val(.Item("INV_BALANCE_NEW") & "")
                                     Dim INV_PMT_invoice As Decimal = INV_PMT
 
                                     ' Dim INV_PMT_invoice As Decimal = Math.Round(INV_PMT, 2)
@@ -7889,11 +7903,11 @@ Optional ByVal key As String = "") As Object
                                             INTER_DIFF_CURR = INTER_DIFF_CURR + -1 * (INV_PMT_invoice - INV_BALANCE)
                                         End If
                                         INV_PMT_invoice = INV_BALANCE
-                                            ' we should probably check to see if the sum of the invoices matches with INV_PMT before falling into this section
-                                            ' if they do not agree, the then application will end up out of balance
-                                        End If
+                                        ' we should probably check to see if the sum of the invoices matches with INV_PMT before falling into this section
+                                        ' if they do not agree, the then application will end up out of balance
+                                    End If
 
-                                        Dim INV_DISC_TAKEN As Decimal = 0
+                                    Dim INV_DISC_TAKEN As Decimal = 0
                                     Dim INV_WRITE_OFF As Decimal = 0
 
                                     If INV_PMT_invoice > INV_BALANCE Then
@@ -8461,7 +8475,8 @@ Optional ByVal key As String = "") As Object
 
 
         Dim SHOPIFY_CUST As String = "SKINCOM"
-        Dim INV_NO_TO_CONSIDER As String = "('" & INV_NO & "','" & INV_NO_OA & "')"
+        Dim INV_NO_TO_CONSIDER As String = ""
+        Dim INV_NO_TO_CONSIDER_BATCH As String = ""
         Dim CURR_EXCH_RATE As Decimal = 1
 
         Dim NEWBATCH As Boolean = True
@@ -8583,7 +8598,7 @@ Optional ByVal key As String = "") As Object
             CURR_EXCH_RATE = rowARTPYMT1.Item("CURR_EXCH_RATE")
             INV_NO = rowSOTINVHC.Item("INV_NO") & ""
             INV_NO_OA = rowSOTINVHC.Item("INV_NO_OA") & ""
-            INV_NO_TO_CONSIDER = "('" & INV_NO & "')"
+            ' INV_NO_TO_CONSIDER = "('" & INV_NO & "')"
             PASSED_AMT = Val(rowSOTINVHC.Item("GIFT_CARD_AMT") & "")
             GIFT_CTL_NO = rowSOTINVHC.Item("GIFT_CTL_NO") & ""
 
@@ -8605,12 +8620,32 @@ Optional ByVal key As String = "") As Object
                     ASCDATA1.ExecuteSQL()
                 End If
             End If
-            INV_NO_TO_CONSIDER = "('" & INV_NO & "','" & INV_NO_OA & "')"
+  
+            ' INV_NO_TO_CONSIDER = "('" & INV_NO & "','" & INV_NO_OA & "')"
+
+
+            ' new
+            ''INV_NO_TO_CONSIDER = "("
+            ''INV_NO_TO_CONSIDER = "'" & INV_NO & "','" & INV_NO_OA & "'"
+            ''INV_NO_TO_CONSIDER = INV_NO_TO_CONSIDER & ")"
+
+            INV_NO_TO_CONSIDER = "("
+            INV_NO_TO_CONSIDER &= $"'{INV_NO}','{INV_NO_OA}'"
+            INV_NO_TO_CONSIDER &= ")"
+
+            If INV_NO_TO_CONSIDER_BATCH = "" Then
+                INV_NO_TO_CONSIDER_BATCH = "("
+                INV_NO_TO_CONSIDER_BATCH &= $"'{INV_NO}','{INV_NO_OA}'"
+            Else
+                INV_NO_TO_CONSIDER_BATCH &= ","
+                INV_NO_TO_CONSIDER_BATCH &= $"'{INV_NO}','{INV_NO_OA}'"
+
+            End If
 
             CUST_CODE = SHOPIFY_CUST
 
             '    fill artopen1 And ARTPYMT3
-            PYMT_BATCH_ILNO = 0
+            '   PYMT_BATCH_ILNO = 0
             ASCMAIN1.sql = "Select ARTOPEN1.* from ARTOPEN1" _
                 & " where ARTOPEN1.CUST_CODE = '" & CUST_CODE & "'" _
                 & " and ARTOPEN1.INV_NUM IN " & INV_NO_TO_CONSIDER & ""
@@ -8673,6 +8708,13 @@ Optional ByVal key As String = "") As Object
 
         Next
         ' Update Database
+        If INV_NO_TO_CONSIDER_BATCH <> "" Then
+            INV_NO_TO_CONSIDER_BATCH &= ")"
+            ASCMAIN1.sql = "Select ARTOPEN1.* from ARTOPEN1" _
+                & " where ARTOPEN1.CUST_CODE = '" & CUST_CODE & "'" _
+                & " and ARTOPEN1.INV_NUM IN " & INV_NO_TO_CONSIDER_BATCH & ""
+            Fill_Records("ARTOPEN1", "", True, ASCMAIN1.sql)
+        End If
 
         PYMT_BATCH_ILNO = 0
         For Each rowARTPYMT3 As DataRow In dst.Tables("ARTPYMT3").Select("", "PYMT_BATCH_ILNO")

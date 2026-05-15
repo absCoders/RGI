@@ -12079,32 +12079,33 @@ Public Class SOFSHIPB
                     MISC_CHG_NOTE = $"Freight Allowance ${freightDifference.ToString("#,##0.00")}"
 
                     ' User Supplied freight charge
-                    If Val(numSHIP_FREIGHT.Value & String.Empty) > 0 Then
-                        numSHIP_FREIGHT.Value = modified_freight
-                        For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
-                            rowSOTPICK1.Item("PICK_FREIGHT") = 0
-                            rowSOTPICK1.Item("ORDR_FOB") = 0
-                        Next
-                        dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") = modified_freight
-                    Else
-                        ' Need to modify SOTPICK1 records, Use percentage
-                        While freightDifference >= 0.01
-                            For Each rowfrt As DataRow In dst.Tables("SOTPICK1").Select("PICK_FREIGHT > 0", "PICK_FREIGHT DESC")
-                                Dim perc As Decimal = rowfrt.Item("PICK_FREIGHT") / freightAllowance
-                                Dim discfreight As Decimal = freightDifference * perc
+                    ' 05/14/2026 - Do no tdo this the Misc Charge will decuct from the invoice
+                    'If Val(numSHIP_FREIGHT.Value & String.Empty) > 0 Then
+                    '    numSHIP_FREIGHT.Value = infreightAllowance
+                    '    For Each rowSOTPICK1 In dst.Tables("SOTPICK1").Select("SELECTED = '1'", "SHIP_BOL_NO")
+                    '        rowSOTPICK1.Item("PICK_FREIGHT") = 0
+                    '        rowSOTPICK1.Item("ORDR_FOB") = 0
+                    '    Next
+                    '    dst.Tables("SOTPICK1").Select("SELECTED = '1'", "PICK_AMT_CONF DESC")(0).Item("PICK_FREIGHT") = infreightAllowance
+                    'Else
+                    '    ' Need to modify SOTPICK1 records, Use percentage
+                    '    While freightDifference >= 0.01
+                    '        For Each rowfrt As DataRow In dst.Tables("SOTPICK1").Select("PICK_FREIGHT > 0", "PICK_FREIGHT DESC")
+                    '            Dim perc As Decimal = rowfrt.Item("PICK_FREIGHT") / freightAllowance
+                    '            Dim discfreight As Decimal = freightDifference * perc
 
-                                Dim PICK_FREIGHT As Decimal = Val(rowfrt.Item("PICK_FREIGHT") & String.Empty)
-                                If PICK_FREIGHT > discfreight Then
-                                    PICK_FREIGHT -= discfreight
-                                    freightDifference -= discfreight
-                                Else
-                                    freightDifference -= PICK_FREIGHT
-                                    PICK_FREIGHT = 0
-                                End If
-                                rowfrt.Item("PICK_FREIGHT") = PICK_FREIGHT
-                            Next
-                        End While
-                    End If
+                    '            Dim PICK_FREIGHT As Decimal = Val(rowfrt.Item("PICK_FREIGHT") & String.Empty)
+                    '            If PICK_FREIGHT > discfreight Then
+                    '                PICK_FREIGHT -= discfreight
+                    '                freightDifference -= discfreight
+                    '            Else
+                    '                freightDifference -= PICK_FREIGHT
+                    '                PICK_FREIGHT = 0
+                    '            End If
+                    '            rowfrt.Item("PICK_FREIGHT") = PICK_FREIGHT
+                    '        Next
+                    '    End While
+                    'End If
                 End If
             End If
         End If
@@ -12253,6 +12254,14 @@ Public Class SOFSHIPB
         ' Capture Credit Card Approved $$
 
         Dim rowSOTPICK1 As DataRow = Nothing
+
+        If ASCMAIN1.Running_in_VS Then
+            ' Are you sure you want process a credit card?
+            Stop
+            CreditCardProcessed = True
+            Exit Sub
+        End If
+
         Try
 
             ' Current processing may have more than one pick ticket for a sales order.
@@ -13315,9 +13324,10 @@ Public Class SOFSHIPB
 
             ShippingLabelDirectory = (rowSOTCARR1.Item("CARRIER_ARCHIVE_DIR") & String.Empty).ToString.Trim
             If ASCMAIN1.Running_in_VS Then
+                Stop
                 Select Case ASCMAIN1.CLIENT
                     Case "RGI"
-                        ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "R:\")
+                        ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "\\192.168.110.229\shared\")
                     Case "NYA"
                         ShippingLabelDirectory = ShippingLabelDirectory.Replace("S:\", "N:\")
                 End Select
@@ -13393,11 +13403,14 @@ Public Class SOFSHIPB
 
         Try
             If (ASCMAIN1.USER_ID = "edz" OrElse ASCMAIN1.USER_ID = "wjz") AndAlso ASCMAIN1.Running_in_VS Then
+                Stop
                 ' Find Zebra printer
-                Dim zebraPrinter As String = FindZebraPrinter()
+                'Dim zebraPrinter As String = FindZebraPrinter()
 
-                Dim vLabelPrinter As New ASCPRINT
-                Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
+                'Dim vLabelPrinter As New ASCPRINT
+                'Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
+                Dim clsTACZPLT1 As New TAC.TACZPLT1
+                clsTACZPLT1.SendLabelToPrinter(txtLabelPrinter.Text, LabelData)
             End If
 
             ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
