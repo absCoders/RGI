@@ -304,6 +304,12 @@ Public Class SORAVAL3
                 End If
                 CR_params.Add("SHOW_ALLOC" & i, SHOW_ALLOC)
             Next
+            If CHKALLOP.Checked Then
+                CR_params.Add("SHOWALLORDPICK", "1")
+            Else
+                CR_params.Add("SHOWALLORDPICK", "")
+            End If
+
 
             If chkShowShipped.Checked Then
                 CR_params.Add("SHOWSHIPPED", "1")

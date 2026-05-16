@@ -155,6 +155,7 @@ Partial Class SORAVAL3
         Me.UltraCombo4 = New Infragistics.Win.UltraWinGrid.UltraCombo()
         Me.chkEXCLUDENEGATIVES = New ABSCS.ABSCheckBox()
         Me.chkProvideProof = New ABSCS.ABSCheckBox()
+        Me.CHKALLOP = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -252,21 +253,25 @@ Partial Class SORAVAL3
         CType(Me.UltraCombo4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkEXCLUDENEGATIVES, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkProvideProof, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.CHKALLOP, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
         '
-        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 23)
-        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.UltraTabPageControl2.Location = New System.Drawing.Point(2, 27)
+        Me.UltraTabPageControl2.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.UltraTabPageControl2.Size = New System.Drawing.Size(1021, 402)
         '
         'UltraTabControl1
         '
         Me.UltraTabControl1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.UltraTabControl1.Size = New System.Drawing.Size(1025, 431)
         Me.UltraTabControl1.TabPageMargins.ForceSerialization = True
         '
         'SplitContainer1
         '
         Me.SplitContainer1.Margin = New System.Windows.Forms.Padding(2, 3, 2, 3)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1025, 646)
         '
         'SplitContainer5
         '
@@ -274,6 +279,7 @@ Partial Class SORAVAL3
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.CHKALLOP)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkProvideProof)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkEXCLUDENEGATIVES)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpPERIOD_RANG2)
@@ -300,6 +306,11 @@ Partial Class SORAVAL3
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpALLGROUP2)
         Me.SplitContainer5.Panel1.Controls.Add(Me.grpPO_DATE_ETA1)
         Me.SplitContainer5.Panel1.Controls.Add(Me.UltraGroupBox2)
+        Me.SplitContainer5.Size = New System.Drawing.Size(1021, 402)
+        '
+        'txtDescription
+        '
+        Me.txtDescription.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
         '
         'grdASTRECAP
         '
@@ -392,19 +403,23 @@ Partial Class SORAVAL3
         Me.grdASTEXPT1.DisplayLayout.ScrollBounds = Infragistics.Win.UltraWinGrid.ScrollBounds.ScrollToFill
         Me.grdASTEXPT1.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASTEXPT1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
+        Me.grdASTEXPT1.Size = New System.Drawing.Size(1017, 370)
         '
         'tabDataExports
         '
+        Me.tabDataExports.Size = New System.Drawing.Size(1021, 402)
         Me.tabDataExports.TabPageMargins.ForceSerialization = True
         '
         'UltraExplorerBar1
         '
         Me.UltraExplorerBar1.GroupSettings.UseMnemonics = Infragistics.Win.DefaultableBoolean.[True]
         Me.UltraExplorerBar1.ItemSettings.Style = Infragistics.Win.UltraWinExplorerBar.ItemStyle.Button
+        Me.UltraExplorerBar1.Location = New System.Drawing.Point(0, 24)
         Me.UltraExplorerBar1.Margins.Bottom = 0
         Me.UltraExplorerBar1.Margins.Left = 0
         Me.UltraExplorerBar1.Margins.Right = 0
         Me.UltraExplorerBar1.Margins.Top = 0
+        Me.UltraExplorerBar1.Size = New System.Drawing.Size(208, 622)
         '
         'grdASFBASEX
         '
@@ -451,24 +466,17 @@ Partial Class SORAVAL3
         Me.grdASFBASEX.DisplayLayout.ScrollStyle = Infragistics.Win.UltraWinGrid.ScrollStyle.Immediate
         Me.grdASFBASEX.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         '
-        '_ASFBASE1_Toolbars_Dock_Area_Left
-        '
-        Me._ASFBASE1_Toolbars_Dock_Area_Left.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        '
         '_ASFBASE1_Toolbars_Dock_Area_Right
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(990, 0)
-        Me._ASFBASE1_Toolbars_Dock_Area_Right.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me._ASFBASE1_Toolbars_Dock_Area_Right.Location = New System.Drawing.Point(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Top
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Top.Size = New System.Drawing.Size(1238, 0)
         '
         '_ASFBASE1_Toolbars_Dock_Area_Bottom
         '
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
-        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(990, 0)
+        Me._ASFBASE1_Toolbars_Dock_Area_Bottom.Size = New System.Drawing.Size(1238, 0)
         '
         'tlb
         '
@@ -479,9 +487,10 @@ Partial Class SORAVAL3
         '
         Me.UltraGroupBox2.Controls.Add(Me.ckhSHOWSTYLES)
         Me.UltraGroupBox2.Controls.Add(Me.optASN)
-        Me.UltraGroupBox2.Location = New System.Drawing.Point(19, 3)
+        Me.UltraGroupBox2.Location = New System.Drawing.Point(24, 3)
+        Me.UltraGroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraGroupBox2.Name = "UltraGroupBox2"
-        Me.UltraGroupBox2.Size = New System.Drawing.Size(162, 109)
+        Me.UltraGroupBox2.Size = New System.Drawing.Size(202, 123)
         Me.UltraGroupBox2.TabIndex = 261
         Me.UltraGroupBox2.Text = "Style Option"
         '
@@ -489,9 +498,10 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.ckhSHOWSTYLES, False)
         Me.Absx1.SetABSColumnName(Me.ckhSHOWSTYLES, "CHKSHOWSTYLES")
-        Me.ckhSHOWSTYLES.Location = New System.Drawing.Point(20, 83)
+        Me.ckhSHOWSTYLES.Location = New System.Drawing.Point(25, 93)
+        Me.ckhSHOWSTYLES.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.ckhSHOWSTYLES.Name = "ckhSHOWSTYLES"
-        Me.ckhSHOWSTYLES.Size = New System.Drawing.Size(110, 16)
+        Me.ckhSHOWSTYLES.Size = New System.Drawing.Size(138, 18)
         Me.ckhSHOWSTYLES.TabIndex = 295
         Me.ckhSHOWSTYLES.Text = "Show Styles"
         Me.ckhSHOWSTYLES.Visible = False
@@ -508,9 +518,10 @@ Partial Class SORAVAL3
         ValueListItem3.DataValue = "N"
         ValueListItem3.DisplayText = "Non-Stock Only"
         Me.optASN.Items.AddRange(New Infragistics.Win.ValueListItem() {ValueListItem1, ValueListItem2, ValueListItem3})
-        Me.optASN.Location = New System.Drawing.Point(19, 24)
+        Me.optASN.Location = New System.Drawing.Point(24, 27)
+        Me.optASN.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.optASN.Name = "optASN"
-        Me.optASN.Size = New System.Drawing.Size(137, 55)
+        Me.optASN.Size = New System.Drawing.Size(171, 62)
         Me.optASN.TabIndex = 0
         Me.optASN.Text = "All Styles"
         '
@@ -519,9 +530,10 @@ Partial Class SORAVAL3
         Me.grpPO_DATE_ETA1.Controls.Add(Me.chkALLOC_DATE1)
         Me.grpPO_DATE_ETA1.Controls.Add(Me.UltraDateTimeEditor6)
         Me.grpPO_DATE_ETA1.Controls.Add(Me.UltraDateTimeEditor3)
-        Me.grpPO_DATE_ETA1.Location = New System.Drawing.Point(13, 137)
+        Me.grpPO_DATE_ETA1.Location = New System.Drawing.Point(16, 164)
+        Me.grpPO_DATE_ETA1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPO_DATE_ETA1.Name = "grpPO_DATE_ETA1"
-        Me.grpPO_DATE_ETA1.Size = New System.Drawing.Size(162, 92)
+        Me.grpPO_DATE_ETA1.Size = New System.Drawing.Size(202, 104)
         Me.grpPO_DATE_ETA1.TabIndex = 274
         '
         'chkALLOC_DATE1
@@ -531,9 +543,10 @@ Partial Class SORAVAL3
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE1, "CHKALLOC_DATE1")
         Me.chkALLOC_DATE1.Checked = True
         Me.chkALLOC_DATE1.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkALLOC_DATE1.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE1.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE1.Name = "chkALLOC_DATE1"
-        Me.chkALLOC_DATE1.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE1.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE1.TabIndex = 35
         Me.chkALLOC_DATE1.Text = "At Once"
         '
@@ -541,28 +554,31 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor6, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor6, "ALLOC_BDATE1")
-        Me.UltraDateTimeEditor6.Location = New System.Drawing.Point(6, 24)
+        Me.UltraDateTimeEditor6.Location = New System.Drawing.Point(8, 27)
+        Me.UltraDateTimeEditor6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor6.Name = "UltraDateTimeEditor6"
         Me.UltraDateTimeEditor6.ReadOnly = True
-        Me.UltraDateTimeEditor6.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor6.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor6.TabIndex = 2
         '
         'UltraDateTimeEditor3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor3, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor3, "ALLOC_EDATE1")
-        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(6, 52)
+        Me.UltraDateTimeEditor3.Location = New System.Drawing.Point(8, 58)
+        Me.UltraDateTimeEditor3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor3.Name = "UltraDateTimeEditor3"
-        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor3.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor3.TabIndex = 1
         '
         'chkALLGROUP2
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP2, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP2, "CHKALLGROUP2")
-        Me.chkALLGROUP2.Location = New System.Drawing.Point(189, 118)
+        Me.chkALLGROUP2.Location = New System.Drawing.Point(236, 143)
+        Me.chkALLGROUP2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP2.Name = "chkALLGROUP2"
-        Me.chkALLGROUP2.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLGROUP2.Size = New System.Drawing.Size(186, 22)
         Me.chkALLGROUP2.TabIndex = 279
         Me.chkALLGROUP2.Text = "Allocate Through 2"
         '
@@ -573,9 +589,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP2.Controls.Add(Me.UltraDateTimeEditor9)
         Me.grpALLGROUP2.Controls.Add(Me.chkALLOC_DATE2)
         Me.grpALLGROUP2.Controls.Add(Me.UltraDateTimeEditor1)
-        Me.grpALLGROUP2.Location = New System.Drawing.Point(181, 137)
+        Me.grpALLGROUP2.Location = New System.Drawing.Point(226, 164)
+        Me.grpALLGROUP2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP2.Name = "grpALLGROUP2"
-        Me.grpALLGROUP2.Size = New System.Drawing.Size(162, 92)
+        Me.grpALLGROUP2.Size = New System.Drawing.Size(202, 104)
         Me.grpALLGROUP2.TabIndex = 278
         Me.grpALLGROUP2.Visible = False
         '
@@ -583,18 +600,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor9, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor9, "ALLOC_BDATE2")
-        Me.UltraDateTimeEditor9.Location = New System.Drawing.Point(6, 24)
+        Me.UltraDateTimeEditor9.Location = New System.Drawing.Point(8, 27)
+        Me.UltraDateTimeEditor9.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor9.Name = "UltraDateTimeEditor9"
-        Me.UltraDateTimeEditor9.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor9.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor9.TabIndex = 35
         '
         'chkALLOC_DATE2
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE2, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE2, "CHKALLOC_DATE2")
-        Me.chkALLOC_DATE2.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE2.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE2.Name = "chkALLOC_DATE2"
-        Me.chkALLOC_DATE2.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE2.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE2.TabIndex = 34
         Me.chkALLOC_DATE2.Text = "Last on File"
         '
@@ -602,17 +621,19 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor1, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor1, "ALLOC_EDATE2")
-        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(6, 52)
+        Me.UltraDateTimeEditor1.Location = New System.Drawing.Point(8, 58)
+        Me.UltraDateTimeEditor1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor1.Name = "UltraDateTimeEditor1"
-        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor1.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor1.TabIndex = 1
         '
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(16, 118)
+        Me.Label1.Location = New System.Drawing.Point(20, 143)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(133, 16)
+        Me.Label1.Size = New System.Drawing.Size(171, 20)
         Me.Label1.TabIndex = 280
         Me.Label1.Text = "Allocate Through 1"
         '
@@ -623,9 +644,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP3.Controls.Add(Me.UltraDateTimeEditor10)
         Me.grpALLGROUP3.Controls.Add(Me.chkALLOC_DATE3)
         Me.grpALLGROUP3.Controls.Add(Me.UltraDateTimeEditor5)
-        Me.grpALLGROUP3.Location = New System.Drawing.Point(349, 137)
+        Me.grpALLGROUP3.Location = New System.Drawing.Point(436, 164)
+        Me.grpALLGROUP3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP3.Name = "grpALLGROUP3"
-        Me.grpALLGROUP3.Size = New System.Drawing.Size(162, 92)
+        Me.grpALLGROUP3.Size = New System.Drawing.Size(202, 104)
         Me.grpALLGROUP3.TabIndex = 281
         Me.grpALLGROUP3.Visible = False
         '
@@ -633,18 +655,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor10, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor10, "ALLOC_BDATE3")
-        Me.UltraDateTimeEditor10.Location = New System.Drawing.Point(5, 24)
+        Me.UltraDateTimeEditor10.Location = New System.Drawing.Point(6, 27)
+        Me.UltraDateTimeEditor10.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor10.Name = "UltraDateTimeEditor10"
-        Me.UltraDateTimeEditor10.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor10.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor10.TabIndex = 36
         '
         'chkALLOC_DATE3
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE3, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE3, "CHKALLOC_DATE3")
-        Me.chkALLOC_DATE3.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE3.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE3.Name = "chkALLOC_DATE3"
-        Me.chkALLOC_DATE3.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE3.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE3.TabIndex = 35
         Me.chkALLOC_DATE3.Text = "Last on File"
         '
@@ -652,18 +676,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor5, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor5, "ALLOC_EDATE3")
-        Me.UltraDateTimeEditor5.Location = New System.Drawing.Point(5, 52)
+        Me.UltraDateTimeEditor5.Location = New System.Drawing.Point(6, 58)
+        Me.UltraDateTimeEditor5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor5.Name = "UltraDateTimeEditor5"
-        Me.UltraDateTimeEditor5.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor5.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor5.TabIndex = 1
         '
         'chkALLGROUP3
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP3, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP3, "CHKALLGROUP3")
-        Me.chkALLGROUP3.Location = New System.Drawing.Point(355, 118)
+        Me.chkALLGROUP3.Location = New System.Drawing.Point(444, 143)
+        Me.chkALLGROUP3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP3.Name = "chkALLGROUP3"
-        Me.chkALLGROUP3.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLGROUP3.Size = New System.Drawing.Size(186, 22)
         Me.chkALLGROUP3.TabIndex = 282
         Me.chkALLGROUP3.Text = "Allocate Through 3"
         '
@@ -671,9 +697,10 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP4, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP4, "CHKALLGROUP4")
-        Me.chkALLGROUP4.Location = New System.Drawing.Point(523, 118)
+        Me.chkALLGROUP4.Location = New System.Drawing.Point(654, 143)
+        Me.chkALLGROUP4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP4.Name = "chkALLGROUP4"
-        Me.chkALLGROUP4.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLGROUP4.Size = New System.Drawing.Size(186, 22)
         Me.chkALLGROUP4.TabIndex = 284
         Me.chkALLGROUP4.Text = "Allocate Through 4"
         '
@@ -684,9 +711,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP4.Controls.Add(Me.UltraDateTimeEditor8)
         Me.grpALLGROUP4.Controls.Add(Me.chkALLOC_DATE4)
         Me.grpALLGROUP4.Controls.Add(Me.UltraDateTimeEditor7)
-        Me.grpALLGROUP4.Location = New System.Drawing.Point(517, 137)
+        Me.grpALLGROUP4.Location = New System.Drawing.Point(646, 164)
+        Me.grpALLGROUP4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP4.Name = "grpALLGROUP4"
-        Me.grpALLGROUP4.Size = New System.Drawing.Size(162, 92)
+        Me.grpALLGROUP4.Size = New System.Drawing.Size(202, 104)
         Me.grpALLGROUP4.TabIndex = 283
         Me.grpALLGROUP4.Visible = False
         '
@@ -694,18 +722,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor8, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor8, "ALLOC_BDATE4")
-        Me.UltraDateTimeEditor8.Location = New System.Drawing.Point(6, 26)
+        Me.UltraDateTimeEditor8.Location = New System.Drawing.Point(8, 29)
+        Me.UltraDateTimeEditor8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor8.Name = "UltraDateTimeEditor8"
-        Me.UltraDateTimeEditor8.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor8.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor8.TabIndex = 37
         '
         'chkALLOC_DATE4
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE4, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE4, "CHKALLOC_DATE4")
-        Me.chkALLOC_DATE4.Location = New System.Drawing.Point(6, 5)
+        Me.chkALLOC_DATE4.Location = New System.Drawing.Point(8, 6)
+        Me.chkALLOC_DATE4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE4.Name = "chkALLOC_DATE4"
-        Me.chkALLOC_DATE4.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE4.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE4.TabIndex = 36
         Me.chkALLOC_DATE4.Text = "Last on File"
         '
@@ -713,18 +743,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor7, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor7, "ALLOC_EDATE4")
-        Me.UltraDateTimeEditor7.Location = New System.Drawing.Point(6, 54)
+        Me.UltraDateTimeEditor7.Location = New System.Drawing.Point(8, 61)
+        Me.UltraDateTimeEditor7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor7.Name = "UltraDateTimeEditor7"
-        Me.UltraDateTimeEditor7.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor7.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor7.TabIndex = 1
         '
         'chkALLGROUP5
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP5, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP5, "CHKALLGROUP5")
-        Me.chkALLGROUP5.Location = New System.Drawing.Point(19, 240)
+        Me.chkALLGROUP5.Location = New System.Drawing.Point(24, 280)
+        Me.chkALLGROUP5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP5.Name = "chkALLGROUP5"
-        Me.chkALLGROUP5.Size = New System.Drawing.Size(149, 16)
+        Me.chkALLGROUP5.Size = New System.Drawing.Size(186, 18)
         Me.chkALLGROUP5.TabIndex = 286
         Me.chkALLGROUP5.Text = "Allocate Through 5"
         '
@@ -735,9 +767,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP5.Controls.Add(Me.UltraDateTimeEditor11)
         Me.grpALLGROUP5.Controls.Add(Me.chkALLOC_DATE5)
         Me.grpALLGROUP5.Controls.Add(Me.UltraDateTimeEditor2)
-        Me.grpALLGROUP5.Location = New System.Drawing.Point(13, 258)
+        Me.grpALLGROUP5.Location = New System.Drawing.Point(16, 300)
+        Me.grpALLGROUP5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP5.Name = "grpALLGROUP5"
-        Me.grpALLGROUP5.Size = New System.Drawing.Size(162, 88)
+        Me.grpALLGROUP5.Size = New System.Drawing.Size(202, 99)
         Me.grpALLGROUP5.TabIndex = 285
         Me.grpALLGROUP5.Visible = False
         '
@@ -745,18 +778,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor11, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor11, "ALLOC_BDATE5")
-        Me.UltraDateTimeEditor11.Location = New System.Drawing.Point(6, 26)
+        Me.UltraDateTimeEditor11.Location = New System.Drawing.Point(8, 29)
+        Me.UltraDateTimeEditor11.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor11.Name = "UltraDateTimeEditor11"
-        Me.UltraDateTimeEditor11.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor11.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor11.TabIndex = 37
         '
         'chkALLOC_DATE5
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE5, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE5, "CHKALLOC_DATE5")
-        Me.chkALLOC_DATE5.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE5.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE5.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE5.Name = "chkALLOC_DATE5"
-        Me.chkALLOC_DATE5.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE5.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE5.TabIndex = 36
         Me.chkALLOC_DATE5.Text = "Last on File"
         '
@@ -764,18 +799,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor2, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor2, "ALLOC_EDATE5")
-        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(6, 54)
+        Me.UltraDateTimeEditor2.Location = New System.Drawing.Point(8, 61)
+        Me.UltraDateTimeEditor2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor2.Name = "UltraDateTimeEditor2"
-        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor2.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor2.TabIndex = 1
         '
         'chkALLGROUP6
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP6, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP6, "CHKALLGROUP6")
-        Me.chkALLGROUP6.Location = New System.Drawing.Point(187, 241)
+        Me.chkALLGROUP6.Location = New System.Drawing.Point(234, 281)
+        Me.chkALLGROUP6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP6.Name = "chkALLGROUP6"
-        Me.chkALLGROUP6.Size = New System.Drawing.Size(149, 16)
+        Me.chkALLGROUP6.Size = New System.Drawing.Size(186, 18)
         Me.chkALLGROUP6.TabIndex = 288
         Me.chkALLGROUP6.Text = "Allocate Through 6"
         '
@@ -783,9 +820,10 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE6, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE6, "CHKALLOC_DATE6")
-        Me.chkALLOC_DATE6.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE6.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE6.Name = "chkALLOC_DATE6"
-        Me.chkALLOC_DATE6.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE6.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE6.TabIndex = 36
         Me.chkALLOC_DATE6.Text = "Last on File"
         '
@@ -796,9 +834,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP6.Controls.Add(Me.UltraDateTimeEditor12)
         Me.grpALLGROUP6.Controls.Add(Me.chkALLOC_DATE6)
         Me.grpALLGROUP6.Controls.Add(Me.UltraDateTimeEditor4)
-        Me.grpALLGROUP6.Location = New System.Drawing.Point(181, 260)
+        Me.grpALLGROUP6.Location = New System.Drawing.Point(226, 302)
+        Me.grpALLGROUP6.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP6.Name = "grpALLGROUP6"
-        Me.grpALLGROUP6.Size = New System.Drawing.Size(162, 86)
+        Me.grpALLGROUP6.Size = New System.Drawing.Size(202, 97)
         Me.grpALLGROUP6.TabIndex = 287
         Me.grpALLGROUP6.Visible = False
         '
@@ -806,27 +845,30 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor12, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor12, "ALLOC_BDATE6")
-        Me.UltraDateTimeEditor12.Location = New System.Drawing.Point(6, 26)
+        Me.UltraDateTimeEditor12.Location = New System.Drawing.Point(8, 29)
+        Me.UltraDateTimeEditor12.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor12.Name = "UltraDateTimeEditor12"
-        Me.UltraDateTimeEditor12.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor12.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor12.TabIndex = 37
         '
         'UltraDateTimeEditor4
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor4, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor4, "ALLOC_EDATE6")
-        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(6, 54)
+        Me.UltraDateTimeEditor4.Location = New System.Drawing.Point(8, 61)
+        Me.UltraDateTimeEditor4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor4.Name = "UltraDateTimeEditor4"
-        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor4.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor4.TabIndex = 1
         '
         'chkALLGROUP7
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP7, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP7, "CHKALLGROUP7")
-        Me.chkALLGROUP7.Location = New System.Drawing.Point(354, 241)
+        Me.chkALLGROUP7.Location = New System.Drawing.Point(442, 281)
+        Me.chkALLGROUP7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP7.Name = "chkALLGROUP7"
-        Me.chkALLGROUP7.Size = New System.Drawing.Size(149, 16)
+        Me.chkALLGROUP7.Size = New System.Drawing.Size(186, 18)
         Me.chkALLGROUP7.TabIndex = 289
         Me.chkALLGROUP7.Text = "Allocate Through 7"
         '
@@ -837,9 +879,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP7.Controls.Add(Me.UltraDateTimeEditor13)
         Me.grpALLGROUP7.Controls.Add(Me.chkALLOC_DATE7)
         Me.grpALLGROUP7.Controls.Add(Me.UltraDateTimeEditor14)
-        Me.grpALLGROUP7.Location = New System.Drawing.Point(349, 260)
+        Me.grpALLGROUP7.Location = New System.Drawing.Point(436, 302)
+        Me.grpALLGROUP7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP7.Name = "grpALLGROUP7"
-        Me.grpALLGROUP7.Size = New System.Drawing.Size(162, 86)
+        Me.grpALLGROUP7.Size = New System.Drawing.Size(202, 97)
         Me.grpALLGROUP7.TabIndex = 290
         Me.grpALLGROUP7.Visible = False
         '
@@ -847,18 +890,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor13, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor13, "ALLOC_BDATE7")
-        Me.UltraDateTimeEditor13.Location = New System.Drawing.Point(6, 26)
+        Me.UltraDateTimeEditor13.Location = New System.Drawing.Point(8, 29)
+        Me.UltraDateTimeEditor13.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor13.Name = "UltraDateTimeEditor13"
-        Me.UltraDateTimeEditor13.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor13.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor13.TabIndex = 37
         '
         'chkALLOC_DATE7
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE7, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE7, "CHKALLOC_DATE7")
-        Me.chkALLOC_DATE7.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE7.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE7.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE7.Name = "chkALLOC_DATE7"
-        Me.chkALLOC_DATE7.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE7.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE7.TabIndex = 36
         Me.chkALLOC_DATE7.Text = "Last on File"
         '
@@ -866,18 +911,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor14, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor14, "ALLOC_EDATE7")
-        Me.UltraDateTimeEditor14.Location = New System.Drawing.Point(6, 54)
+        Me.UltraDateTimeEditor14.Location = New System.Drawing.Point(8, 61)
+        Me.UltraDateTimeEditor14.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor14.Name = "UltraDateTimeEditor14"
-        Me.UltraDateTimeEditor14.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor14.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor14.TabIndex = 1
         '
         'chkALLGROUP8
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLGROUP8, False)
         Me.Absx1.SetABSColumnName(Me.chkALLGROUP8, "CHKALLGROUP8")
-        Me.chkALLGROUP8.Location = New System.Drawing.Point(523, 241)
+        Me.chkALLGROUP8.Location = New System.Drawing.Point(654, 281)
+        Me.chkALLGROUP8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLGROUP8.Name = "chkALLGROUP8"
-        Me.chkALLGROUP8.Size = New System.Drawing.Size(149, 16)
+        Me.chkALLGROUP8.Size = New System.Drawing.Size(186, 18)
         Me.chkALLGROUP8.TabIndex = 291
         Me.chkALLGROUP8.Text = "Allocate Through 8"
         '
@@ -888,9 +935,10 @@ Partial Class SORAVAL3
         Me.grpALLGROUP8.Controls.Add(Me.UltraDateTimeEditor15)
         Me.grpALLGROUP8.Controls.Add(Me.chkALLOC_DATE8)
         Me.grpALLGROUP8.Controls.Add(Me.UltraDateTimeEditor16)
-        Me.grpALLGROUP8.Location = New System.Drawing.Point(517, 259)
+        Me.grpALLGROUP8.Location = New System.Drawing.Point(646, 301)
+        Me.grpALLGROUP8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpALLGROUP8.Name = "grpALLGROUP8"
-        Me.grpALLGROUP8.Size = New System.Drawing.Size(162, 86)
+        Me.grpALLGROUP8.Size = New System.Drawing.Size(202, 97)
         Me.grpALLGROUP8.TabIndex = 292
         Me.grpALLGROUP8.Visible = False
         '
@@ -898,18 +946,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor15, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor15, "ALLOC_BDATE8")
-        Me.UltraDateTimeEditor15.Location = New System.Drawing.Point(6, 26)
+        Me.UltraDateTimeEditor15.Location = New System.Drawing.Point(8, 29)
+        Me.UltraDateTimeEditor15.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor15.Name = "UltraDateTimeEditor15"
-        Me.UltraDateTimeEditor15.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor15.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor15.TabIndex = 37
         '
         'chkALLOC_DATE8
         '
         Me.Absx1.SetABSBindToTable(Me.chkALLOC_DATE8, False)
         Me.Absx1.SetABSColumnName(Me.chkALLOC_DATE8, "CHKALLOC_DATE8")
-        Me.chkALLOC_DATE8.Location = New System.Drawing.Point(6, 3)
+        Me.chkALLOC_DATE8.Location = New System.Drawing.Point(8, 3)
+        Me.chkALLOC_DATE8.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkALLOC_DATE8.Name = "chkALLOC_DATE8"
-        Me.chkALLOC_DATE8.Size = New System.Drawing.Size(149, 20)
+        Me.chkALLOC_DATE8.Size = New System.Drawing.Size(186, 22)
         Me.chkALLOC_DATE8.TabIndex = 36
         Me.chkALLOC_DATE8.Text = "Last on File"
         '
@@ -917,18 +967,20 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.UltraDateTimeEditor16, False)
         Me.Absx1.SetABSColumnName(Me.UltraDateTimeEditor16, "ALLOC_EDATE8")
-        Me.UltraDateTimeEditor16.Location = New System.Drawing.Point(6, 54)
+        Me.UltraDateTimeEditor16.Location = New System.Drawing.Point(8, 61)
+        Me.UltraDateTimeEditor16.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraDateTimeEditor16.Name = "UltraDateTimeEditor16"
-        Me.UltraDateTimeEditor16.Size = New System.Drawing.Size(150, 25)
+        Me.UltraDateTimeEditor16.Size = New System.Drawing.Size(188, 29)
         Me.UltraDateTimeEditor16.TabIndex = 1
         '
         'grpPERIOD_RANGE
         '
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo2)
         Me.grpPERIOD_RANGE.Controls.Add(Me.UltraCombo1)
-        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(439, 33)
+        Me.grpPERIOD_RANGE.Location = New System.Drawing.Point(571, 37)
+        Me.grpPERIOD_RANGE.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPERIOD_RANGE.Name = "grpPERIOD_RANGE"
-        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(162, 79)
+        Me.grpPERIOD_RANGE.Size = New System.Drawing.Size(202, 89)
         Me.grpPERIOD_RANGE.TabIndex = 293
         Me.grpPERIOD_RANGE.Text = "Period Range"
         Me.grpPERIOD_RANGE.Visible = False
@@ -993,9 +1045,10 @@ Partial Class SORAVAL3
         Me.UltraCombo2.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo2.DisplayMember = "LEGEND"
         Me.UltraCombo2.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo2.Location = New System.Drawing.Point(6, 49)
+        Me.UltraCombo2.Location = New System.Drawing.Point(8, 55)
+        Me.UltraCombo2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo2.Name = "UltraCombo2"
-        Me.UltraCombo2.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo2.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo2.TabIndex = 1
         '
         'UltraCombo1
@@ -1058,18 +1111,20 @@ Partial Class SORAVAL3
         Me.UltraCombo1.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo1.DisplayMember = "LEGEND"
         Me.UltraCombo1.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo1.Location = New System.Drawing.Point(6, 19)
+        Me.UltraCombo1.Location = New System.Drawing.Point(8, 21)
+        Me.UltraCombo1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo1.Name = "UltraCombo1"
-        Me.UltraCombo1.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo1.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo1.TabIndex = 0
         '
         'chkShowShipped
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowShipped, False)
         Me.Absx1.SetABSColumnName(Me.chkShowShipped, "CHKSHOWSHIPPED")
-        Me.chkShowShipped.Location = New System.Drawing.Point(439, 12)
+        Me.chkShowShipped.Location = New System.Drawing.Point(571, 14)
+        Me.chkShowShipped.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowShipped.Name = "chkShowShipped"
-        Me.chkShowShipped.Size = New System.Drawing.Size(149, 16)
+        Me.chkShowShipped.Size = New System.Drawing.Size(186, 18)
         Me.chkShowShipped.TabIndex = 294
         Me.chkShowShipped.Text = "Show Shipped"
         '
@@ -1077,9 +1132,10 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowONP, False)
         Me.Absx1.SetABSColumnName(Me.chkShowONP, "CHKSHOWONP")
-        Me.chkShowONP.Location = New System.Drawing.Point(194, 11)
+        Me.chkShowONP.Location = New System.Drawing.Point(242, 12)
+        Me.chkShowONP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowONP.Name = "chkShowONP"
-        Me.chkShowONP.Size = New System.Drawing.Size(149, 16)
+        Me.chkShowONP.Size = New System.Drawing.Size(186, 18)
         Me.chkShowONP.TabIndex = 295
         Me.chkShowONP.Text = "Show Open & Pick"
         '
@@ -1087,9 +1143,10 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowTotal, False)
         Me.Absx1.SetABSColumnName(Me.chkShowTotal, "CHKSHOWTOTAL")
-        Me.chkShowTotal.Location = New System.Drawing.Point(194, 28)
+        Me.chkShowTotal.Location = New System.Drawing.Point(242, 32)
+        Me.chkShowTotal.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowTotal.Name = "chkShowTotal"
-        Me.chkShowTotal.Size = New System.Drawing.Size(149, 16)
+        Me.chkShowTotal.Size = New System.Drawing.Size(186, 18)
         Me.chkShowTotal.TabIndex = 296
         Me.chkShowTotal.Text = "Show Total"
         '
@@ -1100,9 +1157,10 @@ Partial Class SORAVAL3
         Me.Absx1.SetABSColumnName(Me.AbsCheckBox2, "CHKTRANSAMPLES")
         Me.AbsCheckBox2.Checked = True
         Me.AbsCheckBox2.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.AbsCheckBox2.Location = New System.Drawing.Point(194, 61)
+        Me.AbsCheckBox2.Location = New System.Drawing.Point(242, 69)
+        Me.AbsCheckBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.AbsCheckBox2.Name = "AbsCheckBox2"
-        Me.AbsCheckBox2.Size = New System.Drawing.Size(223, 21)
+        Me.AbsCheckBox2.Size = New System.Drawing.Size(279, 24)
         Me.AbsCheckBox2.TabIndex = 297
         Me.AbsCheckBox2.Text = "Exclude Transfers & Samples"
         '
@@ -1110,9 +1168,10 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.chkShowShipped2, False)
         Me.Absx1.SetABSColumnName(Me.chkShowShipped2, "CHKSHOWSHIPPED")
-        Me.chkShowShipped2.Location = New System.Drawing.Point(607, 11)
+        Me.chkShowShipped2.Location = New System.Drawing.Point(781, 12)
+        Me.chkShowShipped2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkShowShipped2.Name = "chkShowShipped2"
-        Me.chkShowShipped2.Size = New System.Drawing.Size(149, 16)
+        Me.chkShowShipped2.Size = New System.Drawing.Size(186, 18)
         Me.chkShowShipped2.TabIndex = 298
         Me.chkShowShipped2.Text = "Show 2nd Shipped"
         Me.chkShowShipped2.Visible = False
@@ -1121,9 +1180,10 @@ Partial Class SORAVAL3
         '
         Me.grpPERIOD_RANG2.Controls.Add(Me.UltraCombo3)
         Me.grpPERIOD_RANG2.Controls.Add(Me.UltraCombo4)
-        Me.grpPERIOD_RANG2.Location = New System.Drawing.Point(607, 33)
+        Me.grpPERIOD_RANG2.Location = New System.Drawing.Point(781, 37)
+        Me.grpPERIOD_RANG2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.grpPERIOD_RANG2.Name = "grpPERIOD_RANG2"
-        Me.grpPERIOD_RANG2.Size = New System.Drawing.Size(162, 79)
+        Me.grpPERIOD_RANG2.Size = New System.Drawing.Size(202, 89)
         Me.grpPERIOD_RANG2.TabIndex = 299
         Me.grpPERIOD_RANG2.Text = "Period Range"
         Me.grpPERIOD_RANG2.Visible = False
@@ -1188,9 +1248,10 @@ Partial Class SORAVAL3
         Me.UltraCombo3.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo3.DisplayMember = "LEGEND"
         Me.UltraCombo3.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo3.Location = New System.Drawing.Point(6, 49)
+        Me.UltraCombo3.Location = New System.Drawing.Point(8, 55)
+        Me.UltraCombo3.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo3.Name = "UltraCombo3"
-        Me.UltraCombo3.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo3.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo3.TabIndex = 1
         '
         'UltraCombo4
@@ -1253,9 +1314,10 @@ Partial Class SORAVAL3
         Me.UltraCombo4.DisplayLayout.ViewStyleBand = Infragistics.Win.UltraWinGrid.ViewStyleBand.OutlookGroupBy
         Me.UltraCombo4.DisplayMember = "LEGEND"
         Me.UltraCombo4.DropDownStyle = Infragistics.Win.UltraWinGrid.UltraComboStyle.DropDownList
-        Me.UltraCombo4.Location = New System.Drawing.Point(6, 19)
+        Me.UltraCombo4.Location = New System.Drawing.Point(8, 21)
+        Me.UltraCombo4.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UltraCombo4.Name = "UltraCombo4"
-        Me.UltraCombo4.Size = New System.Drawing.Size(150, 26)
+        Me.UltraCombo4.Size = New System.Drawing.Size(188, 30)
         Me.UltraCombo4.TabIndex = 0
         '
         'chkEXCLUDENEGATIVES
@@ -1265,9 +1327,10 @@ Partial Class SORAVAL3
         Me.Absx1.SetABSColumnName(Me.chkEXCLUDENEGATIVES, "CHKEXCLUDENEGATIVES")
         Me.chkEXCLUDENEGATIVES.Checked = True
         Me.chkEXCLUDENEGATIVES.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkEXCLUDENEGATIVES.Location = New System.Drawing.Point(194, 44)
+        Me.chkEXCLUDENEGATIVES.Location = New System.Drawing.Point(242, 50)
+        Me.chkEXCLUDENEGATIVES.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkEXCLUDENEGATIVES.Name = "chkEXCLUDENEGATIVES"
-        Me.chkEXCLUDENEGATIVES.Size = New System.Drawing.Size(149, 16)
+        Me.chkEXCLUDENEGATIVES.Size = New System.Drawing.Size(186, 18)
         Me.chkEXCLUDENEGATIVES.TabIndex = 300
         Me.chkEXCLUDENEGATIVES.Text = "Exclude Negatives"
         '
@@ -1275,18 +1338,30 @@ Partial Class SORAVAL3
         '
         Me.Absx1.SetABSBindToTable(Me.chkProvideProof, False)
         Me.Absx1.SetABSColumnName(Me.chkProvideProof, "CHKPROVIDEPROOF")
-        Me.chkProvideProof.Location = New System.Drawing.Point(194, 80)
+        Me.chkProvideProof.Location = New System.Drawing.Point(242, 90)
+        Me.chkProvideProof.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkProvideProof.Name = "chkProvideProof"
-        Me.chkProvideProof.Size = New System.Drawing.Size(223, 21)
+        Me.chkProvideProof.Size = New System.Drawing.Size(279, 24)
         Me.chkProvideProof.TabIndex = 301
         Me.chkProvideProof.Text = "Provide Detail Proof"
         '
+        'CHKALLOP
+        '
+        Me.Absx1.SetABSBindToTable(Me.CHKALLOP, False)
+        Me.Absx1.SetABSColumnName(Me.CHKALLOP, "CHKALLOP")
+        Me.CHKALLOP.Location = New System.Drawing.Point(243, 113)
+        Me.CHKALLOP.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.CHKALLOP.Name = "CHKALLOP"
+        Me.CHKALLOP.Size = New System.Drawing.Size(328, 18)
+        Me.CHKALLOP.TabIndex = 302
+        Me.CHKALLOP.Text = "Show All Groups w/Open & Pick Qty"
+        '
         'SORAVAL3
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(10.0!, 18.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(990, 574)
-        Me.Margin = New System.Windows.Forms.Padding(5, 3, 5, 3)
+        Me.ClientSize = New System.Drawing.Size(1238, 646)
+        Me.Margin = New System.Windows.Forms.Padding(6, 3, 6, 3)
         Me.Name = "SORAVAL3"
         Me.Text = "SORAVAL3"
         Me.UltraTabPageControl2.ResumeLayout(False)
@@ -1397,6 +1472,7 @@ Partial Class SORAVAL3
         CType(Me.UltraCombo4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkEXCLUDENEGATIVES, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkProvideProof, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.CHKALLOP, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1456,4 +1532,5 @@ Partial Class SORAVAL3
     Friend WithEvents chkShowShipped2 As ABSCS.ABSCheckBox
     Friend WithEvents chkEXCLUDENEGATIVES As ABSCS.ABSCheckBox
     Friend WithEvents chkProvideProof As ABSCS.ABSCheckBox
+    Friend WithEvents CHKALLOP As ABSCS.ABSCheckBox
 End Class
