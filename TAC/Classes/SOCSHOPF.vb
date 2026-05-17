@@ -316,7 +316,7 @@ Public Class SOCSHOPF
                         Dim BODY_HTML As String = product("body_html").ToString
 
                         For Each jVariant As JObject In product("variants")
-                            Dim UPC_CODE As String = jVariant("sku").ToString
+                            Dim UPC_CODE As String = jVariant("barcode").ToString
                             Dim ECOM_VARIANT_ID As String = jVariant("id").ToString
                             Dim ECOM_INV_VARIANT_ID As String = jVariant("inventory_item_id").ToString
                             ASCMAIN1.Progress("-", UPC_CODE)
@@ -369,6 +369,134 @@ Public Class SOCSHOPF
         End Try
 
     End Function
+
+    Public Function VerifyShopifyProducts(ByRef dt As DataTable) As Boolean
+
+        Try
+            Dim sql As String = String.Empty
+            Dim lstDiscontinuedItems As New List(Of String)
+
+            Initialize()
+
+            If rowECTECOMD Is Nothing Then
+                MessageBox.Show($"VerifyShopifyProducts, Ecommerce Partner {ECOM_CODE} does not have Shopify credentials")
+                Return False
+            End If
+
+            If ECOM_CUST_CODE.Length = 0 Then
+                MessageBox.Show($"VerifyShopifyProducts, Ecommerce Partner {ECOM_CODE} is not assigned to a Customer")
+                Return False
+            End If
+
+            ShopifyUrl = rowECTECOMD.Item("ECOM_URL") & String.Empty
+            If ShopifyUrl.Length = 0 Then
+                MessageBox.Show($"VerifyShopifyProducts, Ecommerce Partner {ECOM_CODE} is not assigned a URL")
+                Return False
+            End If
+
+            ECOM_SITE_USER = rowECTECOMD.Item("ECOM_SITE_USER") & String.Empty
+            ECOM_SITE_PWD = rowECTECOMD.Item("ECOM_SITE_PWD") & String.Empty
+            ShopifyUrl = ShopifyUrl.Replace("{USER_ID}", ECOM_SITE_USER).Replace("{PASSWORD}", ECOM_SITE_PWD)
+
+            shopAccessToken = rowECTECOMD.Item("ECOM_SITE_SECRET_KEY") & String.Empty
+            If shopAccessToken.Length = 0 Then
+                MessageBox.Show($"VerifyShopifyProducts, Ecommerce Partner {ECOM_CODE} is not assigned an Access Token")
+                Return False
+            End If
+
+            Dim client As New HttpClient() With {
+                .BaseAddress = New Uri(ShopifyUrl)
+            }
+
+            ' Authentication
+            client.DefaultRequestHeaders.Accept.Clear()
+            client.DefaultRequestHeaders.Accept.Add(New MediaTypeWithQualityHeaderValue("application/json"))
+            client.DefaultRequestHeaders.Add("X-Shopify-Access-Token", shopAccessToken)
+
+            Dim response As New HttpResponseMessage
+            Dim nextPageUrl As String = "products.json?limit=100&published_status=any"
+            Dim counter As Int32 = 0
+
+            ' ICTSTYCW.ECOM_VARIANT_ID WEB_ECOM_VARIANT_ID, ICTSTYCW.ECOM_INV_VARIANT_ID WEB_ECOM_INV_VARIANT_ID, ICTSTYCW.ECOM_PRODUCT_ID WEB_ECOM_PRODUCT_ID
+            While Not String.IsNullOrEmpty(nextPageUrl)
+                response = client.GetAsync(nextPageUrl).Result
+                response.EnsureSuccessStatusCode()
+                System.Threading.Thread.Sleep(3000)
+
+                If response.IsSuccessStatusCode Then
+                    Dim responseStr As String = response.Content.ReadAsStringAsync().Result
+                    Dim jsonObj As JObject = JObject.Parse(responseStr)
+                    counter += jsonObj("products").Count
+
+                    For Each product As JObject In jsonObj("products")
+                        Dim ECOM_PRODUCT_ID As String = product("id").ToString
+                        Dim WEB_DESCRIPTION As String = product("title").ToString
+
+                        For Each jVariant As JObject In product("variants")
+                            Dim UPC_CODE As String = jVariant("barcode").ToString
+                            Dim ECOM_VARIANT_ID As String = jVariant("id").ToString
+                            Dim ECOM_INV_VARIANT_ID As String = jVariant("inventory_item_id").ToString
+                            ASCMAIN1.Progress("-", UPC_CODE)
+
+                            If dt.Select($"ECOM_VARIANT_ID = '{ECOM_VARIANT_ID}'").Length > 0 Then
+                                For Each dr As DataRow In dt.Select($"ECOM_VARIANT_ID = '{ECOM_VARIANT_ID}'")
+                                    dr.Item("WEB_ECOM_PRODUCT_ID") = ECOM_PRODUCT_ID
+                                    dr.Item("WEB_ECOM_VARIANT_ID") = ECOM_VARIANT_ID
+                                    dr.Item("WEB_ECOM_INV_VARIANT_ID") = ECOM_INV_VARIANT_ID
+                                    dr.Item("WEB_UPC_CODE") = UPC_CODE
+                                Next
+                            Else
+                                If WEB_DESCRIPTION.Length > dt.Columns("STYLE_DESC").MaxLength Then
+                                    WEB_DESCRIPTION = WEB_DESCRIPTION.Substring(0, dt.Columns("STYLE_DESC").MaxLength).Trim
+                                End If
+
+                                Dim dr As DataRow = dt.NewRow
+                                dr.Item("WEB_UPC_CODE") = UPC_CODE
+                                dr.Item("STYLE_DESC") = WEB_DESCRIPTION
+                                dr.Item("WEB_ECOM_PRODUCT_ID") = ECOM_PRODUCT_ID
+                                dr.Item("WEB_ECOM_VARIANT_ID") = ECOM_VARIANT_ID
+                                dr.Item("WEB_ECOM_INV_VARIANT_ID") = ECOM_INV_VARIANT_ID
+                                dt.Rows.Add(dr)
+                            End If
+                        Next
+                    Next
+                End If
+
+                nextPageUrl = Nothing ' reset first
+                If response.Headers.Contains("Link") Then
+                    Dim linkHeader = response.Headers.GetValues("Link").FirstOrDefault()
+                    If linkHeader IsNot Nothing Then
+                        Dim parts() As String = linkHeader.Split(","c)
+
+                        For Each part As String In parts
+                            If part.Contains("rel=""next""") Then
+                                Dim start = part.IndexOf("<") + 1
+                                Dim [end] = part.IndexOf(">")
+                                Dim fullUrl = part.Substring(start, [end] - start)
+
+                                ' Shopify requires using the exact URL (absolute), not just relative
+                                nextPageUrl = fullUrl
+                            End If
+                        Next
+                    End If
+                End If
+
+                ' If we found an absolute URL, strip base only if needed
+                If Not String.IsNullOrEmpty(nextPageUrl) AndAlso nextPageUrl.StartsWith(client.BaseAddress.ToString()) Then
+                    'nextPageUrl = nextPageUrl.Replace(client.BaseAddress.ToString(), "")
+                    nextPageUrl = nextPageUrl.Replace(client.BaseAddress.ToString(), "")
+                End If
+            End While
+
+            Return True
+
+        Catch ex As Exception
+            MessageBox.Show($"VerifyShopifyProducts Error: {ex.Message}")
+            Return False
+        End Try
+
+    End Function
+
 
     Public Function GetShopifyProductsGraphQL(ByRef NumItemsUpdated As Int16) As Boolean
 

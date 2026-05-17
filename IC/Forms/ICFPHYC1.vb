@@ -171,12 +171,20 @@ Public Class ICFPHYC1
                 .Tables("ICTPHYC2").Columns.Add("TOTAL_COUNT", GetType(System.Int64), "ISNULL(COUNT_CTNS,0) * ISNULL(CARTON_PACK_QTY,0) + ISNULL(COUNT_LOOSE,0)")
             End If
 
-            ASCMAIN1.sql = "Select ICTPHYC2.*" _
-                & ", ICTPHYC1.LOCATION_CODE, ICTPHYC1.COUNT_BY, ICTPHYC1.INIT_OPER, ICTPHYC1.INIT_DATE" _
-                & " from ICTPHYC2,ICTPHYC1" _
-                & " where ICTPHYC2.WHSE_CODE = :PARM1 and ICTPHYC2.STYLE_CODE = :PARM2 and ICTPHYC2.COLOR_CODE = :PARM3" _
-                & "   and ICTPHYC1.WHSE_CODE = ICTPHYC2.WHSE_CODE" _
-                & "   and ICTPHYC1.TICKET_NO = ICTPHYC2.TICKET_NO" & RGI_CODE
+            ASCMAIN1.sql = "SELECT ICTPHYC2.*,
+                            ICTPHYC1.LOCATION_CODE, ICTPHYC1.COUNT_BY, ICTPHYC1.INIT_OPER, ICTPHYC1.INIT_DATE, NVL(WHTLOCB0.LOCATION_QTY, 0) AS LOCATION_QTY
+                        FROM ICTPHYC2
+                        JOIN ICTPHYC1
+                            ON ICTPHYC1.WHSE_CODE = ICTPHYC2.WHSE_CODE
+                            AND ICTPHYC1.TICKET_NO = ICTPHYC2.TICKET_NO
+                        LEFT JOIN WHTLOCB0
+                            ON WHTLOCB0.WHSE_CODE = ICTPHYC1.WHSE_CODE
+                            AND WHTLOCB0.LOCATION_CODE = ICTPHYC1.LOCATION_CODE
+                            AND WHTLOCB0.STYLE_CODE = ICTPHYC2.STYLE_CODE
+                            AND WHTLOCB0.COLOR_CODE = ICTPHYC2.COLOR_CODE
+                        WHERE ICTPHYC2.WHSE_CODE = :PARM1
+                            AND ICTPHYC2.STYLE_CODE = :PARM2
+                            AND ICTPHYC2.COLOR_CODE = :PARM3" & RGI_CODE
             Create_TDA(.Tables.Add, "ICTPHYCI", "**", 0, False, "VVV", 3)
             .Tables("ICTPHYCI").Columns.Add("TOTAL_COUNT", GetType(System.Int64), "ISNULL(COUNT_CTNS,0) * ISNULL(CARTON_PACK_QTY,0) + ISNULL(COUNT_LOOSE,0)")
 
@@ -370,6 +378,11 @@ Public Class ICFPHYC1
         Create_Summary(grdWHTLOCBV, "VARIANCE")
         Create_Summary(grdWHTLOCBV, "AMT_VARIANCE")
 
+        Show_Filter(grdICTPHYCX)
+        Show_Filter(grdICTPHYCV)
+        Show_Filter(grdICTPHYCL)
+        Show_Filter(grdICTPHYCR)
+        'Show_Filter(grdWHTLOCBV)
 
         With grdICTPHYC2.DisplayLayout.Bands("ICTPHYC2")
             For Each gcol As UltraWinGrid.UltraGridColumn In .Columns
@@ -990,7 +1003,7 @@ Public Class ICFPHYC1
         Load_Popup_Menu(grdICTPHYCL, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdICTPHYCR, "SS", "Show Filter", "Show GroupBox")
         Load_Popup_Menu(grdWHTLOCB0, "BB", "Location Inquiry", "Show 0's")
-        Load_Popup_Menu(grdWHTLOCBV, "SB", "Show Filter", "Style Status Inquiry")
+        Load_Popup_Menu(grdWHTLOCBV, "SBB", "Show Filter", "Style Status Inquiry", "Recount Styles for Loc")
     End Sub
 
     Overrides Sub tlb_BeforeToolDropdown(ByVal sender As Object, ByVal e As Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs)
@@ -1079,9 +1092,9 @@ Public Class ICFPHYC1
                 Dim TICKET_NO = Absx1.txtFor("TICKET_NO").Text
                 Verify_Counts(TICKET_NO)
 
-            Case "Recount Location"
+            Case "Recount Location", "Recount Styles for Loc"
                 Dim LOCATION_CODE As String
-                If grd.Name = "grdICTPHYC2" Then
+                If grd.Name = "grdICTPHYC2" Or grd.Name = "grdWHTLOCBV" Then
                     LOCATION_CODE = Absx1.txtFor("LOCATION_CODE").Text
                 Else
                     LOCATION_CODE = grd.ActiveRow.Cells("LOCATION_CODE").Value
