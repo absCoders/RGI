@@ -310,7 +310,6 @@ Public Class SORAVAL3
                 CR_params.Add("SHOWALLORDPICK", "")
             End If
 
-
             If chkShowShipped.Checked Then
                 CR_params.Add("SHOWSHIPPED", "1")
                 CR_params.Add("SHIP1DATES", xRYP0.Substring(4, 2) & "/" & xRYP0.Substring(2, 2) & " - " & xRYP1.Substring(4, 2) & "/" & xRYP1.Substring(2, 2))
