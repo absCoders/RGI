@@ -96,6 +96,7 @@ Partial Class POROPEN2
         Me.txtPOREF = New Infragistics.Win.UltraWinEditors.UltraTextEditor()
         Me.lblPOREF = New Infragistics.Win.Misc.UltraLabel()
         Me.chkStyleStats = New ABSCS.ABSCheckBox()
+        Me.chkCOSTBOTH = New ABSCS.ABSCheckBox()
         Me.UltraTabPageControl2.SuspendLayout()
         CType(Me.UltraTabControl1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.UltraTabControl1.SuspendLayout()
@@ -173,6 +174,7 @@ Partial Class POROPEN2
         CType(Me.chkStyleStatsO, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.txtPOREF, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.chkCOSTBOTH, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'UltraTabPageControl2
@@ -198,6 +200,7 @@ Partial Class POROPEN2
         '
         'SplitContainer5.Panel1
         '
+        Me.SplitContainer5.Panel1.Controls.Add(Me.chkCOSTBOTH)
         Me.SplitContainer5.Panel1.Controls.Add(Me.chkStyleStats)
         Me.SplitContainer5.Panel1.Controls.Add(Me.lblPOREF)
         Me.SplitContainer5.Panel1.Controls.Add(Me.txtPOREF)
@@ -785,7 +788,7 @@ Partial Class POROPEN2
         Me.chkDZNCOST.Location = New System.Drawing.Point(20, 301)
         Me.chkDZNCOST.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.chkDZNCOST.Name = "chkDZNCOST"
-        Me.chkDZNCOST.Size = New System.Drawing.Size(259, 22)
+        Me.chkDZNCOST.Size = New System.Drawing.Size(206, 22)
         Me.chkDZNCOST.TabIndex = 281
         Me.chkDZNCOST.Text = "Show Cost In Dozen"
         '
@@ -851,6 +854,17 @@ Partial Class POROPEN2
         Me.chkStyleStats.Size = New System.Drawing.Size(308, 22)
         Me.chkStyleStats.TabIndex = 342
         Me.chkStyleStats.Text = "Show On Hand/In-Transit Details"
+        '
+        'chkCOSTBOTH
+        '
+        Me.Absx1.SetABSBindToTable(Me.chkCOSTBOTH, False)
+        Me.Absx1.SetABSColumnName(Me.chkCOSTBOTH, "CHKCOSTBOTH")
+        Me.chkCOSTBOTH.Location = New System.Drawing.Point(222, 301)
+        Me.chkCOSTBOTH.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.chkCOSTBOTH.Name = "chkCOSTBOTH"
+        Me.chkCOSTBOTH.Size = New System.Drawing.Size(161, 22)
+        Me.chkCOSTBOTH.TabIndex = 343
+        Me.chkCOSTBOTH.Text = "Show Cost Both"
         '
         'POROPEN2
         '
@@ -942,6 +956,7 @@ Partial Class POROPEN2
         CType(Me.chkStyleStatsO, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.txtPOREF, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.chkStyleStats, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.chkCOSTBOTH, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -984,4 +999,5 @@ Partial Class POROPEN2
     Friend WithEvents txtPOREF As UltraWinEditors.UltraTextEditor
     Friend WithEvents lblPOREF As Misc.UltraLabel
     Friend WithEvents chkStyleStats As ABSCS.ABSCheckBox
+    Friend WithEvents chkCOSTBOTH As ABSCS.ABSCheckBox
 End Class

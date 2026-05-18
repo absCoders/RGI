@@ -1580,6 +1580,7 @@ Public Class POROPEN2
             Dim PO_SHIP_ETA As String = ""
             Dim II As Integer = 1
             Dim PO_COST_CALC As Decimal = 0
+            Dim PO_COST_CALC_STR As String = ""
             Dim PO_COST_TOT As Decimal = 0
             ' ASCMAIN1.sql = "Select * from ICTSTAT2 where STYLE_CODE = '" & STYLE_CODE & "' and COLOR_CODE = '" & rowPOTORDRQ.Item("COLOR_CODE") & String.Empty & "'"
             '       For Each rowICTSTAT2 As DataRow In ASCDATA1.GetDataTable.Select("")
@@ -1612,6 +1613,17 @@ Public Class POROPEN2
                 PO_COST_TOT = Val(rowPOTORDRX.Item("PO_COST") & String.Empty)
             End If
 
+            If chkCOSTBOTH.Checked = True Then
+                If Absx1.chkFor("CHKUSEFIFOCOST").Checked Then
+                    PO_COST_CALC_STR = Format(Val(rowPOTORDRX.Item("PO_COST_VCOST") & String.Empty), "###.00") & "-Unit " & Format(Val(rowPOTORDRX.Item("PO_COST_VCOST") & String.Empty) * 12, "###.00") & "-Dz"
+
+                Else
+                    PO_COST_CALC_STR = Format(Val(rowPOTORDRX.Item("PO_COST") & String.Empty), "###.00") & "-Unit " & Format(Val(rowPOTORDRX.Item("PO_COST") & String.Empty) * 12, "###.00") & "-Dz"
+                End If
+            Else
+                PO_COST_CALC_STR = PO_COST_CALC
+            End If
+
 
             ' 3 shipmrnt fielods
             worksheet.Cells(i + CI - 1, COL + chkcnt).Value = SHP_OPN
@@ -1622,7 +1634,7 @@ Public Class POROPEN2
             chkcnt += 1
             worksheet.Cells(i + CI - 1, COL + chkcnt).Value = rowPOTORDRX.Item("LAST_DATE_SHIP_BY") & String.Empty
             chkcnt += 1
-            worksheet.Cells(i + CI - 1, COL + chkcnt).Value = PO_COST_CALC
+            worksheet.Cells(i + CI - 1, COL + chkcnt).Value = PO_COST_CALC_STR
             chkcnt += 1
             worksheet.Cells(i + CI - 1, COL + chkcnt).Value = Val(rowPOTORDRX.Item("PO_QTY_OPN") & String.Empty) + SHP_OPN
             chkcnt += 1
@@ -1774,10 +1786,35 @@ Public Class POROPEN2
         Dim interior As SpreadsheetGear.IInterior
         Dim range As SpreadsheetGear.IRange
 
+        Dim PO_COST_CALC_HEAD1 As String = ""
+
         worksheet.Cells(i, COL - 1).Value = "" & Chr(13) & Chr(10) & "Color"
         worksheet.Cells(i, COL - 1).Font.Size = 12
         worksheet.Cells(i, COL).Value = "" & Chr(13) & Chr(10) & "Description"
         worksheet.Cells(i, COL).Font.Size = 12
+
+
+
+
+        If Absx1.chkFor("CHKUSEFIFOCOST").Checked Then
+            If chkDZNCOST.Checked = True Then
+                PO_COST_CALC_HEAD1 = "Init Cost Dz"
+            Else
+                PO_COST_CALC_HEAD1 = "Init Cost Units"
+            End If
+            If chkCOSTBOTH.Checked Then
+                PO_COST_CALC_HEAD1 = "Init Cost Both"
+            End If
+        Else
+            If chkDZNCOST.Checked = True Then
+                PO_COST_CALC_HEAD1 = "PO Cost Dz"
+            Else
+                PO_COST_CALC_HEAD1 = "PO Cost Units"
+            End If
+            If chkCOSTBOTH.Checked Then
+                PO_COST_CALC_HEAD1 = "PO Cost Both"
+            End If
+        End If
 
         COL += 1
         With worksheet.Cells(i, COL)
@@ -1857,7 +1894,7 @@ Public Class POROPEN2
         COL += 1
         With worksheet.Cells(i, COL)
             .HorizontalAlignment = SpreadsheetGear.HAlign.Left
-            .Value = "PO Cost"
+            .Value = PO_COST_CALC_HEAD1
         End With
         COL += 1
         With worksheet.Cells(i - 1, COL)
@@ -2146,7 +2183,7 @@ Public Class POROPEN2
         _COL += 1
         ' WIP PO COST
         With worksheet.Cells(_COL, COL)
-            .ColumnWidth = 20
+            .ColumnWidth = 24
             .EntireColumn.NumberFormat = "##0.00"
             .EntireColumn.HorizontalAlignment = SpreadsheetGear.HAlign.Right
             .HorizontalAlignment = SpreadsheetGear.HAlign.Right
