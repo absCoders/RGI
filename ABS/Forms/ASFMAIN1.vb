@@ -108,7 +108,7 @@ Public Class ASFMAIN1
             Dim ISLfile As String = Application.StartupPath & "\ABS1.isl"
 
             If Not IO.File.Exists(ISLfile) Then
-                Dim i As Integer = InStr(ISLfile, "\bin\x64")
+                Dim i As Integer = InStr(ISLfile, "\bin\x86")
                 IO.File.Copy(Mid(ISLfile, 1, i) & "\ABS1.isl", ISLfile)
             End If
 
@@ -1389,9 +1389,9 @@ Public Class ASFMAIN1
                 Dim buildType As String
 
 #If DEBUG Then
-                buildType = "x64\Debug"
+                buildType = "x86\Debug"
 #Else
-                buildType = "x64\Release"
+                buildType = "x86\Release"
 #End If
                 Dim TICKS As Long = Now.Ticks
                 Dim TIMES As String = ""
@@ -1917,9 +1917,9 @@ Public Class ASFMAIN1
         Dim buildType As String = ""
 
 #If DEBUG Then
-        buildType = "x64\Debug"
+        buildType = "x86\Debug"
 #Else
-        buildType = "x64\Release"
+        buildType = "x86\Release"
 #End If
         'RND WAS REMARKED
         MODULE_IDs = GetSetting(My.Application.Info.AssemblyName, ASCMAIN1.SOLUTION, "ASFMAIN1.MODULE_IDs")
@@ -1984,9 +1984,9 @@ Public Class ASFMAIN1
         Dim buildType As String
 
 #If DEBUG Then
-        buildType = "x64\Debug"
+        buildType = "x86\Debug"
 #Else
-        buildType = "x64\Release"
+        buildType = "x86\Release"
 #End If
 
         Dim slocation As String = ""
@@ -1999,7 +1999,7 @@ Public Class ASFMAIN1
         End If
 
         If ASCMAIN1.ABSWEB Then
-            slocation = "C:\VS\VDI\" & MODULE_ID & "\bin\x64\Debug\" & MODULE_ID & ".dll"
+            slocation = "C:\VS\VDI\" & MODULE_ID & "\bin\x86\Debug\" & MODULE_ID & ".dll"
         End If
 
         Dim formAsm As System.Reflection.Assembly = System.Reflection.Assembly.LoadFrom(slocation)
