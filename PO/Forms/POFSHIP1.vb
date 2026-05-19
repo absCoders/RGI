@@ -2009,9 +2009,10 @@ Public Class POFSHIP1
         cbeReceipts2.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, PrdsBack) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
         cbeReceipts2.SelectedItem = cbeReceipts2.Items(0)
 
-
-        cbeCostComplete.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -60) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
-        cbeCostComplete.SelectedItem = cbeCostComplete.Items(0) ' cbeYPSFrom.Items(Val(Mid(ASCMAIN1.CYP, 5, 2)) - 1)
+        If ASCMAIN1.DBS_SERVER = "RGI" Or ASCMAIN1.DBS_COMPANY = "RGI" Then
+            cbeCostComplete.DataSource = ASCDATA1.GetDataTable("Select OPS_YYYYPP, LEGEND from GLTPARM2 where OPS_YYYYPP >= '" & ASCMAIN1.Period_Calc(ASCMAIN1.CYP, -60) & "' and OPS_YYYYPP <= '" & ASCMAIN1.CYP & "' order by OPS_YYYYPP DESC")
+            cbeCostComplete.SelectedItem = cbeCostComplete.Items(0) ' cbeYPSFrom.Items(Val(Mid(ASCMAIN1.CYP, 5, 2)) - 1)
+        End If
 
 
         Bind_Controls(grpShipment, "POTSHIP1")
