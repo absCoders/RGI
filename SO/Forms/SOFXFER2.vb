@@ -10,8 +10,8 @@ Public Class SOFXFER2
     Private Event OnDirList As nsoftware.IPWorks.Ftp.OnDirListHandler
     'Private Event OnDirListS As nsoftware.IPWorksSSH.Sftp.OnDirListHandler
     ' Dim sqlSOTWORK1 As String
-    Dim WithEvents Ftp1 As New nsoftware.IPWorks.Ftp
-    Dim WithEvents FtpS As New nsoftware.IPWorksSSH.Sftp
+    Dim WithEvents Ftp1 As New nsoftware.IPWorks.FTP
+    Dim WithEvents FtpS As New nsoftware.IPWorksSSH.SFTPClient ' Sftp
 
     Dim PrintSelected As Boolean = False
     Dim RefreshRequired As Boolean = False
@@ -843,7 +843,8 @@ Public Class SOFXFER2
         Ftp1.Password = "0ff1c3"
         Ftp1.RemoteHost = "ftp.regency-rib.com" '"192.168.110.224" '"50.75.200.254"
         Ftp1.Logon()
-        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+        'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+        Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
         Ftp1.LocalFile = LocalFile
         LocalFileOrig = LocalFile
         Ftp1.RemoteFile = RemoteFile
@@ -890,11 +891,12 @@ Public Class SOFXFER2
             FtpS.SSHUser = "salesReps"
             FtpS.SSHPassword = "0ff1c3ABS"
             FtpS.SSHHost = "sftp.regency-rib.com"
-            FtpS.SSHAuthMode = nsoftware.IPWorksSSH.SftpSSHAuthModes.amPassword
+            FtpS.SSHAuthMode = SCPSSHAuthModes.amPassword ' SftpSSHAuthModes.amPassword ' nsoftware.IPWorksSSH.SftpSSHAuthModes.amPassword
             FtpS.SSHEncryptionAlgorithms = "aes256-ctr"
             FtpS.LocalFile = String.Format("{0}{1}", LocalPath, LocalFile)
             FtpS.RemoteFile = RemoteFile
-            FtpS.RemotePath = RemotePath '"/DB"
+            'FtpS.RemotePath = RemotePath '"/DB"
+            FtpS.ChangeRemotePath(RemotePath)
             FtpS.Overwrite = True
             FtpS.Config("PreserveFileTime=True")
 
@@ -934,12 +936,12 @@ Public Class SOFXFER2
         Return RetVal
     End Function
 
-    Public Shared Sub SSHServerAuthentication(sender As Object, e As nsoftware.IPWorksSSH.SftpSSHServerAuthenticationEventArgs)
+    Public Shared Sub SSHServerAuthentication(sender As Object, e As SFTPClientSSHServerAuthenticationEventArgs) ' nsoftware.IPWorksSSH.SftpSSHServerAuthenticationEventArgs)
 
         e.Accept = True
     End Sub
 
-    Public Shared Sub SSHStatus(sender As Object, e As nsoftware.IPWorksSSH.SftpSSHStatusEventArgs)
+    Public Shared Sub SSHStatus(sender As Object, e As SFTPClientSSHStatusEventArgs) ' SftpSSHStatusEventArgs)nsoftware.IPWorksSSH.SftpSSHStatusEventArgs)
 
         ' MsgBox(e.Message, MsgBoxStyle.OkOnly, "SSHStatus Messages")
         'theLog &= e.Message & vbCrLf
@@ -1744,7 +1746,8 @@ Public Class SOFXFER2
             Ftp1.Password = "joydHUJ3"
             Ftp1.RemoteHost = "regency-rib.com"
             Ftp1.Logon()
-            Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+            'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+            Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
             Ftp1.RemoteFile = RemoteFolder & "*"
             Ftp1.LocalFile = IMAGES_FOLDER & "*"
             Ftp1.Overwrite = True
@@ -1861,7 +1864,8 @@ Public Class SOFXFER2
         Ftp1.Password = "joydHUJ3"
         Ftp1.RemoteHost = "regency-rib.com"
         Ftp1.Logon()
-        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+        'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+        Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
         Ftp1.RemoteFile = RemoteFolder & "*"
         Ftp1.LocalFile = IMAGES_FOLDER & "*"
         Ftp1.Overwrite = True

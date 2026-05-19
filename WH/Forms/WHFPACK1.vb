@@ -1424,13 +1424,19 @@ Public Class WHFPACK1
                     label = label & rowDtl.Item("STYLE_CODE") & " " & rowDtl.Item("COLOR_CODE") & "  " & qty & "  " & rowDtl.Item("STYLE_UOM") & "~"
                 Next
 
-                Using ipp As New nsoftware.IPWorks.Ipport
+                Using ipp As New nsoftware.IPWorks.tcpclient ' Ipport
                     ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
 
                     If ASCMAIN1.Running_in_VS Then
-                        ipp.Connect("192.168.1.3", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
+                        ipp.RemoteHost = "192.168.1.3"
+                        ipp.RemotePort = 4444
+                        ipp.Connect()
+                        'ipp.Connect("192.168.1.3", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
                     Else
-                        ipp.Connect("192.168.110.239", "4444")
+                        ipp.RemoteHost = "192.168.110.239"
+                        ipp.RemotePort = 4444
+                        ipp.Connect()
+                        'ipp.Connect("192.168.110.239", "4444")
                     End If
 
                     ipp.SendLine(label)

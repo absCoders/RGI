@@ -1768,7 +1768,8 @@ Public Class SORORDRL
             Sftp1.Password = WB_PARM_SITE_PWD
             Sftp1.LocalFile = FolderQuote & "\" & FileQuote
             Sftp1.RemoteFile = WB_PARM_SITE_FILE
-            Sftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmDefault
+            'Sftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmDefault
+            Sftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmDefault)
 
             Sftp1.Timeout = (20 * 60)
             Sftp1.Logoff()

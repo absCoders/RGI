@@ -1595,13 +1595,16 @@ Public Class ARTCUST1
                 .User = UserName
                 .Password = Password
                 .RemoteHost = RemoteHost
-                .RemotePath = RemotePath & "/tax_id/" & TAX_ID
+                ' .RemotePath = RemotePath & "/tax_id/" & TAX_ID
+                .ChangeRemotePath(RemotePath & "/tax_id/" & TAX_ID)
+
                 .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                 .LocalFile = LocalFile
                 .RemoteFile = TAX_ID_DOC
                 .Overwrite = False
-                If Not .FileExists() Then
+                If Not .CheckFileExists() Then ' .FileExists() Then
                     ErrMsg.AppendLine("File Not Found On Shopsite")
                     .Logoff()
                 Else

@@ -357,9 +357,13 @@ Public MustInherit Class ShippingLabel
 
             'PRINTER_NAME = PRINTER_PORT ' FOR VANDALE, USE IP:PORT FOR PRINTER_NAME
 
-            Using ipp As New nsoftware.IPWorks.Ipport
+            Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
                 ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
-                ipp.Connect(Split(PRINTER_PORT, ":")(0), Val(Split(PRINTER_PORT, ":")(1)))
+
+                ipp.RemoteHost = Split(PRINTER_PORT, ":")(0)
+                ipp.RemotePort = Val(Split(PRINTER_PORT, ":")(1))
+                ipp.Connect()
+                ' ipp.Connect(Split(PRINTER_PORT, ":")(0), Val(Split(PRINTER_PORT, ":")(1)))
 
                 Dim array() As Byte = System.Text.Encoding.ASCII.GetBytes(labelData)
                 ipp.Send(array)
@@ -372,9 +376,13 @@ Public MustInherit Class ShippingLabel
                 If ASCMAIN1.Running_in_VS AndAlso 1 = 2 Then
                     PrintShippingLabelFromDevMachine(labelData)
                 ElseIf PrinterName.Length > 0 AndAlso PrinterName.Contains(":") AndAlso PrinterName.Split(":").Length = 2 Then
-                    Using ipp As New nsoftware.IPWorks.Ipport
+                    Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
                         ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
-                        ipp.Connect(Split(PrinterName, ":")(0), Val(Split(PrinterName, ":")(1)))
+
+                        ipp.RemoteHost = Split(PrinterName, ":")(0)
+                        ipp.RemotePort = Val(Split(PrinterName, ":")(1))
+                        ipp.Connect()
+                        'ipp.Connect(Split(PrinterName, ":")(0), Val(Split(PrinterName, ":")(1)))
 
                         Dim array() As Byte = System.Text.Encoding.ASCII.GetBytes(labelData)
                         ipp.Send(array)

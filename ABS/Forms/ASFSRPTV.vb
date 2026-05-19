@@ -1129,9 +1129,13 @@ Public Class ASFSRPTV
                 pgset.PrinterSettings.PrinterName = prset.PrinterName
                 pgset.PrinterSettings.PrintToFile = True
                 ASCMAIN1.CR_RPT.PrintToPrinter(prset, pgset, False)
-                Using ipp As New nsoftware.IPWorks.Ipport
+                Using ipp As New nsoftware.IPWorks.TCPClient
                     ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
-                    ipp.Connect(Split(streamIPandPort, ":")(0), Val(Split(streamIPandPort, ":")(1)))
+
+                    ipp.RemoteHost = Split(streamIPandPort, ":")(0)
+                    ipp.RemotePort = Val(Split(streamIPandPort, ":")(1))
+
+                    ' ipp.Connect(Split(streamIPandPort, ":")(0), Val(Split(streamIPandPort, ":")(1)))
                     While w2 < 12 And Not My.Computer.FileSystem.FileExists(tempfilename)
                         System.Threading.Thread.Sleep(3000)
                         w2 += 1

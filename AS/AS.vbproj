@@ -146,10 +146,6 @@
       <Name>Infragistics4.Documents.Core.v14.2</Name>
       <Private>False</Private>
     </Reference>
-    <Reference Include="nsoftware.IPWorks, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -173,12 +169,6 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\ASFBWAN1.Designer.vb">
-      <DependentUpon>ASFBWAN1.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ASFBWAN1.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\ASFERROR.Designer.vb">
       <DependentUpon>ASFERROR.vb</DependentUpon>
     </Compile>
@@ -347,9 +337,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\ASFBWAN1.resx">
-      <DependentUpon>ASFBWAN1.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ASFERROR.resx">
       <DependentUpon>ASFERROR.vb</DependentUpon>
       <SubType>Designer</SubType>

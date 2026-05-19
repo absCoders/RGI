@@ -1760,9 +1760,11 @@ Public Class WBFSTYLW
                 .User = WB_PARM_SITE_USER
                 .Password = WB_PARM_SITE_PWD
                 .RemoteHost = FTP_REMOTE_HOST
-                .RemotePath = RemotePath
+                '.RemotePath = RemotePath
+                .ChangeRemotePath(RemotePath)
                 .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                 .LocalFile = localFile
                 .RemoteFile = FileName
                 '.Overwrite = False
@@ -3113,7 +3115,8 @@ Public Class WBFSTYLW
                 WB_PARM_SITE_OUTPUT_DIR = WB_PARM_SITE_OUTPUT_DIR.Substring(1)
             End If
             Sftp1.RemoteFile = WB_PARM_SITE_OUTPUT_DIR & My.Computer.FileSystem.GetName(shopSiteFilename)
-            Sftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmDefault
+            'Sftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmDefault
+            Sftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmDefault)
             Sftp1.Passive = True
             Sftp1.Upload()
             Dim script As String = WB_PARM_SITE_PRODUCT_POST_URL & My.Computer.FileSystem.GetName(shopSiteFilename)
@@ -3981,9 +3984,11 @@ Public Class WBFSTYLW
                     .User = UserName
                     .Password = Password
                     .RemoteHost = RemoteHost
-                    .RemotePath = RemotePath
+                    '.RemotePath = RemotePath
+                    .ChangeRemotePath(RemotePath)
                     .Logon()
-                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                    .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                     .LocalFile = FileName
                     .RemoteFile = _WBCSHIPT.FileNameCSV
                     .Overwrite = True
@@ -4024,16 +4029,18 @@ Public Class WBFSTYLW
                 .User = WB_PARM_SITE_USER
                 .Password = WB_PARM_SITE_PWD
                 .RemoteHost = FTP_REMOTE_HOST
-                .RemotePath = RemotePath
+                '.RemotePath = RemotePath
+                .ChangeRemotePath(RemotePath)
                 .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                 '.LocalFile = localFolder
                 .RemoteFile = RemoteFileName
                 '.Overwrite = False
                 .Overwrite = False
                 'If Not .FileExists() Then
                 '.Download()
-                LastFileTime = .FileTime
+                LastFileTime = .QueryFileTime ' .FileTime
                 .Logoff()
                 Do While .Connected
                     .DoEvents()
@@ -4086,9 +4093,11 @@ Public Class WBFSTYLW
                     .User = WB_PARM_SITE_USER
                     .Password = WB_PARM_SITE_PWD
                     .RemoteHost = FTP_REMOTE_HOST
-                    .RemotePath = RemotePath
+                    '.RemotePath = RemotePath
+                    .ChangeRemotePath(RemotePath)
                     .Logon()
-                    .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                    .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                     '.LocalFile = localFolder
                     '.RemoteFile = RemoteFileName
                     '.Overwrite = False
@@ -4249,13 +4258,15 @@ Public Class WBFSTYLW
                 .User = UserName
                 .Password = Password
                 .RemoteHost = RemoteHost
-                .RemotePath = RemotePath
+                '.RemotePath = RemotePath
+                .ChangeRemotePath(RemotePath)
                 .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                 .LocalFile = localFile
                 .RemoteFile = OutBoundFile
                 .Overwrite = False
-                If .FileExists() Then
+                If .CheckFileExists() Then '.FileExists() Then
                     errMsg.AppendLine("New Customer File Still Waiting On ShopSite.")
                     .DoEvents()
                     .Logoff()
@@ -4357,13 +4368,15 @@ Public Class WBFSTYLW
                 .User = UserName
                 .Password = Password
                 .RemoteHost = RemoteHost
-                .RemotePath = RemotePath
+                '.RemotePath = RemotePath
+                .ChangeRemotePath(RemotePath)
                 .Logon()
-                .TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                '.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                .ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                 .LocalFile = localFile
                 .RemoteFile = OutBoundFile
                 .Overwrite = False
-                If Not .FileExists() Then
+                If Not .CheckFileExists() Then '.FileExists() Then
                     .Upload()
                     .Logoff()
                     Do While .Connected

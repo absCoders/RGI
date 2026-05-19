@@ -4820,7 +4820,8 @@ Public Class ICFQUOTX
 
                 Ftp1.Logon()
 
-                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                 Ftp1.LocalFile = FileNameLocalFull
                 Ftp1.RemoteFile = FTPRemoteFull
                 'Ftp1.Timeout = 0 'Don't Timeout

@@ -10818,10 +10818,13 @@ Public Class SOFSHIPB
                             End If
 
 
-                            Using ipp As New nsoftware.IPWorks.Ipport
+                            Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
                                 ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
                                 'ipp.Config("SSLEnabledProtocols=" & TAC.TACMAIN1.SSLEnabledProtocols)
-                                ipp.Connect(requestedIpAddress, Val(requestedStreamPort))
+                                ipp.RemoteHost = requestedIpAddress
+                                ipp.RemotePort = Val(requestedStreamPort)
+                                ipp.Connect()
+                                'ipp.Connect(requestedIpAddress, Val(requestedStreamPort))
                                 Using binaryReader As New System.IO.BinaryReader(System.IO.File.Open(packSlipFilename, System.IO.FileMode.Open))
                                     waitAmount = 0
                                     Do
@@ -17960,10 +17963,13 @@ Public Class SOFSHIPB
                     End If
 
 
-                    Using ipp As New nsoftware.IPWorks.Ipport
+                    Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
                         ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
                         'ipp.Config("SSLEnabledProtocols=" & TAC.TACMAIN1.SSLEnabledProtocols)
-                        ipp.Connect(requestedIpAddress, Val(requestedStreamPort))
+                        ipp.RemoteHost = requestedIpAddress
+                        ipp.RemotePort = Val(requestedStreamPort)
+                        ipp.Connect()
+                        'ipp.Connect(requestedIpAddress, Val(requestedStreamPort))
                         Using binaryReader As New System.IO.BinaryReader(System.IO.File.Open(LabelData, System.IO.FileMode.Open))
                             waitAmount = 0
                             Do

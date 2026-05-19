@@ -309,9 +309,11 @@ Public Class WBFWAYF1
         Ftp1.User = "EDI_RegencyInternational"
         Ftp1.Password = "Vcbt75EwqaY"
         Ftp1.RemoteHost = "edi.csnstores.com"
-        Ftp1.RemotePath = "Inventory"
+        'Ftp1.RemotePath = "Inventory"
+        Ftp1.ChangeRemotePath("Inventory")
         Ftp1.Logon()
-        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+        'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+        Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
         Ftp1.LocalFile = TransferFile
         Ftp1.RemoteFile = "regency.csv"
         Ftp1.Overwrite = True

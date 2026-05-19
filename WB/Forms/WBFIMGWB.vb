@@ -342,7 +342,8 @@ Public Class WBFIMGWB
                                 Ftp1.Password = "joydHUJ3"
                                 Ftp1.RemoteHost = "regency-rib.com"
                                 Ftp1.Logon()
-                                Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                                'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                                Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                                 Ftp1.Overwrite = True
 
                                 For Each STYLE As KeyValuePair(Of String, String) In STYLES
@@ -534,7 +535,8 @@ Public Class WBFIMGWB
             Ftp1.Password = "joydHUJ3"
             Ftp1.RemoteHost = "regency-rib.com"
             Ftp1.Logon()
-            Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+            'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+            Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
             Ftp1.RemoteFile = txtREMOTE_FOLDER.Text & "*"
             Ftp1.LocalFile = txtLOCAL_FOLDER.Text & "*"
             Ftp1.Overwrite = True
@@ -664,7 +666,8 @@ Public Class WBFIMGWB
                     Ftp1.Password = "joydHUJ3"
                     Ftp1.RemoteHost = "regency-rib.com"
                     Ftp1.Logon()
-                    Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+                    ' Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+                    Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
                     Ftp1.Overwrite = True
                 End If
 

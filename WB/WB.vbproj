@@ -157,11 +157,17 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Visual Studio Tools for Office\PIA\Office12\Microsoft.Office.Interop.Word.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks, Version=24.0.9376.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorks.24.0.9376\lib\net40\nsoftware.IPWorks.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksZip">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP 2020 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks.System, Version=24.0.9376.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorks.24.0.9376\lib\net40\nsoftware.IPWorks.System.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksZip, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksZip.24.0.9373\lib\net40\nsoftware.IPWorksZip.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksZip.System, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksZip.24.0.9373\lib\net40\nsoftware.IPWorksZip.System.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -554,6 +560,7 @@
     <Content Include="Resources\arrow_left_blue.png" />
     <Content Include="Resources\arrow_right_blue.png" />
     <Content Include="Resources\branch_element.png" />
+    <None Include="packages.config" />
     <None Include="Resources\find_selection.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />

@@ -23,11 +23,11 @@ Public Class ASCENCRY
 
     Private Aes As nsoftware.IPWorksEncrypt.Aes
     Private Blowfish As nsoftware.IPWorksEncrypt.Blowfish
-    Private Cast As nsoftware.IPWorksEncrypt.Cast
-    Private Des As nsoftware.IPWorksEncrypt.Des
-    Private Idea As nsoftware.IPWorksEncrypt.Idea
-    Private Rc2 As nsoftware.IPWorksEncrypt.Rc2
-    Private Rc4 As nsoftware.IPWorksEncrypt.Rc4
+    Private Cast As nsoftware.IPWorksEncrypt.CAST
+    'Private Des As nsoftware.IPWorksEncrypt.Des
+    'Private Idea As nsoftware.IPWorksEncrypt.Idea
+    'Private Rc2 As nsoftware.IPWorksEncrypt.Rc2
+    'Private Rc4 As nsoftware.IPWorksEncrypt.Rc4
     Private Tripledes As nsoftware.IPWorksEncrypt.Tripledes
     Private Twofish As nsoftware.IPWorksEncrypt.Twofish
 
@@ -97,17 +97,17 @@ Public Class ASCENCRY
         Cast = New nsoftware.IPWorksEncrypt.Cast
         Cast.RuntimeLicense = ezcrypt1RuntimeLicense
 
-        Des = New nsoftware.IPWorksEncrypt.Des
-        Des.RuntimeLicense = ezcrypt1RuntimeLicense
+        'Des = New nsoftware.IPWorksEncrypt.Des
+        'Des.RuntimeLicense = ezcrypt1RuntimeLicense
 
-        Idea = New nsoftware.IPWorksEncrypt.Idea
-        Idea.RuntimeLicense = ezcrypt1RuntimeLicense
+        'Idea = New nsoftware.IPWorksEncrypt.Idea
+        'Idea.RuntimeLicense = ezcrypt1RuntimeLicense
 
-        Rc2 = New nsoftware.IPWorksEncrypt.Rc2
-        Rc2.RuntimeLicense = ezcrypt1RuntimeLicense
+        'Rc2 = New nsoftware.IPWorksEncrypt.Rc2
+        'Rc2.RuntimeLicense = ezcrypt1RuntimeLicense
 
-        Rc4 = New nsoftware.IPWorksEncrypt.Rc4
-        Rc4.RuntimeLicense = ezcrypt1RuntimeLicense
+        'Rc4 = New nsoftware.IPWorksEncrypt.Rc4
+        'Rc4.RuntimeLicense = ezcrypt1RuntimeLicense
 
         Tripledes = New nsoftware.IPWorksEncrypt.Tripledes
         Tripledes.RuntimeLicense = ezcrypt1RuntimeLicense
@@ -303,49 +303,49 @@ Public Class ASCENCRY
                     Cast.Decrypt()
                     Cast.Dispose()
 
-                Case EncrytpionTypes.DataEncryptionStandard_DES
-                    Des.Overwrite = OverwriteOutputFile
-                    Des.InputFile = sInputFile
-                    Des.OutputFile = sOutputFile
-                    Des.Key = sKey
-                    Des.IV = sIteratorVector
-                    Des.PaddingMode = iPaddingMode
-                    Des.CipherMode = iCipherMode
-                    Des.Decrypt()
-                    Des.Dispose()
+                'Case EncrytpionTypes.DataEncryptionStandard_DES
+                '    Des.Overwrite = OverwriteOutputFile
+                '    Des.InputFile = sInputFile
+                '    Des.OutputFile = sOutputFile
+                '    Des.Key = sKey
+                '    Des.IV = sIteratorVector
+                '    Des.PaddingMode = iPaddingMode
+                '    Des.CipherMode = iCipherMode
+                '    Des.Decrypt()
+                '    Des.Dispose()
 
-                Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
-                    Idea.Overwrite = OverwriteOutputFile
-                    Idea.InputFile = sInputFile
-                    Idea.OutputFile = sOutputFile
-                    Idea.Key = sKey
-                    Idea.IV = sIteratorVector
-                    Idea.PaddingMode = iPaddingMode
-                    Idea.CipherMode = iCipherMode
-                    Idea.Decrypt()
-                    Idea.Dispose()
+                'Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
+                '    Idea.Overwrite = OverwriteOutputFile
+                '    Idea.InputFile = sInputFile
+                '    Idea.OutputFile = sOutputFile
+                '    Idea.Key = sKey
+                '    Idea.IV = sIteratorVector
+                '    Idea.PaddingMode = iPaddingMode
+                '    Idea.CipherMode = iCipherMode
+                '    Idea.Decrypt()
+                '    Idea.Dispose()
 
-                Case EncrytpionTypes.RC2
-                    Rc2.Overwrite = OverwriteOutputFile
-                    Rc2.InputFile = sInputFile
-                    Rc2.OutputFile = sOutputFile
-                    Rc2.Key = sKey
-                    Rc2.IV = sIteratorVector
-                    Rc2.PaddingMode = iPaddingMode
-                    Rc2.CipherMode = iCipherMode
-                    Rc2.Decrypt()
-                    Rc2.Dispose()
+                'Case EncrytpionTypes.RC2
+                '    Rc2.Overwrite = OverwriteOutputFile
+                '    Rc2.InputFile = sInputFile
+                '    Rc2.OutputFile = sOutputFile
+                '    Rc2.Key = sKey
+                '    Rc2.IV = sIteratorVector
+                '    Rc2.PaddingMode = iPaddingMode
+                '    Rc2.CipherMode = iCipherMode
+                '    Rc2.Decrypt()
+                '    Rc2.Dispose()
 
-                Case EncrytpionTypes.RC4
-                    Rc4.Overwrite = OverwriteOutputFile
-                    Rc4.InputFile = sInputFile
-                    Rc4.OutputFile = sOutputFile
-                    Rc4.Key = sKey
-                    Rc4.IV = sIteratorVector
-                    'Rc4.PaddingMode = iPaddingMode
-                    'Rc4.CipherMode = iCipherMode
-                    Rc4.Decrypt()
-                    Rc4.Dispose()
+                'Case EncrytpionTypes.RC4
+                '    Rc4.Overwrite = OverwriteOutputFile
+                '    Rc4.InputFile = sInputFile
+                '    Rc4.OutputFile = sOutputFile
+                '    Rc4.Key = sKey
+                '    Rc4.IV = sIteratorVector
+                '    'Rc4.PaddingMode = iPaddingMode
+                '    'Rc4.CipherMode = iCipherMode
+                '    Rc4.Decrypt()
+                '    Rc4.Dispose()
 
                 Case EncrytpionTypes.TripleDES
                     Tripledes.Overwrite = OverwriteOutputFile
@@ -429,49 +429,49 @@ Public Class ASCENCRY
                     Cast.Encrypt()
                     Cast.Dispose()
 
-                Case EncrytpionTypes.DataEncryptionStandard_DES
-                    Des.Overwrite = OverwriteOutputFile
-                    Des.InputFile = sInputFile
-                    Des.OutputFile = sOutputFile
-                    Des.Key = sKey
-                    Des.IV = sIteratorVector
-                    Des.PaddingMode = iPaddingMode
-                    Des.CipherMode = iCipherMode
-                    Des.Encrypt()
-                    Des.Dispose()
+                'Case EncrytpionTypes.DataEncryptionStandard_DES
+                '    Des.Overwrite = OverwriteOutputFile
+                '    Des.InputFile = sInputFile
+                '    Des.OutputFile = sOutputFile
+                '    Des.Key = sKey
+                '    Des.IV = sIteratorVector
+                '    Des.PaddingMode = iPaddingMode
+                '    Des.CipherMode = iCipherMode
+                '    Des.Encrypt()
+                '    Des.Dispose()
 
-                Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
-                    Idea.Overwrite = OverwriteOutputFile
-                    Idea.InputFile = sInputFile
-                    Idea.OutputFile = sOutputFile
-                    Idea.Key = sKey
-                    Idea.IV = sIteratorVector
-                    Idea.PaddingMode = iPaddingMode
-                    Idea.CipherMode = iCipherMode
-                    Idea.Encrypt()
-                    Idea.Dispose()
+                'Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
+                '    Idea.Overwrite = OverwriteOutputFile
+                '    Idea.InputFile = sInputFile
+                '    Idea.OutputFile = sOutputFile
+                '    Idea.Key = sKey
+                '    Idea.IV = sIteratorVector
+                '    Idea.PaddingMode = iPaddingMode
+                '    Idea.CipherMode = iCipherMode
+                '    Idea.Encrypt()
+                '    Idea.Dispose()
 
-                Case EncrytpionTypes.RC2
-                    Rc2.Overwrite = OverwriteOutputFile
-                    Rc2.InputFile = sInputFile
-                    Rc2.OutputFile = sOutputFile
-                    Rc2.Key = sKey
-                    Rc2.IV = sIteratorVector
-                    Rc2.PaddingMode = iPaddingMode
-                    Rc2.CipherMode = iCipherMode
-                    Rc2.Encrypt()
-                    Rc2.Dispose()
+                'Case EncrytpionTypes.RC2
+                '    Rc2.Overwrite = OverwriteOutputFile
+                '    Rc2.InputFile = sInputFile
+                '    Rc2.OutputFile = sOutputFile
+                '    Rc2.Key = sKey
+                '    Rc2.IV = sIteratorVector
+                '    Rc2.PaddingMode = iPaddingMode
+                '    Rc2.CipherMode = iCipherMode
+                '    Rc2.Encrypt()
+                '    Rc2.Dispose()
 
-                Case EncrytpionTypes.RC2
-                    Rc4.Overwrite = OverwriteOutputFile
-                    Rc4.InputFile = sInputFile
-                    Rc4.OutputFile = sOutputFile
-                    Rc4.Key = sKey
-                    Rc4.IV = sIteratorVector
-                    'Rc4.PaddingMode = iPaddingMode
-                    'Rc4.CipherMode = iCipherMode
-                    Rc4.Encrypt()
-                    Rc4.Dispose()
+                'Case EncrytpionTypes.RC2
+                '    Rc4.Overwrite = OverwriteOutputFile
+                '    Rc4.InputFile = sInputFile
+                '    Rc4.OutputFile = sOutputFile
+                '    Rc4.Key = sKey
+                '    Rc4.IV = sIteratorVector
+                '    'Rc4.PaddingMode = iPaddingMode
+                '    'Rc4.CipherMode = iCipherMode
+                '    Rc4.Encrypt()
+                '    Rc4.Dispose()
 
                 Case EncrytpionTypes.TripleDES
                     Tripledes.Overwrite = OverwriteOutputFile
@@ -631,45 +631,45 @@ Public Class ASCENCRY
                     sDecryptedString = Cast.OutputMessage
                     Cast.Dispose()
 
-                Case EncrytpionTypes.DataEncryptionStandard_DES
-                    Des.InputMessageB = Convert.FromBase64String(sEncryptedString)
-                    Des.Key = sKey
-                    Des.IV = sIteratorVector
-                    Des.PaddingMode = iPaddingMode
-                    Des.CipherMode = iCipherMode
-                    Des.Decrypt()
-                    sDecryptedString = Des.OutputMessage
-                    Des.Dispose()
+                'Case EncrytpionTypes.DataEncryptionStandard_DES
+                '    Des.InputMessageB = Convert.FromBase64String(sEncryptedString)
+                '    Des.Key = sKey
+                '    Des.IV = sIteratorVector
+                '    Des.PaddingMode = iPaddingMode
+                '    Des.CipherMode = iCipherMode
+                '    Des.Decrypt()
+                '    sDecryptedString = Des.OutputMessage
+                '    Des.Dispose()
 
-                Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
-                    Idea.InputMessageB = Convert.FromBase64String(sEncryptedString)
-                    Idea.Key = sKey
-                    Idea.IV = sIteratorVector
-                    Idea.PaddingMode = iPaddingMode
-                    Idea.CipherMode = iCipherMode
-                    Idea.Decrypt()
-                    sDecryptedString = Idea.OutputMessage
-                    Idea.Dispose()
+                'Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
+                '    Idea.InputMessageB = Convert.FromBase64String(sEncryptedString)
+                '    Idea.Key = sKey
+                '    Idea.IV = sIteratorVector
+                '    Idea.PaddingMode = iPaddingMode
+                '    Idea.CipherMode = iCipherMode
+                '    Idea.Decrypt()
+                '    sDecryptedString = Idea.OutputMessage
+                '    Idea.Dispose()
 
-                Case EncrytpionTypes.RC2
-                    Rc2.InputMessageB = Convert.FromBase64String(sEncryptedString)
-                    Rc2.Key = sKey
-                    Rc2.IV = sIteratorVector
-                    Rc2.PaddingMode = iPaddingMode
-                    Rc2.CipherMode = iCipherMode
-                    Rc2.Decrypt()
-                    sDecryptedString = Rc2.OutputMessage
-                    Rc2.Dispose()
+                'Case EncrytpionTypes.RC2
+                '    Rc2.InputMessageB = Convert.FromBase64String(sEncryptedString)
+                '    Rc2.Key = sKey
+                '    Rc2.IV = sIteratorVector
+                '    Rc2.PaddingMode = iPaddingMode
+                '    Rc2.CipherMode = iCipherMode
+                '    Rc2.Decrypt()
+                '    sDecryptedString = Rc2.OutputMessage
+                '    Rc2.Dispose()
 
-                Case EncrytpionTypes.RC4
-                    Rc4.InputMessageB = Convert.FromBase64String(sEncryptedString)
-                    Rc4.Key = sKey
-                    Rc4.IV = sIteratorVector
-                    'Rc4.PaddingMode = iPaddingMode
-                    'Rc4.CipherMode = iCipherMode
-                    Rc4.Decrypt()
-                    sDecryptedString = Rc4.OutputMessage
-                    Rc4.Dispose()
+                'Case EncrytpionTypes.RC4
+                '    Rc4.InputMessageB = Convert.FromBase64String(sEncryptedString)
+                '    Rc4.Key = sKey
+                '    Rc4.IV = sIteratorVector
+                '    'Rc4.PaddingMode = iPaddingMode
+                '    'Rc4.CipherMode = iCipherMode
+                '    Rc4.Decrypt()
+                '    sDecryptedString = Rc4.OutputMessage
+                '    Rc4.Dispose()
 
                 Case EncrytpionTypes.TripleDES
                     Tripledes.InputMessageB = Convert.FromBase64String(sEncryptedString)
@@ -746,45 +746,45 @@ Public Class ASCENCRY
                     sEncryptedString = Convert.ToBase64String(Cast.OutputMessageB)
                     Cast.Dispose()
 
-                Case EncrytpionTypes.DataEncryptionStandard_DES
-                    Des.InputMessage = sDecryptedString
-                    Des.Key = sKey
-                    Des.IV = sIteratorVector
-                    Des.PaddingMode = iPaddingMode
-                    Des.CipherMode = iCipherMode
-                    Des.Encrypt()
-                    sEncryptedString = Convert.ToBase64String(Des.OutputMessageB)
-                    Des.Dispose()
+                'Case EncrytpionTypes.DataEncryptionStandard_DES
+                '    Des.InputMessage = sDecryptedString
+                '    Des.Key = sKey
+                '    Des.IV = sIteratorVector
+                '    Des.PaddingMode = iPaddingMode
+                '    Des.CipherMode = iCipherMode
+                '    Des.Encrypt()
+                '    sEncryptedString = Convert.ToBase64String(Des.OutputMessageB)
+                '    Des.Dispose()
 
-                Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
-                    Idea.InputMessage = sDecryptedString
-                    Idea.Key = sKey
-                    Idea.IV = sIteratorVector
-                    Idea.PaddingMode = iPaddingMode
-                    Idea.CipherMode = iCipherMode
-                    Idea.Encrypt()
-                    sEncryptedString = Convert.ToBase64String(Idea.OutputMessageB)
-                    Idea.Dispose()
+                'Case EncrytpionTypes.InternationalDataEncryptionAlgorithm_IDEA
+                '    Idea.InputMessage = sDecryptedString
+                '    Idea.Key = sKey
+                '    Idea.IV = sIteratorVector
+                '    Idea.PaddingMode = iPaddingMode
+                '    Idea.CipherMode = iCipherMode
+                '    Idea.Encrypt()
+                '    sEncryptedString = Convert.ToBase64String(Idea.OutputMessageB)
+                '    Idea.Dispose()
 
-                Case EncrytpionTypes.RC2
-                    Rc2.InputMessage = sDecryptedString
-                    Rc2.Key = sKey
-                    Rc2.IV = sIteratorVector
-                    Rc2.PaddingMode = iPaddingMode
-                    Rc2.CipherMode = iCipherMode
-                    Rc2.Encrypt()
-                    sEncryptedString = Convert.ToBase64String(Rc2.OutputMessageB)
-                    Rc2.Dispose()
+                'Case EncrytpionTypes.RC2
+                '    Rc2.InputMessage = sDecryptedString
+                '    Rc2.Key = sKey
+                '    Rc2.IV = sIteratorVector
+                '    Rc2.PaddingMode = iPaddingMode
+                '    Rc2.CipherMode = iCipherMode
+                '    Rc2.Encrypt()
+                '    sEncryptedString = Convert.ToBase64String(Rc2.OutputMessageB)
+                '    Rc2.Dispose()
 
-                Case EncrytpionTypes.RC4
-                    Rc4.InputMessage = sDecryptedString
-                    Rc4.Key = sKey
-                    Rc4.IV = sIteratorVector
-                    'Rc4.PaddingMode = iPaddingMode
-                    'Rc4.CipherMode = iCipherMode
-                    Rc4.Encrypt()
-                    sEncryptedString = Convert.ToBase64String(Rc4.OutputMessageB)
-                    Rc4.Dispose()
+                'Case EncrytpionTypes.RC4
+                '    Rc4.InputMessage = sDecryptedString
+                '    Rc4.Key = sKey
+                '    Rc4.IV = sIteratorVector
+                '    'Rc4.PaddingMode = iPaddingMode
+                '    'Rc4.CipherMode = iCipherMode
+                '    Rc4.Encrypt()
+                '    sEncryptedString = Convert.ToBase64String(Rc4.OutputMessageB)
+                '    Rc4.Dispose()
 
                 Case EncrytpionTypes.TripleDES
                     Tripledes.InputMessage = sDecryptedString

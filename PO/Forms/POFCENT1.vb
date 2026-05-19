@@ -372,15 +372,18 @@ Public Class POFCENT1
             FTP1 = New nsoftware.IPWorks.Ftp
             FTP1.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareftpkey")
             FTP1.RemoteHost = ROWs("POTPARMC").Item("PO_PARM_FTP_SITE")
-            FTP1.RemotePath = ROWs("POTPARMC").Item("PO_PARM_INBOUND_FOLDER")
+            'FTP1.RemotePath = ROWs("POTPARMC").Item("PO_PARM_INBOUND_FOLDER")
+            FTP1.ChangeRemotePath(ROWs("POTPARMC").Item("PO_PARM_INBOUND_FOLDER"))
             FTP1.User = ROWs("POTPARMC").Item("PO_PARM_FTP_LOGIN")
             FTP1.Password = ROWs("POTPARMC").Item("PO_PARM_FTP_PWD")
 
-            FTP1.RemotePath = "/Outbound/856/"
+            'FTP1.RemotePath = "/Outbound/856/"
+            FTP1.ChangeRemotePath("/Outbound/856/")
 
             FTP1.Logon()
 
-            FTP1.RemotePath = "/Outbound/856/"
+            'FTP1.RemotePath = "/Outbound/856/"
+            FTP1.ChangeRemotePath("/Outbound/856/")
 
             If Not FTP1.Connected Then
                 EMsg = "Connection to FTP Site Failed "
@@ -411,7 +414,8 @@ Public Class POFCENT1
                 FTP1.RemoteFile = filename
                 FTP1.LocalFile = ROWs("POTPARMC").Item("PO_PARM_DOWNLOAD_FOLDER") & filename
                 FTP1.Download()
-                FTP1.DeleteFile(FTP1.RemotePath & "/" & filename)
+                FTP1.DeleteFile("/Outbound/856/" & "/" & filename)
+                'FTP1.DeleteFile(FTP1.RemotePath & "/" & filename)
                 FTP1.DoEvents()
 
                 My.Computer.FileSystem.CopyFile(ROWs("POTPARMC").Item("PO_PARM_DOWNLOAD_FOLDER") & filename, ROWs("POTPARMC").Item("PO_PARM_ARCH_FOLDER") & "\" & filename, True)

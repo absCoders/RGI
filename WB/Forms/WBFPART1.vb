@@ -375,9 +375,11 @@ Public Class WBFPART1
         Ftp1.User = rowWBTPARM1.Item("WB_PARM_SITE_USER").ToString
         Ftp1.Password = rowWBTPARM1.Item("WB_PARM_SITE_PWD").ToString
         Ftp1.RemoteHost = "69.39.227.201"
-        Ftp1.RemotePath = "www/partials"
+        'Ftp1.RemotePath = "www/partials"
+        Ftp1.ChangeRemotePath("www/partials")
         Ftp1.Logon()
-        Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+        'Ftp1.TransferMode = nsoftware.IPWorks.FTPTransferModes.tmBinary
+        Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
         Ftp1.LocalFile = TransferFile
         Ftp1.RemoteFile = (txtPART_PAGE_NAME.Text).ToLower()
         Ftp1.Overwrite = True

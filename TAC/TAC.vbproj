@@ -159,20 +159,29 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorks, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks, Version=24.0.9376.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorks.24.0.9376\lib\net40\nsoftware.IPWorks.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksEncrypt">
-      <HintPath>..\..\..\..\Program Files\nsoftware\IPWorks Encrypt 2020 .NET Edition\lib\nsoftware.IPWorksEncrypt.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks.System, Version=24.0.9376.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorks.24.0.9376\lib\net40\nsoftware.IPWorks.System.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksSSH, Version=20.0.7721.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks SSH 2020 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
+    <Reference Include="nsoftware.IPWorksEncrypt, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksEncrypt.24.0.9373\lib\net40\nsoftware.IPWorksEncrypt.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksZip, Version=9.0.5157.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks ZIP 2020 .NET Edition\lib\nsoftware.IPWorksZip.dll</HintPath>
+    <Reference Include="nsoftware.IPWorksEncrypt.System, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksEncrypt.24.0.9373\lib\net40\nsoftware.IPWorksEncrypt.System.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksSSH, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksSSH.24.0.9373\lib\net40\nsoftware.IPWorksSSH.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksSSH.System, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksSSH.24.0.9373\lib\net40\nsoftware.IPWorksSSH.System.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksZip, Version=24.0.9573.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksZip.24.0.9573\lib\net40\nsoftware.IPWorksZip.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksZip.System, Version=24.0.9573.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksZip.24.0.9573\lib\net40\nsoftware.IPWorksZip.System.dll</HintPath>
     </Reference>
     <Reference Include="office, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

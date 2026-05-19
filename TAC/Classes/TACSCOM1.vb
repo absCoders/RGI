@@ -21,8 +21,10 @@ Public Class TACSCOM1
             Ftp1.Password = PWD
             Ftp1.RemoteHost = HOST
             Ftp1.Logon()
-            Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
-            Ftp1.RemotePath = FOLDERNAME_remote
+            'Ftp1.TransferMode = nsoftware.IPWorks.FtpTransferModes.tmBinary
+            'Ftp1.RemotePath = FOLDERNAME_remote
+            Ftp1.ChangeTransferMode(nsoftware.IPWorks.FTPTransferModes.tmBinary)
+            Ftp1.ChangeRemotePath(FOLDERNAME_remote)
 
             For i As Integer = 0 To FILENAME_local.Length - 1
                 'Ftp1.LocalFile = ASCMAIN1.Folders("Temp") & FILENAME_local
@@ -42,12 +44,12 @@ Public Class TACSCOM1
         End Try
     End Function
 
-    Public Shared Sub SSHServerAuthentication(sender As Object, e As SftpSSHServerAuthenticationEventArgs)
+    Public Shared Sub SSHServerAuthentication(sender As Object, e As SFTPClientSSHServerAuthenticationEventArgs) '  SftpSSHServerAuthenticationEventArgs)
 
         e.Accept = True
     End Sub
 
-    Public Shared Sub SSHStatus(sender As Object, e As SftpSSHStatusEventArgs)
+    Public Shared Sub SSHStatus(sender As Object, e As SFTPClientSSHStatusEventArgs) ' SftpSSHStatusEventArgs)
 
         ' MsgBox(e.Message, MsgBoxStyle.OkOnly, "SSHStatus Messages")
         theLog &= e.Message & vbCrLf
@@ -84,7 +86,7 @@ Public Class TACSCOM1
         End If
 
         Dim success = False
-        Dim sftp As New nsoftware.IPWorksSSH.Sftp
+        Dim sftp As New nsoftware.IPWorksSSH.SFTPClient ' nsoftware.IPWorksSSH.Sftp
         theLog = ""
 
         AddHandler sftp.OnSSHServerAuthentication, AddressOf SSHServerAuthentication
@@ -104,7 +106,7 @@ Public Class TACSCOM1
             ' SSH_APP_PARTNER_PUBKEY = crypt.Decrypt_AES(SSH_APP_PARTNER_PUBKEY)
             Dim SSH_APP_PARTNER_PUBKEY_B() As Byte = StrToByteArray(SSH_APP_PARTNER_PUBKEY)
 
-            sftp.SSHAuthMode = nsoftware.IPWorksSSH.SftpSSHAuthModes.amPublicKey
+            sftp.SSHAuthMode = nsoftware.IPWorksSSH.SCPSSHAuthModes.amPublicKey ' nsoftware.IPWorksSSH.SftpSSHAuthModes.amPublicKey
             sftp.SSHUser = SSH_APP_USERNAME
             sftp.SSHCert = New Certificate(CertStoreTypes.cstPEMKeyBlob, SSH_APP_SSH_PVTKEY_B, "", "*")
             'cstSSHPublicKey
@@ -150,10 +152,10 @@ Public Class TACSCOM1
             sftp.SSHUser = SSH_APP_USERNAME
 
             If SSH_APP_PASSWORD <> "" Then
-                sftp.SSHAuthMode = SftpSSHAuthModes.amPassword
+                sftp.SSHAuthMode = SCPSSHAuthModes.amPassword ' SftpSSHAuthModes.amPassword
                 sftp.SSHPassword = SSH_APP_PASSWORD
             Else
-                sftp.SSHAuthMode = SftpSSHAuthModes.amPublicKey
+                sftp.SSHAuthMode = SCPSSHAuthModes.amPublicKey ' SftpSSHAuthModes.amPublicKey
                 'sftp.SSHCert = New Certificate(CertStoreTypes.cstPPKFile, "C:\Users\wjz\Desktop\Interparfums\JPMC\JPMC_SSH_pvt.ppk", "0ff1c3INT", "*")
                 'sftp.SSHCert = New Certificate(CertStoreTypes.cstPPKFile, "S:\INT\Archive\INT\JPMC\JPMC_SSH_pvt.ppk", "0ff1c3INT", "*")
 
@@ -191,7 +193,8 @@ Public Class TACSCOM1
                 success = True
 
                 sftp.LocalFile = FILENAME_LOCAL
-                sftp.RemotePath = SSH_APP_FOLDER_PUT
+                'sftp.RemotePath = SSH_APP_FOLDER_PUT
+                sftp.ChangeRemotePath(SSH_APP_FOLDER_PUT)
 
                 sftp.RemoteFile = FILENAME_REMOTE
                 sftp.Upload()
@@ -245,7 +248,7 @@ Public Class TACSCOM1
         End If
 
         Dim success = False
-        Dim sftp As New nsoftware.IPWorksSSH.Sftp
+        Dim sftp As New nsoftware.IPWorksSSH.SFTPClient ' nsoftware.IPWorksSSH.Sftp
         AddHandler sftp.OnSSHServerAuthentication, AddressOf SSHServerAuthentication
 
         sftp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwaresftpkey")
@@ -253,10 +256,10 @@ Public Class TACSCOM1
         sftp.SSHUser = SSH_APP_USERNAME
 
         If SSH_APP_PASSWORD <> "" Then
-            sftp.SSHAuthMode = SftpSSHAuthModes.amPassword
+            sftp.SSHAuthMode = SFTPClientSSHAuthModes.amPassword ' SftpSSHAuthModes.amPassword
             sftp.SSHPassword = SSH_APP_PASSWORD
         Else
-            sftp.SSHAuthMode = SftpSSHAuthModes.amPublicKey
+            sftp.SSHAuthMode = SFTPClientSSHAuthModes.amPublicKey ' SftpSSHAuthModes.amPublicKey
             'sftp.SSHCert = New Certificate(CertStoreTypes.cstPPKFile, "C:\Users\wjz\Desktop\Interparfums\JPMC\JPMC_SSH_pvt.ppk", "0ff1c3INT", "*")
             'sftp.SSHCert = New Certificate(CertStoreTypes.cstPPKFile, "S:\INT\Archive\INT\JPMC\JPMC_SSH_pvt.ppk", "0ff1c3INT", "*")
             'sftp.SSHCert = New Certificate(CertStoreTypes.cstPPKFile, "S:\INT\Archive\INT\JPMC\JPMC_IPLB_pvt.asc", "0ff1c3INT", "*")
@@ -272,7 +275,8 @@ Public Class TACSCOM1
             sftp.SSHHost = SSH_APP_PARTNER_URI
             sftp.SSHLogon(SSH_APP_PARTNER_URI, 22)
             success = True
-            sftp.RemotePath = "/" & SSH_APP_FOLDER_GET
+            'sftp.RemotePath = "/" & SSH_APP_FOLDER_GET
+            sftp.ChangeRemotePath("/" & SSH_APP_FOLDER_GET)
 
             sftp.ListDirectory()
             For Each s As nsoftware.IPWorksSSH.DirEntry In sftp.DirList

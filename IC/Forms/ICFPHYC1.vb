@@ -961,9 +961,13 @@ Public Class ICFPHYC1
         ASCDATA1.ExecuteSQL(ASCMAIN1.sql)
         CommitTrans()
 
-        Using ipp As New nsoftware.IPWorks.Ipport
+        Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
             ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
-            ipp.Connect("192.168.110.239", "4444")
+
+            ipp.RemoteHost = "192.168.110.239"
+            ipp.RemotePort = 4444
+            ipp.Connect()
+            'ipp.Connect("192.168.110.239", "4444")
             Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
             Try
                 data = cbxLabelPrinter.SelectedItem 'Printer

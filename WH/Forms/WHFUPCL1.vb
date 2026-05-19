@@ -601,12 +601,18 @@ Public Class WHFUPCL1
             CARTONS_PER_UNIT = rowICTSTYL1.Item("CARTONS_PER_UNIT")
         End If
 
-        Using ipp As New nsoftware.IPWorks.Ipport
+        Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
             ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
             If ASCMAIN1.Running_in_VS Then
-                ipp.Connect("192.168.50.74", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
+                ipp.RemoteHost = "192.168.50.74"
+                ipp.RemotePort = 4444
+                ipp.Connect()
+                'ipp.Connect("192.168.50.74", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
             Else
-                ipp.Connect("192.168.110.239", "4444")
+                ipp.RemoteHost = "192.168.110.239"
+                ipp.RemotePort = 4444
+                ipp.Connect()
+                'ipp.Connect("192.168.110.239", "4444")
             End If
             Dim data As String '= "upc123" ' & vbCrLf a new line is needed to send the data across
             Try

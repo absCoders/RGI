@@ -169,12 +169,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Microsoft SDKs\Azure\.NET SDK\v2.9\bin\plugins\Diagnostics\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorks">
-      <HintPath>..\..\..\..\..\Program Files\nsoftware\IPWorks 2020 .NET Edition\lib\nsoftware.IPWorks.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks, Version=24.0.9376.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorks.24.0.9376\lib\net40\nsoftware.IPWorks.dll</HintPath>
     </Reference>
-    <Reference Include="nsoftware.IPWorksSSH, Version=20.0.8162.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\nsoftware\IPWorks SSH 2020 .NET Edition\lib\nsoftware.IPWorksSSH.dll</HintPath>
+    <Reference Include="nsoftware.IPWorks.System, Version=24.0.9376.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorks.24.0.9376\lib\net40\nsoftware.IPWorks.System.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksSSH, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksSSH.24.0.9373\lib\net40\nsoftware.IPWorksSSH.dll</HintPath>
+    </Reference>
+    <Reference Include="nsoftware.IPWorksSSH.System, Version=24.0.9373.0, Culture=neutral, PublicKeyToken=cdc168f89cffe9cf, processorArchitecture=MSIL">
+      <HintPath>..\packages\nsoftware.IPWorksSSH.24.0.9373\lib\net40\nsoftware.IPWorksSSH.System.dll</HintPath>
     </Reference>
     <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
     <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL" />
@@ -1208,6 +1213,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ABSCS\ABSCS.csproj">

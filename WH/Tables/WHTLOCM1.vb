@@ -149,12 +149,18 @@ Public Class WHTLOCM1
 
         Dim Label = "NEWER|BARCODE_1TXT.lbx|" & Printer & "|" & Loc & "|"
 
-        Using ipp As New nsoftware.IPWorks.Ipport
+        Using ipp As New nsoftware.IPWorks.TCPClient ' Ipport
             ipp.RuntimeLicense = TACMAIN1.nSoftwareIPWorksV9Key
             If ASCMAIN1.Running_in_VS Then
-                ipp.Connect("192.168.120.52", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
+                ipp.RemoteHost = "192.168.120.52"
+                ipp.RemotePort = 4444
+                ipp.Connect()
+                'ipp.Connect("192.168.120.52", "4444") 'ipp.Connect("192.168.120.67", "4444") '"192.168.4.117", "4444")
             Else
-                ipp.Connect("192.168.110.239", "4444")
+                ipp.RemoteHost = "192.168.110.239"
+                ipp.RemotePort = 4444
+                ipp.Connect()
+                'ipp.Connect("192.168.110.239", "4444")
             End If
 
             ipp.SendLine(Label)

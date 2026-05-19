@@ -883,9 +883,10 @@ Public Class TACZPLT1
 
             Dim port As Int16 = 9100
 
-            Using ipp As New nsoftware.IPWorks.Ipport
+            Using ipp As New nsoftware.IPWorks.TCPClient ' .Ipport
                 ipp.RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareipportkey")
-                ipp.Connect(labelPrinterIP, port)
+
+                ' ipp.Connect(labelPrinterIP, port)
 
                 Dim array() As Byte = System.Text.Encoding.ASCII.GetBytes(labelImage)
                 ipp.Send(array)
