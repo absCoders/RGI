@@ -217,9 +217,7 @@
     <Compile Include="Forms\SAFCSLS1.Designer.vb">
       <DependentUpon>SAFCSLS1.vb</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SAFCSLS1.vb">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\SAFCSLS1.vb" />
     <Compile Include="Forms\SAFISLS1.Designer.vb">
       <DependentUpon>SAFISLS1.vb</DependentUpon>
     </Compile>

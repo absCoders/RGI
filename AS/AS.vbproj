@@ -292,9 +292,7 @@
     <Compile Include="Tables\ASTVIEW1.Designer.vb">
       <DependentUpon>ASTVIEW1.vb</DependentUpon>
     </Compile>
-    <Compile Include="Tables\ASTVIEW1.vb">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Tables\ASTVIEW1.vb" />
     <Compile Include="Tables\ASTDSQLF.Designer.vb">
       <DependentUpon>ASTDSQLF.vb</DependentUpon>
     </Compile>

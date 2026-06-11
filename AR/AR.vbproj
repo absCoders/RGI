@@ -331,9 +331,7 @@
     <Compile Include="Reports\ARRDEFI1.Designer.vb">
       <DependentUpon>ARRDEFI1.vb</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ARRDEFI1.vb">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Reports\ARRDEFI1.vb" />
     <Compile Include="Reports\ARRPYMT1.Designer.vb">
       <DependentUpon>ARRPYMT1.vb</DependentUpon>
     </Compile>

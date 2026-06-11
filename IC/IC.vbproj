@@ -335,9 +335,7 @@
     <Compile Include="Forms\ICFPHYC1.Designer.vb">
       <DependentUpon>ICFPHYC1.vb</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ICFPHYC1.vb">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Forms\ICFPHYC1.vb" />
     <Compile Include="Forms\ICFPHYS1.Designer.vb">
       <DependentUpon>ICFPHYS1.vb</DependentUpon>
     </Compile>

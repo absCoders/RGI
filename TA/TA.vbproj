@@ -166,9 +166,7 @@
     <Compile Include="Reports\TARPEND0.Designer.vb">
       <DependentUpon>TARPEND0.vb</DependentUpon>
     </Compile>
-    <Compile Include="Reports\TARPEND0.vb">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Reports\TARPEND0.vb" />
     <Compile Include="Reports\TARPEND1.Designer.vb">
       <DependentUpon>TARPEND1.vb</DependentUpon>
     </Compile>

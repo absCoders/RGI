@@ -600,7 +600,7 @@ Public Class ASCDATA1
 
                 Select Case Mid$(custom_parameters, i, 1)
                     Case "V"    ' Varchar2
-                        P.OracleDbType = OracleDbType.Varchar2
+                        P.OracledbType = OracledbType.VarChar2
                         If ptbl IsNot Nothing Then ptbl.Columns.Add(COLUMN_NAME, GetType(System.String))
                     Case "I"    ' Integer
                         P.OracleDbType = OracleDbType.Long

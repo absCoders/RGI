@@ -9,7 +9,7 @@ Public Class ASCBASE1
     Public pROWs As New Dictionary(Of String, DataRow)
     Public TBL_SCHEMAs As New Dictionary(Of String, DataTable)
     Public DVWs As New Dictionary(Of String, DataView)
-    
+
     Public ROWs As New Dictionary(Of String, DataRow)
     Public CMDs As New Dictionary(Of String, OracleCommand)
     Public BA_CMDs As New Dictionary(Of String, OracleCommand())
@@ -831,7 +831,7 @@ Public Class ASCBASE1
             End Select
         Next
         Try
-        BA_CMDs(TABLE_NAME)(1).ExecuteNonQuery()
+            BA_CMDs(TABLE_NAME)(1).ExecuteNonQuery()
 
         Catch ex As Exception
             Throw New Exception(String.Format("Exception in Update_BAs: {0}", ex.Message))
