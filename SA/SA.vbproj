@@ -154,17 +154,17 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\bin\Microsoft.Office.Interop.Excel.dll</HintPath>
     </Reference>
-    <Reference Include="SpreadsheetGear2012.Core, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
+    <Reference Include="SpreadsheetGear2017.Core, Version=8.7.4.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2012 for .NET\DotNet40\Bin\SpreadsheetGear2012.Core.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2017 for .NET\DotNet40\Bin\SpreadsheetGear2017.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SpreadsheetGear2012.Drawing, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
+    <Reference Include="SpreadsheetGear2017.Drawing, Version=8.7.4.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2012 for .NET\DotNet40\Bin\SpreadsheetGear2012.Drawing.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2017 for .NET\DotNet40\Bin\SpreadsheetGear2017.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="SpreadsheetGear2012.Windows.Forms, Version=7.4.33.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
+    <Reference Include="SpreadsheetGear2017.Windows.Forms, Version=8.7.4.102, Culture=neutral, PublicKeyToken=39c186f5904944ec, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2012 for .NET\DotNet40\Bin\SpreadsheetGear2012.Windows.Forms.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\SpreadsheetGear\SpreadsheetGear 2017 for .NET\DotNet40\Bin\SpreadsheetGear2017.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -217,7 +217,9 @@
     <Compile Include="Forms\SAFCSLS1.Designer.vb">
       <DependentUpon>SAFCSLS1.vb</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SAFCSLS1.vb" />
+    <Compile Include="Forms\SAFCSLS1.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\SAFISLS1.Designer.vb">
       <DependentUpon>SAFISLS1.vb</DependentUpon>
     </Compile>
