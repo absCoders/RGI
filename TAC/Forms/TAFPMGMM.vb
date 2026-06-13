@@ -310,9 +310,9 @@ Public Class TAFPMGMM
         '    DocumentStreamType = SaveSettings.SavedStreamType
         'End If
 
-        ''TextControl1.Save("C:\VS\VDI\ABS\bin\x86\Debug\TEXT.RTF", TXTextControl.StringStreamType.RichTextFormat)
-        ''TextControl1.Save("C:\VS\VDI\ABS\bin\x86\Debug\TEXT.HTML", TXTextControl.StringStreamType.HTMLFormat)
-        ''TextControl1.Save("C:\VS\VDI\ABS\bin\x86\Debug\TEXT.TXT", TXTextControl.StringStreamType.PlainText)
+        ''TextControl1.Save("C:\VS\VDI\ABS\bin\x64\Debug\TEXT.RTF", TXTextControl.StringStreamType.RichTextFormat)
+        ''TextControl1.Save("C:\VS\VDI\ABS\bin\x64\Debug\TEXT.HTML", TXTextControl.StringStreamType.HTMLFormat)
+        ''TextControl1.Save("C:\VS\VDI\ABS\bin\x64\Debug\TEXT.TXT", TXTextControl.StringStreamType.PlainText)
         'Exit Sub
 
         Me.Cursor = Cursors.WaitCursor

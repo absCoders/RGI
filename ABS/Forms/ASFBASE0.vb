@@ -8709,9 +8709,9 @@ Public Class ASFBASE0
 
         Dim buildType As String
 #If DEBUG Then
-        buildType = "x86\Debug"
+        buildType = "x64\Debug"
 #Else
-        buildType = "x86\Release"
+        buildType = "x64\Release"
 #End If
 
         If ASCMAIN1.Running_in_VS Then
@@ -8721,7 +8721,7 @@ Public Class ASFBASE0
         End If
 
         If ASCMAIN1.ABSWEB Then
-            sLocation = "C:\VS\VDI\" & MODULE_ID & "\bin\x86\Debug\" & MODULE_ID & ".dll"
+            sLocation = "C:\VS\VDI\" & MODULE_ID & "\bin\x64\Debug\" & MODULE_ID & ".dll"
         End If
 
         Dim sType As String = MODULE_ID & "." & MENU_ITEM_OBJECT
