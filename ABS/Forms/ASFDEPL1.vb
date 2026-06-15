@@ -50,8 +50,8 @@ Public Class ASFDEPL1
         WorkingDirectory = Application.StartupPath
         If ASCMAIN1.Running_in_VS Then
             Dim USERNAME As String = System.Environment.GetEnvironmentVariable("USERNAME") & String.Empty
-            WorkingDirectory = $"C:\Users\{USERNAME}\VS\VDI"
-            WorkingDirectory = $"C:\VS\VDI"
+            WorkingDirectory = $"C:\Users\{USERNAME}\VS\RGI"
+            WorkingDirectory = $"C:\VS\RGI"
         End If
 
         deployScriptfileName = $"{WorkingDirectory}\deploy.ps1"
@@ -349,9 +349,9 @@ Public Class ASFDEPL1
 
         Dim strFilepath As String = My.Application.Info.DirectoryPath
 
-        If strFilepath.Contains("\VDI\") Then
-            strFilepath = strFilepath.Substring(0, InStr(strFilepath, "\VDI\"))
-            strFilepath &= "VDI\Reports"
+        If strFilepath.Contains("\RGI\") Then
+            strFilepath = strFilepath.Substring(0, InStr(strFilepath, "\RGI\"))
+            strFilepath &= "RGI\Reports"
         End If
 
         Dim directory As New System.IO.DirectoryInfo(strFilepath)
