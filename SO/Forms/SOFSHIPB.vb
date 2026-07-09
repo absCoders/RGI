@@ -1,8 +1,9 @@
-Imports DPayments.DShippingSDK
-Imports System.Net
 Imports System.IO
-Imports Newtonsoft.Json
+Imports System.Net
+Imports System.Text.RegularExpressions
+Imports DPayments.DShippingSDK
 Imports Infragistics.Win.UltraWinGrid
+Imports Newtonsoft.Json
 
 Public Class SOFSHIPB
 
@@ -145,6 +146,7 @@ Public Class SOFSHIPB
     Private Const CONSPICK_MTASK As Int16 = 125
     Private CustomerPreferredThirdPartyAccountNo As String = String.Empty
     Private isRegencyTransferShipment As Boolean = False
+    Private clsTACZPLT1 As TAC.TACZPLT1
 
 #End Region
 
@@ -13415,8 +13417,23 @@ Public Class SOFSHIPB
                 Dim clsTACZPLT1 As New TAC.TACZPLT1
                 clsTACZPLT1.SendLabelToPrinter(txtLabelPrinter.Text, LabelData)
             End If
+            If (ASCMAIN1.USER_ID = "rick") AndAlso ASCMAIN1.Running_in_VS Then
+                Stop
+                ' Find Zebra printer
+                'Dim zebraPrinter As String = FindZebraPrinter()
 
-            ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+                'Dim vLabelPrinter As New ASCPRINT
+                'Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
+                Dim clsTACZPLT1 As New TAC.TACZPLT1
+                clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
+            End If
+            If ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
+                clsTACZPLT1 = New TAC.TACZPLT1
+                clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
+
+            Else
+                ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+            End If
 
         Catch ex As Exception
             MessageBox.Show("Print Shipping Label Error: " & ex.Message)
@@ -17995,17 +18012,31 @@ Public Class SOFSHIPB
                 Return True
             End If
 
-            If (ASCMAIN1.USER_ID = "edz" OrElse ASCMAIN1.USER_ID = "wjz") AndAlso ASCMAIN1.Running_in_VS Then
-                ' Find Zebra printer
+            If ASCMAIN1.Running_in_VS Then
+                If (ASCMAIN1.USER_ID = "edz" OrElse ASCMAIN1.USER_ID = "wjz") AndAlso ASCMAIN1.Running_in_VS Then
+                    ' Find Zebra printer
 
-                Dim zebraPrinter As String = FindZebraPrinter()
+                    Dim zebraPrinter As String = FindZebraPrinter()
 
-                Dim vLabelPrinter As New ASCPRINT
-                Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
+                    Dim vLabelPrinter As New ASCPRINT
+                    Return vLabelPrinter.SendStringToPrinter(zebraPrinter, LabelData)
+                End If
+                If (ASCMAIN1.USER_ID = "rick") AndAlso ASCMAIN1.Running_in_VS Then
+                    'test ip printers
+                    clsTACZPLT1 = New TAC.TACZPLT1
+                    clsTACZPLT1.PrintSampleShippingLabel()
+                Else
+                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+                End If
+            Else
+                If ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
+                    clsTACZPLT1 = New TAC.TACZPLT1
+                    clsTACZPLT1.SendLabelToPrinter(ASCMAIN1.LabelPrinterIPAddress, LabelData)
+
+                Else
+                    ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
+                End If
             End If
-
-            ASCMAIN1.LabelPrinterSerialPort.WriteLine(LabelData)
-
         Catch ex As Exception
             MessageBox.Show("Print Shipping Label Error: " & ex.Message)
 
@@ -19909,22 +19940,48 @@ Public Class SOFSHIPB
         '**********************************************************************************************************************************
         Try
             txtLabelPrinter.BackColor = Drawing.Color.Red
+            If ASCMAIN1.LabelPrinterIPAddress.Length > 0 Then
+                txtLabelPrinter.Text = ASCMAIN1.LabelPrinterIPAddress
 
-            If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
-                txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
+                Dim status As Boolean = False
+                Dim pattern As String = "^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\." &
+                            "(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\." &
+                            "(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\." &
+                            "(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$"
+
+                If Regex.IsMatch(ASCMAIN1.LabelPrinterIPAddress, pattern) Then
+                    status = True
+                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                    'Try
+                    '    Dim pingSender As New Ping()
+                    '    Dim buffer As New Byte()
+                    '    Dim pr As PingReply = pingSender.Send(ASCMAIN1.LabelPrinterIPAddress, 4000, buffer)
+                    '    status = pr.Status = IPStatus.Success
+                    'Catch
+                    '    status = False
+                    'End Try
+                End If
+
+                If Not status Then
+                    txtLabelPrinter.Appearance.BackColor = Drawing.Color.Red
+                    txtLabelPrinter.Appearance.ForeColor = Drawing.Color.White
+                End If
             Else
-                txtLabelPrinter.Text = "No Port"
-            End If
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing Then
+                    txtLabelPrinter.Text = ASCMAIN1.LabelPrinterSerialPort.PortName
+                Else
+                    txtLabelPrinter.Text = "No Port"
+                End If
 
-            txtLabelPrinter.BackColor = Drawing.Color.Yellow
-            If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
-                If Not ASCMAIN1.Running_in_VS Then ASCMAIN1.LabelPrinterSerialPort.Open()
-            End If
+                txtLabelPrinter.BackColor = Drawing.Color.Yellow
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso Not ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    If Not ASCMAIN1.Running_in_VS Then ASCMAIN1.LabelPrinterSerialPort.Open()
+                End If
 
-            If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
-                txtLabelPrinter.BackColor = Drawing.Color.Green
+                If ASCMAIN1.LabelPrinterSerialPort IsNot Nothing AndAlso ASCMAIN1.LabelPrinterSerialPort.IsOpen Then
+                    txtLabelPrinter.BackColor = Drawing.Color.Green
+                End If
             End If
-
         Catch ex As Exception
             txtLabelPrinter.BackColor = Drawing.Color.Red
         End Try
