@@ -31,8 +31,8 @@ Public Class ASCENCRY
     Private Tripledes As nsoftware.IPWorksEncrypt.Tripledes
     Private Twofish As nsoftware.IPWorksEncrypt.Twofish
 
-    Private Ezcrypt1 As New nsoftware.IPWorksEncrypt.Ezcrypt
-    Private ezcrypt1RuntimeLicense As String = "31454E394141315355425241533154453345383933333331580000000000000000000000000000004D554637445A525A0000465A4E454647504E433944460000"
+    Private Ezcrypt1 As New nsoftware.IPWorksEncrypt.EzCrypt
+    Private ezcrypt1RuntimeLicense As String = "" ' "31454E4A414431535542323032373033313352415331544531414D48313432360044544E42415600303030303030303000005442414D52434633554336380000"
 
     Public UseEncryption As Boolean = False
     Private Const defaultKey As String = "0fficeABS"
@@ -88,13 +88,15 @@ Public Class ASCENCRY
 
     Private Sub InitializeVariables()
 
-        Aes = New nsoftware.IPWorksEncrypt.Aes
+        ezcrypt1RuntimeLicense = ASCMAIN1.nSoftwareKeys("nSoftwareEncryptionkey")
+
+        Aes = New nsoftware.IPWorksEncrypt.AES
         Aes.RuntimeLicense = ezcrypt1RuntimeLicense
 
         Blowfish = New nsoftware.IPWorksEncrypt.Blowfish
         Blowfish.RuntimeLicense = ezcrypt1RuntimeLicense
 
-        Cast = New nsoftware.IPWorksEncrypt.Cast
+        Cast = New nsoftware.IPWorksEncrypt.CAST
         Cast.RuntimeLicense = ezcrypt1RuntimeLicense
 
         'Des = New nsoftware.IPWorksEncrypt.Des
@@ -109,7 +111,7 @@ Public Class ASCENCRY
         'Rc4 = New nsoftware.IPWorksEncrypt.Rc4
         'Rc4.RuntimeLicense = ezcrypt1RuntimeLicense
 
-        Tripledes = New nsoftware.IPWorksEncrypt.Tripledes
+        Tripledes = New nsoftware.IPWorksEncrypt.TripleDES
         Tripledes.RuntimeLicense = ezcrypt1RuntimeLicense
 
         Twofish = New nsoftware.IPWorksEncrypt.Twofish
