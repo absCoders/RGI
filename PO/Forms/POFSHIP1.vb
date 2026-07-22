@@ -604,6 +604,7 @@ Public Class POFSHIP1
                     sqlstuff = sqlstuff & ",SUM(DECODE (POTLCST1.COST_CATGY_CODE, '" & rowPOTCATG1.Item("COST_CATGY_CODE") & "' , NVL(POTLCST2.COST_ACT_PO,0))) AS " & rowPOTCATG1.Item("COST_CATGY_CODE") & vbCrLf
                 Next
                 sqlstuff = Replace(sqlstuff, "AS THC/ORC", "AS THCORC")
+                sqlstuff = Replace(sqlstuff, "AS MPF/HMF", "AS MPF_HMF")
 
                 ASCMAIN1.sql = "SELECT POTSHIP1.PO_SHIPMENT_NO" & vbCrLf _
                 & sqlstuff _
