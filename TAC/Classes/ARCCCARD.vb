@@ -805,6 +805,8 @@ Public Class ARCCCARD
             clsLogFileLocation = cXmlDirectory
         End If
 
+        cTestMode = ASCMAIN1.DBS_COMPANY <> ASCMAIN1.DBS_SERVER
+
     End Sub
 
 #End Region
@@ -1028,6 +1030,11 @@ Public Class ARCCCARD
         Capture = False
         clsLastError = String.Empty
 
+        If TestMode Then
+            MessageBox.Show("You are in test mode and credit card processing is turned off.", "Cedit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return True
+        End If
+
         Try
             MerchantSetup()
             clsIcharge.RuntimeLicense = ASCMAIN1.nSoftwareKeys("4DPayments")
@@ -1069,6 +1076,11 @@ Public Class ARCCCARD
 
         Capture = False
         clsLastError = String.Empty
+
+        If TestMode Then
+            MessageBox.Show("You are in test mode and credit card processing is turned off.", "Cedit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return True
+        End If
 
         Try
             MerchantSetup()
@@ -1160,6 +1172,11 @@ Public Class ARCCCARD
 
         Credit = False
         clsLastError = String.Empty
+
+        If TestMode Then
+            MessageBox.Show("You are in test mode and credit card processing is turned off.", "Cedit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return True
+        End If
 
         Try
             MerchantSetup()
@@ -1261,6 +1278,11 @@ Public Class ARCCCARD
 
         Refund = False
         clsLastError = String.Empty
+
+        If TestMode Then
+            MessageBox.Show("You are in test mode and credit card processing is turned off.", "Cedit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return True
+        End If
 
         Try
             MerchantSetup()
@@ -1423,6 +1445,11 @@ Public Class ARCCCARD
 
         VoidTransaction = False
         clsLastError = String.Empty
+
+        If TestMode Then
+            MessageBox.Show("You are in test mode and credit card processing is turned off.", "Cedit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return True
+        End If
 
         Try
             MerchantSetup()
@@ -1642,6 +1669,11 @@ Public Class ARCCCARD
 
         AuthOnlySale = False
         clsLastError = String.Empty
+
+        If TestMode Then
+            MessageBox.Show("You are in test mode and credit card processing is turned off.", "Cedit Card", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return True
+        End If
 
         Try
             MerchantSetup()
